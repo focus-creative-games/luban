@@ -1,6 +1,6 @@
-# Birght Gen
+# Luban
 
-## What is Bright Gen
+## What is Luban
 
 * Aim
   * Less time for trival & repeated work, more time with creativity & leisure .
@@ -8,7 +8,7 @@
 * Philosophy
   * Simpler, Faster
 
-* [Home Page](https://focus-creative-games.github.io/bright_gen/index.html)
+* [Home Page](https://focus-creative-games.github.io/luban/index.html)
 
 * Read this in other languages: [English](README.en-us.md), [简体中文](README.md)
 
@@ -59,4 +59,4 @@ We welcome contributions! Many people all over the world have helped make this p
 
 ## License
 
-Birght Gen is licensed under the [MIT](LICENSE.TXT) license.
+Luban is licensed under the [MIT](LICENSE.TXT) license.
