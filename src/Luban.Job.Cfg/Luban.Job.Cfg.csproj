@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Source\TypeVisitors\Proto\**" />
+    <EmbeddedResource Remove="Source\TypeVisitors\Proto\**" />
+    <None Remove="Source\TypeVisitors\Proto\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ExcelDataReader" Version="3.6.0" />
+    <PackageReference Include="NeoLua" Version="1.3.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Luban.Job.Common\Luban.Job.Common.csproj" />
+  </ItemGroup>
+
+</Project>

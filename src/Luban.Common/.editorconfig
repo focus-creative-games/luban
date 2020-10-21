@@ -1,0 +1,25 @@
+﻿[*.cs]
+
+# CA1707: 标识符不应包含下划线
+dotnet_diagnostic.CA1707.severity = none
+
+# CA1305: 指定 IFormatProvider
+dotnet_diagnostic.CA1305.severity = none
+
+# CA1303: 请不要将文本作为本地化参数传递
+dotnet_diagnostic.CA1303.severity = none
+
+# CA1062: 验证公共方法的参数
+dotnet_diagnostic.CA1062.severity = none
+
+# CA2227: 集合属性应为只读
+dotnet_diagnostic.CA2227.severity = none
+
+# CA1819: 属性不应返回数组
+dotnet_diagnostic.CA1819.severity = none
+
+# CA1304: 指定 CultureInfo
+dotnet_diagnostic.CA1304.severity = none
+
+# CA1031: 不捕获常规异常类型
+dotnet_diagnostic.CA1031.severity = none
