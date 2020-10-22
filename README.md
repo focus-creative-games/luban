@@ -2,6 +2,8 @@
 [//]: # (Date: 2020-10-20 20:24:07)
 
 # Luban
+[![license](http://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Tencent/puerts/blob/master/LICENSE)
+[![Build Status](https://travis-ci.com/focus-creative-games/luban.svg?branch=main)](https://travis-ci.com/focus-creative-games/luban)
 
 ## 介绍
 
