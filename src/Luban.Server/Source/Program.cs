@@ -18,21 +18,26 @@ namespace Luban.Server
             public int Port { get; set; } = 8899;
         }
 
-        private static CommandLineOptions options;
+        private static CommandLineOptions ParseOptions(String[] args)
+        {
+            var helpWriter = new StringWriter();
+            var parser = new Parser(ps =>
+            {
+                ps.HelpWriter = helpWriter;
+            });
+
+            var result = parser.ParseArguments<CommandLineOptions>(args);
+            if (result.Tag == ParserResultType.NotParsed)
+            {
+                Console.Error.WriteLine(helpWriter.ToString());
+                Environment.Exit(1);
+            }
+            return ((Parsed<CommandLineOptions>)result).Value;
+        }
 
         static void Main(string[] args)
         {
-            var parseResult = Parser.Default.ParseArguments<CommandLineOptions>(args);
-
-            parseResult.WithNotParsed(errs =>
-            {
-                Environment.Exit(-1);
-            });
-
-            parseResult.WithParsed(opts =>
-            {
-                options = opts;
-            });
+            var options = ParseOptions(args);
 
             Luban.Common.Utils.LogUtil.InitSimpleNLogConfigure(NLog.LogLevel.Info);
 
