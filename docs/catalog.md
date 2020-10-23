@@ -68,6 +68,7 @@
             - const
             - bean
                 - field
+					- convert 常量替换
                 - 多态
         * table
         * module

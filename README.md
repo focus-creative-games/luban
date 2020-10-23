@@ -5,6 +5,8 @@
 [![license](http://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Tencent/puerts/blob/master/LICENSE)
 [![Build Status](https://travis-ci.com/focus-creative-games/luban.svg?branch=main)](https://travis-ci.com/focus-creative-games/luban)
 
+![](docs/images/icon.png)
+
 ## 介绍
 
 Luban 是一个强大的生成与缓存工具。生成目标可以是常规代码、配置数据、类似protobuf的消息代码，也可以是游戏资源如assetbundle。
