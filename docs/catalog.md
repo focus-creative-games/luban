@@ -52,7 +52,8 @@
         - bin 格式
         - lua 格式
     - 本地化
-* gen.client & gen.server 工作模型
+* gen.client & gen.server 工作模型  
+![](docs/images/Client_Server.png)  
 * 定义 + 数据的 抽象模型
 * 定义
     * 根定义文件
