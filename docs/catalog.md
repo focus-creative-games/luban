@@ -1,7 +1,7 @@
 
 * start up
-    - 下载 dotnet sdk 3.1
-    - 下载 luban.client&luban.server
+    - [下载 dotnet sdk 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1)
+    - [下载 luban.client&luban.server](https://github.com/focus-creative-games/luban/releases/tag/v1.0)
         - 启动 luban.server
     - 创建游戏配置
         - root.xml

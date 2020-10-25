@@ -11,12 +11,12 @@ Luban 最初是为了解决传统excel导出工具功能过于薄弱，无法很
 实际项目过程中不断迭代和优化，理解逐渐深入，最终由一个增强型的配置工具成为一个 **相对完备的游戏配置数据解决方案**。
 
 ## 文档
-* 目录 (catalog.md)
+* [目录](docs/catalog.md)
 
 ## 支持和联系
 
-QQ 群	: 692890842
-QQ 群名	: Luban 开发交流群
-邮箱	: taojingjian#gmail.com
+QQ 群	: 692890842  
+QQ 群名	: Luban 开发交流群  
+邮箱	: taojingjian#gmail.com  
 
 

@@ -20,6 +20,7 @@ Luban 最初是为了解决传统excel导出工具功能过于薄弱，无法很
 ## 文档
 * [主页](https://focus-creative-games.github.io/luban/index.html)
 * 各语言的简介: [English](README.en-us.md), [简体中文](README.md)
+* [使用说明](docs/catalog.md)
 
 ## 特性
 
