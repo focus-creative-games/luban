@@ -2,7 +2,7 @@
 [//]: # (Date: 2020-10-20 20:24:07)
 
 # Luban
-[![license](http://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Tencent/puerts/blob/master/LICENSE)
+[![license](http://img.shields.io/badge/license-MIT-blue.svg)]
 [![Build Status](https://travis-ci.com/focus-creative-games/luban.svg?branch=main)](https://travis-ci.com/focus-creative-games/luban)
 
 ![](docs/images/icon.png)
@@ -11,9 +11,9 @@
 
 Luban 是一个强大的生成与缓存工具。生成目标可以是常规代码、配置数据、类似protobuf的消息代码，也可以是游戏资源如assetbundle。
 在大型项目中，由于配置或资源数据庞大，生成对象可能会花费相当多的时间。比如一个典型的MMORPG项目，后期全量生成配置，即使用了多线程加速，所需时间
-也在10秒的级别。因此使用client/server模式，新增缓存机制来加速生成过程，将生成时间时间降低到秒级。
+也在10秒的级别。因此使用client/server模式，通过缓存机制来加速生成过程。
 
-Luban 最初是为了解决传统excel导出工具功能过于薄弱，无法很好解决MMORPG游戏复杂配置需求的痛点问题。 自2015年以来，经历过 MMORPG、卡牌、SLG 等多个上线项目的考验，
+Luban 最初是为了解决传统excel导出工具功能过于薄弱，无法很好处理MMORPG游戏复杂配置需求的痛点问题。 自2015年以来，经历过 MMORPG、卡牌、SLG 等多个上线项目的考验，
 实际项目过程中不断迭代和优化，最终由一个增强型的配置工具成为一个 **相对完备的游戏配置数据解决方案**。
 
 
@@ -46,6 +46,27 @@ Luban 最初是为了解决传统excel导出工具功能过于薄弱，无法很
 * 支持容器类型 set。 value 只能为内置类型或者enum类型，不支持 bean 类型
 * 支持容器类型 map。 key 只能为内置类型或者enum类型，不支持 bean 类型。 value 可以为内置类型，也可以为自定义类型
 
+### 支持增强的excel格式
+* 用 true,false表示 bool变量。
+* 用枚举名及别名表示枚举常量。比如用 白绿红之类表示品质，而不是1,2,3这样的magic number
+* 支持整数的常量替换。比如说 升级丹道具id 为 1122，所有填升级丹id的地方可以填 升级丹 来表示。减少填写错误
+* 支持可空变量. 用 null 表示空数据.
+* 支持 datetime 数据类型. 时间格式标准为以下几种，最终被转化为utc时间方便程序处理
+    - yyyy-MM-dd HH:mm:ss
+    - yyyy-MM-dd HH:mm
+    - yyyy-MM-dd HH
+    - yyyy-MM-dd
+* 支持用sep拆分单元格。在一个单元格里填写多个数据。
+* 支持多行数据。例如，章节配置里有一个复杂小节列表字段。支持多行填写这个列表数据。
+* 支持多级标题头,方便对应一些比较深的数据。比如  a.b.c 这种。
+* 支持多态别名，可以方便填写多态数据。比如说 Circle,5 或者 Rectangle,3,4
+* **支持在excel里比较简洁填写出任意复杂的配置**。
+   - 支持结构列表。 比如 list,Equip (包含 int id, string name, float attr) 这样一个复杂结构列表数据，可以填成  1,abasfa,0.5|2,xxxyy;0.9。
+   - 支持多态结构。 比如 cfg.Shape 是一个多态类型,包含 Cirecle(float radius)和Rectagnle(float width, float size)。 可以填成 圆,5 或者 长方形,3,5。
+   - 支持无限层次的复杂结构的组合
+      - 比如 list,Convex(int id, Vector3[] vertexs) 是一个多边形列表, Convext自身包含一个顶点列表，可以配置成 1_1.2,2.3,3.4_3.1,3.2,3.3|2_2.2,2.3.3.3 。
+      - 比如 list,Shape 是一个形状列表。 可以这样配置  Circle,10;Rectange,5,6;Circle,4
+	
 
 ### 多种原始文件格式支持
 一个复杂项目中，总有一部分数据(10-20%)不适合excel编辑（比如技能、AI、副本等等），这些数据一般通过专用编辑器来编辑和导出。遇到的问题是这种配置数据是无法与excel数据统一处理的，造成游戏内有多种配置数据加载方案，程序需要花费很多时间去处理这些数据的加载问题。另外这些复杂数据无法使用数据检验和分组导出以及本地化等等excel导表工具的机制。Luban能够处理excel族、xml、json、lua、目录等多种数据源，统一导出数据和生成代码，所有数据源都能使用数据检验、分组导出等等机制，程序彻底从复杂配置处理中解脱出来。
@@ -61,27 +82,6 @@ Luban 最初是为了解决传统excel导出工具功能过于薄弱，无法很
    - 一对多。比如任务表可以来 任务1.xlsx，任务2.xlsx 等等多个表。
    - 多对多。还可以是以上组合，不过实际中很少见）
 
-### 支持增强的excel格式
-* 用 true,false表示 bool变量。
-* 用枚举名及别名表示枚举常量。比如用 白绿红之类表示品质，而不是1,2,3这样的magic number
-* 支持整数的常量替换。比如说 升级丹道具id 为 1122，所有填升级丹id的地方可以填 升级丹 来表示。减少填写错误
-* 支持可空变量. 用 null 表示空数据.
-* 支持 datetime 数据类型. 时间格式标准为以下几种，最终被转化为utc时间方便程序处理
-    - yyyy-MM-dd HH:mm:ss
-    - yyyy-MM-dd HH:mm
-    - yyyy-MM-dd HH
-    - yyyy-MM-dd
-* 支持用sep拆分单元格。在一个单元格里填写多个数据。
-* 支持多行数据。例如，章节配置里有一个复杂小节列表字段。支持多行填写这个列表数据。
-* 支持多级标题头,方便对应一些比较深的数据。比如  a.b.c 这种。
-* 支持多态别名，可以方便填写多态数据。比如说 圆,5 或者 长方形,3,4
-* **支持在excel里比较简洁填写出任意复杂的配置**。
-   - 支持结构列表。 比如 list,Equip (包含 int id, string name, float attr) 这样一个复杂结构列表数据，可以填成  1,abasfa,0.5|2,xxxyy;0.9。
-   - 支持多态结构。 比如 cfg.Shape 是一个多态类型,包含 Cirecle(float radius)和Rectagnle(float width, float size)。 可以填成 圆,5 或者 长方形,3,5。
-   - 支持无限层次的复杂结构的组合
-      - 比如 list,Convex(int id, Vector3[] vertexs) 是一个多边形列表, Convext自身包含一个顶点列表，可以配置成 1_1.2,2.3,3.4_3.1,3.2,3.3|2_2.2,2.3.3.3 。
-      - 比如 list,Shape 是一个形状列表。 可以这样配置  Circle,10;Rectange,5,6;Circle,4
-	
 ### 多种导出数据格式支持
  **导出格式与原始数据解耦**。无论源数据是 excel、lua、xml、json 或者它们的混合, 最终都被以**统一的格式**导出，极大简化了生成代码的复杂性。 目前支持以下几种导出格式：
 * binary格式。与pb格式类似。所占空间最小，加载最快。
