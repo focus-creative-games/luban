@@ -77,11 +77,11 @@
 
 - 之前用 bean 来定义结构，我们引入的新的 tag “enum” 来定义 枚举。
 - enum 的 name 属性表示 枚举名。
-- 如果生成 c#代码的话，会生成 cfg.item.Equality 类。
-- `<var name=”xxx” alias=”xx” value=”xx”/>` 定义检举项。
-- 其中 name 为必填项，不可为空，也不能重复。
-- alias 是可选项，枚举项别名。
-- value 是枚举值，主要给程序使用。
+  - 如果生成 c#代码的话，会生成 cfg.item.Equality 类。
+- ``` <var name=”xxx” alias=”xx” value=”xx”/> ``` 为检举项。
+  - 其中 name 为必填项，不可为空，也不能重复。
+  - alias 是可选项，枚举项别名。
+  - value 是枚举值，主要给程序使用。
 - [完整用法](images/adv/def_10.png)  
   ```
   <module name = "item">
@@ -98,7 +98,8 @@
   </module>
   ```
 - excel 表中，想表达一个枚举值，既可以用检举项 name,也可以用枚举项的 alias，但不能是相应的整数值。
-- 注意！如果想引用其他模块定义的 enum 或者 bean, type 里必须指定全名。比如 type=”mall.TradeInfo” 。
+- 注意！如果想引用其他模块定义的 enum 或者 bean, type 里必须指定全名。  
+  比如 type=”mall.TradeInfo” 。
 - ![如图](images/adv/def_11.png)
 
 ## bean 类型
