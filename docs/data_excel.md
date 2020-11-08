@@ -5,14 +5,29 @@
 
 - 新增 一个字段 batch_useable，表示能否批量使用
 - 用 true 或 false 表示 bool 值，只需要小写后是这两个值即可，比如 true,True,True 都是合法的值。excel 会自动将输入的值大写化。
-- ![如图](images/adv/def_01.png)
-- ![相应定义文件](images/adv/def_02.png)
+- 配置:
+  ![如图](images/adv/def_01.png)
+- [定义](images/adv/def_02.png):  
+  ``` xml
+  <module name = "item">
+    <bean name = "Item">
+      <var name = "batch_usable" type = "bool" />
+    </bean>
+  </module>
+  ```
 
 ## float 类型
 
 - 新增一个 float 类型字段，掉落概率 drop_prob.
 - ![如图](images/adv/def_03.png)
-- ![如图](images/adv/def_04.png)
+- [定义](images/adv/def_04.png):  
+  ``` xml
+  <module name = "item">
+    <bean name = "Item">
+      <var name = "drop_prob" type = "float" />
+    </bean>
+  </module>
+  ```
 
 ## 列表类型 list,int
 
