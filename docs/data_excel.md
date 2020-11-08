@@ -5,10 +5,10 @@
 
 - 新增 一个字段 batch_useable，表示能否批量使用
 - 用 true 或 false 表示 bool 值，只需要小写后是这两个值即可，比如 true,True,True 都是合法的值。excel 会自动将输入的值大写化。
-- 配置:
+- 配置:  
   ![如图](images/adv/def_01.png)
-- [定义](images/adv/def_02.png):  
-  ``` xml
+- [定义](images/adv/def_02.png):
+  ```xml
   <module name = "item">
     <bean name = "Item">
       <var name = "batch_usable" type = "bool" />
@@ -19,9 +19,10 @@
 ## float 类型
 
 - 新增一个 float 类型字段，掉落概率 drop_prob.
-- ![如图](images/adv/def_03.png)
-- [定义](images/adv/def_04.png):  
-  ``` xml
+- 配置:  
+  ![如图](images/adv/def_03.png)
+- [定义](images/adv/def_04.png):
+  ```xml
   <module name = "item">
     <bean name = "Item">
       <var name = "drop_prob" type = "float" />
@@ -32,29 +33,70 @@
 ## 列表类型 list,int
 
 - 我们新增一个字段， 宝箱的随机抽取道具列表 random_item_ids。
-- ![如图](images/adv/def_05.png)
-- ![如图](images/adv/def_06.png)
+- 配置:  
+  ![如图](images/adv/def_05.png)
+- [定义](images/adv/def_06.png)
+  ```xml
+  <module name = "item">
+    <bean name = "Item">
+      <var name = "random_item_ids" type = "list, int" />
+    </bean>
+  </module>
+  ```
 
 ## 向量类型 vector3
 
 - vector3 有三个字段 float x, float y, float z, 适合用于表示坐标之类的数据。
 - 我们新增一个 spawn_location 字段，表示物品产生的场景位置。
-- ![如图](images/adv/def_07.png)
-- ![如图](images/adv/def_08.png)
+- 配置:  
+  ![如图](images/adv/def_07.png)
+- [定义](images/adv/def_08.png):
+  ```xml
+  <module name = "item">
+    <bean name = "Item">
+      <var name = "spawn_location" type = "vector3" />
+    </bean>
+  </module>
+  ```
 
 ## 枚举类型
 
 - 道具有品质，白绿蓝紫橙。 虽然可以直接填 1-5 这几个数据，但不直观，而且对程序非常不友好。
 - 有一种更优雅的方式是定义枚举。
-- ![如图](images/adv/def_09.png)
+- [枚举定义](images/adv/def_09.png)
+
+  ```xml
+  <enum name = "EQuality">
+    <var name = "WHITE" alias = "白" value = "1">
+    <var name = "GREEN" alias = "绿" value = "2">
+    <var name = "BLUE" alias = "蓝" value = "3">
+    <var name = "PURPLE" alias = "紫" value = "4">
+    <var name = "ORANGE" alias = "橙" value = "5">
+  </enum>
+  ```
+
 - 之前用 bean 来定义结构，我们引入的新的 tag “enum” 来定义 枚举。
 - enum 的 name 属性表示 枚举名。
 - 如果生成 c#代码的话，会生成 cfg.item.Equality 类。
-- <var name=”xxx” alias=”xx” value=”xx”/> 定义检举项。
+- `<var name=”xxx” alias=”xx” value=”xx”/>` 定义检举项。
 - 其中 name 为必填项，不可为空，也不能重复。
 - alias 是可选项，枚举项别名。
 - value 是枚举值，主要给程序使用。
-- ![如图](images/adv/def_10.png)
+- [完整用法](images/adv/def_10.png)  
+  ```
+  <module name = "item">
+    <enum name = "EQuality">
+      <var name = "WHITE" alias = "白" value = "1">
+      <var name = "GREEN" alias = "绿" value = "2">
+      <var name = "BLUE" alias = "蓝" value = "3">
+      <var name = "PURPLE" alias = "紫" value = "4">
+      <var name = "ORANGE" alias = "橙" value = "5">
+    </enum>
+    <bean name = "Item">
+      <var name = "quality" type = "EQuality">
+    </bean>
+  </module>
+  ```
 - excel 表中，想表达一个枚举值，既可以用检举项 name,也可以用枚举项的 alias，但不能是相应的整数值。
 - 注意！如果想引用其他模块定义的 enum 或者 bean, type 里必须指定全名。比如 type=”mall.TradeInfo” 。
 - ![如图](images/adv/def_11.png)
@@ -137,49 +179,51 @@
   2. show_info 下一行，填上 子字段名 （顺序不重要）
 - 我们称之为多级标题头，通过多级标题头的方式，可以精确定位深层次字段的列。方便策划填。
 
-
 ## 单例表
-  * 不是所有数据都是 类似map 这样的多记录结构。有些配置只有一份，比如 开启装备系统的最小角色等级。 这些数据 所在的表，也只有一个记录。称之为 单例表。
-  * 我们创建一个单例表，来存放这些数据。  
-    定义如下：  
-    ![如图](images/adv/def_33.png)  
-    数据如下：  
-    ![如图](images/adv/def_34.png)  
+
+- 不是所有数据都是 类似 map 这样的多记录结构。有些配置只有一份，比如 开启装备系统的最小角色等级。 这些数据 所在的表，也只有一个记录。称之为 单例表。
+- 我们创建一个单例表，来存放这些数据。  
+  定义如下：  
+  ![如图](images/adv/def_33.png)  
+  数据如下：  
+  ![如图](images/adv/def_34.png)
 
 ## 横表与纵表
-  * 之前介绍的表都是 面向行，沿着行方向填写数据。有时候我们希望 以列为方向填写。 
-  * 比如 上面的单例表。 如果改成一行一个字段，看起来会更清楚。 我们引入纵表支持。
-  * 定义不变，但 excel 的填法有区别，数据如下：
-  * ![如图](images/adv/def_35.png)  
+
+- 之前介绍的表都是 面向行，沿着行方向填写数据。有时候我们希望 以列为方向填写。
+- 比如 上面的单例表。 如果改成一行一个字段，看起来会更清楚。 我们引入纵表支持。
+- 定义不变，但 excel 的填法有区别，数据如下：
+- ![如图](images/adv/def_35.png)
 
 ## 可空变量
-  * 有时候会有一种变量，我们希望它 功能生效时填一个有效值，功能不生效里，用一个值来表示。 例如 int 类型，常常拿0或者-1作无效值常量。 但有时候，0或-1也是有效值时，这种做法就不生效了。或者说 项目组内 有时候拿0，有时候拿-1作无效值标记，很不统一。我们借鉴 sql及 c#,引入 可空值概念，用null表达空值。
-  * 我们为Item 添加  min_use_level 字段，类型为 int? 当填有效值时，使用时要检查等级，否则不检查。
-  * 定义如下  
-    ![如图](images/adv/def_36.png)  
-  * 数据如下  
-    ![如图](images/adv/def_37.png)  
+
+- 有时候会有一种变量，我们希望它 功能生效时填一个有效值，功能不生效里，用一个值来表示。 例如 int 类型，常常拿 0 或者-1 作无效值常量。 但有时候，0 或-1 也是有效值时，这种做法就不生效了。或者说 项目组内 有时候拿 0，有时候拿-1 作无效值标记，很不统一。我们借鉴 sql 及 c#,引入 可空值概念，用 null 表达空值。
+- 我们为 Item 添加 min_use_level 字段，类型为 int? 当填有效值时，使用时要检查等级，否则不检查。
+- 定义如下  
+  ![如图](images/adv/def_36.png)
+- 数据如下  
+  ![如图](images/adv/def_37.png)
 
 ## datetime 类型
-  * 时间是常用的数据类型。Luban特地提供了支持。  
-    填写格式为 以下4种。  
-    * yyyy-mm-dd hh:mm:ss 如 1999-08-08 01:30:29
-    * yyyy-mm-dd hh:mm    如 2000-08-07 07:40
-    * yyyy-mm-dd hh 	  如 2001-09-05 07
-    * yyyy-mm-dd 		  如 2003-04-05
-  * 为Item 新增一个 失效时间字段 expire_time 。   
-    定义如下:  
-    ![如图](images/adv/def_38.png)  
-    数据如下:  
-    ![如图](images/adv/def_39.png)  
+
+- 时间是常用的数据类型。Luban 特地提供了支持。  
+  填写格式为 以下 4 种。
+  - yyyy-mm-dd hh:mm:ss 如 1999-08-08 01:30:29
+  - yyyy-mm-dd hh:mm 如 2000-08-07 07:40
+  - yyyy-mm-dd hh 如 2001-09-05 07
+  - yyyy-mm-dd 如 2003-04-05
+- 为 Item 新增一个 失效时间字段 expire_time 。  
+  定义如下:  
+  ![如图](images/adv/def_38.png)  
+  数据如下:  
+  ![如图](images/adv/def_39.png)
 
 ## convert 常量替换
-  * 游戏里经常会出现一些常用的类似枚举的值，比如说 升级丹的id,在很多地方都要填，如果直接它的道具id,既不直观，也容易出错。 Luban 支持常量替换。  
-  * 对于需要常量替换的字段，添加 convert=”枚举类”。 如果填写的值是 枚举名或者别名，则替换为 相应的整数。否则 按照整数解析。
-  *    
-    定义如下:  
-    ![如图](images/adv/def_40.png)  
-    数据如下:  
-    ![如图](images/adv/def_41.png)  
-  * 添加了convert 的字段，既可以填 convert指向的枚举类里的一个合法枚举名，也可以是其他整数。 
 
+- 游戏里经常会出现一些常用的类似枚举的值，比如说 升级丹的 id,在很多地方都要填，如果直接它的道具 id,既不直观，也容易出错。 Luban 支持常量替换。
+- 对于需要常量替换的字段，添加 convert=”枚举类”。 如果填写的值是 枚举名或者别名，则替换为 相应的整数。否则 按照整数解析。
+- 定义如下:  
+  ![如图](images/adv/def_40.png)  
+  数据如下:  
+  ![如图](images/adv/def_41.png)
+- 添加了 convert 的字段，既可以填 convert 指向的枚举类里的一个合法枚举名，也可以是其他整数。
