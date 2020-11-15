@@ -78,11 +78,11 @@
 - 之前用 bean 来定义结构，我们引入的新的 tag “enum” 来定义 枚举。
 - enum 的 name 属性表示 枚举名。
   - 如果生成 c#代码的话，会生成 cfg.item.Equality 类。
-- ``` <var name=”xxx” alias=”xx” value=”xx”/> ``` 为检举项。
+- `<var name=”xxx” alias=”xx” value=”xx”/>` 为检举项。
   - 其中 name 为必填项，不可为空，也不能重复。
   - alias 是可选项，枚举项别名。
   - value 是枚举值，主要给程序使用。
-- [完整用法](images/adv/def_10.png)  
+- [完整用法](images/adv/def_10.png)
   ```
   <module name = "item">
     <enum name = "EQuality">
@@ -106,8 +106,17 @@
 
 - 有时候希望一个字段是复合类型。
 - 比如，我们想用一个字段 level_range 来表示道具可以使用的等级范围，它包含两个字段，最小等级和最大等级。
-- 此时，可以通过定义 bean 来解决。
-  ![如图](images/adv/def_12.png)
+- 此时，可以通过定义 bean 来解决。  
+  [定义](images/adv/def_12.png)
+  ```
+  <bean name="IntRange">
+    <var name="min" type="int">
+    <var name="max" type="int">
+  </bean>
+  <bean name="Item">
+    <var name="level_range" type="IntRange">
+  </bean>
+  ```
 - 之前的字段都在一个单元格内填写，现在这个字段是 bean 类型，有两个值，该怎么填写呢？  
   如果也像 list,int 那样把两个数写在一个单元格里(如下图)，会发现工具报错了: “10,20” 不是合法的整数值。
   ![如图](images/adv/def_13.png)
@@ -116,8 +125,17 @@
      让 level_range 标题头占据两列，这样就能在两个单元格里分别填写最小最大等级了。  
      ![如图](images/adv/def_14.png)
   2. 使用 sep 分割单元格  
-     字段定义中指定 sep 属性，用某些字符分割单元格，这样就能识别为两个整数了。
-     ![如图](images/adv/def_15.png)  
+     字段定义中指定 sep 属性，用某些字符分割单元格，这样就能识别为两个整数了。  
+     [定义](images/adv/def_15.png)
+     ```
+     <bean name="IntRange">
+       <var name="min" type="int">
+       <var name="max" type="int">
+     </bean>
+     <bean name="Item">
+       <var name="level_range" type="IntRange" sep="|">
+     </bean>
+     ```
      如果想用 分号; 或者 竖号 | 分割，只要 sep=”;” 或者 sep=”|“ 即可。  
      ![如图](images/adv/def_16.png)
 
@@ -125,23 +143,66 @@
 
 - 有些时候，我们需要一个 结构列表字段。  
   比如说 道具不同等级会增加不同的血量。我们定义一个 ItemLevelAttr 结构。  
-  ![如图](images/adv/def_17.png)
-- 对应的 excel 配置如下。  
+  [定义](images/adv/def_17.png)
+
+  ```
+  <module name="item">
+   <bean name="ItemLevelAttr">
+    <var name="level", type="int">
+    <var name="desc", type="string">
+    <var name="attr", type="float">
+   </bean>
+
+   <bean name="Item">
+    <var name="level_attrs" type="list,ItemLevelAttr" />
+   </bean>
+  </module>
+  ```
+
+  配置:  
   ![如图](images/adv/def_18.png)
+
 - 对于多个值构成的字段，填写方式为 在标题头(level_attrs)对应的列范围内，按顺序填值。不需要跟策划的标题头名有对应关系。空白单元格会被忽略。也就是如下填法也是可以的：  
   ![如图](images/adv/def_19.png)
 - 这种填法的缺点是占据在太多的列。如果想如下填，该怎么办呢？
   ![如图](images/adv/def_20.png)
 - 有两种办法。
   1. bean ItemLevelAttr 增加属性 sep=”,”  
-     ![如图](images/adv/def_21.png)  
+     [定义](images/adv/def_21.png)
+     ```
+     <bean name="ItemLevelAttr" sep=",>
+      <var name="level" type="int"/>
+      <var name="desc" type="string"/>
+      <var name="attr" type="float"/>
+     </bean>
+     ```
      如果不想用逗号”,” ，想用;来分割单元格内的数据，只要将 sep=”;” 即可。
   2. 字段 level_attrs 增加属性 sep=”,”，即  
-     ![如图](images/adv/def_22.png)  
+     [定义](images/adv/def_22.png)
+     ```
+     <bean name="ItemLevelAttr" sep=",>
+      <var name="level" type="int"/>
+      <var name="desc" type="string"/>
+      <var name="attr" type="float"/>
+     </bean>
+     <bean name="Item">
+      <var name="level_attrs" type="list,ItemLevelAttr" sep=",">
+     </bean>
+     ```
      如果想所有数据都在一个单元格内填写，又该怎么办呢？  
      ![如图](images/adv/def_23.png)  
-     想用 | 来分割不同 ItemLevelAttr ,用 , 来分割每个记录的数据。只需要 字段 level_attrs 的 sep=”,|” 即可。
-     ![如图](images/adv/def_24.png)
+     想用 | 来分割不同 ItemLevelAttr ,用 , 来分割每个记录的数据。只需要 字段 level_attrs 的 sep=”,|” 即可。  
+     [定义](images/adv/def_24.png)
+     ```
+     <bean name="ItemLevelAttr" sep=",>
+      <var name="level" type="int"/>
+      <var name="desc" type="string"/>
+      <var name="attr" type="float"/>
+     </bean>
+     <bean name="Item">
+      <var name="level_attrs" type="list,ItemLevelAttr" sep=",|">
+     </bean>
+     ```
 
 ## 多态 bean
 
@@ -151,12 +212,40 @@
 - 假设 item 有一个形状 Shape 类型的字段。Shape 有两种 Circle 和 Rectangle.  
   Cicle 有 2 个字段 int id; float radius;  
   Rectangle 有 3 个字段 int id; float width; float height;  
-  ![如图](images/adv/def_25.png)  
+  [定义](images/adv/def_25.png)
+  ```
+  <bean name="Shape">
+    <var name="id" type="int">
+    <bean name="Circle">
+      <var name="radius" type="float">
+    </bean>
+    <bean name="Rectangle">
+      <var name="width" type="float"/>
+      <var name="height" type="float"/>
+    </bean>
+  </bean>
+  <bean name="Item">
+    <var name="shape" type="Shape"/>
+  </bean>
+  ```
+  配置:  
   ![如图](images/adv/def_26.png)
 - 注意到，多态 bean 与普通 bean 填写区别在于，多态 bean 需要一个类型名。这也好理解，如果没有类型名，如何知道使用哪个 bean 呢。
-- 有时间策划不太习惯填写英文，或者说类型名有时候会调整，不希望调整类型名后配置也跟着改变，因为，多态 bean 支持别名的概念。
-  ![如图](images/adv/def_27.png)
-- 这时，可以这样填数据：  
+- 有时间策划不太习惯填写英文，或者说类型名有时候会调整，不希望调整类型名后配置也跟着改变，因为，多态 bean 支持别名的概念。  
+  [定义](images/adv/def_27.png)
+  ```
+  <bean name="Shape">
+    <var name="id" type="int"/>
+    <bean name="Circle" alias="圆">
+      <var name="radius" type="float"/>
+    </bean>
+    <bean name="Rectangle" alias="长方形">
+      <var name="width" type="float"/>
+      <var name="height" type="float"/>
+    </bean>
+  </bean>
+  ```
+- 配置  
   ![如图](images/adv/def_28.png)
 - 使用类型名和别名来标识多态都是支持的，可以混合使用。
 
