@@ -1,9 +1,11 @@
 using ExcelDataReader;
 using Luban.Job.Cfg.Datas;
+using Luban.Job.Cfg.Defs;
 using Luban.Job.Common.Types;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Luban.Job.Cfg.DataSources.Excel
 {
@@ -61,7 +63,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
             {
                 try
                 {
-                    datas.AddRange(sheet.ReadMulti(type));
+                    datas.AddRange(sheet.ReadMulti(type, ((DefBean)type.Bean).IsMultiRow));
                 }
                 catch (Exception e)
                 {

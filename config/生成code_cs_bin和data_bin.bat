@@ -1,4 +1,4 @@
-..\src\Luban.Client\bin\Debug\netcoreapp3.1\Luban.Client.exe ^
+..\src\Luban.Client\bin\Debug\net5.0\Luban.Client.exe ^
 	-h 127.0.0.1 ^
 	-j cfg ^
 	-- ^

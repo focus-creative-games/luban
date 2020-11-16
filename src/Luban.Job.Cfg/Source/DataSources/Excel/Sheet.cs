@@ -14,10 +14,6 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         private bool OrientRow { get; set; } = true; //  以行为数据读取方向
 
-        private bool Align { get; set; } = true;// 标题头与数据严格对齐的 固定列格式
-
-        private bool IsMultiRow { get; set; }
-
         private int TitleRows { get; set; } = 3; // 默认有三行是标题行. 第一行是字段名，第二行是中文描述，第三行是注释
 
         public string Name { get; }
@@ -209,12 +205,6 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 return false;
             }
 
-            s_logger.Trace("align:{align} row:{orient}", Align, OrientRow);
-            if (!Align)
-            {
-                throw new Exception($"当前不支持 align:false");
-            }
-
             LoadRemainRows(reader);
 
             return true;
@@ -249,31 +239,20 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 string value = ss[1];
                 switch (key)
                 {
-                    case "align":
-                    {
-                        if (!bool.TryParse(value, out var v))
-                        {
-                            throw new Exception($"单元薄 meta 定义 align:{value} 属性值只能为true或false");
-                        }
-                        Align = v;
-                        break;
-                    }
                     case "row":
                     {
-                        if (!bool.TryParse(value, out var v))
+                        if (int.TryParse(value, out var v1))
                         {
-                            throw new Exception($"单元薄 meta 定义 row:{value} 属性值只能为true或false");
+                            OrientRow = v1 != 0;
                         }
-                        OrientRow = v;
-                        break;
-                    }
-                    case "multi_rows":
-                    {
-                        if (!bool.TryParse(value, out var v))
+                        else if (bool.TryParse(value, out var v2))
                         {
-                            throw new Exception($"单元薄 meta 定义 multi_rows:{value} 属性值只能为true或false");
+                            OrientRow = v2;
                         }
-                        IsMultiRow = v;
+                        else
+                        {
+                            throw new Exception($"单元薄 meta 定义 row:{value} 属性值只能为true或false或0或1");
+                        }
                         break;
                     }
                     case "title_rows":
@@ -287,19 +266,6 @@ namespace Luban.Job.Cfg.DataSources.Excel
                             throw new Exception($"单元薄 title_rows 应该在 [1,10] 范围内,默认是3");
                         }
                         TitleRows = v;
-                        break;
-                    }
-                    case "ignore":
-                    {
-                        if (!bool.TryParse(value, out var v))
-                        {
-                            throw new Exception($"单元薄 meta 定义 ignore:{value} 属性值只能为true或false");
-                        }
-                        if (v)
-                        {
-                            return false;
-                        }
-
                         break;
                     }
                     default:
@@ -623,11 +589,11 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
 
 
-        public List<DType> ReadMulti(TBean type)
+        public List<DType> ReadMulti(TBean type, bool enableMultiRowRecord)
         {
             var datas = new List<DType>();
 
-            for (DType data; (data = ReadOne(type)) != null;)
+            for (DType data; (data = ReadOne(type, enableMultiRowRecord)) != null;)
             {
                 datas.Add(data);
             }
@@ -635,9 +601,9 @@ namespace Luban.Job.Cfg.DataSources.Excel
         }
 
         private int curReadIndex = 0;
-        public DType ReadOne(TBean type)
+        public DType ReadOne(TBean type, bool enableMultiRowRecord)
         {
-            if (!IsMultiRow)
+            if (!enableMultiRowRecord)
             {
                 List<Cell> row = GetNextRecordRow();
                 if (row == null)

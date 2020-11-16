@@ -265,3 +265,5 @@ __pycache__/
 # gen cache meta file
 .cache.meta
 
+/config/output_code
+/config/output_data
