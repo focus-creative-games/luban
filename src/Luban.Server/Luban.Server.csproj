@@ -30,6 +30,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Luban.Job.Cfg\Luban.Job.Cfg.csproj" />
+    <ProjectReference Include="..\Luban.Job.Db\Luban.Job.Db.csproj" />
+    <ProjectReference Include="..\Luban.Job.Proto\Luban.Job.Proto.csproj" />
     <ProjectReference Include="..\Luban.Server.Common\Luban.Server.Common.csproj" />
   </ItemGroup>
 

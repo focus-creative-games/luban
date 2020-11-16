@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Source\TypeVisitors\Proto\**" />
+    <EmbeddedResource Remove="Source\TypeVisitors\Proto\**" />
+    <None Remove="Source\TypeVisitors\Proto\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Luban.Job.Common\Luban.Job.Common.csproj" />
+  </ItemGroup>
+
+</Project>

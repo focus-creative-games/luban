@@ -15,6 +15,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luban.Server.Common", "Luba
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luban.Server", "Luban.Server\Luban.Server.csproj", "{714B78D2-A3BE-4845-AF0E-0A5076B8E77E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luban.Job.Proto", "Luban.Job.Proto\Luban.Job.Proto.csproj", "{845D3933-EA3F-4A7D-97A3-77E696A2D261}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luban.Job.Db", "Luban.Job.Db\Luban.Job.Db.csproj", "{7467AC15-C61F-4C56-942F-18EAEA902C58}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +49,14 @@ Global
 		{714B78D2-A3BE-4845-AF0E-0A5076B8E77E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{714B78D2-A3BE-4845-AF0E-0A5076B8E77E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{714B78D2-A3BE-4845-AF0E-0A5076B8E77E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{845D3933-EA3F-4A7D-97A3-77E696A2D261}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{845D3933-EA3F-4A7D-97A3-77E696A2D261}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{845D3933-EA3F-4A7D-97A3-77E696A2D261}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{845D3933-EA3F-4A7D-97A3-77E696A2D261}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7467AC15-C61F-4C56-942F-18EAEA902C58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7467AC15-C61F-4C56-942F-18EAEA902C58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7467AC15-C61F-4C56-942F-18EAEA902C58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7467AC15-C61F-4C56-942F-18EAEA902C58}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
