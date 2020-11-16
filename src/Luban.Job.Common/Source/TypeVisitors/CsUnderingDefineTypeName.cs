@@ -88,17 +88,17 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TList type)
         {
-            return $"List<{type.ElementType.Apply(this)}>";
+            return $"System.Collections.Generic.List<{type.ElementType.Apply(this)}>";
         }
 
         public string Accept(TSet type)
         {
-            return $"HashSet<{type.ElementType.Apply(this)}>";
+            return $"System.Collections.Generic.HashSet<{type.ElementType.Apply(this)}>";
         }
 
         public string Accept(TMap type)
         {
-            return $"Dictionary<{type.KeyType.Apply(this)}, {type.ValueType.Apply(this)}>";
+            return $"System.Collections.Generic.Dictionary<{type.KeyType.Apply(this)}, {type.ValueType.Apply(this)}>";
         }
 
         public string Accept(TVector2 type)

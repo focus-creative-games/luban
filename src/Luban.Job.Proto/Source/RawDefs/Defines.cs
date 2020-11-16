@@ -5,10 +5,6 @@ namespace Luban.Job.Proto.RawDefs
 {
     public class Defines
     {
-        public string Target { get; set; } = "*";
-
-        public string Language { get; set; } = "cs";
-
         public string TopModule { get; set; } = "";
 
         public List<Service> ProtoServices { get; set; } = new List<Service>();

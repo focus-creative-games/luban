@@ -137,7 +137,7 @@ namespace Luban.Job.Cfg.TypeVisitors
                 }
                 else
                 {
-                    if (b.Children == null)
+                    if (b.Children == null || a.Children.Count != b.Children.Count)
                     {
                         return setupNotEqual();
                     }

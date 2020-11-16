@@ -25,7 +25,15 @@ namespace Luban.Job.Proto.Defs
 
         public Defines BuildDefines()
         {
-            return new Defines();
+            return new Defines()
+            {
+                TopModule = TopModule,
+                Consts = _consts,
+                Enums = _enums,
+                Beans = _beans,
+                Protos = _protos,
+                Rpcs = _rpcs,
+            };
         }
 
         private readonly List<string> rpcAttrs = new List<string> { "id" };
@@ -90,11 +98,7 @@ namespace Luban.Job.Proto.Defs
             {
                 s_logger.Trace("service {service_name} node: {name} {value}", name, ele.Name, ele.Attribute("value")?.Value);
             }
-        }
-
-        protected override void AddBean(XElement e, string parent)
-        {
-            throw new NotImplementedException();
+            //TODO service
         }
     }
 }

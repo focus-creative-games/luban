@@ -194,14 +194,15 @@ namespace Luban.Job.Common.Defs
             _namespaceStack.Pop();
         }
 
-        private static readonly List<string> _fieldRequireAttrs = new List<string> { "name", "id", "type", };
+        private static readonly List<string> _fieldRequireAttrs = new List<string> { "name", "type", };
+        private static readonly List<string> _fieldOptionalAttrs = new List<string> { "id", };
 
         protected virtual Field CreateField(XElement e)
         {
-            ValidAttrKeys(e, null, _fieldRequireAttrs);
+            ValidAttrKeys(e, _fieldOptionalAttrs, _fieldRequireAttrs);
             var f = new Field()
             {
-                Id = XmlUtil.GetRequiredIntAttribute(e, "id"),
+                Id = XmlUtil.GetOptionIntAttribute(e, "id"),
                 Name = XmlUtil.GetRequiredAttribute(e, "name"),
                 Type = CreateType(e, "type"),
             };

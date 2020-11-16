@@ -32,7 +32,7 @@ namespace Luban.Job.Cfg
     {
         private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
-        class GenCfgArgs
+        class GenArgs
         {
             [Option('d', "define_file", Required = true, HelpText = "define file")]
             public string DefineFile { get; set; }
@@ -49,7 +49,7 @@ namespace Luban.Job.Cfg
             [Option("output_data_dir", Required = true, HelpText = "output data directory")]
             public string OutputDataDir { get; set; }
 
-            [Option("gen_types", Required = true, HelpText = "cs_bin,cs_json,lua_bin,go_bin,cpp_ue_editor,cs_unity_editor can be multi")]
+            [Option("gen_types", Required = true, HelpText = "code_cs_bin,code_cs_json,code_lua_bin,data_bin,data_lua,data_json can be multi")]
             public string GenType { get; set; }
 
             [Option('s', "service", Required = true, HelpText = "service")]
@@ -113,14 +113,14 @@ namespace Luban.Job.Cfg
         }
 
 
-        private bool TryParseArg(List<string> args, out GenCfgArgs result, out string errMsg)
+        private bool TryParseArg(List<string> args, out GenArgs result, out string errMsg)
         {
             var helpWriter = new StringWriter();
             var parser = new Parser(ps =>
             {
                 ps.HelpWriter = helpWriter;
             }); ;
-            var parseResult = parser.ParseArguments<GenCfgArgs>(args);
+            var parseResult = parser.ParseArguments<GenArgs>(args);
             if (parseResult.Tag == ParserResultType.NotParsed)
             {
                 errMsg = helpWriter.ToString();
@@ -129,7 +129,7 @@ namespace Luban.Job.Cfg
             }
             else
             {
-                result = (parseResult as Parsed<GenCfgArgs>).Value;
+                result = (parseResult as Parsed<GenArgs>).Value;
                 errMsg = null;
 
                 string inputDataDir = result.InputDataDir;
@@ -170,7 +170,7 @@ namespace Luban.Job.Cfg
                 FileGroups = new List<FileGroup>(),
             };
 
-            if (!TryParseArg(rpc.Arg.JobArguments, out GenCfgArgs args, out string errMsg))
+            if (!TryParseArg(rpc.Arg.JobArguments, out GenArgs args, out string errMsg))
             {
                 res.ErrCode = Luban.Common.EErrorCode.JOB_ARGUMENT_ERROR;
                 res.ErrMsg = errMsg;
