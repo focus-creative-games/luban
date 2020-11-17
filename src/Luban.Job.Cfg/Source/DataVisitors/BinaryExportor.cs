@@ -1,6 +1,7 @@
 using Bright.Serialization;
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Common.TypeVisitors;
 using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.DataVisitors
@@ -102,7 +103,7 @@ namespace Luban.Job.Cfg.DataVisitors
                     continue;
                 }
 
-                if (defField.NeedMarshalBoolPrefix)
+                if (defField.CType.Apply(NeedMarshalBoolPrefixVisitor.Ins))
                 {
                     if (field != null)
                     {

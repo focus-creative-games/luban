@@ -7,15 +7,6 @@ namespace Luban.Job.Cfg.Defs
 {
     class TTypeTemplateExtends : TTypeTemplateCommonExtends
     {
-        public static string CsDeserialize(string bufName, string fieldName, TType type)
-        {
-            return type.Apply(CsDeserializeVisitor.Ins, bufName, fieldName);
-        }
-
-        public static string CsCompatibleDeserialize(string bufName, string fieldName, TType type)
-        {
-            return type.Apply(CsDeserializeVisitor.Ins, bufName, fieldName);
-        }
 
         public static string CsJsonDeserialize(string bufName, string fieldName, string jsonFieldName, TType type)
         {
@@ -81,16 +72,6 @@ namespace Luban.Job.Cfg.Defs
             return type.Apply(CppDeserializeVisitor.Ins, bufName, fieldName);
         }
 
-        public static string LuaCommentType(TType type)
-        {
-            return type.Apply(LuaCommentTypeVisitor.Ins);
-        }
-
-        public static string LuaUnderingDeserialize(string bufName, TType type)
-        {
-            return type.Apply(LuaUnderingDeserializeVisitor.Ins, bufName);
-        }
-
 
         public static string GoDefineType(TType type)
         {
@@ -106,7 +87,7 @@ namespace Luban.Job.Cfg.Defs
         {
             var name = field.CsStyleName;
             TType type = field.CType;
-            if (field.NeedMarshalBoolPrefix)
+            if (field.CType.Apply(NeedMarshalBoolPrefixVisitor.Ins))
             {
                 return $"{{ var _exists bool; if _exists, err = {bufName}.ReadBool(); err != nil {{ return }}; if _exists {{ if _v.{name}, err = {type.Apply(GoDeserializeVisitor.Ins, bufName)}; err != nil  {{ return }} }} }}";
             }

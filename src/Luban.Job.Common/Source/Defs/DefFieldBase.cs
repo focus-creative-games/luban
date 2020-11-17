@@ -65,7 +65,6 @@ namespace Luban.Job.Common.Defs
 
         public string UpperCaseName => Name.ToUpper();
 
-
         public DefFieldBase(DefTypeBase host, Field f, int idOffset)
         {
             HostType = host;

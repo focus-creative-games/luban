@@ -11,6 +11,11 @@ namespace Luban.Job.Common.Defs
             return type.Apply(TagNameVisitor.Ins);
         }
 
+        public static bool NeedMarshalBoolPrefix(TType type)
+        {
+            return type.Apply(NeedMarshalBoolPrefixVisitor.Ins);
+        }
+
         public static bool CsNeedInit(TType type)
         {
             return type.Apply(CsNeedInitVisitor.Ins);
@@ -29,6 +34,31 @@ namespace Luban.Job.Common.Defs
         public static string CsConstValue(TType type, string value)
         {
             return type.Apply(CsConstValueVisitor.Ins, value);
+        }
+
+        public static string CsInitFieldCtorValue(string bufName, TType type)
+        {
+            return $"{bufName} = {type.Apply(CsCtorValueVisitor.Ins)};";
+        }
+
+        public static string CsSerialize(string bufName, string fieldName, TType type)
+        {
+            return type.Apply(CsSerializeVisitor.Ins, bufName, fieldName);
+        }
+
+        public static string CsCompatibleSerialize(string bufName, string fieldName, TType type)
+        {
+            return type.Apply(CsSerializeVisitor.Ins, bufName, fieldName);
+        }
+
+        public static string CsDeserialize(string bufName, string fieldName, TType type)
+        {
+            return type.Apply(CsDeserializeVisitor.Ins, bufName, fieldName);
+        }
+
+        public static string CsCompatibleDeserialize(string bufName, string fieldName, TType type)
+        {
+            return type.Apply(CsDeserializeVisitor.Ins, bufName, fieldName);
         }
 
         public static string JavaDefineType(TType type)
@@ -64,6 +94,28 @@ namespace Luban.Job.Common.Defs
         public static string LuaConstValue(TType type, string value)
         {
             return type.Apply(LuaConstValueVisitor.Ins, value);
+        }
+
+        public static string LuaCommentType(TType type)
+        {
+            return type.Apply(LuaCommentTypeVisitor.Ins);
+        }
+
+        public static string LuaSerializeWhileNil(string bufName, string fieldName, TType type)
+        {
+            if (type.IsNullable)
+            {
+                return $"if {fieldName} == nil then writeBool(false) elseif writeBool(true) {type.Apply(LuaUnderingSerializeVisitor.Ins, bufName, fieldName)} end";
+            }
+            else
+            {
+                return $"{type.Apply(LuaUnderingSerializeVisitor.Ins, bufName, type.Apply(LuaValueOrDefaultVisitor.Ins, fieldName))}";
+            }
+        }
+
+        public static string LuaUnderingDeserialize(string bufName, TType type)
+        {
+            return type.Apply(LuaUnderingDeserializeVisitor.Ins, bufName);
         }
 
         public static string GoConstValue(TType type, string value)

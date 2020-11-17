@@ -20,6 +20,12 @@ namespace Luban.Job.Proto.Generate
             var protos = types.Where(t => t is DefProto).ToList();
             var rpcs = types.Where(t => t is DefRpc).ToList();
             var template = t_allRender ??= Template.Parse(@"
+{{
+    consts = x.consts
+    enums = x.enums
+    beans = x.beans
+    protos = x.protos
+}}
 local setmetatable = setmetatable
 local pairs = pairs
 local ipairs = ipairs
@@ -48,24 +54,24 @@ end
 
 local consts =
 {
-    {{- for c in consts }}
+    {{~ for c in consts ~}}
     ---@class {{c.full_name}}
-    {{- for item in c.items }}
+    {{~ for item in c.items ~}}
      ---@field public {{item.name}} {{item.type}}
-    {{-end}}
-    ['{{c.full_name}}'] = {  {{ for item in c.items }} {{item.name}}={{item.to_lua_const_value}}, {{end}} };
-    {{-end}}
+    {{~end~}}
+    ['{{c.full_name}}'] = {  {{ for item in c.items }} {{item.name}}={{lua_const_value item.ctype item.value}}, {{end}} };
+    {{~end~}}
 }
 
 local enums =
 {
-    {{- for c in enums }}
+    {{~ for c in enums ~}}
     ---@class {{c.full_name}}
-    {{- for item in c.items }}
+    {{~ for item in c.items ~}}
      ---@field public {{item.name}} int
-    {{-end}}
+    {{~end~}}
     ['{{c.full_name}}'] = {  {{ for item in c.items }} {{item.name}}={{item.int_value}}, {{end}} };
-    {{-end}}
+    {{~end~}}
 }
 
 
@@ -181,6 +187,12 @@ local function InitTypes(methods)
         return map
     end
 
+    local function readNullableBool(bs)
+        if readBool(bs) then
+            return readBool(bs)
+        end
+    end
+
     local default_vector2 = {x=0,y=0}
     local default_vector3 = {x=0,y=0,z=0}
     local default_vector4 = {x=0,y=0,z=0,w=0}
@@ -189,17 +201,16 @@ local function InitTypes(methods)
 {{ for bean in beans }}
     do
     ---@class {{bean.full_name}} {{if bean.parent_def_type}}:{{bean.parent}} {{end}}
-    {{- for field in bean.fields}}
-     ---@field public {{field.name}} {{field.lua_comment_type}}
-    {{-end}}
+    {{~ for field in bean.fields~}}
+     ---@field public {{field.name}} {{lua_comment_type field.ctype}}
+    {{~end}}
         local class = SimpleClass()
         class._id = {{bean.id}}
         class._name = '{{bean.full_name}}'
-        --local name2id = { {{for c in bean.hierarchy_not_abstract_children}} ['{{c.full_name}}'] = {{c.id}}, {{end}} }
         local id2name = { {{for c in bean.hierarchy_not_abstract_children}} [{{c.id}}] = '{{c.full_name}}', {{end}} }
 {{if bean.is_abstract_type}}
         class._serialize = function(bs, self)
-            writeInt(bs, self._id)
+            writeInt(bs, {{bean.id}})
             beans[self._name]._serialize(bs, self)
         end
         class._deserialize = function(bs)
@@ -208,15 +219,19 @@ local function InitTypes(methods)
         end
 {{else}}
         class._serialize = function(bs, self)
-        {{- for field in bean.hierarchy_fields }}
-            {{field.proto_lua_serialize_while_nil}}
-        {{-end}}
+        {{~ for field in bean.hierarchy_fields ~}}
+            {{lua_serialize_while_nil 'bs' ('self.' + field.name) field.ctype}}
+        {{~end~}}
         end
         class._deserialize = function(bs)
             local o = {
-        {{- for field in bean.hierarchy_fields }}
-            {{field.name}} = {{field.proto_lua_deserialize}},
-        {{-end}}
+        {{~ for field in bean.hierarchy_fields ~}}
+            {{~if !(need_marshal_bool_prefix field.ctype)~}}
+                {{field.name}} = {{lua_undering_deserialize 'bs' field.ctype}},
+            {{~else~}}
+            {{field.name}} = {{if !field.ctype.is_bool}}readBool(bs) and {{lua_undering_deserialize 'bs' field.ctype}} or nil {{else}} readNullableBool(bs) {{end}},
+            {{~end~}}
+        {{~end~}}
             }
             setmetatable(o, class)
             return o
@@ -230,74 +245,43 @@ local function InitTypes(methods)
 {{ for proto in protos }}
     do
     ---@class {{proto.full_name}}
-    {{- for field in proto.fields}}
-     ---@field public {{field.name}} {{field.lua_comment_type}}
-    {{-end}}
+    {{~ for field in proto.fields~}}
+     ---@field public {{field.name}} {{lua_comment_type field.ctype}}
+    {{~end}}
         local class = SimpleClass()
         class._id = {{proto.id}}
         class._name = '{{proto.full_name}}'
-        class._serialize = function(self, bs)
-        {{- for field in proto.fields }}
-            {{field.proto_lua_serialize_while_nil}}
-        {{-end}}
+        class._serialize = function(bs, self)
+        {{~ for field in proto.fields ~}}
+            {{lua_serialize_while_nil 'bs' ('self.' + field.name) field.ctype}}
+        {{~end~}}
         end
-        class._deserialize = function(self, bs)
-        {{- for field in proto.fields }}
-            self.{{field.name}} = {{field.proto_lua_deserialize}}
-        {{-end}}
+        class._deserialize = function(bs)
+            local o = {
+        {{~ for field in proto.fields ~}}
+            {{~if !(need_marshal_bool_prefix field.ctype)~}}
+                {{field.name}} = {{lua_undering_deserialize 'bs' field.ctype}},
+            {{~else~}}
+            {{field.name}} = {{if !field.ctype.is_bool}}readBool(bs) and {{lua_undering_deserialize 'bs' field.ctype}} or nil {{else}} readNullableBool(bs) {{end}},
+            {{~end~}}
+        {{~end~}}
+            }
+            setmetatable(o, class)
+            return o
         end
         protos[class._id] = class
         protos[class._name] = class
     end
 {{end}}
 
-    local rpcs = { }
-{{ for rpc in rpcs }}
-    do
-    ---@class {{rpc.full_name}}
-        ---@field public is_request bool
-        ---@field public rpc_id long
-        ---@field public arg {{rpc.targ_type.lua_comment_type}}
-        ---@field public res {{rpc.tres_type.lua_comment_type}}
-        local class = SimpleClass()
-        class._id = {{rpc.id}}
-        class._name = '{{rpc.full_name}}'
-        class._arg_name = '{{rpc.targ_type.bean.full_name}}'
-        class._res_name = '{{rpc.tres_type.bean.full_name}}'
-        class._serialize = function(self, bs)
-            local composite_id = self.rpc_id * 2
-            if self.is_request then
-                writeLong(bs, composite_id)
-                beans['{{rpc.targ_type.bean.full_name}}']._serialize(self.arg, bs)
-            else
-                writeLong(bs, composite_id + 1)
-                beans['{{rpc.tres_type.bean.full_name}}']._serialize(self.res, bs)
-            end
-        end
-        class._deserialize = function(self, bs)
-            local composite_id = readLong(bs)
-            self.rpc_id = composite_id // 2
-            if composite_id % 2 == 0 then
-                self.is_request = true
-                self.arg = beans['{{rpc.targ_type.bean.full_name}}']._deserialize(bs)
-            else
-                self.is_request = false
-                self.res = beans['{{rpc.tres_type.bean.full_name}}']._deserialize(bs)
-            end
-        end
-        rpcs[class._id] = class
-        rpcs[class._name] = class
-    end
-{{end}}
-
-    return { consts = consts, enums = enums, beans = beans, protos = protos, rpcs = rpcs }
+    return { consts = consts, enums = enums, beans = beans, protos = protos }
     end
 
 return { InitTypes = InitTypes}
 
 
 ");
-            return template.Render(new { Consts = consts, Enums = enums, Beans = beans, Protos = protos, Rpcs = rpcs });
+            return template.RenderCode(new { Consts = consts, Enums = enums, Beans = beans, Protos = protos, Rpcs = rpcs });
         }
     }
 }

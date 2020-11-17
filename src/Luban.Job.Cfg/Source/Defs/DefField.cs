@@ -115,8 +115,6 @@ namespace Luban.Job.Cfg.Defs
 
         public bool IsResource => !string.IsNullOrEmpty(ResourceTag);
 
-        public bool NeedMarshalBoolPrefix => CType.Apply(NeedMarshalBoolPrefixVisitor.Ins);
-
         public string CsRefVarName => $"{CsStyleName}_Ref";
 
         public string JavaRefVarName => $"{JavaStyleName}_Ref";

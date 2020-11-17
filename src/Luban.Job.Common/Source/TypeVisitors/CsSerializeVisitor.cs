@@ -1,9 +1,9 @@
 using Luban.Job.Common.Types;
 using Luban.Job.Common.TypeVisitors;
 
-namespace Luban.Job.Proto.TypeVisitors
+namespace Luban.Job.Common.TypeVisitors
 {
-    class CsSerializeVisitor : DecoratorFuncVisitor<string, string, string>
+    public class CsSerializeVisitor : DecoratorFuncVisitor<string, string, string>
     {
         public static CsSerializeVisitor Ins { get; } = new CsSerializeVisitor();
 

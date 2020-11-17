@@ -13,7 +13,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public override string Accept(TArray type, string x)
         {
-            return $"readList({x}, {type.ElementType.Apply(LuaDeserializeMethodNameVisitor.Ins)})";
+            return $"readArray({x}, {type.ElementType.Apply(LuaDeserializeMethodNameVisitor.Ins)})";
         }
 
         public override string Accept(TList type, string x)

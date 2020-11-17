@@ -139,7 +139,7 @@ namespace Luban.Job.Proto
                         {
                             var render = new LuaRender();
                             var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderTypes(ass.Types.Values.ToList()), Common.ELanguage.LUA);
-                            var file = "ProtoTypes.lua";
+                            var file = "Types.lua";
                             var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
                             genCodeFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                         }));

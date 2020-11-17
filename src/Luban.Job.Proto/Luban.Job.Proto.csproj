@@ -9,4 +9,8 @@
     <ProjectReference Include="..\Luban.Job.Common\Luban.Job.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Source\TypeVisitors\" />
+  </ItemGroup>
+
 </Project>
