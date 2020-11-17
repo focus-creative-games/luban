@@ -65,9 +65,9 @@ namespace {{x.namespace_with_top_module}}
         {
             {{~ for field in fields ~}}
                 {{~if cs_need_init field.ctype~}}
-            {{cs_init_field_ctor_value field}}
+            {{cs_init_field_ctor_value field.cs_style_name field.ctype}}
                 {{~else if is_value_type~}}
-            {field.cs_style_name} = default;
+            {{field.cs_style_name}} = default;
                 {{~end~}}
             {{~end~}}
         }
@@ -178,8 +178,8 @@ namespace {{x.namespace_with_top_module}}
         public {{name}}(Bright.Common.NotNullInitialization _)
         {
             {{~ for field in fields ~}}
-                {{~if field.ctype.need_init~}}
-            {{cs_init_field_ctor_value field}}
+                {{~if cs_need_init field.ctype~}}
+            {{cs_init_field_ctor_value field.cs_style_name field.ctype}}
                 {{~end~}}
             {{~end~}}
         }

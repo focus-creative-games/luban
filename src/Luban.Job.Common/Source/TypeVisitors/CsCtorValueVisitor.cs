@@ -1,0 +1,60 @@
+﻿using Luban.Job.Common.Types;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Luban.Job.Common.TypeVisitors
+{
+    public class CsCtorValueVisitor : DecoratorFuncVisitor<string>
+    {
+        public static CsCtorValueVisitor Ins { get; } = new CsCtorValueVisitor();
+
+        public override string DoAccept(TType type)
+        {
+            return "default";
+        }
+
+
+        public override string Accept(TString type)
+        {
+            return "\"\"";
+        }
+
+        public override string Accept(TBytes type)
+        {
+            return "System.Array.Empty<byte>()";
+        }
+
+        public override string Accept(TText type)
+        {
+            return "\"\"";
+        }
+
+        public override string Accept(TBean type)
+        {
+            return type.Bean.IsAbstractType ? "default" : $"new {type.Apply(CsDefineTypeName.Ins)}()";
+        }
+
+        public override string Accept(TArray type)
+        {
+            return $"System.Array.Empty<{type.ElementType.Apply(CsDefineTypeName.Ins)}>()";
+        }
+
+        public override string Accept(TList type)
+        {
+            return $"new System.Collections.Generic.List<{type.ElementType.Apply(CsDefineTypeName.Ins)}>()";
+        }
+
+        public override string Accept(TSet type)
+        {
+            return $"new System.Collections.Generic.HashSet<{type.ElementType.Apply(CsDefineTypeName.Ins)}>()";
+        }
+
+        public override string Accept(TMap type)
+        {
+            return $"new System.Collections.Generic.Dictionary<{type.KeyType.Apply(CsDefineTypeName.Ins)},{type.ValueType.Apply(CsDefineTypeName.Ins)}>()";
+        }
+    }
+}

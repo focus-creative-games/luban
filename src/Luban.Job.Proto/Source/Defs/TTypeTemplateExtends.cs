@@ -37,9 +37,9 @@ namespace Luban.Job.Proto.Defs
             return type.Apply(LuaUnderingDeserializeVisitor.Ins, bufName);
         }
 
-        public static string CsInitFieldCtorValue(DefField field)
+        public static string CsInitFieldCtorValue(string bufName, TType type)
         {
-            return $"{field.CsStyleName} = default;";
+            return $"{bufName} = {type.Apply(CsCtorValueVisitor.Ins)};";
         }
     }
 }

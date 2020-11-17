@@ -68,9 +68,10 @@ namespace Luban.Job.Db.Defs
             return $"{field.CsStyleName} = default;";
         }
 
-        public static string CsWriteBlob(string bufName, string valueName, TType type)
+        public static string CsWriteBlob(string bufName, string fieldName, TType type)
         {
-            return type.Apply(DbWriteBlob.Ins, bufName, valueName);
+            //return type.Apply(DbWriteBlob.Ins, bufName, valueName);
+            return DbCsCompatibleSerialize(bufName, fieldName, type);
         }
     }
 }
