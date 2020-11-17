@@ -1,12 +1,16 @@
-using Luban.Job.Common.Types;
+﻿using Luban.Job.Common.Types;
 using Luban.Job.Common.TypeVisitors;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Luban.Job.Db.TypeVisitors
 {
-    class DbWriteBlob : ITypeFuncVisitor<string, string, string>
+    class DbCsCompatibleSerializeVisitor : ITypeFuncVisitor<string, string, string>
     {
-        public static DbWriteBlob Ins { get; } = new DbWriteBlob();
+        public static DbCsCompatibleSerializeVisitor Ins { get; } = new DbCsCompatibleSerializeVisitor();
 
         public string Accept(TBool type, string byteBufName, string fieldName)
         {
@@ -83,33 +87,32 @@ namespace Luban.Job.Db.TypeVisitors
             var bean = type.Bean;
             if (bean.IsNotAbstractType)
             {
-
-                return $"{fieldName}.Serialize({byteBufName});";
+                return $"{byteBufName}.BeginWriteSegment(out var _state2_); {fieldName}.Serialize({byteBufName}); {byteBufName}.EndWriteSegment(_state2_);";
             }
             else
             {
-                return $"{bean.FullName}.Serialize{bean.Name}({byteBufName}, {fieldName});";
+                return $"{byteBufName}.BeginWriteSegment(out var _state2_); {bean.FullName}.Serialize{bean.Name}({byteBufName}, {fieldName});{byteBufName}.EndWriteSegment(_state2_);";
             }
         }
 
         public string Accept(TArray type, string byteBufName, string fieldName)
         {
-            return $"{byteBufName}.WriteSize({fieldName}.Length); foreach(var _e in {fieldName}) {{ {type.ElementType.Apply(this, byteBufName, "_e")} }}";
+            throw new NotSupportedException();
         }
 
         public string Accept(TList type, string byteBufName, string fieldName)
         {
-            return $"{byteBufName}.WriteSize({fieldName}.Count); foreach(var _e in {fieldName}) {{ {type.ElementType.Apply(this, byteBufName, "_e")} }}";
+            return $"{byteBufName}.WriteInt(FieldTag.{type.ElementType.Apply(TagNameVisitor.Ins)}); foreach(var _e in {fieldName}) {{ {type.ElementType.Apply(this, byteBufName, "_e")} }}";
         }
 
         public string Accept(TSet type, string byteBufName, string fieldName)
         {
-            return $"{byteBufName}.WriteSize({fieldName}.Count); foreach(var _e in {fieldName}) {{ {type.ElementType.Apply(this, byteBufName, "_e")} }}";
+            return $"{byteBufName}.WriteInt(FieldTag.{type.ElementType.Apply(TagNameVisitor.Ins)}); foreach(var _e in {fieldName}) {{ {type.ElementType.Apply(this, byteBufName, "_e")} }}";
         }
 
         public string Accept(TMap type, string byteBufName, string fieldName)
         {
-            return $"{byteBufName}.WriteSize({fieldName}.Count); foreach((var _k, var _v) in {fieldName}) {{ {type.KeyType.Apply(this, byteBufName, "_k")} {type.ValueType.Apply(this, byteBufName, "_v")}}}";
+            return $"{byteBufName}.WriteInt(FieldTag.{type.KeyType.Apply(TagNameVisitor.Ins)}); {byteBufName}.WriteInt(FieldTag.{type.ValueType.Apply(TagNameVisitor.Ins)}); foreach((var _k, var _v) in {fieldName}) {{ {type.KeyType.Apply(this, byteBufName, "_k")} {type.ValueType.Apply(this, byteBufName, "_v")}}}";
 
         }
 

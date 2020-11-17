@@ -161,11 +161,11 @@ namespace Luban.Job.Common.Defs
 
         private void AddModule(XElement me)
         {
-            var name = XmlUtil.GetRequiredAttribute(me, "name");
-            if (string.IsNullOrEmpty(name))
-            {
-                throw new LoadDefException($"xml:{CurImportFile} contains module which's name is empty");
-            }
+            var name = XmlUtil.GetOptionalAttribute(me, "name");
+            //if (string.IsNullOrEmpty(name))
+            //{
+            //    throw new LoadDefException($"xml:{CurImportFile} contains module which's name is empty");
+            //}
 
             _namespaceStack.Push(_namespaceStack.Count > 0 ? TypeUtil.MakeFullName(_namespaceStack.Peek(), name) : name);
 

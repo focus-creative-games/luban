@@ -6,6 +6,11 @@ namespace Luban.Job.Common.Defs
 {
     public class TTypeTemplateCommonExtends : ScriptObject
     {
+        public static string TagName(TType type)
+        {
+            return type.Apply(TagNameVisitor.Ins);
+        }
+
         public static bool CsNeedInit(TType type)
         {
             return type.Apply(CsNeedInitVisitor.Ins);

@@ -96,9 +96,9 @@ namespace {{x.namespace_with_top_module}}
             switch (_buf.ReadInt())
             {
                 case 0 : return null;
-            {{- for child in x.hierarchy_not_abstract_children}}
+            {{~ for child in x.hierarchy_not_abstract_children~}}
                 case {{child.full_name}}.ID: x = new {{child.full_name}}(); break;
-            {{-end}}
+            {{~end~}}
                 default: throw new SerializationException();
             }
             x.Deserialize(_buf);

@@ -59,7 +59,15 @@ namespace Luban.Common.Utils
 
         public static string MakeFullName(string module, string name)
         {
-            return module != null && module.Length > 0 ? module + "." + name : name;
+            if (string.IsNullOrEmpty(module))
+            {
+                return name;
+            }
+            if (string.IsNullOrEmpty(name))
+            {
+                return module;
+            }
+            return module + "." + name;
         }
 
         public static string MakeGoPkgName(string module)

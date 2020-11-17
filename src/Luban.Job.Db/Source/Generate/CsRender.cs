@@ -36,89 +36,95 @@ namespace Luban.Job.Db.Generate
         public string Render(DefBean b)
         {
             var template = t_beanRender ??= Template.Parse(@"
+{{
+    name = x.name
+    parent_def_type = x.parent_def_type
+    fields = x.fields
+    hierarchy_fields = x.hierarchy_fields
+    is_abstract_type = x.is_abstract_type
+}}
 using Bright.Serialization;
 
-namespace {{namespace_with_top_module}}
+namespace {{x.namespace_with_top_module}}
 {
    
-{{if !is_value_type}}
-public {{cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{parent}} {{else}} Bright.Transaction.BeanBase {{end}}
+public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.parent}} {{else}} Bright.Transaction.TxnBeanBase {{end}}
 {
-        {{- for field in fields }}
-        {{if is_abstract_type}}protected{{else}}private{{end}} {{field.ctype.db_cs_define_type}} {{field.internal_name}};
-        {{-end}}
+    {{~ for field in fields~}}
+        {{if is_abstract_type}}protected{{else}}private{{end}} {{db_cs_define_type field.ctype}} {{field.internal_name}};
+    {{~end}}
 
     public {{name}}()
     {
-        {{- for field in fields }}
-        {{if field.ctype.need_init}}{{field.db_cs_init_field}} {{end}}
-        {{end}}
+        {{~ for field in fields~}}
+        {{if cs_need_init field.ctype}}{{db_cs_init_field field.internal_name field.log_type field.ctype }} {{end}}
+        {{~end~}}
     }
 
-        {{- for field in fields }}
-        {{if field.ctype.has_setter}}
+    {{~ for field in fields~}}
+        {{~if has_setter field.ctype~}}
 
-        private sealed class {{field.log_type}} :  Bright.Transaction.FieldLogger<{{name}}, {{field.ctype.db_cs_define_type}}>
+    private sealed class {{field.log_type}} :  Bright.Transaction.FieldLogger<{{name}}, {{db_cs_define_type field.ctype}}>
+    {
+        public {{field.log_type}}({{name}} self, {{db_cs_define_type field.ctype}} value) : base(self, value) {  }
+
+        public override long FieldId => host._objectId_ + {{field.id}};
+
+        public override void Commit() { this.host.{{field.internal_name}} = this.Value; }
+
+
+        public override void WriteBlob(ByteBuf _buf)
         {
-            public {{field.log_type}}({{name}} self, {{field.ctype.db_cs_define_type}} value) : base(self, value) {  }
+            _buf.WriteInt(FieldTag.{{tag_name field.ctype}});
+            {{cs_write_blob '_buf' 'this.Value' field.ctype}}
+        }
+    }
 
-            public override long FieldId => host._objectId_ + {{field.id}};
-
-            public override void Commit() { this.host.{{field.internal_name}} = this.Value; }
-
-
-            public override void WriteBlob(ByteBuf _buf)
+    public {{db_cs_define_type field.ctype}} {{field.cs_style_name}}
+    { 
+        get
+        {
+            if (this.InitedObjectId)
             {
-                _buf.WriteInt(FieldTag.{{field.ctype.tag_name}});
-                {{field.db_write_blob}}
+                var txn = Bright.Transaction.TransactionContext.ThreadStaticTxn;
+                if (txn == null) return {{field.internal_name}};
+                var log = ({{field.log_type}})txn.GetField(_objectId_ + {{field.id}});
+                return log != null ? log.Value : {{field.internal_name}};
+            }
+            else
+            {
+                return {{field.internal_name}};
             }
         }
-
-        public {{field.ctype.db_cs_define_type}} {{field.public_name}}
-        { 
-            get
+        set
+        {
+            {{~if db_field_cannot_null~}}
+            if (value == null) throw new ArgumentNullException();
+            {{~end~}}
+            if (this.InitedObjectId)
             {
-                if (this.InitedObjectId)
-                {
-                    var txn = Bright.Transaction.TransactionContext.ThreadStaticTxn;
-                    if (txn == null) return {{field.internal_name}};
-                    var log = ({{field.log_type}})txn.GetField(_objectId_ + {{field.id}});
-                    return log != null ? log.Value : {{field.internal_name}};
-                }
-                else
-                {
-                    return {{field.internal_name}};
-                }
+                var txn = Bright.Transaction.TransactionContext.ThreadStaticTxn;
+                txn.PutField(_objectId_ + {{field.id}}, new {{field.log_type}}(this, value));
+                {{~if field.ctype.need_set_children_root}}
+                value?.InitRoot(GetRoot());
+                {{end}}
             }
-            set
+            else
             {
-                {{if db_field_cannot_null}}if (value == null) throw new ArgumentNullException();{{end}}
-                if (this.InitedObjectId)
-                {
-                    var txn = Bright.Transaction.TransactionContext.ThreadStaticTxn;
-                    txn.PutField(_objectId_ + {{field.id}}, new {{field.log_type}}(this, value));
-                    {{-if field.ctype.need_set_children_root}}
-                    value?.InitRoot(GetRoot());
-                    {{end}}
-                }
-                else
-                {
-                    {{field.internal_name}} = value;
-                } 
-            }
+                {{field.internal_name}} = value;
+            } 
         }
-        {{else}}
-
-        {{if field.ctype.is_collection}}
-
-        private class {{field.log_type}} : {{field.ctype.db_cs_define_type}}.Log
+    }
+        {{~else~}}
+            {{~if field.ctype.is_collection~}}
+        private class {{field.log_type}} : {{db_cs_define_type field.ctype}}.Log
         {
             private readonly {{name}} host;
-            public {{field.log_type}}({{name}} host, {{field.ctype.immutable_type}} value) : base(value) { this.host = host;  }
+            public {{field.log_type}}({{name}} host, {{cs_immutable_type field.ctype}} value) : base(value) { this.host = host;  }
 
             public override long FieldId => host._objectId_ + {{field.id}};
 
-            public override Bright.Transaction.BeanBase Host => host;
+            public override Bright.Transaction.TxnBeanBase Host => host;
 
             public override void Commit()
             {
@@ -127,17 +133,17 @@ public {{cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{parent}} 
 
             public override void WriteBlob(ByteBuf _buf)
             {
-                _buf.WriteInt(FieldTag.{{field.ctype.tag_name}});
-                {{field.db_write_blob}}
+                _buf.WriteInt(FieldTag.{{tag_name field.ctype}});
+                {{cs_write_blob '_buf' 'this.Value' field.ctype}}
             }
         }
-        {{end}}
+            {{~end~}}
 
-         public {{field.ctype.db_cs_define_type}} {{field.public_name}} => {{field.internal_name}};
-        {{end}}
-        {{-end}}
+         public {{db_cs_define_type field.ctype}} {{field.cs_style_name}} => {{field.internal_name}};
+        {{~end~}}
+    {{~end~}}
 
-    {{if is_abstract_type}}
+    {{~if is_abstract_type~}}
     public static void Serialize{{name}}(ByteBuf _buf, {{name}} x)
     {
         if (x == null) { _buf.WriteInt(0); return; }
@@ -151,21 +157,21 @@ public {{cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{parent}} 
         switch (_buf.ReadInt())
         {
             case 0 : return null;
-        {{- for child in hierarchy_not_abstract_children}}
+        {{~ for child in x.hierarchy_not_abstract_children~}}
             case {{child.full_name}}.ID: x = new {{child.full_name}}(); break;
-        {{-end}}
+        {{~end~}}
             default: throw new SerializationException();
         }
         x.Deserialize(_buf);
         return x;
     }
-    {{else}}
+    {{~else~}}
     public override void Serialize(ByteBuf _buf)
     {
         _buf.WriteLong(_objectId_);
-        {{- for field in hierarchy_fields }}
-        { _buf.WriteInt(FieldTag.{{field.ctype.tag_name}} | ({{field.id}} << FieldTag.TAG_SHIFT)); {{field.db_serialize_compatible}} }
-        {{-end}}
+        {{~ for field in hierarchy_fields~}}
+        { _buf.WriteInt(FieldTag.{{tag_name field.ctype}} | ({{field.id}} << FieldTag.TAG_SHIFT)); {{db_cs_compatible_serialize '_buf' field.internal_name field.ctype}} }
+        {{~end}}
     }
 
     public override void Deserialize(ByteBuf _buf)
@@ -176,87 +182,38 @@ public {{cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{parent}} 
             int _tag_ = _buf.ReadInt();
             switch (_tag_)
             {
-            {{- for field in hierarchy_fields }}
-            case FieldTag.{{field.ctype.tag_name}} | ({{field.id}} << FieldTag.TAG_SHIFT) : { {{field.db_deserialize_compatible}}  break; }
-            {{-end}}
+            {{~ for field in hierarchy_fields~}}
+            case FieldTag.{{tag_name field.ctype}} | ({{field.id}} << FieldTag.TAG_SHIFT) : { {{db_cs_compatible_deserialize '_buf' field.internal_name field.ctype}}  break; }
+            {{~end~}}
             default: { _buf.SkipUnknownField(_tag_); break; }
             }
         }
     }
 
-    public const int ID = {{id}};
+    public const int ID = {{x.id}};
     public override int GetTypeId() => ID;
-
-    {{end}}
+    {{~end~}}
 
     protected override void InitChildrenRoot(Bright.Transaction.TKey root)
     {
-        {{- for field in hierarchy_fields }}
-        {{if field.ctype.need_set_children_root}}this.{{field.internal_name}}?.InitRoot(root);{{end}}
-        {{-end}}
+        {{~ for field in hierarchy_fields~}}
+        {{if need_set_children_root field.ctype}}{{field.internal_name}}?.InitRoot(root);{{end}}
+        {{~end}}
     }
 
     public override string ToString()
     {
         return ""{{full_name}}{ ""
-    {{- for field in hierarchy_fields }}
-        + ""{{field.public_name}}:"" + {{field.db_cs_to_string}} + "",""
-    {{-end}}
+    {{~ for field in hierarchy_fields~}}
+        + ""{{field.cs_style_name}}:"" + {{cs_to_string field.cs_style_name field.ctype}} + "",""
+    {{~end~}}
         + ""}"";
     }
 }
 
-{{else}}
-  public struct {{name}} : ISerializable
-{
-        {{- for field in fields }}
-        private {{field.ctype.db_cs_define_type}} {{field.internal_name}};
-        {{-end}}
-
-        {{- for field in fields }}
-        public {{field.ctype.db_cs_define_type}} {{field.public_name}} {get => {{field.internal_name}}; set => {{field.internal_name}} = value;}
-        {{-end}}
-
-    public void Serialize(ByteBuf _buf)
-    {
-        _buf.WriteSize({{hierarchy_fields.size}});
-        {{- for field in hierarchy_fields }}
-        { _buf.WriteInt(FieldTag.{{field.ctype.tag_name}} | ({{field.id}} << FieldTag.TAG_SHIFT)); {{field.db_serialize_compatible}} }
-        {{-end}}
-    }
-
-    public void Deserialize(ByteBuf _buf)
-    {
-        for (int _var_num_ = _buf.ReadSize(); -- _var_num_ >= 0;)
-        {
-            int _tag_ = _buf.ReadInt();
-            switch (_tag_)
-            {
-            {{- for field in hierarchy_fields }}
-            case FieldTag.{{field.ctype.tag_name}} | ({{field.id}} << FieldTag.TAG_SHIFT) : { {{field.db_deserialize_compatible}}  break; }
-            {{-end}}
-            default: { _buf.SkipUnknownField(_tag_); break; }
-            }
-        }
-    }
-
-    public int GetTypeId() => 0;
-
-        public override string ToString()
-        {
-            return ""{{full_name}}{ ""
-        {{- for field in hierarchy_fields }}
-            + ""{{field.public_name}}:"" + {{field.db_cs_to_string}} + "",""
-        {{-end}}
-            + ""}"";
-        }
-}  
-
-{{end}}
-
 }
 ");
-            var result = template.Render(b);
+            var result = template.RenderCode(b);
             return result;
         }
 
@@ -265,15 +222,22 @@ public {{cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{parent}} 
         public string Render(DefTable p)
         {
             var template = t_tableRender ??= Template.Parse(@"
+{{
+    name = x.name
+    key_ttype = x.key_ttype
+    value_ttype = x.value_ttype
+    base_table_type = x.base_table_type
+    internal_table_type = x.internal_table_type
+}}
 using System;
 using System.Threading.Tasks;
 
-namespace {{namespace_with_top_module}}
+namespace {{x.namespace_with_top_module}}
 {
 
 public sealed class {{name}}
 {
-    public static {{base_table_type}} Table { get; } = new {{internal_table_type}}({{table_uid}});
+    public static {{base_table_type}} Table { get; } = new {{internal_table_type}}({{x.table_uid}});
 
         private class {{internal_table_type}} : {{base_table_type}}
         {
@@ -283,32 +247,32 @@ public sealed class {{name}}
             }
         };
 
-    public static {{value_ttype.cs_define_type}} Get({{key_ttype.cs_define_type}} key)
+    public static {{db_cs_define_type value_ttype}} Get({{db_cs_define_type key_ttype}} key)
     {
         return Table.Get(key);
     }
 
-    public static {{value_ttype.cs_define_type}} CreateIfNotExist({{key_ttype.cs_define_type}} key)
+    public static {{db_cs_define_type value_ttype}} CreateIfNotExist({{db_cs_define_type key_ttype}} key)
     {
         return Table.CreateIfNotExist(key);
     }
 
-    public static void Insert({{key_ttype.cs_define_type}} key, {{value_ttype.cs_define_type}} value)
+    public static void Insert({{db_cs_define_type key_ttype}} key, {{db_cs_define_type value_ttype}} value)
     {
         Table.Insert(key, value);
     }
 
-    public static void Remove({{key_ttype.cs_define_type}} key)
+    public static void Remove({{db_cs_define_type key_ttype}} key)
     {
         Table.Remove(key);
     }
 
-    public static void Put({{key_ttype.cs_define_type}} key, {{value_ttype.cs_define_type}} value)
+    public static void Put({{db_cs_define_type key_ttype}} key, {{db_cs_define_type value_ttype}} value)
     {
         Table.Put(key, value);
     }
 
-    public static {{value_ttype.cs_define_type}} Select({{key_ttype.cs_define_type}} key)
+    public static {{db_cs_define_type value_ttype}} Select({{db_cs_define_type key_ttype}} key)
     {
         return Table.Select(key);
     }
@@ -316,14 +280,14 @@ public sealed class {{name}}
 }
 
 ");
-            var result = template.Render(p);
+            var result = template.RenderCode(p);
 
             return result;
         }
 
         [ThreadStatic]
         private static Template t_stubRender;
-        public string RenderTables(string name, string module, List<DbDefTypeBase> tables)
+        public string RenderTables(string name, string module, List<DefTable> tables)
         {
             var template = t_stubRender ??= Template.Parse(@"
 using Bright.Serialization;
@@ -335,9 +299,9 @@ public static class {{name}}
 {
         public static System.Collections.Generic.List<Bright.Transaction.TxnTable> TableList { get; } = new System.Collections.Generic.List<Bright.Transaction.TxnTable>
         {
-        {{- for table in tables }}
+        {{~ for table in tables~}}
             {{table.full_name}}.Table,
-        {{-end}}
+        {{~end}}
         };
 }
 

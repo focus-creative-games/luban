@@ -1,5 +1,6 @@
 using Luban.Job.Common.Types;
 using Luban.Job.Db.RawDefs;
+using Luban.Job.Db.TypeVisitors;
 using System;
 
 namespace Luban.Job.Db.Defs
@@ -30,7 +31,7 @@ namespace Luban.Job.Db.Defs
 
         public string InternalTableType => "_" + Name;
 
-        //public string BaseTableType => KeyTType.GetDbCsBaseTableType(KeyTType, ValueTType);
+        public string BaseTableType => $"Bright.Transaction.TxnTable<{KeyTType.Apply(DbCsDefineTypeVisitor.Ins)},{ValueTType.Apply(DbCsDefineTypeVisitor.Ins)}>";
 
         public override void Compile()
         {

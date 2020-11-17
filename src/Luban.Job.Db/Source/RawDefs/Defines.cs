@@ -5,8 +5,6 @@ namespace Luban.Job.Db.RawDefs
 {
     public class Defines
     {
-        public string Language { get; set; } = "cs";
-
         public string TopModule { get; set; } = "";
 
         public List<Bean> Beans { get; set; } = new List<Bean>();

@@ -21,7 +21,14 @@ namespace Luban.Job.Db.Defs
 
         public Defines BuildDefines()
         {
-            return new Defines();
+            return new Defines()
+            {
+                TopModule = TopModule,
+                Consts = _consts,
+                Enums = _enums,
+                Beans = _beans,
+                DbTables = _tables,
+            };
         }
 
 

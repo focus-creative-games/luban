@@ -3,6 +3,7 @@ using Luban.Job.Db.RawDefs;
 using Luban.Server.Common;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Luban.Job.Db.Defs
 {
@@ -104,6 +105,9 @@ namespace Luban.Job.Db.Defs
             }
         }
 
-
+        public List<DefTypeBase> GetExportTypes()
+        {
+            return Types.Values.ToList();
+        }
     }
 }

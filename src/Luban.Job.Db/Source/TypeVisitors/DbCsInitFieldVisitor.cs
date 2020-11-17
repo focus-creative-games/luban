@@ -86,7 +86,7 @@ namespace Luban.Job.Db.TypeVisitors
             }
             else
             {
-                return $"{fieldName} = new {type.DbCsDefineType()}();";
+                return $"{fieldName} = new {type.Apply(DbCsDefineTypeVisitor.Ins)}();";
             }
         }
 
@@ -97,17 +97,17 @@ namespace Luban.Job.Db.TypeVisitors
 
         public string Accept(TList type, string fieldName, string logType)
         {
-            return $"{fieldName} = new {type.DbCsDefineType()}(_v => new {logType}(this, _v));";
+            return $"{fieldName} = new {type.Apply(DbCsDefineTypeVisitor.Ins)}(_v => new {logType}(this, _v));";
         }
 
         public string Accept(TSet type, string fieldName, string logType)
         {
-            return $"{fieldName} = new {type.DbCsDefineType()}(_v => new {logType}(this, _v));";
+            return $"{fieldName} = new {type.Apply(DbCsDefineTypeVisitor.Ins)}(_v => new {logType}(this, _v));";
         }
 
         public string Accept(TMap type, string fieldName, string logType)
         {
-            return $"{fieldName} = new {type.DbCsDefineType()}(_v => new {logType}(this, _v));";
+            return $"{fieldName} = new {type.Apply(DbCsDefineTypeVisitor.Ins)}(_v => new {logType}(this, _v));";
         }
 
         public string Accept(TVector2 type, string fieldName, string logType)

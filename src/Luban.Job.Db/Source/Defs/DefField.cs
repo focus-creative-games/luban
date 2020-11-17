@@ -7,7 +7,11 @@ namespace Luban.Job.Db.Defs
     {
         public DefAssembly Assembly => (DefAssembly)HostType.AssemblyBase;
 
-        public DefField(DbDefTypeBase host, Field f, int idOffset) : base(host, f, idOffset)
+        public string LogType => $"Log_{Name}";
+
+        public string InternalName => "__" + Name;
+
+        public DefField(DefTypeBase host, Field f, int idOffset) : base(host, f, idOffset)
         {
 
         }
