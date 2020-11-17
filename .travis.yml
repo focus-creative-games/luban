@@ -2,7 +2,7 @@ language: csharp
 solution: src/Luban.sln
 
 mono: none
-dotnet: 3.1
+dotnet: 5.0
 script:
  - cd src
  - dotnet restore
