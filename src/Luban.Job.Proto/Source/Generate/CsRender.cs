@@ -193,14 +193,14 @@ namespace {{x.namespace_with_top_module}}
         public override void Serialize(ByteBuf _buf)
         {
             {{~ for field in fields ~}}
-            {{field.cs_serialize}}
+            {{cs_serialize '_buf' field.cs_style_name field.ctype}}
             {{~end~}}
         }
 
         public override void Deserialize(ByteBuf _buf)
         {
             {{~ for field in fields ~}}
-            {{field.cs_deserialize}}
+            {{cs_deserialize '_buf' field.cs_style_name field.ctype}}
             {{~end~}}
         }
 
