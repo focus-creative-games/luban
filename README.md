@@ -19,11 +19,12 @@
 - 自 2015 年以来，经历过 MMORPG、卡牌、SLG 等多个上线项目的考验，
 - 实际项目过程中不断迭代和优化，最终由一个增强型的配置工具成为一个相对完备的游戏配置数据解决方案。
 
+## 快速生成 lua 的例子
 
-## 快速布署一个 lua 例子
-  * [下载例子]并解压至临时目录
-  * 双击 bat 生成
-
+- 进入 config 目录
+- 双击 生成lua数据.bat
+- 生成的 OutputLua 目录即对像数据
+- 修改 bat 路径，即可使用至项目中
 
 ## 使用示例
 
@@ -46,15 +47,15 @@
   ```
 - [更多语言的例子](docs/samples.md)
 
-
 ## 文档
 
 - [主页](https://focus-creative-games.github.io/luban/index.html)
 - [特性](docs/traits.md)
+- [Excel 配置数据简介](docs/data_excel.md)
 - [使用说明](docs/catalog.md)
 - [常见问题](docs/faq.md)
 
-## RoadMap
+## 路线图
 
 - [ ] 新增 unity 内置编辑器
 - [ ] 新增 unreal 内置编辑器
@@ -64,14 +65,14 @@
 ## 开发环境架设
 
 - 安装 [VS2019 社区版](https://visualstudio.microsoft.com/zh-hans/vs/)
-- 安装 [.dotnet core sdk 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1)
+- 安装 [.dotnet core sdk 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
 
 ## 如何贡献?
 
 - [Contributing](CONTRIBUTING.md) explains what kinds of changes we welcome
 - [Workflow Instructions](docs/workflow/README.md) explains how to build and test
 
-## Useful Links
+## 有用的链接
 
 - [.NET Core source index](https://source.dot.net)
 - 社区的其它实现
