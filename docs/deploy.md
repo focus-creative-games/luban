@@ -4,5 +4,7 @@
 # 服务端布署
 
 ## Docker 镜像布署
-- docker pull hugebug4ever/luban:latest
-- docker run -d -p 8899:8899 hugebug4ever/luban:latest 
+``` bash
+    docker pull hugebug4ever/luban:latest
+    docker run --name luban-server -d -p 8899:8899 hugebug4ever/luban:latest 
+```
