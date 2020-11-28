@@ -154,7 +154,7 @@ local function InitTypes(methods)
         class._deserialize = function(bs)
             local o = {
         {{~ for field in bean.hierarchy_export_fields ~}}
-            {{~if !need_marshal_bool_prefix field.ctype~}}
+            {{~if !(need_marshal_bool_prefix field.ctype)~}}
             {{field.name}} = {{lua_undering_deserialize 'bs' field.ctype}},
             {{~else~}}
             {{field.name}} = {{if !field.ctype.is_bool}}readBool(bs) and {{lua_undering_deserialize 'bs' field.ctype}} or nil {{-else-}} readNullableBool(bs) {{-end-}},
