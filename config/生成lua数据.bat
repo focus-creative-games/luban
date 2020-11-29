@@ -1,5 +1,5 @@
 ..\src\Luban.Client\bin\Debug\netcoreapp3.1\Luban.Client.exe ^
-	-h 139.196.55.78 ^
+	-h 81.69.4.240 ^
 	-j cfg ^
 	-- ^
 	-d Defines/root.xml ^

@@ -5,8 +5,6 @@
 
 - 新增 一个字段 batch_useable，表示能否批量使用
 - 用 true 或 false 表示 bool 值，只需要小写后是这两个值即可，比如 true,True,True 都是合法的值。excel 会自动将输入的值大写化。
-- 配置:  
-  ![如图](images/adv/def_01.png)
 - [定义](images/adv/def_02.png):
   ```xml
   <module name = "item">
@@ -15,12 +13,12 @@
     </bean>
   </module>
   ```
+- 配置:  
+  ![如图](images/adv/def_01.png)
 
 ## float 类型
 
 - 新增一个 float 类型字段，掉落概率 drop_prob.
-- 配置:  
-  ![如图](images/adv/def_03.png)
 - [定义](images/adv/def_04.png):
   ```xml
   <module name = "item">
@@ -29,12 +27,12 @@
     </bean>
   </module>
   ```
+- 配置:  
+  ![如图](images/adv/def_03.png)
 
 ## 列表类型 list,int
 
 - 我们新增一个字段， 宝箱的随机抽取道具列表 random_item_ids。
-- 配置:  
-  ![如图](images/adv/def_05.png)
 - [定义](images/adv/def_06.png)
   ```xml
   <module name = "item">
@@ -43,13 +41,13 @@
     </bean>
   </module>
   ```
+- 配置:  
+  ![如图](images/adv/def_05.png)
 
 ## 向量类型 vector3
 
 - vector3 有三个字段 float x, float y, float z, 适合用于表示坐标之类的数据。
 - 我们新增一个 spawn_location 字段，表示物品产生的场景位置。
-- 配置:  
-  ![如图](images/adv/def_07.png)
 - [定义](images/adv/def_08.png):
   ```xml
   <module name = "item">
@@ -58,6 +56,8 @@
     </bean>
   </module>
   ```
+- 配置:  
+  ![如图](images/adv/def_07.png)
 
 ## 枚举类型
 
@@ -65,7 +65,7 @@
 - 有一种更优雅的方式是定义枚举。
 - [枚举定义](images/adv/def_09.png)
 
-  ```xml
+  ``` xml
   <enum name = "EQuality">
     <var name = "WHITE" alias = "白" value = "1">
     <var name = "GREEN" alias = "绿" value = "2">
@@ -83,7 +83,7 @@
   - alias 是可选项，枚举项别名。
   - value 是枚举值，主要给程序使用。
 - [完整用法](images/adv/def_10.png)
-  ```
+  ``` xml
   <module name = "item">
     <enum name = "EQuality">
       <var name = "WHITE" alias = "白" value = "1">
@@ -108,7 +108,7 @@
 - 比如，我们想用一个字段 level_range 来表示道具可以使用的等级范围，它包含两个字段，最小等级和最大等级。
 - 此时，可以通过定义 bean 来解决。  
   [定义](images/adv/def_12.png)
-  ```
+  ``` xml
   <bean name="IntRange">
     <var name="min" type="int">
     <var name="max" type="int">
@@ -127,7 +127,7 @@
   2. 使用 sep 分割单元格  
      字段定义中指定 sep 属性，用某些字符分割单元格，这样就能识别为两个整数了。  
      [定义](images/adv/def_15.png)
-     ```
+     ``` xml
      <bean name="IntRange">
        <var name="min" type="int">
        <var name="max" type="int">
@@ -145,7 +145,7 @@
   比如说 道具不同等级会增加不同的血量。我们定义一个 ItemLevelAttr 结构。  
   [定义](images/adv/def_17.png)
 
-  ```
+  ``` xml
   <module name="item">
    <bean name="ItemLevelAttr">
     <var name="level", type="int">
@@ -169,7 +169,7 @@
 - 有两种办法。
   1. bean ItemLevelAttr 增加属性 sep=”,”  
      [定义](images/adv/def_21.png)
-     ```
+     ``` xml
      <bean name="ItemLevelAttr" sep=",>
       <var name="level" type="int"/>
       <var name="desc" type="string"/>
@@ -179,7 +179,7 @@
      如果不想用逗号”,” ，想用;来分割单元格内的数据，只要将 sep=”;” 即可。
   2. 字段 level_attrs 增加属性 sep=”,”，即  
      [定义](images/adv/def_22.png)
-     ```
+     ``` xml
      <bean name="ItemLevelAttr" sep=",>
       <var name="level" type="int"/>
       <var name="desc" type="string"/>
@@ -193,7 +193,7 @@
      ![如图](images/adv/def_23.png)  
      想用 | 来分割不同 ItemLevelAttr ,用 , 来分割每个记录的数据。只需要 字段 level_attrs 的 sep=”,|” 即可。  
      [定义](images/adv/def_24.png)
-     ```
+     ``` xml
      <bean name="ItemLevelAttr" sep=",>
       <var name="level" type="int"/>
       <var name="desc" type="string"/>
@@ -213,7 +213,7 @@
   Cicle 有 2 个字段 int id; float radius;  
   Rectangle 有 3 个字段 int id; float width; float height;  
   [定义](images/adv/def_25.png)
-  ```
+  ``` xml
   <bean name="Shape">
     <var name="id" type="int">
     <bean name="Circle">
@@ -233,7 +233,7 @@
 - 注意到，多态 bean 与普通 bean 填写区别在于，多态 bean 需要一个类型名。这也好理解，如果没有类型名，如何知道使用哪个 bean 呢。
 - 有时间策划不太习惯填写英文，或者说类型名有时候会调整，不希望调整类型名后配置也跟着改变，因为，多态 bean 支持别名的概念。  
   [定义](images/adv/def_27.png)
-  ```
+  ``` xml
   <bean name="Shape">
     <var name="id" type="int"/>
     <bean name="Circle" alias="圆">
@@ -252,7 +252,22 @@
 ## multi_rows 多行 记录
 
 - 使用数据表经常会遇到某个字段是列表类型的情形。有时候列表的 bean 的字段特别多，比如多达 10 个字段，列表包含了好几个 bean。如果此时配置成一行，会导致 excel 列过多，策划编辑维护不方便直观。 Luban 支持这个列表 多行配置。
-- ![如图](images/adv/def_29.png)
+- [定义](images/adv/def_29.png)
+  ``` xml
+    <bean name="MultiLineType">
+      <var name="x1" type="int"/>
+      <var name="x2" type="int"/>
+      <var name="x3" type="int"/>
+      <var name="x4" type="int"/>
+      <var name="x5" type="int"/>
+      <var name="x6" type="int"/>
+      <var name="x7" type="int"/>
+    </bean>
+    <bean name="Item">
+      ...
+      <var name="lines" type="list,MultiLineType" multi_rows="1"/>
+    </bean>
+  ```
 - 和 普通 非多行记录的区别在于 lines 字段多了一个 multi_rows=”1” 字段，表示这个字段要多行配置。
 - ![如图](images/adv/def_30.png)
 - 和普通不包括多行数据的 excel 表比，meta 行多了 multi_rows:1 这个属性。为了防止被误识别为多行，multi_rows 需要手动打开。
@@ -261,8 +276,19 @@
 
 - 经常会有字段占了多列，比如 Shape, 如果按顺序填写，有个问题在于，字段很多时，容易对应错误，不方便定位。
 - 假设 有个 show_info 字段，包含 如下字段 string name; string desc; string tip;
-- ![如图](images/adv/def_31.png)
-- 填写数据如下  
+- [定义](images/adv/def_31.png)
+  ``` xml
+  <bean name="ShowInfo">
+    <var name="name" type="string" />
+    <var name="desc" type="string" />
+    <var name="tip" type="string" />
+  </bean>
+  <bean name="Item">
+    ...
+    <var name="show_info" type="ShowInfo"/>
+  </bean>
+  ```
+- 配置  
   ![如图](images/adv/def_32.png)
 - 有几处改动
   1. 我们新插入了一行标题头，第 2 行变成了两行。同时 A2,A3 单元格合并，表示标题头占了 2 行。
@@ -273,9 +299,15 @@
 
 - 不是所有数据都是 类似 map 这样的多记录结构。有些配置只有一份，比如 开启装备系统的最小角色等级。 这些数据 所在的表，也只有一个记录。称之为 单例表。
 - 我们创建一个单例表，来存放这些数据。  
-  定义如下：  
-  ![如图](images/adv/def_33.png)  
-  数据如下：  
+- [定义](images/adv/def_33.png)  
+  ``` xml
+  <bean name="GlobalConfig">
+    <var name="unlock_equip_sys_level" type="int"/>
+    <var name="unlock_mall_sys_level" type="int"/>
+  </bean>
+  <table name="TbGlobalConfig" value="GlobalConfig" mode="one" input="item/全局参数表.xlsx"/>
+  ```
+- 配置  
   ![如图](images/adv/def_34.png)
 
 ## 横表与纵表
@@ -289,9 +321,14 @@
 
 - 有时候会有一种变量，我们希望它 功能生效时填一个有效值，功能不生效里，用一个值来表示。 例如 int 类型，常常拿 0 或者-1 作无效值常量。 但有时候，0 或-1 也是有效值时，这种做法就不生效了。或者说 项目组内 有时候拿 0，有时候拿-1 作无效值标记，很不统一。我们借鉴 sql 及 c#,引入 可空值概念，用 null 表达空值。
 - 我们为 Item 添加 min_use_level 字段，类型为 int? 当填有效值时，使用时要检查等级，否则不检查。
-- 定义如下  
-  ![如图](images/adv/def_36.png)
-- 数据如下  
+- [定义](images/adv/def_36.png)
+  ``` xml
+  <bean name="Item">
+    ...
+    <var name="min_use_level" type="int?"/>
+  </bean>
+  ```
+- 配置  
   ![如图](images/adv/def_37.png)
 
 ## datetime 类型
@@ -303,17 +340,31 @@
   - yyyy-mm-dd hh 如 2001-09-05 07
   - yyyy-mm-dd 如 2003-04-05
 - 为 Item 新增一个 失效时间字段 expire_time 。  
-  定义如下:  
-  ![如图](images/adv/def_38.png)  
-  数据如下:  
+- [定义](images/adv/def_38.png)  
+  ``` xml
+  <bean name="Item">
+    ...
+    <var name="expire_time" type="datetime"/>
+  </bean>
+  ```
+- 配置    
   ![如图](images/adv/def_39.png)
 
 ## convert 常量替换
 
 - 游戏里经常会出现一些常用的类似枚举的值，比如说 升级丹的 id,在很多地方都要填，如果直接它的道具 id,既不直观，也容易出错。 Luban 支持常量替换。
 - 对于需要常量替换的字段，添加 convert=”枚举类”。 如果填写的值是 枚举名或者别名，则替换为 相应的整数。否则 按照整数解析。
-- 定义如下:  
-  ![如图](images/adv/def_40.png)  
-  数据如下:  
+- [定义](images/adv/def_40.png)  
+  ``` xml
+  <enum name="EFunctionItemId">
+    <var name="SHENG_JI_DAN" alias="升级丹" value="11220304"/>
+    <var name="JIN_JIE_DAN" alias="进阶丹" value="11220506"/>
+  </enum>
+  <bean name="Item">
+    ...
+    <var name="cost_item_on_use" type="int" convert="EFunctionItemId"/>
+  </bean>
+  ```
+- 配置:  
   ![如图](images/adv/def_41.png)
 - 添加了 convert 的字段，既可以填 convert 指向的枚举类里的一个合法枚举名，也可以是其他整数。
