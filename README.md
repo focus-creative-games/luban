@@ -5,6 +5,7 @@
 
 [![license](http://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://travis-ci.com/focus-creative-games/luban.svg?branch=main)](https://travis-ci.com/focus-creative-games/luban)
+![Docker Pulls](https://img.shields.io/docker/pulls/mashape/kong.svg)
 
 ![](docs/images/icon.png)
 
