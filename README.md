@@ -4,8 +4,9 @@
 # Luban
 
 [![license](http://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Build Status](https://travis-ci.com/focus-creative-games/luban.svg?branch=main)](https://travis-ci.com/focus-creative-games/luban)
-![Docker Pulls](https://img.shields.io/docker/pulls/mashape/kong.svg)
+[![Build Status](https://travis-ci.com/focus-creative-games/luban.svg?branch=main)](https://travis-ci.com/focus-creative-games/luban)  
+![Docker Auto](https://img.shields.io/docker/cloud/automated/hugebug4ever/luban.svg)
+![Docker Build](https://img.shields.io/docker/cloud/build/hugebug4ever/luban.svg)
 
 ![](docs/images/icon.png)
 
