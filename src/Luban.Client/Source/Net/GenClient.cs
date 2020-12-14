@@ -39,7 +39,7 @@ namespace Luban.Client.Common.Net
             var c = new TcpClientBootstrap
             {
                 RemoteAddress = new IPEndPoint(IPAddress.Parse(host), port),
-                ConnectTimeoutMills = 100,
+                ConnectTimeoutMills = 3000,
                 EventLoop = new EventLoop(null),
                 InitHandler = ch =>
                 {

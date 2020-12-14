@@ -177,7 +177,7 @@ Options:
             Environment.Exit(exitCode);
         }
 
-        const int GEN_JOB_TIMEOUT = 30;
+        const int GEN_JOB_TIMEOUT = 120;
 
         private static int SubmitGenJob(CommandLineOptions options)
         {

@@ -68,7 +68,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TBytes type)
         {
-            return "writeString";
+            return "writeBytes";
         }
 
         public string Accept(TText type)
