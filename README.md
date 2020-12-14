@@ -14,6 +14,8 @@
 
 Luban是一个强大的对象生成与缓存工具。生成目标可以是类似protobuf的消息代码、游戏配置代码、游戏配置数据、数据库代码，也可以是游戏资源如assetbundle。
 
+luban创新性提出 **定义 + 数据源** 的设计，实现了完备的类型系统，增强了excel格式，同时提供json、xml、lua等多种数据源支持，统一了数据定义、加载、检验、数据导出及代码生成的Pipeline，彻底解决了中大型项目中难以在excel中配置复杂数据以及一个项目中excel、json等多种的配置方案并存的问题。
+
 Luban适合有以下需求的开发者：
 1. 无法容忍传统excel导表工具的简陋功能，希望找一个快速强大经受过上线项目检验的满足中大型游戏项目配置需求的游戏配置解决方案
 2. 不想使用protobuf,希望针对项目需求方便地自定义消息生成，满足严苛的内存和性能的要求
@@ -40,13 +42,12 @@ Luban另一优点是生成过程极快。对于普通的导表工具，一个典
 - 强大的数据校验能力。支持内建数据格式检查。支持ref表引用检查（策划不用担心填错id）。支持path资源检查（策划不用担心填错资源路径）。
 - 支持 one(单例表)、map（常规key-value表）、bmap(双键表)
 - 支持时间本地化。datetime类型数据会根据指定的timezone，转换为目标地区该时刻的UTC时间，方便程序使用。
-- **[TODO] 支持文本静态本地化。导出时所有text类型数据正确替换为最终的本地化字符串。**
-- **[TODO] 支持文本动态本地化。运行时动态切换所有text类型数据为目标本地化字符串。**
-- **[TODO] 支持main + braches 多分支数据。对于不同地区配置有少量区别的海外项目非常有用。**
 - 支持 emmylua anntations。生成的lua包含符合emmylua 格式anntations信息。配合emmylua有良好的配置代码提示能力。
 - 支持 res 资源标记。可以一键导出配置中引用的所有资源列表(icon,ui,assetbundle等等)
 - 生成代码良好模块化。
-- 配置数据模块化。策划可以方便地按需求自己组织数据目录和结构，不影响逻辑表。
+- **[TODO] 支持文本静态本地化。导出时所有text类型数据正确替换为最终的本地化字符串。**
+- **[TODO] 支持文本动态本地化。运行时动态切换所有text类型数据为目标本地化字符串。**
+- **[TODO] 支持main + braches 多分支数据。对于需要针对不同地区有部分差异配置的海外项目非常有用。**
 - 支持主流的游戏开发语言
    - c++ (11+)
    - c# (.net framework 4+. dotnet core 3+)
@@ -54,8 +55,7 @@ Luban另一优点是生成过程极快。对于普通的导表工具，一个典
    - go (1.10+)
    - lua (5.1+)
    - js 和 typescript (3.0+)
-   - python (2.7+ 及 3.0+)
-   
+   - python (2.7+ 及 3.0+)  
 - 支持主流引擎和平台
    - unity + c#
    - unity + tolua,xlua
@@ -73,9 +73,7 @@ Luban另一优点是生成过程极快。对于普通的导表工具，一个典
 
 ## 快速入门 - 结构定义和数据配置
 
-luban创新性提出 **定义 + 数据源** 的设计，实现了完备的类型系统，增强了excel格式，同时提供json、xml、lua等多种数据源支持，统一了数据定义、加载、检验、数据导出及代码生成的Pipeline，彻底解决了中大型项目中难以在excel中配置复杂数据以及一个项目中excel、json等多种的配置方案并存的问题。
-
-与常见的专注于excel的导表工具把定义和数据放在同一个excel文件的做法不同，luban的定义与数据分离，使用单独的xml定义 **表和结构**。
+与常见的专注于excel的导表工具中定义和数据放在同一个excel文件的做法不同，luban的定义与数据分离，使用单独的xml定义 **表和结构**。
 
 ### 常规的原生数据
 ```
@@ -166,7 +164,7 @@ luban创新性提出 **定义 + 数据源** 的设计，实现了完备的类型
 ![](docs/images/examples/ex_32.png)
 
 ### 可空数据类型
-配置数据中经常有空值的语义需求，无论0或-1表达空值都是不太自然、不太统一的。luban借鉴了c#中的可空变量的概念，特地提供可空数据支持。
+配置数据中经常有空值的语义需求，实际项目中往往混杂地使用0或-1表达空值，既不自然清晰也不统一。luban借鉴了c#中的可空变量的概念，特地提供可空数据支持。
 
 除了string外的所有原生数据类型，以及enum类型都有相应的可空数据类型。定义方式为 <类型名>?，与c#里的Nullable类型定义方式相同。例如 bool?,int?,long?,double?, EColor?
 
@@ -269,7 +267,7 @@ luban创新性提出 **定义 + 数据源** 的设计，实现了完备的类型
 
 ### 单例表
 
-单例既代码模式中单例的含义，用于配置全局只有一份的数据。
+单例即代码模式中单例的含义，用于配置全局只有一份的数据。
 
 ```
 	<bean name="SingletonTable">
@@ -389,65 +387,30 @@ luban创新性提出 **定义 + 数据源** 的设计，实现了完备的类型
 	<x8_0>123</x8_0>
 	<x9>112334</x9>
 	<x10>yf</x10>
-	<x12>
-		<x1>1</x1>
-	</x12>
+	<x12>		<x1>1</x1>	</x12>
 	<x13>C</x13>
-	<x14 __type__="DemoD2">
-		<x1>1</x1>
-		<x2>2</x2>
-	</x14>
+	<x14 __type__="DemoD2">		<x1>1</x1>		<x2>2</x2>	</x14>
 	<v2>1,2</v2>
 	<v3>1.2,2.3,3.4</v3>
 	<v4>1.2,2.2,3.2,4.3</v4>
 	<t1>1970-01-01 00:00:00</t1>
-	<k1>
-		<item>1</item>
-		<item>2</item>
-	</k1>
-	<k2>
-		<item>1</item>
-		<item>2</item>
-	</k2>
-	<k3>
-		<item>1</item>
-		<item>2</item>
-	</k3>
-	<k4>
-		<item>1</item>
-		<item>2</item>
-	</k4>
-	<k5>
-		<item>1</item>
-		<item>2</item>
-	</k5>
-	<k6>
-		<item>1</item>
-		<item>2</item>
-	</k6>
-	<k7>
-		<item>1</item>
-		<item>3</item>
-	</k7>
+	<k1>		<item>1</item>		<item>2</item>	</k1>
+	<k2>		<item>1</item>		<item>2</item>	</k2>
+	<k3>		<item>1</item>		<item>2</item>	</k3>
+	<k4>		<item>1</item>		<item>2</item>	</k4>
+	<k5>		<item>1</item>		<item>2</item>	</k5>
+	<k6>		<item>1</item>		<item>2</item>	</k6>
+	<k7>		<item>1</item>		<item>3</item>	</k7>
 	<k8>
 		<item> <key>2</key><value>10</value></item>
 		<item> <key>3</key><value>30</value></item>
 	</k8>
 	<k9>
-		<item>
-			<y1>1</y1>
-			<y2>true</y2>
-		</item>
-		<item>
-			<y1>2</y1>
-			<y2>false</y2>
-		</item>
+		<item>			<y1>1</y1>			<y2>true</y2>		</item>
+		<item>			<y1>2</y1>			<y2>false</y2>		</item>
 	</k9>
 	<k15>
-		<item __type__="DemoD2">
-			<x1>1</x1>
-			<x2>2</x2>
-		</item>
+		<item __type__="DemoD2">			<x1>1</x1>			<x2>2</x2>		</item>
 	</k15>
 </data>
 ```
@@ -519,8 +482,6 @@ bat脚本中的 --output_data_dir 参数为输出lua数据目录，可根据实�
 ------
 ## 程序使用示例
 
-完整的集成流程参见相应的demo项目，以下简略介绍如何在代码中使用配置表。
-
 ### Lua 使用示例
 
   ```Lua
@@ -533,7 +494,6 @@ bat脚本中的 --output_data_dir 参数为输出lua数据目录，可根据实�
 
 ### C# 使用示例
 
-将--output_data_dir指向项目的配置数据目录，例如 <当前运行目录>/output_data
   ```C#
   // 一行代码可以加载所有配置。 cfg.Tables 包含所有表的一个实例字段。
   var tables = new cfg.Tables(file => return new ByteBuf(File.ReadAllBytes("<--output_data_dir指向的数据路径>/" + file)));
