@@ -5,7 +5,7 @@
 	-d Defines/root.xml ^
 	--input_data_dir Datas ^
 	--output_data_dir output_lua ^
-	-s server ^
+	-s client ^
 	--gen_types data_lua ^
 	--export_test_data
 

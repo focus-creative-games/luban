@@ -10,8 +10,6 @@
 
 ![](docs/images/icon.png)
 
--------
-
 ## 介绍
 
 Luban是一个强大的对象生成与缓存工具。生成目标可以是类似protobuf的消息代码、游戏配置代码、游戏配置数据、数据库代码，也可以是游戏资源如assetbundle。
@@ -23,7 +21,6 @@ Luban适合有以下需求的开发者：
 
 Luban另一优点是生成过程极快。对于普通的导表工作，一个典型的MMORPG项目后期全量生成配置往往需要几十秒。Luban使用client/server的云生成模式，多线程生成+对象缓存，大多数情况下可以1s内完成整个生成过程 ^_^。
 
-------
 ## 文档
 
 - [主页](https://focus-creative-games.github.io/luban/index.html)
@@ -32,7 +29,6 @@ Luban另一优点是生成过程极快。对于普通的导表工作，一个典
 - [使用说明](docs/catalog.md)
 - [常见问题](docs/faq.md)
 
-------
 ## 特性
 - 支持增强的excel格式，可以在excel里比较简洁填写出任意复杂的数据。
 - 支持excel族、json、xml、lua 多种数据格式
@@ -75,15 +71,12 @@ Luban另一优点是生成过程极快。对于普通的导表工作，一个典
    - 其他所有支持lua的引擎和平台
    - 其他所有支持js的引擎和平台
 
---------
-
-
-
 ## 快速入门 - 结构定义和数据配置
 
-    luban创新性提出 定义+数据源 的概念设计，配合完备的类型系统及多种数据源支持，基本解决了中大弄项目中难以配置复杂数据以及excel、json等多种配置方案不统一的问题。与常见的专注于excel的导表工具把定义和数据放在同一个excel文件的做法不同，luban的定义与数据分离，使用单独的xml定义 **表和结构**。
+luban创新性提出 定义+数据源 的设计，实现了完备的类型系统，增加了excel格式，同时提供json、xml、lua等多种数据源支持，基本解决了中大型项目中难以在excel中配置复杂数据以及excel、json等多种配置方案不统一的问题。
 
-------
+与常见的专注于excel的导表工具把定义和数据放在同一个excel文件的做法不同，luban的定义与数据分离，使用单独的xml定义 **表和结构**。
+
 ### 常规的原生数据
 ```
 	<bean name="DemoPrimitiveTypesTable">
@@ -104,9 +97,9 @@ Luban另一优点是生成过程极快。对于普通的导表工作，一个典
 
 ![](docs/images/examples/ex_2.png)
 
-------
-
 ### 枚举
+
+定义枚举类，同时强制配置中必须填写枚举名或者别名，提高配置阅读性。
 
 ```
 	<enum name="DemoEnum">
@@ -122,8 +115,6 @@ Luban另一优点是生成过程极快。对于普通的导表工作，一个典
 ```
 
 ![](docs/images/examples/ex_12.png)
-
-------
 
 ### 自定义结构 bean 
 
@@ -141,9 +132,9 @@ Luban另一优点是生成过程极快。对于普通的导表工作，一个典
 
 ![](docs/images/examples/ex_22.png)
 
-------
-
 ### 多态结构 bean
+支持OOP的类型的继承体系，方便表达多类型的数据，经常用于技能、AI等模块。
+
 ```
 	<bean name="Shape">
 		<var name="id" type="int"/>
@@ -174,9 +165,9 @@ Luban另一优点是生成过程极快。对于普通的导表工作，一个典
 
 ![](docs/images/examples/ex_32.png)
 
-------
-
 ### 可空数据类型
+配置数据中经常有空值的语义需求，无论0或-1表达空值都是不太自然、不太统一的。luban借鉴了c#中的可空变量的概念，特地提供可空数据支持。
+
 除了string外的所有原生数据类型，以及enum类型都有相应的可空数据类型。定义方式为 <类型名>?，与c#里的Nullable类型定义方式相同。例如 bool?,int?,long?,double?, EColor?
 
 ```
@@ -189,9 +180,9 @@ Luban另一优点是生成过程极快。对于普通的导表工作，一个典
 
 ![](docs/images/examples/ex_42.png)
 
-------
+### 简单原生数据列表类型
+一般来说，既可以在一个单元格内以 逗号","分隔填写，也可以每个单元格填写一个数据。注意！空单元格会被忽略。
 
-### 简单列表
 ```
 	<bean name="CollectionTable">
 		<var name="id" type="int"/>
@@ -203,7 +194,7 @@ Luban另一优点是生成过程极快。对于普通的导表工作，一个典
 ![](docs/images/examples/ex_52.png)
 
 ### 结构列表
-对于结构列表类型，有多种填写。根据策划的偏好，可以自由选择最合适的填法。
+对于结构列表类型，有多种填写。策划根据具体情况，选择最合适的填法。
 
 - 填法1。 全展开。
 
@@ -255,7 +246,6 @@ Luban另一优点是生成过程极快。对于普通的导表工作，一个典
 
 ![](docs/images/examples/ex_63.png)
 
-------
 ### 多态结构列表
 ```
 	<bean name="CollectionTable3">
@@ -264,7 +254,6 @@ Luban另一优点是生成过程极快。对于普通的导表工作，一个典
 	</bean>
 ```
 ![](docs/images/examples/ex_71.png)
-------
 
 ### 双主键表
 ```
@@ -277,7 +266,6 @@ Luban另一优点是生成过程极快。对于普通的导表工作，一个典
 ```
 
 ![](docs/images/examples/ex_91.png)
-------
 
 ### 单例表
 
@@ -293,8 +281,6 @@ Luban另一优点是生成过程极快。对于普通的导表工作，一个典
 ```
 
 ![](docs/images/examples/ex_a1.png)
-------
-
 
 ### json 数据源
 
@@ -313,20 +299,15 @@ Luban另一优点是生成过程极快。对于普通的导表工作，一个典
 		<var name="x8_0" type="fshort"/>
 		<var name="x8" type="fint"/>
 		<var name="x9" type="flong"/>
-		
 		<var name="x10" type="string" path="normal;*.txt"/>
 		<var name="x12" type="DemoType1"/>
 		<var name="x13" type="DemoEnum"/>
 		<var name="x14" type="DemoDynamic" sep=","/>多态数据结构
-		
 		<var name="v2" type="vector2"/>
 		<var name="v3" type="vector3"/>
 		<var name="v4" type="vector4"/>
-		
 		<var name="t1" type="datetime"/>
-
 		<var name="k1" type="array,int"/> 使用;来分隔
-		
 		<var name="k2" type="list,int"/>
 		<var name="k3" type="linkedlist,int"/>
 		<var name="k4" type="arraylist,int"/>
@@ -341,7 +322,6 @@ Luban另一优点是生成过程极快。对于普通的导表工作，一个典
   <table name="TbDataFromJson" value="DemoType2" input="test/json_datas"/>
 ```
 
-数据
 以目录为数据源，递归遍历整个目录树，将每个json数据当作一个记录读入。
 
 ![](docs/images/examples/ex_81.png)
@@ -380,55 +360,21 @@ Luban另一优点是生成过程极快。对于普通的导表工作，一个典
 	"k15":[{"__type__": "DemoD2", "x1":1, "x2":2}]
  }
 ```
---------
+
 ### xml 数据源
 定义
 
 ```
-	<bean name="DemoType2" >
-		<var name="x4" type="int" convert="DemoEnum"/>
-		<var name="x1" type="bool"/>
-		<var name="x2" type="byte"/>
-		<var name="x3" type="short" ref="test.TbFullTypes"/>
-		<var name="x5" type="long" convert="DemoEnum"/>
-		<var name="x5" type="long" convert="DemoEnum"/>
-		<var name="x6" type="float"/>
-		<var name="x7" type="double"/>
-		<var name="x8_0" type="fshort"/>
-		<var name="x8" type="fint"/>
-		<var name="x9" type="flong"/>
-		
-		<var name="x10" type="string" path="normal;*.txt"/>
-		<var name="x12" type="DemoType1"/>
-		<var name="x13" type="DemoEnum"/>
-		<var name="x14" type="DemoDynamic" sep=","/>多态数据结构
-		
-		<var name="v2" type="vector2"/>
-		<var name="v3" type="vector3"/>
-		<var name="v4" type="vector4"/>
-		
-		<var name="t1" type="datetime"/>
-
-		<var name="k1" type="array,int"/> 使用;来分隔
-		
-		<var name="k2" type="list,int"/>
-		<var name="k3" type="linkedlist,int"/>
-		<var name="k4" type="arraylist,int"/>
-		<var name="k5" type="set,int"/>
-		<var name="k6" type="treeset,int"/>
-		<var name="k7" type="hashset,int"/>
-		<var name="k8" type="map,int,int"/>
-		<var name="k9" type="list,DemoE2" sep="," index="y1"/>
-		<var name="k15" type="array,DemoDynamic" sep=","/> 
+	<bean name="DemoType2">
+		<<定义同json>>
 	</bean>
 
 <table name="TbDataFromXml" value="DemoType2" input="test/xml_datas"/> 
  	
 ```
 
-数据
-
 以目录为数据源，递归遍历整个目录树，将每个xml数据当作一个记录读入。
+
 其中 1.xml 文件内容如下
 ```
  <data>
@@ -510,47 +456,12 @@ Luban另一优点是生成过程极快。对于普通的导表工作，一个典
 定义
 
 ```
-	<bean name="DemoType2" >
-		<var name="x4" type="int" convert="DemoEnum"/>
-		<var name="x1" type="bool"/>
-		<var name="x2" type="byte"/>
-		<var name="x3" type="short" ref="test.TbFullTypes"/>
-		<var name="x5" type="long" convert="DemoEnum"/>
-		<var name="x5" type="long" convert="DemoEnum"/>
-		<var name="x6" type="float"/>
-		<var name="x7" type="double"/>
-		<var name="x8_0" type="fshort"/>
-		<var name="x8" type="fint"/>
-		<var name="x9" type="flong"/>
-		
-		<var name="x10" type="string" path="normal;*.txt"/>
-		<var name="x12" type="DemoType1"/>
-		<var name="x13" type="DemoEnum"/>
-		<var name="x14" type="DemoDynamic" sep=","/>多态数据结构
-		
-		<var name="v2" type="vector2"/>
-		<var name="v3" type="vector3"/>
-		<var name="v4" type="vector4"/>
-		
-		<var name="t1" type="datetime"/>
-
-		<var name="k1" type="array,int"/> 使用;来分隔
-		
-		<var name="k2" type="list,int"/>
-		<var name="k3" type="linkedlist,int"/>
-		<var name="k4" type="arraylist,int"/>
-		<var name="k5" type="set,int"/>
-		<var name="k6" type="treeset,int"/>
-		<var name="k7" type="hashset,int"/>
-		<var name="k8" type="map,int,int"/>
-		<var name="k9" type="list,DemoE2" sep="," index="y1"/>
-		<var name="k15" type="array,DemoDynamic" sep=","/> 
+	<bean name="DemoType2">
+		<<定义同json>>
 	</bean>
 
 	<table name="TbDataFromLua" value="DemoType2" input="test/lua_datas"/> 
 ```
-
-数据
 以目录为数据源，递归遍历整个目录树，将每个lua数据当作一个记录读入。
 
 其中 1.lua 文件内容如下
@@ -588,28 +499,44 @@ Luban另一优点是生成过程极快。对于普通的导表工作，一个典
 	k15 = {{ __type__="DemoD2", x1 = 1, x2=3}},
 }
 ```
+
 ------
 ## 生成代码与数据
-以lua为例:
+以lua为例：
 
-1) 进入 config 目录
-2) 双击 生成 lua 数据.bat
-3) 生成的 output_lua 目录即对像数据
-4) 修改 bat 脚本路径，即可使用至项目中
------
+1. 定义全局环境变量LUBAN_SERVER_IP。如果本地已运行luban.server，则取地址为127.0.0.1；如果没有运行，也可以使用已经部属好的云luan服务（仅供快速测试，建议每个项目独立搭建luban-server），地址为 81.69.4.240 。
+1. 进入 config 目录
+1. 双击 生成 lua 数据.bat
+
+生成的 output_lua 目录中即包含所有导出配置数据文件。如下图：
+
+![](docs/images/examples/ex_a2.png)
+
+bat脚本中的 --output_data_dir 参数为输出lua数据目录，可根据实际情况修改。
+
+![](docs/images/examples/ex_a3.png)
+
+------
 ## 程序使用示例
 
-- Lua 使用示例
+完整的集成流程参见相应的demo项目，以下简略介绍如何在代码中使用配置表。
+
+### Lua 使用示例
+将--output_data_dir 指向项目的lua目录下的合适子目录，例如 <lua工程根目录>/Gen/Cfg
   ```Lua
-  local data = require("TbItem")
-  local cfg = data[32]
-  print(cfg.name)
+  -- 直接 require 表
+  local data = require("<lua路径>.TbFullTypes")
+  -- 获取 key为1001的道具数据
+  local cfg = data[1]
+  print(cfg.X4)
   ```
 
-- C# 使用示例
+### C# 使用示例
+
+将--output_data_dir指向项目的配置数据目录，例如 <当前运行目录>/output_data
   ```C#
   // 一行代码可以加载所有配置。 cfg.Tables 包含所有表的一个实例字段。
-  var tables = new cfg.Tables(file => return new ByteBuf(File.ReadAllBytes("output_data/" + file)));
+  var tables = new cfg.Tables(file => return new ByteBuf(File.ReadAllBytes("<数据路径>/" + file)));
   // 访问一个单例表
   Console.WriteLine(tables.TbGlobal.Name);
   // 访问普通的 key-value 表
@@ -619,8 +546,7 @@ Luban另一优点是生成过程极快。对于普通的导表工作，一个典
   ```
 - [更多语言的例子](docs/samples.md)
 
-
-
+------
 ## 路线图
 
 - [ ] 新增 unity 内置编辑器
@@ -633,7 +559,7 @@ Luban另一优点是生成过程极快。对于普通的导表工作，一个典
 - 安装 [VS2019 社区版](https://visualstudio.microsoft.com/zh-hans/vs/)
 - 安装 [.dotnet core sdk 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
 
-## 如何贡献?
+## 如何贡献
 
 - [Contributing](CONTRIBUTING.md) explains what kinds of changes we welcome
 - [Workflow Instructions](docs/workflow/README.md) explains how to build and test
