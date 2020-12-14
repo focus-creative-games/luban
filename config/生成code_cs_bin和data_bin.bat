@@ -1,5 +1,5 @@
 ..\src\Luban.Client\bin\Debug\net5.0\Luban.Client.exe ^
-	-h 127.0.0.1 ^
+	-h %LUBAN_SERVER_IP% ^
 	-j cfg ^
 	-- ^
 	-d Defines/root.xml ^

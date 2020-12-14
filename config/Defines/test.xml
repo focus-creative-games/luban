@@ -42,10 +42,10 @@
 	</bean>
 	
 	<bean name="DemoType2" >
+		<var name="x4" type="int" convert="DemoEnum"/>
 		<var name="x1" type="bool"/>
 		<var name="x2" type="byte"/>
 		<var name="x3" type="short" ref="test.TbFullTypes"/>
-		<var name="x4" type="int?" convert="DemoEnum"/>
 		<var name="x5" type="long" convert="DemoEnum"/>
 		<var name="x6" type="float"/>
 		<var name="x7" type="double"/>
@@ -78,7 +78,6 @@
 	</bean>
 	
 	<table name="TbFullTypes" index="x3" value="DemoType2" input="test/full_type.xlsx"/> 最常见的普通 key-value表
-	
 	
 	<bean name="DateTimeRange" sep=";">
 		<var name="start_time" type="datetime"/>
@@ -144,35 +143,21 @@
 	<bean name="TestUeType">
 		<var name="x1" type="bool"/>
 		<var name="x2" type="byte"/>
-		<!--var name="x3" type="short"/-->
+		<var name="x3" type="short"/>
 		<var name="x4" type="int"/>
 		<var name="x5" type="long"/>
 		<var name="x6" type="float"/>
-		<!--var name="x7" type="double"/>
-		<var name="x8_0" type="fshort"/>
-		<var name="x8" type="fint"/>
-		<var name="x9" type="flong"/-->
-		
 		<var name="x10" type="string"/>
 		<var name="x12" type="DemoType1"/>
 		<var name="x13" type="ETestUeType"/>
-		<!--var name="x14" type="DemoDynamic" sep=","/-->多态数据结构
-		
 		<var name="v2" type="vector2"/>
 		<var name="v3" type="vector3"/>
 		<var name="v4" type="vector4"/>
 		
 		<var name="t1" type="datetime"/>
-		<!--
+		<var name="k1" type="array,int"/>
 		
-		<var name="x15" type="DemoType1"/>
-		
-		<var name="y1" type="int?"/> nullable ,多态结构肯定是nullable的
-	-->
-		
-		<var name="k1" type="array,int"/> 使用;来分隔
-		
-		<var name="k2" type="list,int" group="c,s"/>
+		<var name="k2" type="list,int"/>
 		<var name="k3" type="linkedlist,int"/>
 		<var name="k4" type="arraylist,int"/>
 		<var name="k5" type="set,int"/>

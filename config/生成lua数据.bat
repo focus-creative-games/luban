@@ -1,5 +1,5 @@
-..\src\Luban.Client\bin\Debug\netcoreapp3.1\Luban.Client.exe ^
-	-h 81.69.4.240 ^
+..\src\Luban.Client\bin\Debug\net5.0\Luban.Client.exe ^
+	-h %LUBAN_SERVER_IP% ^
 	-j cfg ^
 	-- ^
 	-d Defines/root.xml ^
