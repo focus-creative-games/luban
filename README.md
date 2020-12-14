@@ -19,7 +19,7 @@ Luban适合有以下需求的开发者：
 2. 不想使用protobuf,希望针对项目需求方便地自定义消息生成，满足严苛的内存和性能的要求
 3. 希望做其他自定义生成或者缓存
 
-Luban另一优点是生成过程极快。对于普通的导表工作，一个典型的MMORPG项目后期全量生成配置往往需要几十秒。Luban使用client/server的云生成模式，多线程生成+对象缓存，大多数情况下可以1s内完成整个生成过程 ^_^。
+Luban另一优点是生成过程极快。对于普通的导表工具，一个典型的MMORPG项目后期全量生成配置往往需要几十秒。Luban使用client/server的云生成模型，多线程生成+对象缓存，大多数情况下可以1s内完成整个生成过程 ^_^，加速了日常工作流的迭代过程，积少成多也能为程序和策划同学节省下可观的时间。
 
 ## 文档
 
@@ -40,9 +40,9 @@ Luban另一优点是生成过程极快。对于普通的导表工作，一个典
 - 强大的数据校验能力。支持内建数据格式检查。支持ref表引用检查（策划不用担心填错id）。支持path资源检查（策划不用担心填错资源路径）。
 - 支持 one(单例表)、map（常规key-value表）、bmap(双键表)
 - 支持时间本地化。datetime类型数据会根据指定的timezone，转换为目标地区该时刻的UTC时间，方便程序使用。
-- [TODO] 支持文本静态本地化。导出时所有text类型数据正确替换为最终的本地化字符串。
-- [TODO] 支持文本动态本地化。运行时动态切换所有text类型数据为目标本地化字符串。
-- [TODO] 支持main + braches 多分支数据。对于不同地区配置有少量区别的海外项目非常有用。
+- **[TODO] 支持文本静态本地化。导出时所有text类型数据正确替换为最终的本地化字符串。**
+- **[TODO] 支持文本动态本地化。运行时动态切换所有text类型数据为目标本地化字符串。**
+- **[TODO] 支持main + braches 多分支数据。对于不同地区配置有少量区别的海外项目非常有用。**
 - 支持 emmylua anntations。生成的lua包含符合emmylua 格式anntations信息。配合emmylua有良好的配置代码提示能力。
 - 支持 res 资源标记。可以一键导出配置中引用的所有资源列表(icon,ui,assetbundle等等)
 - 生成代码良好模块化。
@@ -73,7 +73,7 @@ Luban另一优点是生成过程极快。对于普通的导表工作，一个典
 
 ## 快速入门 - 结构定义和数据配置
 
-luban创新性提出 定义+数据源 的设计，实现了完备的类型系统，增加了excel格式，同时提供json、xml、lua等多种数据源支持，基本解决了中大型项目中难以在excel中配置复杂数据以及excel、json等多种配置方案不统一的问题。
+luban创新性提出 **定义 + 数据源** 的设计，实现了完备的类型系统，增强了excel格式，同时提供json、xml、lua等多种数据源支持，统一了数据定义、加载、检验、数据导出及代码生成的Pipeline，彻底解决了中大型项目中难以在excel中配置复杂数据以及一个项目中excel、json等多种的配置方案并存的问题。
 
 与常见的专注于excel的导表工具把定义和数据放在同一个excel文件的做法不同，luban的定义与数据分离，使用单独的xml定义 **表和结构**。
 
@@ -522,10 +522,10 @@ bat脚本中的 --output_data_dir 参数为输出lua数据目录，可根据实�
 完整的集成流程参见相应的demo项目，以下简略介绍如何在代码中使用配置表。
 
 ### Lua 使用示例
-将--output_data_dir 指向项目的lua目录下的合适子目录，例如 <lua工程根目录>/Gen/Cfg
+
   ```Lua
   -- 直接 require 表
-  local data = require("<lua路径>.TbFullTypes")
+  local data = require("<--output_data_dir 指向的lua相对路径>.TbFullTypes")
   -- 获取 key为1001的道具数据
   local cfg = data[1]
   print(cfg.X4)
@@ -536,7 +536,7 @@ bat脚本中的 --output_data_dir 参数为输出lua数据目录，可根据实�
 将--output_data_dir指向项目的配置数据目录，例如 <当前运行目录>/output_data
   ```C#
   // 一行代码可以加载所有配置。 cfg.Tables 包含所有表的一个实例字段。
-  var tables = new cfg.Tables(file => return new ByteBuf(File.ReadAllBytes("<数据路径>/" + file)));
+  var tables = new cfg.Tables(file => return new ByteBuf(File.ReadAllBytes("<--output_data_dir指向的数据路径>/" + file)));
   // 访问一个单例表
   Console.WriteLine(tables.TbGlobal.Name);
   // 访问普通的 key-value 表
