@@ -125,9 +125,14 @@ namespace Luban.Job.Cfg.DataVisitors
             line.Append(type.Value);
         }
 
+        private string EscapeString(string s)
+        {
+            return s.Replace("\\", "\\\\").Replace("'", "\\'");
+        }
+
         public void Accept(DString type, StringBuilder line)
         {
-            line.Append('\'').Append(type.Value).Append('\'');
+            line.Append('\'').Append(EscapeString(type.Value)).Append('\'');
         }
 
         public void Accept(DBytes type, StringBuilder line)
@@ -137,7 +142,7 @@ namespace Luban.Job.Cfg.DataVisitors
 
         public void Accept(DText type, StringBuilder line)
         {
-            line.Append('\'').Append(type.Value).Append('\'');
+            line.Append('\'').Append(EscapeString(type.Value)).Append('\'');
         }
 
         public void Accept(DBean type, StringBuilder line)

@@ -136,6 +136,7 @@ func NewChild{{go_full_name}}(_buf *serialization.ByteBuf) (_v interface{}, err 
         private static Template t_tableRender;
         public string Render(DefTable p)
         {
+            // TODO 目前只有普通表支持多态. 单例表和双key表都不支持
             string package = "cfg";
             var template = t_tableRender ??= Template.Parse(@"
 {{-
@@ -233,7 +234,16 @@ func New{{go_full_name}}(_buf *serialization.ByteBuf) (*{{go_full_name}}, error)
 				return nil, err2
 			} else {
 				_dataList = append(_dataList, _v)
+{{~if value_type.is_dynamic ~}}
+        {{- for child in value_type.bean.hierarchy_not_abstract_children}}
+                if __v, __is := _v.(*{{child.go_full_name}}) ; __is {
+                    dataMap[__v.{{index_field.cs_style_name}}] = _v
+                    continue
+                }
+        {{-end}}
+{{~else~}}
 				dataMap[_v.{{index_field.cs_style_name}}] = _v
+{{~end~}}
 			}
 		}
 		return &{{go_full_name}}{_dataList:_dataList, _dataMap:dataMap}, nil

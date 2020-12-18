@@ -51,6 +51,7 @@ class {{name}} : public {{if parent_def_type}} {{parent_def_type.cpp_full_name}}
 
     }
 
+{{~if !hierarchy_export_fields.empty?~}}
     {{name}}({{- for field in hierarchy_export_fields }}{{cpp_define_type field.ctype}} {{field.name}}{{if !for.last}},{{end}} {{end}}) 
     {{-if parent_def_type-}}
             : {{parent_def_type.cpp_full_name}}({{ for field in parent_def_type.hierarchy_export_fields }}{{field.name}}{{if !for.last}}, {{end}}{{end}})
@@ -61,7 +62,7 @@ class {{name}} : public {{if parent_def_type}} {{parent_def_type.cpp_full_name}}
         this->{{field.cpp_style_name}} = {{field.name}};
         {{~end~}}
     }
-
+{{~end~}}
     virtual ~{{name}}() {}
 
     bool deserialize(ByteBuf& _buf);

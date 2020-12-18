@@ -102,6 +102,9 @@ class {{name}} {{if parent_def_type}}({{parent_def_type.py_full_name}}){{end}}:
         {{~end~}}
         {{py27_deserialize ('self.' + field.py_style_name) ('_json_[""' + field.name + '""]') field.ctype}}
         {{~end~}}
+        {{~if export_fields.empty?}}
+        pass
+        {{~end~}}
 ");
             var result = template.RenderCode(b);
 

@@ -12,7 +12,7 @@
 
 ## 介绍
 
-luban是一个相当完备成熟的游戏配置解决方案，同时也可以用作通用型对象生成与缓存工具。
+luban是一个比较完备的游戏配置解决方案，同时也可以用作通用型对象生成与缓存工具。
 
 luban创新性提出 **定义 + 数据源** 的设计，实现了完备的类型系统，增强了excel格式，同时提供json、xml、lua等多种数据源支持，统一了数据定义、加载、检验、数据导出及代码生成的游戏配置Pipeline，彻底解决了中大型项目中难以在excel中配置复杂数据以及一个项目中excel、json等多种的配置方案并存的问题。
 
@@ -30,12 +30,13 @@ Luban另一优点是生成过程极快。对于普通的导表工具，一个典
 - [Excel 配置数据简介](docs/data_excel.md)
 - [使用说明](docs/catalog.md)
 - [常见问题](docs/faq.md)
+- [示例项目](https://github.com/focus-creative-games/luban_examples)
 
 ## 特性
 - 支持增强的excel格式，可以在excel里比较简洁填写出任意复杂的数据。
-- 支持excel族、json、xml、lua 多种数据格式
-- 强大完备的类型系统。支持所有常见原生类型、容器类型list,set,map、枚举和结构、**多态结构**以及**可空类型**
-- 灵活的数据源定义。一个表可以来自多个文件，或者一个文件内定义多个表或者一个表对应一个目录下所有文件。以及以上的组合
+- 支持excel族、json、xml、lua 多种数据格式，基本统一了游戏内的配置数据
+- 灵活的数据源定义。一个表可以来自多个文件或者一个文件内定义多个表或者一个表对应一个目录下所有文件，以及以上的组合。
+- 强大完备的类型系统。支持所有常见原生类型、容器类型list,set,map、枚举和结构、**多态结构**以及**可空类型**。
 - 支持表与字段级别分组。可以选择性地导出客户端或者服务器所用的表及字段。
 - 多种导出数据格式支持。支持binary、json、lua 等导出数据格式。
 - 支持数据标签。 可以选择导出符合要求的数据，发布正式数据时策划不必手动注释掉那些测试或者非正式数据了。
@@ -71,9 +72,9 @@ Luban另一优点是生成过程极快。对于普通的导表工具，一个典
    - 其他所有支持lua的引擎和平台
    - 其他所有支持js的引擎和平台
 
-## 结构定义与配置表填写
+## 使用预览
 
-与常见的专注于excel的导表工具中定义和数据放在同一个excel文件的做法不同，luban的定义与数据分离，使用单独的xml定义 **表和结构**，数据文件只包含数据。
+与常见的专注于excel的导表工具不同，luban的定义与数据分离，使用单独的xml定义 **表和结构**，数据文件只包含数据。
 
 ### 常规的原生数据
 ```
@@ -414,7 +415,7 @@ luban支持横表与纵表，默认为横表。对于单例表，纵表填写更
 	</k15>
 </data>
 ```
-### json 数据源
+### lua 数据源
 
 定义
 
@@ -496,7 +497,7 @@ luban支持横表与纵表，默认为横表。对于单例表，纵表填写更
 
   ```Lua
   -- 直接 require 表
-  local data = require("<--output_data_dir 指向的lua相对路径>.TbFullTypes")
+  local data = require("<lua数据路径>.TbFullTypes")
   -- 获取 key为1001的道具数据
   local cfg = data[1]
   print(cfg.X4)
@@ -506,7 +507,7 @@ luban支持横表与纵表，默认为横表。对于单例表，纵表填写更
 
   ```C#
   // 一行代码可以加载所有配置。 cfg.Tables 包含所有表的一个实例字段。
-  var tables = new cfg.Tables(file => return new ByteBuf(File.ReadAllBytes("<--output_data_dir指向的数据路径>/" + file)));
+  var tables = new cfg.Tables(file => return new ByteBuf(File.ReadAllBytes("<数据路径>/" + file)));
   // 访问一个单例表
   Console.WriteLine(tables.TbGlobal.Name);
   // 访问普通的 key-value 表

@@ -22,6 +22,18 @@ namespace Luban.Common.Utils
             return index >= 0 ? path[..index] : path;
         }
 
+        public static string GetFileNameWithoutExt(string file)
+        {
+            int index = file.LastIndexOf('.');
+            return index >= 0 ? file.Substring(0, index) : file;
+        }
+
+        public static string GetFileExtension(string file)
+        {
+            int index = file.LastIndexOf('.');
+            return index >= 0 ? file.Substring(index + 1) : "";
+        }
+
         public static string GetPathRelateRootFile(string rootFile, string file)
         {
             return Combine(GetParent(rootFile), file);

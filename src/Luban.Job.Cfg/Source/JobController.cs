@@ -529,20 +529,20 @@ export class Vector2 {
                                 {
                                     @"
 class Vector2:
-        def __init__(self, x, y):
-            self.x = x
-            self.y = y
-            self.a = Vector4(1,2,3,4)
-        def __str__(self):
-            return '{%g,%g}' % (self.x, self.y)
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.a = Vector4(1,2,3,4)
+    def __str__(self):
+        return '{%g,%g}' % (self.x, self.y)
 
-        @staticmethod
-        def fromJson(_json_):
-            x = _json_['x']
-            y = _json_['y']
-            if (x == None or y == None):
-                raise Exception()
-            return Vector2(x, y)
+    @staticmethod
+    def fromJson(_json_):
+        x = _json_['x']
+        y = _json_['y']
+        if (x == None or y == None):
+            raise Exception()
+        return Vector2(x, y)
 
 
 class Vector3:

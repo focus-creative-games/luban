@@ -192,7 +192,8 @@ public final class {{name}}
     public java.util.ArrayList<{{java_box_define_type value_type}}> getDataList() { return _dataList; }
 
     {{if value_type.is_dynamic}}
-    public T getAs<T extends {{java_box_define_type value_type}}>({{java_define_type key_type1}} key1, {{java_define_type key_type2}} key2) { return (T)_dataMapMap.get(key1).get(key2); }
+    @SuppressWarnings(""unchecked"")
+    public <T extends {{java_box_define_type value_type}}> T getAs({{java_define_type key_type1}} key1, {{java_define_type key_type2}} key2) { return (T)_dataMapMap.get(key1).get(key2); }
     {{end}}
     public {{java_box_define_type value_type}} get({{java_define_type key_type1}} key1, {{java_define_type key_type2}} key2) { return _dataMapMap.get(key1).get(key2);}
 
@@ -225,7 +226,8 @@ public final class {{name}}
     public java.util.ArrayList<{{java_box_define_type value_type}}> getDataList() { return _dataList; }
 
 {{~if value_type.is_dynamic~}}
-    public T getAs<T extends {{java_box_define_type value_type}}>({{java_box_define_type key_type}} key) { return (T)_dataMap.get(key); }
+    @SuppressWarnings(""unchecked"")
+    public <T extends {{java_box_define_type value_type}}> T getAs({{java_define_type key_type}} key) { return (T)_dataMap.get(key); }
 {{~end~}}
     public {{java_box_define_type value_type}} get({{java_define_type key_type}} key) { return _dataMap.get(key); }
 
