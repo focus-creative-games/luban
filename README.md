@@ -30,6 +30,8 @@ Luban另一优点是生成过程极快。对于普通的导表工具，一个典
 - [Excel 配置数据简介](docs/data_excel.md)
 - [使用说明](docs/catalog.md)
 - [常见问题](docs/faq.md)
+- [快速上手及进阶](docs/start_up.md)
+- [完整手册](docs/manual.md)
 - [示例项目](https://github.com/focus-creative-games/luban_examples)
 
 ## 特性

@@ -1,23 +1,13 @@
 <root>
-
 	<topmodule name="cfg"/>
 
-	<group name="client,c" default="1"/>
-	<group name="server,s" default="1"/>
-	<group name="editor,e" default="1"/>
-	<group name="ue,u"/>
-	
+	<group name="c" default="1"/> client 分组
+	<group name="s" default="1"/> server 分组
+	<group name="e" default="1"/> editor分组
+
 	<import name="."/>
 
-	<service name="server" manager="Tables" group="s,server"/>
-	
-	<service name="client" manager="Tables" group="c,client"/>
-	
-	<service name="all" manager="Tables" group="c,s"/>
-	
-	<service name="ue4_editor" manager="Tables" group="e"/>
-	
-	<service name="unity_editor" manager="Tables" group="e"/>
-	
-	<service name="ue4" manager="Tables" group="u,ue"/>
+	<service name="server" manager="Tables" group="s"/>
+	<service name="client" manager="Tables" group="c"/>
+	<service name="all" manager="Tables" group="c,s,e"/>
 </root>
