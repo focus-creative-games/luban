@@ -41,7 +41,7 @@
     </root>
     ```
 
-    直接从 luban_examples项目的 config/Defines/\_\_root__.xml 拷贝即可。
+    也可以直接拷贝 luban_examples项目的 config/Defines/\_\_root__.xml。
 
 1. 在配置根目录下，创建 check.bat，内容如下：
 
@@ -66,7 +66,8 @@ pause
 ```
     == succ ==
 ```
-表明命令行是正确的，能够正常生成，否则仔细检查参数。
+表明命令行是正确的。
 
+## 创建第一个表
 
 # 进阶

@@ -12,16 +12,16 @@
 
 ## 介绍
 
-luban是一个比较完备的游戏配置解决方案，同时也可以用作通用型对象生成与缓存工具。
+luban是一个相当完备的游戏配置解决方案，同时也可以用作通用型对象生成与缓存方案。
 
 luban创新性提出 **定义 + 数据源** 的设计，实现了完备的类型系统，增强了excel格式，同时提供json、xml、lua等多种数据源支持，统一了数据定义、加载、检验、数据导出及代码生成的游戏配置Pipeline，彻底解决了中大型项目中难以在excel中配置复杂数据以及一个项目中excel、json等多种的配置方案并存的问题。
 
 Luban适合有以下需求的开发者：
-1. 无法容忍传统excel导表工具的简陋功能，希望找一个快速强大经受过上线项目检验的满足中大型游戏项目配置需求的游戏配置解决方案
-2. 不想使用protobuf,希望针对项目需求方便地自定义消息生成，满足严苛的内存和性能的要求
+1. 手头excel导表工具功能简陋，希望找一个快速强大经受过上线项目检验的满足中大型游戏项目配置需求的游戏配置解决方案
+2. 希望针对项目需求方便地定制配置、消息等生成，满足更严苛的内存和性能的要求
 3. 希望做其他自定义生成或者缓存
 
-Luban另一优点是生成过程极快。对于普通的导表工具，一个典型的MMORPG项目后期全量生成配置往往需要几十秒。Luban使用client/server的云生成模型，通过多线程并发生成+对象缓存机制，大多数情况下可以1s内完成整个生成过程。
+Luban生成过程极快。对于普通的导表工具，一个典型的MMORPG项目后期全量生成配置往往需要几十秒。Luban使用client/server的云生成模型，通过多线程并发生成+对象缓存机制，大多数情况下可以1s内完成整个生成过程。
 
 ## 文档
 
@@ -74,12 +74,15 @@ Luban另一优点是生成过程极快。对于普通的导表工具，一个典
    - 其他所有支持lua的引擎和平台
    - 其他所有支持js的引擎和平台
 
-## 使用预览
+## 快速预览
 
 与常见的专注于excel的导表工具不同，luban的定义与数据分离，使用单独的xml定义 **表和结构**，数据文件只包含数据。
 
 ### 常规的原生数据
-```
+
+以下是一个包含所有常见简单原生数据的表。
+
+```xml
 <bean name="DemoPrimitiveTypesTable">
 	<var name="x1" type="bool"/>
 	<var name="x2" type="byte"/>
@@ -94,15 +97,23 @@ Luban另一优点是生成过程极快。对于普通的导表工具，一个典
 	<var name="v4" type="vector4"/>
 	<var name="t1" type="datetime"/>
 </bean>
+
+<table name="TbDemoPrimitive" index="x4" value="DemoPrimitiveTypesTable" input="demo_primitive.xlsx"/>
 ```
 
 ![](docs/images/examples/ex_2.png)
+
+
+- name="TbDemoPrivitive" 表示数据表名为TbDemoPrivitive，生成table的代码时使用这个类名。
+- value="DemoPrimitiveTypesTable" 表示数据表每行记录(即KV中的V)的类型为DemoPrimitiveTypesTable。
+- index="x4" 表示数据表以 <value>类型的x4字段为key。
+- input="demo_primitive.xlsx" 表示数据表的数据文件为 demo_primitives.xlsx
 
 ### 枚举
 
 定义枚举类，同时强制配置中必须填写枚举名或者别名，提高配置阅读性。
 
-```
+```xml
 <enum name="DemoEnum">
 	<var name="RED" alias="红" value="1"/>
 	<var name="BLUE" alias="蓝" value="3"/>
@@ -113,13 +124,15 @@ Luban另一优点是生成过程极快。对于普通的导表工具，一个典
 	<var name="id" type="int"/>
 	<var name="x2" type="DemoEnum"/>
 </bean>
+
+<table name="TbDemoEnum" value="DemoEnumTable" input="demo_enum.xlsx"/>
 ```
 
 ![](docs/images/examples/ex_12.png)
 
 ### 自定义结构 bean 
 
-```
+```xml
 <bean name="IntRange">
 	<var name="min" type="int"/>
 	<var name="max" type="int"/>
@@ -129,6 +142,8 @@ Luban另一优点是生成过程极快。对于普通的导表工具，一个典
 	<var name="id" type="int"/>
 	<var name="range" type="IntRange"/>
 </bean>
+
+<table name="TbDemoBean" value="DemoBeanTable" input="demo_bean.xlsx"/>
 ```
 
 ![](docs/images/examples/ex_22.png)
@@ -136,7 +151,7 @@ Luban另一优点是生成过程极快。对于普通的导表工具，一个典
 ### 多态结构 bean
 支持OOP的类型的继承体系，方便表达多类型的数据，经常用于技能、AI等模块。
 
-```
+```xml
 <bean name="Shape">
 	<var name="id" type="int"/>
 	<bean name="Circle">
@@ -157,11 +172,12 @@ Luban另一优点是生成过程极快。对于普通的导表工具，一个典
 	</bean>
 </bean>
 
-
 <bean name="ShapeTable">
 	<var name="id" type="int"/>
 	<var name="shape" type="Shape"/>
 </bean>
+
+<table name="TbDemoShape" value="DemoShapeTable" input="demo_shape.xlsx"/>
 ```
 
 ![](docs/images/examples/ex_32.png)
@@ -169,25 +185,30 @@ Luban另一优点是生成过程极快。对于普通的导表工具，一个典
 ### 可空数据类型
 配置数据中经常有空值的语义需求，实际项目中往往混杂地使用0或-1表达空值，既不自然清晰也不统一。luban借鉴了c#中的可空变量的概念，特地提供可空数据支持。除了string外的所有原生数据类型，以及enum类型都有相应的可空数据类型。定义方式为 <类型名>?，与c#里的Nullable类型定义方式相同。例如 bool?,int?,long?,double?, EColor?
 
-```
+```xml
 <bean name="NullableTable">
 	<var name="id" type="int"/>
 	<var name="min_level" type="int?"/>
 	<var name="color" type="DemoEnum?"/>
 </bean>
+
+<table name="TbNullable" value="NullableTable" input="nullable.xlsx">
 ```
 
 ![](docs/images/examples/ex_42.png)
 
+
 ### 简单原生数据列表类型
 一般来说，既可以在一个单元格内以 逗号","分隔填写，也可以每个单元格填写一个数据。注意！空单元格会被忽略。
 
-```
+```xml
 <bean name="CollectionTable">
 	<var name="id" type="int"/>
 	<var name="items" type="list,int"/>
 	<var name="coefs" type="list,int"/>
 </bean>
+
+<table name="TbSimpleCollection" value="CollectionTable" input="collection.xlsx">
 ```
 
 ![](docs/images/examples/ex_52.png)
@@ -195,72 +216,84 @@ Luban另一优点是生成过程极快。对于普通的导表工具，一个典
 ### 结构列表
 对于结构列表类型，有多种填写。策划根据具体情况，选择最合适的填法。
 
-- 全展开。
+1. 全展开。
+	```xml
+	<bean name="Item">
+		<var name="id" type="int"/>
+		<var name="name" type="string"/>
+		<var name="num" type="int"/>
+	</bean>
 
-```
-<bean name="Item">
-	<var name="id" type="int"/>
-	<var name="name" type="string"/>
-	<var name="num" type="int"/>
-</bean>
+	<bean name="CollectionTable2">
+		<var name="id" type="int"/>
+		<var name="items" type="list,Item"/>
+	</bean>
 
-<bean name="CollectionTable2">
-	<var name="id" type="int"/>
-	<var name="items" type="list,Item"/>
-</bean>
-```
+	<table name="TbBeanCollection" value="CollectionTable2" input="collection2.xlsx">
+	```
 
-![](docs/images/examples/ex_61.png)
+	![](docs/images/examples/ex_61.png)
 
-- 每个Item在一个单元格内
+1. 每个Item在一个单元格内
 
-```
-<bean name="Item" sep=",">
-	<var name="id" type="int"/>
-	<var name="name" type="string"/>
-	<var name="num" type="int"/>
-</bean>
+	```xml
+	<bean name="Item" sep=",">
+		<var name="id" type="int"/>
+		<var name="name" type="string"/>
+		<var name="num" type="int"/>
+	</bean>
 
-<bean name="CollectionTable2">
-	<var name="id" type="int"/>
-	<var name="items" type="list,Item"/>
-</bean>
-```
+	<bean name="CollectionTable2">
+		<var name="id" type="int"/>
+		<var name="items" type="list,Item"/>
+	</bean>
 
-![](docs/images/examples/ex_62.png)
+	<table name="TbBeanCollection" value="CollectionTable2" input="collection2.xlsx">
+	```
 
-- 所有数据都在一个单元格内
-```
-<bean name="Item" sep=",">
-	<var name="id" type="int"/>
-	<var name="name" type="string"/>
-	<var name="num" type="int"/>
-</bean>
+	![](docs/images/examples/ex_62.png)
 
-<bean name="CollectionTable2">
-	<var name="id" type="int"/>
-	<var name="items" type="list,Item" sep="|"/>
-</bean>
-```
+1. 所有数据都在一个单元格内
+	```xml
+	<bean name="Item" sep=",">
+		<var name="id" type="int"/>
+		<var name="name" type="string"/>
+		<var name="num" type="int"/>
+	</bean>
 
-![](docs/images/examples/ex_63.png)
+	<bean name="CollectionTable2">
+		<var name="id" type="int"/>
+		<var name="items" type="list,Item" sep="|"/>
+	</bean>
+
+	<table name="TbBeanCollection" value="CollectionTable2" input="collection2.xlsx">
+	```
+
+	![](docs/images/examples/ex_63.png)
 
 ### 多态结构列表
-```
+
+```xml
 <bean name="CollectionTable3">
 	<var name="id" type="int"/>
 	<var name="shapes" type="list,Shape" sep=","/>
 </bean>
+
+<table name="TbBeanCollection3" value="CollectionTable3" input="collection3.xlsx">
 ```
+
 ![](docs/images/examples/ex_71.png)
 
 ### 双主键表
-```
+两个主键的表，以key1,key2为主键。
+
+```xml
 <bean name="TwoKeyTable">
 	<var name="key1" type="int"/>
 	<var name="key2" type="string"/>
 	<var name="name" type="string"/>
 </bean>
+
 <table name="TbTowKey" value="TwoKeyTable" index="key1,key2" input="examples.xlsx"/>
 ```
 
@@ -270,7 +303,7 @@ Luban另一优点是生成过程极快。对于普通的导表工具，一个典
 
 单例即代码模式中单例的含义，用于配置全局只有一份的数据。
 
-```
+```xml
 <bean name="SingletonTable">
 	<var name="init_gold_num" type="int"/>
 	<var name="guild_module_open_level" type="int"/>
@@ -283,11 +316,131 @@ luban支持横表与纵表，默认为横表。对于单例表，纵表填写更
 
 ![](docs/images/examples/ex_a1.png)
 
+### 数据约束校验
+
+支持 key引用检查、path资源检查、range范围检查 这几种约束检查。
+
+- 引用检查
+	
+	对于 int、long、string等简单数据类型，可以检查数据是否是某个表的合法id，这在游戏配置中非常普遍。例如下面的TbBonus表，要求item_id必须是合法的道具id，那么通过ref="item.TbItem"来显式约束，如果填了非法整数值，生成过程中会打印警告。发现引用错误不会中止生成，仍然导出数据，因为实际项目开发过程中，由于数据频繁改动而临时性产生一些不合法数据非常常见，这些出错的数据可能不会影响大部分的测试，如果中止生成，会导致不相关的开发同学经常性被阻塞了开发流程。
+
+	有时候不想对值为0或者空的字符串作检查，可以通过ref="<表全名>?"的方式来表示忽略检查默认值数据，例如ref="item.TbItem?"。	如果是int?之类的可空数据类型，不需要 ref="<表名>?" 也会自动忽略null数据，但0值仍然会被检查而发出警告。
+
+	```xml
+	<module name="item">
+		<bean name="Item">
+			<var name="id" type="int">
+			<var name="num" type="int">
+		</bean>
+
+		<table name="TbItem" value="Item" input="item/item.xlsx">
+
+		<bean name="Bonus1">
+			<var name="id" type="int">
+			<var name="item_id" type="int" ref="item.TbItem">
+			<var name="num" type="int">
+		</bean>
+		<table name="TbBonus" value="Bonus1" input="item/bonus.xlsx">
+
+		<bean name="Bonus2">
+			<var name="id" type="int">
+			<var name="item_id" type="int?" ref="item.TbItem">
+			<var name="num" type="int">
+		</bean>
+		<table name="TbBonus2" value="Bonus2" input="item/bonus2.xlsx">
+	</module>
+	```
+
+	![](docs/images/examples/ex_e1.png)
+	
+	![](docs/images/examples/ex_e2.png)
+
+	![](docs/images/examples/ex_e3.png)
+
+- path 资源检查
+
+	用于检查策划填写的资源路径是否合法，防止运行时出现资源查找不到的错误。具体请看 [完整手册](docs/manual.md)
+
+- range 检查
+
+	用于检查策划填写的数据是否在合法的范围内。具体请看 [完整手册](docs/manual.md)
+
+### 多数据源
+
+- 一个数据表来自两个excel文件
+
+	通过 excel文件1,excel文件2... 的方式指定数据表的数据来自多个文件，不同文件以逗号","分隔。当数据源为excel文件，并且没有用@来指定某个单元表时，该excel文件的中的所有单元表都会被读入。例如TbItem表的数据来自item目录下的item1.xlsx和item2.xlsx。
+	
+	```xml
+		<bean name="Item">
+			<var name="id" type="int">
+			<var name="num" type="int">
+		</bean>
+
+		<table name="TbItem" value="Item" input="item/item1.xlsx,item/item2.xlsx">
+	```
+
+	![](docs/images/examples/ex_c1.png)
+
+	![](docs/images/examples/ex_c2.png)
+
+	![](docs/images/examples/ex_c3.png)
+
+	![](docs/images/examples/ex_c4.png)
+
+- 两个数据表来自同一个excel文件的不同单元表
+	
+	通过 <单元表名>@excel文件的方式指定数据来自excel文件的某个单元表，可以指定多个单元表，通过逗号","分隔。示例中TbItem占了table1、table3两个单元表；TbEquip占了table2、table4两个单元表。同一个数据表占据的单元表不必连续。示例中故意让TbItem和TbEquip占了不相邻的两个单元表。
+	```xml
+	<bean name="Item">
+		<var name="id" type="int">
+		<var name="num" type="int">
+	</bean>
+
+	<table name="TbItem" value="Item" input="table1@examples.xlsx,table3@examples">
+
+	<bean name="Equip">
+		<var name="id" type="int">
+		<var name="count" type="int">
+	</bean>
+
+	<table name="TbEquip" value="Equip" input="table2@examples.xlsx,table4@examples">
+	```
+	![](docs/images/examples/ex_b1.png)
+
+	![](docs/images/examples/ex_b2.png)
+
+	![](docs/images/examples/ex_b3.png)
+
+	![](docs/images/examples/ex_b4.png)
+
+
+- 一个数据表的数据来自**目录**下的所有文件
+	
+	当以目录为数据源时，会遍历整个目录树中所有文件，除了文件名以 ",.~" （字符 逗号或点号或波浪号)开头的文件外，读入每个文件中的数据。如果是excel族的数据，会从每个文件中读取多个记录，如果是xml、lua、json族的数据，每个文件当作一个记录读入。 可以有指定多个目录同时为数据源，以逗号","分隔。
+	```xml
+	<bean name="Item">
+		<var name="id" type="int">
+		<var name="num" type="int">
+	</bean>
+
+	<table name="TbItem" value="Item" input="item">
+
+	```
+	![](docs/images/examples/ex_d1.png)
+
+	![](docs/images/examples/ex_c1.png)
+
+	![](docs/images/examples/ex_c3.png)
+
 ### json 数据源
+在一个大型复杂项目里，有些表的数据是以json形式保存，比如技能、AI、剧情等等。常规的导表工具只能处理excel，像xml、json之类的数据一般是程序员自己处理，最终导致游戏内有几套配置加载方案，而且前后端以及
+编辑器的开发者还得花费大量时间手写代码去处理这些数据，既麻烦又不容易定位错误。
 
-定义
+luban通过 **定义 + 数据源** 的方式统一所有配置。json数据源用法与excel数据源基本相同，唯一区别在于
+输入的数据文件格式由xlsx变成json。实际项目中如果以json为数据格式，为了方便编辑器处理，一般一个记录占一个文件，所有记录统一放在一个目录下，因此数据源变成了目录。如下图中的input="test/json_datas"目录。
 
-```
+```xml
 <bean name="DemoType2" >
 	<var name="x4" type="int" convert="DemoEnum"/>
 	<var name="x1" type="bool"/>
@@ -323,13 +476,13 @@ luban支持横表与纵表，默认为横表。对于单例表，纵表填写更
 <table name="TbDataFromJson" value="DemoType2" input="test/json_datas"/>
 ```
 
-以目录为数据源，递归遍历整个目录树，将每个json数据当作一个记录读入。
+以目录为数据源，递归遍历整个目录树，**按文件排序后**依次将每个json数据当作一个记录读入。
 
 ![](docs/images/examples/ex_81.png)
 
 其中 1.json 文件内容如下
 
-```
+```json
  {
 	"x1":true,
 	"x2":3,
@@ -365,7 +518,7 @@ luban支持横表与纵表，默认为横表。对于单例表，纵表填写更
 ### xml 数据源
 定义
 
-```
+```xml
 	<bean name="DemoType2">
 		<<定义同json>>
 	</bean>
@@ -377,7 +530,7 @@ luban支持横表与纵表，默认为横表。对于单例表，纵表填写更
 以目录为数据源，递归遍历整个目录树，将每个xml数据当作一个记录读入。
 
 其中 1.xml 文件内容如下
-```
+```xml
  <data>
 	<x1>true</x1>
 	<x2>4</x2>
@@ -421,7 +574,7 @@ luban支持横表与纵表，默认为横表。对于单例表，纵表填写更
 
 定义
 
-```
+```xml
 <bean name="DemoType2">
 	<<定义同json>>
 </bean>
@@ -432,8 +585,8 @@ luban支持横表与纵表，默认为横表。对于单例表，纵表填写更
 
 其中 1.lua 文件内容如下
 
-```
- return 
+```lua
+return 
 {
 	x1 = false,
 	x2 = 2,
@@ -467,35 +620,12 @@ luban支持横表与纵表，默认为横表。对于单例表，纵表填写更
 ```
 
 ------
-## 代码与数据生成
-以lua为例：
 
-1. 定义全局环境变量LUBAN_SERVER_IP。如果本地已运行luban.server，则取地址为127.0.0.1；如果没有运行，也可以使用已经部属好的云luan服务（仅供快速测试，建议每个项目独立搭建luban-server），地址为 81.69.4.240 。
-1. 进入 config 目录 & 运行 "生成 lua 数据.bat"
-
-生成的 output_lua 目录包含所有生成的配置数据文件。如下图：
-
-![](docs/images/examples/ex_a2.png)
-
-命令中的 --output_data_dir 参数为输出的lua数据目录，可根据实际情况修改。
-
-```
-..\src\Luban.Client\bin\Debug\net5.0\Luban.Client.exe ^
-	-h %LUBAN_SERVER_IP% ^
-	-j cfg ^
-	-- ^
-	-d Defines/root.xml ^
-	--input_data_dir Datas ^
-	--output_data_dir output_lua ^
-	-s client ^
-	--gen_types data_lua ^
-	--export_test_data
-```
-
-------
 ## 代码使用示例
 
-### Lua 使用示例
+这儿只简略展示lua和c#在开放中的用法，详细的使用范例和代码见[示例项目](https://github.com/focus-creative-games/luban_examples)。
+
+- Lua 使用示例
 
   ```Lua
   -- 直接 require 表
@@ -505,7 +635,7 @@ luban支持横表与纵表，默认为横表。对于单例表，纵表填写更
   print(cfg.X4)
   ```
 
-### C# 使用示例
+- C# 使用示例
 
   ```C#
   // 一行代码可以加载所有配置。 cfg.Tables 包含所有表的一个实例字段。
