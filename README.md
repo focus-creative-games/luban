@@ -8,7 +8,7 @@
 ![Docker Auto](https://img.shields.io/docker/cloud/automated/hugebug4ever/luban.svg)
 ![Docker Build](https://img.shields.io/docker/cloud/build/hugebug4ever/luban.svg)
 
-[![rzX2B6.png](https://s3.ax1x.com/2021/01/02/rzX2B6.png)](https://imgchr.com/i/rzX2B6)
+![](docs/images/icon.png)
 
 ## 介绍
 
@@ -46,7 +46,7 @@ Luban生成过程极快。对于普通的导表工具，一个典型的MMORPG项
 - 支持多种常见数据表模式。 one(单例表)、map（常规key-value表）、bmap(双键表)
 - 支持时间本地化。datetime类型数据会根据指定的timezone，转换为目标地区该时刻的UTC时间，方便程序使用。
 - 支持emmylua anntations。生成的lua包含符合emmylua 格式anntations信息。配合emmylua有良好的配置代码提示能力。
-- 支持res 资源标记。可以一键导出配置中引用的所有资源列表(icon,ui,assetbundle等等)
+- 支持res资源标记。可以一键导出配置中引用的所有资源列表(icon,ui,assetbundle等等)
 - 生成代码良好模块化。
 - **[TODO] 支持文本静态本地化。导出时所有text类型数据正确替换为最终的本地化字符串。**
 - **[TODO] 支持文本动态本地化。运行时动态切换所有text类型数据为目标本地化字符串。**
@@ -101,7 +101,7 @@ Luban生成过程极快。对于普通的导表工具，一个典型的MMORPG项
 <table name="TbDemoPrimitive" index="x4" value="DemoPrimitiveTypesTable" input="demo_primitive.xlsx"/>
 ```
 
-[![rzXo3d.png](https://s3.ax1x.com/2021/01/02/rzXo3d.png)](https://imgchr.com/i/rzXo3d)
+![](docs/images/examples/ex_2.png)
 
 
 - name="TbDemoPrivitive" 表示数据表名为TbDemoPrivitive，生成table的代码时使用这个类名。
@@ -128,7 +128,7 @@ Luban生成过程极快。对于普通的导表工具，一个典型的MMORPG项
 <table name="TbDemoEnum" value="DemoEnumTable" input="demo_enum.xlsx"/>
 ```
 
-[![rzXqDP.png](https://s3.ax1x.com/2021/01/02/rzXqDP.png)](https://imgchr.com/i/rzXqDP)
+![](docs/images/examples/ex_12.png)
 
 ### 自定义结构 bean 
 
@@ -146,7 +146,7 @@ Luban生成过程极快。对于普通的导表工具，一个典型的MMORPG项
 <table name="TbDemoBean" value="DemoBeanTable" input="demo_bean.xlsx"/>
 ```
 
-[![rzXv4g.png](https://s3.ax1x.com/2021/01/02/rzXv4g.png)](https://imgchr.com/i/rzXv4g)
+![](docs/images/examples/ex_22.png)
 
 ### 多态结构 bean
 支持OOP的类型的继承体系，方便表达多类型的数据，经常用于技能、AI等模块。
@@ -180,7 +180,7 @@ Luban生成过程极快。对于普通的导表工具，一个典型的MMORPG项
 <table name="TbDemoShape" value="DemoShapeTable" input="demo_shape.xlsx"/>
 ```
 
-[![rzjpgs.png](https://s3.ax1x.com/2021/01/02/rzjpgs.png)](https://imgchr.com/i/rzjpgs)
+![](docs/images/examples/ex_32.png)
 
 ### 可空数据类型
 配置数据中经常有空值的语义需求，实际项目中往往混杂地使用0或-1表达空值，既不自然清晰也不统一。luban借鉴了c#中的可空变量的概念，特地提供可空数据支持。除了string外的所有原生数据类型，以及enum类型都有相应的可空数据类型。定义方式为 <类型名>?，与c#里的Nullable类型定义方式相同。例如 bool?,int?,long?,double?, EColor?
@@ -195,7 +195,7 @@ Luban生成过程极快。对于普通的导表工具，一个典型的MMORPG项
 <table name="TbNullable" value="NullableTable" input="nullable.xlsx">
 ```
 
-[![rzj9vn.png](https://s3.ax1x.com/2021/01/02/rzj9vn.png)](https://imgchr.com/i/rzj9vn)
+![](docs/images/examples/ex_42.png)
 
 
 ### 简单原生数据列表类型
@@ -211,7 +211,7 @@ Luban生成过程极快。对于普通的导表工具，一个典型的MMORPG项
 <table name="TbSimpleCollection" value="CollectionTable" input="collection.xlsx">
 ```
 
-[![rzjFbV.png](https://s3.ax1x.com/2021/01/02/rzjFbV.png)](https://imgchr.com/i/rzjFbV)
+![](docs/images/examples/ex_52.png)
 
 ### 结构列表
 对于结构列表类型，有多种填写。策划根据具体情况，选择最合适的填法。
@@ -232,7 +232,7 @@ Luban生成过程极快。对于普通的导表工具，一个典型的MMORPG项
 	<table name="TbBeanCollection" value="CollectionTable2" input="collection2.xlsx">
 	```
 
-	[![rzjeC4.png](https://s3.ax1x.com/2021/01/02/rzjeC4.png)](https://imgchr.com/i/rzjeC4)
+	![](docs/images/examples/ex_61.png)
 
 1. 每个Item在一个单元格内
 
@@ -251,7 +251,7 @@ Luban生成过程极快。对于普通的导表工具，一个典型的MMORPG项
 	<table name="TbBeanCollection" value="CollectionTable2" input="collection2.xlsx">
 	```
 
-	[![rzjra8.png](https://s3.ax1x.com/2021/01/02/rzjra8.png)](https://imgchr.com/i/rzjra8)
+	![](docs/images/examples/ex_62.png)
 
 1. 所有数据都在一个单元格内
 	```xml
@@ -269,7 +269,7 @@ Luban生成过程极快。对于普通的导表工具，一个典型的MMORPG项
 	<table name="TbBeanCollection" value="CollectionTable2" input="collection2.xlsx">
 	```
 
-	[![rzjOMR.png](https://s3.ax1x.com/2021/01/02/rzjOMR.png)](https://imgchr.com/i/rzjOMR)
+	![](docs/images/examples/ex_63.png)
 
 ### 多态结构列表
 
@@ -282,7 +282,7 @@ Luban生成过程极快。对于普通的导表工具，一个典型的MMORPG项
 <table name="TbBeanCollection3" value="CollectionTable3" input="collection3.xlsx">
 ```
 
-[![rzjxZ6.png](https://s3.ax1x.com/2021/01/02/rzjxZ6.png)](https://imgchr.com/i/rzjxZ6)
+![](docs/images/examples/ex_71.png)
 
 ### 双主键表
 两个主键的表，以key1,key2为主键。
@@ -297,7 +297,7 @@ Luban生成过程极快。对于普通的导表工具，一个典型的MMORPG项
 <table name="TbTowKey" value="TwoKeyTable" index="key1,key2" input="examples.xlsx"/>
 ```
 
-[![rzvSIO.png](https://s3.ax1x.com/2021/01/02/rzvSIO.png)](https://imgchr.com/i/rzvSIO)
+![](docs/images/examples/ex_91.png)
 
 ### 单例表
 
@@ -314,7 +314,7 @@ Luban生成过程极快。对于普通的导表工具，一个典型的MMORPG项
 
 luban支持横表与纵表，默认为横表。对于单例表，纵表填写更舒服一些，因此我们在excel的B1单元格填上 row:0 表示它是纵表。
 
-[![rzvCJe.png](https://s3.ax1x.com/2021/01/02/rzvCJe.png)](https://imgchr.com/i/rzvCJe)
+![](docs/images/examples/ex_a1.png)
 
 ### 数据约束校验
 
@@ -351,11 +351,11 @@ luban支持横表与纵表，默认为横表。对于单例表，纵表填写更
 	</module>
 	```
 
-	[![rzvPRH.png](https://s3.ax1x.com/2021/01/02/rzvPRH.png)](https://imgchr.com/i/rzvPRH)
+	![](docs/images/examples/ex_e1.png)
 	
-	[![rzvkQA.png](https://s3.ax1x.com/2021/01/02/rzvkQA.png)](https://imgchr.com/i/rzvkQA)
+	![](docs/images/examples/ex_e2.png)
 
-	[![rzvAsI.png](https://s3.ax1x.com/2021/01/02/rzvAsI.png)](https://imgchr.com/i/rzvAsI)
+	![](docs/images/examples/ex_e3.png)
 
 - path 资源检查
 
@@ -380,13 +380,13 @@ luban支持横表与纵表，默认为横表。对于单例表，纵表填写更
 		<table name="TbItem" value="Item" input="item/item1.xlsx,item/item2.xlsx">
 	```
 
-	[![rzvedf.png](https://s3.ax1x.com/2021/01/02/rzvedf.png)](https://imgchr.com/i/rzvedf)
+	![](docs/images/examples/ex_c1.png)
 
-	[![rzvmo8.png](https://s3.ax1x.com/2021/01/02/rzvmo8.png)](https://imgchr.com/i/rzvmo8)
+	![](docs/images/examples/ex_c2.png)
 
-	[![rzvuFS.png](https://s3.ax1x.com/2021/01/02/rzvuFS.png)](https://imgchr.com/i/rzvuFS)
+	![](docs/images/examples/ex_c3.png)
 
-	[![rzvKJg.png](https://s3.ax1x.com/2021/01/02/rzvKJg.png)](https://imgchr.com/i/rzvKJg)
+	![](docs/images/examples/ex_c4.png)
 
 - 两个数据表来自同一个excel文件的不同单元表
 	
@@ -406,13 +406,13 @@ luban支持横表与纵表，默认为横表。对于单例表，纵表填写更
 
 	<table name="TbEquip" value="Equip" input="table2@examples.xlsx,table4@examples">
 	```
-	[![rzvMWQ.png](https://s3.ax1x.com/2021/01/02/rzvMWQ.png)](https://imgchr.com/i/rzvMWQ)
+	![](docs/images/examples/ex_b1.png)
 
-	[![rzvQzj.png](https://s3.ax1x.com/2021/01/02/rzvQzj.png)](https://imgchr.com/i/rzvQzj)
+	![](docs/images/examples/ex_b2.png)
 
-	[![rzv1Qs.png](https://s3.ax1x.com/2021/01/02/rzv1Qs.png)](https://imgchr.com/i/rzv1Qs)
+	![](docs/images/examples/ex_b3.png)
 
-	[![rzv3yn.png](https://s3.ax1x.com/2021/01/02/rzv3yn.png)](https://imgchr.com/i/rzv3yn)
+	![](docs/images/examples/ex_b4.png)
 
 
 - 一个数据表的数据来自**目录**下的所有文件
@@ -427,11 +427,11 @@ luban支持横表与纵表，默认为横表。对于单例表，纵表填写更
 	<table name="TbItem" value="Item" input="item">
 
 	```
-	[![rzvtoT.png](https://s3.ax1x.com/2021/01/02/rzvtoT.png)](https://imgchr.com/i/rzvtoT)
+	![](docs/images/examples/ex_d1.png)
 
-	[![rzvedf.png](https://s3.ax1x.com/2021/01/02/rzvedf.png)](https://imgchr.com/i/rzvedf)
+	![](docs/images/examples/ex_c1.png)
 
-	[![rzvuFS.png](https://s3.ax1x.com/2021/01/02/rzvuFS.png)](https://imgchr.com/i/rzvuFS)
+	![](docs/images/examples/ex_c3.png)
 
 ### json 数据源
 在一个大型复杂项目里，有些表的数据是以json形式保存，比如技能、AI、剧情等等。常规的导表工具只能处理excel，像xml、json之类的数据一般是程序员自己处理，最终导致游戏内有几套配置加载方案，而且前后端以及
@@ -478,7 +478,7 @@ luban通过 **定义 + 数据源** 的方式统一所有配置。json数据源�
 
 以目录为数据源，递归遍历整个目录树，**按文件排序后**依次将每个json数据当作一个记录读入。
 
-[![rzvIOI.png](https://s3.ax1x.com/2021/01/02/rzvIOI.png)](https://imgchr.com/i/rzvIOI)
+![](docs/images/examples/ex_81.png)
 
 其中 1.json 文件内容如下
 
