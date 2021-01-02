@@ -8,7 +8,7 @@
 ![Docker Auto](https://img.shields.io/docker/cloud/automated/hugebug4ever/luban.svg)
 ![Docker Build](https://img.shields.io/docker/cloud/build/hugebug4ever/luban.svg)
 
-![](docs/images/icon.png)
+![icon](docs/images/icon.png)
 
 ## 介绍
 
@@ -128,7 +128,7 @@ Luban生成过程极快。对于普通的导表工具，一个典型的MMORPG项
 <table name="TbDemoEnum" value="DemoEnumTable" input="demo_enum.xlsx"/>
 ```
 
-![](docs/images/examples/ex_12.png)
+![ex_12](docs/images/examples/ex_12.png)
 
 ### 自定义结构 bean 
 
@@ -146,7 +146,7 @@ Luban生成过程极快。对于普通的导表工具，一个典型的MMORPG项
 <table name="TbDemoBean" value="DemoBeanTable" input="demo_bean.xlsx"/>
 ```
 
-![](docs/images/examples/ex_22.png)
+![ex_22](docs/images/examples/ex_22.png)
 
 ### 多态结构 bean
 支持OOP的类型的继承体系，方便表达多类型的数据，经常用于技能、AI等模块。
@@ -180,7 +180,7 @@ Luban生成过程极快。对于普通的导表工具，一个典型的MMORPG项
 <table name="TbDemoShape" value="DemoShapeTable" input="demo_shape.xlsx"/>
 ```
 
-![](docs/images/examples/ex_32.png)
+![ex_32](docs/images/examples/ex_32.png)
 
 ### 可空数据类型
 配置数据中经常有空值的语义需求，实际项目中往往混杂地使用0或-1表达空值，既不自然清晰也不统一。luban借鉴了c#中的可空变量的概念，特地提供可空数据支持。除了string外的所有原生数据类型，以及enum类型都有相应的可空数据类型。定义方式为 <类型名>?，与c#里的Nullable类型定义方式相同。例如 bool?,int?,long?,double?, EColor?
@@ -195,7 +195,7 @@ Luban生成过程极快。对于普通的导表工具，一个典型的MMORPG项
 <table name="TbNullable" value="NullableTable" input="nullable.xlsx">
 ```
 
-![](docs/images/examples/ex_42.png)
+![ex_42](docs/images/examples/ex_42.png)
 
 
 ### 简单原生数据列表类型
@@ -211,7 +211,7 @@ Luban生成过程极快。对于普通的导表工具，一个典型的MMORPG项
 <table name="TbSimpleCollection" value="CollectionTable" input="collection.xlsx">
 ```
 
-![](docs/images/examples/ex_52.png)
+![ex_52](docs/images/examples/ex_52.png)
 
 ### 结构列表
 对于结构列表类型，有多种填写。策划根据具体情况，选择最合适的填法。
@@ -232,7 +232,7 @@ Luban生成过程极快。对于普通的导表工具，一个典型的MMORPG项
 	<table name="TbBeanCollection" value="CollectionTable2" input="collection2.xlsx">
 	```
 
-	![](docs/images/examples/ex_61.png)
+	![ex_61](docs/images/examples/ex_61.png)
 
 1. 每个Item在一个单元格内
 
@@ -251,7 +251,7 @@ Luban生成过程极快。对于普通的导表工具，一个典型的MMORPG项
 	<table name="TbBeanCollection" value="CollectionTable2" input="collection2.xlsx">
 	```
 
-	![](docs/images/examples/ex_62.png)
+	![ex_62](docs/images/examples/ex_62.png)
 
 1. 所有数据都在一个单元格内
 	```xml
@@ -269,7 +269,7 @@ Luban生成过程极快。对于普通的导表工具，一个典型的MMORPG项
 	<table name="TbBeanCollection" value="CollectionTable2" input="collection2.xlsx">
 	```
 
-	![](docs/images/examples/ex_63.png)
+	![ex_63](docs/images/examples/ex_63.png)
 
 ### 多态结构列表
 
@@ -282,7 +282,7 @@ Luban生成过程极快。对于普通的导表工具，一个典型的MMORPG项
 <table name="TbBeanCollection3" value="CollectionTable3" input="collection3.xlsx">
 ```
 
-![](docs/images/examples/ex_71.png)
+![ex_71](docs/images/examples/ex_71.png)
 
 ### 双主键表
 两个主键的表，以key1,key2为主键。
@@ -297,7 +297,7 @@ Luban生成过程极快。对于普通的导表工具，一个典型的MMORPG项
 <table name="TbTowKey" value="TwoKeyTable" index="key1,key2" input="examples.xlsx"/>
 ```
 
-![](docs/images/examples/ex_91.png)
+![ex_91](docs/images/examples/ex_91.png)
 
 ### 单例表
 
@@ -314,7 +314,7 @@ Luban生成过程极快。对于普通的导表工具，一个典型的MMORPG项
 
 luban支持横表与纵表，默认为横表。对于单例表，纵表填写更舒服一些，因此我们在excel的B1单元格填上 row:0 表示它是纵表。
 
-![](docs/images/examples/ex_a1.png)
+![ex_a1](docs/images/examples/ex_a1.png)
 
 ### 数据约束校验
 
@@ -351,11 +351,11 @@ luban支持横表与纵表，默认为横表。对于单例表，纵表填写更
 	</module>
 	```
 
-	![](docs/images/examples/ex_e1.png)
+	![ex_e1](docs/images/examples/ex_e1.png)
 	
-	![](docs/images/examples/ex_e2.png)
+	![ex_e2](docs/images/examples/ex_e2.png)
 
-	![](docs/images/examples/ex_e3.png)
+	![ex_e3](docs/images/examples/ex_e3.png)
 
 - path 资源检查
 
@@ -380,13 +380,13 @@ luban支持横表与纵表，默认为横表。对于单例表，纵表填写更
 		<table name="TbItem" value="Item" input="item/item1.xlsx,item/item2.xlsx">
 	```
 
-	![](docs/images/examples/ex_c1.png)
+	![ex_c1](docs/images/examples/ex_c1.png)
 
-	![](docs/images/examples/ex_c2.png)
+	![ex_c2](docs/images/examples/ex_c2.png)
 
-	![](docs/images/examples/ex_c3.png)
+	![ex_c3](docs/images/examples/ex_c3.png)
 
-	![](docs/images/examples/ex_c4.png)
+	![ex_c4](docs/images/examples/ex_c4.png)
 
 - 两个数据表来自同一个excel文件的不同单元表
 	
@@ -406,13 +406,13 @@ luban支持横表与纵表，默认为横表。对于单例表，纵表填写更
 
 	<table name="TbEquip" value="Equip" input="table2@examples.xlsx,table4@examples">
 	```
-	![](docs/images/examples/ex_b1.png)
+	![ex_b1](docs/images/examples/ex_b1.png)
 
-	![](docs/images/examples/ex_b2.png)
+	![ex_b2](docs/images/examples/ex_b2.png)
 
-	![](docs/images/examples/ex_b3.png)
+	![ex_b3](docs/images/examples/ex_b3.png)
 
-	![](docs/images/examples/ex_b4.png)
+	![ex_b4](docs/images/examples/ex_b4.png)
 
 
 - 一个数据表的数据来自**目录**下的所有文件
@@ -427,11 +427,11 @@ luban支持横表与纵表，默认为横表。对于单例表，纵表填写更
 	<table name="TbItem" value="Item" input="item">
 
 	```
-	![](docs/images/examples/ex_d1.png)
+	![ex_d1](docs/images/examples/ex_d1.png)
 
-	![](docs/images/examples/ex_c1.png)
+	![ex_c1](docs/images/examples/ex_c1.png)
 
-	![](docs/images/examples/ex_c3.png)
+	![ex_c3](docs/images/examples/ex_c3.png)
 
 ### json 数据源
 在一个大型复杂项目里，有些表的数据是以json形式保存，比如技能、AI、剧情等等。常规的导表工具只能处理excel，像xml、json之类的数据一般是程序员自己处理，最终导致游戏内有几套配置加载方案，而且前后端以及
@@ -478,7 +478,7 @@ luban通过 **定义 + 数据源** 的方式统一所有配置。json数据源�
 
 以目录为数据源，递归遍历整个目录树，**按文件排序后**依次将每个json数据当作一个记录读入。
 
-![](docs/images/examples/ex_81.png)
+![ex_81](docs/images/examples/ex_81.png)
 
 其中 1.json 文件内容如下
 
