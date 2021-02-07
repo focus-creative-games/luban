@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Luban.Job.Db.Generate
 {
-    class CsRender
+    class SyncCsRender
     {
         public string RenderAny(object o)
         {

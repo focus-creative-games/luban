@@ -99,7 +99,7 @@ namespace Luban.Job.Db
                 {
                     case "cs":
                     {
-                        var render = new CsRender();
+                        var render = new AsyncCsRender();
                         foreach (var c in ass.Types.Values)
                         {
                             tasks.Add(Task.Run(() =>

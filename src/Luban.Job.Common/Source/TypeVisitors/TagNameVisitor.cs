@@ -83,7 +83,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TBean type)
         {
-            return "BEAN";
+            return type.IsDynamic ? "DYNAMIC_BEAN" : "BEAN";
         }
 
         public string Accept(TArray type)

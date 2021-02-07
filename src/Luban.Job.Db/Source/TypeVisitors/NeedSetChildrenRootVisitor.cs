@@ -19,12 +19,17 @@ namespace Luban.Job.Db.TypeVisitors
 
         public override bool Accept(TList type)
         {
-            return type.ElementType is TBean;
+            return true;
+        }
+
+        public override bool Accept(TSet type)
+        {
+            return true;
         }
 
         public override bool Accept(TMap type)
         {
-            return type.ValueType is TBean;
+            return true;
         }
     }
 }
