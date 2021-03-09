@@ -38,6 +38,7 @@ namespace Luban.Job.Db.Generate
             var template = t_beanRender ??= Template.Parse(@"
 {{
     name = x.name
+    full_name = x.full_name
     parent_def_type = x.parent_def_type
     fields = x.fields
     hierarchy_fields = x.hierarchy_fields
@@ -86,7 +87,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
         {
             if (this.InitedObjectId)
             {
-                var txn = Bright.Transaction.TransactionContext.ThreadStaticTxn;
+                var txn = Bright.Transaction.TransactionContext.ThreadStaticCtx;
                 if (txn == null) return {{field.internal_name}};
                 var log = ({{field.log_type}})txn.GetField(_objectId_ + {{field.id}});
                 return log != null ? log.Value : {{field.internal_name}};
@@ -103,7 +104,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
             {{~end~}}
             if (this.InitedObjectId)
             {
-                var txn = Bright.Transaction.TransactionContext.ThreadStaticTxn;
+                var txn = Bright.Transaction.TransactionContext.ThreadStaticCtx;
                 txn.PutField(_objectId_ + {{field.id}}, new {{field.log_type}}(this, value));
                 {{~if field.ctype.need_set_children_root}}
                 value?.InitRoot(GetRoot());
@@ -194,7 +195,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
     public override int GetTypeId() => ID;
     {{~end~}}
 
-    protected override void InitChildrenRoot(Bright.Transaction.TKey root)
+    protected override void InitChildrenRoot(Bright.Storage.TKey root)
     {
         {{~ for field in hierarchy_fields~}}
         {{if need_set_children_root field.ctype}}{{field.internal_name}}?.InitRoot(root);{{end}}
@@ -237,11 +238,11 @@ namespace {{x.namespace_with_top_module}}
 
 public sealed class {{name}}
 {
-    public static {{base_table_type}} Table { get; } = new {{internal_table_type}}({{x.table_uid}});
+    public static {{base_table_type}} Table { get; } = new {{internal_table_type}}();
 
         private class {{internal_table_type}} : {{base_table_type}}
         {
-            public {{internal_table_type}}(int tableId) : base(tableId)
+            public {{internal_table_type}}() : base({{x.table_uid}}, ""{{x.full_name}}"")
             {
 
             }
@@ -275,6 +276,11 @@ public sealed class {{name}}
     public static {{db_cs_define_type value_ttype}} Select({{db_cs_define_type key_ttype}} key)
     {
         return Table.Select(key);
+    }
+
+    public static ValueTask<{{db_cs_define_type value_ttype}}> SelectAsync({{db_cs_define_type key_ttype}} key)
+    {
+        return Table.SelectAsync<{{db_cs_define_type value_ttype}}>(key);
     }
 }
 }
