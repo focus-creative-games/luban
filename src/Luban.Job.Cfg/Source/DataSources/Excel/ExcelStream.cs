@@ -13,8 +13,15 @@ namespace Luban.Job.Cfg.DataSources.Excel
         private readonly int _toIndex;
         private int _curIndex;
 
-        public ExcelStream(List<Sheet.Cell> datas, int fromIndex, int toIndex, string sep)
+
+        /// <summary>
+        /// NamedMode下 string可以用空白表达空字符串，而不必用null或""
+        /// </summary>
+        public bool NamedMode { get; set; }
+
+        public ExcelStream(List<Sheet.Cell> datas, int fromIndex, int toIndex, string sep, bool namedMode)
         {
+            NamedMode = namedMode;
             if (string.IsNullOrWhiteSpace(sep))
             {
                 this._datas = datas;
@@ -42,8 +49,9 @@ namespace Luban.Job.Cfg.DataSources.Excel
             }
         }
 
-        public ExcelStream(Sheet.Cell cell, string sep)
+        public ExcelStream(Sheet.Cell cell, string sep, bool namedMode)
         {
+            NamedMode = namedMode;
             if (string.IsNullOrWhiteSpace(sep))
             {
                 this._datas = new List<Sheet.Cell> { cell };
@@ -102,7 +110,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
             return false;
         }
 
-        public object Read()
+        public object Read(bool notSkip = false)
         {
             //if (curIndex <= toIndex)
             //{
@@ -112,7 +120,12 @@ namespace Luban.Job.Cfg.DataSources.Excel
             //{
             //    throw new Exception($"cell:{datas[curIndex - 1]} 无法读取到足够多的数据");
             //}
-            return ReadSkipNull();
+            return notSkip ? ReadMayNull() : ReadSkipNull();
+        }
+
+        private object ReadMayNull()
+        {
+            return _curIndex <= _toIndex ? _datas[_curIndex++].Value : null;
         }
 
         //public object Read(bool nullable)

@@ -137,7 +137,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 if (Titles.TryGetValue(name, out var title))
                 {
                     CheckEmptySinceSecondRow(name, title.FromIndex, title.ToIndex);
-                    var es = new ExcelStream(Rows[0], title.FromIndex, title.ToIndex, sep);
+                    var es = new ExcelStream(Rows[0], title.FromIndex, title.ToIndex, sep, true);
                     return es;
                 }
                 else
@@ -181,7 +181,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                         {
                             continue;
                         }
-                        yield return new ExcelStream(row, title.FromIndex, title.ToIndex, sep);
+                        yield return new ExcelStream(row, title.FromIndex, title.ToIndex, sep, false);
                     }
                 }
                 else

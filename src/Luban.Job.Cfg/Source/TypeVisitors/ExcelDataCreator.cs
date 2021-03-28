@@ -235,10 +235,14 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public DType Accept(TString type, object converter, ExcelStream x, DefAssembly ass)
         {
-            var d = x.Read();
-            if (d is string s && s == "null")
+            var d = x.Read(x.NamedMode);
+            if (d == null)
             {
                 return new DString("");
+            }
+            if (d is string s)
+            {
+                return new DString(DataUtil.UnEscapeString(s));
             }
             return new DString(d.ToString());
         }
@@ -250,10 +254,14 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public DType Accept(TText type, object converter, ExcelStream x, DefAssembly ass)
         {
-            var d = x.Read();
-            if (d is string s && s == "null")
+            var d = x.Read(x.NamedMode);
+            if (d == null)
             {
                 return new DString("");
+            }
+            if (d is string s)
+            {
+                return new DString(DataUtil.UnEscapeString(s));
             }
             return new DString(d.ToString());
         }
@@ -272,7 +280,7 @@ namespace Luban.Job.Cfg.TypeVisitors
                     }
                     else
                     {
-                        list.Add(f.CType.Apply(this, f.Remapper, new ExcelStream(stream.ReadCell(), sep), ass));
+                        list.Add(f.CType.Apply(this, f.Remapper, new ExcelStream(stream.ReadCell(), sep, false), ass));
                     }
                 }
                 catch (Exception e)
@@ -312,6 +320,7 @@ namespace Luban.Job.Cfg.TypeVisitors
         // 因为貌似没意义？
         public List<DType> ReadList(TType type, object converter, ExcelStream stream, DefAssembly ass)
         {
+            stream.NamedMode = false;
             string sep = type is TBean bean ? ((DefBean)bean.Bean).Sep : null;
             var datas = new List<DType>();
             while (!stream.TryReadEOF())
@@ -322,7 +331,7 @@ namespace Luban.Job.Cfg.TypeVisitors
                 }
                 else
                 {
-                    datas.Add(type.Apply(this, converter, new ExcelStream(stream.ReadCell(), sep), ass));
+                    datas.Add(type.Apply(this, converter, new ExcelStream(stream.ReadCell(), sep, false), ass)); ;
                 }
             }
             return datas;
@@ -345,13 +354,14 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public DType Accept(TMap type, object converter, ExcelStream x, DefAssembly ass)
         {
+            x.NamedMode = false;
             string sep = type.ValueType is TBean bean ? ((DefBean)bean.Bean).Sep : null;
 
             var datas = new Dictionary<DType, DType>();
             while (!x.TryReadEOF())
             {
                 var key = type.KeyType.Apply(this, null, x, ass);
-                var value = string.IsNullOrWhiteSpace(sep) ? type.ValueType.Apply(this, null, x, ass) : type.ValueType.Apply(this, null, new ExcelStream(x.ReadCell(), sep), ass);
+                var value = string.IsNullOrWhiteSpace(sep) ? type.ValueType.Apply(this, null, x, ass) : type.ValueType.Apply(this, null, new ExcelStream(x.ReadCell(), sep, false), ass);
                 if (!datas.TryAdd(key, value))
                 {
                     throw new Exception($"map 的 key:{key} 重复");

@@ -64,6 +64,15 @@ namespace Luban.Job.Cfg.Utils
             return (string)data.Source;
         }
 
+        public static string UnEscapeString(string s)
+        {
+            if (s == "null" || s == "\"\"")
+            {
+                return "";
+            }
+            return s;
+        }
+
         //public static string Data2String(DType data)
         //{
         //    var s = new StringBuilder();
