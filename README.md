@@ -12,9 +12,11 @@
 
 ## 介绍
 
-luban是一个相当完备的游戏配置解决方案，同时也可以用作通用型对象生成与缓存方案。
+luban是一个比较成熟的**游戏配置解决方案**。它目前也被用于消息生成或者其他类型的生成，是一个通用型对象生成与缓存方案。
 
-luban创新性提出 **定义 + 数据源** 的设计，实现了完备的类型系统，增强了excel格式，同时提供json、xml、lua等多种数据源支持，统一了数据定义、加载、检验、数据导出及代码生成的游戏配置Pipeline，彻底解决了中大型项目中难以在excel中配置复杂数据以及一个项目中excel、json等多种的配置方案并存的问题。
+luban最初为无缝开放世界MMORPG这样的超大型项目而设计，擅长处理大型复杂的配置数据和结构。也适合向下用于卡牌、回合制、ARPG等中轻度游戏。目前在完美、头条、紫龙等多个公司内多个项目内使用，有多个上线项目。
+
+luban基于 **meta定义 + 数据源** 的设计，实现了**完备的类型系统**，增强了excel格式，同时提供json、xml、lua等多种数据源支持，统一了数据定义、加载、检验、数据导出及代码生成的游戏配置Pipeline，彻底解决了中大型项目中难以在excel中配置复杂数据以及一个项目中excel、json等多种的配置方案并存的问题。
 
 Luban适合有以下需求的开发者：
 1. 希望找一个快速强大经受过上线项目检验的满足**中大型**游戏项目配置需求的游戏配置解决方案
@@ -43,6 +45,7 @@ Luban生成过程极快。对于普通的导表工具，一个典型的MMORPG项
 - 多种导出数据格式支持。支持binary、json、lua 等导出数据格式。
 - 支持数据标签。 可以选择导出符合要求的数据，发布正式数据时策划不必手动注释掉那些测试或者非正式数据了。
 - 强大的数据校验能力。支持内建数据格式检查；支持ref表引用检查（策划不用担心填错id）；支持path资源检查（策划不用担心填错资源路径）。
+- 支持常量别名。策划不必再为诸如 升级丹 这样的道具手写具体道具id了。
 - 支持多种常见数据表模式。 one(单例表)、map（常规key-value表）、bmap(双键表)
 - 支持时间本地化。datetime类型数据会根据指定的timezone，转换为目标地区该时刻的UTC时间，方便程序使用。
 - 支持emmylua anntations。生成的lua包含符合emmylua 格式anntations信息。配合emmylua有良好的配置代码提示能力。
@@ -101,7 +104,7 @@ Luban生成过程极快。对于普通的导表工具，一个典型的MMORPG项
 <table name="TbDemoPrimitive" index="x4" value="DemoPrimitiveTypesTable" input="demo_primitive.xlsx"/>
 ```
 
-![](docs/images/examples/ex_2.png)
+![ex_2](docs/images/examples/ex_2.png)
 
 
 - name="TbDemoPrivitive" 表示数据表名为TbDemoPrivitive，生成table的代码时使用这个类名。
@@ -397,14 +400,14 @@ luban支持横表与纵表，默认为横表。对于单例表，纵表填写更
 		<var name="num" type="int">
 	</bean>
 
-	<table name="TbItem" value="Item" input="table1@examples.xlsx,table3@examples">
+	<table name="TbItem" value="Item" input="table1@examples.xlsx,table3@examples.xlsx">
 
 	<bean name="Equip">
 		<var name="id" type="int">
 		<var name="count" type="int">
 	</bean>
 
-	<table name="TbEquip" value="Equip" input="table2@examples.xlsx,table4@examples">
+	<table name="TbEquip" value="Equip" input="table2@examples.xlsx,table4@examples.xlsx">
 	```
 	![ex_b1](docs/images/examples/ex_b1.png)
 
@@ -424,7 +427,7 @@ luban支持横表与纵表，默认为横表。对于单例表，纵表填写更
 		<var name="num" type="int">
 	</bean>
 
-	<table name="TbItem" value="Item" input="item">
+	<table name="TbItem" value="Item" input="item.xlsx">
 
 	```
 	![ex_d1](docs/images/examples/ex_d1.png)
@@ -519,9 +522,6 @@ luban通过 **定义 + 数据源** 的方式统一所有配置。json数据源�
 定义
 
 ```xml
-	<bean name="DemoType2">
-		<<定义同json>>
-	</bean>
 
 <table name="TbDataFromXml" value="DemoType2" input="test/xml_datas"/> 
  	
@@ -575,10 +575,6 @@ luban通过 **定义 + 数据源** 的方式统一所有配置。json数据源�
 定义
 
 ```xml
-<bean name="DemoType2">
-	<<定义同json>>
-</bean>
-
 <table name="TbDataFromLua" value="DemoType2" input="test/lua_datas"/> 
 ```
 以目录为数据源，递归遍历整个目录树，将每个lua数据当作一个记录读入。
@@ -646,6 +642,9 @@ return
   Console.WriteLine(tables.TbItem.Get(12).X1);
   // 访问 双键表
   Console.WriteLine(tables.TbTwoKey.Get(1, 10).X8);
+  // 支持 operator []用法
+  Console.WriteLine(tables.TbMail[1001].X2);
+  Console.WriteLine(tables.TbTwoKey[100, 1].X8);
   ```
 - [更多语言的例子](docs/samples.md)
 
@@ -661,6 +660,16 @@ return
 
 - 安装 [VS2019 社区版](https://visualstudio.microsoft.com/zh-hans/vs/)
 - 安装 [.dotnet core sdk 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
+
+## 部属 luban-server
+
+- 基于 docker 
+
+	docker run -d --rm --name luban-server -p 8899:8899 focuscreativegames/luban-server:latest
+
+- 基于 .net 5 runtime
+	- 自行安装 .net 5 runtime.
+	- 在Luban.Server目录下运行 dotnet Luban.Server.dll
 
 ## 如何贡献
 
