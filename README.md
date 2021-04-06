@@ -77,6 +77,11 @@ Luban生成过程极快。对于普通的导表工具，一个典型的MMORPG项
    - 其他所有支持lua的引擎和平台
    - 其他所有支持js的引擎和平台
 
+
+## luban工作流程Pipeline
+
+![pipeline](docs/images/pipeline.jpg)
+
 ## 快速预览
 
 与常见的专注于excel的导表工具不同，luban的定义与数据分离，使用单独的xml定义 **表和结构**，数据文件只包含数据。
