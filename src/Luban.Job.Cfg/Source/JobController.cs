@@ -49,7 +49,7 @@ namespace Luban.Job.Cfg
             [Option("output_data_dir", Required = true, HelpText = "output data directory")]
             public string OutputDataDir { get; set; }
 
-            [Option("gen_types", Required = true, HelpText = "code_cs_bin,code_cs_json,code_lua_bin,data_bin,data_lua,data_json can be multi")]
+            [Option("gen_types", Required = true, HelpText = "code_cs_bin,code_cs_json,code_lua_bin,data_bin,data_lua,data_json,data_json_monolithic . can be multi")]
             public string GenType { get; set; }
 
             [Option('s', "service", Required = true, HelpText = "service")]
@@ -822,6 +822,41 @@ class Vector4:
                                     genDataFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                                 }));
                             }
+                            break;
+                        }
+                        case "data_json_monolithic":
+                        {
+                            await CheckLoadCfgDataAsync();
+                            List<Task<byte[]>> allJsonTask = new List<Task<byte[]>>();
+                            foreach (var c in exportTables)
+                            {
+                                allJsonTask.Add(Task.Run(() =>
+                                {
+                                    return ToOutputData(c, ass.GetTableDataList(c), "data_json");
+                                }));
+                            }
+                            await Task.WhenAll(allJsonTask);
+
+                            int estimatedCapacity = allJsonTask.Sum(t => t.Result.Length + 100);
+                            var sb = new MemoryStream(estimatedCapacity);
+                            sb.Write(System.Text.Encoding.UTF8.GetBytes("{\n"));
+                            for (int i = 0; i < exportTables.Count; i++)
+                            {
+                                if (i != 0)
+                                {
+                                    sb.Write(System.Text.Encoding.UTF8.GetBytes((",\n")));
+                                }
+                                sb.Write(System.Text.Encoding.UTF8.GetBytes("\"" + exportTables[i].Name + "\":"));
+                                sb.Write(allJsonTask[i].Result);
+                            }
+                            sb.Write(System.Text.Encoding.UTF8.GetBytes("\n}"));
+
+                            var content = sb.ToArray();
+                            s_logger.Debug("estimated size:{0} actual size:{1}", estimatedCapacity, content.Length);
+                            var md5 = FileUtil.CalcMD5(content);
+                            var outputFile = "tables.json";
+                            CacheManager.Ins.AddCache(outputFile, md5, content);
+                            genDataFiles.Add(new FileInfo() { FilePath = outputFile, MD5 = md5 });
                             break;
                         }
                         case "data_lua":
