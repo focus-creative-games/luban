@@ -49,6 +49,12 @@ namespace Luban.Job.Cfg
             [Option("output_data_dir", Required = true, HelpText = "output data directory")]
             public string OutputDataDir { get; set; }
 
+            [Option("output_data_resource_list_file", Required = false, HelpText = "output resource list file")]
+            public string OutputDataResourceListFile { get; set; }
+
+            [Option("output_data_json_monolithic_file", Required = false, HelpText = "output monolithic json file")]
+            public string OutputDataJsonMonolithicFile { get; set; }
+
             [Option("gen_types", Required = true, HelpText = "code_cs_bin,code_cs_json,code_lua_bin,data_bin,data_lua,data_json,data_json_monolithic . can be multi")]
             public string GenType { get; set; }
 
@@ -143,7 +149,7 @@ namespace Luban.Job.Cfg
                     errMsg = "--outputcodedir missing";
                     return false;
                 }
-                else if (genTypes.Any(t => t.StartsWith("data_", StringComparison.Ordinal)))
+                if (genTypes.Any(t => t.StartsWith("data_", StringComparison.Ordinal)))
                 {
                     if (string.IsNullOrWhiteSpace(inputDataDir))
                     {
@@ -153,6 +159,16 @@ namespace Luban.Job.Cfg
                     if (string.IsNullOrWhiteSpace(outputDataDir))
                     {
                         errMsg = "--outputdatadir missing";
+                        return false;
+                    }
+                    if (genTypes.Contains("data_resources") && string.IsNullOrWhiteSpace(result.OutputDataResourceListFile))
+                    {
+                        errMsg = "--output_data_resource_list_file missing";
+                        return false;
+                    }
+                    if (genTypes.Contains("data_json_monolithic") && string.IsNullOrWhiteSpace(result.OutputDataJsonMonolithicFile))
+                    {
+                        errMsg = "--output_data_json_monolithic_file missing";
                         return false;
                     }
                 }
@@ -229,8 +245,9 @@ namespace Luban.Job.Cfg
 
                 var tasks = new List<Task>();
 
-                var genCodeFiles = new ConcurrentBag<FileInfo>();
-                var genDataFiles = new ConcurrentBag<FileInfo>();
+                var genCodeFilesInOutputCodeDir = new ConcurrentBag<FileInfo>();
+                var genDataFilesInOutputDataDir = new ConcurrentBag<FileInfo>();
+                var genScatteredFiles = new ConcurrentBag<FileInfo>();
 
                 foreach (var genType in genTypes)
                 {
@@ -238,7 +255,6 @@ namespace Luban.Job.Cfg
                     {
                         case "code_cs_bin":
                         case "code_cs_json":
-
                         case "code_java_bin":
                         {
                             ICodeRender render = CreateCodeRender(genType);
@@ -251,7 +267,7 @@ namespace Luban.Job.Cfg
                                     var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderAny(c), lan);
                                     var file = RenderFileUtil.GetDefTypePath(c.FullName, lan);
                                     var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                    genCodeFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                                    genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                                 }));
                             }
 
@@ -262,7 +278,7 @@ namespace Luban.Job.Cfg
                                 var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderService(name, module, exportTables), lan);
                                 var file = RenderFileUtil.GetDefTypePath(name, lan);
                                 var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                genCodeFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                                genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                             }));
 
                             break;
@@ -275,7 +291,7 @@ namespace Luban.Job.Cfg
                                 var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderAll(ass.Types.Values.ToList()), ELanguage.LUA);
                                 var file = "Types.lua";
                                 var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                genCodeFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                                genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                             }));
                             break;
                         }
@@ -289,7 +305,7 @@ namespace Luban.Job.Cfg
                                     var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderAny(c), ELanguage.GO);
                                     var file = RenderFileUtil.GetDefTypePath(c.FullName, ELanguage.GO);
                                     var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                    genCodeFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                                    genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                                 }));
                             }
 
@@ -300,7 +316,7 @@ namespace Luban.Job.Cfg
                                 var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderService(name, module, exportTables), ELanguage.GO);
                                 var file = RenderFileUtil.GetDefTypePath(name, ELanguage.GO);
                                 var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                genCodeFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                                genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                             }));
                             break;
                         }
@@ -375,7 +391,7 @@ namespace {ass.TopModule}
                                 var content = FileHeaderUtil.ConcatAutoGenerationHeader(string.Join('\n', headerFileContent), ELanguage.CPP);
                                 var file = "gen_types.h";
                                 var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                genCodeFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                                genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                             }));
 
                             var beanTypes = exportTypes.Where(c => c is DefBean).ToList();
@@ -393,7 +409,7 @@ namespace {ass.TopModule}
                                         ELanguage.CPP);
                                     var file = $"gen_stub_{index}.cpp";
                                     var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                    genCodeFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                                    genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                                 }));
                             }
                             break;
@@ -514,7 +530,7 @@ export class Vector2 {
                                 var content = FileHeaderUtil.ConcatAutoGenerationHeader(string.Join('\n', fileContent), ELanguage.TYPESCRIPT);
                                 var file = "Types.ts";
                                 var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                genCodeFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                                genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                             }));
                             break;
                         }
@@ -617,7 +633,7 @@ class Vector4:
                                 var content = FileHeaderUtil.ConcatAutoGenerationHeader(string.Join('\n', fileContent), ELanguage.PYTHON);
                                 var file = "Types.py";
                                 var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                genCodeFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                                genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
 
 
                                 {
@@ -625,7 +641,7 @@ class Vector4:
                                     var initFile = "__init__.py";
 
                                     var initMd5 = CacheFileUtil.GenMd5AndAddCache(initFile, moduleInitContent);
-                                    genCodeFiles.Add(new FileInfo() { FilePath = initFile, MD5 = initMd5 });
+                                    genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = initFile, MD5 = initMd5 });
                                 }
                             }));
                             break;
@@ -732,7 +748,7 @@ class Vector4:
                                 var content = FileHeaderUtil.ConcatAutoGenerationHeader(string.Join('\n', fileContent), ELanguage.PYTHON);
                                 var file = "Types.py";
                                 var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                genCodeFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                                genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                             }));
                             break;
                         }
@@ -750,7 +766,7 @@ class Vector4:
                                     var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderAny(c), ELanguage.CPP);
                                     var file = "editor_" + RenderFileUtil.GetUeCppDefTypeHeaderFilePath(c.FullName);
                                     var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                    genCodeFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                                    genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                                 }));
                             }
 
@@ -767,7 +783,7 @@ class Vector4:
                                         ELanguage.CPP);
                                     var file = $"stub_{index}.cpp";
                                     var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                    genCodeFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                                    genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                                 }));
                             }
                             break;
@@ -782,7 +798,7 @@ class Vector4:
                                     var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderAny(c), ELanguage.CS);
                                     var file = RenderFileUtil.GetDefTypePath(c.FullName, ELanguage.GO);
                                     var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                    genCodeFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                                    genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                                 }));
                             }
                             break;
@@ -802,7 +818,7 @@ class Vector4:
                                     var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderAny(c), ELanguage.CPP);
                                     var file = "bp_" + RenderFileUtil.GetUeCppDefTypeHeaderFilePath(c.FullName);
                                     var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                    genCodeFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                                    genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                                 }));
                             }
                             break;
@@ -819,7 +835,7 @@ class Vector4:
                                     var file = genType.EndsWith("json") ? c.JsonOutputDataFile : c.OutputDataFile;
                                     var md5 = FileUtil.CalcMD5(content);
                                     CacheManager.Ins.AddCache(file, md5, content);
-                                    genDataFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                                    genDataFilesInOutputDataDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                                 }));
                             }
                             break;
@@ -854,9 +870,9 @@ class Vector4:
                             var content = sb.ToArray();
                             s_logger.Debug("estimated size:{0} actual size:{1}", estimatedCapacity, content.Length);
                             var md5 = FileUtil.CalcMD5(content);
-                            var outputFile = "tables.json";
+                            var outputFile = args.OutputDataJsonMonolithicFile;
                             CacheManager.Ins.AddCache(outputFile, md5, content);
-                            genDataFiles.Add(new FileInfo() { FilePath = outputFile, MD5 = md5 });
+                            genScatteredFiles.Add(new FileInfo() { FilePath = outputFile, MD5 = md5 });
                             break;
                         }
                         case "data_lua":
@@ -869,7 +885,7 @@ class Vector4:
                                 var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderDefines(ass.Types.Values.ToList()), ELanguage.LUA);
                                 var file = "Types.lua";
                                 var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                genDataFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                                genDataFilesInOutputDataDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
 
                             }));
 
@@ -881,7 +897,7 @@ class Vector4:
                                     var file = $"{c.Name}.lua";
                                     var md5 = FileUtil.CalcMD5(content);
                                     CacheManager.Ins.AddCache(file, md5, content);
-                                    genDataFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                                    genDataFilesInOutputDataDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                                 }));
                             }
                             break;
@@ -912,13 +928,12 @@ class Vector4:
                                         }
                                     }
                                 }
-                                var file = "resources.txt";
+                                var file = args.OutputDataResourceListFile;
                                 var contents = System.Text.Encoding.UTF8.GetBytes(string.Join("\n", resourceLines));
                                 var md5 = FileUtil.CalcMD5(contents);
                                 CacheManager.Ins.AddCache(file, md5, contents);
 
-                                // 不这么处理???
-                                genDataFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                                genScatteredFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                             }));
                             break;
                         }
@@ -932,13 +947,17 @@ class Vector4:
                 }
                 await Task.WhenAll(tasks.ToArray());
 
-                if (genCodeFiles.Count > 0)
+                if (!genCodeFilesInOutputCodeDir.IsEmpty)
                 {
-                    res.FileGroups.Add(new FileGroup() { Dir = outputCodeDir, Files = genCodeFiles.ToList() });
+                    res.FileGroups.Add(new FileGroup() { Dir = outputCodeDir, Files = genCodeFilesInOutputCodeDir.ToList() });
                 }
-                if (genDataFiles.Count > 0)
+                if (!genDataFilesInOutputDataDir.IsEmpty)
                 {
-                    res.FileGroups.Add(new FileGroup() { Dir = outputDataDir, Files = genDataFiles.ToList() });
+                    res.FileGroups.Add(new FileGroup() { Dir = outputDataDir, Files = genDataFilesInOutputDataDir.ToList() });
+                }
+                if (!genScatteredFiles.IsEmpty)
+                {
+                    res.ScatteredFiles.AddRange(genScatteredFiles);
                 }
             }
             catch (Exception e)

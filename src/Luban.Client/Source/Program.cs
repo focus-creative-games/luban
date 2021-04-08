@@ -210,6 +210,11 @@ Options:
                 tasks.Add(DownloadFileUtil.DownloadGeneratedFiles(fg.Dir, fg.Files));
             }
 
+            foreach (var f in res.ScatteredFiles)
+            {
+                tasks.Add(DownloadFileUtil.DownloadGeneratedFile(f));
+            }
+
             Task.WaitAll(tasks.ToArray());
             return 0;
         }

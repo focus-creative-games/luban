@@ -35,9 +35,7 @@ namespace Luban.Client.Common.Utils
             }
             await Task.WhenAll(tasks);
 
-            // todo 感觉有点问题哈，不是每个生成目录都需要clean up 的
             FileCleaner.Clean(outputDir, newFiles);
-
         }
 
         public static async Task DownloadGeneratedFile(FileInfo file)

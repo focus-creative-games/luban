@@ -66,7 +66,9 @@ namespace Luban.Common.Protos
 
         public string ErrMsg { get; set; }
 
-        public List<FileGroup> FileGroups { get; set; }
+        public List<FileGroup> FileGroups { get; set; } = new List<FileGroup>();
+
+        public List<FileInfo> ScatteredFiles { get; set; } = new List<FileInfo>();
 
         public override int GetTypeId()
         {
@@ -78,12 +80,14 @@ namespace Luban.Common.Protos
             os.WriteInt((int)ErrCode);
             os.WriteString(ErrMsg);
             Bright.Common.SerializationUtil.Serialize(os, FileGroups);
+            Bright.Common.SerializationUtil.Serialize(os, ScatteredFiles);
         }
         public override void Deserialize(ByteBuf os)
         {
             ErrCode = (EErrorCode)os.ReadInt();
             ErrMsg = os.ReadString();
-            Bright.Common.SerializationUtil.Deserialize(os, FileGroups = new List<FileGroup>());
+            Bright.Common.SerializationUtil.Deserialize(os, FileGroups);
+            Bright.Common.SerializationUtil.Deserialize(os, ScatteredFiles);
         }
     }
 
