@@ -119,7 +119,7 @@ namespace Luban.Job.Cfg
         }
 
 
-        private bool TryParseArg(List<string> args, out GenArgs result, out string errMsg)
+        private static bool TryParseArg(List<string> args, out GenArgs result, out string errMsg)
         {
             var helpWriter = new StringWriter();
             var parser = new Parser(ps =>
@@ -1113,6 +1113,7 @@ class Vector4:
                     {
                         Indented = true,
                         SkipValidation = false,
+                        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(System.Text.Unicode.UnicodeRanges.All),
                     });
                     JsonExportor.Ins.WriteList(records, jsonWriter);
                     jsonWriter.Flush();
