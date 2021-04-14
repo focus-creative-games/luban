@@ -5,6 +5,8 @@ namespace Luban.Job.Common.Types
 {
     public class TMap : TType
     {
+        public bool IsMap => true;
+
         public TType KeyType { get; }
 
         public TType ValueType { get; }

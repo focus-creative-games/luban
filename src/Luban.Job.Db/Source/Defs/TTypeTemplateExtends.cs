@@ -12,6 +12,11 @@ namespace Luban.Job.Db.Defs
             return type.Apply(DbCsDefineTypeVisitor.Ins);
         }
 
+        public static string DbCsReadonlyDefineType(TType type)
+        {
+            return type.Apply(DbCsReadOnlyDefineTypeVisitor.Ins);
+        }
+
         public static string CsImmutableType(TType type)
         {
             return type.Apply(ImmutableTypeName.Ins);

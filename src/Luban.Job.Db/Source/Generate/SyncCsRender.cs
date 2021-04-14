@@ -43,13 +43,21 @@ namespace Luban.Job.Db.Generate
     fields = x.fields
     hierarchy_fields = x.hierarchy_fields
     is_abstract_type = x.is_abstract_type
+    readonly_name = ""IReadOnly"" + name
 }}
 using Bright.Serialization;
 
 namespace {{x.namespace_with_top_module}}
 {
+
+public interface {{readonly_name}} {{if parent_def_type}}: IReadOnly{{x.parent}} {{end}}
+{
+    {{~ for field in fields~}}
+        {{db_cs_readonly_define_type field.ctype}} {{field.cs_style_name}} {get;}
+    {{~end~}}
+}
    
-public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.parent}} {{else}} Bright.Transaction.TxnBeanBase {{end}}, Bright.Transaction.IUnsafeBean
+public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.parent}} {{else}} Bright.Transaction.TxnBeanBase {{end}}, {{readonly_name}} , Bright.Transaction.IUnsafeBean
 {
     {{~ for field in fields~}}
         {{if is_abstract_type}}protected{{else}}private{{end}} {{db_cs_define_type field.ctype}} {{field.internal_name}};
@@ -63,6 +71,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
     }
 
     {{~ for field in fields~}}
+        {{ctype = field.ctype}}
         {{~if has_setter field.ctype~}}
 
     private sealed class {{field.log_type}} :  Bright.Transaction.FieldLogger<{{name}}, {{db_cs_define_type field.ctype}}>
@@ -141,6 +150,12 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
             {{~end~}}
 
          public {{db_cs_define_type field.ctype}} {{field.cs_style_name}} => {{field.internal_name}};
+        {{~end~}}
+
+        {{~if ctype.bean || ctype.element_type ~}}
+        {{db_cs_readonly_define_type ctype}} {{readonly_name}}.{{field.cs_style_name}} => {{field.internal_name}};
+        {{~else if ctype.is_map~}}
+        {{db_cs_readonly_define_type ctype}} {{readonly_name}}.{{field.cs_style_name}} => new Bright.Transaction.Collections.PReadOnlyMap<{{db_cs_readonly_define_type ctype.key_type}}, {{db_cs_readonly_define_type ctype.value_type}}, {{db_cs_define_type ctype.value_type}}>({{field.internal_name}});
         {{~end~}}
     {{~end~}}
 
@@ -273,14 +288,14 @@ public sealed class {{name}}
         Table.Put(key, value);
     }
 
-    public static {{db_cs_define_type value_ttype}} Select({{db_cs_define_type key_ttype}} key)
+    public static {{db_cs_readonly_define_type value_ttype}} Select({{db_cs_define_type key_ttype}} key)
     {
         return Table.Select(key);
     }
 
-    public static ValueTask<{{db_cs_define_type value_ttype}}> SelectAsync({{db_cs_define_type key_ttype}} key)
+    public static ValueTask<{{db_cs_readonly_define_type value_ttype}}> SelectAsync({{db_cs_define_type key_ttype}} key)
     {
-        return Table.SelectAsync<{{db_cs_define_type value_ttype}}>(key);
+        return Table.SelectAsync<{{db_cs_readonly_define_type value_ttype}}>(key);
     }
 }
 }
