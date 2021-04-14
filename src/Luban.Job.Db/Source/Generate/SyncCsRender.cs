@@ -49,7 +49,7 @@ using Bright.Serialization;
 namespace {{x.namespace_with_top_module}}
 {
    
-public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.parent}} {{else}} Bright.Transaction.TxnBeanBase {{end}}
+public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.parent}} {{else}} Bright.Transaction.TxnBeanBase {{end}}, Bright.Transaction.IUnsafeBean
 {
     {{~ for field in fields~}}
         {{if is_abstract_type}}protected{{else}}private{{end}} {{db_cs_define_type field.ctype}} {{field.internal_name}};
@@ -85,7 +85,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
     { 
         get
         {
-            if (this.InitedObjectId)
+            if (this.IsManaged)
             {
                 var txn = Bright.Transaction.TransactionContext.ThreadStaticCtx;
                 if (txn == null) return {{field.internal_name}};
@@ -102,7 +102,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
             {{~if db_field_cannot_null~}}
             if (value == null) throw new ArgumentNullException();
             {{~end~}}
-            if (this.InitedObjectId)
+            if (this.IsManaged)
             {
                 var txn = Bright.Transaction.TransactionContext.ThreadStaticCtx;
                 txn.PutField(_objectId_ + {{field.id}}, new {{field.log_type}}(this, value));
@@ -195,10 +195,10 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
     public override int GetTypeId() => ID;
     {{~end~}}
 
-    protected override void InitChildrenRoot(Bright.Storage.TKey root)
+    void Bright.Transaction.IUnsafeBean.InitChildrenRoot(Bright.Storage.TKey root)
     {
         {{~ for field in hierarchy_fields~}}
-        {{if need_set_children_root field.ctype}}{{field.internal_name}}?.InitRoot(root);{{end}}
+        {{if need_set_children_root field.ctype}}((Bright.Transaction.IUnsafeBean)({{field.internal_name}}))?.InitRoot(root);{{end}}
         {{~end}}
     }
 
