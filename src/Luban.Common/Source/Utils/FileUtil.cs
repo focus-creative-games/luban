@@ -19,7 +19,7 @@ namespace Luban.Common.Utils
         public static string GetParent(string path)
         {
             int index = path.Replace('\\', '/').LastIndexOf('/');
-            return index >= 0 ? path[..index] : path;
+            return index >= 0 ? path[..index] : ".";
         }
 
         public static string GetFileNameWithoutExt(string file)
