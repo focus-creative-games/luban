@@ -98,9 +98,14 @@ namespace Luban.Job.Cfg.Defs
 
         }
 
-        public static string TsDeserialize(string fieldName, string jsonFieldName, TType type)
+        public static string TsJsonConstructor(string fieldName, string jsonFieldName, TType type)
         {
-            return type.Apply(TypescriptDeserializeVisitor.Ins, $"{jsonFieldName}", fieldName);
+            return type.Apply(TypescriptJsonConstructorVisitor.Ins, $"{jsonFieldName}", fieldName);
+        }
+
+        public static string TsBinConstructor(string fieldName, string byteBufName, TType type)
+        {
+            return type.Apply(TypescriptBinConstructorVisitor.Ins, $"{byteBufName}", fieldName);
         }
 
         public static string TsRecursiveResolve(DefField field, string tables)
@@ -122,11 +127,6 @@ namespace Luban.Job.Cfg.Defs
             {
                 return $"this.{refVarName} = (_tables.get('{tableName}') as {table.FullName}).get({name});";
             }
-        }
-
-        public static string TsDeserializeBin(string fieldName, string byteBufName, TType type)
-        {
-            return type.Apply(TypescriptDeserializeBinVisitor.Ins, byteBufName, fieldName);
         }
 
         public static string Py3Deserialize(string fieldName, string jsonFieldName, TType type)

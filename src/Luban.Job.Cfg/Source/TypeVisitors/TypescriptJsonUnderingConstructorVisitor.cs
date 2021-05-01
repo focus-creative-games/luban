@@ -3,9 +3,9 @@ using Luban.Job.Common.TypeVisitors;
 
 namespace Luban.Job.Cfg.TypeVisitors
 {
-    class TypescriptUnderingDeserializeVisitor : ITypeFuncVisitor<string, string, string>
+    class TypescriptJsonUnderingConstructorVisitor : ITypeFuncVisitor<string, string, string>
     {
-        public static TypescriptUnderingDeserializeVisitor Ins { get; } = new TypescriptUnderingDeserializeVisitor();
+        public static TypescriptJsonUnderingConstructorVisitor Ins { get; } = new TypescriptJsonUnderingConstructorVisitor();
 
         public string Accept(TBool type, string jsonVarName, string fieldName)
         {
@@ -81,7 +81,7 @@ namespace Luban.Job.Cfg.TypeVisitors
         {
             if (type.Bean.IsAbstractType)
             {
-                return $"{fieldName} = {type.Bean.FullName}.deserialize({jsonVarName});";
+                return $"{fieldName} = {type.Bean.FullName}.constructorFrom({jsonVarName});";
             }
             else
             {

@@ -177,11 +177,9 @@ enum class {{name}}
         }
 
 
-
-
         [ThreadStatic]
         private static Template t_tsConstRender;
-        public static string RenderTsConstClass(DefConst c)
+        public static string RenderTypescriptConstClass(DefConst c)
         {
             var ctx = new TemplateContext();
             var env = new TTypeTemplateCommonExtends
@@ -192,15 +190,14 @@ enum class {{name}}
 
 
             var template = t_tsConstRender ??= Template.Parse(@"
-namespace {{x.namespace_with_top_module}}
-{
-    export class {{x.name}}
-    {
-        {{~ for item in x.items ~}}
-        static {{item.name}} : {{ts_define_type item.ctype}}  = {{ts_const_value item.ctype item.value}};
-        {{~end~}}
-    }
+{{typescript_namespace_begin}}
+
+export class {{x.name}} {
+    {{~ for item in x.items ~}}
+    static {{item.name}} = {{ts_const_value item.ctype item.value}};
+    {{~end~}}
 }
+{{typescript_namespace_end}}
 
 ");
             var result = template.Render(ctx);
@@ -210,20 +207,17 @@ namespace {{x.namespace_with_top_module}}
 
         [ThreadStatic]
         private static Template t_tsEnumRender;
-        public static string RenderTsEnumClass(DefEnum e)
+        public static string RenderTypescriptEnumClass(DefEnum e)
         {
             var template = t_tsEnumRender ??= Template.Parse(@"
-namespace {{namespace_with_top_module}}
-{
-    export enum {{name}}
-    {
-        {{- for item in items }}
-        {{item.name}} = {{item.value}},
-        {{-end}}
-    }
+{{typescript_namespace_begin}}
+
+export enum {{name}} {
+    {{- for item in items }}
+    {{item.name}} = {{item.value}},
+    {{-end}}
 }
-
-
+{{typescript_namespace_end}}
 ");
             var result = template.Render(e);
 

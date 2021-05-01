@@ -1,6 +1,7 @@
 using CommandLine;
 using Luban.Common.Protos;
 using Luban.Common.Utils;
+using Luban.Job.Common;
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.Utils;
 using Luban.Job.Proto.Defs;
@@ -30,7 +31,7 @@ namespace Luban.Job.Proto
             [Option('c', "output_code_dir", Required = true, HelpText = "output code directory")]
             public string OutputCodeDir { get; set; }
 
-            [Option('g', "gen_type", Required = true, HelpText = "cs,lua,java,cpp")]
+            [Option('g', "gen_type", Required = true, HelpText = "cs,lua,java,cpp,ts")]
             public string GenType { get; set; }
 
             [Option('s', "service", Required = true, HelpText = "service")]
@@ -143,6 +144,132 @@ namespace Luban.Job.Proto
                             var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
                             genCodeFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                         }));
+                        break;
+                    }
+                    case "ts":
+                    {
+                        var render = new TypescriptRender();
+
+                        tasks.Add(Task.Run(() =>
+                        {
+                            var fileContent = new List<string>
+                                {
+                                    @$"
+import {{Bright}} from 'csharp'
+
+export namespace {ass.TopModule} {{
+",
+
+                                    @"
+export interface ISerializable {
+    serialize(_buf_: Bright.Serialization.ByteBuf) : void
+    deserialize(_buf_: Bright.Serialization.ByteBuf) : void
+}
+
+export abstract class BeanBase implements ISerializable {
+    abstract getTypeId() : number
+    abstract serialize(_buf_: Bright.Serialization.ByteBuf): void
+    abstract deserialize(_buf_: Bright.Serialization.ByteBuf): void
+}
+
+export abstract class Protocol implements ISerializable {
+    abstract getTypeId() : number
+    abstract serialize(_buf_: Bright.Serialization.ByteBuf): void
+    abstract deserialize(_buf_: Bright.Serialization.ByteBuf): void
+}
+
+export class Vector2 {
+        x: number;
+        y: number;
+        constructor(x: number, y: number) {
+            this.x = x;
+            this.y = y;
+        }
+
+        to(_buf_: Bright.Serialization.ByteBuf) {
+            _buf_.WriteFloat(this.x)
+            _buf_.WriteFloat(this.y)
+        }
+
+        static from(_buf_: Bright.Serialization.ByteBuf): Vector2 {
+            let x = _buf_.ReadFloat();
+            let y = _buf_.ReadFloat();
+            return new Vector2(x, y);
+        }
+    }
+
+
+    export class Vector3 {
+        x: number;
+        y: number;
+        z: number;
+        constructor(x: number, y: number, z: number) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+
+        to(_buf_: Bright.Serialization.ByteBuf) {
+            _buf_.WriteFloat(this.x)
+            _buf_.WriteFloat(this.y)
+            _buf_.WriteFloat(this.z)
+        }
+
+        static from(_buf_: Bright.Serialization.ByteBuf): Vector3 {
+            let x = _buf_.ReadFloat();
+            let y = _buf_.ReadFloat();
+            let z = _buf_.ReadFloat();
+            return new Vector3(x, y, z);
+        }
+    }
+
+    export class Vector4 {
+        x: number;
+        y: number;
+        z: number;
+        w: number;
+        constructor(x: number, y: number, z: number, w: number) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.w = w;
+        }
+
+        to(_buf_: Bright.Serialization.ByteBuf) {
+            _buf_.WriteFloat(this.x)
+            _buf_.WriteFloat(this.y)
+            _buf_.WriteFloat(this.z)
+            _buf_.WriteFloat(this.w)
+        }
+
+        static from(_buf_: Bright.Serialization.ByteBuf): Vector4 {
+            let x = _buf_.ReadFloat();
+            let y = _buf_.ReadFloat();
+            let z = _buf_.ReadFloat();
+            let w = _buf_.ReadFloat();
+            return new Vector4(x, y, z, w);
+        }
+    }
+
+"
+                                };
+
+                            foreach (var type in exportTypes)
+                            {
+                                fileContent.Add(render.RenderAny(type));
+                            }
+
+                            fileContent.Add(render.RenderStubs("ProtocolStub", ass.TopModule, ass.Types.Values.Where(t => t is DefProto).ToList(),
+                                ass.Types.Values.Where(t => t is DefRpc).ToList()));
+
+                            fileContent.Add("}"); // end of topmodule
+
+                            var content = FileHeaderUtil.ConcatAutoGenerationHeader(string.Join('\n', fileContent), ELanguage.TYPESCRIPT);
+                            var file = "Types.ts";
+                            var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
+                            genCodeFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                        }));
+
                         break;
                     }
                     default:

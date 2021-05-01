@@ -1,14 +1,23 @@
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Common.Defs;
+using Luban.Job.Common.Utils;
 using Scriban;
 using System;
 using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.Generate
 {
-    class TypeScriptBinCodeRender : TypescriptCodeRenderBase
+    class TypeScriptBinCodeRender : CodeRenderBase
     {
+        public override string Render(DefConst c)
+        {
+            return RenderUtil.RenderTypescriptConstClass(c);
+        }
 
+        public override string Render(DefEnum e)
+        {
+            return RenderUtil.RenderTypescriptEnumClass(e);
+        }
 
         [ThreadStatic]
         private static Template t_beanRender;
@@ -23,11 +32,11 @@ namespace Luban.Job.Cfg.Generate
     hierarchy_export_fields = x.hierarchy_export_fields
 }}
 
-namespace {{x.namespace}} {
+{{x.typescript_namespace_begin}}
 
 export {{if x.is_abstract_type}} abstract {{end}} class {{name}} {{if parent_def_type}} extends {{x.parent}}{{end}} {
 {{~if x.is_abstract_type~}}
-    static deserialize(_buf_ : Bright.Serialization.ByteBuf) : {{name}} {
+    static constructorFrom(_buf_ : Bright.Serialization.ByteBuf) : {{name}} {
         switch (_buf_.ReadInt())
         {
             case 0 : return null;
@@ -44,7 +53,7 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} {{if parent_def
         super(_buf_);
         {{~end~}}
         {{~ for field in export_fields ~}}
-        {{ts_deserialize_bin ('this.' + field.ts_style_name) '_buf_' field.ctype}}
+        {{ts_bin_constructor ('this.' + field.ts_style_name) '_buf_' field.ctype}}
         {{~end~}}
     }
 
@@ -69,7 +78,7 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} {{if parent_def
     }
 }
 
-}
+{{x.typescript_namespace_end}}
 ");
             var result = template.RenderCode(b);
 
@@ -88,7 +97,7 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} {{if parent_def
         key_type2 =  x.key_ttype2
         value_type =  x.value_ttype
     }}
-namespace {{x.namespace}} {
+{{x.typescript_namespace_begin}}
 export class {{name}}{
     {{~ if x.is_two_key_map_table ~}}
     private _dataListMap : Map<{{ts_define_type key_type1}}, {{ts_define_type value_type}}[]>;
@@ -102,7 +111,7 @@ export class {{name}}{
         
         for(let n = _buf_.ReadInt(); n > 0 ; n--) {
             let _v : {{ts_define_type value_type}};
-            {{ts_deserialize_bin '_v' '_buf_' value_type}}
+            {{ts_bin_constructor '_v' '_buf_' value_type}}
             this._dataList.push(_v);
             var _key = _v.{{x.index_field1.ts_style_name}};
             let list : {{ts_define_type value_type}}[] = this._dataListMap.get(_key);
@@ -142,7 +151,7 @@ export class {{name}}{
         
         for(let n = _buf_.ReadInt() ; n > 0 ; n--) {
             let _v : {{ts_define_type value_type}};
-            {{ts_deserialize_bin '_v' '_buf_' value_type}}
+            {{ts_bin_constructor '_v' '_buf_' value_type}}
             this._dataList.push(_v);
             this._dataMap.set(_v.{{x.index_field.ts_style_name}}, _v);
         }
@@ -165,7 +174,7 @@ export class {{name}}{
 
     constructor(_buf_ : Bright.Serialization.ByteBuf) {
         if (_buf_.ReadInt() != 1) throw new Error('table mode=one, but size != 1');
-        {{ts_deserialize_bin 'this._data' '_buf_' value_type}}
+        {{ts_bin_constructor 'this._data' '_buf_' value_type}}
     }
 
     getData() : {{ts_define_type value_type}} { return this._data; }
@@ -180,7 +189,7 @@ export class {{name}}{
 
     {{end}}
 }
-}
+{{x.typescript_namespace_end}}
 ");
             var result = template.RenderCode(p);
 

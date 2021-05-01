@@ -57,6 +57,11 @@ namespace Luban.Common.Utils
             return string.Join("", module.Split('.').Select(n => $"{n}_")) + ueName;
         }
 
+        public static string MakeTypescriptNamespaceBegin(string module)
+        {
+            return string.Join("", module.Split('.').Select(n => $"export namespace {n} {{"));
+        }
+
         public static string MakeFullName(string module, string name)
         {
             if (string.IsNullOrEmpty(module))

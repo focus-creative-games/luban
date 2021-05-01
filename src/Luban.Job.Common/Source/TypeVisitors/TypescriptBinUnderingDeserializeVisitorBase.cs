@@ -1,12 +1,10 @@
 using Luban.Job.Common.Types;
 using Luban.Job.Common.TypeVisitors;
 
-namespace Luban.Job.Cfg.TypeVisitors
+namespace Luban.Job.Common.TypeVisitors
 {
-    class TypescriptUnderingDeserializeBinVisitor : ITypeFuncVisitor<string, string, string>
+    public abstract class TypescriptBinUnderingDeserializeVisitorBase : ITypeFuncVisitor<string, string, string>
     {
-        public static TypescriptUnderingDeserializeBinVisitor Ins { get; } = new TypescriptUnderingDeserializeBinVisitor();
-
         public string Accept(TBool type, string bufName, string fieldName)
         {
             return $"{fieldName} = {bufName}.ReadBool();";
@@ -69,7 +67,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TBytes type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadArrayBuf();";
+            return $"{fieldName} = new Uint8Array({bufName}.ReadArrayBuffer());";
         }
 
         public string Accept(TText type, string bufName, string fieldName)
@@ -77,17 +75,17 @@ namespace Luban.Job.Cfg.TypeVisitors
             return $"{fieldName} = {bufName}.ReadString();";
         }
 
-        public string Accept(TBean type, string bufVarName, string fieldName)
-        {
-            if (type.Bean.IsAbstractType)
-            {
-                return $"{fieldName} = {type.Bean.FullName}.deserialize({bufVarName});";
-            }
-            else
-            {
-                return $"{fieldName} = new {type.Bean.FullName}({bufVarName});";
-            }
-        }
+        public abstract string Accept(TBean type, string bufVarName, string fieldName);
+        //{
+        //    if (type.Bean.IsAbstractType)
+        //    {
+        //        return $"{fieldName} = {type.Bean.FullName}.deserialize({bufVarName});";
+        //    }
+        //    else
+        //    {
+        //        return $"{fieldName} = new {type.Bean.FullName}({bufVarName});";
+        //    }
+        //}
 
         private string GetNewArray(TArray arrayType, string size)
         {

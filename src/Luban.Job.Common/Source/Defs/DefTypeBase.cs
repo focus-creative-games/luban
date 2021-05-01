@@ -33,6 +33,9 @@ namespace Luban.Job.Common.Defs
 
         public string CppFullNameWithTopModule => TypeUtil.MakeCppFullName(AssemblyBase.TopModule, FullName);
 
+        public string TypescriptNamespaceBegin => TypeUtil.MakeTypescriptNamespaceBegin(Namespace);
+
+        public string TypescriptNamespaceEnd => TypeUtil.MakeCppNamespaceEnd(Namespace);
 
         public string CppFullName => TypeUtil.MakeCppFullName(Namespace, Name);
 

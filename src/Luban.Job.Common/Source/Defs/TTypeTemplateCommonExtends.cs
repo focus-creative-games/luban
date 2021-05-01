@@ -138,6 +138,16 @@ namespace Luban.Job.Common.Defs
             return type.Apply(LuaConstValueVisitor.Ins, value);
         }
 
+        public static string TsBinSerialize(string fieldName, string byteBufName, TType type)
+        {
+            return type.Apply(TypescriptBinSerializeVisitor.Ins, byteBufName, fieldName);
+        }
+
+        public static string TsBinDeserialize(string fieldName, string byteBufName, TType type)
+        {
+            return type.Apply(TypescriptBinDeserializeVisitor.Ins, byteBufName, fieldName);
+        }
+
         public static string PyDefineType(TType type)
         {
             return type.Apply(PyDefineTypeName.Ins);
