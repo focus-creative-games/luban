@@ -26,8 +26,7 @@ namespace {{x.namespace}} {
 export {{if x.is_abstract_type}} abstract {{end}} class {{name}} {{if parent_def_type}} extends {{x.parent}}{{end}} {
 {{~if x.is_abstract_type~}}
     static deserialize(_json_ : any) : {{name}} {
-        switch (_json_.__type__)
-        {
+        switch (_json_.__type__) {
             case null : return null;
         {{~ for child in x.hierarchy_not_abstract_children~}}
             case '{{child.name}}': return new {{child.full_name}}(_json_);

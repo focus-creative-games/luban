@@ -97,7 +97,7 @@ namespace Luban.Job.Cfg.TypeVisitors
             }
             else
             {
-                return $"{{ {fieldName} = []; for(var _ele of {jsonVarName}) {{ let _e :{type.ElementType.Apply(TypescriptDefineTypeName.Ins)};{type.ElementType.Apply(this, "_ele", "_e")} {fieldName}.push(_e);}}}}";
+                return $"{{ {fieldName} = []; for(let _ele of {jsonVarName}) {{ let _e :{type.ElementType.Apply(TypescriptDefineTypeName.Ins)};{type.ElementType.Apply(this, "_ele", "_e")} {fieldName}.push(_e);}}}}";
             }
         }
 
@@ -109,7 +109,7 @@ namespace Luban.Job.Cfg.TypeVisitors
             }
             else
             {
-                return $"{{ {fieldName} = []; for(var _ele of {jsonVarName}) {{ let _e : {type.ElementType.Apply(TypescriptDefineTypeName.Ins)};{type.ElementType.Apply(this, "_ele", "_e")} {fieldName}.push(_e);}}}}";
+                return $"{{ {fieldName} = []; for(let _ele of {jsonVarName}) {{ let _e : {type.ElementType.Apply(TypescriptDefineTypeName.Ins)};{type.ElementType.Apply(this, "_ele", "_e")} {fieldName}.push(_e);}}}}";
             }
         }
 
