@@ -239,7 +239,7 @@ namespace Luban.Job.Cfg.Defs
             if (!_name2CfgTable.TryAdd(p.Name, p))
             {
                 var exist = _name2CfgTable[p.Name];
-                throw new Exception($"定义文件:{CurImportFile} table:{p.Namespace}.{p.Name} 与 {exist.Namespace}.{exist.Name} 重复");
+                throw new Exception($"定义文件:{CurImportFile} table:{p.Namespace}.{p.Name} 与 {exist.Namespace}.{exist.Name} 名称不能重复");
             }
             _cfgTables.Add(p);
         }

@@ -4,9 +4,9 @@ using System;
 
 namespace Luban.Job.Cfg.TypeVisitors
 {
-    class TsRecursiveResolveVisitor : ITypeFuncVisitor<string, string, string>
+    class TypescriptRecursiveResolveVisitor : ITypeFuncVisitor<string, string, string>
     {
-        public static TsRecursiveResolveVisitor Ins { get; } = new TsRecursiveResolveVisitor();
+        public static TypescriptRecursiveResolveVisitor Ins { get; } = new TypescriptRecursiveResolveVisitor();
 
         public string Accept(TBool type, string fieldName, string tablesName)
         {

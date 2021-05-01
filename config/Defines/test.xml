@@ -37,7 +37,7 @@
 	</bean>
 	
 	<bean name="DemoE2">
-		<var name="y1" type="int"/>
+		<var name="y1" type="int?"/>
 		<var name="y2" type="bool"/>
 	</bean>
 	

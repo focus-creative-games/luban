@@ -2,9 +2,9 @@ using Luban.Job.Common.Types;
 
 namespace Luban.Job.Common.TypeVisitors
 {
-    public class TsDefineTypeName : ITypeFuncVisitor<string>
+    public class TypescriptDefineTypeName : ITypeFuncVisitor<string>
     {
-        public static TsDefineTypeName Ins { get; } = new TsDefineTypeName();
+        public static TypescriptDefineTypeName Ins { get; } = new TypescriptDefineTypeName();
 
         public string Accept(TBool type)
         {
@@ -38,12 +38,12 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TLong type)
         {
-            return "number";
+            return "bigint";
         }
 
         public string Accept(TFlong type)
         {
-            return "number";
+            return "bigint";
         }
 
         public string Accept(TFloat type)
@@ -106,7 +106,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TList type)
         {
-            return GetArrayType(type.ElementType);
+            return $"{type.ElementType.Apply(this)}[]";
         }
 
         public string Accept(TSet type)

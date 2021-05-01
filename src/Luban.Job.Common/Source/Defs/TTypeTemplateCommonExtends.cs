@@ -125,7 +125,7 @@ namespace Luban.Job.Common.Defs
 
         public static string TsDefineType(TType type)
         {
-            return type.Apply(TsDefineTypeName.Ins);
+            return type.Apply(TypescriptDefineTypeName.Ins);
         }
 
         public static string TsToString(string filedName, TType type)

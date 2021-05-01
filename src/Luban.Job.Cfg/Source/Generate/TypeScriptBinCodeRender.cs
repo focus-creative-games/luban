@@ -6,8 +6,10 @@ using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.Generate
 {
-    class TypeScriptJsonCodeRender : TypescriptCodeRenderBase
+    class TypeScriptBinCodeRender : TypescriptCodeRenderBase
     {
+
+
         [ThreadStatic]
         private static Template t_beanRender;
         public override string Render(DefBean b)
@@ -25,27 +27,24 @@ namespace {{x.namespace}} {
 
 export {{if x.is_abstract_type}} abstract {{end}} class {{name}} {{if parent_def_type}} extends {{x.parent}}{{end}} {
 {{~if x.is_abstract_type~}}
-    static deserialize(_json_ : any) : {{name}} {
-        switch (_json_.__type__)
+    static deserialize(_buf_ : Bright.Serialization.ByteBuf) : {{name}} {
+        switch (_buf_.ReadInt())
         {
-            case null : return null;
+            case 0 : return null;
         {{~ for child in x.hierarchy_not_abstract_children~}}
-            case '{{child.name}}': return new {{child.full_name}}(_json_);
+            case {{child.id}}: return new {{child.full_name}}(_buf_);
         {{~end~}}
             default: throw new Error();
         }
     }
 {{~end~}}
 
-    constructor(_json_ : any) {
+    constructor(_buf_ : Bright.Serialization.ByteBuf) {
         {{~if parent_def_type~}}
-        super(_json_);
+        super(_buf_);
         {{~end~}}
         {{~ for field in export_fields ~}}
-        {{~if !field.ctype.is_nullable~}}
-        if (_json_.{{field.name}} == null) { throw new Error(); }
-        {{~end~}}
-        {{ts_deserialize ('this.' + field.ts_style_name) ( '_json_.' + field.name) field.ctype}}
+        {{ts_deserialize_bin ('this.' + field.ts_style_name) '_buf_' field.ctype}}
         {{~end~}}
     }
 
@@ -96,14 +95,14 @@ export class {{name}}{
     private  _dataMapMap : Map<{{ts_define_type key_type1}}, Map<{{ts_define_type key_type2}}, {{ts_define_type value_type}}>>;
     private _dataList : {{ts_define_type value_type}}[];
 
-    constructor(_json_ : any) {
+    constructor(_buf_ : Bright.Serialization.ByteBuf) {
         this._dataListMap = new Map<{{ts_define_type key_type1}}, {{ts_define_type value_type}}[]>();
         this._dataMapMap = new Map<{{ts_define_type key_type1}}, Map<{{ts_define_type key_type2}}, {{ts_define_type value_type}}>>();
         this._dataList = [];
         
-        for(var _json2_ of _json_) {
+        for(let n = _buf_.ReadInt(); n > 0 ; n--) {
             let _v : {{ts_define_type value_type}};
-            {{ts_deserialize '_v' '_json2_' value_type}}
+            {{ts_deserialize_bin '_v' '_buf_' value_type}}
             this._dataList.push(_v);
             var _key = _v.{{x.index_field1.ts_style_name}};
             let list : {{ts_define_type value_type}}[] = this._dataListMap.get(_key);
@@ -137,13 +136,13 @@ export class {{name}}{
     private _dataMap : Map<{{ts_define_type key_type}}, {{ts_define_type value_type}}>;
     private _dataList : {{ts_define_type value_type}}[];
     
-    constructor(_json_ : any) {
+    constructor(_buf_ : Bright.Serialization.ByteBuf) {
         this._dataMap = new Map<{{ts_define_type key_type}}, {{ts_define_type value_type}}>();
         this._dataList = [];
         
-        for(var _json2_ of _json_) {
+        for(let n = _buf_.ReadInt() ; n > 0 ; n--) {
             let _v : {{ts_define_type value_type}};
-            {{ts_deserialize '_v' '_json2_' value_type}}
+            {{ts_deserialize_bin '_v' '_buf_' value_type}}
             this._dataList.push(_v);
             this._dataMap.set(_v.{{x.index_field.ts_style_name}}, _v);
         }
@@ -164,9 +163,9 @@ export class {{name}}{
 
      private _data : {{ts_define_type value_type}};
 
-    constructor(_json_ : any) {
-        if (_json_.length != 1) throw new Error('table mode=one, but size != 1');
-        {{ts_deserialize 'this._data' '_json_[0]' value_type}}
+    constructor(_buf_ : Bright.Serialization.ByteBuf) {
+        if (_buf_.ReadInt() != 1) throw new Error('table mode=one, but size != 1');
+        {{ts_deserialize_bin 'this._data' '_buf_' value_type}}
     }
 
     getData() : {{ts_define_type value_type}} { return this._data; }
@@ -200,7 +199,7 @@ export class {{name}}{
 
 }}
 
-type JsonLoader = (file : string) => any
+type ByteBufLoader = (file : string) => Bright.Serialization.ByteBuf
 
 export class {{name}} {
     {{~ for table in tables ~}}
@@ -208,10 +207,10 @@ export class {{name}} {
     get {{table.name}}() : {{table.full_name}}  { return this._{{table.name}};}
     {{~end~}}
 
-    constructor(loader : JsonLoader) {
+    constructor(loader : ByteBufLoader) {
         let tables = new Map<string, any>();
         {{~for table in tables ~}}
-        this._{{table.name}} = new {{table.full_name}}(loader('{{table.json_output_data_file}}')); 
+        this._{{table.name}} = new {{table.full_name}}(loader('{{table.output_data_file}}')); 
         tables.set('{{table.full_name}}', this._{{table.name}});
         {{~end~}}
 
