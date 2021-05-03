@@ -190,14 +190,14 @@ enum class {{name}}
 
 
             var template = t_tsConstRender ??= Template.Parse(@"
-{{typescript_namespace_begin}}
+{{x.typescript_namespace_begin}}
 
 export class {{x.name}} {
     {{~ for item in x.items ~}}
     static {{item.name}} = {{ts_const_value item.ctype item.value}};
     {{~end~}}
 }
-{{typescript_namespace_end}}
+{{x.typescript_namespace_end}}
 
 ");
             var result = template.Render(ctx);
