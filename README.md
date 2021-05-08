@@ -67,6 +67,7 @@ Luban适合有以下需求的开发者：
    - unity + c#
    - unity + tolua,xlua
    - unity + ILRuntime
+   - unity + puerts
    - unreal + c++
    - unreal + unlua
    - unreal + sluaunreal

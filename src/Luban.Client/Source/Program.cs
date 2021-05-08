@@ -4,6 +4,7 @@ using Luban.Common.Protos;
 using Luban.Common.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,9 +26,13 @@ namespace Luban.Client
             public bool Verbose { get; set; }
 
             public string CacheMetaInfoFile { get; set; } = ".cache.meta";
+
+            public string WatchDir { get; set; }
         }
 
         private static NLog.Logger s_logger;
+
+        private static FileSystemWatcher s_watcher;
 
         private static void PrintUsage(string err)
         {
@@ -39,11 +44,12 @@ e.g.
     Luban.Client -h 127.0.0.1 -p 2234 -j cfg --  --name abc
 
 Options:
-  -h, --host            Required. host ip
-  -p  --port            port. default 8899
-  -j  --job             Required. job type.  avaliable value: cfg
-  -v  --verbose         verbose print
-  -c  --cachemetafile   cache meta file name
+  -h, --host  <host>            Required. host ip
+  -p  --port  <port>            port. default 8899
+  -j  --job   <job>             Required. job type.  avaliable value: cfg
+  -v  --verbose                 verbose print
+  -c  --cachemetafile <file>    cache meta file name. default is '.cache.meta'
+  -w  --watch  <dir>            watch data change and regenerate.
   -h  --help            show usage
 ");
         }
@@ -88,6 +94,12 @@ Options:
                         case "--cachemetafile":
                         {
                             ops.CacheMetaInfoFile = args[++i];
+                            break;
+                        }
+                        case "-w":
+                        case "--watch":
+                        {
+                            ops.WatchDir = args[++i];
                             break;
                         }
                         case "--":
@@ -135,7 +147,6 @@ Options:
             CommandLineOptions options = parseResult.Item2;
 
             profile.StartPhase("init logger");
-
             LogUtil.InitSimpleNLogConfigure(NLog.LogLevel.Info);
             s_logger = NLog.LogManager.GetCurrentClassLogger();
             profile.EndPhaseAndLog();
@@ -143,14 +154,82 @@ Options:
             ThreadPool.SetMinThreads(4, 5);
             ThreadPool.SetMaxThreads(64, 10);
 
+
+            if (string.IsNullOrWhiteSpace(options.WatchDir))
+            {
+                Environment.Exit(GenOnce(options, profile));
+                profile.EndPhaseAndLog();
+            }
+            else
+            {
+                GenOnce(options, profile);
+                var watcher = new FileSystemWatcher(options.WatchDir);
+
+                watcher.NotifyFilter = NotifyFilters.Attributes
+                                     | NotifyFilters.CreationTime
+                                     | NotifyFilters.DirectoryName
+                                     | NotifyFilters.FileName
+                                     | NotifyFilters.LastAccess
+                                     | NotifyFilters.LastWrite
+                                     | NotifyFilters.Security
+                                     | NotifyFilters.Size;
+
+                watcher.Changed += (o, p) => OnWatchChange(options, profile);
+                watcher.Created += (o, p) => OnWatchChange(options, profile);
+                watcher.Deleted += (o, p) => OnWatchChange(options, profile);
+                watcher.Renamed += (o, p) => OnWatchChange(options, profile);
+
+                //watcher.Filter = "*.txt";
+                watcher.IncludeSubdirectories = true;
+                watcher.EnableRaisingEvents = true;
+
+                s_logger.Info("=== start watch. dir:{} ==", options.WatchDir);
+                s_watcher = watcher;
+            }
+        }
+
+        private static readonly object s_watchLocker = new object();
+        private static bool s_watchDirChange = false;
+
+        private static void OnWatchChange(CommandLineOptions options, ProfileTimer profile)
+        {
+            lock (s_watchLocker)
+            {
+                if (s_watchDirChange)
+                {
+                    return;
+                }
+                s_watchDirChange = true;
+
+                Task.Run(async () =>
+                {
+                    s_logger.Info("=== start new generation ==");
+                    await Task.Delay(200);
+
+                    lock (s_watchLocker)
+                    {
+                        s_watchDirChange = false;
+                        GenOnce(options, profile);
+                    }
+                    s_logger.Info("=== watch changes ==");
+                });
+            }
+
+        }
+
+        private static int GenOnce(CommandLineOptions options, ProfileTimer profile)
+        {
             int exitCode;
             try
             {
+
+                profile.StartPhase("connect server");
+                var conn = GenClient.Start(options.Host, options.Port, ProtocolStub.Factories);
+
                 profile.StartPhase("load cache meta file");
                 CacheMetaManager.Ins.Load(options.CacheMetaInfoFile);
                 profile.EndPhaseAndLog();
-                profile.StartPhase("connect server");
-                var conn = GenClient.Ins.Start(options.Host, options.Port, ProtocolStub.Factories);
+
                 conn.Wait();
                 profile.EndPhaseAndLog();
 
@@ -163,9 +242,13 @@ Options:
                 exitCode = 1;
                 s_logger.Error(e);
             }
+            finally
+            {
+                GenClient.Stop();
+            }
 
             CacheMetaManager.Ins.Save();
-            profile.EndPhaseAndLog();
+            CacheMetaManager.Ins.Reset();
             if (exitCode == 0)
             {
                 s_logger.Info("== succ ==");
@@ -174,7 +257,7 @@ Options:
             {
                 s_logger.Error("== fail ==");
             }
-            Environment.Exit(exitCode);
+            return exitCode;
         }
 
         const int GEN_JOB_TIMEOUT = 120;

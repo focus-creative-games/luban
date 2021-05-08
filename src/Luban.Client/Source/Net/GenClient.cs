@@ -32,10 +32,11 @@ namespace Luban.Client.Common.Net
 
         private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public static GenClient Ins { get; } = new GenClient();
+        public static GenClient Ins { get; private set; }
 
-        public async Task Start(string host, int port, Dictionary<int, ProtocolCreator> factories)
+        public static async Task Start(string host, int port, Dictionary<int, ProtocolCreator> factories)
         {
+            Ins = new GenClient();
             var c = new TcpClientBootstrap
             {
                 RemoteAddress = new IPEndPoint(IPAddress.Parse(host), port),
@@ -44,11 +45,17 @@ namespace Luban.Client.Common.Net
                 InitHandler = ch =>
                 {
                     ch.Pipeline.AddLast(new ProtocolFrameCodec(20_000_000, new RecycleByteBufPool(100, 10), new DefaultProtocolAllocator(factories)));
-                    ch.Pipeline.AddLast(this);
+                    ch.Pipeline.AddLast(Ins);
                 }
             };
 
             var ch = await c.ConnectAsync().ConfigureAwait(false);
+        }
+
+        public static void Stop()
+        {
+            _ = Ins.Session.CloseAsync();
+            Ins = null;
         }
 
         public override void HandleProtocol(Protocol proto)

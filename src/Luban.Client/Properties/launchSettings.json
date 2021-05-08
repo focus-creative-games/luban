@@ -2,8 +2,8 @@
   "profiles": {
     "Luban.Client": {
       "commandName": "Project",
-      "commandLineArgs": "-h 127.0.0.1 -p 8899 -j cfg -a \"{ 'define_file':'../../CfgDefines/root.xml', 'input_data_dir':'../../CfgDatas', 'validate_root_dir':'E:/NikkiP4_D/X6Game/Content', 'output_data_dir':'output_data', 'service':'server', 'export_test_data':true,'gen_types':'code_cs_bin,data_bin', 'output_code_dir' : 'Gen' }\"",
-      "workingDirectory": "E:\\workspace\\bright_gen\\DemoProjects\\Csharp_Server_DotNetCore"
+      "commandLineArgs": "-h %LUBAN_SERVER_IP% -j cfg -w ..\\DesignerConfigs\\Datas  -- -d ..\\DesignerConfigs\\Defines\\__root__.xml --input_data_dir ..\\DesignerConfigs\\Datas  --output_code_dir TsScripts/src/Gen/Cfg  --output_data_dir ConfigData  --gen_types code_typescript_bin,data_bin  -s client --export_test_data --validate_root_dir Assets ",
+      "workingDirectory": "C:\\workspace\\unity-world\\Client"
     },
     "Luban.Client-db": {
       "commandName": "Project",

@@ -121,6 +121,15 @@ namespace Luban.Client.Common.Utils
             s_logger.Info("[Save] meta file:{metaFile} updated!", _metaFile);
         }
 
+        public void Reset()
+        {
+            lock (_lock)
+            {
+                _dirty = false;
+                _cacheFileMetas.Clear();
+            }
+        }
+
         private MetaInfo GetMetaInfo(string file)
         {
             lock (_lock)
