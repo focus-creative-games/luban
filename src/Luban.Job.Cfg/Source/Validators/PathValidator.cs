@@ -64,6 +64,22 @@ namespace Luban.Job.Cfg.Validators
         }
     }
 
+    class UnityAddressablePattern : IPathPattern
+    {
+        public bool EmptyAble { get; set; }
+
+        public string Mode => "unity";
+
+        public UnityAddressablePattern()
+        {
+        }
+
+        public object CalcFinalPath(string path)
+        {
+            return path;
+        }
+    }
+
     class Ue4ResourcePattern : IPathPattern
     {
         private readonly Regex _pat1;
@@ -227,6 +243,15 @@ namespace Luban.Job.Cfg.Validators
                         ThrowCompileError(def, "必须包含 pattern和replace");
                     }
                     PathPattern = new RegexPattern(ss[1], ss[2]);
+                    break;
+                }
+                case "unity":
+                {
+                    if (ss.Length != 1)
+                    {
+                        ThrowCompileError(def, "");
+                    }
+                    PathPattern = new UnityAddressablePattern();
                     break;
                 }
                 case "ue":
