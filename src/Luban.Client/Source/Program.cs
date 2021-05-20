@@ -157,8 +157,9 @@ Options:
 
             if (string.IsNullOrWhiteSpace(options.WatchDir))
             {
-                Environment.Exit(GenOnce(options, profile));
+                int exitCode = GenOnce(options, profile);
                 profile.EndPhaseAndLog();
+                Environment.Exit(exitCode);
             }
             else
             {
@@ -222,7 +223,7 @@ Options:
             int exitCode;
             try
             {
-
+                profile.StartPhase("generation");
                 profile.StartPhase("connect server");
                 var conn = GenClient.Start(options.Host, options.Port, ProtocolStub.Factories);
 
@@ -235,6 +236,7 @@ Options:
 
                 profile.StartPhase("gen job");
                 exitCode = SubmitGenJob(options);
+                profile.EndPhaseAndLog();
                 profile.EndPhaseAndLog();
             }
             catch (Exception e)
