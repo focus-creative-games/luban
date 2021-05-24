@@ -41,7 +41,7 @@ namespace Luban.Job.Cfg.Datas
 
         public override bool Equals(object obj)
         {
-            return obj is DEnum o && o.StrValue == this.StrValue;
+            return obj is DEnum o && o.Value == this.Value;
         }
 
         public override int GetHashCode()
