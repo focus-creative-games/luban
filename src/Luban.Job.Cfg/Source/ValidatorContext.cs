@@ -61,27 +61,41 @@ namespace Luban.Job.Cfg
 
         public async Task ValidateTables(IEnumerable<DefTable> tables)
         {
-            var tasks = new List<Task>();
-            foreach (var t in tables)
             {
-                tasks.Add(Task.Run(() =>
+                var tasks = new List<Task>();
+                foreach (var t in tables)
                 {
-                    var records = t.Assembly.GetTableDataList(t);
-                    ValidateTableModeIndex(t, records);
-
-                    var visitor = new ValidatorVisitor(this);
-                    try
+                    tasks.Add(Task.Run(() =>
                     {
-                        CurrentVisitor = visitor;
-                        visitor.ValidateTable(t, records);
-                    }
-                    finally
-                    {
-                        CurrentVisitor = null;
-                    }
-                }));
+                        var records = t.Assembly.GetTableDataList(t);
+                        ValidateTableModeIndex(t, records);
+                    }));
+                }
+                await Task.WhenAll(tasks);
             }
-            await Task.WhenAll(tasks);
+
+            {
+                var tasks = new List<Task>();
+                foreach (var t in tables)
+                {
+                    tasks.Add(Task.Run(() =>
+                    {
+                        var records = t.Assembly.GetTableDataList(t);
+                        var visitor = new ValidatorVisitor(this);
+                        try
+                        {
+                            CurrentVisitor = visitor;
+                            visitor.ValidateTable(t, records);
+                        }
+                        finally
+                        {
+                            CurrentVisitor = null;
+                        }
+                    }));
+                }
+                await Task.WhenAll(tasks);
+            }
+
             if (!string.IsNullOrWhiteSpace(RootDir))
             {
                 await ValidatePaths();

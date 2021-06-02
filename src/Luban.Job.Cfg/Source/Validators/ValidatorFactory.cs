@@ -1,6 +1,7 @@
 using Luban.Config.Common.RawDefs;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Luban.Job.Cfg.Validators
 {
@@ -14,7 +15,7 @@ namespace Luban.Job.Cfg.Validators
             {
                 case RefValidator.NAME:
                 {
-                    return new RefValidator(new List<string> { validator.Rule });
+                    return new RefValidator(validator.Rule.Split(',').ToList());
                 }
                 case PathValidator.NAME:
                 {

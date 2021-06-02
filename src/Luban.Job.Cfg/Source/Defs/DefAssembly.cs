@@ -69,7 +69,7 @@ namespace Luban.Job.Cfg.Defs
 
         public Dictionary<DType, DBean> GetTableDataMap(DefTable table)
         {
-            return _recordsMapByTables.GetValueOrDefault(table.FullName);
+            return _recordsMapByTables[table.FullName];
         }
 
         public List<DefTable> GetExportTables()

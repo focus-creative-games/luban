@@ -54,13 +54,27 @@ namespace Luban.Job.Cfg.Validators
                 }
                 DefTable ct = assembly.GetCfgTable(actualTable);
                 var recordMap = assembly.GetTableDataMap(ct);
-                if (recordMap != null && !recordMap.ContainsKey(key))
+                if (/*recordMap != null &&*/ recordMap.ContainsKey(key))
                 {
-                    string source = DataUtil.GetSourceFile(ValidatorContext.CurrentVisitor.CurrentValidateRecord);
-                    assembly.Agent.Error("记录 {0} = {1} (来自文件:{2}) 在引用表:{3} 中不存在", ValidatorContext.CurrentRecordPath, key, source, table);
+                    return;
                 }
             }
 
+            foreach (var table in Tables)
+            {
+                string actualTable;
+                if (table.EndsWith("?"))
+                {
+                    actualTable = table[0..^1];
+                }
+                else
+                {
+                    actualTable = table;
+                }
+                DefTable ct = assembly.GetCfgTable(actualTable);
+                string source = DataUtil.GetSourceFile(ValidatorContext.CurrentVisitor.CurrentValidateRecord);
+                assembly.Agent.Error("记录 {0} = {1} (来自文件:{2}) 在引用表:{3} 中不存在", ValidatorContext.CurrentRecordPath, key, source, table);
+            }
         }
 
         public void Compile(DefField def)
