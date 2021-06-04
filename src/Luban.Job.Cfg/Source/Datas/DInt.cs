@@ -30,7 +30,13 @@ namespace Luban.Job.Cfg.Datas
 
         public override bool Equals(object obj)
         {
-            return obj is DInt o && o.Value == this.Value;
+            switch (obj)
+            {
+                case DInt dint: return this.Value == dint.Value;
+                case DFint fint: return this.Value == fint.Value;
+                case DEnum denum: return this.Value == denum.Value;
+                default: return false;
+            }
         }
 
         public override int GetHashCode()
