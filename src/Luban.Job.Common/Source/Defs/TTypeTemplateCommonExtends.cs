@@ -26,9 +26,9 @@ namespace Luban.Job.Common.Defs
             return type.Apply(CsDefineTypeName.Ins);
         }
 
-        public static string CsToString(string filedName, TType type)
+        public static string CsToString(string fieldName, TType type)
         {
-            return $"{filedName}";
+            return type.Apply(CsToStringVisitor.Ins, fieldName);
         }
 
         public static string CsConstValue(TType type, string value)
