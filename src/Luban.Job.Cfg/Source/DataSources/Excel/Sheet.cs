@@ -189,6 +189,21 @@ namespace Luban.Job.Cfg.DataSources.Excel
                     throw new Exception($"单元薄 缺失 列:{name}，请检查是否写错或者遗漏");
                 }
             }
+
+
+            public ExcelStream GetMultiRowStream(string name, string sep)
+            {
+                if (Titles.TryGetValue(name, out var title))
+                {
+                    var totalCells = Rows.SelectMany(r => r.GetRange(title.FromIndex, title.ToIndex - title.FromIndex + 1))
+                        .Where(c => c.Value != null && !(c.Value is string s && string.IsNullOrWhiteSpace(s))).ToList();
+                    return new ExcelStream(totalCells, 0, totalCells.Count - 1, sep, false);
+                }
+                else
+                {
+                    throw new Exception($"单元薄 缺失 列:{name}，请检查是否写错或者遗漏");
+                }
+            }
         }
 
         public Sheet(string name, bool exportTestData)

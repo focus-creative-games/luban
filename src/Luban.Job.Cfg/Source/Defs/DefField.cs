@@ -48,10 +48,10 @@ namespace Luban.Job.Cfg.Defs
         // 对于 two key map, 需要检查 ref,但不为它生成 ref 代码.故只有map类型表才要生成代码
         public bool GenRef => Ref != null && Ref.Tables.Count == 1 && Assembly.GetCfgTable(Ref.FirstTable).IsMapTable;
 
-        public bool HasRecursiveRef => (CType is TBean)
-            || (CType is TArray ta && ta.ElementType is TBean)
-            || (CType is TList tl && tl.ElementType is TBean)
-            || (CType is TMap tm && tm.ValueType is TBean);
+        public bool HasRecursiveRef => (CType.IsBean)
+            || (CType is TArray ta && ta.ElementType.IsBean)
+            || (CType is TList tl && tl.ElementType.IsBean)
+            || (CType is TMap tm && tm.ValueType.IsBean);
 
         public string CsRefTypeName
         {
@@ -182,7 +182,7 @@ namespace Luban.Job.Cfg.Defs
                 }
             }
 
-            if (IsMultiRow && !CType.IsCollection)
+            if (IsMultiRow && !CType.IsCollection && !CType.IsBean)
             {
                 throw new Exception($"只有容器类型才支持 multi_line 属性");
             }
@@ -213,7 +213,7 @@ namespace Luban.Job.Cfg.Defs
                 }
             }
 
-            if (!CType.IsCollection && !(CType is TBean))
+            if (!CType.IsCollection && !(CType.IsBean))
             {
                 this.Ref = (RefValidator)this.Validators.FirstOrDefault(v => v is RefValidator);
             }

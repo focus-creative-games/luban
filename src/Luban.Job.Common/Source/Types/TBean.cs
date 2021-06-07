@@ -23,6 +23,8 @@ namespace Luban.Job.Common.Types
 
         public bool IsDynamic => Bean.IsAbstractType;
 
+        public override bool IsBean => true;
+
         public override void Apply<T>(ITypeActionVisitor<T> visitor, T x)
         {
             visitor.Accept(this, x);

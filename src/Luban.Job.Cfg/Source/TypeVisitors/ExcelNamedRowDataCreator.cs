@@ -120,11 +120,11 @@ namespace Luban.Job.Cfg.TypeVisitors
                     {
                         if (f.IsMultiRow)
                         {
-                            list.Add(f.CType.Apply(this, row.GetSubTitleNamedRowOfMultiRows(fname), f.RawIsMultiRow, f.IsNullable));
+                            list.Add(f.CType.Apply(this, row.GetSubTitleNamedRowOfMultiRows(fname), f.IsMultiRow, f.IsNullable));
                         }
                         else
                         {
-                            list.Add(f.CType.Apply(this, row.GetSubTitleNamedRow(fname), f.RawIsMultiRow /* 肯定是 false */, f.IsNullable));
+                            list.Add(f.CType.Apply(this, row.GetSubTitleNamedRow(fname), f.IsMultiRow /* 肯定是 false */, f.IsNullable));
                         }
                     }
                     catch (Exception e)
@@ -144,7 +144,14 @@ namespace Luban.Job.Cfg.TypeVisitors
                     {
                         try
                         {
-                            list.Add(f.CType.Apply(MultiRowExcelDataCreator.Ins, row.GetColumnOfMultiRows(f.Name, sep), f.IsNullable, (DefAssembly)bean.AssemblyBase));
+                            if (f.CType.IsCollection)
+                            {
+                                list.Add(f.CType.Apply(MultiRowExcelDataCreator.Ins, row.GetColumnOfMultiRows(f.Name, sep), f.IsNullable, (DefAssembly)bean.AssemblyBase));
+                            }
+                            else
+                            {
+                                list.Add(f.CType.Apply(ExcelDataCreator.Ins, null, row.GetMultiRowStream(f.Name, sep), (DefAssembly)bean.AssemblyBase));
+                            }
                         }
                         catch (Exception e)
                         {
