@@ -156,7 +156,7 @@ Options:
             ThreadPool.SetMaxThreads(64, 10);
 
 
-            if (options.WatchDir.Length == 0)
+            if (options.WatchDir == null || options.WatchDir.Length == 0)
             {
                 int exitCode = GenOnce(options, profile);
                 profile.EndPhaseAndLog();
