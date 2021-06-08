@@ -1,5 +1,6 @@
 using Luban.Client.Common.Net;
 using Luban.Client.Common.Utils;
+using Luban.Client.Utils;
 using Luban.Common.Protos;
 using Luban.Common.Utils;
 using System;
@@ -27,12 +28,12 @@ namespace Luban.Client
 
             public string CacheMetaInfoFile { get; set; } = ".cache.meta";
 
-            public string WatchDir { get; set; }
+            public string[] WatchDir { get; set; }
         }
 
         private static NLog.Logger s_logger;
 
-        private static FileSystemWatcher s_watcher;
+        private static MultiFileWatcher s_watcher;
 
         private static void PrintUsage(string err)
         {
@@ -99,7 +100,7 @@ Options:
                         case "-w":
                         case "--watch":
                         {
-                            ops.WatchDir = args[++i];
+                            ops.WatchDir = args[++i].Split(';', ',');
                             break;
                         }
                         case "--":
@@ -155,7 +156,7 @@ Options:
             ThreadPool.SetMaxThreads(64, 10);
 
 
-            if (string.IsNullOrWhiteSpace(options.WatchDir))
+            if (options.WatchDir.Length == 0)
             {
                 int exitCode = GenOnce(options, profile);
                 profile.EndPhaseAndLog();
@@ -164,59 +165,11 @@ Options:
             else
             {
                 GenOnce(options, profile);
-                var watcher = new FileSystemWatcher(options.WatchDir);
 
-                watcher.NotifyFilter = NotifyFilters.Attributes
-                                     | NotifyFilters.CreationTime
-                                     | NotifyFilters.DirectoryName
-                                     | NotifyFilters.FileName
-                                     | NotifyFilters.LastAccess
-                                     | NotifyFilters.LastWrite
-                                     | NotifyFilters.Security
-                                     | NotifyFilters.Size;
-
-                watcher.Changed += (o, p) => OnWatchChange(options, profile);
-                watcher.Created += (o, p) => OnWatchChange(options, profile);
-                watcher.Deleted += (o, p) => OnWatchChange(options, profile);
-                watcher.Renamed += (o, p) => OnWatchChange(options, profile);
-
-                //watcher.Filter = "*.txt";
-                watcher.IncludeSubdirectories = true;
-                watcher.EnableRaisingEvents = true;
-
-                s_logger.Info("=== start watch. dir:{} ==", options.WatchDir);
-                s_watcher = watcher;
+                s_watcher = new MultiFileWatcher(options.WatchDir, () => GenOnce(options, profile));
             }
         }
 
-        private static readonly object s_watchLocker = new object();
-        private static bool s_watchDirChange = false;
-
-        private static void OnWatchChange(CommandLineOptions options, ProfileTimer profile)
-        {
-            lock (s_watchLocker)
-            {
-                if (s_watchDirChange)
-                {
-                    return;
-                }
-                s_watchDirChange = true;
-
-                Task.Run(async () =>
-                {
-                    s_logger.Info("=== start new generation ==");
-                    await Task.Delay(200);
-
-                    lock (s_watchLocker)
-                    {
-                        s_watchDirChange = false;
-                        GenOnce(options, profile);
-                    }
-                    s_logger.Info("=== watch changes ==");
-                });
-            }
-
-        }
 
         private static int GenOnce(CommandLineOptions options, ProfileTimer profile)
         {
