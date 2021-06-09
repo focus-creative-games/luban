@@ -33,8 +33,6 @@ namespace Luban.Client
 
         private static NLog.Logger s_logger;
 
-        private static MultiFileWatcher s_watcher;
-
         private static void PrintUsage(string err)
         {
             Console.WriteLine("ERRORS:");
@@ -166,7 +164,7 @@ Options:
             {
                 GenOnce(options, profile);
 
-                s_watcher = new MultiFileWatcher(options.WatchDir, () => GenOnce(options, profile));
+                new MultiFileWatcher(options.WatchDir, () => GenOnce(options, profile));
             }
         }
 
