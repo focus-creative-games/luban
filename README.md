@@ -390,9 +390,11 @@ luban支持横表与纵表，默认为横表。对于单例表，纵表填写更
 	例如 在unity项目的装备表中的 icon字段必须为有效资源，，在icon字段中添加定义 path="unity"
 
 	定义:
+
 	![path_define](docs/images/examples/path_01.png)
 
 	数据:
+
 	![path_data](docs/images/examples/path_02.png)
 
 - range 检查
@@ -402,6 +404,7 @@ luban支持横表与纵表，默认为横表。对于单例表，纵表填写更
 	示例： 英雄的站位坐标必须在 [1,5]的范围内，则为 position字段添加 range="[1,5]" 属性
 
 	定义:
+
 	![range_define](docs/images/examples/range_01.png)
 
 	数据:
@@ -700,16 +703,17 @@ return
 
 ## 代码使用示例
 
-这儿只简略展示lua和c#在开放中的用法，详细的使用范例和代码见[示例项目](https://github.com/focus-creative-games/luban_examples)。
+这儿只简略展示lua、c#、typescript、go语言在开发中的用法，更多语言以及更详细的使用范例和代码见[示例项目](https://github.com/focus-creative-games/luban_examples)。
 
 - Lua 使用示例
 
   ```Lua
-  -- 直接 require 表
-  local data = require("<lua数据路径>.TbFullTypes")
-  -- 获取 key为1001的道具数据
-  local cfg = data[1]
-  print(cfg.X4)
+  -- 访问一个单例表
+  print(require("TbGlobal").name)
+  -- 访问普通的 key-value 表
+  print(require("TbItem")[12].x1)
+  -- 访问 双键表
+  print(require("TbTwoKey")[1][10].x8)
   ```
 
 - C# 使用示例
@@ -727,6 +731,35 @@ return
   Console.WriteLine(tables.TbMail[1001].X2);
   Console.WriteLine(tables.TbTwoKey[100, 1].X8);
   ```
+
+- typescript 使用示例
+
+	```typescript
+	// 一行代码可以加载所有配置。 cfg.Tables 包含所有表的一个实例字段。
+	let tables = new cfg.Tables(f => JsHelpers.LoadFromFile(gameConfDir, f))
+	// 访问一个单例表
+	console.log(tables.TbGlobal.name)
+	// 访问普通的 key-value 表
+	console.log(tables.TbItem.get(12).x1)
+	// 访问 双键表
+	console.log(tables.TbTwoKey.get(1,10).x8)
+	```
+
+- go 使用示例
+	```go
+	// 一行代码可以加载所有配置。 cfg.Tables 包含所有表的一个实例字段。
+	if tables , err := cfg.NewTables(loader) ; err != nil {
+		println(err.Error())
+		return
+	}
+	// 访问一个单例表
+	println(tables.TbGlobal.Name)
+	// 访问普通的 key-value 表
+	println(tables.TbItem.Get(12).X1)
+	// 访问 双键表
+	println(tables.TbTwoKey.Get(1, 10).X8)
+
+	```
 - [更多语言的例子](docs/samples.md)
 
 ------
