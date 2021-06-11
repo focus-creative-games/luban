@@ -12,7 +12,7 @@
 
 ## 介绍
 
-luban是一个比较成熟的**游戏配置解决方案**。它目前也被用于消息生成或者其他类型的生成，是一个通用型对象生成与缓存方案。
+luban是一个通用型对象生成与缓存方案, 在此基础上实现了一个功能**完备强大灵活易用**的 **游戏配置解决方案**。
 
 luban最初为无缝开放世界MMORPG这样的超大型项目而设计，擅长处理大型复杂的配置数据和结构，也适合向下用于卡牌、回合制、ARPG等中轻度游戏。
 
@@ -294,6 +294,22 @@ Luban适合有以下需求的开发者：
 
 ![ex_71](docs/images/examples/ex_71.png)
 
+### 多行记录
+
+经常会碰到一些记录中包含一个list:bean类型的结构列表。 如果强行要求一行配置，阅读性与可维护性较差，如果拆表，对策划和程序都不友好。 我们支持在对这种类型的数据多行方式配置，只需要在该多行字段后加属性 multi_rows="1"。
+示例如下：
+
+英雄升级表中的**levels**字段为一个列表。我们标记它为multi_rows，在多行填写。
+
+
+定义：
+
+![multi_define](docs/images/examples/multi_01.png)
+
+数据:
+
+![multi_data](docs/images/examples/multi_02.png)
+
 ### 双主键表
 两个主键的表，以key1,key2为主键。
 
@@ -369,11 +385,69 @@ luban支持横表与纵表，默认为横表。对于单例表，纵表填写更
 
 - path 资源检查
 
-	用于检查策划填写的资源路径是否合法，防止运行时出现资源查找不到的错误。具体请看 [完整手册](docs/manual.md)
+	用于检查策划填写的资源路径是否合法，防止运行时出现资源查找不到的错误。目标已经针对Unity和UE4实现专门的资源检查机制。 具体请看 [完整手册](docs/manual.md)
+
+	例如 在unity项目的装备表中的 icon字段必须为有效资源，，在icon字段中添加定义 path="unity"
+
+	定义:
+	![path_define](docs/images/examples/path_01.png)
+
+	数据:
+	![path_data](docs/images/examples/path_02.png)
 
 - range 检查
 
-	用于检查策划填写的数据是否在合法的范围内。具体请看 [完整手册](docs/manual.md)
+	用于检查策划填写的数据是否在合法的范围内，支持[x,y],[x,],(x,y),(x,) 等等开闭区间写法。具体请看 [完整手册](docs/manual.md)
+
+	示例： 英雄的站位坐标必须在 [1,5]的范围内，则为 position字段添加 range="[1,5]" 属性
+
+	定义:
+	![range_define](docs/images/examples/range_01.png)
+
+	数据:
+	
+	![range_data](docs/images/examples/range_02.png)
+
+
+### 分组导出
+
+在大多数项目中，导出给前后端的数据并非完全相同。有些表可能仅仅前端或者后端需要，有些字段也可能仅仅前端或者后端需要。 
+
+luban同时支持两种级别的分组：
+- 表级别分组
+
+	定义方式为在table中定义group属性，如果未定义 group,则默认导出给所有分组，如果定义group，则只导出给指定分组，可以多个，以逗号","分隔。
+
+	&lt; table name="xxx" group="&lt;group1&gt;,&lt;group2&gt;..." &gt;
+
+	例如: TbItemFunc表只给客户端使用。
+	定义如下:
+
+	![group_table](docs/images/examples/group_02.png)
+
+- 字段级别分组
+
+	定义方式为给var指定group属性，未指定则默认导出给所有分组。可以为多个，以逗号","分隔。相比于大多数导表工具只支持**表顶级字段**的分组导出，luban支持任意bean字段粒度级别的分组导出。
+
+	&lt;var name="xxx" group="&lt;group1&gt;,&lt;group2&gt; ..." /&gt;
+	
+	例如, Item表中 major_type 字段前后端都需要;max_pile_num 只有后端需要;icon字段只有前端需要。
+	定义如下:
+
+	![group_var](docs/images/examples/group_01.png)
+
+
+### 标签数据过滤
+
+根据数据标签选择性导出符合要求的数据。适于一些情形例如：研发期制作了一些测试数据，我们希望正式上线时不导出这些数据，但不希望手动在excel表中删除那些记录，因为这些测试数据内网测试时仍然需要。一种比较优雅的办法是标记这些数据为TEST(或者测试，或者其他标签)，导出时忽略带有些标签的数据。
+
+示例: 102149001和102149002是测试物品，希望正式发布时不包含，只要在命令行选项中关闭 --export-test 即可不导出这些测试数据。
+
+![tag](docs/images/examples/tag_01.png)
+
+### 常量别名
+
+项目中经常有一些数字频率被使用，例如 升级丹道具id。策划每次填写数字，容易失误填错。我们允许为整数指定常量别名，工具导出配置时遇到别名，自动将其替换为相应整数。
 
 ### 多数据源
 
