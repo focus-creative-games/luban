@@ -58,7 +58,7 @@ namespace Luban.Job.Cfg
             [Option("export_test_data", Required = false, HelpText = "export test data")]
             public bool ExportTestData { get; set; } = false;
 
-            [Option('t', "i10n_timezone", Required = false, HelpText = "timezone")]
+            [Option('t', "l10n_timezone", Required = false, HelpText = "timezone")]
             public string TimeZone { get; set; }
 
             [Option("input_l10n_text_files", Required = false, HelpText = "input l10n text table files. can be multi, sep by ','")]
@@ -66,6 +66,12 @@ namespace Luban.Job.Cfg
 
             [Option("output_l10n_not_converted_text_file", Required = false, HelpText = "the file save not converted l10n texts.")]
             public string OutputNotConvertTextFile { get; set; }
+
+            [Option("branch", Required = false, HelpText = "branch name")]
+            public string BranchName { get; set; }
+
+            [Option("branch_input_data_dir", Required = false, HelpText = "branch input data root dir")]
+            public string BranchInputDataDir { get; set; }
         }
 
         private ICodeRender CreateCodeRender(string genType)
@@ -95,7 +101,7 @@ namespace Luban.Job.Cfg
         }
 
 
-        private static bool TryParseArg(List<string> args, out GenArgs result, out string errMsg)
+        private static bool TryParseArg(List<string> args, out GenArgs options, out string errMsg)
         {
             var helpWriter = new StringWriter();
             var parser = new Parser(ps =>
@@ -106,19 +112,19 @@ namespace Luban.Job.Cfg
             if (parseResult.Tag == ParserResultType.NotParsed)
             {
                 errMsg = helpWriter.ToString();
-                result = null;
+                options = null;
                 return false;
             }
             else
             {
-                result = (parseResult as Parsed<GenArgs>).Value;
+                options = (parseResult as Parsed<GenArgs>).Value;
                 errMsg = null;
 
-                string inputDataDir = result.InputDataDir;
-                string outputCodeDir = result.OutputCodeDir;
-                string outputDataDir = result.OutputDataDir;
+                string inputDataDir = options.InputDataDir;
+                string outputCodeDir = options.OutputCodeDir;
+                string outputDataDir = options.OutputDataDir;
 
-                var genTypes = result.GenType.Split(',').Select(s => s.Trim()).ToList();
+                var genTypes = options.GenType.Split(',').Select(s => s.Trim()).ToList();
 
                 if (genTypes.Any(t => t.StartsWith("code_", StringComparison.Ordinal)) && string.IsNullOrWhiteSpace(outputCodeDir))
                 {
@@ -137,22 +143,28 @@ namespace Luban.Job.Cfg
                         errMsg = "--outputdatadir missing";
                         return false;
                     }
-                    if (genTypes.Contains("data_resources") && string.IsNullOrWhiteSpace(result.OutputDataResourceListFile))
+                    if (genTypes.Contains("data_resources") && string.IsNullOrWhiteSpace(options.OutputDataResourceListFile))
                     {
                         errMsg = "--output_data_resource_list_file missing";
                         return false;
                     }
-                    if (genTypes.Contains("data_json_monolithic") && string.IsNullOrWhiteSpace(result.OutputDataJsonMonolithicFile))
+                    if (genTypes.Contains("data_json_monolithic") && string.IsNullOrWhiteSpace(options.OutputDataJsonMonolithicFile))
                     {
                         errMsg = "--output_data_json_monolithic_file missing";
                         return false;
                     }
 
-                    if (string.IsNullOrWhiteSpace(result.InputTextTableFiles) ^ string.IsNullOrWhiteSpace(result.OutputNotConvertTextFile))
+                    if (string.IsNullOrWhiteSpace(options.InputTextTableFiles) ^ string.IsNullOrWhiteSpace(options.OutputNotConvertTextFile))
                     {
                         errMsg = "--input_l10n_text_files must be provided with --output_l10n_not_converted_text_file";
                         return false;
                     }
+                }
+
+                if (string.IsNullOrWhiteSpace(options.BranchName) ^ string.IsNullOrWhiteSpace(options.BranchInputDataDir))
+                {
+                    errMsg = "--branch must be provided with --branch_input_data_dir";
+                    return false;
                 }
 
                 return true;
@@ -197,7 +209,7 @@ namespace Luban.Job.Cfg
 
                 var ass = new DefAssembly(timeZoneInfo);
 
-                ass.Load(args.Service, rawDefines, agent);
+                ass.Load(args.Service, args.BranchName, rawDefines, agent);
 
                 var targetService = ass.CfgTargetService;
 
@@ -216,7 +228,7 @@ namespace Luban.Job.Cfg
                         hasLoadCfgData = true;
                         var timer = new ProfileTimer();
                         timer.StartPhase("load config data");
-                        await DataLoaderUtil.LoadCfgDataAsync(agent, ass, args.InputDataDir, args.ExportTestData);
+                        await DataLoaderUtil.LoadCfgDataAsync(agent, ass, args.InputDataDir, args.BranchName, args.BranchInputDataDir, args.ExportTestData);
                         timer.EndPhaseAndLog();
 
                         if (needL10NTextConvert)

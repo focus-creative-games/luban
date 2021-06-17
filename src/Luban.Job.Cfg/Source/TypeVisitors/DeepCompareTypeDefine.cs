@@ -1,5 +1,5 @@
-using Luban.Config.Common.RawDefs;
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Cfg.RawDefs;
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.Types;
 using Luban.Job.Common.TypeVisitors;

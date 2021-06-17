@@ -71,16 +71,14 @@ namespace Luban.Job.Cfg.Utils
         //   return CollectInputFilesAsync(agent, table.InputFiles, dataDir)
         //}
 
-        public static async Task LoadTableAsync(RemoteAgent agent, DefTable table, string dataDir, bool exportTestData)
+        public static async Task GenerateLoadRecordFromFileTasksAsync(RemoteAgent agent, DefTable table, string dataDir, List<string> inputFiles2, bool exportTestData, List<Task<List<Record>>> tasks)
         {
-            var tasks = new List<Task<List<Record>>>();
-
-            var inputFiles = await CollectInputFilesAsync(agent, table.InputFiles, dataDir);
+            var inputFileInfos = await CollectInputFilesAsync(agent, inputFiles2, dataDir);
 
             // check cache (table, exporttestdata) -> (list<InputFileInfo>, List<DType>)
             // (md5, sheetName,exportTestData) -> (value_type, List<DType>)
 
-            foreach (var file in inputFiles)
+            foreach (var file in inputFileInfos)
             {
                 var actualFile = file.ActualFile;
                 //s_logger.Info("== get input file:{file} actualFile:{actual}", file, actualFile);
@@ -103,21 +101,52 @@ namespace Luban.Job.Cfg.Utils
                     return res;
                 }));
             }
-
-            var records = new List<Record>(tasks.Count);
-            foreach (var task in tasks)
-            {
-                records.AddRange(await task);
-            }
-
-            s_logger.Trace("== load recors. count:{count}", records.Count);
-
-            table.Assembly.AddDataTable(table, records);
-
-            s_logger.Trace("table:{name} record num:{num}", table.FullName, records.Count);
         }
 
-        public static async Task LoadCfgDataAsync(RemoteAgent agent, DefAssembly ass, string dataDir, bool exportTestData)
+        public static async Task LoadTableAsync(RemoteAgent agent, DefTable table, string dataDir, string branchName, string branchDataDir, bool exportTestData)
+        {
+            var mainLoadTasks = new List<Task<List<Record>>>();
+            var mainGenerateTask = GenerateLoadRecordFromFileTasksAsync(agent, table, dataDir, table.InputFiles, exportTestData, mainLoadTasks);
+
+            var branchLoadTasks = new List<Task<List<Record>>>();
+
+            Task branchGenerateTask = null;
+            if (!string.IsNullOrWhiteSpace(branchName))
+            {
+                var branchInputFiles = table.GetBranchInputFiles(branchName);
+                if (branchInputFiles != null)
+                {
+                    branchGenerateTask = GenerateLoadRecordFromFileTasksAsync(agent, table, branchDataDir, branchInputFiles, exportTestData, branchLoadTasks);
+                }
+            }
+
+            await mainGenerateTask;
+
+            var mainRecords = new List<Record>(256);
+            foreach (var task in mainLoadTasks)
+            {
+                mainRecords.AddRange(await task);
+            }
+            s_logger.Trace("== load main records. count:{count}", mainRecords.Count);
+
+            List<Record> branchRecords = null;
+            if (branchGenerateTask != null)
+            {
+                branchRecords = new List<Record>(64);
+                await branchGenerateTask;
+                foreach (var task in branchLoadTasks)
+                {
+                    branchRecords.AddRange(await task);
+                }
+                s_logger.Trace("== load branch records. count:{count}", branchRecords.Count);
+            }
+
+            table.Assembly.AddDataTable(table, mainRecords, branchRecords);
+
+            s_logger.Trace("table:{name} record num:{num}", table.FullName, mainRecords.Count);
+        }
+
+        public static async Task LoadCfgDataAsync(RemoteAgent agent, DefAssembly ass, string dataDir, string branchName, string branchDataDir, bool exportTestData)
         {
             var ctx = agent;
             List<DefTable> exportTables = ass.Types.Values.Where(t => t is DefTable ct && ct.NeedExport).Select(t => (DefTable)t).ToList();
@@ -130,7 +159,7 @@ namespace Luban.Job.Cfg.Utils
                 genDataTasks.Add(Task.Run(async () =>
                 {
                     long beginTime = TimeUtil.NowMillis;
-                    await LoadTableAsync(agent, c, dataDir, exportTestData);
+                    await LoadTableAsync(agent, c, dataDir, branchName, branchDataDir, exportTestData);
                     long endTime = TimeUtil.NowMillis;
                     if (endTime - beginTime > 100)
                     {

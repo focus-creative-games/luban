@@ -1,11 +1,14 @@
+using Luban.Job.Cfg.RawDefs;
 using Luban.Job.Common.RawDefs;
 using System.Collections.Generic;
 
-namespace Luban.Config.Common.RawDefs
+namespace Luban.Job.Cfg.RawDefs
 {
     public class Defines
     {
         public string TopModule { get; set; } = "";
+
+        public List<Branch> Branches { get; set; } = new List<Branch>();
 
         public List<Bean> Beans { get; set; } = new List<Bean>();
 

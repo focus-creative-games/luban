@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Luban.Config.Common.RawDefs
+namespace Luban.Job.Cfg.RawDefs
 {
     public class Service
     {

@@ -53,7 +53,7 @@ namespace Luban.Job.Cfg.Validators
                     return;
                 }
                 DefTable ct = assembly.GetCfgTable(actualTable);
-                var recordMap = assembly.GetTableDataMap(ct);
+                var recordMap = assembly.GetTableDataInfo(ct).FinalRecordMap;
                 if (/*recordMap != null &&*/ recordMap.ContainsKey(key))
                 {
                     return;

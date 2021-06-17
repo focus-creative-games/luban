@@ -1,5 +1,5 @@
 using Luban.Common.Utils;
-using Luban.Config.Common.RawDefs;
+using Luban.Job.Cfg.RawDefs;
 using Luban.Job.Cfg.Validators;
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.Types;

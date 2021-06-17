@@ -79,7 +79,7 @@
 		<var name="k15" type="array,DemoDynamic" sep=","/> 
 	</bean>
 	
-	<table name="TbFullTypes" index="x3" value="DemoType2" input="test/full_type.xlsx"/> 最常见的普通 key-value表
+	<table name="TbFullTypes" index="x3" value="DemoType2" input="test/full_type.xlsx" branch_input="cn:test/full_type_cn1.xlsx,test/full_type_cn2.xlsx|en:texx/full_type_en.xlsx"/> 最常见的普通 key-value表
 	
 	<bean name="DateTimeRange" sep=";">
 		<var name="start_time" type="datetime"/>

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Luban.Config.Common.RawDefs
+namespace Luban.Job.Cfg.RawDefs
 {
     public enum ETableMode
     {
@@ -35,5 +35,7 @@ namespace Luban.Config.Common.RawDefs
         public List<string> Groups { get; set; } = new List<string>();
 
         public List<string> InputFiles { get; set; } = new List<string>();
+
+        public Dictionary<string, List<string>> BranchInputFiles { get; set; } = new Dictionary<string, List<string>>();
     }
 }

@@ -1,8 +1,8 @@
 using Luban.Common.Utils;
-using Luban.Config.Common.RawDefs;
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Cfg.RawDefs;
 using Luban.Job.Cfg.Utils;
 using Luban.Job.Cfg.Validators;
 using System;
@@ -27,6 +27,8 @@ namespace Luban.Job.Cfg
 
     public class ValidatorContext
     {
+        private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
+
         [ThreadStatic]
         private static ValidatorVisitor t_visitor;
 
@@ -67,8 +69,7 @@ namespace Luban.Job.Cfg
                 {
                     tasks.Add(Task.Run(() =>
                     {
-                        var records = t.Assembly.GetTableDataList(t);
-                        ValidateTableModeIndex(t, records);
+                        ValidateTableModeIndex(t);
                     }));
                 }
                 await Task.WhenAll(tasks);
@@ -171,58 +172,134 @@ namespace Luban.Job.Cfg
             }
         }
 
-        private void ValidateTableModeIndex(DefTable table, List<Record> records)
+        private void ValidateTableModeIndex(DefTable table)
         {
-            var recordMap = new Dictionary<DType, Record>();
+            var tableDataInfo = Assembly.GetTableDataInfo(table);
+
+            List<Record> mainRecords = tableDataInfo.MainRecords;
+            List<Record> branchRecords = tableDataInfo.BranchRecords;
+
+            // 这么大费周张是为了保证被覆盖的id仍然保持原来的顺序，而不是出现在最后
+            int index = 0;
+            foreach (var r in mainRecords)
+            {
+                r.Index = index++;
+            }
+            if (branchRecords != null)
+            {
+                foreach (var r in branchRecords)
+                {
+                    r.Index = index++;
+                }
+            }
+
+            var mainRecordMap = new Dictionary<DType, Record>();
 
             switch (table.Mode)
             {
                 case ETableMode.ONE:
                 {
-                    if (records.Count != 1)
+                    if (mainRecords.Count != 1)
                     {
-                        throw new Exception($"配置表 {table.FullName} 是单值表 mode=one,但数据个数:{records.Count} != 1");
+                        throw new Exception($"配置表 {table.FullName} 是单值表 mode=one,但主文件数据个数:{mainRecords.Count} != 1");
+                    }
+                    if (branchRecords != null && branchRecords.Count != 1)
+                    {
+                        throw new Exception($"配置表 {table.FullName} 是单值表 mode=one,但分支文件数据个数:{branchRecords.Count} != 1");
+                    }
+                    if (branchRecords != null)
+                    {
+                        mainRecords[0] = branchRecords[0];
                     }
                     break;
                 }
                 case ETableMode.MAP:
                 {
-                    foreach (Record r in records)
+                    foreach (Record r in mainRecords)
                     {
                         DType key = r.Data.Fields[table.IndexFieldIdIndex];
-                        if (!recordMap.TryAdd(key, r))
+                        if (!mainRecordMap.TryAdd(key, r))
                         {
-                            throw new Exception($@"配置表 {table.FullName} 主键字段:{table.Index} 主键值:{key} 重复.
+                            throw new Exception($@"配置表 {table.FullName} 主文件 主键字段:{table.Index} 主键值:{key} 重复.
         记录1 来自文件:{r.Source}
-        记录2 来自文件:{recordMap[key].Source}
+        记录2 来自文件:{mainRecordMap[key].Source}
 ");
                         }
-
+                    }
+                    if (branchRecords != null)
+                    {
+                        var branchRecordMap = new Dictionary<DType, Record>();
+                        foreach (Record r in branchRecords)
+                        {
+                            DType key = r.Data.Fields[table.IndexFieldIdIndex];
+                            if (!branchRecordMap.TryAdd(key, r))
+                            {
+                                throw new Exception($@"配置表 {table.FullName} 分支文件 主键字段:{table.Index} 主键值:{key} 重复.
+        记录1 来自文件:{r.Source}
+        记录2 来自文件:{branchRecordMap[key].Source}
+");
+                            }
+                            if (mainRecordMap.TryGetValue(key, out var old))
+                            {
+                                s_logger.Debug("配置表 {} 分支文件 主键:{} 覆盖 主文件记录", table.FullName, key);
+                                mainRecords[old.Index] = r;
+                            }
+                            mainRecordMap[key] = r;
+                        }
                     }
                     break;
                 }
                 case ETableMode.BMAP:
                 {
-                    var twoKeyMap = new Dictionary<(DType, DType), Record>();
-                    foreach (Record r in records)
+                    var mainTwoKeyMap = new Dictionary<(DType, DType), Record>();
+                    foreach (Record r in mainRecords)
                     {
                         DType key1 = r.Data.Fields[table.IndexFieldIdIndex1];
                         DType key2 = r.Data.Fields[table.IndexFieldIdIndex2];
-                        if (!twoKeyMap.TryAdd((key1, key2), r))
+                        if (!mainTwoKeyMap.TryAdd((key1, key2), r))
                         {
-                            throw new Exception($@"配置表 {table.FullName} 主键字段:{table.Index} 主键值:({key1},{key2})重复. 
+                            throw new Exception($@"配置表 {table.FullName} 主文件 主键字段:{table.Index} 主键值:({key1},{key2})重复. 
         记录1 来自文件:{r.Source}
-        记录2 来自文件:{twoKeyMap[(key1, key2)].Source}
+        记录2 来自文件:{mainTwoKeyMap[(key1, key2)].Source}
 ");
                         }
                         // 目前不支持 双key索引检查,但支持主key索引检查.
                         // 所以至少塞入一个,让ref检查能通过
-                        recordMap[key1] = r;
+                        mainRecordMap[key1] = r;
                     }
+
+                    if (branchRecords != null)
+                    {
+                        var branchTwoKeyMap = new Dictionary<(DType, DType), Record>();
+                        foreach (Record r in branchRecords)
+                        {
+                            DType key1 = r.Data.Fields[table.IndexFieldIdIndex1];
+                            DType key2 = r.Data.Fields[table.IndexFieldIdIndex2];
+                            if (!branchTwoKeyMap.TryAdd((key1, key2), r))
+                            {
+                                throw new Exception($@"配置表 {table.FullName} 分支文件 主键字段:{table.Index} 主键值:({key1},{key2})重复. 
+        记录1 来自文件:{r.Source}
+        记录2 来自文件:{branchTwoKeyMap[(key1, key2)].Source}
+");
+                            }
+                            if (mainTwoKeyMap.TryGetValue((key1, key2), out var old))
+                            {
+                                s_logger.Debug("配置表 {} 分支文件 主键:({},{}) 覆盖 主文件记录", table.FullName, key1, key2);
+                                mainRecords[old.Index] = r;
+                            }
+                            mainTwoKeyMap[(key1, key2)] = r;
+                            // 目前不支持 双key索引检查,但支持主key索引检查.
+                            // 所以至少塞入一个,让ref检查能通过
+                            mainRecordMap[key1] = r;
+                        }
+                    }
+
+
                     break;
                 }
             }
-            table.Assembly.SetDataTableMap(table, recordMap);
+            tableDataInfo.FinalRecords = mainRecords;
+            tableDataInfo.FinalRecordMap = mainRecordMap;
         }
     }
 }

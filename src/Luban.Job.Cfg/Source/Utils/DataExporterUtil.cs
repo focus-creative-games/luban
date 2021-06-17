@@ -1,5 +1,4 @@
 ﻿using Bright.Serialization;
-using Luban.Config.Common.RawDefs;
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Defs;

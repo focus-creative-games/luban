@@ -1,6 +1,6 @@
 using Luban.Job.Common.RawDefs;
 
-namespace Luban.Config.Common.RawDefs
+namespace Luban.Job.Cfg.RawDefs
 {
     public class CfgBean : Bean
     {

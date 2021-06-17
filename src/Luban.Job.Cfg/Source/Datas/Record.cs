@@ -12,6 +12,8 @@ namespace Luban.Job.Cfg.Datas
 
         public string Source { get; }
 
+        public int Index { get; set; }
+
         public Record(DBean data, string source)
         {
             Data = data;

@@ -6,6 +6,10 @@
 	<group name="e" default="1"/> editor分组
 
 	<import name="."/>
+	
+	<branch name="en"/>
+	<branch name="jp"/>
+	<branch name="cn"/>
 
 	<service name="server" manager="Tables" group="s"/>
 	<service name="client" manager="Tables" group="c"/>

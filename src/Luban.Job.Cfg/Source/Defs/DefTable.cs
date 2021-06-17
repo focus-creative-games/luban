@@ -1,4 +1,4 @@
-using Luban.Config.Common.RawDefs;
+using Luban.Job.Cfg.RawDefs;
 using Luban.Job.Common.Types;
 using System;
 using System.Collections.Generic;
@@ -19,6 +19,7 @@ namespace Luban.Job.Cfg.Defs
             Mode = b.Mode;
             InputFiles = b.InputFiles;
             Groups = b.Groups;
+            _branchInputFiles = b.BranchInputFiles;
         }
 
 
@@ -35,6 +36,8 @@ namespace Luban.Job.Cfg.Defs
         public bool IsTwoKeyMapTable => Mode == ETableMode.BMAP;
 
         public List<string> InputFiles { get; }
+
+        private readonly Dictionary<string, List<string>> _branchInputFiles;
 
         public List<string> Groups { get; }
 
@@ -62,11 +65,24 @@ namespace Luban.Job.Cfg.Defs
 
         public string JsonOutputDataFile => $"{FullName}.json";
 
+        public List<string> GetBranchInputFiles(string branchName)
+        {
+            return _branchInputFiles.GetValueOrDefault(branchName);
+        }
+
         public override void Compile()
         {
-            var pass = Assembly;
+            var ass = Assembly;
 
-            if ((ValueTType = (TBean)pass.CreateType(Namespace, ValueType)) == null)
+            foreach (var branchName in _branchInputFiles.Keys)
+            {
+                if (ass.GetBranch(branchName) == null)
+                {
+                    throw new Exception($"table:{FullName} branch_input branch:{branchName} 不存在");
+                }
+            }
+
+            if ((ValueTType = (TBean)ass.CreateType(Namespace, ValueType)) == null)
             {
                 throw new Exception($"table:{FullName} 的 value类型:{ValueType} 不存在");
             }

@@ -1,6 +1,6 @@
-using Luban.Config.Common.RawDefs;
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.l10n;
+using Luban.Job.Cfg.RawDefs;
 using Luban.Job.Cfg.TypeVisitors;
 using Luban.Job.Common.Defs;
 using Luban.Server.Common;
@@ -11,11 +11,30 @@ using System.Linq;
 
 namespace Luban.Job.Cfg.Defs
 {
+    public class TableDataInfo
+    {
+        public List<Record> MainRecords { get; }
+
+        public List<Record> BranchRecords { get; }
+
+        public List<Record> FinalRecords { get; set; }
+
+        public Dictionary<DType, Record> FinalRecordMap { get; set; }
+
+        public TableDataInfo(List<Record> mainRecords, List<Record> branchRecords)
+        {
+            MainRecords = mainRecords;
+            BranchRecords = branchRecords;
+        }
+    }
+
     public class DefAssembly : DefAssemblyBase
     {
         private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
         public Service CfgTargetService { get; private set; }
+
+        public Branch TargetBranch { get; private set; }
 
         public TimeZoneInfo TimeZone { get; }
 
@@ -33,10 +52,11 @@ namespace Luban.Job.Cfg.Defs
             return groups.Any(g => CfgTargetService.Groups.Contains(g));
         }
 
+        private readonly List<Branch> _branches = new List<Branch>();
+
         private readonly List<Service> _cfgServices = new List<Service>();
 
-        private readonly ConcurrentDictionary<string, List<Record>> _recordsByTables = new();
-        private readonly ConcurrentDictionary<string, Dictionary<DType, Record>> _recordsMapByTables = new();
+        private readonly ConcurrentDictionary<string, TableDataInfo> _recordsByTables = new();
 
         public Dictionary<string, DefTable> CfgTables { get; } = new Dictionary<string, DefTable>();
 
@@ -52,6 +72,11 @@ namespace Luban.Job.Cfg.Defs
             NotConvertTextSet = new NotConvertTextSet();
         }
 
+        public Branch GetBranch(string name)
+        {
+            return _branches.Find(b => b.Name == name);
+        }
+
         public void AddCfgTable(DefTable table)
         {
             if (!CfgTables.TryAdd(table.FullName, table))
@@ -65,24 +90,24 @@ namespace Luban.Job.Cfg.Defs
             return CfgTables.TryGetValue(name, out var t) ? t : null;
         }
 
-        public void AddDataTable(DefTable table, List<Record> records)
+        public void AddDataTable(DefTable table, List<Record> mainRecords, List<Record> branchRecords)
         {
-            _recordsByTables[table.FullName] = records;
+            _recordsByTables[table.FullName] = new TableDataInfo(mainRecords, branchRecords);
         }
 
-        public void SetDataTableMap(DefTable table, Dictionary<DType, Record> recordMap)
-        {
-            _recordsMapByTables[table.FullName] = recordMap;
-        }
+        //public void SetDataTableMap(DefTable table, Dictionary<DType, Record> recordMap)
+        //{
+        //    _recordsByTables[table.FullName].FinalRecordMap = recordMap;
+        //}
 
         public List<Record> GetTableDataList(DefTable table)
         {
-            return _recordsByTables[table.FullName];
+            return _recordsByTables[table.FullName].FinalRecords;
         }
 
-        public Dictionary<DType, Record> GetTableDataMap(DefTable table)
+        public TableDataInfo GetTableDataInfo(DefTable table)
         {
-            return _recordsMapByTables[table.FullName];
+            return _recordsByTables[table.FullName];
         }
 
         public List<DefTable> GetExportTables()
@@ -122,7 +147,7 @@ namespace Luban.Job.Cfg.Defs
             return refTypes.Values.ToList();
         }
 
-        public void Load(string outputService, Defines defines, RemoteAgent agent)
+        public void Load(string outputService, string branchName, Defines defines, RemoteAgent agent)
         {
             this.Agent = agent;
             SupportDatetimeType = true;
@@ -135,6 +160,17 @@ namespace Luban.Job.Cfg.Defs
             {
                 throw new ArgumentException($"service:{outputService} not exists");
             }
+
+            if (!string.IsNullOrWhiteSpace(branchName))
+            {
+                TargetBranch = defines.Branches.Find(b => b.Name == branchName);
+                if (TargetBranch == null)
+                {
+                    throw new Exception($"branch {branchName} not in valid branch set");
+                }
+            }
+
+            this._branches.AddRange(defines.Branches);
 
             foreach (var c in defines.Consts)
             {

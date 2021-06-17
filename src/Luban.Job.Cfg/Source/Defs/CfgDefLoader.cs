@@ -1,5 +1,5 @@
 using Luban.Common.Utils;
-using Luban.Config.Common.RawDefs;
+using Luban.Job.Cfg.RawDefs;
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.RawDefs;
 using Luban.Server.Common;
@@ -14,6 +14,8 @@ namespace Luban.Job.Cfg.Defs
     {
         private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
+        private readonly List<Branch> _branches = new();
+
         private readonly List<Table> _cfgTables = new List<Table>();
 
         private readonly List<Service> _cfgServices = new List<Service>();
@@ -24,10 +26,12 @@ namespace Luban.Job.Cfg.Defs
 
         public CfgDefLoader(RemoteAgent agent) : base(agent)
         {
+            RegisterRootDefineHandler("branch", AddBranch);
             RegisterRootDefineHandler("service", AddService);
             RegisterRootDefineHandler("group", AddGroup);
 
             RegisterModuleDefineHandler("table", AddTable);
+
 
             IsBeanFieldMustDefineId = false;
         }
@@ -37,6 +41,7 @@ namespace Luban.Job.Cfg.Defs
             return new Defines()
             {
                 TopModule = TopModule,
+                Branches = _branches,
                 Consts = this._consts,
                 Enums = _enums,
                 Beans = _beans,
@@ -46,6 +51,21 @@ namespace Luban.Job.Cfg.Defs
             };
         }
 
+
+        private static readonly List<string> _branchRequireAttrs = new List<string> { "name" };
+        private void AddBranch(XElement e)
+        {
+            var branchName = e.Attribute("name").Value;
+            if (string.IsNullOrWhiteSpace(branchName))
+            {
+                throw new Exception("branch 属性name不能为空");
+            }
+            if (this._branches.Any(b => b.Name == branchName))
+            {
+                throw new Exception($"branch {branchName} 重复");
+            }
+            _branches.Add(new Branch(branchName));
+        }
 
         private static readonly List<string> _groupOptionalAttrs = new List<string> { "default" };
         private static readonly List<string> _groupRequireAttrs = new List<string> { "name" };
@@ -132,7 +152,7 @@ namespace Luban.Job.Cfg.Defs
             _cfgServices.Add(new Service() { Name = name, Manager = manager, Groups = groups, Refs = refs });
         }
 
-        private readonly List<string> _tableOptionalAttrs = new List<string> { "index", "mode", "group" };
+        private readonly List<string> _tableOptionalAttrs = new List<string> { "index", "mode", "group", "branch_input" };
         private readonly List<string> _tableRequireAttrs = new List<string> { "name", "value", "input" };
 
 
@@ -235,6 +255,24 @@ namespace Luban.Job.Cfg.Defs
                 throw new Exception($"定义文件:{CurImportFile} table:{p.Name} group:{invalidGroup} 不存在");
             }
             p.InputFiles.AddRange(XmlUtil.GetRequiredAttribute(e, "input").Split(','));
+
+            var branchInputAttr = e.Attribute("branch_input");
+            if (branchInputAttr != null)
+            {
+                foreach (var subBranchStr in branchInputAttr.Value.Split('|').Select(s => s.Trim()).Where(s => !string.IsNullOrWhiteSpace(s)))
+                {
+                    var nameAndDirs = subBranchStr.Split(':');
+                    if (nameAndDirs.Length != 2)
+                    {
+                        throw new Exception($"定义文件:{CurImportFile} table:{p.Name} branch_input:{subBranchStr} 定义不合法");
+                    }
+                    var branchDirs = nameAndDirs[1].Split(',', ';').ToList();
+                    if (!p.BranchInputFiles.TryAdd(nameAndDirs[0], branchDirs))
+                    {
+                        throw new Exception($"定义文件:{CurImportFile} table:{p.Name} branch_input:{subBranchStr} 子branch:{nameAndDirs[0]} 重复");
+                    }
+                }
+            }
 
             if (!_name2CfgTable.TryAdd(p.Name, p))
             {
