@@ -81,7 +81,27 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public DType Accept(TText type, JsonElement x, DefAssembly ass)
         {
-            return new DText(x.GetString());
+            if (!x.TryGetProperty("key", out var keyEle))
+            {
+                throw new Exception("text 缺失 key属性");
+            }
+            if (!x.TryGetProperty("text", out var textEle))
+            {
+                throw new Exception("text 缺失 text属性");
+            }
+            string key = keyEle.GetString();
+            if (key == null)
+            {
+                throw new Exception("text key不是字符串");
+            }
+            string text = textEle.GetString();
+            if (text == null)
+            {
+                throw new Exception("text text不是字符串");
+            }
+
+            ass.AddText(key, text);
+            return new DText(key, text);
         }
 
         public DType Accept(TBean type, JsonElement x, DefAssembly ass)

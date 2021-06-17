@@ -1,4 +1,5 @@
 using Luban.Job.Cfg.Datas;
+using Luban.Job.Cfg.Utils;
 using Luban.Job.Common.Types;
 using Luban.Job.Common.TypeVisitors;
 using System;
@@ -141,57 +142,59 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public DType Accept(TBytes type, string x)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public DType Accept(TText type, string x)
         {
-            return new DText(x);
+            //var (key, text) = DataUtil.ExtractText(x);
+            //return new DText(key, text);
+            throw new NotSupportedException();
         }
 
         public DType Accept(TBean type, string x)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public DType Accept(TArray type, string x)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public DType Accept(TList type, string x)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public DType Accept(TSet type, string x)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public DType Accept(TMap type, string x)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public DType Accept(TVector2 type, string x)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public DType Accept(TVector3 type, string x)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public DType Accept(TVector4 type, string x)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public DType Accept(TDateTime type, string x)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
     }
 }

@@ -82,7 +82,10 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public DType Accept(TText type, XElement x, DefAssembly ass)
         {
-            return new DText(x.Value);
+            var key = x.Element("key").Value;
+            var text = x.Element("text").Value;
+            ass.AddText(key, text);
+            return new DText(key, text);
         }
 
         public DType Accept(TBean type, XElement x, DefAssembly ass)

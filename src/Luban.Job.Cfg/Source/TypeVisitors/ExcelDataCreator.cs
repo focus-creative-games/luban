@@ -7,6 +7,7 @@ using Luban.Job.Common.Types;
 using Luban.Job.Common.TypeVisitors;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace Luban.Job.Cfg.TypeVisitors
 {
@@ -16,6 +17,25 @@ namespace Luban.Job.Cfg.TypeVisitors
         SKIP_BLANK_CELL = 0x2,
         NULL_AS_NULL = 0x4,
         NULL_STR_AS_NULL = 0x8,
+    }
+
+    class InvalidExcelDataException : Exception
+    {
+        public InvalidExcelDataException()
+        {
+        }
+
+        public InvalidExcelDataException(string message) : base(message)
+        {
+        }
+
+        public InvalidExcelDataException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
+
+        protected InvalidExcelDataException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
     }
 
     class ExcelDataCreator : ITypeFuncVisitor<object, ExcelStream, DefAssembly, DType>
@@ -32,7 +52,7 @@ namespace Luban.Job.Cfg.TypeVisitors
                 }
                 else
                 {
-                    throw new Exception($"单元格没有填有效数据");
+                    throw new InvalidExcelDataException($"单元格没有填有效数据");
                 }
             }
             return false;
@@ -51,7 +71,7 @@ namespace Luban.Job.Cfg.TypeVisitors
                 case "是": return true;
                 case "false":
                 case "否": return false;
-                default: throw new Exception($"{s} 不是 bool 类型的值 (true 或 false)");
+                default: throw new InvalidExcelDataException($"{s} 不是 bool 类型的值 (true 或 false)");
             }
         }
 
@@ -74,7 +94,7 @@ namespace Luban.Job.Cfg.TypeVisitors
             }
             if (!byte.TryParse(d.ToString(), out byte v))
             {
-                throw new Exception($"{d} 不是 byte 类型值");
+                throw new InvalidExcelDataException($"{d} 不是 byte 类型值");
             }
             return new DByte(v);
         }
@@ -88,7 +108,7 @@ namespace Luban.Job.Cfg.TypeVisitors
             }
             if (!short.TryParse(d.ToString(), out short v))
             {
-                throw new Exception($"{d} 不是 short 类型值");
+                throw new InvalidExcelDataException($"{d} 不是 short 类型值");
             }
             return new DShort(v);
         }
@@ -102,7 +122,7 @@ namespace Luban.Job.Cfg.TypeVisitors
             }
             if (!short.TryParse(d.ToString(), out short v))
             {
-                throw new Exception($"{d} 不是 short 类型值");
+                throw new InvalidExcelDataException($"{d} 不是 short 类型值");
             }
             return new DFshort(v);
         }
@@ -124,7 +144,7 @@ namespace Luban.Job.Cfg.TypeVisitors
             }
             if (!int.TryParse(ds, out var v))
             {
-                throw new Exception($"{d} 不是 int 类型值");
+                throw new InvalidExcelDataException($"{d} 不是 int 类型值");
             }
             return new DInt(v);
         }
@@ -146,7 +166,7 @@ namespace Luban.Job.Cfg.TypeVisitors
             }
             if (!int.TryParse(ds, out var v))
             {
-                throw new Exception($"{d} 不是 int 类型值");
+                throw new InvalidExcelDataException($"{d} 不是 int 类型值");
             }
             return new DFint(v);
         }
@@ -168,7 +188,7 @@ namespace Luban.Job.Cfg.TypeVisitors
             }
             if (!long.TryParse(ds, out var v))
             {
-                throw new Exception($"{d} 不是 long 类型值");
+                throw new InvalidExcelDataException($"{d} 不是 long 类型值");
             }
             return new DLong(v);
         }
@@ -190,7 +210,7 @@ namespace Luban.Job.Cfg.TypeVisitors
             }
             if (!long.TryParse(ds, out var v))
             {
-                throw new Exception($"{d} 不是 long 类型值");
+                throw new InvalidExcelDataException($"{d} 不是 long 类型值");
             }
             return new DFlong(v);
         }
@@ -204,7 +224,7 @@ namespace Luban.Job.Cfg.TypeVisitors
             }
             if (!float.TryParse(d.ToString(), out var v))
             {
-                throw new Exception($"{d} 不是 float 类型值");
+                throw new InvalidExcelDataException($"{d} 不是 float 类型值");
             }
             return new DFloat(v);
         }
@@ -218,7 +238,7 @@ namespace Luban.Job.Cfg.TypeVisitors
             }
             if (!double.TryParse(d.ToString(), out var v))
             {
-                throw new Exception($"{d} 不是 double 类型值");
+                throw new InvalidExcelDataException($"{d} 不是 double 类型值");
             }
             return new DDouble(v);
         }
@@ -235,16 +255,11 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public DType Accept(TString type, object converter, ExcelStream x, DefAssembly ass)
         {
-            var d = x.Read(x.NamedMode);
-            if (d == null)
+            if (x.NamedMode && x.IncludeNullAndEmptySize != 1)
             {
-                return new DString("");
+                throw new InvalidExcelDataException("excel string类型在标题头对应模式下必须正好占据一个单元格");
             }
-            if (d is string s)
-            {
-                return new DString(DataUtil.UnEscapeString(s));
-            }
-            return new DString(d.ToString());
+            return new DString(ParseString(x.Read(x.NamedMode)));
         }
 
         public DType Accept(TBytes type, object converter, ExcelStream x, DefAssembly ass)
@@ -252,18 +267,32 @@ namespace Luban.Job.Cfg.TypeVisitors
             throw new NotImplementedException();
         }
 
-        public DType Accept(TText type, object converter, ExcelStream x, DefAssembly ass)
+        private static string ParseString(object d)
         {
-            var d = x.Read(x.NamedMode);
             if (d == null)
             {
-                return new DString("");
+                return "";
             }
-            if (d is string s)
+            else if (d is string s)
             {
-                return new DString(DataUtil.UnEscapeString(s));
+                return DataUtil.UnEscapeString(s);
             }
-            return new DString(d.ToString());
+            else
+            {
+                return d.ToString();
+            }
+        }
+
+        public DType Accept(TText type, object converter, ExcelStream x, DefAssembly ass)
+        {
+            if (x.NamedMode && x.IncludeNullAndEmptySize != 2)
+            {
+                throw new InvalidExcelDataException("excel text 类型在标题头对应模式下必须正好占据2个单元格");
+            }
+            string key = ParseString(x.Read(x.NamedMode));
+            string text = ParseString(x.Read(x.NamedMode));
+            ass.AddText(key, text);
+            return new DText(key, text);
         }
 
         private List<DType> CreateBeanFields(DefBean bean, ExcelStream stream, DefAssembly ass)
@@ -285,7 +314,7 @@ namespace Luban.Job.Cfg.TypeVisitors
                 }
                 catch (Exception e)
                 {
-                    throw new Exception($"读取结构:{bean.FullName} 字段:{f.Name} 出错 ==> {e.Message}", e);
+                    throw new InvalidExcelDataException($"读取结构:{bean.FullName} 字段:{f.Name} 出错 ==> {e.Message}", e);
                 }
             }
             return list;
@@ -306,7 +335,7 @@ namespace Luban.Job.Cfg.TypeVisitors
                 DefBean implType = (DefBean)originBean.GetNotAbstractChildType(subType);
                 if (implType == null)
                 {
-                    throw new Exception($"type:{fullType} 不是bean类型");
+                    throw new InvalidExcelDataException($"type:{fullType} 不是bean类型");
                 }
                 return new DBean(originBean, implType, CreateBeanFields(implType, x, ass));
             }
@@ -364,7 +393,7 @@ namespace Luban.Job.Cfg.TypeVisitors
                 var value = string.IsNullOrWhiteSpace(sep) ? type.ValueType.Apply(this, null, x, ass) : type.ValueType.Apply(this, null, new ExcelStream(x.ReadCell(), sep, false), ass);
                 if (!datas.TryAdd(key, value))
                 {
-                    throw new Exception($"map 的 key:{key} 重复");
+                    throw new InvalidExcelDataException($"map 的 key:{key} 重复");
                 }
             }
             return new DMap(type, datas);

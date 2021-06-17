@@ -267,3 +267,4 @@ __pycache__/
 
 /config/output_code
 /config/output_data
+/config/output_lua

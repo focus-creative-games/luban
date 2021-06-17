@@ -2,7 +2,7 @@
 	-h %LUBAN_SERVER_IP% ^
 	-j cfg ^
 	-- ^
-	-d Defines/root.xml ^
+	-d Defines/__root__.xml ^
 	--input_data_dir Datas ^
 	--output_data_dir output_lua ^
 	-s client ^

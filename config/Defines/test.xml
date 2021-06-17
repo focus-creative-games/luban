@@ -58,6 +58,8 @@
 		<var name="x13" type="DemoEnum"/>
 		<var name="x14" type="DemoDynamic" sep=","/>多态数据结构
 		
+		<var name="s1" type="text"/>
+		
 		<var name="v2" type="vector2"/>
 		<var name="v3" type="vector3"/>
 		<var name="v4" type="vector4"/>

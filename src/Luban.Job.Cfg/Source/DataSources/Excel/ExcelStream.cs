@@ -82,6 +82,8 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         public string CurrentExcelPosition => _datas[Math.Min(_curIndex, _datas.Count - 1)].ToString();
 
+        public int IncludeNullAndEmptySize => _toIndex - _curIndex + 1;
+
         public override string ToString()
         {
             var sb = new StringBuilder();

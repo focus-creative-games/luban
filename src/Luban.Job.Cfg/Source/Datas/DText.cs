@@ -4,8 +4,13 @@ namespace Luban.Job.Cfg.Datas
 {
     public class DText : DType<string>
     {
-        public DText(string x) : base(x)
+        public string Key { get; }
+
+        public DText(string key, string x) : base(x)
         {
+            Key = key;
+
+            System.Console.WriteLine("== text. key:{0} text:{1}", key, x);
         }
 
         public override void Apply<T>(IDataActionVisitor<T> visitor, T x)

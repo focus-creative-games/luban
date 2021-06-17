@@ -73,6 +73,16 @@ namespace Luban.Job.Cfg.Utils
             return s;
         }
 
+        public static (string Key, string Text) ExtractText(string rawKeyAndText)
+        {
+            string[] keyAndText = rawKeyAndText.Split('|');
+            if (keyAndText.Length != 2)
+            {
+                throw new Exception("text data should like <key>|<text>");
+            }
+            return (keyAndText[0], keyAndText[1]);
+        }
+
         //public static string Data2String(DType data)
         //{
         //    var s = new StringBuilder();

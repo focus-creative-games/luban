@@ -108,17 +108,40 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public DType Accept(TString type, object x, DefAssembly ass)
         {
-            return new DString(x?.ToString());
+            if (x is string s)
+            {
+                return new DString(s);
+            }
+            else
+            {
+                throw new Exception($"{x} 不是 double 类型数据");
+            }
         }
 
         public DType Accept(TBytes type, object x, DefAssembly ass)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public DType Accept(TText type, object x, DefAssembly ass)
         {
-            return new DText(x?.ToString());
+            var table = (LuaTable)x;
+            if (table == null)
+            {
+                throw new Exception($"字段不是 text类型({{key=xx,text=yy}}}})");
+            }
+            string key = (string)table["key"];
+            string text = (string)table["text"];
+            if (key == null)
+            {
+                throw new Exception("text缺失key属性");
+            }
+            if (text == null)
+            {
+                throw new Exception("text缺失text属性");
+            }
+            ass.AddText(key, text);
+            return new DText(key, text);
         }
 
         public DType Accept(TBean type, object x, DefAssembly ass)

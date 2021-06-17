@@ -14,6 +14,7 @@ return
 	x12 = {x1=1},
 	x13 = "D",
 	x14 = { __type__="DemoD2", x1 = 1, x2=3},
+	s1 = { key="lua/key1", text="lua text "},
 	v2 = {x= 1,y = 2},
 	v3 = {x=0.1, y= 0.2,z=0.3},
 	v4 = {x=1,y=2,z=3.5,w=4},

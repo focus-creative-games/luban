@@ -39,6 +39,8 @@ namespace Luban.Job.Cfg.Defs
 
         public Dictionary<string, DefTable> CfgTables { get; } = new Dictionary<string, DefTable>();
 
+        private readonly ConcurrentDictionary<string, string> _texts = new ConcurrentDictionary<string, string>();
+
         public void AddCfgTable(DefTable table)
         {
             if (!CfgTables.TryAdd(table.FullName, table))
@@ -107,6 +109,22 @@ namespace Luban.Job.Cfg.Defs
             }
 
             return refTypes.Values.ToList();
+        }
+
+        public void AddText(string key, string text)
+        {
+            if (key == null || text == null)
+            {
+                throw new Exception("text的key或text属性不能为null");
+            }
+            if (key == "" && text != "")
+            {
+                throw new InvalidExcelDataException($"text  key为空, 但text:{text}不为空");
+            }
+            if (!_texts.TryAdd(key, text) && _texts[key] != text)
+            {
+                throw new Exception($"text key:{key} 出现多次，但值不相同. 当前:{text} 之前:{_texts[key]}");
+            }
         }
 
         public void Load(string outputService, Defines defines, RemoteAgent agent)
