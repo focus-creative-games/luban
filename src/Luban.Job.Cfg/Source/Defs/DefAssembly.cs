@@ -1,6 +1,6 @@
 using Luban.Config.Common.RawDefs;
 using Luban.Job.Cfg.Datas;
-using Luban.Job.Cfg.i10n;
+using Luban.Job.Cfg.l10n;
 using Luban.Job.Cfg.TypeVisitors;
 using Luban.Job.Common.Defs;
 using Luban.Server.Common;
@@ -42,9 +42,15 @@ namespace Luban.Job.Cfg.Defs
 
         public RawTextTable RawTextTable { get; } = new RawTextTable();
 
-        public TextTable ExportTextTable { get; } = new TextTable();
+        public TextTable ExportTextTable { get; private set; }
 
-        public NotConvertTextSet NotConvertTextSet { get; } = new NotConvertTextSet();
+        public NotConvertTextSet NotConvertTextSet { get; private set; }
+
+        public void InitL10n()
+        {
+            ExportTextTable = new TextTable(this);
+            NotConvertTextSet = new NotConvertTextSet();
+        }
 
         public void AddCfgTable(DefTable table)
         {

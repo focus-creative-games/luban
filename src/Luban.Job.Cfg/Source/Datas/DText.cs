@@ -1,5 +1,5 @@
 using Luban.Job.Cfg.DataVisitors;
-using Luban.Job.Cfg.i10n;
+using Luban.Job.Cfg.l10n;
 using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.Datas

@@ -1,6 +1,6 @@
 ﻿using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.Defs;
-using Luban.Job.Cfg.i10n;
+using Luban.Job.Cfg.l10n;
 using System;
 using System.Collections.Generic;
 using System.Linq;

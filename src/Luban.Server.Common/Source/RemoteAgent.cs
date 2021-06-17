@@ -100,7 +100,7 @@ namespace Luban.Server.Common
                             GET_INPUT_FILE_TIMEOUT);
                         if (res.Err != Luban.Common.EErrorCode.OK)
                         {
-                            throw new ReadRemoteFailException($"{res.Err}");
+                            throw new ReadRemoteFailException($"ReadFile:{file} fail. {res.Err}");
                         }
                         s_logger.Trace("read GetFileOrDirectoryAsync end. file:{file} cost:{time}", file, TimeUtil.NowMillis - t1);
                         return res;

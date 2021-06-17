@@ -69,7 +69,6 @@ namespace Luban.Job.Cfg
                     {
                         var records = t.Assembly.GetTableDataList(t);
                         ValidateTableModeIndex(t, records);
-
                     }));
                 }
                 await Task.WhenAll(tasks);

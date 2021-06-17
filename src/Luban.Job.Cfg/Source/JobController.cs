@@ -1,13 +1,7 @@
-using Bright.Serialization;
 using Bright.Time;
 using CommandLine;
 using Luban.Common.Protos;
 using Luban.Common.Utils;
-using Luban.Config.Common.RawDefs;
-using Luban.Job.Cfg.Cache;
-using Luban.Job.Cfg.Datas;
-using Luban.Job.Cfg.DataSources;
-using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Cfg.Generate;
 using Luban.Job.Cfg.RawDefs;
@@ -64,32 +58,14 @@ namespace Luban.Job.Cfg
             [Option("export_test_data", Required = false, HelpText = "export test data")]
             public bool ExportTestData { get; set; } = false;
 
-            [Option('t', "timezone", Required = false, HelpText = "timezone")]
+            [Option('t', "i10n_timezone", Required = false, HelpText = "timezone")]
             public string TimeZone { get; set; }
-        }
 
-        private async Task LoadCfgDataAsync(RemoteAgent agent, DefAssembly ass, string dataDir, bool exportTestData)
-        {
-            var ctx = agent;
-            List<DefTable> exportTables = ass.Types.Values.Where(t => t is DefTable ct && ct.NeedExport).Select(t => (DefTable)t).ToList();
-            var genDataTasks = new List<Task>();
-            var outputDataFiles = new ConcurrentBag<FileInfo>();
-            long genDataStartTime = TimeUtil.NowMillis;
+            [Option("input_l10n_text_files", Required = false, HelpText = "input l10n text table files. can be multi, sep by ','")]
+            public string InputTextTableFiles { get; set; }
 
-            foreach (DefTable c in exportTables)
-            {
-                genDataTasks.Add(Task.Run(async () =>
-                {
-                    long beginTime = TimeUtil.NowMillis;
-                    await LoadTableAsync(agent, c, dataDir, exportTestData);
-                    long endTime = TimeUtil.NowMillis;
-                    if (endTime - beginTime > 100)
-                    {
-                        ctx.Info("====== load {0} cost {1} ms ======", c.FullName, (endTime - beginTime));
-                    }
-                }));
-            }
-            await Task.WhenAll(genDataTasks.ToArray());
+            [Option("output_l10n_not_converted_text_file", Required = false, HelpText = "the file save not converted l10n texts.")]
+            public string OutputNotConvertTextFile { get; set; }
         }
 
         private ICodeRender CreateCodeRender(string genType)
@@ -171,6 +147,12 @@ namespace Luban.Job.Cfg
                         errMsg = "--output_data_json_monolithic_file missing";
                         return false;
                     }
+
+                    if (string.IsNullOrWhiteSpace(result.InputTextTableFiles) ^ string.IsNullOrWhiteSpace(result.OutputNotConvertTextFile))
+                    {
+                        errMsg = "--input_l10n_text_files must be provided with --output_l10n_not_converted_text_file";
+                        return false;
+                    }
                 }
 
                 return true;
@@ -225,6 +207,7 @@ namespace Luban.Job.Cfg
 
                 bool hasLoadCfgData = false;
 
+                bool needL10NTextConvert = !string.IsNullOrWhiteSpace(args.InputTextTableFiles);
 
                 async Task CheckLoadCfgDataAsync()
                 {
@@ -233,8 +216,14 @@ namespace Luban.Job.Cfg
                         hasLoadCfgData = true;
                         var timer = new ProfileTimer();
                         timer.StartPhase("load config data");
-                        await LoadCfgDataAsync(agent, ass, args.InputDataDir, args.ExportTestData);
+                        await DataLoaderUtil.LoadCfgDataAsync(agent, ass, args.InputDataDir, args.ExportTestData);
                         timer.EndPhaseAndLog();
+
+                        if (needL10NTextConvert)
+                        {
+                            ass.InitL10n();
+                            await DataLoaderUtil.LoadTextTablesAsync(agent, ass, args.InputDataDir, args.InputTextTableFiles);
+                        }
 
                         timer.StartPhase("validate");
                         var validateCtx = new ValidatorContext(ass, args.ValidateRootDir);
@@ -944,7 +933,7 @@ class Vector4:
                             {
                                 tasks.Add(Task.Run(() =>
                                 {
-                                    var content = ToOutputData(c, ass.GetTableDataList(c), genType);
+                                    var content = DataExporterUtil.ToOutputData(c, ass.GetTableDataList(c), genType);
                                     var file = genType.EndsWith("json") ? c.JsonOutputDataFile : c.OutputDataFile;
                                     var md5 = FileUtil.CalcMD5(content);
                                     CacheManager.Ins.AddCache(file, md5, content);
@@ -961,7 +950,7 @@ class Vector4:
                             {
                                 allJsonTask.Add(Task.Run(() =>
                                 {
-                                    return ToOutputData(c, ass.GetTableDataList(c), "data_json");
+                                    return DataExporterUtil.ToOutputData(c, ass.GetTableDataList(c), "data_json");
                                 }));
                             }
                             await Task.WhenAll(allJsonTask);
@@ -1006,7 +995,7 @@ class Vector4:
                             {
                                 tasks.Add(Task.Run(() =>
                                 {
-                                    var content = ToOutputData(c, ass.GetTableDataList(c), genType);
+                                    var content = DataExporterUtil.ToOutputData(c, ass.GetTableDataList(c), genType);
                                     var file = $"{c.Name}.lua";
                                     var md5 = FileUtil.CalcMD5(content);
                                     CacheManager.Ins.AddCache(file, md5, content);
@@ -1023,7 +1012,7 @@ class Vector4:
                             {
                                 genDataTasks.Add(Task.Run(() =>
                                 {
-                                    return ExportResourceList(ass.GetTableDataList(c));
+                                    return DataExporterUtil.ExportResourceList(ass.GetTableDataList(c));
                                 }));
                             }
 
@@ -1060,6 +1049,16 @@ class Vector4:
                 }
                 await Task.WhenAll(tasks.ToArray());
 
+                if (needL10NTextConvert)
+                {
+                    var notConvertTextList = DataExporterUtil.GenNotConvertTextList(ass.NotConvertTextSet);
+                    var md5 = FileUtil.CalcMD5(notConvertTextList);
+                    string outputNotConvertTextFile = args.OutputNotConvertTextFile;
+                    CacheManager.Ins.AddCache(outputNotConvertTextFile, md5, notConvertTextList);
+
+                    genScatteredFiles.Add(new FileInfo() { FilePath = outputNotConvertTextFile, MD5 = md5 });
+                }
+
                 if (!genCodeFilesInOutputCodeDir.IsEmpty)
                 {
                     res.FileGroups.Add(new FileGroup() { Dir = outputCodeDir, Files = genCodeFilesInOutputCodeDir.ToList() });
@@ -1081,201 +1080,6 @@ class Vector4:
             timer.EndPhaseAndLog();
 
             agent.Session.ReplyRpc<GenJob, GenJobArg, GenJobRes>(rpc, res);
-        }
-
-        public string GetActualFileName(string file)
-        {
-            int index = file.IndexOf('@');
-            return index >= 0 ? file[(index + 1)..] : file;
-        }
-
-        private List<Record> LoadCfgRecords(DefTable table, string originFile, string sheetName, byte[] content, bool multiRecord, bool exportTestData)
-        {
-            // (md5,sheet,multiRecord,exportTestData) -> (valuetype, List<(datas)>)
-            var dataSource = DataSourceFactory.Create(originFile, sheetName, new MemoryStream(content), exportTestData);
-            try
-            {
-                List<DType> datas;
-                if (multiRecord)
-                {
-                    datas = dataSource.ReadMulti(table.ValueTType);
-                }
-                else
-                {
-                    datas = new List<DType> { dataSource.ReadOne(table.ValueTType) };
-                }
-                var records = new List<Record>(datas.Count);
-                foreach (var data in datas)
-                {
-                    records.Add(new Record((DBean)data, originFile));
-                }
-                return records;
-            }
-            catch (Exception e)
-            {
-                throw new Exception($"配置文件:{originFile} 生成失败. ==> {e.Message}", e);
-            }
-        }
-
-        class InputFileInfo
-        {
-            public string MD5 { get; set; }
-
-            public string OriginFile { get; set; }
-
-            public string ActualFile { get; set; }
-
-            public string SheetName { get; set; }
-        }
-
-
-
-        private async Task<List<InputFileInfo>> CollectInputFilesAsync(RemoteAgent agent, DefTable table, string dataDir)
-        {
-            var collectTasks = new List<Task<List<InputFileInfo>>>();
-            foreach (var file in table.InputFiles)
-            {
-                (var actualFile, var sheetName) = RenderFileUtil.SplitFileAndSheetName(FileUtil.Standardize(file));
-                var actualFullPath = FileUtil.Combine(dataDir, actualFile);
-                var originFullPath = FileUtil.Combine(dataDir, file);
-                //s_logger.Info("== get input file:{file} actualFile:{actual}", file, actualFile);
-
-                collectTasks.Add(Task.Run(async () =>
-                {
-                    var fileOrDirContent = await agent.GetFileOrDirectoryAsync(actualFullPath);
-                    if (fileOrDirContent.IsFile)
-                    {
-                        return new List<InputFileInfo> { new InputFileInfo() { OriginFile = file, ActualFile = actualFullPath, SheetName = sheetName, MD5 = fileOrDirContent.Md5 } };
-                    }
-                    else
-                    {
-                        return fileOrDirContent.SubFiles.Select(f => new InputFileInfo() { OriginFile = f.FilePath, ActualFile = f.FilePath, MD5 = f.MD5 }).ToList();
-                    }
-                }));
-            }
-
-            var allFiles = new List<InputFileInfo>();
-            foreach (var t in collectTasks)
-            {
-                allFiles.AddRange(await t);
-            }
-            return allFiles;
-        }
-
-        public async Task LoadTableAsync(RemoteAgent agent, DefTable table, string dataDir, bool exportTestData)
-        {
-            var tasks = new List<Task<List<Record>>>();
-
-            var inputFiles = await CollectInputFilesAsync(agent, table, dataDir);
-
-            // check cache (table, exporttestdata) -> (list<InputFileInfo>, List<DType>)
-            // (md5, sheetName,exportTestData) -> (value_type, List<DType>)
-
-            foreach (var file in inputFiles)
-            {
-                var actualFile = file.ActualFile;
-                //s_logger.Info("== get input file:{file} actualFile:{actual}", file, actualFile);
-
-                tasks.Add(Task.Run(async () =>
-                {
-                    if (FileRecordCacheManager.Ins.TryGetCacheLoadedRecords(table, file.MD5, actualFile, file.SheetName, exportTestData, out var cacheRecords))
-                    {
-                        return cacheRecords;
-                    }
-                    var res = LoadCfgRecords(table,
-                        file.OriginFile,
-                        file.SheetName,
-                        await agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5),
-                        RenderFileUtil.IsExcelFile(file.ActualFile),
-                        exportTestData);
-
-                    FileRecordCacheManager.Ins.AddCacheLoadedRecords(table, file.MD5, file.SheetName, exportTestData, res);
-
-                    return res;
-                }));
-            }
-
-            var records = new List<Record>(tasks.Count);
-            foreach (var task in tasks)
-            {
-                records.AddRange(await task);
-            }
-
-            s_logger.Trace("== load recors. count:{count}", records.Count);
-
-            table.Assembly.AddDataTable(table, records);
-
-            s_logger.Trace("table:{name} record num:{num}", table.FullName, records.Count);
-        }
-
-        private byte[] ToOutputData(DefTable table, List<Record> records, string dataType)
-        {
-            switch (dataType)
-            {
-                case "data_bin":
-                {
-                    var buf = ThreadLocalTemporalByteBufPool.Alloc(1024 * 1024);
-                    BinaryExportor.Ins.WriteList(records, table.Assembly, buf);
-                    var bytes = buf.CopyData();
-                    ThreadLocalTemporalByteBufPool.Free(buf);
-                    return bytes;
-                }
-                case "data_json":
-                {
-                    var ss = new MemoryStream();
-                    var jsonWriter = new Utf8JsonWriter(ss, new JsonWriterOptions()
-                    {
-                        Indented = true,
-                        SkipValidation = false,
-                        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(System.Text.Unicode.UnicodeRanges.All),
-                    });
-                    JsonExportor.Ins.WriteList(records, table.Assembly, jsonWriter);
-                    jsonWriter.Flush();
-                    return DataUtil.StreamToBytes(ss);
-                }
-                case "data_lua":
-                {
-                    var content = new List<string>();
-
-                    switch (table.Mode)
-                    {
-                        case ETableMode.ONE:
-                        {
-                            LuaExportor.Ins.ExportTableOne(table, records, content);
-                            break;
-                        }
-                        case ETableMode.MAP:
-                        {
-                            LuaExportor.Ins.ExportTableOneKeyMap(table, records, content);
-                            break;
-                        }
-                        case ETableMode.BMAP:
-                        {
-                            LuaExportor.Ins.ExportTableTwoKeyMap(table, records, content);
-                            break;
-                        }
-                        default:
-                        {
-                            throw new NotSupportedException();
-                        }
-                    }
-                    return System.Text.Encoding.UTF8.GetBytes(string.Join('\n', content));
-                }
-                default:
-                {
-                    throw new ArgumentException($"not support datatype:{dataType}");
-                }
-            }
-        }
-
-        private List<ResourceInfo> ExportResourceList(List<Record> records)
-        {
-            var resList = new List<ResourceInfo>();
-            foreach (Record res in records)
-            {
-                ResourceExportor.Ins.Accept(res.Data, null, resList);
-            }
-            return resList;
         }
     }
 }

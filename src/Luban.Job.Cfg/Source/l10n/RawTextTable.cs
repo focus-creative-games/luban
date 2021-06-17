@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Luban.Job.Cfg.i10n
+namespace Luban.Job.Cfg.l10n
 {
     public class RawTextTable
     {
