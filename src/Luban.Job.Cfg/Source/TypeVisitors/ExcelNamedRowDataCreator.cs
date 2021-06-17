@@ -160,7 +160,7 @@ namespace Luban.Job.Cfg.TypeVisitors
                     }
                     else
                     {
-                        ExcelStream stream = row.GetColumn(f.Name, sep);
+                        ExcelStream stream = row.GetColumn(f.Name, sep, !f.CType.Apply(IsMultiData.Ins));
                         try
                         {
                             list.Add(f.CType.Apply(ExcelDataCreator.Ins, f.Remapper, stream, (DefAssembly)bean.AssemblyBase));
@@ -180,7 +180,7 @@ namespace Luban.Job.Cfg.TypeVisitors
             var originBean = (DefBean)type.Bean;
             if (originBean.IsAbstractType)
             {
-                string subType = row.GetColumn(DefBean.TYPE_NAME_KEY, null).Read().ToString().Trim();
+                string subType = row.GetColumn(DefBean.TYPE_NAME_KEY, null, true).Read().ToString().Trim();
                 if (subType.ToLower() == "null")
                 {
                     return new DBean(originBean, null, null);

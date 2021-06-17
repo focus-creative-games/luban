@@ -59,11 +59,6 @@ namespace Luban.Job.Cfg.Utils
             return bytes;
         }
 
-        public static string GetSourceFile(DType data)
-        {
-            return (string)data.Source;
-        }
-
         public static string UnEscapeString(string s)
         {
             if (s == "null" || s == "\"\"")
@@ -81,6 +76,18 @@ namespace Luban.Job.Cfg.Utils
                 throw new Exception("text data should like <key>|<text>");
             }
             return (keyAndText[0], keyAndText[1]);
+        }
+
+        public static void ValidateText(string key, string text)
+        {
+            if (key == null || text == null)
+            {
+                throw new Exception("text的key或text属性不能为null");
+            }
+            if (key == "" && text != "")
+            {
+                throw new Exception($"text  key为空, 但text:{text}不为空");
+            }
         }
 
         //public static string Data2String(DType data)

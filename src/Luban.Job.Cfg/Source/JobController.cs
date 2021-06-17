@@ -1089,26 +1089,27 @@ class Vector4:
             return index >= 0 ? file[(index + 1)..] : file;
         }
 
-        private List<DType> LoadCfgRecords(DefTable table, string originFile, string sheetName, byte[] content, bool multiRecord, bool exportTestData)
+        private List<Record> LoadCfgRecords(DefTable table, string originFile, string sheetName, byte[] content, bool multiRecord, bool exportTestData)
         {
             // (md5,sheet,multiRecord,exportTestData) -> (valuetype, List<(datas)>)
-            var dataSourc = DataSourceFactory.Create(originFile, sheetName, new MemoryStream(content), exportTestData);
+            var dataSource = DataSourceFactory.Create(originFile, sheetName, new MemoryStream(content), exportTestData);
             try
             {
                 List<DType> datas;
                 if (multiRecord)
                 {
-                    datas = dataSourc.ReadMulti(table.ValueTType);
+                    datas = dataSource.ReadMulti(table.ValueTType);
                 }
                 else
                 {
-                    datas = new List<DType> { dataSourc.ReadOne(table.ValueTType) };
+                    datas = new List<DType> { dataSource.ReadOne(table.ValueTType) };
                 }
+                var records = new List<Record>(datas.Count);
                 foreach (var data in datas)
                 {
-                    data.Source = originFile;
+                    records.Add(new Record((DBean)data, originFile));
                 }
-                return datas;
+                return records;
             }
             catch (Exception e)
             {
@@ -1163,7 +1164,7 @@ class Vector4:
 
         public async Task LoadTableAsync(RemoteAgent agent, DefTable table, string dataDir, bool exportTestData)
         {
-            var tasks = new List<Task<List<DType>>>();
+            var tasks = new List<Task<List<Record>>>();
 
             var inputFiles = await CollectInputFilesAsync(agent, table, dataDir);
 
@@ -1194,7 +1195,7 @@ class Vector4:
                 }));
             }
 
-            var records = new List<DType>(tasks.Count);
+            var records = new List<Record>(tasks.Count);
             foreach (var task in tasks)
             {
                 records.AddRange(await task);
@@ -1207,14 +1208,14 @@ class Vector4:
             s_logger.Trace("table:{name} record num:{num}", table.FullName, records.Count);
         }
 
-        private byte[] ToOutputData(DefTable table, List<DType> records, string dataType)
+        private byte[] ToOutputData(DefTable table, List<Record> records, string dataType)
         {
             switch (dataType)
             {
                 case "data_bin":
                 {
                     var buf = ThreadLocalTemporalByteBufPool.Alloc(1024 * 1024);
-                    BinaryExportor.Ins.WriteList(records, buf);
+                    BinaryExportor.Ins.WriteList(records, table.Assembly, buf);
                     var bytes = buf.CopyData();
                     ThreadLocalTemporalByteBufPool.Free(buf);
                     return bytes;
@@ -1228,7 +1229,7 @@ class Vector4:
                         SkipValidation = false,
                         Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(System.Text.Unicode.UnicodeRanges.All),
                     });
-                    JsonExportor.Ins.WriteList(records, jsonWriter);
+                    JsonExportor.Ins.WriteList(records, table.Assembly, jsonWriter);
                     jsonWriter.Flush();
                     return DataUtil.StreamToBytes(ss);
                 }
@@ -1267,12 +1268,12 @@ class Vector4:
             }
         }
 
-        private List<ResourceInfo> ExportResourceList(List<DType> records)
+        private List<ResourceInfo> ExportResourceList(List<Record> records)
         {
             var resList = new List<ResourceInfo>();
-            foreach (DBean res in records)
+            foreach (Record res in records)
             {
-                ResourceExportor.Ins.Accept(res, null, resList);
+                ResourceExportor.Ins.Accept(res.Data, null, resList);
             }
             return resList;
         }

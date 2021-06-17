@@ -100,7 +100,7 @@ namespace Luban.Job.Cfg.TypeVisitors
                 throw new Exception("text text不是字符串");
             }
 
-            ass.AddText(key, text);
+            DataUtil.ValidateText(key, text);
             return new DText(key, text);
         }
 

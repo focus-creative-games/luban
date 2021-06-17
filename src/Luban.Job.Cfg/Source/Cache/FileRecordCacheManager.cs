@@ -23,11 +23,11 @@ namespace Luban.Job.Cfg.Cache
         {
             public DefTable Table { get; }
 
-            public List<DType> Records { get; }
+            public List<Record> Records { get; }
 
             public volatile int LastAccessTime;
 
-            public FileRecordCache(DefTable table, List<DType> records)
+            public FileRecordCache(DefTable table, List<Record> records)
             {
                 Table = table;
                 Records = records;
@@ -39,7 +39,7 @@ namespace Luban.Job.Cfg.Cache
 
         private readonly object _shrinkLocker = new object();
 
-        public bool TryGetCacheLoadedRecords(DefTable table, string md5, string originFile, string sheetName, bool exportTestData, out List<DType> cacheRecords)
+        public bool TryGetCacheLoadedRecords(DefTable table, string md5, string originFile, string sheetName, bool exportTestData, out List<Record> cacheRecords)
         {
             // TODO text localization check
             cacheRecords = null;
@@ -60,7 +60,7 @@ namespace Luban.Job.Cfg.Cache
             }
         }
 
-        public void AddCacheLoadedRecords(DefTable table, string md5, string sheetName, bool exportTestData, List<DType> cacheRecords)
+        public void AddCacheLoadedRecords(DefTable table, string md5, string sheetName, bool exportTestData, List<Record> cacheRecords)
         {
             lock (_shrinkLocker)
             {

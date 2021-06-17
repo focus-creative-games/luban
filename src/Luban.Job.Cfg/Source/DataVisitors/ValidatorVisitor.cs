@@ -7,8 +7,6 @@ using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.DataVisitors
 {
-
-
     public class ValidatorVisitor : IDataActionVisitor<DefAssembly>
     {
         private readonly Stack<object> _path = new Stack<object>();
@@ -17,33 +15,34 @@ namespace Luban.Job.Cfg.DataVisitors
 
         public ValidatorContext Ctx { get; }
 
-        public DBean CurrentValidateRecord { get; private set; }
+        public Record CurrentValidateRecord { get; set; }
 
         public ValidatorVisitor(ValidatorContext ctx)
         {
             Ctx = ctx;
         }
 
-        public void ValidateTable(DefTable table, List<DType> records)
+        public void ValidateTable(DefTable table, List<Record> records)
         {
             DefAssembly ass = table.Assembly;
             var keyIndex = table.IndexFieldIdIndex;
 
-            foreach (DBean r in records)
+            foreach (Record r in records)
             {
                 CurrentValidateRecord = r;
+                DBean data = r.Data;
                 _path.Clear();
                 _path.Push(table.FullName);
                 if (table.IsMapTable)
                 {
-                    _path.Push(r.Fields[keyIndex]);
+                    _path.Push(data.Fields[keyIndex]);
                 }
                 else if (table.IsTwoKeyMapTable)
                 {
-                    _path.Push(r.Fields[keyIndex]);
-                    _path.Push(r.Fields[table.IndexFieldIdIndex2]);
+                    _path.Push(data.Fields[keyIndex]);
+                    _path.Push(data.Fields[table.IndexFieldIdIndex2]);
                 }
-                Accept(r, ass);
+                Accept(data, ass);
             }
         }
 

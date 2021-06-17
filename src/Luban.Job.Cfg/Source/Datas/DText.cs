@@ -1,16 +1,37 @@
 using Luban.Job.Cfg.DataVisitors;
+using Luban.Job.Cfg.i10n;
+using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.Datas
 {
-    public class DText : DType<string>
+    public class DText : DType
     {
         public string Key { get; }
 
-        public DText(string key, string x) : base(x)
+        private readonly string _rawValue;
+
+        public string RawValue => _rawValue;
+
+        public DText(string key, string x)
         {
             Key = key;
+            _rawValue = x;
+        }
 
-            System.Console.WriteLine("== text. key:{0} text:{1}", key, x);
+        public string GetText(TextTable stringTable, NotConvertTextSet notConvertKeys)
+        {
+            if (stringTable != null)
+            {
+                if (stringTable.TryGetText(Key, out var text))
+                {
+                    return text;
+                }
+                else if (notConvertKeys != null)
+                {
+                    notConvertKeys.Add(Key, _rawValue);
+                }
+            }
+            return _rawValue;
         }
 
         public override void Apply<T>(IDataActionVisitor<T> visitor, T x)
@@ -35,12 +56,12 @@ namespace Luban.Job.Cfg.Datas
 
         public override bool Equals(object obj)
         {
-            return obj is DText o && o.Value == this.Value;
+            return obj is DText o && o._rawValue == this._rawValue && o.Key == this.Key;
         }
 
         public override int GetHashCode()
         {
-            return Value.GetHashCode();
+            return _rawValue.GetHashCode();
         }
     }
 }

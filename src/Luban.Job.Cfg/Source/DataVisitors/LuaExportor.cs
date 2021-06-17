@@ -7,52 +7,54 @@ using System.Text;
 
 namespace Luban.Job.Cfg.DataVisitors
 {
-    class LuaExportor : IDataActionVisitor<StringBuilder>
+    class LuaExportor : IDataActionVisitor<DefAssembly, StringBuilder>
     {
         public static LuaExportor Ins { get; } = new LuaExportor();
 
-        public void ExportTableOne(DefTable t, List<DType> records, List<string> result)
+        public void ExportTableOne(DefTable t, List<Record> records, List<string> result)
         {
             result.Add("return ");
             var s = new StringBuilder();
-            Accept((DBean)records[0], s);
+            Accept(records[0].Data, t.Assembly, s);
             result.Add(s.ToString());
         }
 
-        public void ExportTableOneKeyMap(DefTable t, List<DType> records, List<string> result)
+        public void ExportTableOneKeyMap(DefTable t, List<Record> records, List<string> result)
         {
             result.Add("return ");
             result.Add("{");
             var s = new StringBuilder();
             var ks = new StringBuilder();
-            foreach (DBean r in records)
+            foreach (Record r in records)
             {
+                DBean d = r.Data;
                 s.Clear();
-                s.Append($"[{ToLuaCodeString(r.GetField(t.Index), ks)}] = ");
-                Accept(r, s);
+                s.Append($"[{ToLuaCodeString(d.GetField(t.Index), t.Assembly, ks)}] = ");
+                Accept(d, t.Assembly, s);
                 s.Append(',');
                 result.Add(s.ToString());
             }
             result.Add("}");
         }
 
-        public void ExportTableTwoKeyMap(DefTable t, List<DType> records, List<string> result)
+        public void ExportTableTwoKeyMap(DefTable t, List<Record> records, List<string> result)
         {
             result.Add("return ");
             result.Add("{");
 
             var s = new StringBuilder();
             var ks = new StringBuilder();
-            foreach (var g in records.GroupBy(r => ((DBean)r).GetField(t.Index1)))
+            foreach (var g in records.GroupBy(r => r.Data.GetField(t.Index1)))
             {
-                result.Add($"[{ToLuaCodeString(g.Key, ks)}] =");
+                result.Add($"[{ToLuaCodeString(g.Key, t.Assembly, ks)}] =");
                 result.Add("{");
 
-                foreach (DBean r in g)
+                foreach (Record r in g)
                 {
+                    DBean d = r.Data;
                     s.Clear();
-                    s.Append($"[{ToLuaCodeString(r.GetField(t.Index2), ks)}] = ");
-                    Accept(r, s);
+                    s.Append($"[{ToLuaCodeString(d.GetField(t.Index2), t.Assembly, ks)}] = ");
+                    Accept(d, t.Assembly, s);
                     s.Append(',');
                     result.Add(s.ToString());
                 }
@@ -63,64 +65,64 @@ namespace Luban.Job.Cfg.DataVisitors
             result.Add("}");
         }
 
-        private string ToLuaCodeString(DType data, StringBuilder b)
+        private string ToLuaCodeString(DType data, DefAssembly ass, StringBuilder b)
         {
             b.Clear();
-            data.Apply(this, b);
+            data.Apply(this, ass, b);
             return b.ToString();
         }
 
-        public void Accept(DBool type, StringBuilder line)
+        public void Accept(DBool type, DefAssembly ass, StringBuilder line)
         {
             line.Append(type.Value ? "true" : "false");
         }
 
-        public void Accept(DByte type, StringBuilder line)
+        public void Accept(DByte type, DefAssembly ass, StringBuilder line)
         {
             line.Append(type.Value);
         }
 
-        public void Accept(DShort type, StringBuilder line)
+        public void Accept(DShort type, DefAssembly ass, StringBuilder line)
         {
             line.Append(type.Value);
         }
 
-        public void Accept(DFshort type, StringBuilder line)
+        public void Accept(DFshort type, DefAssembly ass, StringBuilder line)
         {
             line.Append(type.Value);
         }
 
-        public void Accept(DInt type, StringBuilder line)
+        public void Accept(DInt type, DefAssembly ass, StringBuilder line)
         {
             line.Append(type.Value);
         }
 
-        public void Accept(DFint type, StringBuilder line)
+        public void Accept(DFint type, DefAssembly ass, StringBuilder line)
         {
             line.Append(type.Value);
         }
 
-        public void Accept(DLong type, StringBuilder line)
+        public void Accept(DLong type, DefAssembly ass, StringBuilder line)
         {
             line.Append(type.Value);
         }
 
-        public void Accept(DFlong type, StringBuilder line)
+        public void Accept(DFlong type, DefAssembly ass, StringBuilder line)
         {
             line.Append(type.Value);
         }
 
-        public void Accept(DFloat type, StringBuilder line)
+        public void Accept(DFloat type, DefAssembly ass, StringBuilder line)
         {
             line.Append(type.Value);
         }
 
-        public void Accept(DDouble type, StringBuilder line)
+        public void Accept(DDouble type, DefAssembly ass, StringBuilder line)
         {
             line.Append(type.Value);
         }
 
-        public void Accept(DEnum type, StringBuilder line)
+        public void Accept(DEnum type, DefAssembly ass, StringBuilder line)
         {
             line.Append(type.Value);
         }
@@ -130,22 +132,22 @@ namespace Luban.Job.Cfg.DataVisitors
             return s.Replace("\\", "\\\\").Replace("'", "\\'");
         }
 
-        public void Accept(DString type, StringBuilder line)
+        public void Accept(DString type, DefAssembly ass, StringBuilder line)
         {
             line.Append('\'').Append(EscapeString(type.Value)).Append('\'');
         }
 
-        public void Accept(DBytes type, StringBuilder line)
+        public void Accept(DBytes type, DefAssembly ass, StringBuilder line)
         {
             throw new NotImplementedException();
         }
 
-        public void Accept(DText type, StringBuilder line)
+        public void Accept(DText type, DefAssembly ass, StringBuilder line)
         {
-            line.Append('\'').Append(EscapeString(type.Value)).Append('\'');
+            line.Append('\'').Append(EscapeString(type.GetText(ass.ExportTextTable, ass.NotConvertTextSet))).Append('\'');
         }
 
-        public void Accept(DBean type, StringBuilder line)
+        public void Accept(DBean type, DefAssembly ass, StringBuilder line)
         {
             var bean = type.Type;
             if (bean.IsAbstractType)
@@ -174,76 +176,76 @@ namespace Luban.Job.Cfg.DataVisitors
                 if (field != null)
                 {
                     line.Append(defField.Name).Append('=');
-                    field.Apply(this, line);
+                    field.Apply(this, ass, line);
                     line.Append(',');
                 }
             }
             line.Append("}");
         }
 
-        public void Accept(DArray type, StringBuilder line)
+        public void Accept(DArray type, DefAssembly ass, StringBuilder line)
         {
             line.Append('{');
             foreach (var d in type.Datas)
             {
-                d.Apply(this, line);
+                d.Apply(this, ass, line);
                 line.Append(',');
             }
             line.Append('}');
         }
 
-        public void Accept(DList type, StringBuilder line)
+        public void Accept(DList type, DefAssembly ass, StringBuilder line)
         {
             line.Append('{');
             foreach (var d in type.Datas)
             {
-                d.Apply(this, line);
+                d.Apply(this, ass, line);
                 line.Append(',');
             }
             line.Append('}');
         }
 
-        public void Accept(DSet type, StringBuilder line)
+        public void Accept(DSet type, DefAssembly ass, StringBuilder line)
         {
             line.Append('{');
             foreach (var d in type.Datas)
             {
-                d.Apply(this, line);
+                d.Apply(this, ass, line);
                 line.Append(',');
             }
             line.Append('}');
         }
 
-        public void Accept(DMap type, StringBuilder line)
+        public void Accept(DMap type, DefAssembly ass, StringBuilder line)
         {
             line.Append('{');
             foreach ((var k, var v) in type.Datas)
             {
                 line.Append('[');
-                k.Apply(this, line);
+                k.Apply(this, ass, line);
                 line.Append("]=");
-                v.Apply(this, line);
+                v.Apply(this, ass, line);
                 line.Append(',');
             }
             line.Append('}');
         }
 
-        public void Accept(DVector2 type, StringBuilder line)
+        public void Accept(DVector2 type, DefAssembly ass, StringBuilder line)
         {
             line.Append($"{{x={type.Value.X},y={type.Value.Y}}}");
         }
 
-        public void Accept(DVector3 type, StringBuilder line)
+        public void Accept(DVector3 type, DefAssembly ass, StringBuilder line)
         {
             line.Append($"{{x={type.Value.X},y={type.Value.Y},z={type.Value.Z}}}");
         }
 
-        public void Accept(DVector4 type, StringBuilder line)
+        public void Accept(DVector4 type, DefAssembly ass, StringBuilder line)
         {
             line.Append($"{{x={type.Value.X},y={type.Value.Y},z={type.Value.Z},w={type.Value.W}}}");
         }
 
-        public void Accept(DDateTime type, StringBuilder line)
+        public void Accept(DDateTime type, DefAssembly ass, StringBuilder line)
         {
             line.Append(type.UnixTime);
         }

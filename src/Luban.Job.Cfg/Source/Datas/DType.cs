@@ -20,11 +20,6 @@ namespace Luban.Job.Cfg.Datas
             this.Apply(ToStringVisitor.Ins, s);
             return s.ToString();
         }
-
-        /// <summary>
-        /// 从哪儿创建的. 一般来说会保存它的源文件
-        /// </summary>
-        public object Source { get; set; }
     }
 
     public abstract class DType<T> : DType

@@ -6,81 +6,91 @@ using System.Text.Json;
 
 namespace Luban.Job.Cfg.DataVisitors
 {
-    class JsonExportor : IDataActionVisitor<Utf8JsonWriter>
+    class JsonExportor : IDataActionVisitor<DefAssembly, Utf8JsonWriter>
     {
         public static JsonExportor Ins { get; } = new JsonExportor();
 
-        public void Accept(DBool type, Utf8JsonWriter x)
+        public void WriteList(List<Record> datas, DefAssembly ass, Utf8JsonWriter x)
+        {
+            x.WriteStartArray();
+            foreach (var d in datas)
+            {
+                d.Data.Apply(this, ass, x);
+            }
+            x.WriteEndArray();
+        }
+
+        public void Accept(DBool type, DefAssembly ass, Utf8JsonWriter x)
         {
             x.WriteBooleanValue(type.Value);
         }
 
-        public void Accept(DByte type, Utf8JsonWriter x)
+        public void Accept(DByte type, DefAssembly ass, Utf8JsonWriter x)
         {
             x.WriteNumberValue(type.Value);
         }
 
-        public void Accept(DShort type, Utf8JsonWriter x)
+        public void Accept(DShort type, DefAssembly ass, Utf8JsonWriter x)
         {
             x.WriteNumberValue(type.Value);
         }
 
-        public void Accept(DFshort type, Utf8JsonWriter x)
+        public void Accept(DFshort type, DefAssembly ass, Utf8JsonWriter x)
         {
             x.WriteNumberValue(type.Value);
         }
 
-        public void Accept(DInt type, Utf8JsonWriter x)
+        public void Accept(DInt type, DefAssembly ass, Utf8JsonWriter x)
         {
             x.WriteNumberValue(type.Value);
         }
 
-        public void Accept(DFint type, Utf8JsonWriter x)
+        public void Accept(DFint type, DefAssembly ass, Utf8JsonWriter x)
         {
             x.WriteNumberValue(type.Value);
         }
 
-        public void Accept(DLong type, Utf8JsonWriter x)
+        public void Accept(DLong type, DefAssembly ass, Utf8JsonWriter x)
         {
             x.WriteNumberValue(type.Value);
         }
 
-        public void Accept(DFlong type, Utf8JsonWriter x)
+        public void Accept(DFlong type, DefAssembly ass, Utf8JsonWriter x)
         {
             x.WriteNumberValue(type.Value);
         }
 
-        public void Accept(DFloat type, Utf8JsonWriter x)
+        public void Accept(DFloat type, DefAssembly ass, Utf8JsonWriter x)
         {
             x.WriteNumberValue(type.Value);
         }
 
-        public void Accept(DDouble type, Utf8JsonWriter x)
+        public void Accept(DDouble type, DefAssembly ass, Utf8JsonWriter x)
         {
             x.WriteNumberValue(type.Value);
         }
 
-        public void Accept(DEnum type, Utf8JsonWriter x)
+        public void Accept(DEnum type, DefAssembly ass, Utf8JsonWriter x)
         {
             x.WriteNumberValue(type.Value);
         }
 
-        public void Accept(DString type, Utf8JsonWriter x)
+        public void Accept(DString type, DefAssembly ass, Utf8JsonWriter x)
         {
             x.WriteStringValue(type.Value);
         }
 
-        public void Accept(DBytes type, Utf8JsonWriter x)
+        public void Accept(DBytes type, DefAssembly ass, Utf8JsonWriter x)
         {
             throw new NotImplementedException();
         }
 
-        public void Accept(DText type, Utf8JsonWriter x)
+        public void Accept(DText type, DefAssembly ass, Utf8JsonWriter x)
         {
-            x.WriteStringValue(type.Value);
+            x.WriteStringValue(type.GetText(ass.ExportTextTable, ass.NotConvertTextSet));
         }
 
-        public void Accept(DBean type, Utf8JsonWriter x)
+        public void Accept(DBean type, DefAssembly ass, Utf8JsonWriter x)
         {
             x.WriteStartObject();
 
@@ -108,51 +118,51 @@ namespace Luban.Job.Cfg.DataVisitors
                 }
                 else
                 {
-                    d.Apply(this, x);
+                    d.Apply(this, ass, x);
                 }
             }
             x.WriteEndObject();
         }
 
-        public void WriteList(List<DType> datas, Utf8JsonWriter x)
+        public void WriteList(List<DType> datas, DefAssembly ass, Utf8JsonWriter x)
         {
             x.WriteStartArray();
             foreach (var d in datas)
             {
-                d.Apply(this, x);
+                d.Apply(this, ass, x);
             }
             x.WriteEndArray();
         }
 
-        public void Accept(DArray type, Utf8JsonWriter x)
+        public void Accept(DArray type, DefAssembly ass, Utf8JsonWriter x)
         {
-            WriteList(type.Datas, x);
+            WriteList(type.Datas, ass, x);
         }
 
-        public void Accept(DList type, Utf8JsonWriter x)
+        public void Accept(DList type, DefAssembly ass, Utf8JsonWriter x)
         {
-            WriteList(type.Datas, x);
+            WriteList(type.Datas, ass, x);
         }
 
-        public void Accept(DSet type, Utf8JsonWriter x)
+        public void Accept(DSet type, DefAssembly ass, Utf8JsonWriter x)
         {
-            WriteList(type.Datas, x);
+            WriteList(type.Datas, ass, x);
         }
 
-        public void Accept(DMap type, Utf8JsonWriter x)
+        public void Accept(DMap type, DefAssembly ass, Utf8JsonWriter x)
         {
             x.WriteStartArray();
             foreach (var d in type.Datas)
             {
                 x.WriteStartArray();
-                d.Key.Apply(this, x);
-                d.Value.Apply(this, x);
+                d.Key.Apply(this, ass, x);
+                d.Value.Apply(this, ass, x);
                 x.WriteEndArray();
             }
             x.WriteEndArray();
         }
 
-        public void Accept(DVector2 type, Utf8JsonWriter x)
+        public void Accept(DVector2 type, DefAssembly ass, Utf8JsonWriter x)
         {
             x.WriteStartObject();
             x.WriteNumber("x", type.Value.X);
@@ -160,7 +170,7 @@ namespace Luban.Job.Cfg.DataVisitors
             x.WriteEndObject();
         }
 
-        public void Accept(DVector3 type, Utf8JsonWriter x)
+        public void Accept(DVector3 type, DefAssembly ass, Utf8JsonWriter x)
         {
             x.WriteStartObject();
             x.WriteNumber("x", type.Value.X);
@@ -169,7 +179,7 @@ namespace Luban.Job.Cfg.DataVisitors
             x.WriteEndObject();
         }
 
-        public void Accept(DVector4 type, Utf8JsonWriter x)
+        public void Accept(DVector4 type, DefAssembly ass, Utf8JsonWriter x)
         {
             x.WriteStartObject();
             x.WriteNumber("x", type.Value.X);
@@ -179,7 +189,7 @@ namespace Luban.Job.Cfg.DataVisitors
             x.WriteEndObject();
         }
 
-        public void Accept(DDateTime type, Utf8JsonWriter x)
+        public void Accept(DDateTime type, DefAssembly ass, Utf8JsonWriter x)
         {
             x.WriteNumberValue(type.UnixTime);
         }

@@ -75,7 +75,7 @@ namespace Luban.Job.Cfg.DataVisitors
 
         public void Accept(DText type, StringBuilder x)
         {
-            x.Append(type.Value);
+            x.Append(type.Key).Append('|').Append(type.RawValue);
         }
 
         public void Accept(DBean type, StringBuilder x)

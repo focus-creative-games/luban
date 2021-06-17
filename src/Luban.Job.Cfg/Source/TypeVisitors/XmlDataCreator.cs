@@ -84,7 +84,7 @@ namespace Luban.Job.Cfg.TypeVisitors
         {
             var key = x.Element("key").Value;
             var text = x.Element("text").Value;
-            ass.AddText(key, text);
+            DataUtil.ValidateText(key, text);
             return new DText(key, text);
         }
 
@@ -102,15 +102,11 @@ namespace Luban.Job.Cfg.TypeVisitors
                 }
                 var fullName = TypeUtil.MakeFullName(bean.Namespace, subType);
                 var defType = (DefBean)bean.GetNotAbstractChildType(subType);
-                if (defType == null)
-                {
-                    throw new Exception($"type:{fullName} 不是合法类型");
-                }
                 //if (defType.IsAbstractType)
                 //{
                 //    throw new Exception($"type:{fullName} 是抽象类. 不能创建实例");
                 //}
-                implBean = defType;
+                implBean = defType ?? throw new Exception($"type:{fullName} 不是合法类型");
             }
             else
             {

@@ -72,7 +72,7 @@ namespace Luban.Job.Cfg.Validators
                     actualTable = table;
                 }
                 DefTable ct = assembly.GetCfgTable(actualTable);
-                string source = DataUtil.GetSourceFile(ValidatorContext.CurrentVisitor.CurrentValidateRecord);
+                string source = ValidatorContext.CurrentVisitor.CurrentValidateRecord.Source;
                 assembly.Agent.Error("记录 {0} = {1} (来自文件:{2}) 在引用表:{3} 中不存在", ValidatorContext.CurrentRecordPath, key, source, table);
             }
         }

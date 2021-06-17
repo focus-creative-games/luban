@@ -1,5 +1,6 @@
 using Luban.Config.Common.RawDefs;
 using Luban.Job.Cfg.Datas;
+using Luban.Job.Cfg.i10n;
 using Luban.Job.Cfg.TypeVisitors;
 using Luban.Job.Common.Defs;
 using Luban.Server.Common;
@@ -34,12 +35,16 @@ namespace Luban.Job.Cfg.Defs
 
         private readonly List<Service> _cfgServices = new List<Service>();
 
-        private readonly ConcurrentDictionary<string, List<DType>> _recordsByTables = new ConcurrentDictionary<string, List<DType>>();
-        private readonly ConcurrentDictionary<string, Dictionary<DType, DBean>> _recordsMapByTables = new ConcurrentDictionary<string, Dictionary<DType, DBean>>();
+        private readonly ConcurrentDictionary<string, List<Record>> _recordsByTables = new();
+        private readonly ConcurrentDictionary<string, Dictionary<DType, Record>> _recordsMapByTables = new();
 
         public Dictionary<string, DefTable> CfgTables { get; } = new Dictionary<string, DefTable>();
 
-        private readonly ConcurrentDictionary<string, string> _texts = new ConcurrentDictionary<string, string>();
+        public RawTextTable RawTextTable { get; } = new RawTextTable();
+
+        public TextTable ExportTextTable { get; } = new TextTable();
+
+        public NotConvertTextSet NotConvertTextSet { get; } = new NotConvertTextSet();
 
         public void AddCfgTable(DefTable table)
         {
@@ -54,22 +59,22 @@ namespace Luban.Job.Cfg.Defs
             return CfgTables.TryGetValue(name, out var t) ? t : null;
         }
 
-        public void AddDataTable(DefTable table, List<DType> records)
+        public void AddDataTable(DefTable table, List<Record> records)
         {
             _recordsByTables[table.FullName] = records;
         }
 
-        public void SetDataTableMap(DefTable table, Dictionary<DType, DBean> recordMap)
+        public void SetDataTableMap(DefTable table, Dictionary<DType, Record> recordMap)
         {
             _recordsMapByTables[table.FullName] = recordMap;
         }
 
-        public List<DType> GetTableDataList(DefTable table)
+        public List<Record> GetTableDataList(DefTable table)
         {
             return _recordsByTables[table.FullName];
         }
 
-        public Dictionary<DType, DBean> GetTableDataMap(DefTable table)
+        public Dictionary<DType, Record> GetTableDataMap(DefTable table)
         {
             return _recordsMapByTables[table.FullName];
         }
@@ -109,22 +114,6 @@ namespace Luban.Job.Cfg.Defs
             }
 
             return refTypes.Values.ToList();
-        }
-
-        public void AddText(string key, string text)
-        {
-            if (key == null || text == null)
-            {
-                throw new Exception("text的key或text属性不能为null");
-            }
-            if (key == "" && text != "")
-            {
-                throw new InvalidExcelDataException($"text  key为空, 但text:{text}不为空");
-            }
-            if (!_texts.TryAdd(key, text) && _texts[key] != text)
-            {
-                throw new Exception($"text key:{key} 出现多次，但值不相同. 当前:{text} 之前:{_texts[key]}");
-            }
         }
 
         public void Load(string outputService, Defines defines, RemoteAgent agent)

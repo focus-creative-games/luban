@@ -134,7 +134,7 @@ namespace Luban.Job.Cfg.Validators
             return true;
         }
 
-        public string Source => DataUtil.GetSourceFile(ValidatorContext.CurrentVisitor.CurrentValidateRecord);
+        public string Source => ValidatorContext.CurrentVisitor.CurrentValidateRecord.Source;
 
         public void Validate(ValidatorContext ctx, DType data, bool nullable)
         {

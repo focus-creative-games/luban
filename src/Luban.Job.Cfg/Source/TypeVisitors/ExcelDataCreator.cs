@@ -291,7 +291,7 @@ namespace Luban.Job.Cfg.TypeVisitors
             }
             string key = ParseString(x.Read(x.NamedMode));
             string text = ParseString(x.Read(x.NamedMode));
-            ass.AddText(key, text);
+            DataUtil.ValidateText(key, text);
             return new DText(key, text);
         }
 

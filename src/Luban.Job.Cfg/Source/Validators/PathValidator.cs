@@ -175,7 +175,7 @@ namespace Luban.Job.Cfg.Validators
                     return;
                 }
 
-                string source = DataUtil.GetSourceFile(ValidatorContext.CurrentVisitor.CurrentValidateRecord);
+                string source = ValidatorContext.CurrentVisitor.CurrentValidateRecord.Source;
                 object finalPaths = PathPattern.CalcFinalPath(value);
                 if (finalPaths == null)
                 {

@@ -75,7 +75,7 @@ namespace Luban.Job.Cfg.DataVisitors
 
         public bool Accept(DText type)
         {
-            return string.IsNullOrEmpty(type.Value);
+            return string.IsNullOrEmpty(type.Key);
         }
 
         public bool Accept(DBean type)

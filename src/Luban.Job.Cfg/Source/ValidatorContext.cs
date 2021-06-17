@@ -69,6 +69,7 @@ namespace Luban.Job.Cfg
                     {
                         var records = t.Assembly.GetTableDataList(t);
                         ValidateTableModeIndex(t, records);
+
                     }));
                 }
                 await Task.WhenAll(tasks);
@@ -86,6 +87,7 @@ namespace Luban.Job.Cfg
                         {
                             CurrentVisitor = visitor;
                             visitor.ValidateTable(t, records);
+                            ValidateText(t, records);
                         }
                         finally
                         {
@@ -100,6 +102,16 @@ namespace Luban.Job.Cfg
             {
                 await ValidatePaths();
             }
+        }
+
+        private void ValidateText(DefTable table, List<Record> records)
+        {
+            foreach (var r in records)
+            {
+                CurrentVisitor.CurrentValidateRecord = r;
+                r.Data.Apply(TextValidatorVisitor.Ins, this.Assembly.RawTextTable);
+            }
+            CurrentVisitor.CurrentValidateRecord = null;
         }
 
         private async Task ValidatePaths()
@@ -160,9 +172,9 @@ namespace Luban.Job.Cfg
             }
         }
 
-        private void ValidateTableModeIndex(DefTable table, List<DType> records)
+        private void ValidateTableModeIndex(DefTable table, List<Record> records)
         {
-            var recordMap = new Dictionary<DType, DBean>();
+            var recordMap = new Dictionary<DType, Record>();
 
             switch (table.Mode)
             {
@@ -176,14 +188,14 @@ namespace Luban.Job.Cfg
                 }
                 case ETableMode.MAP:
                 {
-                    foreach (DBean r in records)
+                    foreach (Record r in records)
                     {
-                        DType key = r.Fields[table.IndexFieldIdIndex];
+                        DType key = r.Data.Fields[table.IndexFieldIdIndex];
                         if (!recordMap.TryAdd(key, r))
                         {
                             throw new Exception($@"配置表 {table.FullName} 主键字段:{table.Index} 主键值:{key} 重复.
-        记录1 来自文件:{DataUtil.GetSourceFile(r)}
-        记录2 来自文件:{DataUtil.GetSourceFile(recordMap[key])}
+        记录1 来自文件:{r.Source}
+        记录2 来自文件:{recordMap[key].Source}
 ");
                         }
 
@@ -192,16 +204,16 @@ namespace Luban.Job.Cfg
                 }
                 case ETableMode.BMAP:
                 {
-                    var twoKeyMap = new Dictionary<(DType, DType), DBean>();
-                    foreach (DBean r in records)
+                    var twoKeyMap = new Dictionary<(DType, DType), Record>();
+                    foreach (Record r in records)
                     {
-                        DType key1 = r.Fields[table.IndexFieldIdIndex1];
-                        DType key2 = r.Fields[table.IndexFieldIdIndex2];
+                        DType key1 = r.Data.Fields[table.IndexFieldIdIndex1];
+                        DType key2 = r.Data.Fields[table.IndexFieldIdIndex2];
                         if (!twoKeyMap.TryAdd((key1, key2), r))
                         {
                             throw new Exception($@"配置表 {table.FullName} 主键字段:{table.Index} 主键值:({key1},{key2})重复. 
-        记录1 来自文件:{DataUtil.GetSourceFile(r)}
-        记录2 来自文件:{DataUtil.GetSourceFile(twoKeyMap[(key1, key2)])}
+        记录1 来自文件:{r.Source}
+        记录2 来自文件:{twoKeyMap[(key1, key2)].Source}
 ");
                         }
                         // 目前不支持 双key索引检查,但支持主key索引检查.
