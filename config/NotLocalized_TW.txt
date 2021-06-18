@@ -1,0 +1,9 @@
+/asfa|aabbcc
+/asfa32|aabbcc22
+key_name|aabbcc
+key1|asdfa4
+key2|asdfa7
+key3|asdfa8
+lua/key1|lua text 
+xml_key1|xml text
+xml_key2|xml text222

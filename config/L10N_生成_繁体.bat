@@ -8,8 +8,8 @@
 	-s client ^
 	--gen_types data_lua ^
 	--export_test_data ^
-	--input_l10n_text_files l10n/TextTable_CN.xlsx ^
+	--input_l10n_text_files l10n/cn/TextTable_CN.xlsx ^
 	--l10n_text_field_name text_tw ^
-	--output_l10n_not_converted_text_file NotLocalized_CN.txt
+	--output_l10n_not_converted_text_file NotLocalized_TW.txt
 
 pause

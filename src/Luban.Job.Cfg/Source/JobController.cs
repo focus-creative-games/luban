@@ -237,7 +237,7 @@ namespace Luban.Job.Cfg
                         if (needL10NTextConvert)
                         {
                             ass.InitL10n(args.TextValueFieldName);
-                            await DataLoaderUtil.LoadTextTablesAsync(agent, ass, args.InputDataDir, args.InputTextTableFiles);
+                            await DataLoaderUtil.LoadTextTablesAsync(agent, ass, ".", args.InputTextTableFiles);
                         }
 
                         timer.StartPhase("validate");
