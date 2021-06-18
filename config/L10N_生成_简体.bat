@@ -9,6 +9,6 @@
 	--gen_types data_lua ^
 	--export_test_data ^
 	--input_l10n_text_files l10n/TextTable_CN.xlsx ^
-	--output_l10n_not_converted_text_file l10n/NotLocalized_CN.txt
+	--output_l10n_not_converted_text_file NotLocalized_CN.txt
 
 pause

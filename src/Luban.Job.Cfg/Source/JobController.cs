@@ -64,6 +64,9 @@ namespace Luban.Job.Cfg
             [Option("input_l10n_text_files", Required = false, HelpText = "input l10n text table files. can be multi, sep by ','")]
             public string InputTextTableFiles { get; set; }
 
+            [Option("l10n_text_field_name", Required = false, HelpText = "text value field name of text table files. default is text")]
+            public string TextValueFieldName { get; set; }
+
             [Option("output_l10n_not_converted_text_file", Required = false, HelpText = "the file save not converted l10n texts.")]
             public string OutputNotConvertTextFile { get; set; }
 
@@ -233,7 +236,7 @@ namespace Luban.Job.Cfg
 
                         if (needL10NTextConvert)
                         {
-                            ass.InitL10n();
+                            ass.InitL10n(args.TextValueFieldName);
                             await DataLoaderUtil.LoadTextTablesAsync(agent, ass, args.InputDataDir, args.InputTextTableFiles);
                         }
 

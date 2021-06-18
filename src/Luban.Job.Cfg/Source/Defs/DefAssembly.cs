@@ -66,9 +66,9 @@ namespace Luban.Job.Cfg.Defs
 
         public NotConvertTextSet NotConvertTextSet { get; private set; }
 
-        public void InitL10n()
+        public void InitL10n(string textValueFieldName)
         {
-            ExportTextTable = new TextTable(this);
+            ExportTextTable = new TextTable(this, textValueFieldName);
             NotConvertTextSet = new NotConvertTextSet();
         }
 

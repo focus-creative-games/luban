@@ -23,9 +23,13 @@ namespace Luban.Job.Cfg.l10n
 
         private readonly TBean _textRowType;
 
-        public TextTable(DefAssembly ass)
+        public TextTable(DefAssembly ass, string textValueFieldName)
         {
             this.Assembly = ass;
+            if (string.IsNullOrWhiteSpace(textValueFieldName))
+            {
+                textValueFieldName = "text";
+            }
             var defTextRowType = new DefBean(new CfgBean()
             {
                 Namespace = "__intern__",
@@ -40,7 +44,7 @@ namespace Luban.Job.Cfg.l10n
                 {
                     new CfgField() { Name = "key", Type = "string" },
                     //new Common.RawDefs.Field() { Id = 1, Name = "origin_text", Type = "string" },
-                    new CfgField() { Name = "text", Type = "string" },
+                    new CfgField() { Name = textValueFieldName, Type = "string" },
                 }
             })
             {
