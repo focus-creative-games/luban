@@ -63,7 +63,10 @@ namespace Luban.Client.Utils
         private void OnChange(object sender, FileSystemEventArgs e)
         {
             var dirtyName = e.Name;
-            if (string.IsNullOrWhiteSpace(dirtyName) || !_filterSuffixs.Any(s => dirtyName.EndsWith(s)))
+            if (string.IsNullOrWhiteSpace(dirtyName)
+                || !_filterSuffixs.Any(s => dirtyName.EndsWith(s))
+                || dirtyName.Contains('~')
+                || dirtyName.Contains('$'))
             {
                 return;
             }
