@@ -26,13 +26,13 @@ namespace Luban.Client.Utils
             {
                 var watcher = new FileSystemWatcher(file);
 
-                watcher.NotifyFilter = NotifyFilters.Attributes
-                                     | NotifyFilters.CreationTime
-                                     | NotifyFilters.DirectoryName
+                watcher.NotifyFilter = // NotifyFilters.Attributes
+                                       //| NotifyFilters.CreationTime
+                                     NotifyFilters.DirectoryName
                                      | NotifyFilters.FileName
-                                     | NotifyFilters.LastAccess
+                                     //| NotifyFilters.LastAccess
                                      | NotifyFilters.LastWrite
-                                     | NotifyFilters.Security
+                                     //| NotifyFilters.Security
                                      | NotifyFilters.Size;
 
                 watcher.Changed += this.OnChange;
@@ -50,19 +50,37 @@ namespace Luban.Client.Utils
             }
         }
 
+        private readonly static List<string> _filterSuffixs = new List<string>
+        {
+            ".xlsx",
+            ".csv",
+            ".xls",
+            ".json",
+            ".lua",
+            ".xml",
+        };
+
         private void OnChange(object sender, FileSystemEventArgs e)
         {
+            var dirtyName = e.Name;
+            if (string.IsNullOrWhiteSpace(dirtyName) || !_filterSuffixs.Any(s => dirtyName.EndsWith(s)))
+            {
+                return;
+            }
+
             lock (_watchLocker)
             {
                 if (_watchDirChange)
                 {
+                    s_logger.Trace("== has mark dirty:{}. ignore", e.FullPath);
                     return;
                 }
                 _watchDirChange = true;
+                s_logger.Trace("== mark dirty:{}", e.FullPath);
 
                 Task.Run(async () =>
                 {
-                    await Task.Delay(400);
+                    await Task.Delay(100);
 
                     lock (_watchLocker)
                     {
