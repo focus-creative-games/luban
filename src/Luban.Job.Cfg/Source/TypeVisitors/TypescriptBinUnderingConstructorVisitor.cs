@@ -11,11 +11,11 @@ namespace Luban.Job.Common.TypeVisitors
         {
             if (type.Bean.IsAbstractType)
             {
-                return $"{fieldName} = {type.Bean.FullName}.constructorFrom({bufVarName});";
+                return $"{fieldName} = {type.Bean.FullName}.constructorFrom({bufVarName})";
             }
             else
             {
-                return $"{fieldName} = new {type.Bean.FullName}({bufVarName});";
+                return $"{fieldName} = new {type.Bean.FullName}({bufVarName})";
             }
         }
     }

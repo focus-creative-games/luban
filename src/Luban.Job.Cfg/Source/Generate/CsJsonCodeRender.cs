@@ -66,12 +66,12 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
     }
 
     {{~ for field in export_fields ~}}
-     public readonly {{cs_define_type field.ctype}} {{field.cs_style_name}};
+    public readonly {{cs_define_type field.ctype}} {{field.cs_style_name}};
     {{~if field.index_field~}} 
     public readonly Dictionary<{{cs_define_type field.index_field.ctype}}, {{cs_define_type field.ctype.element_type}}> {{field.cs_style_name}}_Index = new Dictionary<{{cs_define_type field.index_field.ctype}}, {{cs_define_type field.ctype.element_type}}>();
     {{~end~}}
     {{~if field.gen_ref~}}
-        public {{field.cs_ref_validator_define}}
+    public {{field.cs_ref_validator_define}}
     {{~end~}}
     {{~end~}}
 
@@ -85,9 +85,9 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
         {{~if parent_def_type}}base.Resolve(_tables);{{end}}
         {{~ for field in export_fields ~}}
         {{~if field.gen_ref~}}
-            {{cs_ref_validator_resolve field}}
+        {{cs_ref_validator_resolve field}}
         {{~else if field.has_recursive_ref~}}
-            {{cs_recursive_resolve field '_tables'}}
+        {{cs_recursive_resolve field '_tables'}}
         {{~end~}}
         {{~end~}}
         OnResolveFinish(_tables);

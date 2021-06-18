@@ -9,83 +9,83 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TBool type, string jsonVarName, string fieldName)
         {
-            return $"{fieldName} = {jsonVarName};";
+            return $"{fieldName} = {jsonVarName}";
         }
 
         public string Accept(TByte type, string jsonVarName, string fieldName)
         {
-            return $"{fieldName} = {jsonVarName};";
+            return $"{fieldName} = {jsonVarName}";
         }
 
         public string Accept(TShort type, string jsonVarName, string fieldName)
         {
-            return $"{fieldName} = {jsonVarName};";
+            return $"{fieldName} = {jsonVarName}";
         }
 
         public string Accept(TFshort type, string jsonVarName, string fieldName)
         {
-            return $"{fieldName} = {jsonVarName};";
+            return $"{fieldName} = {jsonVarName}";
         }
 
         public string Accept(TInt type, string jsonVarName, string fieldName)
         {
-            return $"{fieldName} = {jsonVarName};";
+            return $"{fieldName} = {jsonVarName}";
         }
 
         public string Accept(TFint type, string jsonVarName, string fieldName)
         {
-            return $"{fieldName} = {jsonVarName};";
+            return $"{fieldName} = {jsonVarName}";
         }
 
         public string Accept(TLong type, string jsonVarName, string fieldName)
         {
-            return $"{fieldName} = {jsonVarName};";
+            return $"{fieldName} = {jsonVarName}";
         }
 
         public string Accept(TFlong type, string jsonVarName, string fieldName)
         {
-            return $"{fieldName} = {jsonVarName};";
+            return $"{fieldName} = {jsonVarName}";
         }
 
         public string Accept(TFloat type, string jsonVarName, string fieldName)
         {
-            return $"{fieldName} = {jsonVarName};";
+            return $"{fieldName} = {jsonVarName}";
         }
 
         public string Accept(TDouble type, string jsonVarName, string fieldName)
         {
-            return $"{fieldName} = {jsonVarName};";
+            return $"{fieldName} = {jsonVarName}";
         }
 
         public string Accept(TEnum type, string jsonVarName, string fieldName)
         {
-            return $"{fieldName} = {jsonVarName};";
+            return $"{fieldName} = {jsonVarName}";
         }
 
         public string Accept(TString type, string jsonVarName, string fieldName)
         {
-            return $"{fieldName} = {jsonVarName};";
+            return $"{fieldName} = {jsonVarName}";
         }
 
         public string Accept(TBytes type, string jsonVarName, string fieldName)
         {
-            return $"{fieldName} = {jsonVarName};";
+            return $"{fieldName} = {jsonVarName}";
         }
 
         public string Accept(TText type, string jsonVarName, string fieldName)
         {
-            return $"{fieldName} = {jsonVarName};";
+            return $"{fieldName} = {jsonVarName}";
         }
 
         public string Accept(TBean type, string jsonVarName, string fieldName)
         {
             if (type.Bean.IsAbstractType)
             {
-                return $"{fieldName} = {type.Bean.FullName}.constructorFrom({jsonVarName});";
+                return $"{fieldName} = {type.Bean.FullName}.constructorFrom({jsonVarName})";
             }
             else
             {
-                return $"{fieldName} = new {type.Bean.FullName}({jsonVarName});";
+                return $"{fieldName} = new {type.Bean.FullName}({jsonVarName})";
             }
         }
 
@@ -93,11 +93,11 @@ namespace Luban.Job.Cfg.TypeVisitors
         {
             if (type.Apply(SimpleJsonTypeVisitor.Ins))
             {
-                return $"{fieldName} = {jsonVarName};";
+                return $"{fieldName} = {jsonVarName}";
             }
             else
             {
-                return $"{{ {fieldName} = []; for(let _ele of {jsonVarName}) {{ let _e :{type.ElementType.Apply(TypescriptDefineTypeName.Ins)};{type.ElementType.Apply(this, "_ele", "_e")} {fieldName}.push(_e);}}}}";
+                return $"{{ {fieldName} = []; for(let _ele of {jsonVarName}) {{ let _e :{type.ElementType.Apply(TypescriptDefineTypeName.Ins)}; {type.ElementType.Apply(this, "_ele", "_e")}; {fieldName}.push(_e);}}}}";
             }
         }
 
@@ -105,11 +105,11 @@ namespace Luban.Job.Cfg.TypeVisitors
         {
             if (type.Apply(SimpleJsonTypeVisitor.Ins))
             {
-                return $"{fieldName} = {jsonVarName};";
+                return $"{fieldName} = {jsonVarName}";
             }
             else
             {
-                return $"{{ {fieldName} = []; for(let _ele of {jsonVarName}) {{ let _e : {type.ElementType.Apply(TypescriptDefineTypeName.Ins)};{type.ElementType.Apply(this, "_ele", "_e")} {fieldName}.push(_e);}}}}";
+                return $"{{ {fieldName} = []; for(let _ele of {jsonVarName}) {{ let _e : {type.ElementType.Apply(TypescriptDefineTypeName.Ins)}; {type.ElementType.Apply(this, "_ele", "_e")}; {fieldName}.push(_e);}}}}";
             }
         }
 
@@ -117,38 +117,38 @@ namespace Luban.Job.Cfg.TypeVisitors
         {
             if (type.Apply(SimpleJsonTypeVisitor.Ins))
             {
-                return $"{fieldName} = {jsonVarName};";
+                return $"{fieldName} = {jsonVarName}";
             }
             else
             {
-                return $"{{ {fieldName} = new {type.Apply(TypescriptDefineTypeName.Ins)}(); for(var _ele of {jsonVarName}) {{ let _e:{type.ElementType.Apply(TypescriptDefineTypeName.Ins)};{type.ElementType.Apply(this, "_ele", "_e")} {fieldName}.add(_e);}}}}";
+                return $"{{ {fieldName} = new {type.Apply(TypescriptDefineTypeName.Ins)}(); for(var _ele of {jsonVarName}) {{ let _e:{type.ElementType.Apply(TypescriptDefineTypeName.Ins)}; {type.ElementType.Apply(this, "_ele", "_e")}; {fieldName}.add(_e);}}}}";
             }
         }
 
         public string Accept(TMap type, string jsonVarName, string fieldName)
         {
-            return $"{fieldName} = new {type.Apply(TypescriptDefineTypeName.Ins)}(); for(var _entry_ of {jsonVarName}) {{ let _k:{type.KeyType.Apply(TypescriptDefineTypeName.Ins)};  {type.KeyType.Apply(this, "_entry_[0]", "_k")}  let _v:{type.ValueType.Apply(TypescriptDefineTypeName.Ins)};  {type.ValueType.Apply(this, "_entry_[1]", "_v")}     {fieldName}.set(_k, _v);  }}";
+            return $"{fieldName} = new {type.Apply(TypescriptDefineTypeName.Ins)}(); for(var _entry_ of {jsonVarName}) {{ let _k:{type.KeyType.Apply(TypescriptDefineTypeName.Ins)}; {type.KeyType.Apply(this, "_entry_[0]", "_k")}  let _v:{type.ValueType.Apply(TypescriptDefineTypeName.Ins)};  {type.ValueType.Apply(this, "_entry_[1]", "_v")}; {fieldName}.set(_k, _v);  }}";
 
         }
 
         public string Accept(TVector2 type, string jsonVarName, string fieldName)
         {
-            return $"{fieldName} = Vector2.from({jsonVarName});";
+            return $"{fieldName} = Vector2.from({jsonVarName})";
         }
 
         public string Accept(TVector3 type, string jsonVarName, string fieldName)
         {
-            return $"{fieldName} = Vector3.from({jsonVarName});";
+            return $"{fieldName} = Vector3.from({jsonVarName})";
         }
 
         public string Accept(TVector4 type, string jsonVarName, string fieldName)
         {
-            return $"{fieldName} = Vector4.from({jsonVarName});";
+            return $"{fieldName} = Vector4.from({jsonVarName})";
         }
 
         public string Accept(TDateTime type, string jsonVarName, string fieldName)
         {
-            return $"{fieldName} = {jsonVarName};";
+            return $"{fieldName} = {jsonVarName}";
         }
     }
 }
