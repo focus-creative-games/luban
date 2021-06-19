@@ -18,25 +18,42 @@ namespace Luban.Job.Cfg.DataSources.Lua
 
         public override void Load(string rawUrl, string sheetName, Stream stream, bool exportDebugData)
         {
+            RawUrl = rawUrl;
             _env = LuaManager.CreateEnvironment();
             _dataTable = (LuaTable)_env.DoChunk(new StreamReader(stream, Encoding.UTF8), rawUrl)[0];
         }
 
-        public override List<DType> ReadMulti(TBean type)
+        public override List<Record> ReadMulti(TBean type)
         {
-            var records = new List<DType>();
+            var records = new List<Record>();
 
             foreach (LuaTable t in _dataTable.Values.Values)
             {
-                records.Add(type.Apply(LuaDataCreator.Ins, t, (DefAssembly)type.Bean.AssemblyBase));
+                Record r = ReadRecord(t, type);
+                if (r != null)
+                {
+                    records.Add(r);
+                }
             }
 
             return records;
         }
 
-        public override DType ReadOne(TBean type)
+        public override Record ReadOne(TBean type)
         {
-            return type.Apply(LuaDataCreator.Ins, _dataTable, (DefAssembly)type.Bean.AssemblyBase);
+            return ReadRecord(_dataTable, type);
+        }
+
+        protected Record ReadRecord(LuaTable table, TBean type)
+        {
+            string tagName = table.GetValue(TAG_KEY)?.ToString();
+            if (IsIgnoreTag(tagName))
+            {
+                return null;
+            }
+            var data = (DBean)type.Apply(LuaDataCreator.Ins, table, (DefAssembly)type.Bean.AssemblyBase);
+            var isTest = IsTestTag(tagName);
+            return new Record(data, RawUrl, isTest);
         }
     }
 }

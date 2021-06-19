@@ -16,13 +16,13 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         private int TitleRows { get; set; } = 3; // 默认有三行是标题行. 第一行是字段名，第二行是中文描述，第三行是注释
 
+        public string RawUrl { get; }
+
         public string Name { get; }
 
         private List<List<Cell>> _rowColumns;
 
         private Title _rootTitle;
-
-        private bool ExportTestData { get; }
 
         public class Title
         {
@@ -206,10 +206,10 @@ namespace Luban.Job.Cfg.DataSources.Excel
             }
         }
 
-        public Sheet(string name, bool exportTestData)
+        public Sheet(string rawUrl, string name)
         {
+            this.RawUrl = rawUrl;
             this.Name = name;
-            this.ExportTestData = exportTestData;
         }
 
         public bool Load(IExcelDataReader reader)
@@ -292,35 +292,17 @@ namespace Luban.Job.Cfg.DataSources.Excel
             return true;
         }
 
-        private bool NotExport(List<Cell> row)
+        private string GetRowTag(List<Cell> row)
         {
             if (row.Count == 0)
             {
-                return true;
+                return null;
             }
             if (row[0].Value == null)
             {
-                return false;
+                return null;
             }
-
-            string exportFlag = row[0].Value.ToString().Trim().ToLower();
-            switch (exportFlag)
-            {
-                case "false":
-                case "否": return true;
-                case "true":
-                case "是": return false;
-                case "test":
-                case "测试":
-                {
-                    if (!ExportTestData)
-                    {
-                        s_logger.Debug("忽略测试数据. row:{row}", row);
-                    }
-                    return !ExportTestData;
-                }
-                default: throw new Exception($"不支持的excel 导出标记: {exportFlag}");
-            }
+            return row[0].Value.ToString().Trim();
         }
 
         private void InitSubTitles(Title parentTitle, List<List<Cell>> rows, CellRange[] mergeCells, int maxDepth, int depth, int fromColumn, int toColumn)
@@ -519,15 +501,16 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 throw new Exception($"没有定义任何有效 列");
             }
             _rootTitle.SortSubTitles();
-            foreach (var title in _rootTitle.SubTitleList)
-            {
-                // s_logger.Info("============ sheet:{sheet} title:{title}", Name, title);
-            }
+            //foreach (var title in _rootTitle.SubTitleList)
+            //{
+            //    // s_logger.Info("============ sheet:{sheet} title:{title}", Name, title);
+            //}
 
             // 删除标题行
             this._rowColumns.RemoveRange(0, Math.Min(TitleRows + titleRowNum - 1, this._rowColumns.Count));
 
-            this._rowColumns.RemoveAll(row => NotExport(row));
+            // 删除忽略的记录行
+            this._rowColumns.RemoveAll(row => AbstractDataSource.IsIgnoreTag(GetRowTag(row)));
         }
 
 
@@ -604,11 +587,11 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
 
 
-        public List<DType> ReadMulti(TBean type, bool enableMultiRowRecord)
+        public List<Record> ReadMulti(TBean type, bool enableMultiRowRecord)
         {
-            var datas = new List<DType>();
+            var datas = new List<Record>();
 
-            for (DType data; (data = ReadOne(type, enableMultiRowRecord)) != null;)
+            for (Record data; (data = ReadOne(type, enableMultiRowRecord)) != null;)
             {
                 datas.Add(data);
             }
@@ -616,7 +599,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
         }
 
         private int curReadIndex = 0;
-        public DType ReadOne(TBean type, bool enableMultiRowRecord)
+        public Record ReadOne(TBean type, bool enableMultiRowRecord)
         {
             if (!enableMultiRowRecord)
             {
@@ -625,7 +608,9 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 {
                     return null;
                 }
-                return ExcelNamedRowDataCreator.Ins.ReadExcel(new NamedRow(_rootTitle, row), type);
+                bool isTest = AbstractDataSource.IsTestTag(GetRowTag(row));
+                var data = (DBean)ExcelNamedRowDataCreator.Ins.ReadExcel(new NamedRow(_rootTitle, row), type);
+                return new Record(data, RawUrl, isTest);
             }
             else
             {
@@ -634,7 +619,9 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 {
                     return null;
                 }
-                return ExcelNamedRowDataCreator.Ins.ReadExcel(new NamedRow(_rootTitle, rows), type);
+                bool isTest = AbstractDataSource.IsTestTag(GetRowTag(rows[0]));
+                var data = (DBean)ExcelNamedRowDataCreator.Ins.ReadExcel(new NamedRow(_rootTitle, rows), type);
+                return new Record(data, RawUrl, isTest);
             }
         }
     }

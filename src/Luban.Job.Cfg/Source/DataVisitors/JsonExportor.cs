@@ -191,7 +191,7 @@ namespace Luban.Job.Cfg.DataVisitors
 
         public void Accept(DDateTime type, DefAssembly ass, Utf8JsonWriter x)
         {
-            x.WriteNumberValue(type.UnixTime);
+            x.WriteNumberValue(type.GetUnixTime(ass.TimeZone));
         }
     }
 }

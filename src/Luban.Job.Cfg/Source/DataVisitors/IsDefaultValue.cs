@@ -70,7 +70,7 @@ namespace Luban.Job.Cfg.DataVisitors
 
         public bool Accept(DBytes type)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public bool Accept(DText type)
@@ -120,7 +120,7 @@ namespace Luban.Job.Cfg.DataVisitors
 
         public bool Accept(DDateTime type)
         {
-            return type.UnixTime == 0;
+            throw new NotSupportedException();
         }
     }
 }

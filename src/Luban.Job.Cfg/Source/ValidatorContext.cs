@@ -81,7 +81,7 @@ namespace Luban.Job.Cfg
                 {
                     tasks.Add(Task.Run(() =>
                     {
-                        var records = t.Assembly.GetTableDataList(t);
+                        var records = t.Assembly.GetTableAllDataList(t);
                         var visitor = new ValidatorVisitor(this);
                         try
                         {

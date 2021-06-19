@@ -7,12 +7,28 @@ namespace Luban.Job.Cfg.Datas
     {
         public DateTime Time { get; }
 
-        public int UnixTime { get; }
+        //public int UnixTime { get; }
+        private readonly int _localTime;
 
         public DDateTime(DateTime time)
         {
             this.Time = time;
-            this.UnixTime = (int)new DateTimeOffset(time).ToUnixTimeSeconds();
+            // time.Kind == DateTimeKind.Unspecified
+            // DateTimeOffset把它当作Local处理
+            this._localTime = (int)new DateTimeOffset(time).ToUnixTimeSeconds();
+        }
+
+        public int GetUnixTime(TimeZoneInfo asTimeZone)
+        {
+            if (asTimeZone == null || asTimeZone == TimeZoneInfo.Local)
+            {
+                return this._localTime;
+            }
+            else
+            {
+                var destDateTime = TimeZoneInfo.ConvertTime(Time, asTimeZone, TimeZoneInfo.Utc);
+                return (int)new DateTimeOffset(destDateTime).ToUnixTimeSeconds();
+            }
         }
 
         public override void Apply<T>(IDataActionVisitor<T> visitor, T x)

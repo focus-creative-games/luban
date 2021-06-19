@@ -39,16 +39,25 @@ namespace Luban.Job.Cfg.Utils
             return new DVector4(new System.Numerics.Vector4(float.Parse(values[0]), float.Parse(values[1]), float.Parse(values[2]), float.Parse(values[3])));
         }
 
-        public static DDateTime CreateDateTime(string x, TimeZoneInfo timeZoneInfo)
-        {
+        //public static DDateTime CreateDateTime(string x, TimeZoneInfo timeZoneInfo)
+        //{
 
-            DateTime dateTime = DateTime.ParseExact(x,
-                new string[] {
+        //    DateTime dateTime = DateTime.ParseExact(x,
+        //        new string[] {
+        //            "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm", "yyyy-MM-dd HH", "yyyy-MM-dd",
+        //            //"yyyy/MM/dd HH:mm:ss", "yyyy/MM/dd HH:mm", "yyyy/MM/dd HH", "yyyy/MM/dd",
+        //        },
+        //        System.Globalization.CultureInfo.InvariantCulture);
+        //    return new DDateTime(TimeZoneInfo.ConvertTimeToUtc(dateTime, timeZoneInfo));
+        //}
+        private static readonly string[] dateTimeFormats = new string[] {
                     "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm", "yyyy-MM-dd HH", "yyyy-MM-dd",
                     //"yyyy/MM/dd HH:mm:ss", "yyyy/MM/dd HH:mm", "yyyy/MM/dd HH", "yyyy/MM/dd",
-                },
-                System.Globalization.CultureInfo.InvariantCulture);
-            return new DDateTime(TimeZoneInfo.ConvertTimeToUtc(dateTime, timeZoneInfo));
+                };
+        public static DDateTime CreateDateTime(string x)
+        {
+            DateTime dateTime = DateTime.ParseExact(x, dateTimeFormats, System.Globalization.CultureInfo.InvariantCulture);
+            return new DDateTime(dateTime);
         }
 
         public static byte[] StreamToBytes(Stream stream)

@@ -21,6 +21,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
         public override void Load(string rawUrl, string sheetName, Stream stream, bool exportTestData)
         {
             s_logger.Trace("{filename} {sheet}", rawUrl, sheetName);
+            RawUrl = rawUrl;
             string ext = Path.GetExtension(rawUrl);
             using (var reader = ext != ".csv" ? ExcelReaderFactory.CreateReader(stream) : ExcelReaderFactory.CreateCsvReader(stream))
             {
@@ -30,7 +31,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                     {
                         try
                         {
-                            var sheet = ReadSheet(reader, exportTestData);
+                            var sheet = ReadSheet(rawUrl, reader);
                             if (sheet != null)
                             {
                                 _sheets.Add(sheet);
@@ -50,15 +51,15 @@ namespace Luban.Job.Cfg.DataSources.Excel
             }
         }
 
-        private Sheet ReadSheet(IExcelDataReader reader, bool exportTestData)
+        private Sheet ReadSheet(string url, IExcelDataReader reader)
         {
-            var sheet = new Sheet(reader.Name ?? "", exportTestData);
+            var sheet = new Sheet(url, reader.Name ?? "");
             return sheet.Load(reader) ? sheet : null;
         }
 
-        public override List<DType> ReadMulti(TBean type)
+        public override List<Record> ReadMulti(TBean type)
         {
-            var datas = new List<DType>();
+            var datas = new List<Record>();
             foreach (var sheet in _sheets)
             {
                 try
@@ -73,7 +74,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
             return datas;
         }
 
-        public override DType ReadOne(TBean type)
+        public override Record ReadOne(TBean type)
         {
             var datas = ReadMulti(type);
             switch (datas.Count)

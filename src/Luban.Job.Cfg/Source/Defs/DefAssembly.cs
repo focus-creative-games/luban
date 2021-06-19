@@ -19,6 +19,19 @@ namespace Luban.Job.Cfg.Defs
 
         public List<Record> FinalRecords { get; set; }
 
+        private List<Record> _notTestRecords;
+        public List<Record> NotTestRecords
+        {
+            get
+            {
+                if (_notTestRecords == null)
+                {
+                    _notTestRecords = FinalRecords.Where(r => !r.IsTest).ToList();
+                }
+                return _notTestRecords;
+            }
+        }
+
         public Dictionary<DType, Record> FinalRecordMap { get; set; }
 
         public TableDataInfo(List<Record> mainRecords, List<Record> branchRecords)
@@ -34,13 +47,19 @@ namespace Luban.Job.Cfg.Defs
 
         public Service CfgTargetService { get; private set; }
 
+        private readonly string _branchName;
+        private readonly bool _exportTestData;
+
         public Branch TargetBranch { get; private set; }
 
         public TimeZoneInfo TimeZone { get; }
 
-        public DefAssembly(TimeZoneInfo timezone)
+        public DefAssembly(string branchName, TimeZoneInfo timezone, bool exportTestData, RemoteAgent agent)
         {
+            this._branchName = branchName;
             this.TimeZone = timezone;
+            this._exportTestData = exportTestData;
+            this.Agent = agent;
         }
 
         public bool NeedExport(List<string> groups)
@@ -100,9 +119,15 @@ namespace Luban.Job.Cfg.Defs
         //    _recordsByTables[table.FullName].FinalRecordMap = recordMap;
         //}
 
-        public List<Record> GetTableDataList(DefTable table)
+        public List<Record> GetTableAllDataList(DefTable table)
         {
             return _recordsByTables[table.FullName].FinalRecords;
+        }
+
+        public List<Record> GetTableExportDataList(DefTable table)
+        {
+            var tableDataInfo = _recordsByTables[table.FullName];
+            return _exportTestData ? tableDataInfo.FinalRecords : tableDataInfo.NotTestRecords;
         }
 
         public TableDataInfo GetTableDataInfo(DefTable table)
@@ -147,9 +172,8 @@ namespace Luban.Job.Cfg.Defs
             return refTypes.Values.ToList();
         }
 
-        public void Load(string outputService, string branchName, Defines defines, RemoteAgent agent)
+        public void Load(string outputService, Defines defines)
         {
-            this.Agent = agent;
             SupportDatetimeType = true;
 
             TopModule = defines.TopModule;
@@ -161,12 +185,12 @@ namespace Luban.Job.Cfg.Defs
                 throw new ArgumentException($"service:{outputService} not exists");
             }
 
-            if (!string.IsNullOrWhiteSpace(branchName))
+            if (!string.IsNullOrWhiteSpace(_branchName))
             {
-                TargetBranch = defines.Branches.Find(b => b.Name == branchName);
+                TargetBranch = defines.Branches.Find(b => b.Name == _branchName);
                 if (TargetBranch == null)
                 {
-                    throw new Exception($"branch {branchName} not in valid branch set");
+                    throw new Exception($"branch {_branchName} not in valid branch set");
                 }
             }
 
@@ -211,7 +235,7 @@ namespace Luban.Job.Cfg.Defs
                 }
                 catch (Exception)
                 {
-                    agent.Error("precompile type:{0} error", type.FullName);
+                    this.Agent.Error("precompile type:{0} error", type.FullName);
                     throw;
                 }
             }
@@ -225,7 +249,7 @@ namespace Luban.Job.Cfg.Defs
                 }
                 catch (Exception)
                 {
-                    agent.Error("compile type:{0} error", type.FullName);
+                    this.Agent.Error("compile type:{0} error", type.FullName);
                     s_logger.Error("compile type:{0} error", type.FullName);
                     throw;
                 }
@@ -240,7 +264,7 @@ namespace Luban.Job.Cfg.Defs
                 }
                 catch (Exception)
                 {
-                    agent.Error("post compile type:{0} error", type.FullName);
+                    this.Agent.Error("post compile type:{0} error", type.FullName);
                     s_logger.Error("post compile type:{0} error", type.FullName);
                     throw;
                 }

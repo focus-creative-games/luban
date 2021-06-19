@@ -208,11 +208,11 @@ namespace Luban.Job.Cfg
 
                 var rawDefines = loader.BuildDefines();
 
-                TimeZoneInfo timeZoneInfo = string.IsNullOrEmpty(args.TimeZone) ? TimeZoneInfo.Local : TimeZoneInfo.FindSystemTimeZoneById(args.TimeZone);
+                TimeZoneInfo timeZoneInfo = string.IsNullOrEmpty(args.TimeZone) ? null : TimeZoneInfo.FindSystemTimeZoneById(args.TimeZone);
 
-                var ass = new DefAssembly(timeZoneInfo);
+                var ass = new DefAssembly(args.BranchName, timeZoneInfo, args.ExportTestData, agent);
 
-                ass.Load(args.Service, args.BranchName, rawDefines, agent);
+                ass.Load(args.Service, rawDefines);
 
                 var targetService = ass.CfgTargetService;
 
@@ -948,7 +948,7 @@ class Vector4:
                             {
                                 tasks.Add(Task.Run(() =>
                                 {
-                                    var content = DataExporterUtil.ToOutputData(c, ass.GetTableDataList(c), genType);
+                                    var content = DataExporterUtil.ToOutputData(c, ass.GetTableExportDataList(c), genType);
                                     var file = genType.EndsWith("json") ? c.JsonOutputDataFile : c.OutputDataFile;
                                     var md5 = FileUtil.CalcMD5(content);
                                     CacheManager.Ins.AddCache(file, md5, content);
@@ -965,7 +965,7 @@ class Vector4:
                             {
                                 allJsonTask.Add(Task.Run(() =>
                                 {
-                                    return DataExporterUtil.ToOutputData(c, ass.GetTableDataList(c), "data_json");
+                                    return DataExporterUtil.ToOutputData(c, ass.GetTableExportDataList(c), "data_json");
                                 }));
                             }
                             await Task.WhenAll(allJsonTask);
@@ -1010,7 +1010,7 @@ class Vector4:
                             {
                                 tasks.Add(Task.Run(() =>
                                 {
-                                    var content = DataExporterUtil.ToOutputData(c, ass.GetTableDataList(c), genType);
+                                    var content = DataExporterUtil.ToOutputData(c, ass.GetTableExportDataList(c), genType);
                                     var file = $"{c.Name}.lua";
                                     var md5 = FileUtil.CalcMD5(content);
                                     CacheManager.Ins.AddCache(file, md5, content);
@@ -1027,7 +1027,7 @@ class Vector4:
                             {
                                 genDataTasks.Add(Task.Run(() =>
                                 {
-                                    return DataExporterUtil.ExportResourceList(ass.GetTableDataList(c));
+                                    return DataExporterUtil.ExportResourceList(ass.GetTableExportDataList(c));
                                 }));
                             }
 

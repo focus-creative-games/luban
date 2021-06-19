@@ -13,12 +13,12 @@ namespace Luban.Job.Cfg.DataSources.Binary
             throw new NotImplementedException();
         }
 
-        public override List<DType> ReadMulti(TBean type)
+        public override List<Record> ReadMulti(TBean type)
         {
             throw new NotImplementedException();
         }
 
-        public override DType ReadOne(TBean type)
+        public override Record ReadOne(TBean type)
         {
             throw new NotImplementedException();
         }

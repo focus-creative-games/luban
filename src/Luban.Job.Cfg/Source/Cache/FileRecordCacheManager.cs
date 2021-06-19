@@ -35,15 +35,15 @@ namespace Luban.Job.Cfg.Cache
             }
         }
 
-        private readonly ConcurrentDictionary<(string, string, string, bool), FileRecordCache> _caches = new ConcurrentDictionary<(string, string, string, bool), FileRecordCache>();
+        private readonly ConcurrentDictionary<(string MD5, string SheetName), FileRecordCache> _caches = new();
 
         private readonly object _shrinkLocker = new object();
 
-        public bool TryGetCacheLoadedRecords(DefTable table, string md5, string originFile, string sheetName, bool exportTestData, out List<Record> cacheRecords)
+        public bool TryGetCacheLoadedRecords(DefTable table, string md5, string originFile, string sheetName, out List<Record> cacheRecords)
         {
             // TODO text localization check
             cacheRecords = null;
-            if (!_caches.TryGetValue((table.Assembly.TimeZone.Id, md5, sheetName, exportTestData), out var r))
+            if (!_caches.TryGetValue((md5, sheetName), out var r))
             {
                 return false;
             }
@@ -60,11 +60,11 @@ namespace Luban.Job.Cfg.Cache
             }
         }
 
-        public void AddCacheLoadedRecords(DefTable table, string md5, string sheetName, bool exportTestData, List<Record> cacheRecords)
+        public void AddCacheLoadedRecords(DefTable table, string md5, string sheetName, List<Record> cacheRecords)
         {
             lock (_shrinkLocker)
             {
-                _caches[(table.Assembly.TimeZone.Id, md5, sheetName, exportTestData)] = new FileRecordCache(table, cacheRecords);
+                _caches[(md5, sheetName)] = new FileRecordCache(table, cacheRecords);
                 if (_caches.Count > CACHE_FILE_HIGH_WATER_MARK)
                 {
                     s_logger.Info("ShrinkCaches. cache count > high CACHE_FILE_HIGH_WATER_MARK:{}", CACHE_FILE_HIGH_WATER_MARK);

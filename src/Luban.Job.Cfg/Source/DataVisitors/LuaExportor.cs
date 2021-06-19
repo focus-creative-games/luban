@@ -247,7 +247,7 @@ namespace Luban.Job.Cfg.DataVisitors
 
         public void Accept(DDateTime type, DefAssembly ass, StringBuilder line)
         {
-            line.Append(type.UnixTime);
+            line.Append(type.GetUnixTime(ass.TimeZone));
         }
     }
 }

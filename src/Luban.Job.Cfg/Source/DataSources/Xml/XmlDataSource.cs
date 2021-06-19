@@ -12,19 +12,28 @@ namespace Luban.Job.Cfg.DataSources.Xml
     class XmlDataSource : AbstractDataSource
     {
         private XElement _doc;
+
         public override void Load(string rawUrl, string sheetName, Stream stream, bool exportDebugData)
         {
+            RawUrl = rawUrl;
             _doc = XElement.Load(stream);
         }
 
-        public override List<DType> ReadMulti(TBean type)
+        public override List<Record> ReadMulti(TBean type)
         {
             throw new NotSupportedException();
         }
 
-        public override DType ReadOne(TBean type)
+        public override Record ReadOne(TBean type)
         {
-            return type.Apply(XmlDataCreator.Ins, _doc, (DefAssembly)type.Bean.AssemblyBase);
+            string tagName = _doc.Element(TAG_KEY)?.Value;
+            if (IsIgnoreTag(tagName))
+            {
+                return null;
+            }
+            var data = (DBean)type.Apply(XmlDataCreator.Ins, _doc, (DefAssembly)type.Bean.AssemblyBase);
+            bool isTest = IsTestTag(tagName);
+            return new Record(data, RawUrl, isTest);
         }
     }
 }

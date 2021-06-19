@@ -85,7 +85,7 @@ namespace Luban.Job.Cfg.Utils
 
                 tasks.Add(Task.Run(async () =>
                 {
-                    if (FileRecordCacheManager.Ins.TryGetCacheLoadedRecords(table, file.MD5, actualFile, file.SheetName, exportTestData, out var cacheRecords))
+                    if (FileRecordCacheManager.Ins.TryGetCacheLoadedRecords(table, file.MD5, actualFile, file.SheetName, out var cacheRecords))
                     {
                         return cacheRecords;
                     }
@@ -96,7 +96,7 @@ namespace Luban.Job.Cfg.Utils
                         RenderFileUtil.IsExcelFile(file.ActualFile),
                         exportTestData);
 
-                    FileRecordCacheManager.Ins.AddCacheLoadedRecords(table, file.MD5, file.SheetName, exportTestData, res);
+                    FileRecordCacheManager.Ins.AddCacheLoadedRecords(table, file.MD5, file.SheetName, res);
 
                     return res;
                 }));
@@ -176,21 +176,15 @@ namespace Luban.Job.Cfg.Utils
             var dataSource = DataSourceFactory.Create(originFile, sheetName, new MemoryStream(content), exportTestData);
             try
             {
-                List<DType> datas;
                 if (multiRecord)
                 {
-                    datas = dataSource.ReadMulti(recordType);
+                    return dataSource.ReadMulti(recordType);
                 }
                 else
                 {
-                    datas = new List<DType> { dataSource.ReadOne(recordType) };
+                    Record record = dataSource.ReadOne(recordType);
+                    return record != null ? new List<Record> { record } : new List<Record>();
                 }
-                var records = new List<Record>(datas.Count);
-                foreach (var data in datas)
-                {
-                    records.Add(new Record((DBean)data, originFile));
-                }
-                return records;
             }
             catch (Exception e)
             {

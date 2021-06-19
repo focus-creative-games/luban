@@ -436,7 +436,7 @@ namespace Luban.Job.Cfg.TypeVisitors
             {
                 return null;
             }
-            return DataUtil.CreateDateTime(d.ToString(), ass.TimeZone);
+            return DataUtil.CreateDateTime(d.ToString());
         }
     }
 }

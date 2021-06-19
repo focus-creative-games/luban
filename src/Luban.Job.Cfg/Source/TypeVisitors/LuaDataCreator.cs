@@ -257,7 +257,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public DType Accept(TDateTime type, object x, DefAssembly ass)
         {
-            return DataUtil.CreateDateTime(x.ToString(), ass.TimeZone);
+            return DataUtil.CreateDateTime(x.ToString());
         }
     }
 }

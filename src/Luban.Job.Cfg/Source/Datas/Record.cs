@@ -14,10 +14,13 @@ namespace Luban.Job.Cfg.Datas
 
         public int Index { get; set; }
 
-        public Record(DBean data, string source)
+        public bool IsTest { get; }
+
+        public Record(DBean data, string source, bool isTest)
         {
             Data = data;
             Source = source;
+            IsTest = isTest;
         }
     }
 }

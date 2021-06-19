@@ -197,7 +197,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public DType Accept(TDateTime type, JsonElement x, DefAssembly ass)
         {
-            return DataUtil.CreateDateTime(x.GetString(), ass.TimeZone);
+            return DataUtil.CreateDateTime(x.GetString());
         }
 
         public DType Accept(TVector2 type, JsonElement x, DefAssembly ass)
