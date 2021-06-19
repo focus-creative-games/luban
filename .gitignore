@@ -269,3 +269,4 @@ __pycache__/
 /config/output_data
 /config/output_lua
 /config/output_lua_without_test
+/src/Excel2TextDiff/Properties/launchSettings.json
