@@ -153,70 +153,7 @@ package {{package}}
 
 import ""bright/serialization""
 
-{{if x.is_two_key_map_table}}
-
-type {{go_full_name}} struct {
-    _dataListMap map[{{go_define_type key_type1}}][]{{go_define_type value_type}}
-    _dataMapMap map[{{go_define_type key_type1}}]map[{{go_define_type key_type2}}]{{go_define_type value_type}}
-    _dataList []{{go_define_type value_type}}
-}
-
-func New{{go_full_name}}(_buf *serialization.ByteBuf) (*{{go_full_name}}, error) {
-	if size, err := _buf.ReadSize() ; err != nil {
-		return nil, err
-	} else {
-		_dataList := make([]{{go_define_type value_type}}, 0, size)
-		_dataListMap := make(map[{{go_define_type key_type1}}][]{{go_define_type value_type}})
-        _dataMapMap := make(map[{{go_define_type key_type1}}]map[{{go_define_type key_type2}}]{{go_define_type value_type}})
-
-		for i := 0 ; i < size ; i++ {
-			if _v, err2 := {{go_deserialize_type value_type '_buf'}}; err2 != nil {
-				return nil, err2
-			} else {
-				_dataList = append(_dataList, _v)
-                
-                _dataMap := _dataMapMap[_v.{{index_field1.cs_style_name}}]
-                if _dataMap == nil {
-                    _dataMap = make(map[{{go_define_type key_type2}}]{{go_define_type value_type}})
-                    _dataMapMap[_v.{{index_field1.cs_style_name}}] = _dataMap
-                }
-                _dataMap[_v.{{index_field2.cs_style_name}}] = _v
-                
-
-                _dataList := _dataListMap[_v.{{index_field1.cs_style_name}}]
-                if _dataList == nil {
-                    _dataList = make([]{{go_define_type value_type}}, 0)
-                }
-                _dataList = append(_dataList, _v)
-				_dataListMap[_v.{{index_field1.cs_style_name}}] = _dataList
-			}
-		}
-		return &{{go_full_name}}{_dataList:_dataList, _dataMapMap:_dataMapMap, _dataListMap:_dataListMap}, nil
-	}
-}
-
-func (table *{{go_full_name}}) GetDataMapMap() map[{{go_define_type key_type1}}]map[{{go_define_type key_type2}}]{{go_define_type value_type}} {
-    return table._dataMapMap
-}
-
-func (table *{{go_full_name}}) GetDataListMap() map[{{go_define_type key_type1}}][]{{go_define_type value_type}} {
-    return table._dataListMap
-}
-
-func (table *{{go_full_name}}) GetDataList() []{{go_define_type value_type}} {
-    return table._dataList
-}
-
-func (table *{{go_full_name}}) Get(key1 {{go_define_type key_type1}}, key2 {{go_define_type key_type2}}) {{go_define_type value_type}} {
-    if v , ok := table._dataMapMap[key1] ; ok {
-        return v[key2]
-    } else {
-        return nil
-    }
-}
-
-
-{{else if x.is_map_table }}
+{{~if x.is_map_table~}}
 type {{go_full_name}} struct {
     _dataMap map[{{go_define_type key_type}}]{{go_define_type value_type}}
     _dataList []{{go_define_type value_type}}

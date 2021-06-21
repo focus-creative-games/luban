@@ -33,8 +33,6 @@ namespace Luban.Job.Cfg.Defs
 
         public bool IsOneValueTable => Mode == ETableMode.ONE;
 
-        public bool IsTwoKeyMapTable => Mode == ETableMode.BMAP;
-
         public List<string> InputFiles { get; }
 
         private readonly Dictionary<string, List<string>> _branchInputFiles;
@@ -48,16 +46,6 @@ namespace Luban.Job.Cfg.Defs
         public DefField IndexField { get; private set; }
 
         public int IndexFieldIdIndex { get; private set; }
-
-        public string Index1 { get; private set; }
-        public TType KeyTType1 { get; private set; }
-        public DefField IndexField1 { get; private set; }
-        public int IndexFieldIdIndex1 { get; private set; }
-
-        public string Index2 { get; private set; }
-        public TType KeyTType2 { get; private set; }
-        public DefField IndexField2 { get; private set; }
-        public int IndexFieldIdIndex2 { get; private set; }
 
         public bool NeedExport => Assembly.NeedExport(this.Groups);
 
@@ -91,7 +79,7 @@ namespace Luban.Job.Cfg.Defs
             {
                 case ETableMode.ONE:
                 {
-                    KeyTType = KeyTType2 = null;
+                    KeyTType = null;
                     break;
                 }
                 case ETableMode.MAP:
@@ -119,43 +107,6 @@ namespace Luban.Job.Cfg.Defs
                         IndexFieldIdIndex = 0;
                     }
                     KeyTType = IndexField.CType;
-                    break;
-                }
-                case ETableMode.BMAP:
-                {
-                    string[] indexs = Index.Split(',').Where(k => !string.IsNullOrWhiteSpace(k)).ToArray();
-
-                    if (indexs.Length != 2)
-                    {
-                        throw new Exception($"table:{FullName}是双键表,index 必须指定两个key");
-                    }
-
-                    {
-                        Index1 = indexs[0];
-                        if (ValueTType.GetBeanAs<DefBean>().TryGetField(Index1, out var f, out var i))
-                        {
-                            IndexField1 = f;
-                            KeyTType = KeyTType1 = IndexField1.CType;
-                            IndexFieldIdIndex1 = i;
-                        }
-                        else
-                        {
-                            throw new Exception($"table:{FullName} index:{Index} 字段不存在");
-                        }
-                    }
-                    {
-                        Index2 = indexs[1];
-                        if (ValueTType.Bean.TryGetField(Index2, out var f, out var i))
-                        {
-                            IndexField2 = (DefField)f;
-                            KeyTType2 = IndexField2.CType;
-                            IndexFieldIdIndex2 = i;
-                        }
-                        else
-                        {
-                            throw new Exception($"table:{FullName} index:{indexs[1]} 字段不存在");
-                        }
-                    }
                     break;
                 }
                 default: throw new Exception($"unknown mode:{Mode}");

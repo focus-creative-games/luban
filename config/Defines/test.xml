@@ -100,9 +100,6 @@
  	
 	<table name="TbDataFromLua" value="DemoType2" input="test/lua_datas"/> 普通表，不过数据从tbrole_datas目录递归读入，每个文件是一个记录
 	
-	<table name="TbTwoKey" value="DemoType2" index="x3,x4" input="test/json_datas" mode="bmap"/>
-	
-	
 	<bean name="MultiRowType1">
 		<var name="id" type="int"/>
 		<var name="x" type="int"/>

@@ -104,46 +104,7 @@ class {{name}} : public {{if parent_def_type}} {{parent_def_type.cpp_full_name}}
 
 class {{name}}
 {
-    {{~ if x.is_two_key_map_table ~}}
-    private:
-    std::unordered_map<{{cpp_define_type key_type1}}, std::vector<{{cpp_define_type value_type}}>> _dataListMap;
-    std::unordered_map<{{cpp_define_type key_type1}}, std::unordered_map<{{cpp_define_type key_type2}}, {{cpp_define_type value_type}}>> _dataMapMap;
-    std::vector<{{cpp_define_type value_type}}> _dataList;
-
-    public:
-
-    bool load(ByteBuf& _buf)
-    {
-        int n;
-        if (!_buf.readSize(n)) return false;
-        for(; n > 0 ; --n)
-        {
-            {{cpp_define_type value_type}} _v;
-            {{cpp_deserialize '_buf' '_v' value_type}}
-            _dataList.push_back(_v);
-            auto _key = _v->{{x.index_field1.cpp_style_name}};
-            auto& list = _dataListMap[_key];
-            list.push_back(_v);
-            auto& map = _dataMapMap[_key];
-            map[_v->{{x.index_field2.cpp_style_name}}] =  _v;
-        }
-        return true;
-    }
-
-    const std::unordered_map<{{cpp_define_type key_type1}},std::vector<{{cpp_define_type value_type}}>>& getDataListMap() const { return _dataListMap; }
-    const std::unordered_map<{{cpp_define_type key_type1}}, std::unordered_map<{{cpp_define_type key_type2}}, {{cpp_define_type value_type}}>>& getDataMapMap() const {return _dataMapMap;}
-    const std::vector<{{cpp_define_type value_type}}>& getDataList() const { return _dataList; }
-
-    const {{cpp_define_type value_type}} get({{cpp_define_type key_type1}} key1, {{cpp_define_type key_type2}} key2) const
-    { 
-        auto it1 = _dataMapMap.find(key1);
-        if (it1 == _dataMapMap.end()) { return nullptr; }
-        auto it2 = it1->second.find(key2);
-        return it2 != it1->second.end() ? it2->second : nullptr;
-    }
-
-
-    {{~else if x.is_map_table ~}}
+    {{~if x.is_map_table ~}}
     private:
     std::unordered_map<{{cpp_define_type key_type}}, {{cpp_define_type value_type}}> _dataMap;
     std::vector<{{cpp_define_type value_type}}> _dataList;

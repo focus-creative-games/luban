@@ -99,49 +99,7 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} {{if parent_def
     }}
 {{x.typescript_namespace_begin}}
 export class {{name}}{
-    {{~ if x.is_two_key_map_table ~}}
-    private _dataListMap: Map<{{ts_define_type key_type1}}, {{ts_define_type value_type}}[]>
-    private  _dataMapMap: Map<{{ts_define_type key_type1}}, Map<{{ts_define_type key_type2}}, {{ts_define_type value_type}}>>
-    private _dataList: {{ts_define_type value_type}}[]
-
-    constructor(_buf_: Bright.Serialization.ByteBuf) {
-        this._dataListMap = new Map<{{ts_define_type key_type1}}, {{ts_define_type value_type}}[]>()
-        this._dataMapMap = new Map<{{ts_define_type key_type1}}, Map<{{ts_define_type key_type2}}, {{ts_define_type value_type}}>>()
-        this._dataList = []
-        
-        for(let n = _buf_.ReadInt(); n > 0 ; n--) {
-            let _v: {{ts_define_type value_type}}
-            {{ts_bin_constructor '_v' '_buf_' value_type}}
-            this._dataList.push(_v)
-            var _key = _v.{{x.index_field1.ts_style_name}}
-            let list: {{ts_define_type value_type}}[] = this._dataListMap.get(_key)
-            if (list == null) {
-                list = []
-                this._dataListMap.set(_key, list)
-            }
-            list.push(_v)
-
-            let map: Map<{{ts_define_type key_type2}}, {{ts_define_type value_type}}> = this._dataMapMap.get(_key)
-            if (map == null) {
-                map = new Map<{{ts_define_type key_type2}}, {{ts_define_type value_type}}>()
-                this._dataMapMap.set(_key, map)
-            }
-            map.set(_v.{{x.index_field2.ts_style_name}}, _v)
-        }
-    }
-
-    getDataListMap(): Map<{{ts_define_type key_type1}}, {{ts_define_type value_type}}[]>  { return this._dataListMap }
-    getDataMapMap(): Map<{{ts_define_type key_type1}}, Map<{{ts_define_type key_type2}}, {{ts_define_type value_type}}>> { return this._dataMapMap }
-    getDataList(): {{ts_define_type value_type}}[] { return this._dataList }
-
-    get(key1: {{ts_define_type key_type1}}, key2: {{ts_define_type key_type2}}): {{ts_define_type value_type}} { return this._dataMapMap.get(key1).get(key2) }
-
-    resolve(_tables: Map<string, any>) {
-        for(var v of this._dataList) {
-            v.resolve(_tables)
-        }
-    }
-    {{~else if x.is_map_table ~}}
+    {{~if x.is_map_table ~}}
     private _dataMap: Map<{{ts_define_type key_type}}, {{ts_define_type value_type}}>
     private _dataList: {{ts_define_type value_type}}[]
     

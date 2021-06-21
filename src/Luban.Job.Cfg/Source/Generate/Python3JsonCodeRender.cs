@@ -125,37 +125,7 @@ class {{name}} {{if parent_def_type}}({{parent_def_type.py_full_name}}){{else if
 }}
 
 class {{name}}:
-    {{~ if x.is_two_key_map_table ~}}
-    def __init__(self, _json_):
-        self._dataListMap = {}
-        self._dataMapMap = {}
-        self._dataList = []
-        
-        for _json2_ in _json_:
-            {{py3_deserialize '_v' '_json2_' value_type}}
-            self._dataList.append(_v)
-            _key = _v.{{x.index_field1.py_style_name}}
-            list = self._dataListMap.get(_key)
-            if not list:
-                list = []
-                self._dataListMap[_key] = list
-            list.append(_v)
-
-            map = self._dataMapMap.get(_key)
-            if not map:
-                map = {}
-                self._dataMapMap[_key] =  map
-            map[_v.{{x.index_field2.py_style_name}}] = _v
-
-    def getDataListMap(self) : return self._dataListMap
-    def getDataMapMap(self) : return self._dataMapMap
-    def getDataList(self) : return self._dataList
-
-    def get(self, key1, key2) :
-        m1 = self._dataMapMap.get(key1)
-        return m1.get(key2) if m1 else None
-
-    {{~else if x.is_map_table ~}}
+    {{~if x.is_map_table ~}}
 
     def __init__(self, _json_ ):
         self._dataMap = {}

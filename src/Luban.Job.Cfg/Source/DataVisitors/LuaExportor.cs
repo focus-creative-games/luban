@@ -37,34 +37,6 @@ namespace Luban.Job.Cfg.DataVisitors
             result.Add("}");
         }
 
-        public void ExportTableTwoKeyMap(DefTable t, List<Record> records, List<string> result)
-        {
-            result.Add("return ");
-            result.Add("{");
-
-            var s = new StringBuilder();
-            var ks = new StringBuilder();
-            foreach (var g in records.GroupBy(r => r.Data.GetField(t.Index1)))
-            {
-                result.Add($"[{ToLuaCodeString(g.Key, t.Assembly, ks)}] =");
-                result.Add("{");
-
-                foreach (Record r in g)
-                {
-                    DBean d = r.Data;
-                    s.Clear();
-                    s.Append($"[{ToLuaCodeString(d.GetField(t.Index2), t.Assembly, ks)}] = ");
-                    Accept(d, t.Assembly, s);
-                    s.Append(',');
-                    result.Add(s.ToString());
-                }
-
-                result.Add("},");
-            }
-
-            result.Add("}");
-        }
-
         private string ToLuaCodeString(DType data, DefAssembly ass, StringBuilder b)
         {
             b.Clear();

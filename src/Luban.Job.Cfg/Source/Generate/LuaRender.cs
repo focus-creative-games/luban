@@ -172,9 +172,7 @@ local function InitTypes(methods)
     local tables =
     {
 {{~for table in tables ~}}
-    {{~if table.is_two_key_map_table~}}
-    { name='{{table.name}}', file='{{table.output_data_file}}', mode='bmap', index1='{{table.index1}}', index2='{{table.index2}}', value_type='{{table.value_ttype.bean.full_name}}' },
-    {{~else if table.is_map_table ~}}
+    {{~if table.is_map_table ~}}
     { name='{{table.name}}', file='{{table.output_data_file}}', mode='map', index='{{table.index}}', value_type='{{table.value_ttype.bean.full_name}}' },
     {{~else~}}
     { name='{{table.name}}', file='{{table.output_data_file}}', mode='one', value_type='{{table.value_ttype.bean.full_name}}'},
@@ -245,9 +243,7 @@ beans['{{bean.full_name}}'] =
 local tables =
 {
 {{~for table in tables ~}}
-    {{~if table.is_two_key_map_table~}}
-    { name='{{table.name}}', file='{{table.output_data_file}}', mode='bmap', index1='{{table.index1}}', index2='{{table.index2}}', value_type='{{table.value_ttype.bean.full_name}}' },
-    {{~else if table.is_map_table ~}}
+    {{~if table.is_map_table ~}}
     { name='{{table.name}}', file='{{table.output_data_file}}', mode='map', index='{{table.index}}', value_type='{{table.value_ttype.bean.full_name}}' },
     {{~else~}}
     { name='{{table.name}}', file='{{table.output_data_file}}', mode='one', value_type='{{table.value_ttype.bean.full_name}}'},

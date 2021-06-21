@@ -57,11 +57,6 @@ namespace Luban.Job.Cfg.Utils
                             LuaExportor.Ins.ExportTableOneKeyMap(table, records, content);
                             break;
                         }
-                        case ETableMode.BMAP:
-                        {
-                            LuaExportor.Ins.ExportTableTwoKeyMap(table, records, content);
-                            break;
-                        }
                         default:
                         {
                             throw new NotSupportedException();

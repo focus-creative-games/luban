@@ -47,7 +47,7 @@ Luban适合有以下需求的开发者：
 - 支持数据标签。 可以选择导出符合要求的数据，发布正式数据时策划不必手动注释掉那些测试或者非正式数据了。
 - 强大的数据校验能力。支持内建数据格式检查；支持ref表引用检查（策划不用担心填错id）；支持path资源检查（策划不用担心填错资源路径）。
 - 支持常量别名。策划不必再为诸如 升级丹 这样的道具手写具体道具id了。
-- 支持多种常见数据表模式。 one(单例表)、map（常规key-value表）、bmap(双键表)
+- 支持多种常见数据表模式。 one(单例表)、map（常规key-value表）
 - 支持emmylua anntations。生成的lua包含符合emmylua 格式anntations信息。配合emmylua有良好的配置代码提示能力。
 - 支持res资源标记。可以一键导出配置中引用的所有资源列表(icon,ui,assetbundle等等)
 - 生成代码良好模块化。
@@ -311,20 +311,6 @@ Luban适合有以下需求的开发者：
 
 ![multi_data](docs/images/examples/multi_02.png)
 
-### 双主键表
-两个主键的表，以key1,key2为主键。
-
-```xml
-<bean name="TwoKeyTable">
-	<var name="key1" type="int"/>
-	<var name="key2" type="string"/>
-	<var name="name" type="string"/>
-</bean>
-
-<table name="TbTowKey" value="TwoKeyTable" index="key1,key2" input="examples.xlsx"/>
-```
-
-![ex_91](docs/images/examples/ex_91.png)
 
 ### 单例表
 
@@ -713,8 +699,6 @@ return
   print(require("TbGlobal").name)
   -- 访问普通的 key-value 表
   print(require("TbItem")[12].x1)
-  -- 访问 双键表
-  print(require("TbTwoKey")[1][10].x8)
   ```
 
 - C# 使用示例
@@ -726,11 +710,8 @@ return
   Console.WriteLine(tables.TbGlobal.Name);
   // 访问普通的 key-value 表
   Console.WriteLine(tables.TbItem.Get(12).X1);
-  // 访问 双键表
-  Console.WriteLine(tables.TbTwoKey.Get(1, 10).X8);
   // 支持 operator []用法
   Console.WriteLine(tables.TbMail[1001].X2);
-  Console.WriteLine(tables.TbTwoKey[100, 1].X8);
   ```
 
 - typescript 使用示例
@@ -742,8 +723,6 @@ return
 	console.log(tables.TbGlobal.name)
 	// 访问普通的 key-value 表
 	console.log(tables.TbItem.get(12).x1)
-	// 访问 双键表
-	console.log(tables.TbTwoKey.get(1,10).x8)
 	```
 
 - go 使用示例
@@ -757,8 +736,6 @@ return
 	println(tables.TbGlobal.Name)
 	// 访问普通的 key-value 表
 	println(tables.TbItem.Get(12).X1)
-	// 访问 双键表
-	println(tables.TbTwoKey.Get(1, 10).X8)
 
 	```
 - [更多语言的例子](docs/samples.md)

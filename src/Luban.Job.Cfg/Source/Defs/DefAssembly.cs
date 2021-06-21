@@ -114,11 +114,6 @@ namespace Luban.Job.Cfg.Defs
             _recordsByTables[table.FullName] = new TableDataInfo(mainRecords, branchRecords);
         }
 
-        //public void SetDataTableMap(DefTable table, Dictionary<DType, Record> recordMap)
-        //{
-        //    _recordsByTables[table.FullName].FinalRecordMap = recordMap;
-        //}
-
         public List<Record> GetTableAllDataList(DefTable table)
         {
             return _recordsByTables[table.FullName].FinalRecords;

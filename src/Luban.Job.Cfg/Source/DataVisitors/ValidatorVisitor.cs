@@ -37,11 +37,6 @@ namespace Luban.Job.Cfg.DataVisitors
                 {
                     _path.Push(data.Fields[keyIndex]);
                 }
-                else if (table.IsTwoKeyMapTable)
-                {
-                    _path.Push(data.Fields[keyIndex]);
-                    _path.Push(data.Fields[table.IndexFieldIdIndex2]);
-                }
                 Accept(data, ass);
             }
         }

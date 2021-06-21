@@ -163,48 +163,7 @@ import bright.serialization.*;
 
 public final class {{name}}
 {
-    {{~ if x.is_two_key_map_table ~}}
-    private final java.util.HashMap<{{java_box_define_type key_type1}},java.util.ArrayList<{{java_box_define_type value_type}}>> _dataListMap;
-    private final java.util.HashMap<{{java_box_define_type key_type1}}, java.util.HashMap<{{java_box_define_type key_type2}}, {{java_box_define_type value_type}}>> _dataMapMap;
-    private final java.util.ArrayList<{{java_box_define_type value_type}}> _dataList;
-
-    public {{name}}(ByteBuf _buf)
-    {
-        _dataListMap = new java.util.HashMap<{{java_box_define_type key_type1}},java.util.ArrayList<{{java_box_define_type value_type}}>>();
-        _dataMapMap = new java.util.HashMap<{{java_box_define_type key_type1}}, java.util.HashMap<{{java_box_define_type key_type2}}, {{java_box_define_type value_type}}>>();
-        _dataList = new java.util.ArrayList<{{java_box_define_type value_type}}>();
-        
-        for(int n = _buf.readSize() ; n > 0 ; --n)
-        {
-            {{java_box_define_type value_type}} _v;
-            {{java_deserialize '_buf' '_v' value_type}}
-            _dataList.add(_v);
-            var _key = _v.{{x.index_field1.java_style_name}};
-            var list = _dataListMap.computeIfAbsent(_key, k -> new java.util.ArrayList<>());
-            list.add(_v);
-            var map = _dataMapMap.computeIfAbsent(_key, k -> new java.util.HashMap<>());
-            map.put(_v.{{x.index_field2.java_style_name}}, _v);
-        }
-    }
-
-    public java.util.HashMap<{{java_box_define_type key_type1}},java.util.ArrayList<{{java_box_define_type value_type}}>> getDataListMap() { return _dataListMap; }
-    public java.util.HashMap<{{java_box_define_type key_type1}}, java.util.HashMap<{{java_box_define_type key_type2}}, {{java_box_define_type value_type}}>> getDataMapMap() {return _dataMapMap;}
-    public java.util.ArrayList<{{java_box_define_type value_type}}> getDataList() { return _dataList; }
-
-    {{if value_type.is_dynamic}}
-    @SuppressWarnings(""unchecked"")
-    public <T extends {{java_box_define_type value_type}}> T getAs({{java_define_type key_type1}} key1, {{java_define_type key_type2}} key2) { return (T)_dataMapMap.get(key1).get(key2); }
-    {{end}}
-    public {{java_box_define_type value_type}} get({{java_define_type key_type1}} key1, {{java_define_type key_type2}} key2) { return _dataMapMap.get(key1).get(key2);}
-
-    public void resolve(java.util.HashMap<String, Object> _tables)
-    {
-        for({{java_box_define_type value_type}} v : _dataList)
-        {
-            v.resolve(_tables);
-        }
-    }
-    {{~else if x.is_map_table ~}}
+    {{~if x.is_map_table ~}}
     private final java.util.HashMap<{{java_box_define_type key_type}}, {{java_box_define_type value_type}}> _dataMap;
     private final java.util.ArrayList<{{java_box_define_type value_type}}> _dataList;
     

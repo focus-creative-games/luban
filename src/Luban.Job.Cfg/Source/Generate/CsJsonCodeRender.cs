@@ -133,57 +133,7 @@ namespace {{x.namespace_with_top_module}}
 {
 public sealed partial class {{name}}
 {
-    {{~ if x.is_two_key_map_table ~}}
-    private readonly Dictionary<{{cs_define_type key_type1}}, List<{{cs_define_type value_type}}>> _dataListMap;
-    private readonly Dictionary<{{cs_define_type key_type1}}, Dictionary<{{cs_define_type key_type2}}, {{cs_define_type value_type}}>> _dataMapMap;
-    private readonly List<{{cs_define_type value_type}}> _dataList;
-    public {{name}}(JsonElement _buf)
-    {
-      _dataListMap = new Dictionary<{{cs_define_type key_type1}}, List<{{cs_define_type value_type}}>>();
-        _dataMapMap = new Dictionary<{{cs_define_type key_type1}}, Dictionary<{{cs_define_type key_type2}}, {{cs_define_type value_type}}>>();
-        _dataList = new List<{{cs_define_type value_type}}>();
-        
-        foreach(JsonElement _row in _buf.EnumerateArray())
-        {
-            var _v = {{cs_define_type value_type}}.Deserialize{{value_type.bean.name}}(_row);
-            _dataList.Add(_v);
-            var _key = _v.{{x.index_field1.cs_style_name}};
-            if (!_dataListMap.TryGetValue(_key, out var list))
-            {
-                list = new List<{{cs_define_type value_type}}>();
-                _dataListMap.Add(_key, list);
-            }
-            list.Add(_v);
-            if (!_dataMapMap.TryGetValue(_key, out var map))
-            {
-                map = new Dictionary<{{cs_define_type key_type2}}, {{cs_define_type value_type}}>();
-                _dataMapMap.Add(_key, map);
-            }
-            map.Add(_v.{{x.index_field2.cs_style_name}}, _v);
-        }
-    }
-
-    public Dictionary<{{cs_define_type key_type1}}, List<{{cs_define_type value_type}}>> DataListMap => _dataListMap;
-    public Dictionary<{{cs_define_type key_type1}}, Dictionary<{{cs_define_type key_type2}}, {{cs_define_type value_type}}>> DataMapMap => _dataMapMap;
-    public List<{{cs_define_type value_type}}> DataList => _dataList;
-
-    {{if value_type.is_dynamic}}
-    public T GetOrDefaultAs<T>({{cs_define_type key_type1}} key1, {{cs_define_type key_type2}} key2) where T : {{cs_define_type value_type}} => _dataMapMap.TryGetValue(key1, out var m) && m.TryGetValue(key2, out var v) ? (T)v : null;
-    public T GetAs<T>({{cs_define_type key_type1}} key1, {{cs_define_type key_type2}} key2) where T : {{cs_define_type value_type}} => (T)_dataMapMap[key1][key2];
-    {{end}}
-    public {{cs_define_type value_type}} GetOrDefault({{cs_define_type key_type1}} key1, {{cs_define_type key_type2}} key2) => _dataMapMap.TryGetValue(key1, out var m) && m.TryGetValue(key2, out var v) ? v : null;
-    public {{cs_define_type value_type}} Get({{cs_define_type key_type1}} key1, {{cs_define_type key_type2}} key2) => _dataMapMap[key1][key2];
-    public {{cs_define_type value_type}} this[{{cs_define_type key_type1}} key1, {{cs_define_type key_type2}} key2] => _dataMapMap[key1][key2];
-
-    public void Resolve(Dictionary<string, object> _tables)
-    {
-        foreach(var v in _dataList)
-        {
-            v.Resolve(_tables);
-        }
-        OnResolveFinish(_tables);
-    }
-    {{~else if x.is_map_table ~}}
+    {{~if x.is_map_table ~}}
     private readonly Dictionary<{{cs_define_type key_type}}, {{cs_define_type value_type}}> _dataMap;
     private readonly List<{{cs_define_type value_type}}> _dataList;
     

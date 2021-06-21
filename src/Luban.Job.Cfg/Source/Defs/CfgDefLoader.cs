@@ -200,28 +200,9 @@ namespace Luban.Job.Cfg.Defs
                     mode = ETableMode.MAP;
                     break;
                 }
-                case "bmap":
-                {
-                    if ((string.IsNullOrWhiteSpace(indexStr) || indexStr.Split(',').Length != 2))
-                    {
-                        throw new Exception($"定义文件:{CurImportFile} table:{tableName} 是双键表，必须在index属性里指定2个key");
-                    }
-                    mode = ETableMode.BMAP;
-                    break;
-                }
                 case "":
                 {
-                    // 当 mode 属性为空时, 智能根据 index 值推测表类型
-                    // 如果index为空或一个键,则为 MAP类型
-                    // 如果index为2个键，则为 BMAP类型
-                    var indexs = indexStr.Split(',').Select(s => s.Trim()).ToList();
-                    switch (indexs.Count)
-                    {
-                        case 0:
-                        case 1: mode = ETableMode.MAP; break;
-                        case 2: mode = ETableMode.BMAP; break;
-                        default: throw new Exception($"定义文件:{CurImportFile} table:{tableName} 最多只能有两个 index");
-                    }
+                    mode = ETableMode.MAP;
                     break;
                 }
                 default:

@@ -6,7 +6,6 @@ namespace Luban.Job.Cfg.RawDefs
     {
         ONE,
         MAP,
-        BMAP, //双主键 map
     }
 
     public class CfgInputFile

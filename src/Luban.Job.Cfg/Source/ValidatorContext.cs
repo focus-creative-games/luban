@@ -249,54 +249,6 @@ namespace Luban.Job.Cfg
                     }
                     break;
                 }
-                case ETableMode.BMAP:
-                {
-                    var mainTwoKeyMap = new Dictionary<(DType, DType), Record>();
-                    foreach (Record r in mainRecords)
-                    {
-                        DType key1 = r.Data.Fields[table.IndexFieldIdIndex1];
-                        DType key2 = r.Data.Fields[table.IndexFieldIdIndex2];
-                        if (!mainTwoKeyMap.TryAdd((key1, key2), r))
-                        {
-                            throw new Exception($@"配置表 {table.FullName} 主文件 主键字段:{table.Index} 主键值:({key1},{key2})重复. 
-        记录1 来自文件:{r.Source}
-        记录2 来自文件:{mainTwoKeyMap[(key1, key2)].Source}
-");
-                        }
-                        // 目前不支持 双key索引检查,但支持主key索引检查.
-                        // 所以至少塞入一个,让ref检查能通过
-                        mainRecordMap[key1] = r;
-                    }
-
-                    if (branchRecords != null)
-                    {
-                        var branchTwoKeyMap = new Dictionary<(DType, DType), Record>();
-                        foreach (Record r in branchRecords)
-                        {
-                            DType key1 = r.Data.Fields[table.IndexFieldIdIndex1];
-                            DType key2 = r.Data.Fields[table.IndexFieldIdIndex2];
-                            if (!branchTwoKeyMap.TryAdd((key1, key2), r))
-                            {
-                                throw new Exception($@"配置表 {table.FullName} 分支文件 主键字段:{table.Index} 主键值:({key1},{key2})重复. 
-        记录1 来自文件:{r.Source}
-        记录2 来自文件:{branchTwoKeyMap[(key1, key2)].Source}
-");
-                            }
-                            if (mainTwoKeyMap.TryGetValue((key1, key2), out var old))
-                            {
-                                s_logger.Debug("配置表 {} 分支文件 主键:({},{}) 覆盖 主文件记录", table.FullName, key1, key2);
-                                mainRecords[old.Index] = r;
-                            }
-                            mainTwoKeyMap[(key1, key2)] = r;
-                            // 目前不支持 双key索引检查,但支持主key索引检查.
-                            // 所以至少塞入一个,让ref检查能通过
-                            mainRecordMap[key1] = r;
-                        }
-                    }
-
-
-                    break;
-                }
             }
             tableDataInfo.FinalRecords = mainRecords;
             tableDataInfo.FinalRecordMap = mainRecordMap;
