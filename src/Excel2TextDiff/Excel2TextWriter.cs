@@ -11,12 +11,6 @@ namespace Excel2TextDiff
 {
     class Excel2TextWriter
     {
-        class CommandLineOptions
-        {
-            [Option('p', "port", Required = false, HelpText = "listen port")]
-            public int Port { get; set; } = 8899;
-        }
-
         public void TransformToTextAndSave(string excelFile, string outputTextFile)
         {
             var lines = new List<string>();
@@ -27,13 +21,13 @@ namespace Excel2TextDiff
                 do
                 {
                     lines.Add($"===[{reader.Name ?? ""}]===");
-                    LoadRemainRows(reader, lines);
+                    LoadRows(reader, lines);
                 } while (reader.NextResult());
             }
             File.WriteAllLines(outputTextFile, lines, System.Text.Encoding.UTF8);
         }
 
-        private void LoadRemainRows(IExcelDataReader reader, List<string> lines)
+        private void LoadRows(IExcelDataReader reader, List<string> lines)
         {
             int rowIndex = 0;
             while (reader.Read())
