@@ -19,9 +19,9 @@ namespace Luban.Job.Common.TypeVisitors
             }
         }
 
-        public override string Accept(TBean type, string bufName, string fieldName)
-        {
-            return type.Apply(CsUnderingDeserializeVisitor.Ins, bufName, fieldName);
-        }
+        //public override string Accept(TBean type, string bufName, string fieldName)
+        //{
+        //    return type.Apply(CsUnderingDeserializeVisitor.Ins, bufName, fieldName);
+        //}
     }
 }

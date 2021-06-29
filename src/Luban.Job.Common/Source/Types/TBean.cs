@@ -10,8 +10,7 @@ namespace Luban.Job.Common.Types
 
         public T GetBeanAs<T>() where T : DefBeanBase => (T)Bean;
 
-        // TODO bean 允许指定是否可空
-        public TBean(DefBeanBase defBean, bool isNullable) : base(defBean.IsAbstractType)
+        public TBean(DefBeanBase defBean, bool isNullable) : base(isNullable)
         {
             this.Bean = defBean;
         }

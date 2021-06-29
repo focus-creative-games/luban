@@ -87,7 +87,7 @@ namespace Luban.Job.Cfg.Defs
         {
             var name = field.CsStyleName;
             TType type = field.CType;
-            if (field.CType.Apply(NeedMarshalBoolPrefixVisitor.Ins))
+            if (field.CType.IsNullable)
             {
                 return $"{{ var _exists bool; if _exists, err = {bufName}.ReadBool(); err != nil {{ return }}; if _exists {{ if _v.{name}, err = {type.Apply(GoDeserializeVisitor.Ins, bufName)}; err != nil  {{ return }} }} }}";
             }

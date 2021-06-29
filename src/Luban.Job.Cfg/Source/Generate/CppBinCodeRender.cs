@@ -233,7 +233,6 @@ namespace {{x.top_module}}
         if (!_buf.readInt(id)) return false;
         switch (id)
         {
-            case 0 : { _out = nullptr; return true; }
         {{- for child in type.hierarchy_not_abstract_children}}
             case {{child.cpp_full_name}}::ID: { _out = new {{child.cpp_full_name}}(); if (_out->deserialize(_buf)) { return true; } else { delete _out; _out = nullptr; return false;} }
         {{-end}}

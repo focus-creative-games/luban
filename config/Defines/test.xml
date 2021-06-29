@@ -185,6 +185,16 @@
 	</bean>
 	<table name="TbMultiRowTitle" value="MultiRowTitle" input="test/multi_level_title.xlsx"/>
 	
+	
+	<bean name="TestNull">
+		<var name="id" type="int"/>
+		<var name="x1" type="int?"/>
+		<var name="x2" type="DemoEnum?"/>
+		<var name="x3" type="DemoType1?"/>
+		<var name="x4" type="DemoDynamic?"/>
+	</bean>
+	<table name="TbTestNull" value="TestNull" input="test/test_null.xlsx"/>
+	
 	<!--table name="TbDynamic" value="DemoDynamic" input="多态数据源"/-->
  
 	<module name="login">
@@ -199,4 +209,5 @@
 		<var name="value" type="string"/>
 	</bean>
 	<table name="TbTestTag" value="TestTag" input="test/tag_datas"/>
+	
 </module>

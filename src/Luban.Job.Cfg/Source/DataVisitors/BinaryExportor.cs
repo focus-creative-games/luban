@@ -94,12 +94,12 @@ namespace Luban.Job.Cfg.DataVisitors
             var bean = type.Type;
             if (bean.IsAbstractType)
             {
-                // null 时特殊处理
-                if (type.ImplType == null)
-                {
-                    x.WriteInt(0);
-                    return;
-                }
+                // 调整设计后，多态bean不会为空
+                //if (type.ImplType == null)
+                //{
+                //    x.WriteInt(0);
+                //    return;
+                //}
                 x.WriteInt(type.ImplType.Id);
             }
             int index = -1;
@@ -111,8 +111,7 @@ namespace Luban.Job.Cfg.DataVisitors
                 {
                     continue;
                 }
-
-                if (defField.CType.Apply(NeedMarshalBoolPrefixVisitor.Ins))
+                if (defField.CType.IsNullable)
                 {
                     if (field != null)
                     {

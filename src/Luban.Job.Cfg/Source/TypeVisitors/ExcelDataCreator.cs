@@ -327,9 +327,13 @@ namespace Luban.Job.Cfg.TypeVisitors
             if (originBean.IsAbstractType)
             {
                 string subType = x.Read().ToString();
-                if (subType.ToLower().Trim() == "null")
+                if (subType.ToLower().Trim() == DefBean.BEAN_NULL_STR)
                 {
-                    return new DBean(originBean, null, null);
+                    if (!type.IsNullable)
+                    {
+                        throw new InvalidExcelDataException($"type:{type.Bean.FullName}不是可空类型. 不能为空");
+                    }
+                    return null;
                 }
                 string fullType = TypeUtil.MakeFullName(originBean.Namespace, subType);
                 DefBean implType = (DefBean)originBean.GetNotAbstractChildType(subType);
@@ -341,6 +345,18 @@ namespace Luban.Job.Cfg.TypeVisitors
             }
             else
             {
+                if (type.IsNullable)
+                {
+                    string subType = x.Read().ToString().Trim();
+                    if (subType == DefBean.BEAN_NULL_STR)
+                    {
+                        return null;
+                    }
+                    else if (subType != DefBean.BEAN_NOT_NULL_STR)
+                    {
+                        throw new Exception($"type:{type.Bean.FullName} 可空标识 不合法（只能为{DefBean.BEAN_NOT_NULL_STR}或{DefBean.BEAN_NULL_STR})");
+                    }
+                }
                 return new DBean(originBean, originBean, CreateBeanFields(originBean, x, ass));
             }
         }

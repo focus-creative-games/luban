@@ -113,7 +113,7 @@ namespace Luban.Job.Cfg.DataVisitors
 
         public void Accept(DBean record, DefAssembly assembly)
         {
-            if (record.ImplType == null)
+            if (record == null)
             {
                 return;
             }

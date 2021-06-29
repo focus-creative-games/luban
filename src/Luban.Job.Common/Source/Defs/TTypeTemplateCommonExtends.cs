@@ -13,7 +13,7 @@ namespace Luban.Job.Common.Defs
 
         public static bool NeedMarshalBoolPrefix(TType type)
         {
-            return type.Apply(NeedMarshalBoolPrefixVisitor.Ins);
+            return type.IsNullable;
         }
 
         public static bool CsNeedInit(TType type)

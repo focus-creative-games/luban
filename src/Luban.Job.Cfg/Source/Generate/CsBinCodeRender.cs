@@ -59,7 +59,6 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
     {{if x.is_abstract_type}}
         switch (_buf.ReadInt())
         {
-            case 0 : return null;
         {{- for child in x.hierarchy_not_abstract_children}}
             case {{child.full_name}}.ID: return new {{child.full_name}}(_buf);
         {{-end}}

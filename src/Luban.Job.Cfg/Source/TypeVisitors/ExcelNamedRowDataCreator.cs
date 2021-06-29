@@ -2,6 +2,7 @@ using Luban.Common.Utils;
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.DataSources.Excel;
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Cfg.TypeVisitors;
 using Luban.Job.Common.Types;
 using Luban.Job.Common.TypeVisitors;
 using System;
@@ -175,15 +176,20 @@ namespace Luban.Job.Cfg.TypeVisitors
             return list;
         }
 
+
         public DType Accept(TBean type, Sheet.NamedRow row, bool multirow, bool nullable)
         {
             var originBean = (DefBean)type.Bean;
             if (originBean.IsAbstractType)
             {
                 string subType = row.GetColumn(DefBean.TYPE_NAME_KEY, null, true).Read().ToString().Trim();
-                if (subType.ToLower() == "null")
+                if (subType.ToLower() == DefBean.BEAN_NULL_STR)
                 {
-                    return new DBean(originBean, null, null);
+                    if (!type.IsNullable)
+                    {
+                        throw new Exception($"type:{type} 不是可空类型 {type.Bean.FullName}? , 不能为空");
+                    }
+                    return null;
                 }
                 string fullType = TypeUtil.MakeFullName(originBean.Namespace, subType);
                 DefBean implType = (DefBean)originBean.GetNotAbstractChildType(subType);
@@ -195,6 +201,19 @@ namespace Luban.Job.Cfg.TypeVisitors
             }
             else
             {
+                if (type.IsNullable)
+                {
+                    string subType = row.GetColumn(DefBean.TYPE_NAME_KEY, null, true).Read().ToString().Trim();
+                    if (subType == DefBean.BEAN_NULL_STR)
+                    {
+                        return null;
+                    }
+                    else if (subType != DefBean.BEAN_NOT_NULL_STR)
+                    {
+                        throw new Exception($"type:{type.Bean.FullName} {DefBean.TYPE_NAME_KEY} 不合法（只能为{DefBean.BEAN_NOT_NULL_STR}或{DefBean.BEAN_NULL_STR})");
+                    }
+                }
+
                 return new DBean(originBean, originBean, CreateBeanFields(originBean, row));
             }
         }
