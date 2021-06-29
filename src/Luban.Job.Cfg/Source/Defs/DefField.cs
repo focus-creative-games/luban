@@ -45,8 +45,8 @@ namespace Luban.Job.Cfg.Defs
 
         public RefValidator Ref { get; private set; }
 
-        // 对于 two key map, 需要检查 ref,但不为它生成 ref 代码.故只有map类型表才要生成代码
-        public bool GenRef => Ref != null && Ref.Tables.Count == 1 && Assembly.GetCfgTable(Ref.FirstTable).IsMapTable;
+        // 如果ref了多个表，不再生成 xxx_ref之类的字段，也不会resolve
+        public bool GenRef => Ref != null && Ref.Tables.Count == 1;
 
         public bool HasRecursiveRef => (CType.IsBean)
             || (CType is TArray ta && ta.ElementType.IsBean)

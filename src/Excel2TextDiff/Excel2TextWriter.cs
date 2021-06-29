@@ -43,12 +43,13 @@ namespace Excel2TextDiff
                 if (lastNotEmptyIndex >= 0)
                 {
                     row = row.GetRange(0, lastNotEmptyIndex + 1);
+                    lines.Add(string.Join(',', row));
                 }
                 else
                 {
+                    // 忽略空白行，没必要diff这个
                     row.Clear();
                 }
-                lines.Add(string.Join(',', row));
             }
         }
     }
