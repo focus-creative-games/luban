@@ -56,17 +56,17 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
 
     public static {{name}} Deserialize{{name}}(ByteBuf _buf)
     {
-    {{if x.is_abstract_type}}
+    {{~if x.is_abstract_type~}}
         switch (_buf.ReadInt())
         {
-        {{- for child in x.hierarchy_not_abstract_children}}
+        {{~for child in x.hierarchy_not_abstract_children~}}
             case {{child.full_name}}.ID: return new {{child.full_name}}(_buf);
-        {{-end}}
+        {{~end~}}
             default: throw new SerializationException();
         }
-    {{else}}
+    {{~else~}}
         return new {{x.full_name}}(_buf);
-    {{end}}
+    {{~end~}}
     }
 
     {{~ for field in export_fields ~}}
@@ -79,14 +79,16 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
     {{~end~}}
     {{~end~}}
 
-{{if !x.is_abstract_type}}
+{{~if !x.is_abstract_type~}}
     public const int ID = {{x.id}};
     public override int GetTypeId() => ID;
-{{end}}
+{{~end~}}
 
     public {{x.cs_method_modifier}} void Resolve(Dictionary<string, object> _tables)
     {
-        {{~if parent_def_type}}base.Resolve(_tables);{{end}}
+        {{~if parent_def_type~}}
+        base.Resolve(_tables);
+        {{~end~}}
         {{~ for field in export_fields ~}}
         {{~if field.gen_ref~}}
         {{cs_ref_validator_resolve field}}
@@ -102,9 +104,9 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
     public override string ToString()
     {
         return ""{{full_name}}{ ""
-    {{- for field in hierarchy_export_fields }}
+    {{~for field in hierarchy_export_fields ~}}
         + ""{{field.cs_style_name}}:"" + {{cs_to_string field.cs_style_name field.ctype}} + "",""
-    {{-end}}
+    {{~end~}}
         + ""}"";
     }
     }
@@ -199,7 +201,7 @@ public sealed partial class {{name}}
         OnResolveFinish(_tables);
     }
 
-    {{end}}
+    {{~end~}}
 
     partial void OnResolveFinish(Dictionary<string, object> _tables);
 }
@@ -229,21 +231,21 @@ namespace {{namespace}}
    
 public sealed class {{name}}
 {
-    {{- for table in tables }}
+    {{~for table in tables ~}}
     public {{table.full_name}} {{table.name}} {get; }
-    {{-end}}
+    {{~end~}}
 
     public {{name}}(System.Func<string, ByteBuf> loader)
     {
         var tables = new System.Collections.Generic.Dictionary<string, object>();
-        {{- for table in tables }}
+        {{~for table in tables ~}}
         {{table.name}} = new {{table.full_name}}(loader(""{{table.output_data_file}}"")); 
         tables.Add(""{{table.full_name}}"", {{table.name}});
-        {{-end}}
+        {{~end~}}
 
-        {{- for table in tables }}
+        {{~for table in tables ~}}
         {{table.name}}.Resolve(tables); 
-        {{-end}}
+        {{~end~}}
     }
 }
 

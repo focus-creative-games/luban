@@ -33,16 +33,16 @@ namespace Luban.Job.Cfg.Generate
 UENUM(BlueprintType)
 enum class {{ue_bp_full_name}} : uint8
 {
-    {{if !contains_value_equal0_item}}
+    {{~if !contains_value_equal0_item~}}
     __DEFAULT__ = 0,
-    {{end}}
-    {{if contains_any_ue_enum_compatible_item}}
-    {{- for item in items }}
-    {{if item.int_value >= 256}}//{{end}} {{item.name}} = {{item.value}}     UMETA(DisplayName = ""{{item.alias_or_name}}""),
-    {{-end}}
-    {{else}}
+    {{~end~}}
+    {{~if contains_any_ue_enum_compatible_item~}}
+    {{~for item in items ~}}
+    {{if item.int_value >= 256}}//{{end}}{{item.name}} = {{item.value}}     UMETA(DisplayName = ""{{item.alias_or_name}}""),
+    {{~end~}}
+    {{~else~}}
     DUMMY UMETA(DisplayName = ""DUMMY""),
-    {{end}}
+    {{~end~}}
 };
 
 ");
@@ -73,10 +73,10 @@ class X6PROTO_API {{ue_bp_full_name}} : public {{if parent_def_type}} {{parent_d
 public:
 
 
-    {{- for field in export_fields }}
+    {{~for field in export_fields ~}}
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (DisplayName = ""{{field.name}}""))
     {{field.ctype.ue_bp_cpp_define_type}} {{field.name}};
-    {{-end}}
+    {{~end~}}
 };
 
 

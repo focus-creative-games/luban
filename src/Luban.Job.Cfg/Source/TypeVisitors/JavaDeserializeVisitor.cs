@@ -18,10 +18,5 @@ namespace Luban.Job.Cfg.TypeVisitors
                 return type.Apply(JavaUnderingDeserializeVisitor.Ins, bufName, fieldName);
             }
         }
-
-        public override string Accept(TBean type, string bufName, string fieldName)
-        {
-            return type.Apply(JavaUnderingDeserializeVisitor.Ins, bufName, fieldName);
-        }
     }
 }

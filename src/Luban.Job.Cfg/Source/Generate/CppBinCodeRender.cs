@@ -53,9 +53,9 @@ class {{name}} : public {{if parent_def_type}} {{parent_def_type.cpp_full_name}}
 
 {{~if !hierarchy_export_fields.empty?~}}
     {{name}}({{- for field in hierarchy_export_fields }}{{cpp_define_type field.ctype}} {{field.name}}{{if !for.last}},{{end}} {{end}}) 
-    {{-if parent_def_type-}}
+    {{~if parent_def_type~}}
             : {{parent_def_type.cpp_full_name}}({{ for field in parent_def_type.hierarchy_export_fields }}{{field.name}}{{if !for.last}}, {{end}}{{end}})
-    {{-end-}}
+    {{~end~}}
     {
 
         {{~ for field in export_fields ~}}
@@ -71,11 +71,11 @@ class {{name}} : public {{if parent_def_type}} {{parent_def_type.cpp_full_name}}
     {{cpp_define_type field.ctype}} {{field.cpp_style_name}};
     {{~end~}}
 
-{{if !x.is_abstract_type}}
+{{~if !x.is_abstract_type~}}
     static constexpr int ID = {{x.id}};
 
     int getTypeId() const { return ID; }
-{{end}}
+{{~end~}}
 
 };
 
@@ -154,7 +154,7 @@ class {{name}}
      {{cpp_define_type field.ctype}}& {{field.cpp_getter_name}}() const { return _data->{{field.cpp_style_name}}; }
     {{~end~}}
 
-    {{end}}
+    {{~end~}}
 };
 {{x.cpp_namespace_end}}
 ");
@@ -171,17 +171,17 @@ class {{name}}
 class {{name}}
 {
     public:
-    {{- for table in tables }}
+    {{~for table in tables ~}}
      {{table.cpp_full_name}} {{table.name}};
-    {{-end}}
+    {{~end~}}
 
     bool load(std::function<bool(ByteBuf&, const std::string&)> loader)
     {
         ByteBuf buf;
-        {{- for table in tables }}
+        {{~for table in tables~}}
         if (!loader(buf, ""{{table.output_data_file}}"")) return false;
         if (!{{table.name}}.load(buf)) return false;
-        {{-end}}
+        {{~end~}}
         return true;
     }
 };
@@ -228,17 +228,17 @@ namespace {{x.top_module}}
 
     bool {{type.cpp_full_name}}::deserialize{{type.name}}(ByteBuf& _buf, {{type.cpp_full_name}}*& _out)
     {
-    {{if type.is_abstract_type}}
+    {{~if type.is_abstract_type~}}
         int id;
         if (!_buf.readInt(id)) return false;
         switch (id)
         {
-        {{- for child in type.hierarchy_not_abstract_children}}
+        {{~for child in type.hierarchy_not_abstract_children~}}
             case {{child.cpp_full_name}}::ID: { _out = new {{child.cpp_full_name}}(); if (_out->deserialize(_buf)) { return true; } else { delete _out; _out = nullptr; return false;} }
-        {{-end}}
+        {{~end~}}
             default: { _out = nullptr; return false;}
         }
-    {{else}}
+    {{~else~}}
         _out = new {{type.cpp_full_name}}();
         if (_out->deserialize(_buf))
         {
@@ -250,7 +250,7 @@ namespace {{x.top_module}}
             _out = nullptr;
             return false;
         }
-    {{end}}
+    {{~end~}}
     }
     {{~end~}}
 }

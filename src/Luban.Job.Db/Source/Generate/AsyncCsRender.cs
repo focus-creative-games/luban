@@ -52,7 +52,7 @@ namespace {{x.namespace_with_top_module}}
 public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.parent}} {{else}} Bright.Transaction.TxnBeanBase {{end}}
 {
     {{~ for field in fields~}}
-        {{if is_abstract_type}}protected{{else}}private{{end}} {{db_cs_define_type field.ctype}} {{field.internal_name}};
+    {{if is_abstract_type}}protected{{else}}private{{end}} {{db_cs_define_type field.ctype}} {{field.internal_name}};
     {{~end}}
 
     public {{name}}()
@@ -106,9 +106,9 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
             {
                 var txn = Bright.Transaction.TransactionContext.AsyncLocalCtx;
                 txn.PutField(_objectId_ + {{field.id}}, new {{field.log_type}}(this, value));
-                {{~if field.ctype.need_set_children_root}}
+                {{~if field.ctype.need_set_children_root~}}
                 value?.InitRoot(GetRoot());
-                {{end}}
+                {{~end~}}
             }
             else
             {
@@ -199,7 +199,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
     {
         {{~ for field in hierarchy_fields~}}
         {{if need_set_children_root field.ctype}}{{field.internal_name}}?.InitRoot(root);{{end}}
-        {{~end}}
+        {{~end~}}
     }
 
     public override string ToString()

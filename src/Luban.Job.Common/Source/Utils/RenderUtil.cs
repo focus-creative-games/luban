@@ -43,9 +43,9 @@ namespace {{x.namespace_with_top_module}}
             var template = t_enumRender ??= Template.Parse(@"
 namespace {{namespace_with_top_module}}
 {
-    {{-if is_flags}}
+    {{~if is_flags~}}
     [System.Flags]
-    {{-end}}
+    {{~end~}}
     public enum {{name}}
     {
         {{~ for item in items ~}}
@@ -213,9 +213,9 @@ export class {{x.name}} {
 {{typescript_namespace_begin}}
 
 export enum {{name}} {
-    {{- for item in items }}
+    {{~for item in items ~}}
     {{item.name}} = {{item.value}},
-    {{-end}}
+    {{~end~}}
 }
 {{typescript_namespace_end}}
 ");

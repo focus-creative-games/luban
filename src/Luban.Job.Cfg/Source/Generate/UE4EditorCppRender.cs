@@ -34,9 +34,9 @@ namespace editor
 
     enum class {{ue_fname}}
     {
-        {{- for item in items }}
+        {{~for item in items ~}}
         {{item.name}} = {{item.value}},
-        {{-end}}
+        {{~end~}}
     };
 
     bool X6PROTOEDITOR_API {{ue_fname}}ToString({{ue_fname}} value, FString& s);
@@ -69,14 +69,14 @@ namespace editor
 
 struct X6PROTOEDITOR_API {{ue_fname}} : public {{if parent_def_type}} {{parent_def_type.ue_fname}}{{else}}FCfgObj{{end}}
 {
-    {{- for field in fields }}
+    {{~for field in fields ~}}
     {{field.ctype.editor_ue_cpp_define_type}} {{field.name}};
-    {{-end}}
+    {{~end~}}
 
-{{if !is_abstract_type}}
+{{~if !is_abstract_type~}}
     bool Load(FJsonObject* _json) override;
     bool Save(FJsonObject*& result) override;
-{{end}}
+{{~end~}}
 
     static bool Create(FJsonObject* _json, {{ue_fname}}*& result);
 };
@@ -131,21 +131,21 @@ struct X6PROTOEDITOR_API {{ue_fname}} : public {{if parent_def_type}} {{parent_d
 namespace editor
 {
 
-{{for type in types}}
+{{~for type in types~}}
 {{type.cpp_namespace_begin}}
-{{if type.is_bean}}
-{{if type.is_abstract_type}}
+{{~if type.is_bean~}}
+{{~if type.is_abstract_type~}}
     bool {{type.ue_fname}}::Create(FJsonObject* _json, {{type.ue_fname}}*& result)
     {
         FString type;
         if (_json->TryGetStringField(FString(""__type__""), type))
         {
-            {{-for child in type.hierarchy_not_abstract_children}}
+            {{~for child in type.hierarchy_not_abstract_children~}}
             if (type == ""{{child.name}}"")
             {
                 result = new {{child.ue_fname}}();
             } else
-            {{-end}}
+            {{~end~}}
             {
                 result = nullptr;
                 return false;
@@ -163,7 +163,7 @@ namespace editor
             return false;
         }
     }
-{{else}}
+{{~else~}}
     bool {{type.ue_fname}}::Create(FJsonObject* _json, {{type.ue_fname}}*& result)
     {
         result = new {{type.ue_fname}}();
@@ -181,45 +181,45 @@ namespace editor
             auto _json = new FJsonObject();
             _json->SetStringField(""__type__"", ""{{type.name}}"");
 
-{{for field in type.hierarchy_fields}}
+{{~for field in type.hierarchy_fields~}}
             {{field.editor_ue_cpp_save}}
-{{end}}
+{{~end~}}
             result = _json;
             return true;
         }
 
         bool {{type.ue_fname}}::Load(FJsonObject* _json)
         {
-{{for field in type.hierarchy_fields}}
+{{~for field in type.hierarchy_fields~}}
             {{field.editor_ue_cpp_load}}
-{{end}}
+{{~end~}}
             return true;
         }
-{{end}}
-{{else}}
+{{~end~}}
+{{~else~}}
 
 bool {{type.ue_fname}}ToString({{type.ue_fname}} value, FString& s)
 {
-    {{- for item in type.items }}
+    {{~for item in type.items ~}}
     if (value == {{type.ue_fname}}::{{item.name}}) { s = ""{{item.name}}""; return true; }
-    {{-end}}
+    {{~end~}}
     return false;
 }
 bool {{type.ue_fname}}FromString(const FString& s, {{type.ue_fname}}& value)
 {
-    {{- for item in type.items }}
+    {{~for item in type.items ~}}
         if (s == ""{{item.name}}"")
         {
             value = {{type.ue_fname}}::{{item.name}};
             return true;
         }
-    {{-end}}
+    {{~end~}}
     return false;
 }
 
-{{end}}
+{{~end~}}
 {{type.cpp_namespace_end}}
-{{end}}
+{{~end~}}
 }
 ");
             var result = template.Render(new Stub

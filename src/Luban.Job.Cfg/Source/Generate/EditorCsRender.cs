@@ -51,12 +51,14 @@ public {{cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{parent}} 
 
     public {{name}}(Bright.Common.NotNullInitialization _) {{if parent_def_type}} : base(_) {{end}}
     {
-        {{- for field in fields }}
-        {{if field.ctype.need_init}}{{field.proto_cs_init_field}} {{end}}
-        {{-end}}
+        {{~for field in fields ~}}
+        {{~if field.ctype.need_init~}}
+        {{field.proto_cs_init_field}}
+        {{~end~}}
+        {{~end~}}
     }
 
-    {{if is_abstract_type}}
+    {{~if is_abstract_type~}}
     public static void Serialize{{name}}(ByteBuf _buf, {{name}} x)
     {
         if (x == null) { _buf.WriteInt(0); return; }
@@ -70,52 +72,56 @@ public {{cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{parent}} 
         switch (_buf.ReadInt())
         {
             case 0 : return null;
-        {{- for child in hierarchy_not_abstract_children}}
+        {{~for child in hierarchy_not_abstract_children~}}
             case {{child.full_name}}.ID: x = new {{child.full_name}}(false); break;
-        {{-end}}
+        {{~end~}}
             default: throw new SerializationException();
         }
         x.Deserialize(_buf);
         return x;
     }
-    {{end}}
-    {{- for field in fields }}
+    {{~end~}}
+    {{~for field in fields ~}}
      public {{field.ctype.cs_define_type}} {{field.cs_style_name}};
-    {{-end}}
+    {{~end~}}
 
-    {{if !parent_def_type && is_abstract_type}}
-        public abstract int GetTypeId();
-    {{end}}
-    {{if parent_def_type && !is_abstract_type}}
+    {{~if !parent_def_type && is_abstract_type~}}
+    public abstract int GetTypeId();
+    {{~end~}}
+    {{~if parent_def_type && !is_abstract_type~}}
     public const int ID = {{id}};
     public override int GetTypeId()
     {
         return ID;
     }
-    {{end}}
+    {{~end~}}
 
     public {{cs_method_modifer}} void Serialize(ByteBuf _buf)
     {
-        {{if parent_def_type}} base.Serialize(_buf); {{end}}
-        {{- for field in fields }}
+        {{~if parent_def_type~}}
+        base.Serialize(_buf);
+        {{~end~}}
+        {{~for field in fields ~}}
         {{field.cs_serialize}}
-        {{-end}}
+        {{~end~}}
     }
 
     public {{cs_method_modifer}} void Deserialize(ByteBuf _buf)
     {
-        {{if parent_def_type}} base.Deserialize(_buf); {{end}}
-        {{- for field in fields }}
+        {{~if parent_def_type~}}
+        base.Deserialize(_buf);
+        {{~end~}}
+        {{~for field in fields ~}}
         {{field.cs_deserialize}}
-        {{-end}}
+        {{~end~}}
     }
 
         public override string ToString()
         {
             return ""{{full_name}}{ ""
-        {{- for field in hierarchy_fields }}
+        {{~for field in hierarchy_fields ~}}
             + ""{{field.cs_style_name}}:"" + {{field.proto_cs_to_string}} + "",""
-        {{-end}}
+        {{~end~}}
             + ""}"";
         }
     }
@@ -140,17 +146,19 @@ namespace {{namespace}}
    
 public sealed class {{name}} : Bright.Net.Protocol
 {
-    {{- for field in fields }}
+    {{~for field in fields ~}}
      public {{field.ctype.cs_define_type}} {{field.cs_style_name}};
-    {{-end}}
+    {{~end~}}
     public {{name}}()
     {
     }
     public {{name}}(Bright.Common.NotNullInitialization _)
     {
-        {{- for field in fields }}
-        {{if field.ctype.need_init}}{{field.proto_cs_init_field}} {{end}}
-        {{-end}}
+        {{~for field in fields ~}}
+        {{~if field.ctype.need_init~}}
+        {{field.proto_cs_init_field}}
+        {{~end~}}
+        {{~end~}}
     }
     public const int ID = {{id}};
 
@@ -161,16 +169,16 @@ public sealed class {{name}} : Bright.Net.Protocol
 
     public override void Serialize(ByteBuf _buf)
     {
-        {{- for field in fields }}
+        {{~for field in fields ~}}
         {{field.cs_serialize}}
-        {{-end}}
+        {{~end~}}
     }
 
     public override void Deserialize(ByteBuf _buf)
     {
-        {{- for field in fields }}
+        {{~for field in fields ~}}
         {{field.cs_deserialize}}
-        {{-end}}
+        {{~end~}}
     }
 
     public override void Reset()
@@ -186,9 +194,9 @@ public sealed class {{name}} : Bright.Net.Protocol
     public override string ToString()
     {
         return ""{{full_name}}{ ""
-    {{- for field in fields }}
+    {{~for field in fields ~}}
         + ""{{field.cs_style_name}}:"" + {{field.proto_cs_to_string}} + "",""
-    {{-end}}
+    {{~end~}}
         + ""}"";
     }
 }
@@ -215,9 +223,9 @@ public static class {{name}}
 {
     public static System.Collections.Generic.Dictionary<int, Bright.Net.IProtocolFactory> Factories { get; } = new System.Collections.Generic.Dictionary<int, Bright.Net.IProtocolFactory>
     {
-    {{- for proto in protos }}
+    {{~for proto in protos ~}}
         [{{proto.full_name}}.ID] = () => new {{proto.full_name}}(false),
-    {{-end}}
+    {{~end~}}
     };
 }
 

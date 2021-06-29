@@ -39,7 +39,7 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
         {{~end~}}
     }
 
-    public {{name}}({{- for field in hierarchy_export_fields }}{{cs_define_type field.ctype}} {{field.name}}{{if !for.last}},{{end}} {{end}}) {{if parent_def_type}} : base({{- for field in parent_def_type.hierarchy_export_fields }}{{field.name}}{{if !for.last}},{{end}}{{end}}) {{end}}
+    public {{name}}({{~for field in hierarchy_export_fields }}{{cs_define_type field.ctype}} {{field.name}}{{if !for.last}},{{end}} {{end}}) {{if parent_def_type}} : base({{- for field in parent_def_type.hierarchy_export_fields }}{{field.name}}{{if !for.last}},{{end}}{{end}}) {{end}}
     {
         {{~ for field in export_fields ~}}
         this.{{field.cs_style_name}} = {{field.name}};
@@ -54,9 +54,9 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
     {{~if x.is_abstract_type~}}
         switch (_buf.GetProperty(""__type__"").GetString())
         {
-        {{- for child in x.hierarchy_not_abstract_children}}
+        {{~for child in x.hierarchy_not_abstract_children~}}
             case ""{{child.name}}"": return new {{child.full_name}}(_buf);
-        {{-end}}
+        {{~end~}}
             default: throw new SerializationException();
         }
     {{~else~}}
@@ -195,7 +195,7 @@ public sealed partial class {{name}}
         OnResolveFinish(_tables);
     }
 
-    {{end}}
+    {{~end~}}
 
     partial void OnResolveFinish(Dictionary<string, object> _tables);
 }
@@ -225,21 +225,21 @@ namespace {{namespace}}
    
 public sealed partial class {{name}}
 {
-    {{- for table in tables }}
+    {{~for table in tables ~}}
     public {{table.full_name}} {{table.name}} {get; }
-    {{-end}}
+    {{~end~}}
 
     public {{name}}(System.Func<string, JsonElement> loader)
     {
         var tables = new System.Collections.Generic.Dictionary<string, object>();
-        {{- for table in tables }}
+        {{~for table in tables ~}}
         {{table.name}} = new {{table.full_name}}(loader(""{{table.json_output_data_file}}"")); 
         tables.Add(""{{table.full_name}}"", {{table.name}});
-        {{-end}}
+        {{~end~}}
 
-        {{- for table in tables }}
+        {{~for table in tables ~}}
         {{table.name}}.Resolve(tables); 
-        {{-end}}
+        {{~end~}}
     }
 }
 

@@ -57,7 +57,7 @@ public {{x.java_class_modifier}} class {{name}} extends {{if parent_def_type}} {
     public {{name}}({{- for field in hierarchy_export_fields }}{{java_define_type field.ctype}} {{field.name}}{{if !for.last}},{{end}} {{end}})
     {
         {{~if parent_def_type~}}
-            super({{ for field in parent_def_type.hierarchy_export_fields }}{{field.name}}{{if !for.last}}, {{end}}{{end}});
+        super({{ for field in parent_def_type.hierarchy_export_fields }}{{field.name}}{{if !for.last}}, {{end}}{{end}});
         {{~end~}}
         {{~ for field in export_fields ~}}
         this.{{field.java_style_name}} = {{field.name}};
@@ -72,36 +72,35 @@ public {{x.java_class_modifier}} class {{name}} extends {{if parent_def_type}} {
 
     public static {{name}} deserialize{{name}}(ByteBuf _buf)
     {
-    {{if x.is_abstract_type}}
+    {{~if x.is_abstract_type~}}
         switch (_buf.readInt())
         {
-            case 0 : return null;
-        {{- for child in x.hierarchy_not_abstract_children}}
+        {{~for child in x.hierarchy_not_abstract_children~}}
             case {{child.full_name_with_top_module}}.ID: return new {{child.full_name_with_top_module}}(_buf);
-        {{-end}}
+        {{~end~}}
             default: throw new SerializationException();
         }
-    {{else}}
+    {{~else~}}
         return new {{name}}(_buf);
-    {{end}}
+    {{~end~}}
     }
 
     {{~ for field in export_fields ~}}
-     public final {{java_define_type field.ctype}} {{field.java_style_name}};
+    public final {{java_define_type field.ctype}} {{field.java_style_name}};
     {{~if field.index_field~}} 
     public final java.util.HashMap<{{java_box_define_type field.index_field.ctype}}, {{java_box_define_type field.ctype.element_type}}> {{field.java_style_name}}_Index = new java.util.HashMap<>();
     {{~end~}}
     {{~if field.gen_ref~}}
-        public {{field.java_ref_validator_define}}
+    public {{field.java_ref_validator_define}}
     {{~end~}}
     {{~end~}}
 
-{{if !x.is_abstract_type}}
+{{~if !x.is_abstract_type~}}
     public static final int ID = {{x.id}};
 
     @Override
     public int getTypeId() { return ID; }
-{{end}}
+{{~end~}}
 
     @Override
     public void serialize(ByteBuf os)
@@ -117,7 +116,9 @@ public {{x.java_class_modifier}} class {{name}} extends {{if parent_def_type}} {
 
     public void resolve(java.util.HashMap<String, Object> _tables)
     {
-        {{~if parent_def_type}}super.resolve(_tables);{{end}}
+        {{~if parent_def_type~}}
+        super.resolve(_tables);
+        {{~end~}}
         {{~ for field in export_fields ~}}
         {{~if field.gen_ref~}}
             {{java_ref_validator_resolve field}}
@@ -131,9 +132,9 @@ public {{x.java_class_modifier}} class {{name}} extends {{if parent_def_type}} {
     public String toString()
     {
         return ""{{full_name}}{ ""
-    {{- for field in hierarchy_export_fields }}
+    {{~for field in hierarchy_export_fields ~}}
         + ""{{field.java_style_name}}:"" + {{java_to_string field.java_style_name field.ctype}} + "",""
-    {{-end}}
+    {{~end~}}
         + ""}"";
     }
 }
@@ -199,7 +200,7 @@ public final class {{name}}
     }
 
     {{~else~}}
-     private final {{java_define_type value_type}} _data;
+    private final {{java_define_type value_type}} _data;
 
     public final {{java_define_type value_type}} data() { return _data; }
 
@@ -220,7 +221,7 @@ public final class {{name}}
         _data.resolve(_tables);
     }
 
-    {{end}}
+    {{~end~}}
 }
 ");
             var result = template.RenderCode(p);
@@ -243,20 +244,20 @@ public final class {{name}}
         ByteBuf load(String file) throws java.io.IOException;
     }
 
-    {{- for table in tables }}
+    {{~for table in tables ~}}
     public final {{table.full_name_with_top_module}} {{table.name}};
-    {{-end}}
+    {{~end~}}
 
     public {{name}}(IByteBufLoader loader) throws java.io.IOException {
         var tables = new java.util.HashMap<String, Object>();
-        {{- for table in tables }}
+        {{~for table in tables ~}}
         {{table.name}} = new {{table.full_name_with_top_module}}(loader.load(""{{table.output_data_file}}"")); 
         tables.put(""{{table.full_name}}"", {{table.name}});
-        {{-end}}
+        {{~end~}}
 
-        {{- for table in tables }}
+        {{~ for table in tables ~}}
         {{table.name}}.resolve(tables); 
-        {{-end}}
+        {{~end~}}
     }
 }
 

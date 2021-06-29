@@ -31,9 +31,9 @@ namespace Luban.Job.Cfg.Generate
 package {{package}}
 
 const (
-    {{- for item in x.items }}
+    {{~for item in x.items ~}}
     {{x.go_full_name}}_{{item.name}} = {{go_const_value item.ctype item.value}}
-    {{-end}}
+    {{~end~}}
 )
 ");
             var result = template.RenderCode(c, new Dictionary<string, object>() { ["package"] = package });
@@ -52,9 +52,9 @@ const (
 package {{package}}
 
 const (
-    {{- for item in x.items }}
+    {{~for item in x.items ~}}
     {{x.go_full_name}}_{{item.name}} = {{item.value}}
-    {{-end}}
+    {{~end~}}
 )
 
 ");
@@ -85,31 +85,33 @@ import ""bright/serialization""
 {{x.go_import}}
 
 type {{go_full_name}} struct {
-    {{if parent_def_type}}{{parent_def_type.go_full_name}}{{end}}
-    {{- for field in export_fields }}
+    {{~if parent_def_type~}}
+    {{parent_def_type.go_full_name}}
+    {{~end~}}
+    {{~for field in export_fields ~}}
     {{field.cs_style_name}} {{go_define_type field.ctype}}
-    {{-end}}
+    {{~end~}}
 }
 
-{{if !is_abstract_type}}
+{{~if !is_abstract_type~}}
 func ({{go_full_name}}) GetTypeId() int {
     return {{x.id}}
 }
-{{end}}
+{{~end~}}
 
 func New{{go_full_name}}(_buf *serialization.ByteBuf) (_v *{{go_full_name}}, err error) {
     _v = &{{go_full_name}}{}
-{{if parent_def_type}}
+{{~if parent_def_type~}}
     var _p *{{parent_def_type.go_full_name}}
      if _p, err = New{{parent_def_type.go_full_name}}(_buf) ; err != nil { return }
     _v.{{parent_def_type.go_full_name}} = *_p
-{{end}}
-    {{- for field in export_fields }}
+{{~end~}}
+    {{~for field in export_fields ~}}
     {{go_deserialize_field field '_buf'}}
-    {{-end}}
+    {{~end~}}
     return
 }
-{{if is_abstract_type}}
+{{~if is_abstract_type~}}
 func NewChild{{go_full_name}}(_buf *serialization.ByteBuf) (_v interface{}, err error) {
     var id int32
     if id, err = _buf.ReadInt() ; err != nil {
@@ -117,13 +119,13 @@ func NewChild{{go_full_name}}(_buf *serialization.ByteBuf) (_v interface{}, err 
     }
     switch id {
             case 0 : return nil, nil
-        {{- for child in hierarchy_not_abstract_children}}
+        {{~for child in hierarchy_not_abstract_children~}}
             case {{child.id}}: return New{{child.go_full_name}}(_buf);
-        {{-end}}
+        {{~end~}}
     }
     return
 }
-{{end}}
+{{~end~}}
 
 ");
             var result = template.RenderCode(b, new Dictionary<string, object>() { ["package"] = package });
@@ -172,12 +174,12 @@ func New{{go_full_name}}(_buf *serialization.ByteBuf) (*{{go_full_name}}, error)
 			} else {
 				_dataList = append(_dataList, _v)
 {{~if value_type.is_dynamic ~}}
-        {{- for child in value_type.bean.hierarchy_not_abstract_children}}
+        {{~for child in value_type.bean.hierarchy_not_abstract_children~}}
                 if __v, __is := _v.(*{{child.go_full_name}}) ; __is {
                     dataMap[__v.{{index_field.cs_style_name}}] = _v
                     continue
                 }
-        {{-end}}
+        {{~end~}}
 {{~else~}}
 				dataMap[_v.{{index_field.cs_style_name}}] = _v
 {{~end~}}
@@ -200,7 +202,7 @@ func (table *{{go_full_name}}) Get(key {{go_define_type key_type}}) {{go_define_
 }
 
 
-{{else}}
+{{~else~}}
 
 import ""errors""
 
@@ -226,7 +228,7 @@ func (table *{{go_full_name}}) Get() {{go_define_type value_type}} {
     return table._data
 }
 
-{{end}}
+{{~end~}}
 ");
             var result = template.RenderCode(p, new Dictionary<string, object>() { ["package"] = package });
 
@@ -247,9 +249,9 @@ import ""bright/serialization""
 type ByteBufLoader func(string) (*serialization.ByteBuf, error)
 
 type {{name}} struct {
-    {{- for table in tables }}
+    {{~for table in tables ~}}
     {{table.name}} *{{table.go_full_name}}
-    {{-end}}
+    {{~end~}}
 }
 
 func NewTables(loader ByteBufLoader) (*{{name}}, error) {
@@ -257,14 +259,14 @@ func NewTables(loader ByteBufLoader) (*{{name}}, error) {
     var buf *serialization.ByteBuf
 
     tables := &{{name}}{}
-    {{- for table in tables }}
+    {{~for table in tables ~}}
     if buf, err = loader(""{{table.output_data_file}}"") ; err != nil {
         return nil, err
     }
     if tables.{{table.name}}, err = New{{table.go_full_name}}(buf) ; err != nil {
         return nil, err
     }
-    {{-end}}
+    {{~end~}}
     return tables, nil
 }
 
