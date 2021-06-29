@@ -41,18 +41,17 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
 
     public {{name}}({{- for field in hierarchy_export_fields }}{{cs_define_type field.ctype}} {{field.name}}{{if !for.last}},{{end}} {{end}}) {{if parent_def_type}} : base({{- for field in parent_def_type.hierarchy_export_fields }}{{field.name}}{{if !for.last}},{{end}}{{end}}) {{end}}
     {
-        {{- for field in export_fields }}
+        {{~ for field in export_fields ~}}
         this.{{field.cs_style_name}} = {{field.name}};
-        {{-if field.index_field}}
+        {{~if field.index_field~}}
         foreach(var _v in {{field.cs_style_name}}) { {{field.cs_style_name}}_Index.Add(_v.{{field.index_field.cs_style_name}}, _v); }
-        {{-end}}
-        {{-end}}
+        {{~end~}}
+        {{~end~}}
     }
 
     public static {{name}} Deserialize{{name}}(JsonElement _buf)
     {
-    {{if x.is_abstract_type}}
-        if (_buf.ValueKind == JsonValueKind.Null) { return null; }
+    {{~if x.is_abstract_type~}}
         switch (_buf.GetProperty(""__type__"").GetString())
         {
         {{- for child in x.hierarchy_not_abstract_children}}
@@ -60,9 +59,9 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
         {{-end}}
             default: throw new SerializationException();
         }
-    {{else}}
+    {{~else~}}
         return new {{x.full_name}}(_buf);
-    {{end}}
+    {{~end~}}
     }
 
     {{~ for field in export_fields ~}}
@@ -75,14 +74,16 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
     {{~end~}}
     {{~end~}}
 
-{{if !x.is_abstract_type}}
+{{~if !x.is_abstract_type~}}
     public const int ID = {{x.id}};
     public override int GetTypeId() => ID;
-{{end}}
+{{~end~}}
 
     public {{x.cs_method_modifier}} void Resolve(Dictionary<string, object> _tables)
     {
-        {{~if parent_def_type}}base.Resolve(_tables);{{end}}
+        {{~if parent_def_type~}}
+        base.Resolve(_tables);
+        {{~end~}}
         {{~ for field in export_fields ~}}
         {{~if field.gen_ref~}}
         {{cs_ref_validator_resolve field}}
@@ -98,9 +99,9 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
     public override string ToString()
     {
         return ""{{full_name}}{ ""
-    {{- for field in hierarchy_export_fields }}
+    {{~ for field in hierarchy_export_fields ~}}
         + ""{{field.cs_style_name}}:"" + {{cs_to_string field.cs_style_name field.ctype}} + "",""
-    {{-end}}
+    {{~end~}}
         + ""}"";
     }
     }
@@ -180,7 +181,6 @@ public sealed partial class {{name}}
         if (n != 1) throw new SerializationException(""table mode=one, but size != 1"");
         _data = {{cs_define_type value_type}}.Deserialize{{value_type.bean.name}}(_buf[0]);
     }
-
 
     {{~ for field in value_type.bean.hierarchy_export_fields ~}}
      public {{cs_define_type field.ctype}} {{field.cs_style_name}} => _data.{{field.cs_style_name}};
