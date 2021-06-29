@@ -151,7 +151,7 @@ namespace Luban.Job.Cfg
                         errMsg = "--output_data_resource_list_file missing";
                         return false;
                     }
-                    if (genTypes.Contains("data_json_monolithic") && string.IsNullOrWhiteSpace(options.OutputDataJsonMonolithicFile))
+                    if (genTypes.Contains("output_data_json_monolithic_file") && string.IsNullOrWhiteSpace(options.OutputDataJsonMonolithicFile))
                     {
                         errMsg = "--output_data_json_monolithic_file missing";
                         return false;
@@ -660,60 +660,7 @@ export class Vector2 {
                             {
                                 var fileContent = new List<string>
                                 {
-                                    @"
-class Vector2:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.a = Vector4(1,2,3,4)
-    def __str__(self):
-        return '{%g,%g}' % (self.x, self.y)
-
-    @staticmethod
-    def fromJson(_json_):
-        x = _json_['x']
-        y = _json_['y']
-        if (x == None or y == None):
-            raise Exception()
-        return Vector2(x, y)
-
-
-class Vector3:
-    def __init__(self, x, y, z):
-        self.x = x
-        self.y = y
-        self.z = z
-    def __str__(self):
-        return '{%f,%f,%f}' % (self.x, self.y, self.z)
-    @staticmethod
-    def fromJson(_json_):
-        x = _json_['x']
-        y = _json_['y']
-        z = _json_['z']
-        if (x == None or y == None or z == None):
-            raise Exception()
-        return Vector3(x, y, z)
-
-class Vector4:
-    def __init__(self, x, y, z, w):
-        self.x = x
-        self.y = y
-        self.z = z
-        self.w = w
-    def __str__(self):
-        return '{%g,%g,%g,%g}' % (self.x, self.y, self.z, self.w)
-        
-    @staticmethod
-    def fromJson(_json_):
-        x = _json_['x']
-        y = _json_['y']
-        z = _json_['z']
-        w = _json_['w']
-        if (x == None or y == None or z == None or w == None):
-            raise Exception()
-        return Vector4(x, y, z, w)
-
-"
+                                    PYTHON_VECTOR_DEFINES
                                 };
 
                                 foreach (var type in exportTypes)
@@ -775,60 +722,8 @@ class Vector4:
                                     @"
 from enum import Enum
 import abc
-
-class Vector2:
-        def __init__(self, x, y):
-            self.x = x
-            self.y = y
-            self.a = Vector4(1,2,3,4)
-        def __str__(self):
-            return '{%g,%g}' % (self.x, self.y)
-
-        @staticmethod
-        def fromJson(_json_):
-            x = _json_['x']
-            y = _json_['y']
-            if (x == None or y == None):
-                raise Exception()
-            return Vector2(x, y)
-
-
-class Vector3:
-    def __init__(self, x, y, z):
-        self.x = x
-        self.y = y
-        self.z = z
-    def __str__(self):
-        return '{%f,%f,%f}' % (self.x, self.y, self.z)
-    @staticmethod
-    def fromJson(_json_):
-        x = _json_['x']
-        y = _json_['y']
-        z = _json_['z']
-        if (x == None or y == None or z == None):
-            raise Exception()
-        return Vector3(x, y, z)
-
-class Vector4:
-    def __init__(self, x, y, z, w):
-        self.x = x
-        self.y = y
-        self.z = z
-        self.w = w
-    def __str__(self):
-        return '{%g,%g,%g,%g}' % (self.x, self.y, self.z, self.w)
-        
-    @staticmethod
-    def fromJson(_json_):
-        x = _json_['x']
-        y = _json_['y']
-        z = _json_['z']
-        w = _json_['w']
-        if (x == None or y == None or z == None or w == None):
-            raise Exception()
-        return Vector4(x, y, z, w)
-
-"
+",
+                                    PYTHON_VECTOR_DEFINES,
                                 };
 
                                 foreach (var type in exportTypes)
@@ -913,7 +808,7 @@ class Vector4:
                                 tasks.Add(Task.Run(() =>
                                 {
                                     var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderAny(c), ELanguage.CS);
-                                    var file = RenderFileUtil.GetDefTypePath(c.FullName, ELanguage.GO);
+                                    var file = RenderFileUtil.GetDefTypePath(c.FullName, ELanguage.CS);
                                     var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
                                     genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                                 }));
@@ -1096,5 +991,59 @@ class Vector4:
 
             agent.Session.ReplyRpc<GenJob, GenJobArg, GenJobRes>(rpc, res);
         }
+
+        private const string PYTHON_VECTOR_DEFINES = @"
+class Vector2:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+    def __str__(self):
+        return '{%g,%g}' % (self.x, self.y)
+
+    @staticmethod
+    def fromJson(_json_):
+        x = _json_['x']
+        y = _json_['y']
+        if (x == None or y == None):
+            raise Exception()
+        return Vector2(x, y)
+
+
+class Vector3:
+    def __init__(self, x, y, z):
+        self.x = x
+        self.y = y
+        self.z = z
+    def __str__(self):
+        return '{%f,%f,%f}' % (self.x, self.y, self.z)
+    @staticmethod
+    def fromJson(_json_):
+        x = _json_['x']
+        y = _json_['y']
+        z = _json_['z']
+        if (x == None or y == None or z == None):
+            raise Exception()
+        return Vector3(x, y, z)
+
+class Vector4:
+    def __init__(self, x, y, z, w):
+        self.x = x
+        self.y = y
+        self.z = z
+        self.w = w
+    def __str__(self):
+        return '{%g,%g,%g,%g}' % (self.x, self.y, self.z, self.w)
+        
+    @staticmethod
+    def fromJson(_json_):
+        x = _json_['x']
+        y = _json_['y']
+        z = _json_['z']
+        w = _json_['w']
+        if (x == None or y == None or z == None or w == None):
+            raise Exception()
+        return Vector4(x, y, z, w)
+
+";
     }
 }
