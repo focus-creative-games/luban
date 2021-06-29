@@ -57,7 +57,7 @@ namespace Luban.Job.Proto.Generate
 
 export {{if x.is_abstract_type}} abstract {{end}} class {{name}} extends {{if parent_def_type}}{{x.parent}}{{else}}BeanBase{{end}} {
 {{~if x.is_abstract_type~}}
-    static serializeTo(_buf_ : Bright.Serialization.ByteBuf, _bean_ : {{name}}) : void {
+    static serializeTo(_buf_ : Bright.Serialization.ByteBuf, _bean_ : {{name}}) {
         if (_bean_ == null) {
             _buf_.WriteInt(0)
             return
@@ -69,11 +69,11 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} extends {{if pa
     static deserializeFrom(_buf_ : Bright.Serialization.ByteBuf) : {{name}} {
         let  _bean_ :{{name}}
         switch (_buf_.ReadInt()) {
-            case 0 : return null;
+            case 0 : return null
         {{~ for child in x.hierarchy_not_abstract_children~}}
-            case {{child.id}}: _bean_ = new {{child.full_name}}(_buf_); break;
+            case {{child.id}}: _bean_ = new {{child.full_name}}(_buf_); break
         {{~end~}}
-            default: throw new Error();
+            default: throw new Error()
         }
         _bean_.deserialize(_buf_)
         return _bean_
@@ -86,12 +86,12 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} extends {{if pa
 
 
     {{~ for field in fields ~}}
-     {{field.ts_style_name}}{{if field.is_nullable}}?{{end}} : {{ts_define_type field.ctype}};
+     {{field.ts_style_name}}{{if field.is_nullable}}?{{end}} : {{ts_define_type field.ctype}}
     {{~end~}}
 
     serialize(_buf_ : Bright.Serialization.ByteBuf) {
         {{~if parent_def_type~}}
-        super.serialize(_buf_);
+        super.serialize(_buf_)
         {{~end~}}
         {{~ for field in fields ~}}
         {{ts_bin_serialize ('this.' + field.ts_style_name) '_buf_' field.ctype}}
@@ -100,7 +100,7 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} extends {{if pa
 
     deserialize(_buf_ : Bright.Serialization.ByteBuf) {
         {{~if parent_def_type~}}
-        super.deserialize(_buf_);
+        super.deserialize(_buf_)
         {{~end~}}
         {{~ for field in fields ~}}
         {{ts_bin_deserialize ('this.' + field.ts_style_name) '_buf_' field.ctype}}
@@ -112,7 +112,7 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} extends {{if pa
     {{~ for field in hierarchy_fields ~}}
             + ""{{field.ts_style_name}}:"" + this.{{field.ts_style_name}} + "",""
     {{~end~}}
-        + ""}"";
+        + ""}""
     }
 }
 {{x.typescript_namespace_end}}
@@ -141,7 +141,7 @@ export class {{name}} extends Protocol {
 
 
     {{~ for field in fields ~}}
-     {{field.ts_style_name}}{{if field.is_nullable}}?{{end}} : {{ts_define_type field.ctype}};
+     {{field.ts_style_name}}{{if field.is_nullable}}?{{end}} : {{ts_define_type field.ctype}}
     {{~end~}}
 
     serialize(_buf_ : Bright.Serialization.ByteBuf) {
@@ -161,7 +161,7 @@ export class {{name}} extends Protocol {
     {{~ for field in fields ~}}
             + ""{{field.ts_style_name}}:"" + this.{{field.ts_style_name}} + "",""
     {{~end~}}
-        + ""}"";
+        + ""}""
     }
 }
 {{x.typescript_namespace_end}}

@@ -432,66 +432,66 @@ export namespace {ass.TopModule} {{
 
                                     @"
 export class Vector2 {
-        x: number;
-        y: number;
+        x: number
+        y: number
         constructor(x: number, y: number) {
-            this.x = x;
-            this.y = y;
+            this.x = x
+            this.y = y
         }
 
         static from(_json_: any): Vector2 {
-            let x = _json_['x'];
-            let y = _json_['y'];
+            let x = _json_['x']
+            let y = _json_['y']
             if (x == null || y == null) {
-                throw new Error();
+                throw new Error()
             }
-            return new Vector2(x, y);
+            return new Vector2(x, y)
         }
     }
 
 
     export class Vector3 {
-        x: number;
-        y: number;
-        z: number;
+        x: number
+        y: number
+        z: number
         constructor(x: number, y: number, z: number) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
+            this.x = x
+            this.y = y
+            this.z = z
         }
 
         static from(_json_: any): Vector3 {
-            let x = _json_['x'];
-            let y = _json_['y'];
-            let z = _json_['z'];
+            let x = _json_['x']
+            let y = _json_['y']
+            let z = _json_['z']
             if (x == null || y == null || z == null) {
-                throw new Error();
+                throw new Error()
             }
-            return new Vector3(x, y, z);
+            return new Vector3(x, y, z)
         }
     }
 
     export class Vector4 {
-        x: number;
-        y: number;
-        z: number;
-        w: number;
+        x: number
+        y: number
+        z: number
+        w: number
         constructor(x: number, y: number, z: number, w: number) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-            this.w = w;
+            this.x = x
+            this.y = y
+            this.z = z
+            this.w = w
         }
 
         static from(_json_: any): Vector4 {
-            let x = _json_['x'];
-            let y = _json_['y'];
-            let z = _json_['z'];
-            let w = _json_['w'];
+            let x = _json_['x']
+            let y = _json_['y']
+            let z = _json_['z']
+            let w = _json_['w']
             if (x == null || y == null || z == null || w == null) {
-                throw new Error();
+                throw new Error()
             }
-            return new Vector4(x, y, z, w);
+            return new Vector4(x, y, z, w)
         }
     }
 
@@ -554,57 +554,57 @@ export namespace {ass.TopModule} {{
 
                                     @"
 export class Vector2 {
-        x: number;
-        y: number;
+        x: number
+        y: number
         constructor(x: number, y: number) {
-            this.x = x;
-            this.y = y;
+            this.x = x
+            this.y = y
         }
 
         static from(_buf_: Bright.Serialization.ByteBuf): Vector2 {
-            let x = _buf_.ReadFloat();
-            let y = _buf_.ReadFloat();
-            return new Vector2(x, y);
+            let x = _buf_.ReadFloat()
+            let y = _buf_.ReadFloat()
+            return new Vector2(x, y)
         }
     }
 
 
     export class Vector3 {
-        x: number;
-        y: number;
-        z: number;
+        x: number
+        y: number
+        z: number
         constructor(x: number, y: number, z: number) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
+            this.x = x
+            this.y = y
+            this.z = z
         }
 
         static from(_buf_: Bright.Serialization.ByteBuf): Vector3 {
-            let x = _buf_.ReadFloat();
-            let y = _buf_.ReadFloat();
-            let z = _buf_.ReadFloat();
-            return new Vector3(x, y, z);
+            let x = _buf_.ReadFloat()
+            let y = _buf_.ReadFloat()
+            let z = _buf_.ReadFloat()
+            return new Vector3(x, y, z)
         }
     }
 
     export class Vector4 {
-        x: number;
-        y: number;
-        z: number;
-        w: number;
+        x: number
+        y: number
+        z: number
+        w: number
         constructor(x: number, y: number, z: number, w: number) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-            this.w = w;
+            this.x = x
+            this.y = y
+            this.z = z
+            this.w = w
         }
 
         static from(_buf_: Bright.Serialization.ByteBuf): Vector4 {
-            let x = _buf_.ReadFloat();
-            let y = _buf_.ReadFloat();
-            let z = _buf_.ReadFloat();
-            let w = _buf_.ReadFloat();
-            return new Vector4(x, y, z, w);
+            let x = _buf_.ReadFloat()
+            let y = _buf_.ReadFloat()
+            let z = _buf_.ReadFloat()
+            let w = _buf_.ReadFloat()
+            return new Vector4(x, y, z, w)
         }
     }
 
