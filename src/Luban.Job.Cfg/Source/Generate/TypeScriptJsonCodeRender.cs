@@ -38,7 +38,6 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} {{if parent_def
 {{~if x.is_abstract_type~}}
     static constructorFrom(_json_: any): {{name}} {
         switch (_json_.__type__) {
-            case null: return null
         {{~ for child in x.hierarchy_not_abstract_children~}}
             case '{{child.name}}': return new {{child.full_name}}(_json_)
         {{~end~}}

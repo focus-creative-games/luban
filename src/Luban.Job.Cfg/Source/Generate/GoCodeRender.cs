@@ -118,7 +118,6 @@ func NewChild{{go_full_name}}(_buf *serialization.ByteBuf) (_v interface{}, err 
         return
     }
     switch id {
-            case 0 : return nil, nil
         {{~for child in hierarchy_not_abstract_children~}}
             case {{child.id}}: return New{{child.go_full_name}}(_buf);
         {{~end~}}

@@ -32,10 +32,5 @@ namespace Luban.Job.Cfg.TypeVisitors
                 return type.Apply(UnderringVisitor, jsonFieldName, fieldName);
             }
         }
-
-        public override string Accept(TBean type, string bufName, string fieldName)
-        {
-            return type.Apply(UnderringVisitor, bufName, fieldName);
-        }
     }
 }

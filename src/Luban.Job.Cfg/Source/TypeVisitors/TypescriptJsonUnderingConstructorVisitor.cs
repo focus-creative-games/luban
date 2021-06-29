@@ -127,7 +127,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TMap type, string jsonVarName, string fieldName)
         {
-            return $"{fieldName} = new {type.Apply(TypescriptDefineTypeName.Ins)}(); for(var _entry_ of {jsonVarName}) {{ let _k:{type.KeyType.Apply(TypescriptDefineTypeName.Ins)}; {type.KeyType.Apply(this, "_entry_[0]", "_k")}  let _v:{type.ValueType.Apply(TypescriptDefineTypeName.Ins)};  {type.ValueType.Apply(this, "_entry_[1]", "_v")}; {fieldName}.set(_k, _v);  }}";
+            return $"{fieldName} = new {type.Apply(TypescriptDefineTypeName.Ins)}(); for(var _entry_ of {jsonVarName}) {{ let _k:{type.KeyType.Apply(TypescriptDefineTypeName.Ins)}; {type.KeyType.Apply(this, "_entry_[0]", "_k")};  let _v:{type.ValueType.Apply(TypescriptDefineTypeName.Ins)};  {type.ValueType.Apply(this, "_entry_[1]", "_v")}; {fieldName}.set(_k, _v);  }}";
 
         }
 

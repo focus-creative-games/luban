@@ -138,7 +138,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TMap type, string bufVarName, string fieldName)
         {
-            return $"{{ {fieldName} = new {type.Apply(TypescriptDefineTypeName.Ins)}(); for(let i = 0, n = {bufVarName}.ReadSize() ; i < n ; i++) {{ let _k:{type.KeyType.Apply(TypescriptDefineTypeName.Ins)};  {type.KeyType.Apply(this, bufVarName, "_k")}  let _v:{type.ValueType.Apply(TypescriptDefineTypeName.Ins)};  {type.ValueType.Apply(this, bufVarName, "_v")}     {fieldName}.set(_k, _v);  }} }}";
+            return $"{{ {fieldName} = new {type.Apply(TypescriptDefineTypeName.Ins)}(); for(let i = 0, n = {bufVarName}.ReadSize() ; i < n ; i++) {{ let _k:{type.KeyType.Apply(TypescriptDefineTypeName.Ins)};  {type.KeyType.Apply(this, bufVarName, "_k")};  let _v:{type.ValueType.Apply(TypescriptDefineTypeName.Ins)};  {type.ValueType.Apply(this, bufVarName, "_v")}     {fieldName}.set(_k, _v);  }} }}";
 
         }
 

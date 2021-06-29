@@ -148,7 +148,7 @@ local function InitTypes(methods)
 {{~if bean.is_abstract_type~}}
         class._deserialize = function(bs)
             local id = readInt(bs)
-            if id ~= 0 then return beans[id2name[id]]._deserialize(bs) end
+            return beans[id2name[id]]._deserialize(bs)
         end
 {{~else~}}
         class._deserialize = function(bs)

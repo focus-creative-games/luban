@@ -82,14 +82,11 @@ class {{name}} {{if parent_def_type}}({{parent_def_type.py_full_name}}){{else if
         {{~end~}}
     }
         type = _json_['__type__']
-        if type != None:
-            child = {{name}}._childrenTypes.get(type)
-            if child != None:
-                return  child(_json_)
-            else:
-                raise Exception()
+        child = {{name}}._childrenTypes.get(type)
+        if child != None:
+            return  child(_json_)
         else:
-            return None
+            raise Exception()
 {{~end~}}
 
     def __init__(self, _json_):

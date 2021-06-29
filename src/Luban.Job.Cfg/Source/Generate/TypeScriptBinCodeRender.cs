@@ -37,9 +37,7 @@ namespace Luban.Job.Cfg.Generate
 export {{if x.is_abstract_type}} abstract {{end}} class {{name}} {{if parent_def_type}} extends {{x.parent}}{{end}} {
 {{~if x.is_abstract_type~}}
     static constructorFrom(_buf_: Bright.Serialization.ByteBuf): {{name}} {
-        switch (_buf_.ReadInt())
-        {
-            case 0: return null
+        switch (_buf_.ReadInt()) {
         {{~ for child in x.hierarchy_not_abstract_children~}}
             case {{child.id}}: return new {{child.full_name}}(_buf_)
         {{~end~}}
@@ -98,7 +96,7 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} {{if parent_def
         value_type =  x.value_ttype
     }}
 {{x.typescript_namespace_begin}}
-export class {{name}}{
+export class {{name}} {
     {{~if x.is_map_table ~}}
     private _dataMap: Map<{{ts_define_type key_type}}, {{ts_define_type value_type}}>
     private _dataList: {{ts_define_type value_type}}[]

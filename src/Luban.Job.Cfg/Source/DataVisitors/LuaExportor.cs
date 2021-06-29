@@ -124,13 +124,7 @@ namespace Luban.Job.Cfg.DataVisitors
             var bean = type.Type;
             if (bean.IsAbstractType)
             {
-                // null 时特殊处理
-                if (type.ImplType == null)
-                {
-                    line.Append("nil");
-                    return;
-                }
-                line.Append($"{{ _name='{type.ImplType.FullName}',");
+                line.Append($"{{ _name='{type.ImplType.Name}',");
             }
             else
             {
