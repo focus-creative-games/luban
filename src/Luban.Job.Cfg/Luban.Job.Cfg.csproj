@@ -20,8 +20,4 @@
     <ProjectReference Include="..\Luban.Job.Common\Luban.Job.Common.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Source\DataCreators\" />
-  </ItemGroup>
-
 </Project>

@@ -6,7 +6,7 @@ using Luban.Job.Common.TypeVisitors;
 using System;
 using System.Collections.Generic;
 
-namespace Luban.Job.Cfg.TypeVisitors
+namespace Luban.Job.Cfg.DataCreators
 {
     class MultiRowExcelDataCreator : ITypeFuncVisitor<IEnumerable<ExcelStream>, bool, DefAssembly, DType>
     {

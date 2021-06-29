@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json;
 
-namespace Luban.Job.Cfg.TypeVisitors
+namespace Luban.Job.Cfg.DataCreators
 {
     public class JsonDataCreator : ITypeFuncVisitor<JsonElement, DefAssembly, DType>
     {

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace Luban.Job.Cfg.TypeVisitors
+namespace Luban.Job.Cfg.DataCreators
 {
     class XmlDataCreator : ITypeFuncVisitor<XElement, DefAssembly, DType>
     {

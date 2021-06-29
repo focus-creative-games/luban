@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 
-namespace Luban.Job.Cfg.TypeVisitors
+namespace Luban.Job.Cfg.DataCreators
 {
     class LuaDataCreator : ITypeFuncVisitor<object, DefAssembly, DType>
     {

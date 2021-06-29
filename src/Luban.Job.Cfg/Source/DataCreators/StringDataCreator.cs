@@ -4,7 +4,7 @@ using Luban.Job.Common.Types;
 using Luban.Job.Common.TypeVisitors;
 using System;
 
-namespace Luban.Job.Cfg.TypeVisitors
+namespace Luban.Job.Cfg.DataCreators
 {
     class StringDataCreator : ITypeFuncVisitor<string, DType>
     {
