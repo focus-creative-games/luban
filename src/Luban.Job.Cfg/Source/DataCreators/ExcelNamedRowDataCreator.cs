@@ -210,7 +210,7 @@ namespace Luban.Job.Cfg.DataCreators
                     }
                     else if (subType != DefBean.BEAN_NOT_NULL_STR)
                     {
-                        throw new Exception($"type:{type.Bean.FullName} {DefBean.TYPE_NAME_KEY} 不合法（只能为{DefBean.BEAN_NOT_NULL_STR}或{DefBean.BEAN_NULL_STR})");
+                        throw new Exception($"type:{type.Bean.FullName} {DefBean.TYPE_NAME_KEY}:{subType} 不合法（只能为{DefBean.BEAN_NOT_NULL_STR}或{DefBean.BEAN_NULL_STR})");
                     }
                 }
 
