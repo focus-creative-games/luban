@@ -38,7 +38,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TLong type)
         {
-            return "bigint";
+            return type.IsBigInt ? "bigint" : "number";
         }
 
         public string Accept(TFlong type)

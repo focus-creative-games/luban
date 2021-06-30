@@ -22,10 +22,5 @@ namespace Luban.Job.Common.TypeVisitors
                 return type.Apply(TypescriptBinUnderingSerializeVisitor.Ins, bytebufName, fieldName);
             }
         }
-
-        public override string Accept(TBean type, string bufName, string fieldName)
-        {
-            return type.Apply(TypescriptBinUnderingSerializeVisitor.Ins, bufName, fieldName);
-        }
     }
 }

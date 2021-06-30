@@ -133,6 +133,11 @@ namespace Luban.Job.Common.Defs
             return $"{filedName}";
         }
 
+        public static string TsCtorDefaultValue(TType type)
+        {
+            return type.Apply(TypescriptCtorValueVisitor.Ins);
+        }
+
         public static string TsConstValue(TType type, string value)
         {
             return type.Apply(LuaConstValueVisitor.Ins, value);

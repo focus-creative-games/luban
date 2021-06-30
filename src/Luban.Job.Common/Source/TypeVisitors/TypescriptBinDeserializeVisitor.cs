@@ -18,10 +18,5 @@ namespace Luban.Job.Common.TypeVisitors
                 return type.Apply(TypescriptBinUnderingDeserializeVisitor.Ins, byteBufName, fieldName);
             }
         }
-
-        public override string Accept(TBean type, string bufName, string fieldName)
-        {
-            return type.Apply(TypescriptBinUnderingDeserializeVisitor.Ins, bufName, fieldName);
-        }
     }
 }

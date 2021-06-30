@@ -128,6 +128,7 @@ namespace Luban.Job.Common.Defs
                 case "int": return nullable ? TInt.NullableIns : TInt.Ins;
                 case "fint": return nullable ? TFint.NullableIns : TFint.Ins;
                 case "long": return nullable ? TLong.NullableIns : TLong.Ins;
+                case "bigint": return nullable ? TLong.NullableBigIns : TLong.BigIns;
                 case "flong": return nullable ? TFlong.NullableIns : TFlong.Ins;
                 case "float": return nullable ? TFloat.NullableIns : TFloat.Ins;
                 case "double": return nullable ? TDouble.NullableIns : TDouble.Ins;

@@ -4,12 +4,19 @@ namespace Luban.Job.Common.Types
 {
     public class TLong : TType
     {
-        public static TLong Ins { get; } = new TLong(false);
+        public static TLong Ins { get; } = new TLong(false, false);
 
-        public static TLong NullableIns { get; } = new TLong(true);
+        public static TLong NullableIns { get; } = new TLong(true, false);
 
-        public TLong(bool isNullable) : base(isNullable)
+        public static TLong BigIns { get; } = new TLong(false, true);
+
+        public static TLong NullableBigIns { get; } = new TLong(true, true);
+
+        public bool IsBigInt { get; }
+
+        public TLong(bool isNullable, bool isBigInt) : base(isNullable)
         {
+            IsBigInt = isBigInt;
         }
 
         public override bool TryParseFrom(string s)

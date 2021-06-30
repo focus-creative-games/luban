@@ -37,7 +37,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TLong type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadLong();";
+            return $"{fieldName} = {bufName}.{(type.IsBigInt ? "ReadLong" : "ReadLongAsNumber")}();";
         }
 
         public string Accept(TFlong type, string bufName, string fieldName)

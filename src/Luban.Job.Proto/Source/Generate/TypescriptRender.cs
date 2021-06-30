@@ -89,6 +89,14 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} extends {{if pa
      {{field.ts_style_name}}{{if field.is_nullable}}?{{end}} : {{ts_define_type field.ctype}}
     {{~end~}}
 
+    constructor() {
+        super()
+    {{~ for field in fields ~}}
+        this.{{field.ts_style_name}} = {{ts_ctor_default_value field.ctype}}
+    {{~end~}}
+    }
+    
+
     serialize(_buf_ : Bright.Serialization.ByteBuf) {
         {{~if parent_def_type~}}
         super.serialize(_buf_)
@@ -143,6 +151,13 @@ export class {{name}} extends Protocol {
     {{~ for field in fields ~}}
      {{field.ts_style_name}}{{if field.is_nullable}}?{{end}} : {{ts_define_type field.ctype}}
     {{~end~}}
+
+    constructor() {
+        super()
+    {{~ for field in fields ~}}
+        this.{{field.ts_style_name}} = {{ts_ctor_default_value field.ctype}}
+    {{~end~}}
+    }
 
     serialize(_buf_ : Bright.Serialization.ByteBuf) {
         {{~ for field in fields ~}}

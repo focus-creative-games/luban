@@ -44,7 +44,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TLong type, string bufName, string fieldName)
         {
-            return $"{bufName}.WriteLong({fieldName});";
+            return $"{bufName}.{(type.IsBigInt ? "WriteLong" : "WriteNumberAsLong")}({fieldName});";
         }
 
         public string Accept(TFlong type, string bufName, string fieldName)
