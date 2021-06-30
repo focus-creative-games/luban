@@ -27,6 +27,7 @@ namespace Luban.Job.Common.Utils
 
         public static string GenMd5AndAddCache(string fileName, string content)
         {
+            content = content.Replace("\r\n", "\n");
             var bytes = System.Text.Encoding.UTF8.GetBytes(content);
             var md5 = FileUtil.CalcMD5(bytes);
             CacheManager.Ins.AddCache(fileName, md5, bytes);
