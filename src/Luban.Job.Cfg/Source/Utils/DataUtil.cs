@@ -70,11 +70,12 @@ namespace Luban.Job.Cfg.Utils
 
         public static string UnEscapeString(string s)
         {
-            if (s == "null" || s == "\"\"")
+            switch (s)
             {
-                return "";
+                case "null": return null;
+                case "\"\"": return string.Empty;
+                default: return s;
             }
-            return s;
         }
 
         public static (string Key, string Text) ExtractText(string rawKeyAndText)

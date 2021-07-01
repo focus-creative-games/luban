@@ -134,14 +134,32 @@ namespace Luban.Job.Cfg.DataCreators
             {
                 if (x.TryGetProperty(field.Name, out var ele))
                 {
-                    try
+                    if (ele.ValueKind == JsonValueKind.Null || ele.ValueKind == JsonValueKind.Undefined)
                     {
-                        fields.Add(field.CType.Apply(this, ele, ass));
+                        if (field.CType.IsNullable)
+                        {
+                            fields.Add(null);
+                        }
+                        else
+                        {
+                            throw new Exception($"结构:{implBean.FullName} 字段:{field.Name} 不能 null or undefined ");
+                        }
                     }
-                    catch (Exception e)
+                    else
                     {
-                        throw new Exception($"结构:{implBean.FullName} 字段:{field.Name} 读取失败 => {e.Message}", e);
+                        try
+                        {
+                            fields.Add(field.CType.Apply(this, ele, ass));
+                        }
+                        catch (Exception e)
+                        {
+                            throw new Exception($"结构:{implBean.FullName} 字段:{field.Name} 读取失败 => {e.Message}", e);
+                        }
                     }
+                }
+                else if (field.CType.IsNullable)
+                {
+                    fields.Add(null);
                 }
                 else
                 {

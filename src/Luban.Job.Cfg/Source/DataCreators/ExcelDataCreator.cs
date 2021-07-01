@@ -259,7 +259,19 @@ namespace Luban.Job.Cfg.DataCreators
             {
                 throw new InvalidExcelDataException("excel string类型在标题头对应模式下必须正好占据一个单元格");
             }
-            return new DString(ParseString(x.Read(x.NamedMode)));
+            var s = ParseString(x.Read(x.NamedMode));
+            if (s == null)
+            {
+                if (type.IsNullable)
+                {
+                    return null;
+                }
+                else
+                {
+                    throw new InvalidExcelDataException("字段不是nullable类型，不能为null");
+                }
+            }
+            return new DString(s);
         }
 
         public DType Accept(TBytes type, object converter, ExcelStream x, DefAssembly ass)
@@ -271,7 +283,7 @@ namespace Luban.Job.Cfg.DataCreators
         {
             if (d == null)
             {
-                return "";
+                return string.Empty;
             }
             else if (d is string s)
             {
@@ -290,6 +302,18 @@ namespace Luban.Job.Cfg.DataCreators
                 throw new InvalidExcelDataException("excel text 类型在标题头对应模式下必须正好占据2个单元格");
             }
             string key = ParseString(x.Read(x.NamedMode));
+            if (key == null)
+            {
+                if (type.IsNullable)
+                {
+                    return null;
+                }
+                else
+                {
+                    throw new InvalidExcelDataException("该字段不是nullable类型，不能为null");
+                }
+            }
+
             string text = ParseString(x.Read(x.NamedMode));
             DataUtil.ValidateText(key, text);
             return new DText(key, text);

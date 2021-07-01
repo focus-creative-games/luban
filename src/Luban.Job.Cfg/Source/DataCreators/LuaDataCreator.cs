@@ -188,6 +188,10 @@ namespace Luban.Job.Cfg.DataCreators
                         throw new Exception($"结构:{implBean.FullName} 字段:{field.Name} 读取失败 => {e.Message}", e);
                     }
                 }
+                else if (field.CType.IsNullable)
+                {
+                    fields.Add(null);
+                }
                 else
                 {
                     throw new Exception($"结构:{implBean.FullName} 字段:{field.Name} 缺失");

@@ -120,9 +120,13 @@ namespace Luban.Job.Cfg.DataCreators
                 XElement fele = feles.FirstOrDefault();
                 if (fele == null)
                 {
+                    if (field.CType.IsNullable)
+                    {
+                        fields.Add(null);
+                        continue;
+                    }
                     throw new Exception($"字段:{field.Name} 缺失");
                 }
-
                 try
                 {
                     fields.Add(field.CType.Apply(this, fele, ass));
