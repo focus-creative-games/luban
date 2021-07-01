@@ -1,5 +1,3 @@
-[//]: # "Author: bug"
-[//]: # "Date: 2020-10-20 20:24:07"
 
 # Luban
 
@@ -24,6 +22,14 @@ Luban适合有以下需求的开发者：
 1. 希望找一个快速强大经受过上线项目检验的满足**中大型**游戏项目配置需求的游戏配置解决方案
 2. 希望针对项目需求方便地定制配置、消息等生成，满足更严苛的内存和性能的要求
 3. 希望做其他自定义生成或者缓存
+
+
+## 支持和联系
+
+有使用上的疑问请即时加QQ群询问，随时帮助解决。
+
+  - QQ 群: 692890842
+  - 邮箱: taojingjian#gmail.com
 
 
 ## 文档
@@ -115,9 +121,9 @@ Luban适合有以下需求的开发者：
 ![ex_2](docs/images/examples/ex_2.png)
 
 
-- name="TbDemoPrivitive" 表示数据表名为TbDemoPrivitive，生成table的代码时使用这个类名。
+- name="TbDemoPrimitive" 表示数据表名为TbDemoPrimitive，生成table的代码时使用这个类名。
 - value="DemoPrimitiveTypesTable" 表示数据表每行记录(即KV中的V)的类型为DemoPrimitiveTypesTable。
-- index="x4" 表示数据表以 <value>类型的x4字段为key。
+- index="x4" 表示数据表以 <value>类型的x4字段为key。可不填，**默认为第一个字段**。
 - input="demo_primitive.xlsx" 表示数据表的数据文件为 demo_primitives.xlsx
 
 ### 枚举
@@ -194,16 +200,31 @@ Luban适合有以下需求的开发者：
 ![ex_32](docs/images/examples/ex_32.png)
 
 ### 可空数据类型
-配置数据中经常有空值的语义需求，实际项目中往往混杂地使用0或-1表达空值，既不自然清晰也不统一。luban借鉴了c#中的可空变量的概念，特地提供可空数据支持。除了string外的所有原生数据类型，以及enum类型都有相应的可空数据类型。定义方式为 <类型名>?，与c#里的Nullable类型定义方式相同。例如 bool?,int?,long?,double?, EColor?
+配置数据中经常有空值的语义需求，实际项目中往往混杂地使用0或-1表达空值，既不自然清晰也不统一。luban借鉴了c#中的可空变量的概念，特地提供可空数据支持。除了string外的所有原生数据类型，以及enum、bean、和多态bean类型都有相应的可空数据类型。定义方式为 <类型名>?，与c#里的Nullable类型定义方式相同。例如 bool?,int?,long?,double?, EColor?, DemoType?
 
 ```xml
-<bean name="NullableTable">
-	<var name="id" type="int"/>
-	<var name="min_level" type="int?"/>
-	<var name="color" type="DemoEnum?"/>
-</bean>
-
-<table name="TbNullable" value="NullableTable" input="nullable.xlsx">
+	<bean name="DemoType1">
+		<var name="x1" type="int"/>
+	</bean>
+	<bean name="DemoDynamic"> 多态数据结构
+		<var name="x1" type="int"/>
+		
+		<bean name="DemoD2" alias="测试别名">
+			<var name="x2" type="int"/>
+		</bean>
+		
+		<bean name="DemoD3">
+			<var name="x3" type="int"/>
+		</bean>
+	</bean>
+	<bean name="TestNull">
+		<var name="id" type="int"/>
+		<var name="x1" type="int?"/>
+		<var name="x2" type="DemoEnum?"/>
+		<var name="x3" type="DemoType1?"/>
+		<var name="x4" type="DemoDynamic?"/>
+	</bean>
+	<table name="TbTestNull" value="TestNull" input="test/test_null.xlsx"/>
 ```
 
 ![ex_42](docs/images/examples/ex_42.png)
@@ -771,12 +792,7 @@ return
 
 - [.NET Core source index](https://source.dot.net)
 
-## 支持和联系
 
-```
-  QQ 群: 692890842
-  邮箱: taojingjian#gmail.com
-```
 
 ## License
 
