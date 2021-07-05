@@ -13,6 +13,9 @@
    - bool?,byte?,short?,fshort?,int?,fint?,long?,flong?,float?,double?
    - vector2?,vector3?,vector4?
    - datetime?
+   - <枚举>?
+   - < bean>?
+   - <多态bean>?
 * 自定义枚举 enum 及相应可空类型
 * 自定义常量 const
 * 自定义结构 bean
@@ -84,7 +87,6 @@
 ### 多种数据表模式
 * one 格式，即单例表模式
 * map 格式，即普通key-value表模式。 任何符合set 的value要求的类型都可以做key
-* bmap 格式，即双主键模式。 任何符合 set 的value要求的类型都可以作 key1和key
 
 ### 本地化支持
 * 支持**本地化时间**。 配置中的 datetime会根据指定的timezone及localtime转化为正确的utc时间，方便程序处理

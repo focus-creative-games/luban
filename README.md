@@ -40,11 +40,11 @@ Luban适合有以下需求的开发者：
 - [主页](https://focus-creative-games.github.io/luban/index.html)
 - [特性](docs/traits.md)
 - [Excel 配置数据简介](docs/data_excel.md)
-- [使用说明](docs/catalog.md)
+- [文档目录](docs/catalog.md)
 - [常见问题](docs/faq.md)
-- [快速上手及进阶](docs/start_up.md)
-- [完整手册](docs/manual.md)
-- [示例项目](https://github.com/focus-creative-games/luban_examples)
+- [[TODO] 快速上手及进阶](docs/start_up.md)
+- [[TODO] 完整手册](docs/manual.md)
+- **[====>强烈推荐查看：示例项目 <====](https://github.com/focus-creative-games/luban_examples)**
 
 ## 特性
 - 支持增强的excel格式，可以在excel里比较简洁填写出任意复杂的数据
@@ -111,7 +111,8 @@ Luban适合有以下需求的开发者：
 	<var name="x5" type="long" />
 	<var name="x6" type="float"/>
 	<var name="x7" type="double"/>
-	<var name="x10" type="string" />
+	<var name="s1" type="string" />
+	<var anme="s2" type="text"/> 本地化字符串,由key和text两个字段构成
 	<var name="v2" type="vector2"/>
 	<var name="v3" type="vector3"/>
 	<var name="v4" type="vector4"/>
@@ -790,7 +791,9 @@ return
 ## 使用 luban-client
 - 基于 docker (推荐 linux、mac平台使用)
 
-	docker run --rm focuscreativegames/luban-client <参数>
+	docker run --rm -v $PWD/.cache.meta:/bin/.cache.meta  focuscreativegames/luban-client <参数>
+	
+	提醒！ .cache.meta这个文件用于保存本地生成或者提交到远程的文件md5缓存，**强烈推荐** 添加-v 映射，不然每次重新计算所有涉及文件的md5,这可能在项目后期会造成多达几秒的延迟。
 - 基于 .net 5 runtime （推荐win平台使用，可跨平台，不需要重新编译）
 	- 自行安装 .net 5 runtime.
 	- 从[示例项目](https://github.com/focus-creative-games/luban_examples/tree/main/Tools/Luban.Client)拷贝 Luban.Client（**可跨平台，即使在linux、mac平台也不需要重新编译**）
