@@ -435,7 +435,7 @@ luban同时支持两种级别的分组：
 
 	&lt; table name="xxx" group="&lt;group1&gt;,&lt;group2&gt;..." &gt;
 
-	例如: TbItemFunc表只给客户端使用。
+	例如: TbDemoGroup_C表只给客户端使用, TbDemoGroup_S只能服务器使用, TbDemoGroup_E只给editor使用。
 	定义如下:
 
 	![group_table](docs/images/examples/group_02.png)
@@ -446,7 +446,7 @@ luban同时支持两种级别的分组：
 
 	&lt;var name="xxx" group="&lt;group1&gt;,&lt;group2&gt; ..." /&gt;
 	
-	例如, Item表中 major_type 字段前后端都需要;max_pile_num 只有后端需要;icon字段只有前端需要。
+	例如, TbDemoGroup表中 id,x1,x4 字段前后端都需要; x3 只有后端需要;x2 字段只有前端需要。x5是bean类型，它导出给前后端，但它的子字段也可以被分组过滤， x5.y1, x2.y4前后端都会导出，x5.x3只导出给后端,x5.x2只导出给前端。
 	定义如下:
 
 	![group_var](docs/images/examples/group_01.png)

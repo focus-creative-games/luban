@@ -2,8 +2,8 @@
 
 ## 安装
 
-1. dotnet sdk 3.1 （已安装的可跳过）
-2. 下载 luban.client&luban.server (从 luban 项目的 release 找到最新)
+1. dotnet sdk 5.0 （已安装的可跳过）
+2. 下载 luban.client&luban.server ，来自[luban_examples](https://github.com/focus-creative-games/luban_examples) 的 Tools目录
 3. 启动 luban.server  
    直接双击 运行即可。运行生成脚本需要连接到 luban.server,请保持它运行。
 
@@ -79,9 +79,10 @@
       拷贝示例项目中 Csharp_DotNetCore_bin\Core 目录到项目中，可以自由组织位置。  
       此时尝试编译项目，理论上应该能成功编译。
   2.  运行生成命令  
-      <从 luban 项目 release 中下载的 lua.client 程序的路径>
+    
 
-      ```
+      ```bat
+      <luban.client>
       -h 127.0.0.1 ^
       -p 8899 ^
       -j cfg ^
@@ -95,12 +96,21 @@
       --gen_types "code_cs_bin,data_bin"
       ```
 
-      ![例子](images/install/install_06.png)
+      **============提醒=============**
+
+      **如果你们项目使用json导出格式，需要将 --gen_types的参数改为 "code_cs_json,data_json"**
+
+      **如果你们项目使用typescript并且json导出格式，需要将 --gen_types的参数改为 "code_typescript_json, data_json"**
+
+      更多语言或者导出类型的组合，请参考 [luban_examples](https://github.com/focus-creative-games/luban_examples)
+
+      **=============================**
 
       如果一切正常，会产生一系列日志，最终一行是 == succ == 。
       ![类似这样](images/install/install_07.png)
 
       如果遇到 类似这样的错误，说明服务器未启动。 双击启动 luban.server 即可。
+      
       ![错误例子](images/install/install_08.png)
 
       如果一切顺利。生成的代码文件会在 –output_code_dir 参数指定的 目录中，生成的配置数据会在 –output_data_dir 参数指定的目录中。  
