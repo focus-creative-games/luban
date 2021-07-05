@@ -49,12 +49,12 @@ Luban适合有以下需求的开发者：
 ## 特性
 - 支持增强的excel格式，可以在excel里比较简洁填写出任意复杂的数据
 - 支持excel族、json、xml、lua 多种数据格式，基本统一了游戏内的配置数据
-- 强大完备的类型系统。支持所有常见原生类型、容器类型list,set,map、枚举和结构、**多态结构**以及**可空类型**
-- 灵活的数据源定义。一个表可以来自多个文件或者一个文件内定义多个表或者一个表对应一个目录下所有文件，以及以上的组合
+- 强大完备的类型系统。支持所有常见原生类型、datetime类型、容器类型list,set,map、枚举和结构、**多态结构**以及**可空类型**
+- 灵活的数据源定义。一个表可以来自多个文件或者一个文件内定义多个表或者一个目录下所有文件甚至来自云表格，以及以上的组合
 - 支持表与字段级别分组。可以选择性地导出客户端或者服务器所用的表及字段
 - 多种导出数据格式支持。支持binary、json、lua 等导出数据格式
-- 支持数据标签。 可以选择导出符合要求的数据，发布正式数据时策划不必手动注释掉那些测试或者非正式数据了
-- 强大的数据校验能力。支持内建数据格式检查；支持ref表引用检查（策划不用担心填错id）；支持path资源检查（策划不用担心填错资源路径）；支持高级自定义校验（比如两字段和必须100）
+- 支持数据标签。 可以选择导出符合要求的数据，发布正式数据时策划不必手动注释掉那些测试数据了
+- 强大的数据校验能力。支持内建数据格式检查；支持ref表引用检查（策划不用担心填错id）;支持path资源检查（策划不用担心填错资源路径）;支持高级自定义校验（比如两字段和必须100）
 - 支持常量别名。策划不必再为诸如 升级丹 这样的道具手写具体道具id了
 - 支持多种常见数据表模式。 one(单例表)、map（常规key-value表）
 - 支持emmylua anntations。生成的lua包含符合emmylua 格式anntations信息。配合emmylua有良好的配置代码提示能力
@@ -782,9 +782,19 @@ return
 
 	docker run -d --rm --name luban-server -p 8899:8899 focuscreativegames/luban-server:latest
 
-- 基于 .net 5 runtime
+- 基于 .net 5 runtime （推荐win平台使用，可跨平台，不需要重新编译）
 	- 自行安装 .net 5 runtime.
+	- 从[示例项目](https://github.com/focus-creative-games/luban_examples/tree/main/Tools/Luban.Server)拷贝 Luban.Server（**可跨平台，即使在linux、mac平台也不需要重新编译**）
 	- 在Luban.Server目录下运行 dotnet Luban.Server.dll
+
+## 使用 luban-client
+- 基于 docker (推荐 linux、mac平台使用)
+
+	docker run --rm focuscreativegames/luban-client <参数>
+- 基于 .net 5 runtime （推荐win平台使用，可跨平台，不需要重新编译）
+	- 自行安装 .net 5 runtime.
+	- 从[示例项目](https://github.com/focus-creative-games/luban_examples/tree/main/Tools/Luban.Client)拷贝 Luban.Client（**可跨平台，即使在linux、mac平台也不需要重新编译**）
+	- 在Luban.Client目录下运行 dotnet Luban.Client.dll <参数>
 
 ## 如何贡献
 
