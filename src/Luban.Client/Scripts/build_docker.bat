@@ -1,2 +1,2 @@
-docker build -t luban.server:latest -f Dockerfile ../..
+docker build -t luban.client:latest -f Dockerfile ../..
 pause
