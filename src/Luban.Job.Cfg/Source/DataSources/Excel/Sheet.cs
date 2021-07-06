@@ -402,7 +402,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                     var row = new List<Cell>();
                     for (int j = 0; j < rows.Count; j++)
                     {
-                        row.Add(i < rows[i].Count ? rows[j][i] : new Cell(j + 1, i, null));
+                        row.Add(i < rows[j].Count ? rows[j][i] : new Cell(j + 1, i, null));
                     }
                     this._rowColumns.Add(row);
                 }
