@@ -8,6 +8,13 @@
 
 ![icon](docs/images/icon.png)
 
+
+----
+
+## [README - English Version](./README.en-us.md)
+
+----
+
 ## 介绍
 
 luban是一个通用型对象生成与缓存方案, 在此基础上实现了一个功能**完备强大灵活易用**的 **游戏配置解决方案**。

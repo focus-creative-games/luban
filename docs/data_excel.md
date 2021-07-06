@@ -30,6 +30,65 @@
 - 配置:  
   ![如图](images/adv/def_03.png)
 
+## byte,short,int,long,string
+
+  与 float 相似，不再赘述
+
+## string 类型
+填法与 float相似，但又特殊性。当string类型数据出现在**连续单元格**（比如多列bean占了多个单元格）或者用**sep分割**的数据中时，由于工具无法区别空白到底算空白字符串还是应该跳过，所以在连续多字段模式下，强制用""来表示空白字符串。
+
+下面示例中，s1是string，单独占一个列，可以用空白单元格表示空白字符串。 cs1和cs2要么是连续单元格模式，要么是sep分割产生的连续数据模式，表达空白字符串必须用""。
+
+可能会有疑问，如何恰好想表达 ""是怎么办呢？ 如果真遇到这种需求，再寻找解决方案吧。
+
+定义：
+
+```xml
+	<bean name="CompactString">
+		<var name="id" type="int"/>
+		<var name="s2" type="string"/>
+		<var name="s3" type="string"/>
+	</bean>
+	
+	<bean name="TestString">
+		<var name="id" type="int"/>
+		<var name="s1" type="string"/>
+		<var name="cs1" type="CompactString"/>
+		<var name="cs2" type="CompactString" sep=","/>
+	</bean>
+	
+	<table name="TbTestString" value="TestString" input="test/test_string.xlsx"/>
+```
+
+配置数据：
+
+![配置](images/examples/ex_string_01.png)
+
+
+## text 类型
+
+该类型数据包含两个字段, key和text， 其中 key 可以重复出现，但要求text完全相同，否则报错。这么设计是为了防止意外写重了key。**注意：不允许key为空而text不为空**
+
+如果想填空的本地化字符串， key和text完全留空即可，工具会特殊对待，不会加入 key集合。
+
+text的key和text字段都是string类型，因此在连续单元格或者sep产生的连续数据流模式中，同样要遵循用""来表达空白字符串的规则。
+
+定义：
+
+```xml
+	<bean name="L10NDemo">
+		<var name="id" type="int"/>
+		<var name="text" type="text"/>
+	</bean>
+	
+	<table name="TbL10NDemo" value="L10NDemo" input="l10n/Demo.xlsx"/>
+```
+
+配置数据:
+
+![数据](images/examples/ex_i10n_2.png)
+
+
 ## 列表类型 list,int
 
 - 我们新增一个字段， 宝箱的随机抽取道具列表 random_item_ids。
@@ -148,13 +207,13 @@
   ``` xml
   <module name="item">
    <bean name="ItemLevelAttr">
-    <var name="level", type="int">
-    <var name="desc", type="string">
-    <var name="attr", type="float">
+      <var name="level", type="int">
+      <var name="desc", type="string">
+      <var name="attr", type="float">
    </bean>
 
    <bean name="Item">
-    <var name="level_attrs" type="list,ItemLevelAttr" />
+      <var name="level_attrs" type="list,ItemLevelAttr" />
    </bean>
   </module>
   ```
@@ -170,20 +229,20 @@
   1. bean ItemLevelAttr 增加属性 sep=”,”  
      [定义](images/adv/def_21.png)
      ``` xml
-     <bean name="ItemLevelAttr" sep=",>
-      <var name="level" type="int"/>
-      <var name="desc" type="string"/>
-      <var name="attr" type="float"/>
+     <bean name="ItemLevelAttr" sep=",">
+        <var name="level" type="int"/>
+        <var name="desc" type="string"/>
+        <var name="attr" type="float"/>
      </bean>
      ```
      如果不想用逗号”,” ，想用;来分割单元格内的数据，只要将 sep=”;” 即可。
   2. 字段 level_attrs 增加属性 sep=”,”，即  
      [定义](images/adv/def_22.png)
      ``` xml
-     <bean name="ItemLevelAttr" sep=",>
-      <var name="level" type="int"/>
-      <var name="desc" type="string"/>
-      <var name="attr" type="float"/>
+     <bean name="ItemLevelAttr" sep=",">
+        <var name="level" type="int"/>
+        <var name="desc" type="string"/>
+        <var name="attr" type="float"/>
      </bean>
      <bean name="Item">
       <var name="level_attrs" type="list,ItemLevelAttr" sep=",">
@@ -194,10 +253,10 @@
      想用 | 来分割不同 ItemLevelAttr ,用 , 来分割每个记录的数据。只需要 字段 level_attrs 的 sep=”,|” 即可。  
      [定义](images/adv/def_24.png)
      ``` xml
-     <bean name="ItemLevelAttr" sep=",>
-      <var name="level" type="int"/>
-      <var name="desc" type="string"/>
-      <var name="attr" type="float"/>
+     <bean name="ItemLevelAttr" sep=",">
+        <var name="level" type="int"/>
+        <var name="desc" type="string"/>
+        <var name="attr" type="float"/>
      </bean>
      <bean name="Item">
       <var name="level_attrs" type="list,ItemLevelAttr" sep=",|">
@@ -270,7 +329,6 @@
   ```
 - 和 普通 非多行记录的区别在于 lines 字段多了一个 multi_rows=”1” 字段，表示这个字段要多行配置。
 - ![如图](images/adv/def_30.png)
-- 和普通不包括多行数据的 excel 表比，meta 行多了 multi_rows:1 这个属性。为了防止被误识别为多行，multi_rows 需要手动打开。
 
 ## 多级标题头
 
