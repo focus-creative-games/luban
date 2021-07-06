@@ -464,7 +464,24 @@ luban同时支持两种级别的分组：
 
 ### 常量别名
 
-项目中经常有一些数字频率被使用，例如 升级丹道具id。策划每次填写数字，容易失误填错。我们允许为整数指定常量别名，工具导出配置时遇到别名，自动将其替换为相应整数。
+游戏里经常会出现一些常用的类似枚举的值，比如说 升级丹的 id,在很多地方都要填，如果直接它的道具 id,既不直观，也容易出错。 Luban 支持常量替换。对于需要常量替换的字段，添加 convert=”枚举类”。 如果填写的值是 枚举名或者别名，则替换为 相应的整数。否则 按照整数解析。
+
+定义
+
+  ``` xml
+  <enum name="EFunctionItemId">
+    <var name="SHENG_JI_DAN" alias="升级丹" value="11220304"/>
+    <var name="JIN_JIE_DAN" alias="进阶丹" value="11220506"/>
+  </enum>
+  <bean name="Item">
+    <var name="cost_item_on_use" type="int" convert="EFunctionItemId"/>
+  </bean>
+  ```
+
+配置:
+
+  ![如图](docs/images/adv/def_41.png)
+
 
 ### 多数据源
 

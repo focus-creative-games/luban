@@ -410,19 +410,19 @@ text的key和text字段都是string类型，因此在连续单元格或者sep产
 
 ## convert 常量替换
 
-- 游戏里经常会出现一些常用的类似枚举的值，比如说 升级丹的 id,在很多地方都要填，如果直接它的道具 id,既不直观，也容易出错。 Luban 支持常量替换。
-- 对于需要常量替换的字段，添加 convert=”枚举类”。 如果填写的值是 枚举名或者别名，则替换为 相应的整数。否则 按照整数解析。
-- [定义](images/adv/def_40.png)  
+游戏里经常会出现一些常用的类似枚举的值，比如说 升级丹的 id,在很多地方都要填，如果直接它的道具 id,既不直观，也容易出错。 Luban 支持常量替换。对于需要常量替换的字段，添加 convert=”枚举类”。 如果填写的值是 枚举名或者别名，则替换为 相应的整数。否则 按照整数解析。
+
+定义
   ``` xml
   <enum name="EFunctionItemId">
     <var name="SHENG_JI_DAN" alias="升级丹" value="11220304"/>
     <var name="JIN_JIE_DAN" alias="进阶丹" value="11220506"/>
   </enum>
   <bean name="Item">
-    ...
     <var name="cost_item_on_use" type="int" convert="EFunctionItemId"/>
   </bean>
   ```
-- 配置:  
+
+配置: 
+
   ![如图](images/adv/def_41.png)
-- 添加了 convert 的字段，既可以填 convert 指向的枚举类里的一个合法枚举名，也可以是其他整数。
