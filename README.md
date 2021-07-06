@@ -8,12 +8,7 @@
 
 ![icon](docs/images/icon.png)
 
-
-----
-
 ## [README - English Version](./README.en-us.md)
-
-----
 
 ## 介绍
 
@@ -49,7 +44,7 @@ Luban适合有以下需求的开发者：
 - [Excel 配置数据简介](docs/data_excel.md)
 - [文档目录](docs/catalog.md)
 - [常见问题](docs/faq.md)
-- [[TODO] 快速上手及进阶](docs/start_up.md)
+- [快速上手及进阶](docs/start_up.md)
 - [[TODO] 完整手册](docs/manual.md)
 - **[====>强烈推荐查看：示例项目 <====](https://github.com/focus-creative-games/luban_examples)**
 
