@@ -2,19 +2,42 @@
 
 ## 安装
 
-1. dotnet sdk 5.0 （已安装的可跳过）
-2. 下载 luban.client&luban.server ，来自[luban_examples](https://github.com/focus-creative-games/luban_examples) 的 Tools目录
-3. 启动 luban.server  
-   直接双击 运行即可。运行生成脚本需要连接到 luban.server,请保持它运行。
+1. dotnet sdk 5.0 
+1. 下载luban_examples项目
 
+    下载项目 [luban_examples](https://github.com/focus-creative-games/luban_examples)。
+    项目中包含测试配置、最新的luban_client&luban_server工作以及大量的示例项目。为方便起见，后续提及到的文件，默认都指这个项目中的文件。
+1. 部属 luban-server
+
+    - 基于 docker 
+
+        docker run -d --rm --name luban-server -p 8899:8899 focuscreativegames/luban-server:latest
+
+    - 基于 .net 5 runtime （推荐win平台使用，可跨平台，不需要重新编译）
+        - 从[示例项目](https://github.com/focus-creative-games/luban_examples/tree/main/Tools/Luban.Server)拷贝 Luban.Server（**可跨平台，即使在linux、mac平台也不需要重新编译**）
+        - 在Luban.Server目录下运行 dotnet Luban.Server.dll
+
+1. 使用 luban-client
+    - 基于 docker (推荐 linux、mac平台使用)
+
+        docker run --rm -v $PWD/.cache.meta:/bin/.cache.meta  focuscreativegames/luban-client <参数>
+        
+        提醒！ .cache.meta这个文件用于保存本地生成或者提交到远程的文件md5缓存，**强烈推荐** 添加-v 映射，不然每次重新计算所有涉及文件的md5,这可能在项目后期会造成多达几秒的延迟。
+    - 基于 .net 5 runtime （推荐win平台使用，可跨平台，不需要重新编译）
+        - 从[示例项目](https://github.com/focus-creative-games/luban_examples/tree/main/Tools/Luban.Client)拷贝 Luban.Client（**可跨平台，即使在linux、mac平台也不需要重新编译**）
+        - 在Luban.Client目录下运行 dotnet Luban.Client.dll <参数>
+
+1. 设置全局环境变量 
+
+    set_global_envs.bat 脚本文件，它会设置全局环境变量 LUBAN_SERVER_IP 为 127.0.0.1。如果你在其他机器上部属luban-server，请将LUBAN_SERVER_IP改为相应地址。
 ## 创建游戏配置
 
 1. 创建目录结构  
    config 为根目录，下面创建两个子目录 Datas 和 Defines，分别用于 存放策划 excel 及各种配置数据 以及 配置定义。
    ![如图](images/install/install_01.png)
-2. 在 Defines 目录下创建 root.xml 根定义文件  
+2. 在 Defines 目录下创建 \_\_root__.xml 根定义文件  
    ![如图](images/install/install_02.png)  
-   可以直接从 demo 项目拷贝这个文件。
+   可以直接从 [示例配置](https://github.com/focus-creative-games/luban_examples/tree/main/DesignerConfigs/Defines) 拷贝这个文件。
    这个 root 文件描述了：
 
 3. 生成代码的默认顶层命名空间为 cfg
@@ -29,7 +52,12 @@
 8. 添加物品表 excel 文件
    我们可以直接在 Datas 目录下添加 物品表.xlsx 文件，不过如果所有表都放到 Datas 目录下，查找起来很不方便。  
    为了方便，我们按模块组织配置文件，在 Datas 目录下新建一个 item 目录，目录下创建一个 “物品表.xlsx” 文件。  
-   ![如图](images/install/install_03.png) ![文件内容如下](images/install/install_04.png)
+   
+   ![如图](images/install/install_03.png) 
+   
+   文件内容如下
+
+   ![配置](images/install/install_04.png)
 
    - 第 1 行是 meta 行。有一些关于 excel 文件的元描述，默认全空，使用默认默认值即可。  
      单元格 A1 必须是 ##。表示这是一个有效数据表。
@@ -51,17 +79,23 @@
    1. 字段类型呢？字段类型怎么没有定义啊？
    2. 生成的代码中相关的类名又在哪儿获得呢？
    3. 如何导出？最终导出的数据在哪个文件？ 导出文件又是啥格式？  
-      每个配置表都需要在某个子模块定义文件中添加一个相应的定义描述，每个模块可以包含多个表定义。  
-      我们在 Defines 目录创建 item.xml，item.xml 是一个子模块定义文件，用于包含物品模块的所有结构，枚举及配表定义。  
-      接着在 item.xml 里添加物品表相关定义。
 
-      ![文件内容如下](images/install/install_05.png)
+   ---
+   我们正式开始：
+
+    每个配置表都需要在某个子模块定义文件中添加一个相应的定义描述，每个模块可以包含多个表定义。  
+
+    我们在 Defines 目录创建 item.xml，item.xml 是一个子模块定义文件，用于包含物品模块的所有结构，枚举及配表定义。接着在 item.xml 里添加物品表相关定义。
+
+    文件内容如下：
+
+    ![定义](images/install/install_05.png)
 
    - 简略介绍一下定义:
      - table 是表定义，每个表都有一个对应的表定义。
      - name 表名。推荐采取 TbXXXX 这种名字约定。
      - value 记录的类型。即配置表里每行记录的类型。
-     - index 以 value 的哪个字段为主键。这里用 Item 结构里的 id 字段做主键
+     - index 以 value 的哪个字段为主键。这里用 Item 结构里的 id 字段做主键。可为空，默认为第一个字段。
      - input 数据源。这个表的数据文件来源，相对 Datas 目录。可以是多个，以英文分号 ; 分割。
      - bean 用于定义公用结构，同时也用于定义表记录结构。
      - name 类型名。 这儿取 Item，最终生成的 c#代码会使用 cfg.item.Item 这样的类名。
@@ -109,7 +143,7 @@
       如果一切正常，会产生一系列日志，最终一行是 == succ == 。
       ![类似这样](images/install/install_07.png)
 
-      如果遇到 类似这样的错误，说明服务器未启动。 双击启动 luban.server 即可。
+      如果遇到 类似这样的错误，说明服务器未启动。 启动 luban-server 即可。
       
       ![错误例子](images/install/install_08.png)
 
@@ -122,10 +156,10 @@
       ```c#
           var tables = new cfg.Tables(file =>
               new Bright.Serialization.ByteBuf(
-                  System.IO.File.ReadAllBytes( < --output_data_dir 指向的生成数据目录> + “/” + file)));
+                  System.IO.File.ReadAllBytes( <output_data_dir 指向的生成数据目录> + "/" + file)));
       ```
 
-      ![例如下图如示](images/install/install_09.png)
+      ![代码](images/install/install_09.png)
 
   4.  使用加载后的配置表
       cfg.Tables 里包含所有配置表的一个实例字段。  

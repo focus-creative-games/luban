@@ -8,7 +8,7 @@
 
 ![icon](docs/images/icon.png)
 
-## [README - English Version](./README.en-us.md)
+## [README - English](./README.en-us.md)
 
 ## 介绍
 
@@ -29,25 +29,18 @@ Luban适合有以下需求的开发者：
 
 ====**如果觉得不错，烦请点个star，你的支持会给予我们巨大动力 ^_^**====
 
-## 支持和联系
-
-有使用方面的疑问请及时加QQ群询问，随时有人帮助解决。
-
-  - QQ 群: 692890842
-  - 邮箱: taojingjian#gmail.com
-
-
 ## 文档
 
 - [主页](https://focus-creative-games.github.io/luban/index.html)
 - [特性](docs/traits.md)
+- [快速上手](docs/install.md)
 - [Excel 配置数据简介](docs/data_excel.md)
 - [文档目录](docs/catalog.md)
-- [常见问题](docs/faq.md)
-- [快速上手及进阶](docs/start_up.md)
 - [[TODO] 完整手册](docs/manual.md)
 - **[====>强烈推荐查看：示例项目 <====](https://github.com/focus-creative-games/luban_examples)**
-
+- 支持与联系
+  - QQ群: 692890842 （Luban开发交流群）。有使用方面的疑问请及时加QQ群询问，随时有人帮助解决。
+  - 邮箱: taojingjian#gmail.com
 ## 特性
 - 支持增强的excel格式，可以在excel里比较简洁填写出任意复杂的数据
 - 支持excel族、json、xml、lua 多种数据格式，基本统一了游戏内的配置数据
@@ -480,8 +473,7 @@ luban同时支持两种级别的分组：
 
 配置:
 
-  ![如图](docs/images/adv/def_41.png)
-
+![如图](docs/images/adv/def_41.png)
 
 ### 多数据源
 
