@@ -36,6 +36,10 @@ namespace Luban.Job.Cfg.Defs
             get
             {
                 var imports = new HashSet<string>();
+                if (IsAbstractType)
+                {
+                    imports.Add("errors");
+                }
                 foreach (var f in Fields)
                 {
                     f.CType.Apply(CollectGoImport.Ins, imports);

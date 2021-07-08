@@ -88,14 +88,19 @@ namespace Luban.Job.Cfg.Defs
             return type.Apply(GoDeserializeVisitor.Ins, name, bufName);
         }
 
+        public static string GoDeserializeJsonField(TType type, string name, string fieldName, string bufName)
+        {
+            return type.Apply(GoDeserializeJsonVisitor.Ins, name, fieldName, bufName);
+        }
+
         public static string TsJsonConstructor(string fieldName, string jsonFieldName, TType type)
         {
-            return type.Apply(TypescriptJsonConstructorVisitor.Ins, $"{jsonFieldName}", fieldName);
+            return type.Apply(TypescriptJsonConstructorVisitor.Ins, jsonFieldName, fieldName);
         }
 
         public static string TsBinConstructor(string fieldName, string byteBufName, TType type)
         {
-            return type.Apply(TypescriptBinConstructorVisitor.Ins, $"{byteBufName}", fieldName);
+            return type.Apply(TypescriptBinConstructorVisitor.Ins, byteBufName, fieldName);
         }
 
         public static string TsRecursiveResolve(DefField field, string tables)

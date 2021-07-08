@@ -3,9 +3,9 @@ using Luban.Job.Common.TypeVisitors;
 
 namespace Luban.Job.Cfg.TypeVisitors
 {
-    class GoUnderingDeserializeVisitor : ITypeFuncVisitor<string, string, string>
+    class GoDeserializeUnderingVisitor : ITypeFuncVisitor<string, string, string>
     {
-        public static GoUnderingDeserializeVisitor Ins { get; } = new GoUnderingDeserializeVisitor();
+        public static GoDeserializeUnderingVisitor Ins { get; } = new GoDeserializeUnderingVisitor();
 
         public string Accept(TBool type, string fieldName, string bufName)
         {

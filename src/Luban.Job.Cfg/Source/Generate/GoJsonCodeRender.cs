@@ -50,19 +50,20 @@ func New{{go_full_name}}(_buf map[string]interface{}) (_v *{{go_full_name}}, err
     _v.{{parent_def_type.go_full_name}} = *_p
 {{~end~}}
     {{~for field in export_fields ~}}
-    {{go_deserialize_field field '_buf'}}
+    {{go_deserialize_json_field field.ctype (""_v."" + field.go_style_name) field.name '_buf'}}
     {{~end~}}
     return
 }
 {{~if is_abstract_type~}}
 func NewChild{{go_full_name}}(_buf map[string]interface{}) (_v interface{}, err error) {
-    var id int32
-    if id, err = _buf.ReadInt() ; err != nil {
-        return
+    var id string
+    var _ok_ bool
+    if id, _ok_ = _buf[""__type__""].(string) ; !_ok_ {
+        return nil, errors.New(""type id missing"")
     }
     switch id {
         {{~for child in hierarchy_not_abstract_children~}}
-        case {{child.id}}: return New{{child.go_full_name}}(_buf);
+        case ""{{child.name}}"": return New{{child.go_full_name}}(_buf);
         {{~end~}}
         default: return nil, errors.New(""unknown type id"")
     }
@@ -150,7 +151,7 @@ func New{{go_full_name}}(_buf []map[string]interface{}) (*{{go_full_name}}, erro
 	if len(_buf) != 1 {
         return nil, errors.New("" size != 1 "")
 	} else {
-		if _v, err2 := {{go_deserialize_type value_type '_buf'}}; err2 != nil {
+		if _v, err2 := {{go_deserialize_type value_type '_buf[0]'}}; err2 != nil {
 			return nil, err2
 		} else {
 		    return &{{go_full_name}}{_data:_v}, nil
