@@ -40,12 +40,10 @@
    可以直接从 [示例配置](https://github.com/focus-creative-games/luban_examples/tree/main/DesignerConfigs/Defines) 拷贝这个文件。
    这个 root 文件描述了：
 
-3. 生成代码的默认顶层命名空间为 cfg
-4. 有 3 个分组 c,s,e 对应 client，server，editor 分组。 分组用于配置选择性导出。后面再介绍。
-5. import name=”.” 表明从当前目录导入所有子模块定义文件。我们会把所有子模块定义文件也放到 Defines 目录下。
-6. server 表示最终输出的目标。当前定义了 4 个目标。service 的 group 属性指明了这个目标会包含哪些分组。  
-   例如： server 目标就只包含 s 分组，而 all 目标包含了所有分组。  
-   我们先不细究这些定义的含义。
+    - 生成代码的默认顶层命名空间为 cfg
+    - 有 3 个分组 c,s,e 对应 client，server，editor 分组。 分组用于配置选择性导出。后面再介绍。
+    - import name=”.” 表明从当前目录导入所有子模块定义文件。我们会把所有子模块定义文件也放到 Defines 目录下。
+    - server 表示最终输出的目标。当前定义了 4 个目标。service 的 group 属性指明了这个目标会包含哪些分组。例如： server 目标就只包含 s 分组，而 all 目标包含了所有分组。我们先不细究这些定义的含义。
 
 7. 创建第一个配置表 物品表
 
@@ -166,7 +164,7 @@
       加载完 cfg.Tables 后，只需要用 tables.<表名> 就能获得那个表实例，接着可以做各种操作。  
       例如我们要访问 id = 1 的那个记录。代码如下
 
-      ```
+      ```c#
           cfg.item.Item itemInfo = tables.TbItem.Get(1);
           Console.WriteLine(“{0} {1} {2} {3}”,
           itemInfo.Id, itemInfo.Name, itemInfo.Desc,itemInfo.Price)

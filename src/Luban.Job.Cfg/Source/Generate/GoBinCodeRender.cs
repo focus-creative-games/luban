@@ -6,67 +6,11 @@ using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.Generate
 {
-    class GoCodeRender
+    class GoBinCodeRender : GoCodeRenderBase
     {
-        public string RenderAny(object o)
-        {
-            switch (o)
-            {
-                case DefConst c: return Render(c);
-                case DefEnum e: return Render(e);
-                case DefBean b: return Render(b);
-                case DefTable r: return Render(r);
-                default: throw new Exception($"unknown render type:{o}");
-            }
-        }
-
-        [ThreadStatic]
-        private static Template t_constRender;
-
-        public string Render(DefConst c)
-        {
-            string package = "cfg";
-
-            var template = t_constRender ??= Template.Parse(@"
-package {{package}}
-
-const (
-    {{~for item in x.items ~}}
-    {{x.go_full_name}}_{{item.name}} = {{go_const_value item.ctype item.value}}
-    {{~end~}}
-)
-");
-            var result = template.RenderCode(c, new Dictionary<string, object>() { ["package"] = package });
-
-            return result;
-        }
-
-        [ThreadStatic]
-        private static Template t_enumRender;
-
-        public string Render(DefEnum e)
-        {
-            string package = "cfg";
-
-            var template = t_enumRender ??= Template.Parse(@"
-package {{package}}
-
-const (
-    {{~for item in x.items ~}}
-    {{x.go_full_name}}_{{item.name}} = {{item.value}}
-    {{~end~}}
-)
-
-");
-            var result = template.RenderCode(e, new Dictionary<string, object>() { ["package"] = package });
-
-            return result;
-        }
-
         [ThreadStatic]
         private static Template t_beanRender;
-
-        public string Render(DefBean b)
+        protected override string Render(DefBean b)
         {
             string package = "cfg";
 
@@ -78,9 +22,15 @@ const (
     export_fields = x.export_fields
     hierarchy_not_abstract_children = x.hierarchy_not_abstract_children
 -}}
+
 package {{package}}
 
-import ""bright/serialization""
+import (
+    ""bright/serialization""
+{{~if is_abstract_type~}}
+    ""errors""
+{{~end~}}
+)
 
 {{x.go_import}}
 
@@ -107,7 +57,7 @@ func New{{go_full_name}}(_buf *serialization.ByteBuf) (_v *{{go_full_name}}, err
     _v.{{parent_def_type.go_full_name}} = *_p
 {{~end~}}
     {{~for field in export_fields ~}}
-    {{go_deserialize_field field '_buf'}}
+    {{go_deserialize_field field.ctype (""_v."" + field.go_style_name) '_buf'}}
     {{~end~}}
     return
 }
@@ -119,8 +69,9 @@ func NewChild{{go_full_name}}(_buf *serialization.ByteBuf) (_v interface{}, err 
     }
     switch id {
         {{~for child in hierarchy_not_abstract_children~}}
-            case {{child.id}}: return New{{child.go_full_name}}(_buf);
+        case {{child.id}}: return New{{child.go_full_name}}(_buf)
         {{~end~}}
+        default: return nil, errors.New(""unknown type id"")
     }
     return
 }
@@ -132,10 +83,9 @@ func NewChild{{go_full_name}}(_buf *serialization.ByteBuf) (_v interface{}, err 
             return result;
         }
 
-
         [ThreadStatic]
         private static Template t_tableRender;
-        public string Render(DefTable p)
+        protected override string Render(DefTable p)
         {
             // TODO 目前只有普通表支持多态. 单例表和双key表都不支持
             string package = "cfg";
@@ -150,6 +100,7 @@ func NewChild{{go_full_name}}(_buf *serialization.ByteBuf) (_v interface{}, err 
     index_field1 = x.index_field1
     index_field2 = x.index_field2
 -}}
+
 package {{package}}
 
 import ""bright/serialization""
@@ -236,11 +187,12 @@ func (table *{{go_full_name}}) Get() {{go_define_type value_type}} {
 
         [ThreadStatic]
         private static Template t_serviceRender;
-        public string RenderService(string name, string module, List<DefTable> tables)
+        public override string RenderService(string name, string module, List<DefTable> tables)
         {
             string package = "cfg";
 
             var template = t_serviceRender ??= Template.Parse(@"
+
 package {{package}}
 
 import ""bright/serialization""

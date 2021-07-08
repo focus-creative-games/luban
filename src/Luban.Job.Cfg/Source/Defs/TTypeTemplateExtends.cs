@@ -78,24 +78,14 @@ namespace Luban.Job.Cfg.Defs
             return type.Apply(GoTypeNameVisitor.Ins);
         }
 
-        public static string GoDeserializeType(TType type, string bufName)
+        public static string GoDeserializeType(TBean type, string bufName)
         {
-            return type.Apply(GoDeserializeVisitor.Ins, bufName);
+            return type.Bean.IsAbstractType ? $"NewChild{type.Bean.GoFullName}({bufName})" : $"New{ type.Bean.GoFullName} ({ bufName})";
         }
 
-        public static string GoDeserializeField(DefField field, string bufName)
+        public static string GoDeserializeField(TType type, string name, string bufName)
         {
-            var name = field.CsStyleName;
-            TType type = field.CType;
-            if (field.CType.IsNullable)
-            {
-                return $"{{ var _exists bool; if _exists, err = {bufName}.ReadBool(); err != nil {{ return }}; if _exists {{ if _v.{name}, err = {type.Apply(GoDeserializeVisitor.Ins, bufName)}; err != nil  {{ return }} }} }}";
-            }
-            else
-            {
-                return $"if _v.{name}, err = {type.Apply(GoDeserializeVisitor.Ins, bufName)}; err != nil  {{ return }} ";
-            }
-
+            return type.Apply(GoDeserializeVisitor.Ins, name, bufName);
         }
 
         public static string TsJsonConstructor(string fieldName, string jsonFieldName, TType type)

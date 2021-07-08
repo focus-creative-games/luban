@@ -300,8 +300,9 @@ namespace Luban.Job.Cfg
                             break;
                         }
                         case "code_go_bin":
+                        case "code_go_json":
                         {
-                            var render = new GoCodeRender();
+                            GoCodeRenderBase render = genType == "code_go_bin" ? new GoBinCodeRender() : new GoJsonCodeRender();
                             foreach (var c in exportTypes)
                             {
                                 tasks.Add(Task.Run(() =>

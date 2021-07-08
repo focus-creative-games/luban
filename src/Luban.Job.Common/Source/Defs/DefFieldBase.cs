@@ -57,6 +57,10 @@ namespace Luban.Job.Common.Defs
 
         public string PyStyleName => Name;
 
+        public string GoStyleName => CsStyleName;
+
+        //public string GoStyleAssignName => CType.IsNullable ? "*" + CsStyleName : CsStyleName;
+
         public string Type { get; }
 
         public TType CType { get; protected set; }
