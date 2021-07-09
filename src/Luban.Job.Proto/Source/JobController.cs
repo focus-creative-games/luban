@@ -36,6 +36,9 @@ namespace Luban.Job.Proto
 
             [Option('s', "service", Required = true, HelpText = "service")]
             public string Service { get; set; }
+
+            [Option("typescript_bytebuf_require_path", Required = false, HelpText = "bytebuf require path in typescript")]
+            public string TypescriptByteBufRequirePath { get; set; }
         }
 
 
@@ -149,13 +152,14 @@ namespace Luban.Job.Proto
                     case "ts":
                     {
                         var render = new TypescriptRender();
+                        var byteBufRequirePath = args.TypescriptByteBufRequirePath ?? "csharp";
 
                         tasks.Add(Task.Run(() =>
                         {
                             var fileContent = new List<string>
                                 {
                                     @$"
-import {{Bright}} from 'csharp'
+import {{Bright}} from '{byteBufRequirePath}'
 
 export namespace {ass.TopModule} {{
 ",

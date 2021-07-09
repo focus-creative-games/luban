@@ -75,6 +75,9 @@ namespace Luban.Job.Cfg
 
             [Option("branch_input_data_dir", Required = false, HelpText = "branch input data root dir")]
             public string BranchInputDataDir { get; set; }
+
+            [Option("typescript_bytebuf_require_path", Required = false, HelpText = "bytebuf require path in typescript")]
+            public string TypescriptByteBufRequirePath { get; set; }
         }
 
         private ICodeRender CreateCodeRender(string genType)
@@ -543,12 +546,13 @@ export class Vector2 {
                         case "code_typescript_bin":
                         {
                             var render = new TypeScriptBinCodeRender();
+                            var byteBufRequirePath = args.TypescriptByteBufRequirePath ?? "csharp";
                             tasks.Add(Task.Run(() =>
                             {
                                 var fileContent = new List<string>
                                 {
                                     @$"
-import {{Bright}} from 'csharp'
+import {{Bright}} from '{byteBufRequirePath}'
 
 export namespace {ass.TopModule} {{
 ",
