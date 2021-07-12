@@ -71,7 +71,7 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} extends {{if pa
         switch (_buf_.ReadInt()) {
             case 0 : return null
         {{~ for child in x.hierarchy_not_abstract_children~}}
-            case {{child.id}}: _bean_ = new {{child.full_name}}(_buf_); break
+            case {{child.id}}: _bean_ = new {{child.full_name}}(); break
         {{~end~}}
             default: throw new Error()
         }
