@@ -40,6 +40,8 @@ namespace Luban.Job.Common.Defs
 
         public string JavaMethodModifier => ParentDefType != null ? "override" : (IsAbstractType ? "virtual" : "");
 
+        public string TsClassModifier => IsAbstractType ? "abstract" : "";
+
         public DefBeanBase(Bean b)
         {
             Name = b.Name;

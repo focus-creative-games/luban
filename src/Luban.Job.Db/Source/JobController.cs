@@ -31,7 +31,7 @@ namespace Luban.Job.Db
             [Option('g', "gen_type", Required = true, HelpText = "cs,typescript . current only support cs")]
             public string GenType { get; set; }
 
-            [Option("typescript_bright_require_path", Required = false, HelpText = "bright require path in typescript")]
+            [Option("typescript_bright_require_path", Required = true, HelpText = "bright require path in typescript")]
             public string TypescriptBrightRequirePath { get; set; }
         }
 
@@ -131,87 +131,24 @@ namespace Luban.Job.Db
                     case "typescript":
                     {
                         var render = new TypescriptRender();
-                        var byteBufRequirePath = "";// args.TypescriptByteBufRequirePath ?? "csharp";
+                        var brightRequirePath = args.TypescriptBrightRequirePath;
                         tasks.Add(Task.Run(() =>
                         {
-                            var fileContent = new List<string>
-                        {
-                            @$"
-{ (string.IsNullOrEmpty(args.TypescriptBrightRequirePath) ?
-@"
-import {{Bright}} from 'cshar'
-import ByteBuf = Bright.Serialization.ByteBuf
+                            var fileContent = new List<string>();
 
-export class Vector2 {
-        x: number
-        y: number
-        constructor(x: number, y: number) {
-            this.x = x
-            this.y = y
-        }
+                            fileContent.Add(string.Format(TypescriptBrightTypeTemplates.BrightByteBufImportsFormat, brightRequirePath));
 
-        static from(_buf_: Bright.Serialization.ByteBuf): Vector2 {
-            let x = _buf_.ReadFloat()
-            let y = _buf_.ReadFloat()
-            return new Vector2(x, y)
-        }
-    }
+                            fileContent.Add(string.Format(TypescriptBrightTypeTemplates.SerializeImportsFormat, brightRequirePath));
+                            fileContent.Add(string.Format(TypescriptBrightTypeTemplates.ProtocolImportsFormat, brightRequirePath));
+                            fileContent.Add(string.Format(TypescriptBrightTypeTemplates.VectorImportsFormat, brightRequirePath));
+                            fileContent.Add($"import {{FieldLogger, FieldLoggerGeneric1, FieldLoggerGeneric2}} from '{brightRequirePath}/transaction/FieldLogger'");
+                            fileContent.Add($"import TxnBeanBase from '{brightRequirePath}/transaction/TxnBeanBase'");
+                            fileContent.Add($"import {{TxnTable, TxnTableGeneric}} from '{brightRequirePath}/transaction/TxnTable'");
+                            fileContent.Add($"import TransactionContext from '{brightRequirePath}/transaction/TransactionContext'");
+                            fileContent.Add($"import {{FieldTag}} from '{brightRequirePath}/serialization/FieldTag'");
+                            fileContent.Add($"import {{TKey}} from '{brightRequirePath}/storage/TKey'");
 
-
-    export class Vector3 {
-        x: number
-        y: number
-        z: number
-        constructor(x: number, y: number, z: number) {
-            this.x = x
-            this.y = y
-            this.z = z
-        }
-
-        static from(_buf_: Bright.Serialization.ByteBuf): Vector3 {
-            let x = _buf_.ReadFloat()
-            let y = _buf_.ReadFloat()
-            let z = _buf_.ReadFloat()
-            return new Vector3(x, y, z)
-        }
-    }
-
-    export class Vector4 {
-        x: number
-        y: number
-        z: number
-        w: number
-        constructor(x: number, y: number, z: number, w: number) {
-            this.x = x
-            this.y = y
-            this.z = z
-            this.w = w
-        }
-
-        static from(_buf_: Bright.Serialization.ByteBuf): Vector4 {
-            let x = _buf_.ReadFloat()
-            let y = _buf_.ReadFloat()
-            let z = _buf_.ReadFloat()
-            let w = _buf_.ReadFloat()
-            return new Vector4(x, y, z, w)
-        }
-    }
-
-" :
-@"
-
-import {{Bright}} from '{byteBufRequirePath}'
-") }
-
-export namespace {ass.TopModule} {{
-",
-
-                            @"
-
-
-"
-                        };
-
+                            fileContent.Add(@$"export namespace {ass.TopModule} {{");
 
 
                             foreach (var type in exportTypes)
@@ -219,16 +156,15 @@ export namespace {ass.TopModule} {{
                                 fileContent.Add(render.RenderAny(type));
                             }
 
-
                             var tables = ass.Types.Values.Where(t => t is DefTable).Select(t => (DefTable)t).ToList();
-                            fileContent.Add(render.RenderService("Tables", ass.TopModule, tables));
+                            fileContent.Add(render.RenderTables("Tables", ass.TopModule, tables));
 
                             fileContent.Add("}"); // end of topmodule
 
                             var content = FileHeaderUtil.ConcatAutoGenerationHeader(string.Join('\n', fileContent), ELanguage.TYPESCRIPT);
                             var file = "Types.ts";
                             var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                            genScatteredFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                            genCodeFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                         }));
                         break;
                     }
@@ -242,10 +178,6 @@ export namespace {ass.TopModule} {{
                 await Task.WhenAll(tasks.ToArray());
 
                 res.FileGroups.Add(new FileGroup() { Dir = outputCodeDir, Files = genCodeFiles.ToList() });
-                if (!genScatteredFiles.IsEmpty)
-                {
-                    res.ScatteredFiles.AddRange(genScatteredFiles);
-                }
             }
             catch (Exception e)
             {

@@ -130,7 +130,7 @@ namespace Luban.Job.Common.Defs
 
         public static string TsToString(string filedName, TType type)
         {
-            return $"{filedName}";
+            return filedName;
         }
 
         public static string TsCtorDefaultValue(TType type)
