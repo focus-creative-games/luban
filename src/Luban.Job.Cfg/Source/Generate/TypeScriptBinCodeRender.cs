@@ -36,7 +36,7 @@ namespace Luban.Job.Cfg.Generate
 
 export {{if x.is_abstract_type}} abstract {{end}} class {{name}} {{if parent_def_type}} extends {{x.parent}}{{end}} {
 {{~if x.is_abstract_type~}}
-    static constructorFrom(_buf_: Bright.Serialization.ByteBuf): {{name}} {
+    static constructorFrom(_buf_: ByteBuf): {{name}} {
         switch (_buf_.ReadInt()) {
         {{~ for child in x.hierarchy_not_abstract_children~}}
             case {{child.id}}: return new {{child.full_name}}(_buf_)
@@ -46,7 +46,7 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} {{if parent_def
     }
 {{~end~}}
 
-    constructor(_buf_: Bright.Serialization.ByteBuf) {
+    constructor(_buf_: ByteBuf) {
         {{~if parent_def_type~}}
         super(_buf_)
         {{~end~}}
@@ -101,7 +101,7 @@ export class {{name}} {
     private _dataMap: Map<{{ts_define_type key_type}}, {{ts_define_type value_type}}>
     private _dataList: {{ts_define_type value_type}}[]
     
-    constructor(_buf_: Bright.Serialization.ByteBuf) {
+    constructor(_buf_: ByteBuf) {
         this._dataMap = new Map<{{ts_define_type key_type}}, {{ts_define_type value_type}}>()
         this._dataList = []
         
@@ -128,7 +128,7 @@ export class {{name}} {
 
      private _data: {{ts_define_type value_type}}
 
-    constructor(_buf_: Bright.Serialization.ByteBuf) {
+    constructor(_buf_: ByteBuf) {
         if (_buf_.ReadInt() != 1) throw new Error('table mode=one, but size != 1')
         {{ts_bin_constructor 'this._data' '_buf_' value_type}}
     }
@@ -164,7 +164,7 @@ export class {{name}} {
 
 }}
 
-type ByteBufLoader = (file: string) => Bright.Serialization.ByteBuf
+type ByteBufLoader = (file: string) => ByteBuf
 
 export class {{name}} {
     {{~ for table in tables ~}}

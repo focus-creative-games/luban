@@ -186,7 +186,7 @@ namespace Luban.Job.Proto
                             }
                             if (args.EmbedBrightTypes)
                             {
-                                fileContent.Add(TypescriptBrightTypeTemplates.VectorTypes);
+                                fileContent.Add(TypescriptBrightTypeTemplates.VectorTypesByteBuf);
                                 fileContent.Add(TypescriptBrightTypeTemplates.SerializeTypes);
                                 fileContent.Add(TypescriptBrightTypeTemplates.ProtoTypes);
                             }
@@ -197,9 +197,7 @@ namespace Luban.Job.Proto
                                 fileContent.Add(string.Format(TypescriptBrightTypeTemplates.VectorImportsFormat, brightRequirePath));
                             }
 
-                            fileContent.Add(@$"
-export namespace {ass.TopModule} {{
-");
+                            fileContent.Add(@$"export namespace {ass.TopModule} {{");
 
                             foreach (var type in exportTypes)
                             {

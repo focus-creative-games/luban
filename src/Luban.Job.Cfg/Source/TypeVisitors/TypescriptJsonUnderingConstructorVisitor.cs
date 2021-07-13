@@ -133,17 +133,17 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TVector2 type, string jsonVarName, string fieldName)
         {
-            return $"{fieldName} = Vector2.from({jsonVarName})";
+            return $"{fieldName} = Vector2.deserializeFromJson({jsonVarName})";
         }
 
         public string Accept(TVector3 type, string jsonVarName, string fieldName)
         {
-            return $"{fieldName} = Vector3.from({jsonVarName})";
+            return $"{fieldName} = Vector3.deserializeFromJson({jsonVarName})";
         }
 
         public string Accept(TVector4 type, string jsonVarName, string fieldName)
         {
-            return $"{fieldName} = Vector4.from({jsonVarName})";
+            return $"{fieldName} = Vector4.deserializeFromJson({jsonVarName})";
         }
 
         public string Accept(TDateTime type, string jsonVarName, string fieldName)

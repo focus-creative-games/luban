@@ -76,8 +76,14 @@ namespace Luban.Job.Cfg
             [Option("branch_input_data_dir", Required = false, HelpText = "branch input data root dir")]
             public string BranchInputDataDir { get; set; }
 
-            [Option("typescript_bytebuf_require_path", Required = false, HelpText = "bytebuf require path in typescript")]
-            public string TypescriptByteBufRequirePath { get; set; }
+            [Option("typescript_bright_require_path", Required = false, HelpText = "bright require path in typescript")]
+            public string TypescriptBrightRequirePath { get; set; }
+
+            [Option("use_puerts_bytebuf", Required = false, HelpText = "use puerts bytebuf class. default is false")]
+            public bool UsePuertsByteBuf { get; set; }
+
+            [Option("embed_bright_types", Required = false, HelpText = "use puerts bytebuf class. default is false")]
+            public bool EmbedBrightTypes { get; set; }
         }
 
         private ICodeRender CreateCodeRender(string genType)
@@ -170,6 +176,17 @@ namespace Luban.Job.Cfg
                 if (string.IsNullOrWhiteSpace(options.BranchName) ^ string.IsNullOrWhiteSpace(options.BranchInputDataDir))
                 {
                     errMsg = "--branch must be provided with --branch_input_data_dir";
+                    return false;
+                }
+
+                if (!options.UsePuertsByteBuf && string.IsNullOrWhiteSpace(options.TypescriptBrightRequirePath))
+                {
+                    errMsg = $"while use_puerts_bytebuf is false, should provide option --typescript_bright_require_path";
+                    return false;
+                }
+                if (!options.EmbedBrightTypes && string.IsNullOrWhiteSpace(options.TypescriptBrightRequirePath))
+                {
+                    errMsg = $"while embed_bright_types is false, should provide option --typescript_bright_require_path";
                     return false;
                 }
 
@@ -423,112 +440,49 @@ namespace {ass.TopModule}
                             break;
                         }
 
+                        case "code_typescript_bin":
                         case "code_typescript_json":
                         {
-                            var render = new TypeScriptJsonCodeRender();
+                            bool isGenBinary = genType.EndsWith("bin");
+                            CodeRenderBase render = isGenBinary ? new TypeScriptBinCodeRender() : new TypeScriptJsonCodeRender();
+                            var brightRequirePath = args.TypescriptBrightRequirePath;
                             tasks.Add(Task.Run(() =>
                             {
-                                var fileContent = new List<string>
+                                var fileContent = new List<string>();
+                                if (isGenBinary)
                                 {
-                                    @$"
-export namespace {ass.TopModule} {{
-",
-
-                                    @"
-export class Vector2 {
-        x: number
-        y: number
-        constructor(x: number, y: number) {
-            this.x = x
-            this.y = y
-        }
-
-        static from(_json_: any): Vector2 {
-            let x = _json_['x']
-            let y = _json_['y']
-            if (x == null || y == null) {
-                throw new Error()
-            }
-            return new Vector2(x, y)
-        }
-    }
-
-
-    export class Vector3 {
-        x: number
-        y: number
-        z: number
-        constructor(x: number, y: number, z: number) {
-            this.x = x
-            this.y = y
-            this.z = z
-        }
-
-        static from(_json_: any): Vector3 {
-            let x = _json_['x']
-            let y = _json_['y']
-            let z = _json_['z']
-            if (x == null || y == null || z == null) {
-                throw new Error()
-            }
-            return new Vector3(x, y, z)
-        }
-    }
-
-    export class Vector4 {
-        x: number
-        y: number
-        z: number
-        w: number
-        constructor(x: number, y: number, z: number, w: number) {
-            this.x = x
-            this.y = y
-            this.z = z
-            this.w = w
-        }
-
-        static from(_json_: any): Vector4 {
-            let x = _json_['x']
-            let y = _json_['y']
-            let z = _json_['z']
-            let w = _json_['w']
-            if (x == null || y == null || z == null || w == null) {
-                throw new Error()
-            }
-            return new Vector4(x, y, z, w)
-        }
-    }
-
-"
-                                };
-
-                                foreach (var type in exportTypes)
-                                {
-                                    if (type is DefEnum e)
+                                    if (args.UsePuertsByteBuf)
                                     {
-                                        fileContent.Add(render.Render(e));
+                                        fileContent.Add(TypescriptBrightTypeTemplates.PuertsByteBufImports);
+                                    }
+                                    else
+                                    {
+                                        fileContent.Add(string.Format(TypescriptBrightTypeTemplates.BrightByteBufImportsFormat, brightRequirePath));
                                     }
                                 }
 
-                                foreach (var type in exportTypes)
+                                if (args.EmbedBrightTypes)
                                 {
-                                    if (type is DefConst c)
+                                    fileContent.Add(isGenBinary ? TypescriptBrightTypeTemplates.VectorTypesByteBuf : TypescriptBrightTypeTemplates.VectorTypesJson);
+                                    if (isGenBinary)
                                     {
-                                        fileContent.Add(render.Render(c));
+                                        fileContent.Add(TypescriptBrightTypeTemplates.SerializeTypes);
                                     }
                                 }
+                                else
+                                {
+                                    if (isGenBinary)
+                                    {
+                                        fileContent.Add(string.Format(TypescriptBrightTypeTemplates.SerializeImportsFormat, brightRequirePath));
+                                    }
+                                    fileContent.Add(string.Format(TypescriptBrightTypeTemplates.VectorImportsFormat, brightRequirePath));
+                                }
+
+                                fileContent.Add(@$"export namespace {ass.TopModule} {{");
 
                                 foreach (var type in exportTypes)
                                 {
-                                    if (type is DefBean e)
-                                    {
-                                        fileContent.Add(render.Render(e));
-                                    }
-                                }
-
-                                foreach (var type in exportTables)
-                                {
-                                    fileContent.Add(render.Render(type));
+                                    fileContent.Add(render.RenderAny(type));
                                 }
 
                                 fileContent.Add(render.RenderService("Tables", ass.TopModule, exportTables));
@@ -543,119 +497,50 @@ export class Vector2 {
                             break;
                         }
 
-                        case "code_typescript_bin":
-                        {
-                            var render = new TypeScriptBinCodeRender();
-                            var byteBufRequirePath = args.TypescriptByteBufRequirePath ?? "csharp";
-                            tasks.Add(Task.Run(() =>
-                            {
-                                var fileContent = new List<string>
-                                {
-                                    @$"
-import {{Bright}} from '{byteBufRequirePath}'
+                        //case "code_typescript_bin":
+                        //{
+                        //    var render = new TypeScriptBinCodeRender();
+                        //    var brightRequirePath = args.TypescriptBrightRequirePath;
+                        //    tasks.Add(Task.Run(() =>
+                        //    {
+                        //        var fileContent = new List<string>();
+                        //        if (args.UsePuertsByteBuf)
+                        //        {
+                        //            fileContent.Add(TypescriptBrightTypeTemplates.PuertsByteBufImports);
+                        //        }
+                        //        else
+                        //        {
+                        //            fileContent.Add(string.Format(TypescriptBrightTypeTemplates.BrightByteBufImportsFormat, brightRequirePath));
+                        //        }
+                        //        if (args.EmbedBrightTypes)
+                        //        {
+                        //            fileContent.Add(TypescriptBrightTypeTemplates.VectorTypes);
+                        //            fileContent.Add(TypescriptBrightTypeTemplates.SerializeTypes);
+                        //        }
+                        //        else
+                        //        {
+                        //            fileContent.Add(string.Format(TypescriptBrightTypeTemplates.SerializeImportsFormat, brightRequirePath));
+                        //            fileContent.Add(string.Format(TypescriptBrightTypeTemplates.VectorImportsFormat, brightRequirePath));
+                        //        }
 
-export namespace {ass.TopModule} {{
-",
+                        //        fileContent.Add(@$"export namespace {ass.TopModule} {{");
 
-                                    @"
-export class Vector2 {
-        x: number
-        y: number
-        constructor(x: number, y: number) {
-            this.x = x
-            this.y = y
-        }
+                        //        foreach (var type in exportTypes)
+                        //        {
+                        //            fileContent.Add(render.RenderAny(type));
+                        //        }
 
-        static from(_buf_: Bright.Serialization.ByteBuf): Vector2 {
-            let x = _buf_.ReadFloat()
-            let y = _buf_.ReadFloat()
-            return new Vector2(x, y)
-        }
-    }
+                        //        fileContent.Add(render.RenderService("Tables", ass.TopModule, exportTables));
 
+                        //        fileContent.Add("}"); // end of topmodule
 
-    export class Vector3 {
-        x: number
-        y: number
-        z: number
-        constructor(x: number, y: number, z: number) {
-            this.x = x
-            this.y = y
-            this.z = z
-        }
-
-        static from(_buf_: Bright.Serialization.ByteBuf): Vector3 {
-            let x = _buf_.ReadFloat()
-            let y = _buf_.ReadFloat()
-            let z = _buf_.ReadFloat()
-            return new Vector3(x, y, z)
-        }
-    }
-
-    export class Vector4 {
-        x: number
-        y: number
-        z: number
-        w: number
-        constructor(x: number, y: number, z: number, w: number) {
-            this.x = x
-            this.y = y
-            this.z = z
-            this.w = w
-        }
-
-        static from(_buf_: Bright.Serialization.ByteBuf): Vector4 {
-            let x = _buf_.ReadFloat()
-            let y = _buf_.ReadFloat()
-            let z = _buf_.ReadFloat()
-            let w = _buf_.ReadFloat()
-            return new Vector4(x, y, z, w)
-        }
-    }
-
-"
-                                };
-
-                                foreach (var type in exportTypes)
-                                {
-                                    if (type is DefEnum e)
-                                    {
-                                        fileContent.Add(render.Render(e));
-                                    }
-                                }
-
-                                foreach (var type in exportTypes)
-                                {
-                                    if (type is DefConst c)
-                                    {
-                                        fileContent.Add(render.Render(c));
-                                    }
-                                }
-
-                                foreach (var type in exportTypes)
-                                {
-                                    if (type is DefBean e)
-                                    {
-                                        fileContent.Add(render.Render(e));
-                                    }
-                                }
-
-                                foreach (var type in exportTables)
-                                {
-                                    fileContent.Add(render.Render(type));
-                                }
-
-                                fileContent.Add(render.RenderService("Tables", ass.TopModule, exportTables));
-
-                                fileContent.Add("}"); // end of topmodule
-
-                                var content = FileHeaderUtil.ConcatAutoGenerationHeader(string.Join('\n', fileContent), ELanguage.TYPESCRIPT);
-                                var file = "Types.ts";
-                                var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
-                            }));
-                            break;
-                        }
+                        //        var content = FileHeaderUtil.ConcatAutoGenerationHeader(string.Join('\n', fileContent), ELanguage.TYPESCRIPT);
+                        //        var file = "Types.ts";
+                        //        var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
+                        //        genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                        //    }));
+                        //    break;
+                        //}
 
                         case "code_python27_json":
                         {
