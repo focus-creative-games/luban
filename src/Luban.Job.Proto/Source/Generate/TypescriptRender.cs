@@ -57,7 +57,7 @@ namespace Luban.Job.Proto.Generate
 
 export {{if x.is_abstract_type}} abstract {{end}} class {{name}} extends {{if parent_def_type}}{{x.parent}}{{else}}BeanBase{{end}} {
 {{~if x.is_abstract_type~}}
-    static serializeTo(_buf_ : Bright.Serialization.ByteBuf, _bean_ : {{name}}) {
+    static serializeTo(_buf_ : ByteBuf, _bean_ : {{name}}) {
         if (_bean_ == null) {
             _buf_.WriteInt(0)
             return
@@ -66,7 +66,7 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} extends {{if pa
         _bean_.serialize(_buf_)
     }
 
-    static deserializeFrom(_buf_ : Bright.Serialization.ByteBuf) : {{name}} {
+    static deserializeFrom(_buf_ : ByteBuf) : {{name}} {
         let  _bean_ :{{name}}
         switch (_buf_.ReadInt()) {
             case 0 : return null
@@ -97,7 +97,7 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} extends {{if pa
     }
     
 
-    serialize(_buf_ : Bright.Serialization.ByteBuf) {
+    serialize(_buf_ : ByteBuf) {
         {{~if parent_def_type~}}
         super.serialize(_buf_)
         {{~end~}}
@@ -106,7 +106,7 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} extends {{if pa
         {{~end~}}
     }
 
-    deserialize(_buf_ : Bright.Serialization.ByteBuf) {
+    deserialize(_buf_ : ByteBuf) {
         {{~if parent_def_type~}}
         super.deserialize(_buf_)
         {{~end~}}
@@ -159,13 +159,13 @@ export class {{name}} extends Protocol {
     {{~end~}}
     }
 
-    serialize(_buf_ : Bright.Serialization.ByteBuf) {
+    serialize(_buf_ : ByteBuf) {
         {{~ for field in fields ~}}
         {{ts_bin_serialize ('this.' + field.ts_style_name) '_buf_' field.ctype}}
         {{~end~}}
     }
 
-    deserialize(_buf_ : Bright.Serialization.ByteBuf) {
+    deserialize(_buf_ : ByteBuf) {
         {{~ for field in fields ~}}
         {{ts_bin_deserialize ('this.' + field.ts_style_name) '_buf_' field.ctype}}
         {{~end~}}

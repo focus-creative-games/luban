@@ -37,8 +37,14 @@ namespace Luban.Job.Proto
             [Option('s', "service", Required = true, HelpText = "service")]
             public string Service { get; set; }
 
-            [Option("typescript_bytebuf_require_path", Required = false, HelpText = "bytebuf require path in typescript")]
-            public string TypescriptByteBufRequirePath { get; set; }
+            [Option("typescript_bright_require_path", Required = false, HelpText = "bright require path in typescript")]
+            public string TypescriptBrightRequirePath { get; set; }
+
+            [Option("use_puerts_bytebuf", Required = false, HelpText = "use puerts bytebuf class. default is false")]
+            public bool UsePuertsByteBuf { get; set; }
+
+            [Option("embed_bright_types", Required = false, HelpText = "use puerts bytebuf class. default is false")]
+            public bool EmbedBrightTypes { get; set; }
         }
 
 
@@ -59,6 +65,19 @@ namespace Luban.Job.Proto
 
             result = (parseResult as Parsed<GenArgs>).Value;
             errMsg = null;
+
+
+            if (!result.UsePuertsByteBuf && string.IsNullOrWhiteSpace(result.TypescriptBrightRequirePath))
+            {
+                errMsg = $"while use_puerts_bytebuf is false, should provide option --typescript_bright_require_path";
+                return false;
+            }
+            if (!result.EmbedBrightTypes && string.IsNullOrWhiteSpace(result.TypescriptBrightRequirePath))
+            {
+                errMsg = $"while embed_bright_types is false, should provide option --typescript_bright_require_path";
+                return false;
+            }
+
             return true;
         }
 
@@ -152,111 +171,35 @@ namespace Luban.Job.Proto
                     case "ts":
                     {
                         var render = new TypescriptRender();
-                        var byteBufRequirePath = args.TypescriptByteBufRequirePath ?? "csharp";
+                        var brightRequirePath = args.TypescriptBrightRequirePath;
 
                         tasks.Add(Task.Run(() =>
                         {
-                            var fileContent = new List<string>
-                                {
-                                    @$"
-import {{Bright}} from '{byteBufRequirePath}'
+                            var fileContent = new List<string>();
+                            if (args.UsePuertsByteBuf)
+                            {
+                                fileContent.Add(TypescriptBrightTypeTemplates.PuertsByteBufImports);
+                            }
+                            else
+                            {
+                                fileContent.Add(string.Format(TypescriptBrightTypeTemplates.BrightByteBufImportsFormat, brightRequirePath));
+                            }
+                            if (args.EmbedBrightTypes)
+                            {
+                                fileContent.Add(TypescriptBrightTypeTemplates.VectorTypes);
+                                fileContent.Add(TypescriptBrightTypeTemplates.SerializeTypes);
+                                fileContent.Add(TypescriptBrightTypeTemplates.ProtoTypes);
+                            }
+                            else
+                            {
+                                fileContent.Add(string.Format(TypescriptBrightTypeTemplates.SerializeImportsFormat, brightRequirePath));
+                                fileContent.Add(string.Format(TypescriptBrightTypeTemplates.ProtocolImportsFormat, brightRequirePath));
+                                fileContent.Add(string.Format(TypescriptBrightTypeTemplates.VectorImportsFormat, brightRequirePath));
+                            }
 
+                            fileContent.Add(@$"
 export namespace {ass.TopModule} {{
-",
-
-                                    @"
-export interface ISerializable {
-    serialize(_buf_: Bright.Serialization.ByteBuf): void
-    deserialize(_buf_: Bright.Serialization.ByteBuf): void
-}
-
-export abstract class BeanBase implements ISerializable {
-    abstract getTypeId(): number
-    abstract serialize(_buf_: Bright.Serialization.ByteBuf): void
-    abstract deserialize(_buf_: Bright.Serialization.ByteBuf): void
-}
-
-export abstract class Protocol implements ISerializable {
-    abstract getTypeId(): number
-    abstract serialize(_buf_: Bright.Serialization.ByteBuf): void
-    abstract deserialize(_buf_: Bright.Serialization.ByteBuf): void
-}
-
-export class Vector2 {
-        x: number
-        y: number
-        constructor(x: number, y: number) {
-            this.x = x
-            this.y = y
-        }
-
-        to(_buf_: Bright.Serialization.ByteBuf) {
-            _buf_.WriteFloat(this.x)
-            _buf_.WriteFloat(this.y)
-        }
-
-        static from(_buf_: Bright.Serialization.ByteBuf): Vector2 {
-            let x = _buf_.ReadFloat()
-            let y = _buf_.ReadFloat()
-            return new Vector2(x, y)
-        }
-    }
-
-
-    export class Vector3 {
-        x: number
-        y: number
-        z: number
-        constructor(x: number, y: number, z: number) {
-            this.x = x
-            this.y = y
-            this.z = z
-        }
-
-        to(_buf_: Bright.Serialization.ByteBuf) {
-            _buf_.WriteFloat(this.x)
-            _buf_.WriteFloat(this.y)
-            _buf_.WriteFloat(this.z)
-        }
-
-        static from(_buf_: Bright.Serialization.ByteBuf): Vector3 {
-            let x = _buf_.ReadFloat()
-            let y = _buf_.ReadFloat()
-            let z = _buf_.ReadFloat()
-            return new Vector3(x, y, z)
-        }
-    }
-
-    export class Vector4 {
-        x: number
-        y: number
-        z: number
-        w: number
-        constructor(x: number, y: number, z: number, w: number) {
-            this.x = x
-            this.y = y
-            this.z = z
-            this.w = w
-        }
-
-        to(_buf_: Bright.Serialization.ByteBuf) {
-            _buf_.WriteFloat(this.x)
-            _buf_.WriteFloat(this.y)
-            _buf_.WriteFloat(this.z)
-            _buf_.WriteFloat(this.w)
-        }
-
-        static from(_buf_: Bright.Serialization.ByteBuf): Vector4 {
-            let x = _buf_.ReadFloat()
-            let y = _buf_.ReadFloat()
-            let z = _buf_.ReadFloat()
-            let w = _buf_.ReadFloat()
-            return new Vector4(x, y, z, w)
-        }
-    }
-
-"
-                                };
+");
 
                             foreach (var type in exportTypes)
                             {

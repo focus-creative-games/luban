@@ -144,17 +144,17 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TVector2 type, string bufVarName, string fieldName)
         {
-            return $"{fieldName} = Vector2.from({bufVarName})";
+            return $"{fieldName} = Vector2.deserializeFrom({bufVarName})";
         }
 
         public string Accept(TVector3 type, string bufVarName, string fieldName)
         {
-            return $"{fieldName} = Vector3.from({bufVarName})";
+            return $"{fieldName} = Vector3.deserializeFrom({bufVarName})";
         }
 
         public string Accept(TVector4 type, string bufVarName, string fieldName)
         {
-            return $"{fieldName} = Vector4.from({bufVarName})";
+            return $"{fieldName} = Vector4.deserializeFrom({bufVarName})";
         }
 
         public string Accept(TDateTime type, string bufVarName, string fieldName)

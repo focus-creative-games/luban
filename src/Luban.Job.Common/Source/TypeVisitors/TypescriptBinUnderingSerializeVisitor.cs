@@ -84,17 +84,17 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TVector2 type, string bufVarName, string fieldName)
         {
-            return $"{fieldName}.to({bufVarName})";
+            return $"{fieldName}.serialize({bufVarName})";
         }
 
         public string Accept(TVector3 type, string bufVarName, string fieldName)
         {
-            return $"{fieldName}.to({bufVarName})";
+            return $"{fieldName}.serialize({bufVarName})";
         }
 
         public string Accept(TVector4 type, string bufVarName, string fieldName)
         {
-            return $"{fieldName}.to({bufVarName})";
+            return $"{fieldName}.serialize({bufVarName})";
         }
 
         public string Accept(TDateTime type, string bufVarName, string fieldName)
