@@ -91,7 +91,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TBean type, string varName, string bufName)
         {
-            return $"{{ var _ok_ bool; var _x_ map[string]interface{{}}; if _x_, _ok_ = {bufName}.(map[string]interface{{}}); !_ok_ {{ err = errors.New(\"{varName} error\"); return }}; if {varName}, err = {(type.Bean.IsAbstractType ? $"NewChild{type.Bean.GoFullName}(_x_)" : $"New{ type.Bean.GoFullName} (_x_)")}; err != nil {{ return }} }}";
+            return $"{{ var _ok_ bool; var _x_ map[string]interface{{}}; if _x_, _ok_ = {bufName}.(map[string]interface{{}}); !_ok_ {{ err = errors.New(\"{varName} error\"); return }}; if {varName}, err = {($"New{ type.Bean.GoFullName}(_x_)")}; err != nil {{ return }} }}";
         }
 
         public string Accept(TArray type, string varName, string bufName)

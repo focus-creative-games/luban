@@ -42,5 +42,15 @@ namespace Luban.Job.Common.Utils
                 default: return AUTO_GENERATE_C_LIKE + txt;
             }
         }
+
+        public static string GetAutoGenerationHeader(ELanguage lan)
+        {
+            switch (lan)
+            {
+                case ELanguage.LUA: return AUTO_GENERATE_LUA;
+                case ELanguage.PYTHON: return AUTO_GENERATE_PYTHON;
+                default: return AUTO_GENERATE_C_LIKE;
+            }
+        }
     }
 }

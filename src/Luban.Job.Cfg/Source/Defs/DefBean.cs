@@ -31,7 +31,7 @@ namespace Luban.Job.Cfg.Defs
             return DeepCompareTypeDefine.Ins.Compare(this, b, new Dictionary<DefTypeBase, bool>(), new HashSet<DefTypeBase>());
         }
 
-        public string GoImport
+        public string GoBinImport
         {
             get
             {
@@ -42,7 +42,24 @@ namespace Luban.Job.Cfg.Defs
                 }
                 foreach (var f in Fields)
                 {
-                    f.CType.Apply(CollectGoImport.Ins, imports);
+                    f.CType.Apply(TypeVisitors.GoBinImport.Ins, imports);
+                }
+                return string.Join('\n', imports.Select(im => $"import \"{im}\""));
+            }
+        }
+
+        public string GoJsonImport
+        {
+            get
+            {
+                var imports = new HashSet<string>();
+                if (IsAbstractType)
+                {
+                    imports.Add("errors");
+                }
+                foreach (var f in Fields)
+                {
+                    f.CType.Apply(TypeVisitors.GoJsonImport.Ins, imports);
                 }
                 return string.Join('\n', imports.Select(im => $"import \"{im}\""));
             }

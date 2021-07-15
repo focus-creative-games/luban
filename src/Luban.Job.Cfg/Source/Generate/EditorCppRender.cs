@@ -5,43 +5,31 @@ using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.Generate
 {
-    class EditorCppRender
+    class EditorCppRender : CodeRenderBase
     {
-        public string RenderAny(object o)
-        {
-            switch (o)
-            {
-                case DefConst c: return Render(c);
-                case DefEnum e: return Render(e);
-                case DefBean b: return Render(b);
-                case DefTable r: return Render(r);
-                default: throw new Exception($"unknown render type:{o}");
-            }
-        }
-
-        public string Render(DefConst c)
+        public override string Render(DefConst c)
         {
             return "// const";
         }
 
-        public string Render(DefEnum e)
+        public override string Render(DefEnum e)
         {
             return "// enum";
         }
 
-        public string Render(DefBean b)
+        public override string Render(DefBean b)
         {
             return "// bean";
         }
 
-        public string Render(DefTable p)
+        public override string Render(DefTable p)
         {
             return "// table";
         }
 
-        public string RenderStubs(string name, string module, List<CfgDefTypeBase> protos)
+        public override string RenderService(string name, string module, List<DefTable> tables)
         {
-            return "// stubs";
+            return "// service";
         }
     }
 }

@@ -3,9 +3,9 @@ using Luban.Job.Common.TypeVisitors;
 
 namespace Luban.Job.Cfg.TypeVisitors
 {
-    class GoDeserializeVisitor : DecoratorFuncVisitor<string, string, string>
+    class GoDeserializeBinVisitor : DecoratorFuncVisitor<string, string, string>
     {
-        public static GoDeserializeVisitor Ins { get; } = new GoDeserializeVisitor();
+        public static GoDeserializeBinVisitor Ins { get; } = new GoDeserializeBinVisitor();
 
         public override string DoAccept(TType type, string fieldName, string bufName)
         {

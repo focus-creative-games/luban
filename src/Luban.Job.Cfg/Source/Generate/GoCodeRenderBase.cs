@@ -9,24 +9,12 @@ using System.Threading.Tasks;
 
 namespace Luban.Job.Cfg.Generate
 {
-    abstract class GoCodeRenderBase
+    abstract class GoCodeRenderBase : CodeRenderBase
     {
-        public string RenderAny(object o)
-        {
-            switch (o)
-            {
-                case DefConst c: return Render(c);
-                case DefEnum e: return Render(e);
-                case DefBean b: return Render(b);
-                case DefTable r: return Render(r);
-                default: throw new Exception($"unknown render type:{o}");
-            }
-        }
-
         [ThreadStatic]
         private static Template t_constRender;
 
-        private string Render(DefConst c)
+        public override string Render(DefConst c)
         {
             string package = "cfg";
 
@@ -48,7 +36,7 @@ const (
         [ThreadStatic]
         private static Template t_enumRender;
 
-        private string Render(DefEnum e)
+        public override string Render(DefEnum e)
         {
             string package = "cfg";
 
@@ -68,11 +56,5 @@ const (
             return result;
         }
 
-
-        protected abstract string Render(DefBean b);
-
-        protected abstract string Render(DefTable p);
-
-        public abstract string RenderService(string name, string module, List<DefTable> tables);
     }
 }

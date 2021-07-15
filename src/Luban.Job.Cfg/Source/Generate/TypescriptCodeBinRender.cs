@@ -7,18 +7,8 @@ using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.Generate
 {
-    class TypeScriptJsonCodeRender : CodeRenderBase
+    class TypescriptCodeBinRender : TypescriptCodeRenderBase
     {
-        public override string Render(DefConst c)
-        {
-            return RenderUtil.RenderTypescriptConstClass(c);
-        }
-
-        public override string Render(DefEnum e)
-        {
-            return RenderUtil.RenderTypescriptEnumClass(e);
-        }
-
         [ThreadStatic]
         private static Template t_beanRender;
         public override string Render(DefBean b)
@@ -36,25 +26,22 @@ namespace Luban.Job.Cfg.Generate
 
 export {{if x.is_abstract_type}} abstract {{end}} class {{name}} {{if parent_def_type}} extends {{x.parent}}{{end}} {
 {{~if x.is_abstract_type~}}
-    static constructorFrom(_json_: any): {{name}} {
-        switch (_json_.__type__) {
+    static constructorFrom(_buf_: ByteBuf): {{name}} {
+        switch (_buf_.ReadInt()) {
         {{~ for child in x.hierarchy_not_abstract_children~}}
-            case '{{child.name}}': return new {{child.full_name}}(_json_)
+            case {{child.id}}: return new {{child.full_name}}(_buf_)
         {{~end~}}
             default: throw new Error()
         }
     }
 {{~end~}}
 
-    constructor(_json_: any) {
+    constructor(_buf_: ByteBuf) {
         {{~if parent_def_type~}}
-        super(_json_)
+        super(_buf_)
         {{~end~}}
         {{~ for field in export_fields ~}}
-        {{~if !field.ctype.is_nullable~}}
-        if (_json_.{{field.name}} == null) { throw new Error() }
-        {{~end~}}
-        {{ts_json_constructor ('this.' + field.ts_style_name) ( '_json_.' + field.name) field.ctype}}
+        {{ts_bin_constructor ('this.' + field.ts_style_name) '_buf_' field.ctype}}
         {{~end~}}
     }
 
@@ -99,25 +86,27 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} {{if parent_def
         value_type =  x.value_ttype
     }}
 {{x.typescript_namespace_begin}}
-export class {{name}}{
+export class {{name}} {
     {{~if x.is_map_table ~}}
     private _dataMap: Map<{{ts_define_type key_type}}, {{ts_define_type value_type}}>
     private _dataList: {{ts_define_type value_type}}[]
-    constructor(_json_: any) {
+    
+    constructor(_buf_: ByteBuf) {
         this._dataMap = new Map<{{ts_define_type key_type}}, {{ts_define_type value_type}}>()
         this._dataList = []
-        for(var _json2_ of _json_) {
+        
+        for(let n = _buf_.ReadInt() ; n > 0 ; n--) {
             let _v: {{ts_define_type value_type}}
-            {{ts_json_constructor '_v' '_json2_' value_type}}
+            {{ts_bin_constructor '_v' '_buf_' value_type}}
             this._dataList.push(_v)
             this._dataMap.set(_v.{{x.index_field.ts_style_name}}, _v)
         }
     }
 
-    getDataMap(): Map<{{ts_define_type key_type}}, {{ts_define_type value_type}}> { return this._dataMap; }
-    getDataList(): {{ts_define_type value_type}}[] { return this._dataList; }
+    getDataMap(): Map<{{ts_define_type key_type}}, {{ts_define_type value_type}}> { return this._dataMap }
+    getDataList(): {{ts_define_type value_type}}[] { return this._dataList }
 
-    get(key: {{ts_define_type key_type}}): {{ts_define_type value_type}}  { return this._dataMap.get(key); }
+    get(key: {{ts_define_type key_type}}): {{ts_define_type value_type}}  { return this._dataMap.get(key) }
 
     resolve(_tables: Map<string, any>) {
         for(var v of this._dataList) {
@@ -128,15 +117,16 @@ export class {{name}}{
     {{~else~}}
 
      private _data: {{ts_define_type value_type}}
-    constructor(_json_: any) {
-        if (_json_.length != 1) throw new Error('table mode=one, but size != 1')
-        {{ts_json_constructor 'this._data' '_json_[0]' value_type}}
+
+    constructor(_buf_: ByteBuf) {
+        if (_buf_.ReadInt() != 1) throw new Error('table mode=one, but size != 1')
+        {{ts_bin_constructor 'this._data' '_buf_' value_type}}
     }
 
-    getData(): {{ts_define_type value_type}} { return this._data; }
+    getData(): {{ts_define_type value_type}} { return this._data }
 
     {{~ for field in value_type.bean.hierarchy_export_fields ~}}
-     get  {{field.ts_style_name}}(): {{ts_define_type field.ctype}} { return this._data.{{field.ts_style_name}}; }
+     get {{field.ts_style_name}}(): {{ts_define_type field.ctype}} { return this._data.{{field.ts_style_name}} }
     {{~end~}}
 
     resolve(_tables: Map<string, any>) {
@@ -164,23 +154,23 @@ export class {{name}}{
 
 }}
 
-type JsonLoader = (file: string) => any
+type ByteBufLoader = (file: string) => ByteBuf
 
 export class {{name}} {
     {{~ for table in tables ~}}
     private _{{table.name}}: {{table.full_name}}
-    get {{table.name}}(): {{table.full_name}}  { return this._{{table.name}};}
+    get {{table.name}}(): {{table.full_name}}  { return this._{{table.name}}}
     {{~end~}}
 
-    constructor(loader: JsonLoader) {
+    constructor(loader: ByteBufLoader) {
         let tables = new Map<string, any>()
         {{~for table in tables ~}}
-        this._{{table.name}} = new {{table.full_name}}(loader('{{table.json_output_data_file}}'))
+        this._{{table.name}} = new {{table.full_name}}(loader('{{table.output_data_file}}')) 
         tables.set('{{table.full_name}}', this._{{table.name}})
         {{~end~}}
 
         {{~ for table in tables ~}}
-        this._{{table.name}}.resolve(tables)
+        this._{{table.name}}.resolve(tables) 
         {{~end~}}
     }
 }

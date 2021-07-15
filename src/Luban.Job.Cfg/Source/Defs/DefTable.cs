@@ -49,9 +49,9 @@ namespace Luban.Job.Cfg.Defs
 
         public bool NeedExport => Assembly.NeedExport(this.Groups);
 
-        public string OutputDataFile => $"{FullName}.bin";
+        public string OutputDataFile => FullName;
 
-        public string JsonOutputDataFile => $"{FullName}.json";
+        public string OutputDataFileEscapeDot => FullName.Replace('.', '_');
 
         public List<string> GetBranchInputFiles(string branchName)
         {

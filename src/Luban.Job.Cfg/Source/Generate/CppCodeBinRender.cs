@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.Generate
 {
-    class CppBinCodeRender : CodeRenderBase
+    class CppCodeBinRender : CodeRenderBase
     {
         public override string Render(DefConst c)
         {

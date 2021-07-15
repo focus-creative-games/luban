@@ -5,57 +5,62 @@ using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.Generate
 {
-    class CsJsonCodeRender : CsCodeRenderBase
+    class CsCodeBinRender : CsCodeRenderBase
     {
         [ThreadStatic]
         private static Template t_beanRender;
+
         public override string Render(DefBean b)
         {
             var template = t_beanRender ??= Template.Parse(@"
 using Bright.Serialization;
 using System.Collections.Generic;
-using System.Text.Json;
-
 {{
     name = x.name
     parent_def_type = x.parent_def_type
-    parent = x.parent
     export_fields = x.export_fields
     hierarchy_export_fields = x.hierarchy_export_fields
 }}
 
+
 namespace {{x.namespace_with_top_module}}
 {
    
-public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {{parent}} {{else}} Bright.Config.BeanBase {{end}}
+public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {{x.parent}} {{else}} Bright.Config.BeanBase {{end}}
 {
-    public {{name}}(JsonElement _buf) {{if parent_def_type}} : base(_buf) {{end}}
+    public {{name}}(ByteBuf _buf) {{if parent_def_type}} : base(_buf) {{end}}
     {
         {{~ for field in export_fields ~}}
-        {{cs_json_deserialize '_buf' field.cs_style_name field.name field.ctype}}
+        {{cs_deserialize '_buf' field.cs_style_name field.ctype}}
         {{~if field.index_field~}}
-        foreach(var _v in {{field.cs_style_name}}) { {{field.cs_style_name}}_Index.Add(_v.{{field.index_field.cs_style_name}}, _v); }
+        foreach(var _v in {{field.cs_style_name}})
+        { 
+            {{field.cs_style_name}}_Index.Add(_v.{{field.index_field.cs_style_name}}, _v);
+        }
         {{~end~}}
         {{~end~}}
     }
 
-    public {{name}}({{~for field in hierarchy_export_fields }}{{cs_define_type field.ctype}} {{field.name}}{{if !for.last}},{{end}} {{end}}) {{if parent_def_type}} : base({{- for field in parent_def_type.hierarchy_export_fields }}{{field.name}}{{if !for.last}},{{end}}{{end}}) {{end}}
+    public {{name}}({{- for field in hierarchy_export_fields }}{{cs_define_type field.ctype}} {{field.name}}{{if !for.last}},{{end}} {{end}}) {{if parent_def_type}} : base({{- for field in parent_def_type.hierarchy_export_fields }}{{field.name}}{{if !for.last}},{{end}}{{end}}) {{end}}
     {
         {{~ for field in export_fields ~}}
         this.{{field.cs_style_name}} = {{field.name}};
         {{~if field.index_field~}}
-        foreach(var _v in {{field.cs_style_name}}) { {{field.cs_style_name}}_Index.Add(_v.{{field.index_field.cs_style_name}}, _v); }
+        foreach(var _v in {{field.cs_style_name}})
+        {
+            {{field.cs_style_name}}_Index.Add(_v.{{field.index_field.cs_style_name}}, _v); 
+        }
         {{~end~}}
         {{~end~}}
     }
 
-    public static {{name}} Deserialize{{name}}(JsonElement _buf)
+    public static {{name}} Deserialize{{name}}(ByteBuf _buf)
     {
     {{~if x.is_abstract_type~}}
-        switch (_buf.GetProperty(""__type__"").GetString())
+        switch (_buf.ReadInt())
         {
         {{~for child in x.hierarchy_not_abstract_children~}}
-            case ""{{child.name}}"": return new {{child.full_name}}(_buf);
+            case {{child.full_name}}.ID: return new {{child.full_name}}(_buf);
         {{~end~}}
             default: throw new SerializationException();
         }
@@ -99,12 +104,13 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
     public override string ToString()
     {
         return ""{{full_name}}{ ""
-    {{~ for field in hierarchy_export_fields ~}}
+    {{~for field in hierarchy_export_fields ~}}
         + ""{{field.cs_style_name}}:"" + {{cs_to_string field.cs_style_name field.ctype}} + "",""
     {{~end~}}
         + ""}"";
     }
     }
+
 }
 
 ");
@@ -120,32 +126,31 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
             var template = t_tableRender ??= Template.Parse(@"
 using Bright.Serialization;
 using System.Collections.Generic;
-using System.Text.Json;
-
-{{ 
-    name = x.name
-    key_type = x.key_ttype
-    key_type1 =  x.key_ttype1
-    key_type2 =  x.key_ttype2
-    value_type =  x.value_ttype
-}}
 
 namespace {{x.namespace_with_top_module}}
 {
+   {{ 
+        name = x.name
+        key_type = x.key_ttype
+        key_type1 =  x.key_ttype1
+        key_type2 =  x.key_ttype2
+        value_type =  x.value_ttype
+    }}
 public sealed partial class {{name}}
 {
     {{~if x.is_map_table ~}}
     private readonly Dictionary<{{cs_define_type key_type}}, {{cs_define_type value_type}}> _dataMap;
     private readonly List<{{cs_define_type value_type}}> _dataList;
     
-    public {{name}}(JsonElement _buf)
+    public {{name}}(ByteBuf _buf)
     {
         _dataMap = new Dictionary<{{cs_define_type key_type}}, {{cs_define_type value_type}}>();
         _dataList = new List<{{cs_define_type value_type}}>();
         
-        foreach(JsonElement _row in _buf.EnumerateArray())
+        for(int n = _buf.ReadSize() ; n > 0 ; --n)
         {
-            var _v = {{cs_define_type value_type}}.Deserialize{{value_type.bean.name}}(_row);
+            {{cs_define_type value_type}} _v;
+            {{cs_deserialize '_buf' '_v' value_type}}
             _dataList.Add(_v);
             _dataMap.Add(_v.{{x.index_field.cs_style_name}}, _v);
         }
@@ -175,12 +180,13 @@ public sealed partial class {{name}}
 
      private readonly {{cs_define_type value_type}} _data;
 
-    public {{name}}(JsonElement _buf)
+    public {{name}}(ByteBuf _buf)
     {
-        int n = _buf.GetArrayLength();
+        int n = _buf.ReadSize();
         if (n != 1) throw new SerializationException(""table mode=one, but size != 1"");
-        _data = {{cs_define_type value_type}}.Deserialize{{value_type.bean.name}}(_buf[0]);
+        {{cs_deserialize '_buf' '_data' value_type}}
     }
+
 
     {{~ for field in value_type.bean.hierarchy_export_fields ~}}
      public {{cs_define_type field.ctype}} {{field.cs_style_name}} => _data.{{field.cs_style_name}};
@@ -207,33 +213,33 @@ public sealed partial class {{name}}
             return result;
         }
 
-
         [ThreadStatic]
         private static Template t_serviceRender;
         public override string RenderService(string name, string module, List<DefTable> tables)
         {
             var template = t_serviceRender ??= Template.Parse(@"
 using Bright.Serialization;
-using System.Text.Json;
+
 {{
     name = x.name
     namespace = x.namespace
     tables = x.tables
+
 }}
 namespace {{namespace}}
 {
    
-public sealed partial class {{name}}
+public sealed class {{name}}
 {
     {{~for table in tables ~}}
     public {{table.full_name}} {{table.name}} {get; }
     {{~end~}}
 
-    public {{name}}(System.Func<string, JsonElement> loader)
+    public {{name}}(System.Func<string, ByteBuf> loader)
     {
         var tables = new System.Collections.Generic.Dictionary<string, object>();
         {{~for table in tables ~}}
-        {{table.name}} = new {{table.full_name}}(loader(""{{table.json_output_data_file}}"")); 
+        {{table.name}} = new {{table.full_name}}(loader(""{{table.output_data_file}}"")); 
         tables.Add(""{{table.full_name}}"", {{table.name}});
         {{~end~}}
 

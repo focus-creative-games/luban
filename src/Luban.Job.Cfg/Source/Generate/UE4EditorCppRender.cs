@@ -6,22 +6,11 @@ using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.Generate
 {
-    class UE4EditorCppRender
+    class UE4EditorCppRender : CodeRenderBase
     {
-        public string RenderAny(object o)
-        {
-            switch (o)
-            {
-                case DefEnum e: return Render(e);
-                case DefBean b: return Render(b);
-                //case CTable r: return Render(r);
-                default: throw new Exception($"unknown render type:{o}");
-            }
-        }
-
         [ThreadStatic]
         private static Template t_enumRender;
-        public string Render(DefEnum e)
+        public override string Render(DefEnum e)
         {
             var template = t_enumRender ??= Template.Parse(@"
 #pragma once
@@ -53,7 +42,7 @@ namespace editor
 
         [ThreadStatic]
         private static Template t_beanRender;
-        public string Render(DefBean b)
+        public override string Render(DefBean b)
         {
             var template = t_beanRender ??= Template.Parse(@"
 #pragma once
@@ -228,6 +217,21 @@ bool {{type.ue_fname}}FromString(const FString& s, {{type.ue_fname}}& value)
             });
 
             return result;
+        }
+
+        public override string Render(DefConst c)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Render(DefTable c)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string RenderService(string name, string module, List<DefTable> tables)
+        {
+            throw new NotImplementedException();
         }
     }
 }

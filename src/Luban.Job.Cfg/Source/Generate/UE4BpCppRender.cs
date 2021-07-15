@@ -2,25 +2,15 @@ using Luban.Job.Cfg.Defs;
 using Luban.Job.Common.Defs;
 using Scriban;
 using System;
+using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.Generate
 {
-    class UE4BpCppRender
+    class UE4BpCppRender : CodeRenderBase
     {
-        public string RenderAny(object o)
-        {
-            switch (o)
-            {
-                case DefEnum e: return Render(e);
-                case DefBean b: return Render(b);
-                //case CTable r: return Render(r);
-                default: throw new Exception($"unknown render type:{o}");
-            }
-        }
-
         [ThreadStatic]
         private static Template t_enumRender;
-        public string Render(DefEnum e)
+        public override string Render(DefEnum e)
         {
             // ue 不允许 UEnum 为这
             // ue 强制枚举underling type 为 uint8, 意味着不能超过255
@@ -53,7 +43,7 @@ enum class {{ue_bp_full_name}} : uint8
 
         [ThreadStatic]
         private static Template t_beanRender;
-        public string Render(DefBean b)
+        public override string Render(DefBean b)
         {
             var template = t_beanRender ??= Template.Parse(@"
 #pragma once
@@ -86,6 +76,19 @@ public:
             return result;
         }
 
+        public override string Render(DefConst c)
+        {
+            throw new NotImplementedException();
+        }
 
+        public override string Render(DefTable c)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string RenderService(string name, string module, List<DefTable> tables)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

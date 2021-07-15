@@ -159,23 +159,23 @@ namespace Luban.Job.Proto
                             var fileContent = new List<string>();
                             if (args.UsePuertsByteBuf)
                             {
-                                fileContent.Add(TypescriptBrightTypeTemplates.PuertsByteBufImports);
+                                fileContent.Add(TypescriptStringTemplate.PuertsByteBufImports);
                             }
                             else
                             {
-                                fileContent.Add(string.Format(TypescriptBrightTypeTemplates.BrightByteBufImportsFormat, brightRequirePath));
+                                fileContent.Add(string.Format(TypescriptStringTemplate.BrightByteBufImportsFormat, brightRequirePath));
                             }
                             if (args.EmbedBrightTypes)
                             {
-                                fileContent.Add(TypescriptBrightTypeTemplates.VectorTypesByteBuf);
-                                fileContent.Add(TypescriptBrightTypeTemplates.SerializeTypes);
-                                fileContent.Add(TypescriptBrightTypeTemplates.ProtoTypes);
+                                fileContent.Add(TypescriptStringTemplate.VectorTypesByteBuf);
+                                fileContent.Add(TypescriptStringTemplate.SerializeTypes);
+                                fileContent.Add(TypescriptStringTemplate.ProtoTypes);
                             }
                             else
                             {
-                                fileContent.Add(string.Format(TypescriptBrightTypeTemplates.SerializeImportsFormat, brightRequirePath));
-                                fileContent.Add(string.Format(TypescriptBrightTypeTemplates.ProtocolImportsFormat, brightRequirePath));
-                                fileContent.Add(string.Format(TypescriptBrightTypeTemplates.VectorImportsFormat, brightRequirePath));
+                                fileContent.Add(string.Format(TypescriptStringTemplate.SerializeImportsFormat, brightRequirePath));
+                                fileContent.Add(string.Format(TypescriptStringTemplate.ProtocolImportsFormat, brightRequirePath));
+                                fileContent.Add(string.Format(TypescriptStringTemplate.VectorImportsFormat, brightRequirePath));
                             }
 
                             fileContent.Add(@$"export namespace {ass.TopModule} {{");

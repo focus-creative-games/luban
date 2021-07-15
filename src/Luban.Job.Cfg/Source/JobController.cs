@@ -72,14 +72,25 @@ namespace Luban.Job.Cfg
             public string BranchInputDataDir { get; set; }
         }
 
-        private ICodeRender CreateCodeRender(string genType)
+        private ICfgCodeRender CreateCodeRender(string genType)
         {
             switch (genType)
             {
-                case "code_cs_bin": return new CsBinCodeRender();
-                case "code_cs_json": return new CsJsonCodeRender();
-                case "code_java_bin": return new JavaBinCodeRender();
-                case "code_cpp_bin": return new CppBinCodeRender();
+                case "code_cs_bin": return new CsCodeBinRender();
+                case "code_cs_json": return new CsCodeJsonRender();
+                case "code_java_bin": return new JavaCodeBinRender();
+                case "code_go_bin": return new GoCodeBinRender();
+                case "code_go_json": return new GoCodeJsonRender();
+                case "code_cpp_bin": return new CppCodeBinRender();
+                case "code_lua_bin": return new LuaCodeBinRender();
+                case "code_lua_lua": return new LuaCodeLuaRender();
+                case "code_python27_json": return new Python27CodeJsonRender();
+                case "code_python3_json": return new Python3CodeJsonRender();
+                case "code_typescript_bin": return new TypescriptCodeBinRender();
+                case "code_typescript_json": return new TypescriptCodeJsonRender();
+                case "code_cpp_ue_editor": return new UE4EditorCppRender();
+                case "code_cpp_ue_bp": return new UE4BpCppRender();
+                case "code_cs_unity_editor": return new EditorCsRender();
                 default: throw new ArgumentException($"not support gen type:{genType}");
             }
         }
@@ -91,13 +102,37 @@ namespace Luban.Job.Cfg
                 case "code_cs_bin":
                 case "code_cs_json": return ELanguage.CS;
                 case "code_java_bin": return ELanguage.JAVA;
+                case "code_go_bin":
+                case "code_go_json": return ELanguage.GO;
                 case "code_cpp_bin": return ELanguage.CPP;
-                case "code_go_bin": return ELanguage.GO;
-                case "code_lua_bin": return ELanguage.LUA;
+                case "code_lua_bin":
+                case "code_lua_lua": return ELanguage.LUA;
+                case "code_python27_json":
+                case "code_python3_json": return ELanguage.PYTHON;
+                case "code_typescript_bin":
+                case "code_typescript_json": return ELanguage.TYPESCRIPT;
+                case "code_cpp_ue_editor":
+                case "code_cpp_ue_bp": return ELanguage.CPP;
+                case "code_cs_unity_editor": return ELanguage.CS;
                 default: throw new ArgumentException($"not support output data type:{genType}");
             }
         }
 
+        private string GetOutputFileSuffix(string genType)
+        {
+            switch (genType)
+            {
+                case "data_bin": return "bin";
+                case "data_json": return "json";
+                case "data_lua": return "lua";
+                default: throw new Exception($"not support output data type:{genType}");
+            }
+        }
+
+        private string GetOutputFileName(string genType, string fileName)
+        {
+            return $"{(genType.EndsWith("lua") ? fileName.Replace('.', '_') : fileName)}.{GetOutputFileSuffix(genType)}";
+        }
 
         private static bool TryParseArg(List<string> args, out GenArgs options, out string errMsg)
         {
@@ -172,6 +207,27 @@ namespace Luban.Job.Cfg
 
                 return true;
             }
+        }
+
+
+        class GenContext
+        {
+            public GenArgs GenArgs { get; init; }
+            public DefAssembly Assembly { get; init; }
+            public string GenType { get; set; }
+            public ICfgCodeRender Render { get; set; }
+            public ELanguage Lan { get; set; }
+
+            public string TopModule => Assembly.TopModule;
+            public Service TargetService => Assembly.CfgTargetService;
+
+
+            public List<DefTypeBase> ExportTypes { get; init; }
+            public List<DefTable> ExportTables { get; init; }
+            public ConcurrentBag<FileInfo> GenCodeFilesInOutputCodeDir { get; init; }
+            public ConcurrentBag<FileInfo> GenDataFilesInOutputDataDir { get; init; }
+            public ConcurrentBag<FileInfo> GenScatteredFiles { get; init; }
+            public List<Task> Tasks { get; init; }
         }
 
         public async Task GenAsync(RemoteAgent agent, GenJob rpc)
@@ -255,568 +311,84 @@ namespace Luban.Job.Cfg
 
                 foreach (var genType in genTypes)
                 {
+                    var ctx = new GenContext()
+                    {
+                        GenType = genType,
+                        Assembly = ass,
+                        GenArgs = args,
+                        ExportTypes = exportTypes,
+                        ExportTables = exportTables,
+                        GenCodeFilesInOutputCodeDir = genCodeFilesInOutputCodeDir,
+                        GenDataFilesInOutputDataDir = genDataFilesInOutputDataDir,
+                        GenScatteredFiles = genScatteredFiles,
+                        Tasks = tasks,
+                    };
                     switch (genType)
                     {
                         case "code_cs_bin":
                         case "code_cs_json":
                         case "code_java_bin":
-                        {
-                            ICodeRender render = CreateCodeRender(genType);
-                            ELanguage lan = GetLanguage(genType);
-
-                            foreach (var c in exportTypes)
-                            {
-                                tasks.Add(Task.Run(() =>
-                                {
-                                    var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderAny(c), lan);
-                                    var file = RenderFileUtil.GetDefTypePath(c.FullName, lan);
-                                    var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                    genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
-                                }));
-                            }
-
-                            tasks.Add(Task.Run(() =>
-                            {
-                                var module = ass.TopModule;
-                                var name = targetService.Manager;
-                                var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderService(name, module, exportTables), lan);
-                                var file = RenderFileUtil.GetDefTypePath(name, lan);
-                                var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
-                            }));
-
-                            break;
-                        }
-                        case "code_lua_bin":
-                        {
-                            tasks.Add(Task.Run(() =>
-                            {
-                                var render = new LuaRender();
-                                var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderAll(ass.Types.Values.ToList()), ELanguage.LUA);
-                                var file = "Types.lua";
-                                var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
-                            }));
-                            break;
-                        }
                         case "code_go_bin":
                         case "code_go_json":
                         {
-                            GoCodeRenderBase render = genType == "code_go_bin" ? new GoBinCodeRender() : new GoJsonCodeRender();
-                            foreach (var c in exportTypes)
-                            {
-                                tasks.Add(Task.Run(() =>
-                                {
-                                    var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderAny(c), ELanguage.GO);
-                                    var file = RenderFileUtil.GetDefTypePath(c.FullName, ELanguage.GO);
-                                    var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                    genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
-                                }));
-                            }
-
-                            tasks.Add(Task.Run(() =>
-                            {
-                                var module = ass.TopModule;
-                                var name = targetService.Manager;
-                                var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderService(name, module, exportTables), ELanguage.GO);
-                                var file = RenderFileUtil.GetDefTypePath(name, ELanguage.GO);
-                                var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
-                            }));
+                            GenerateCodeScatter(ctx);
+                            break;
+                        }
+                        case "code_lua_bin":
+                        case "code_lua_lua":
+                        {
+                            GenLuaCode(ctx);
+                            break;
+                        }
+                        case "code_typescript_bin":
+                        case "code_typescript_json":
+                        {
+                            GenTypescriptCode(ctx);
+                            break;
+                        }
+                        case "code_python27_json":
+                        {
+                            GenPythonCodes(ctx);
                             break;
                         }
                         case "code_cpp_bin":
                         {
-                            var render = new CppBinCodeRender();
-
-
-                            // 将所有 头文件定义 生成到一个文件
-                            // 按照 const,enum,bean,table, service 的顺序生成
-
-                            tasks.Add(Task.Run(() =>
-                            {
-                                var headerFileContent = new List<string>
-                                {
-                                    @$"
-#pragma once
-#include <functional>
-
-#include ""bright/serialization/ByteBuf.h""
-#include ""bright/CfgBean.hpp""
-
-using ByteBuf = bright::serialization::ByteBuf;
-
-namespace {ass.TopModule}
-{{
-
-"
-                                };
-
-                                foreach (var type in exportTypes)
-                                {
-                                    if (type is DefEnum e)
-                                    {
-                                        headerFileContent.Add(render.Render(e));
-                                    }
-                                }
-
-                                foreach (var type in exportTypes)
-                                {
-                                    if (type is DefConst c)
-                                    {
-                                        headerFileContent.Add(render.Render(c));
-                                    }
-                                }
-
-                                foreach (var type in exportTypes)
-                                {
-                                    if (type is DefBean e)
-                                    {
-                                        headerFileContent.Add(render.RenderForwardDefine(e));
-                                    }
-                                }
-
-                                foreach (var type in exportTypes)
-                                {
-                                    if (type is DefBean e)
-                                    {
-                                        headerFileContent.Add(render.Render(e));
-                                    }
-                                }
-
-                                foreach (var type in exportTables)
-                                {
-                                    headerFileContent.Add(render.Render(type));
-                                }
-
-                                headerFileContent.Add(render.RenderService("Tables", ass.TopModule, exportTables));
-
-                                headerFileContent.Add("}"); // end of topmodule
-
-                                var content = FileHeaderUtil.ConcatAutoGenerationHeader(string.Join('\n', headerFileContent), ELanguage.CPP);
-                                var file = "gen_types.h";
-                                var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
-                            }));
-
-                            var beanTypes = exportTypes.Where(c => c is DefBean).ToList();
-
-                            int TYPE_PER_STUB_FILE = 100;
-
-                            for (int i = 0, n = (beanTypes.Count + TYPE_PER_STUB_FILE - 1) / TYPE_PER_STUB_FILE; i < n; i++)
-                            {
-                                int index = i;
-                                tasks.Add(Task.Run(() =>
-                                {
-                                    int startIndex = index * TYPE_PER_STUB_FILE;
-                                    var content = FileHeaderUtil.ConcatAutoGenerationHeader(
-                                        render.RenderStub(ass.TopModule, beanTypes.GetRange(startIndex, Math.Min(TYPE_PER_STUB_FILE, beanTypes.Count - startIndex))),
-                                        ELanguage.CPP);
-                                    var file = $"gen_stub_{index}.cpp";
-                                    var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                    genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
-                                }));
-                            }
+                            GenCppCode(ctx);
                             break;
                         }
-
-                        case "code_typescript_bin":
-                        case "code_typescript_json":
-                        {
-                            bool isGenBinary = genType.EndsWith("bin");
-                            CodeRenderBase render = isGenBinary ? new TypeScriptBinCodeRender() : new TypeScriptJsonCodeRender();
-                            var brightRequirePath = args.TypescriptBrightRequirePath;
-                            tasks.Add(Task.Run(() =>
-                            {
-                                var fileContent = new List<string>();
-                                if (isGenBinary)
-                                {
-                                    if (args.UsePuertsByteBuf)
-                                    {
-                                        fileContent.Add(TypescriptBrightTypeTemplates.PuertsByteBufImports);
-                                    }
-                                    else
-                                    {
-                                        fileContent.Add(string.Format(TypescriptBrightTypeTemplates.BrightByteBufImportsFormat, brightRequirePath));
-                                    }
-                                }
-
-                                if (args.EmbedBrightTypes)
-                                {
-                                    fileContent.Add(isGenBinary ? TypescriptBrightTypeTemplates.VectorTypesByteBuf : TypescriptBrightTypeTemplates.VectorTypesJson);
-                                    if (isGenBinary)
-                                    {
-                                        fileContent.Add(TypescriptBrightTypeTemplates.SerializeTypes);
-                                    }
-                                }
-                                else
-                                {
-                                    if (isGenBinary)
-                                    {
-                                        fileContent.Add(string.Format(TypescriptBrightTypeTemplates.SerializeImportsFormat, brightRequirePath));
-                                    }
-                                    fileContent.Add(string.Format(TypescriptBrightTypeTemplates.VectorImportsFormat, brightRequirePath));
-                                }
-
-                                fileContent.Add(@$"export namespace {ass.TopModule} {{");
-
-                                foreach (var type in exportTypes)
-                                {
-                                    fileContent.Add(render.RenderAny(type));
-                                }
-
-                                fileContent.Add(render.RenderService("Tables", ass.TopModule, exportTables));
-
-                                fileContent.Add("}"); // end of topmodule
-
-                                var content = FileHeaderUtil.ConcatAutoGenerationHeader(string.Join('\n', fileContent), ELanguage.TYPESCRIPT);
-                                var file = "Types.ts";
-                                var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
-                            }));
-                            break;
-                        }
-
-                        //case "code_typescript_bin":
-                        //{
-                        //    var render = new TypeScriptBinCodeRender();
-                        //    var brightRequirePath = args.TypescriptBrightRequirePath;
-                        //    tasks.Add(Task.Run(() =>
-                        //    {
-                        //        var fileContent = new List<string>();
-                        //        if (args.UsePuertsByteBuf)
-                        //        {
-                        //            fileContent.Add(TypescriptBrightTypeTemplates.PuertsByteBufImports);
-                        //        }
-                        //        else
-                        //        {
-                        //            fileContent.Add(string.Format(TypescriptBrightTypeTemplates.BrightByteBufImportsFormat, brightRequirePath));
-                        //        }
-                        //        if (args.EmbedBrightTypes)
-                        //        {
-                        //            fileContent.Add(TypescriptBrightTypeTemplates.VectorTypes);
-                        //            fileContent.Add(TypescriptBrightTypeTemplates.SerializeTypes);
-                        //        }
-                        //        else
-                        //        {
-                        //            fileContent.Add(string.Format(TypescriptBrightTypeTemplates.SerializeImportsFormat, brightRequirePath));
-                        //            fileContent.Add(string.Format(TypescriptBrightTypeTemplates.VectorImportsFormat, brightRequirePath));
-                        //        }
-
-                        //        fileContent.Add(@$"export namespace {ass.TopModule} {{");
-
-                        //        foreach (var type in exportTypes)
-                        //        {
-                        //            fileContent.Add(render.RenderAny(type));
-                        //        }
-
-                        //        fileContent.Add(render.RenderService("Tables", ass.TopModule, exportTables));
-
-                        //        fileContent.Add("}"); // end of topmodule
-
-                        //        var content = FileHeaderUtil.ConcatAutoGenerationHeader(string.Join('\n', fileContent), ELanguage.TYPESCRIPT);
-                        //        var file = "Types.ts";
-                        //        var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                        //        genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
-                        //    }));
-                        //    break;
-                        //}
-
-                        case "code_python27_json":
-                        {
-                            var render = new Python27JsonCodeRender();
-
-                            tasks.Add(Task.Run(() =>
-                            {
-                                var fileContent = new List<string>
-                                {
-                                    PYTHON_VECTOR_DEFINES
-                                };
-
-                                foreach (var type in exportTypes)
-                                {
-                                    if (type is DefEnum e)
-                                    {
-                                        fileContent.Add(render.Render(e));
-                                    }
-                                }
-
-                                foreach (var type in exportTypes)
-                                {
-                                    if (type is DefConst c)
-                                    {
-                                        fileContent.Add(render.Render(c));
-                                    }
-                                }
-
-                                foreach (var type in exportTypes)
-                                {
-                                    if (type is DefBean e)
-                                    {
-                                        fileContent.Add(render.Render(e));
-                                    }
-                                }
-
-                                foreach (var type in exportTables)
-                                {
-                                    fileContent.Add(render.Render(type));
-                                }
-
-                                fileContent.Add(render.RenderService("Tables", ass.TopModule, exportTables));
-
-                                var content = FileHeaderUtil.ConcatAutoGenerationHeader(string.Join('\n', fileContent), ELanguage.PYTHON);
-                                var file = "Types.py";
-                                var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
-
-
-                                {
-                                    var moduleInitContent = "";
-                                    var initFile = "__init__.py";
-
-                                    var initMd5 = CacheFileUtil.GenMd5AndAddCache(initFile, moduleInitContent);
-                                    genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = initFile, MD5 = initMd5 });
-                                }
-                            }));
-                            break;
-                        }
-
-                        case "code_python3_json":
-                        {
-                            var render = new Python3JsonCodeRender();
-
-                            tasks.Add(Task.Run(() =>
-                            {
-                                var fileContent = new List<string>
-                                {
-                                    @"
-from enum import Enum
-import abc
-",
-                                    PYTHON_VECTOR_DEFINES,
-                                };
-
-                                foreach (var type in exportTypes)
-                                {
-                                    if (type is DefEnum e)
-                                    {
-                                        fileContent.Add(render.Render(e));
-                                    }
-                                }
-
-                                foreach (var type in exportTypes)
-                                {
-                                    if (type is DefConst c)
-                                    {
-                                        fileContent.Add(render.Render(c));
-                                    }
-                                }
-
-                                foreach (var type in exportTypes)
-                                {
-                                    if (type is DefBean e)
-                                    {
-                                        fileContent.Add(render.Render(e));
-                                    }
-                                }
-
-                                foreach (var type in exportTables)
-                                {
-                                    fileContent.Add(render.Render(type));
-                                }
-
-                                fileContent.Add(render.RenderService("Tables", ass.TopModule, exportTables));
-
-                                var content = FileHeaderUtil.ConcatAutoGenerationHeader(string.Join('\n', fileContent), ELanguage.PYTHON);
-                                var file = "Types.py";
-                                var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
-                            }));
-                            break;
-                        }
-
                         case "code_cpp_ue_editor":
                         {
-                            var render = new UE4EditorCppRender();
-
-                            var renderTypes = ass.Types.Values.Where(c => c is DefEnum || c is DefBean).ToList();
-
-                            foreach (var c in renderTypes)
-                            {
-                                tasks.Add(Task.Run(() =>
-                                {
-                                    var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderAny(c), ELanguage.CPP);
-                                    var file = "editor_" + RenderFileUtil.GetUeCppDefTypeHeaderFilePath(c.FullName);
-                                    var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                    genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
-                                }));
-                            }
-
-                            int TYPE_PER_STUB_FILE = 200;
-
-                            for (int i = 0, n = (renderTypes.Count + TYPE_PER_STUB_FILE - 1) / TYPE_PER_STUB_FILE; i < n; i++)
-                            {
-                                int index = i;
-                                tasks.Add(Task.Run(() =>
-                                {
-                                    int startIndex = index * TYPE_PER_STUB_FILE;
-                                    var content = FileHeaderUtil.ConcatAutoGenerationHeader(
-                                        render.RenderStub(renderTypes.GetRange(startIndex, Math.Min(TYPE_PER_STUB_FILE, renderTypes.Count - startIndex))),
-                                        ELanguage.CPP);
-                                    var file = $"stub_{index}.cpp";
-                                    var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                    genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
-                                }));
-                            }
+                            GenCppUeEditor(ctx);
                             break;
                         }
                         case "code_cs_unity_editor":
                         {
-                            var render = new EditorCsRender();
-                            foreach (var c in ass.Types.Values)
-                            {
-                                tasks.Add(Task.Run(() =>
-                                {
-                                    var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderAny(c), ELanguage.CS);
-                                    var file = RenderFileUtil.GetDefTypePath(c.FullName, ELanguage.CS);
-                                    var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                    genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
-                                }));
-                            }
+                            GenCsUnityEditor(ctx);
                             break;
                         }
                         case "code_cpp_ue_bp":
                         {
-                            var render = new UE4BpCppRender();
-                            foreach (var c in exportTypes)
-                            {
-                                if (!(c is DefEnum || c is DefBean))
-                                {
-                                    continue;
-                                }
-
-                                tasks.Add(Task.Run(() =>
-                                {
-                                    var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderAny(c), ELanguage.CPP);
-                                    var file = "bp_" + RenderFileUtil.GetUeCppDefTypeHeaderFilePath(c.FullName);
-                                    var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                    genCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
-                                }));
-                            }
+                            GenCppUeBp(ctx);
                             break;
                         }
                         case "data_bin":
                         case "data_json":
+                        case "data_lua":
                         {
                             await CheckLoadCfgDataAsync();
-                            foreach (var c in exportTables)
-                            {
-                                tasks.Add(Task.Run(() =>
-                                {
-                                    var content = DataExporterUtil.ToOutputData(c, ass.GetTableExportDataList(c), genType);
-                                    var file = genType.EndsWith("json") ? c.JsonOutputDataFile : c.OutputDataFile;
-                                    var md5 = FileUtil.CalcMD5(content);
-                                    CacheManager.Ins.AddCache(file, md5, content);
-                                    genDataFilesInOutputDataDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
-                                }));
-                            }
+                            GenDataScatter(ctx);
                             break;
                         }
                         case "data_json_monolithic":
                         {
                             await CheckLoadCfgDataAsync();
-                            List<Task<byte[]>> allJsonTask = new List<Task<byte[]>>();
-                            foreach (var c in exportTables)
-                            {
-                                allJsonTask.Add(Task.Run(() =>
-                                {
-                                    return DataExporterUtil.ToOutputData(c, ass.GetTableExportDataList(c), "data_json");
-                                }));
-                            }
-                            await Task.WhenAll(allJsonTask);
-
-                            int estimatedCapacity = allJsonTask.Sum(t => t.Result.Length + 100);
-                            var sb = new MemoryStream(estimatedCapacity);
-                            sb.Write(System.Text.Encoding.UTF8.GetBytes("{\n"));
-                            for (int i = 0; i < exportTables.Count; i++)
-                            {
-                                if (i != 0)
-                                {
-                                    sb.Write(System.Text.Encoding.UTF8.GetBytes((",\n")));
-                                }
-                                sb.Write(System.Text.Encoding.UTF8.GetBytes("\"" + exportTables[i].Name + "\":"));
-                                sb.Write(allJsonTask[i].Result);
-                            }
-                            sb.Write(System.Text.Encoding.UTF8.GetBytes("\n}"));
-
-                            var content = sb.ToArray();
-                            s_logger.Debug("estimated size:{0} actual size:{1}", estimatedCapacity, content.Length);
-                            var md5 = FileUtil.CalcMD5(content);
-                            var outputFile = args.OutputDataJsonMonolithicFile;
-                            CacheManager.Ins.AddCache(outputFile, md5, content);
-                            genScatteredFiles.Add(new FileInfo() { FilePath = outputFile, MD5 = md5 });
-                            break;
-                        }
-                        case "data_lua":
-                        {
-                            await CheckLoadCfgDataAsync();
-
-                            tasks.Add(Task.Run(() =>
-                            {
-                                var render = new LuaRender();
-                                var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderDefines(ass.Types.Values.ToList()), ELanguage.LUA);
-                                var file = "Types.lua";
-                                var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                genDataFilesInOutputDataDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
-
-                            }));
-
-                            foreach (var c in exportTables)
-                            {
-                                tasks.Add(Task.Run(() =>
-                                {
-                                    var content = DataExporterUtil.ToOutputData(c, ass.GetTableExportDataList(c), genType);
-                                    var file = $"{c.Name}.lua";
-                                    var md5 = FileUtil.CalcMD5(content);
-                                    CacheManager.Ins.AddCache(file, md5, content);
-                                    genDataFilesInOutputDataDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
-                                }));
-                            }
+                            tasks.Add(GenJsonDataMonolithic(ctx));
                             break;
                         }
                         case "data_resources":
                         {
                             await CheckLoadCfgDataAsync();
-                            var genDataTasks = new List<Task<List<ResourceInfo>>>();
-                            foreach (var c in exportTables)
-                            {
-                                genDataTasks.Add(Task.Run(() =>
-                                {
-                                    return DataExporterUtil.ExportResourceList(ass.GetTableExportDataList(c));
-                                }));
-                            }
-
-                            tasks.Add(Task.Run(async () =>
-                            {
-                                var ress = new HashSet<(string, string)>(10000);
-                                var resourceLines = new List<string>(10000);
-                                foreach (var task in genDataTasks)
-                                {
-                                    foreach (var ri in await task)
-                                    {
-                                        if (ress.Add((ri.Resource, ri.Tag)))
-                                        {
-                                            resourceLines.Add($"{ri.Resource},{ri.Tag}");
-                                        }
-                                    }
-                                }
-                                var file = args.OutputDataResourceListFile;
-                                var contents = System.Text.Encoding.UTF8.GetBytes(string.Join("\n", resourceLines));
-                                var md5 = FileUtil.CalcMD5(contents);
-                                CacheManager.Ins.AddCache(file, md5, contents);
-
-                                genScatteredFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
-                            }));
+                            GenResourceList(ctx);
                             break;
                         }
 
@@ -862,58 +434,390 @@ import abc
             agent.Session.ReplyRpc<GenJob, GenJobArg, GenJobRes>(rpc, res);
         }
 
-        private const string PYTHON_VECTOR_DEFINES = @"
-class Vector2:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-    def __str__(self):
-        return '{%g,%g}' % (self.x, self.y)
+        private void GenerateCodeScatter(GenContext ctx)
+        {
+            string genType = ctx.GenType;
+            ctx.Render = CreateCodeRender(genType);
+            ctx.Lan = GetLanguage(genType);
+            foreach (var c in ctx.ExportTypes)
+            {
+                ctx.Tasks.Add(Task.Run(() =>
+                {
+                    var content = FileHeaderUtil.ConcatAutoGenerationHeader(ctx.Render.RenderAny(c), ctx.Lan);
+                    var file = RenderFileUtil.GetDefTypePath(c.FullName, ctx.Lan);
+                    var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
+                    ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                }));
+            }
 
-    @staticmethod
-    def fromJson(_json_):
-        x = _json_['x']
-        y = _json_['y']
-        if (x == None or y == None):
-            raise Exception()
-        return Vector2(x, y)
+            ctx.Tasks.Add(Task.Run(() =>
+            {
+                var module = ctx.TopModule;
+                var name = ctx.TargetService.Manager;
+                var content = FileHeaderUtil.ConcatAutoGenerationHeader(ctx.Render.RenderService(name, module, ctx.ExportTables), ctx.Lan);
+                var file = RenderFileUtil.GetDefTypePath(name, ctx.Lan);
+                var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
+                ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+            }));
+        }
+
+        private void GenerateCodeMonolithic(GenContext ctx, string outputFile, List<string> fileContent, Action<List<string>> preContent, Action<List<string>> postContent)
+        {
+            ctx.Tasks.Add(Task.Run(() =>
+            {
+                fileContent.Add(FileHeaderUtil.GetAutoGenerationHeader(ctx.Lan));
+
+                preContent?.Invoke(fileContent);
+
+                foreach (var type in ctx.ExportTypes)
+                {
+                    fileContent.Add(ctx.Render.RenderAny(type));
+                }
+
+                fileContent.Add(ctx.Render.RenderService("Tables", ctx.TopModule, ctx.ExportTables));
+                postContent?.Invoke(fileContent);
+
+                var file = outputFile;
+                var md5 = CacheFileUtil.GenMd5AndAddCache(file, string.Join('\n', fileContent));
+                ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+            }));
+        }
+
+        private void GenLuaCode(GenContext ctx)
+        {
+            string genType = ctx.GenType;
+            LuaCodeRenderBase render = CreateCodeRender(genType) as LuaCodeRenderBase;
+            var file = "Types.lua";
+            var content = render.RenderAll(ctx.ExportTypes);
+            var md5 = CacheFileUtil.GenMd5AndAddCache(file, string.Join('\n', content));
+            ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+        }
+
+        private void GenTypescriptCode(GenContext ctx)
+        {
+            string genType = ctx.GenType;
+            var args = ctx.GenArgs;
+            ctx.Render = CreateCodeRender(genType);
+            ctx.Lan = GetLanguage(genType);
+
+            var lines = new List<string>(10000);
+            Action<List<string>> preContent = (fileContent) =>
+            {
+                var brightRequirePath = args.TypescriptBrightRequirePath;
+                bool isGenBinary = genType.EndsWith("bin");
+                if (isGenBinary)
+                {
+                    if (args.UsePuertsByteBuf)
+                    {
+                        fileContent.Add(TypescriptStringTemplate.PuertsByteBufImports);
+                    }
+                    else
+                    {
+                        fileContent.Add(string.Format(TypescriptStringTemplate.BrightByteBufImportsFormat, brightRequirePath));
+                    }
+                }
+
+                if (args.EmbedBrightTypes)
+                {
+                    fileContent.Add(isGenBinary ? TypescriptStringTemplate.VectorTypesByteBuf : TypescriptStringTemplate.VectorTypesJson);
+                    if (isGenBinary)
+                    {
+                        fileContent.Add(TypescriptStringTemplate.SerializeTypes);
+                    }
+                }
+                else
+                {
+                    if (isGenBinary)
+                    {
+                        fileContent.Add(string.Format(TypescriptStringTemplate.SerializeImportsFormat, brightRequirePath));
+                    }
+                    fileContent.Add(string.Format(TypescriptStringTemplate.VectorImportsFormat, brightRequirePath));
+                }
+
+                fileContent.Add(@$"export namespace {ctx.TopModule} {{");
+            };
+
+            Action<List<string>> postContent = (fileContent) =>
+            {
+                fileContent.Add("}"); // end of topmodule
+            };
+
+            GenerateCodeMonolithic(ctx, "Types.ts", lines, preContent, postContent);
+        }
+
+        private void GenPythonCodes(GenContext ctx)
+        {
+            string genType = ctx.GenType;
+            ctx.Render = CreateCodeRender(genType);
+            ctx.Lan = GetLanguage(genType);
+
+            var isPython3 = genType.Contains("python3");
+
+            var lines = new List<string>(10000);
+            Action<List<string>> preContent = (fileContent) =>
+            {
+                if (isPython3)
+                {
+                    fileContent.Add(PythonStringTemplates.ImportTython3Enum);
+                }
+                fileContent.Add(PythonStringTemplates.PythonVectorTypes);
+            };
+
+            GenerateCodeMonolithic(ctx, "Types.py", lines, preContent, null);
 
 
-class Vector3:
-    def __init__(self, x, y, z):
-        self.x = x
-        self.y = y
-        self.z = z
-    def __str__(self):
-        return '{%f,%f,%f}' % (self.x, self.y, self.z)
-    @staticmethod
-    def fromJson(_json_):
-        x = _json_['x']
-        y = _json_['y']
-        z = _json_['z']
-        if (x == None or y == None or z == None):
-            raise Exception()
-        return Vector3(x, y, z)
+            ctx.Tasks.Add(Task.Run(() =>
+            {
+                var moduleInitContent = "";
+                var initFile = "__init__.py";
 
-class Vector4:
-    def __init__(self, x, y, z, w):
-        self.x = x
-        self.y = y
-        self.z = z
-        self.w = w
-    def __str__(self):
-        return '{%g,%g,%g,%g}' % (self.x, self.y, self.z, self.w)
-        
-    @staticmethod
-    def fromJson(_json_):
-        x = _json_['x']
-        y = _json_['y']
-        z = _json_['z']
-        w = _json_['w']
-        if (x == None or y == None or z == None or w == None):
-            raise Exception()
-        return Vector4(x, y, z, w)
+                var initMd5 = CacheFileUtil.GenMd5AndAddCache(initFile, moduleInitContent);
+                ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = initFile, MD5 = initMd5 });
+            }));
+        }
 
-";
+        private void GenCppCode(GenContext ctx)
+        {
+            var render = new CppCodeBinRender();
+            // 将所有 头文件定义 生成到一个文件
+            // 按照 const,enum,bean,table, service 的顺序生成
+
+            ctx.Tasks.Add(Task.Run(() =>
+            {
+                var headerFileContent = new List<string>
+                                {
+                                    @$"
+#pragma once
+#include <functional>
+
+#include ""bright/serialization/ByteBuf.h""
+#include ""bright/CfgBean.hpp""
+
+using ByteBuf = bright::serialization::ByteBuf;
+
+namespace {ctx.TopModule}
+{{
+
+"
+                                };
+
+                foreach (var type in ctx.ExportTypes)
+                {
+                    if (type is DefEnum e)
+                    {
+                        headerFileContent.Add(render.Render(e));
+                    }
+                }
+
+                foreach (var type in ctx.ExportTypes)
+                {
+                    if (type is DefConst c)
+                    {
+                        headerFileContent.Add(render.Render(c));
+                    }
+                }
+
+                foreach (var type in ctx.ExportTypes)
+                {
+                    if (type is DefBean e)
+                    {
+                        headerFileContent.Add(render.RenderForwardDefine(e));
+                    }
+                }
+
+                foreach (var type in ctx.ExportTypes)
+                {
+                    if (type is DefBean e)
+                    {
+                        headerFileContent.Add(render.Render(e));
+                    }
+                }
+
+                foreach (var type in ctx.ExportTables)
+                {
+                    headerFileContent.Add(render.Render(type));
+                }
+
+                headerFileContent.Add(render.RenderService("Tables", ctx.TopModule, ctx.ExportTables));
+
+                headerFileContent.Add("}"); // end of topmodule
+
+                var content = FileHeaderUtil.ConcatAutoGenerationHeader(string.Join('\n', headerFileContent), ELanguage.CPP);
+                var file = "gen_types.h";
+                var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
+                ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+            }));
+
+            var beanTypes = ctx.ExportTypes.Where(c => c is DefBean).ToList();
+
+            int TYPE_PER_STUB_FILE = 100;
+
+            for (int i = 0, n = (beanTypes.Count + TYPE_PER_STUB_FILE - 1) / TYPE_PER_STUB_FILE; i < n; i++)
+            {
+                int index = i;
+                ctx.Tasks.Add(Task.Run(() =>
+                {
+                    int startIndex = index * TYPE_PER_STUB_FILE;
+                    var content = FileHeaderUtil.ConcatAutoGenerationHeader(
+                        render.RenderStub(ctx.TopModule, beanTypes.GetRange(startIndex, Math.Min(TYPE_PER_STUB_FILE, beanTypes.Count - startIndex))),
+                        ELanguage.CPP);
+                    var file = $"gen_stub_{index}.cpp";
+                    var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
+                    ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                }));
+            }
+        }
+
+        private void GenCppUeEditor(GenContext ctx)
+        {
+            var render = new UE4EditorCppRender();
+
+            var renderTypes = ctx.Assembly.Types.Values.Where(c => c is DefEnum || c is DefBean).ToList();
+
+            foreach (var c in renderTypes)
+            {
+                ctx.Tasks.Add(Task.Run(() =>
+                {
+                    var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderAny(c), ELanguage.CPP);
+                    var file = "editor_" + RenderFileUtil.GetUeCppDefTypeHeaderFilePath(c.FullName);
+                    var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
+                    ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                }));
+            }
+
+            int TYPE_PER_STUB_FILE = 200;
+
+            for (int i = 0, n = (renderTypes.Count + TYPE_PER_STUB_FILE - 1) / TYPE_PER_STUB_FILE; i < n; i++)
+            {
+                int index = i;
+                ctx.Tasks.Add(Task.Run(() =>
+                {
+                    int startIndex = index * TYPE_PER_STUB_FILE;
+                    var content = FileHeaderUtil.ConcatAutoGenerationHeader(
+                        render.RenderStub(renderTypes.GetRange(startIndex, Math.Min(TYPE_PER_STUB_FILE, renderTypes.Count - startIndex))),
+                        ELanguage.CPP);
+                    var file = $"stub_{index}.cpp";
+                    var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
+                    ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                }));
+            }
+        }
+
+        private void GenCsUnityEditor(GenContext ctx)
+        {
+            var render = new EditorCsRender();
+            foreach (var c in ctx.Assembly.Types.Values)
+            {
+                ctx.Tasks.Add(Task.Run(() =>
+                {
+                    var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderAny(c), ELanguage.CS);
+                    var file = RenderFileUtil.GetDefTypePath(c.FullName, ELanguage.CS);
+                    var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
+                    ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                }));
+            }
+        }
+
+        private void GenCppUeBp(GenContext ctx)
+        {
+            var render = new UE4BpCppRender();
+            foreach (var c in ctx.ExportTypes)
+            {
+                if (!(c is DefEnum || c is DefBean))
+                {
+                    continue;
+                }
+
+                ctx.Tasks.Add(Task.Run(() =>
+                {
+                    var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderAny(c), ELanguage.CPP);
+                    var file = "bp_" + RenderFileUtil.GetUeCppDefTypeHeaderFilePath(c.FullName);
+                    var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
+                    ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                }));
+            }
+        }
+
+        private void GenDataScatter(GenContext ctx)
+        {
+            string genType = ctx.GenType;
+            foreach (var c in ctx.ExportTables)
+            {
+                ctx.Tasks.Add(Task.Run(() =>
+                {
+                    var content = DataExporterUtil.ToOutputData(c, ctx.Assembly.GetTableExportDataList(c), genType);
+                    var file = GetOutputFileName(genType, c.OutputDataFile);
+                    var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
+                    ctx.GenDataFilesInOutputDataDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                }));
+            }
+        }
+
+        private async Task GenJsonDataMonolithic(GenContext ctx)
+        {
+            var exportTables = ctx.ExportTables;
+            List<Task<byte[]>> allJsonTask = new List<Task<byte[]>>();
+            foreach (var c in exportTables)
+            {
+                allJsonTask.Add(Task.Run(() =>
+                {
+                    return DataExporterUtil.ToOutputData(c, ctx.Assembly.GetTableExportDataList(c), "data_json");
+                }));
+            }
+            await Task.WhenAll(allJsonTask);
+
+            int estimatedCapacity = allJsonTask.Sum(t => t.Result.Length + 100);
+            var sb = new MemoryStream(estimatedCapacity);
+            sb.Write(System.Text.Encoding.UTF8.GetBytes("{\n"));
+            for (int i = 0; i < exportTables.Count; i++)
+            {
+                if (i != 0)
+                {
+                    sb.Write(System.Text.Encoding.UTF8.GetBytes((",\n")));
+                }
+                sb.Write(System.Text.Encoding.UTF8.GetBytes("\"" + exportTables[i].Name + "\":"));
+                sb.Write(allJsonTask[i].Result);
+            }
+            sb.Write(System.Text.Encoding.UTF8.GetBytes("\n}"));
+
+            var content = sb.ToArray();
+            s_logger.Debug("estimated size:{0} actual size:{1}", estimatedCapacity, content.Length);
+            var outputFile = ctx.GenArgs.OutputDataJsonMonolithicFile;
+            var md5 = CacheFileUtil.GenMd5AndAddCache(outputFile, content);
+            ctx.GenScatteredFiles.Add(new FileInfo() { FilePath = outputFile, MD5 = md5 });
+        }
+
+        private void GenResourceList(GenContext ctx)
+        {
+            var genDataTasks = new List<Task<List<ResourceInfo>>>();
+            foreach (var c in ctx.ExportTables)
+            {
+                genDataTasks.Add(Task.Run(() =>
+                {
+                    return DataExporterUtil.ExportResourceList(ctx.Assembly.GetTableExportDataList(c));
+                }));
+            }
+
+            ctx.Tasks.Add(Task.Run(async () =>
+            {
+                var ress = new HashSet<(string, string)>(10000);
+                var resourceLines = new List<string>(10000);
+                foreach (var task in genDataTasks)
+                {
+                    foreach (var ri in await task)
+                    {
+                        if (ress.Add((ri.Resource, ri.Tag)))
+                        {
+                            resourceLines.Add($"{ri.Resource},{ri.Tag}");
+                        }
+                    }
+                }
+                var file = ctx.GenArgs.OutputDataResourceListFile;
+                var content = string.Join("\n", resourceLines);
+                var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
+
+                ctx.GenScatteredFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+            }));
+        }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Luban.Job.Common.Utils
 {
-    public static class TypescriptBrightTypeTemplates
+    public static class TypescriptStringTemplate
     {
         public const string PuertsByteBufImports = @"
 import {Bright} from 'csharp'

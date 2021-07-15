@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.Generate
 {
-    public abstract class CodeRenderBase : ICodeRender
+    public abstract class CodeRenderBase : ICfgCodeRender
     {
         public abstract string Render(DefConst c);
         public abstract string Render(DefEnum c);
@@ -13,7 +13,7 @@ namespace Luban.Job.Cfg.Generate
         public abstract string Render(DefTable c);
         public abstract string RenderService(string name, string module, List<DefTable> tables);
 
-        public string RenderAny(object o)
+        public string RenderAny(DefTypeBase o)
         {
             switch (o)
             {

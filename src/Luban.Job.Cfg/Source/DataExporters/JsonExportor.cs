@@ -1,10 +1,11 @@
 using Luban.Job.Cfg.Datas;
+using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Defs;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
 
-namespace Luban.Job.Cfg.DataVisitors
+namespace Luban.Job.Cfg.DataExporters
 {
     class JsonExportor : IDataActionVisitor<DefAssembly, Utf8JsonWriter>
     {

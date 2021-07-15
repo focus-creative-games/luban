@@ -6,53 +6,8 @@ using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.Generate
 {
-    class Python3JsonCodeRender : CodeRenderBase
+    class Python27CodeJsonRender : PythonCodeRenderBase
     {
-        [ThreadStatic]
-        private static Template t_tsConstRender;
-        public override string Render(DefConst c)
-        {
-            var ctx = new TemplateContext();
-            var env = new TTypeTemplateCommonExtends
-            {
-                ["x"] = c
-            };
-            ctx.PushGlobal(env);
-
-
-            var template = t_tsConstRender ??= Template.Parse(@"
-
-class {{x.py_full_name}}:
-    {{~ for item in x.items ~}}
-    {{item.name}} = {{py_const_value item.ctype item.value}}
-    {{~end~}}
-    {{~if (x.items == empty)~}}
-    pass
-    {{~end~}}
-
-");
-            var result = template.Render(ctx);
-
-            return result;
-        }
-
-        [ThreadStatic]
-        private static Template t_tsEnumRender;
-        public override string Render(DefEnum e)
-        {
-            var template = t_tsEnumRender ??= Template.Parse(@"
-class {{py_full_name}}(Enum):
-    {{~ for item in items ~}}
-    {{item.name}} = {{item.value}}
-    {{~end~}}
-    {{~if (items == empty)~}}
-    pass
-    {{~end~}}
-");
-            var result = template.Render(e);
-
-            return result;
-        }
 
         [ThreadStatic]
         private static Template t_beanRender;
@@ -68,7 +23,7 @@ class {{py_full_name}}(Enum):
     hierarchy_export_fields = x.hierarchy_export_fields
 }}
 
-class {{name}} {{if parent_def_type}}({{parent_def_type.py_full_name}}){{else if is_abstract_type}}(metaclass=abc.ABCMeta){{end}}:
+class {{name}} {{if parent_def_type}}({{parent_def_type.py_full_name}}){{end}}:
 {{~if x.is_abstract_type~}}
     _childrenTypes = None
 
@@ -94,10 +49,10 @@ class {{name}} {{if parent_def_type}}({{parent_def_type.py_full_name}}){{else if
         {{parent_def_type.py_full_name}}.__init__(self, _json_)
         {{~end~}}
         {{~ for field in export_fields ~}}
-            {{~if !field.ctype.is_nullable~}}
+        {{~if !field.ctype.is_nullable~}}
         if _json_['{{field.name}}'] == None: raise Exception()
-            {{~end~}}
-        {{py3_deserialize ('self.' + field.py_style_name) ('_json_[""' + field.name + '""]') field.ctype}}
+        {{~end~}}
+        {{py27_deserialize ('self.' + field.py_style_name) ('_json_[""' + field.name + '""]') field.ctype}}
         {{~end~}}
         {{~if export_fields.empty?}}
         pass
@@ -129,7 +84,7 @@ class {{name}}:
         self._dataList = []
         
         for _json2_ in _json_:
-            {{py3_deserialize '_v' '_json2_' value_type}}
+            {{py27_deserialize '_v' '_json2_' value_type}}
             self._dataList.append(_v)
             self._dataMap[_v.{{x.index_field.py_style_name}}] = _v
 
@@ -142,7 +97,7 @@ class {{name}}:
 
     def __init__(self, _json_):
         if (len(_json_) != 1): raise Exception('table mode=one, but size != 1')
-        {{py3_deserialize 'self._data' '_json_[0]' value_type}}
+        {{py27_deserialize 'self._data' '_json_[0]' value_type}}
 
     def getData(self) : return self._data
 
@@ -152,38 +107,6 @@ class {{name}}:
     {{~end~}}
 ");
             var result = template.RenderCode(p);
-
-            return result;
-        }
-
-        [ThreadStatic]
-        private static Template t_serviceRender;
-        public override string RenderService(string name, string module, List<DefTable> tables)
-        {
-            var template = t_serviceRender ??= Template.Parse(@"
-{{
-    name = x.name
-    namespace = x.namespace
-    tables = x.tables
-}}
-
-class {{name}}:
-    {{~ for table in tables ~}}
-    #def {{table.name}} : return self._{{table.name}}
-    {{~end~}}
-
-    def __init__(self, loader):
-        {{~for table in tables ~}}
-        self.{{table.name}} = {{table.py_full_name}}(loader('{{table.json_output_data_file}}')); 
-        {{~end~}}
-
-");
-            var result = template.RenderCode(new
-            {
-                Name = name,
-                Namespace = module,
-                Tables = tables,
-            });
 
             return result;
         }

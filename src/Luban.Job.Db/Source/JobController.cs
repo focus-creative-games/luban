@@ -135,11 +135,11 @@ namespace Luban.Job.Db
                         {
                             var fileContent = new List<string>();
 
-                            fileContent.Add(string.Format(TypescriptBrightTypeTemplates.BrightByteBufImportsFormat, brightRequirePath));
+                            fileContent.Add(string.Format(TypescriptStringTemplate.BrightByteBufImportsFormat, brightRequirePath));
 
-                            fileContent.Add(string.Format(TypescriptBrightTypeTemplates.SerializeImportsFormat, brightRequirePath));
-                            fileContent.Add(string.Format(TypescriptBrightTypeTemplates.ProtocolImportsFormat, brightRequirePath));
-                            fileContent.Add(string.Format(TypescriptBrightTypeTemplates.VectorImportsFormat, brightRequirePath));
+                            fileContent.Add(string.Format(TypescriptStringTemplate.SerializeImportsFormat, brightRequirePath));
+                            fileContent.Add(string.Format(TypescriptStringTemplate.ProtocolImportsFormat, brightRequirePath));
+                            fileContent.Add(string.Format(TypescriptStringTemplate.VectorImportsFormat, brightRequirePath));
                             fileContent.Add($"import {{FieldLogger, FieldLoggerGeneric1, FieldLoggerGeneric2}} from '{brightRequirePath}/transaction/FieldLogger'");
                             fileContent.Add($"import TxnBeanBase from '{brightRequirePath}/transaction/TxnBeanBase'");
                             fileContent.Add($"import {{TxnTable, TxnTableGeneric}} from '{brightRequirePath}/transaction/TxnTable'");

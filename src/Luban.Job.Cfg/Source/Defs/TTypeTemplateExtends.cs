@@ -80,12 +80,12 @@ namespace Luban.Job.Cfg.Defs
 
         public static string GoDeserializeType(TBean type, string bufName)
         {
-            return type.Bean.IsAbstractType ? $"NewChild{type.Bean.GoFullName}({bufName})" : $"New{ type.Bean.GoFullName} ({ bufName})";
+            return $"New{type.Bean.GoFullName}({bufName})";
         }
 
         public static string GoDeserializeField(TType type, string name, string bufName)
         {
-            return type.Apply(GoDeserializeVisitor.Ins, name, bufName);
+            return type.Apply(GoDeserializeBinVisitor.Ins, name, bufName);
         }
 
         public static string GoDeserializeJsonField(TType type, string name, string fieldName, string bufName)

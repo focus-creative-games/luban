@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.TypeVisitors
 {
-    class CollectGoImport : DecoratorActionVisitor<HashSet<string>>
+    class GoJsonImport : DecoratorActionVisitor<HashSet<string>>
     {
-        public static CollectGoImport Ins { get; } = new CollectGoImport();
+        public static GoJsonImport Ins { get; } = new();
 
         public override void DoAccept(TType type, HashSet<string> x)
         {

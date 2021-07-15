@@ -79,8 +79,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TBean type, string fieldName, string bufName)
         {
-            return $"{{ if {fieldName}, err = {(type.Bean.IsAbstractType ? $"NewChild{type.Bean.GoFullName}({bufName})" : $"New{ type.Bean.GoFullName} ({ bufName})")}; err != nil {{ return }} }}";
-            //return type.Bean.IsAbstractType ? $"NewChild{type.Bean.GoFullName}({bufName})" : $"New{ type.Bean.GoFullName} ({ bufName})";
+            return $"{{ if {fieldName}, err = {($"New{type.Bean.GoFullName}({bufName})")}; err != nil {{ return }} }}";
         }
 
 
@@ -92,7 +91,7 @@ namespace Luban.Job.Cfg.TypeVisitors
                 if _n_, err = {bufName}.ReadSize(); err != nil {{return}}
                 for i := 0 ; i < _n_ ; i++ {{
                     var _e_ {elementType.Apply(GoTypeNameVisitor.Ins)}
-                    {elementType.Apply(GoDeserializeVisitor.Ins, "_e_", bufName)}
+                    {elementType.Apply(GoDeserializeBinVisitor.Ins, "_e_", bufName)}
                     {fieldName} = append({fieldName}, _e_)
                 }}
             }}
@@ -122,9 +121,9 @@ namespace Luban.Job.Cfg.TypeVisitors
                 if _n_, err = {bufName}.ReadSize(); err != nil {{return}}
                 for i := 0 ; i < _n_ ; i++ {{
                     var _key_ {type.KeyType.Apply(GoTypeNameVisitor.Ins)}
-                    {type.KeyType.Apply(GoDeserializeVisitor.Ins, "_key_", bufName)}
+                    {type.KeyType.Apply(GoDeserializeBinVisitor.Ins, "_key_", bufName)}
                     var _value_ {type.ValueType.Apply(GoTypeNameVisitor.Ins)}
-                    {type.ValueType.Apply(GoDeserializeVisitor.Ins, "_value_", bufName)}
+                    {type.ValueType.Apply(GoDeserializeBinVisitor.Ins, "_value_", bufName)}
                     {fieldName}[_key_] = _value_
                 }}
                 }}";

@@ -7,18 +7,8 @@ using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.Generate
 {
-    class JavaBinCodeRender : CodeRenderBase
+    class JavaCodeBinRender : JavaCodeRenderBase
     {
-        public override string Render(DefConst c)
-        {
-            return RenderUtil.RenderJavaConstClass(c);
-        }
-
-        public override string Render(DefEnum c)
-        {
-            return RenderUtil.RenderJavaEnumClass(c);
-        }
-
         [ThreadStatic]
         private static Template t_beanRender;
 

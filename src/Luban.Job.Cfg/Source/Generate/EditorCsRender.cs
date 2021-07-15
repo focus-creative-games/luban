@@ -8,33 +8,21 @@ using System.Linq;
 
 namespace Luban.Job.Cfg.Generate
 {
-    class EditorCsRender
+    class EditorCsRender : CodeRenderBase
     {
-        public string RenderAny(object o)
-        {
-            switch (o)
-            {
-                case DefConst c: return Render(c);
-                case DefEnum e: return Render(e);
-                // case DefBean b: return Render(b); editor 不需要生成 table 的定义
-                // case CTable r: return Render(r);
-                default: throw new Exception($"unknown render type:{o}");
-            }
-        }
-
-        public string Render(DefConst c)
+        public override string Render(DefConst c)
         {
             return RenderUtil.RenderCsConstClass(c);
         }
 
-        public string Render(DefEnum e)
+        public override string Render(DefEnum e)
         {
             return RenderUtil.RenderCsEnumClass(e);
         }
 
         [ThreadStatic]
         private static Template t_beanRender;
-        public string Render(DefBean b)
+        public override string Render(DefBean b)
         {
             var template = t_beanRender ??= Template.Parse(@"
 using Bright.Serialization;
@@ -136,7 +124,7 @@ public {{cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{parent}} 
 
         [ThreadStatic]
         private static Template t_tableRender;
-        public string Render(DefTable p)
+        public override string Render(DefTable p)
         {
             var template = t_tableRender ??= Template.Parse(@"
 using Bright.Serialization;
@@ -211,7 +199,7 @@ public sealed class {{name}} : Bright.Net.Protocol
 
         [ThreadStatic]
         private static Template t_stubRender;
-        public string RenderStubs(string name, string module, List<CfgDefTypeBase> protos)
+        public override string RenderService(string name, string module, List<DefTable> tables)
         {
             var template = t_stubRender ??= Template.Parse(@"
 using Bright.Serialization;
@@ -236,7 +224,7 @@ public static class {{name}}
             {
                 Name = name,
                 Namespace = module,
-                Tables = protos.Where(p => p is DefTable).ToList(),
+                Tables = tables,
             });
 
             return result;
