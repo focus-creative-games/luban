@@ -20,23 +20,14 @@ namespace Luban.Job.Db
 {
     public class JobController : IJobController
     {
-        class GenArgs
+        class GenArgs : GenArgsBase
         {
-            [Option('d', "define_file", Required = true, HelpText = "define file")]
-            public string DefineFile { get; set; }
-
-            [Option('c', "output_code_dir", Required = true, HelpText = "output code directory")]
-            public string OutputCodeDir { get; set; }
-
-            [Option('g', "gen_type", Required = true, HelpText = "cs,typescript . current only support cs")]
+            [Option('g', "gen_type", Required = true, HelpText = "cs,typescript ")]
             public string GenType { get; set; }
-
-            [Option("typescript_bright_require_path", Required = true, HelpText = "bright require path in typescript")]
-            public string TypescriptBrightRequirePath { get; set; }
         }
 
 
-        private bool TryParseArg(List<string> args, out GenArgs result, out string errMsg)
+        private bool TryParseArg(List<string> args, out GenArgs options, out string errMsg)
         {
             var helpWriter = new StringWriter();
             var parser = new Parser(ps =>
@@ -47,12 +38,20 @@ namespace Luban.Job.Db
             if (parseResult.Tag == ParserResultType.NotParsed)
             {
                 errMsg = helpWriter.ToString();
-                result = null;
+                options = null;
                 return false;
             }
 
-            result = (parseResult as Parsed<GenArgs>).Value;
+            options = (parseResult as Parsed<GenArgs>).Value;
             errMsg = null;
+            if (!options.ValidateOutouptCodeDir(ref errMsg))
+            {
+                return false;
+            }
+            if (!options.ValidateTypescriptRequire(options.GenType, ref errMsg))
+            {
+                return false;
+            }
             return true;
         }
 
@@ -146,7 +145,7 @@ namespace Luban.Job.Db
                             fileContent.Add($"import {{TxnTable, TxnTableGeneric}} from '{brightRequirePath}/transaction/TxnTable'");
                             fileContent.Add($"import TransactionContext from '{brightRequirePath}/transaction/TransactionContext'");
                             fileContent.Add($"import {{FieldTag}} from '{brightRequirePath}/serialization/FieldTag'");
-                            fileContent.Add($"import {{TKey}} from '{brightRequirePath}/storage/TKey'");
+                            fileContent.Add($"import TKey from '{brightRequirePath}/storage/TKey'");
 
                             fileContent.Add(@$"export namespace {ass.TopModule} {{");
 

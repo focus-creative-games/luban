@@ -197,6 +197,8 @@ export {{x.ts_class_modifier}} class {{name}} extends {{if parent_def_type}} {{x
         super({{x.table_uid}}, ""{{x.full_name}}"")
     }
 
+    newValue(): {{db_ts_define_type value_ttype}} { return new {{db_ts_define_type value_ttype}}() }
+
     serializeKey(buf: ByteBuf, key: {{db_ts_define_type key_ttype}}) {
         throw new Error('Method not implemented.')
     }

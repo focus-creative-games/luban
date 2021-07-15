@@ -26,19 +26,14 @@ namespace Luban.Job.Cfg
     {
         private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
-        class GenArgs
+        class GenArgs : GenArgsBase
         {
-            [Option('d', "define_file", Required = true, HelpText = "define file")]
-            public string DefineFile { get; set; }
 
             [Option("input_data_dir", Required = true, HelpText = "input data dir")]
             public string InputDataDir { get; set; }
 
             [Option('v', "validate_root_dir", Required = false, HelpText = "validate root directory")]
             public string ValidateRootDir { get; set; }
-
-            [Option("output_code_dir", Required = false, HelpText = "output code directory")]
-            public string OutputCodeDir { get; set; }
 
             [Option("output_data_dir", Required = true, HelpText = "output data directory")]
             public string OutputDataDir { get; set; }
@@ -49,7 +44,7 @@ namespace Luban.Job.Cfg
             [Option("output_data_json_monolithic_file", Required = false, HelpText = "output monolithic json file")]
             public string OutputDataJsonMonolithicFile { get; set; }
 
-            [Option("gen_types", Required = true, HelpText = "code_cs_bin,code_cs_json,code_lua_bin,data_bin,data_lua,data_json,data_json_monolithic . can be multi")]
+            [Option("gen_types", Required = true, HelpText = "code_cs_bin,code_cs_json,code_lua_bin,code_java_bin,code_go_bin,code_go_json,code_cpp_bin,code_python27_json,code_python3_json,code_typescript_bin,code_typescript_json,data_bin,data_lua,data_json,data_json_monolithic . can be multi")]
             public string GenType { get; set; }
 
             [Option('s', "service", Required = true, HelpText = "service")]
@@ -75,15 +70,6 @@ namespace Luban.Job.Cfg
 
             [Option("branch_input_data_dir", Required = false, HelpText = "branch input data root dir")]
             public string BranchInputDataDir { get; set; }
-
-            [Option("typescript_bright_require_path", Required = false, HelpText = "bright require path in typescript")]
-            public string TypescriptBrightRequirePath { get; set; }
-
-            [Option("use_puerts_bytebuf", Required = false, HelpText = "use puerts bytebuf class. default is false")]
-            public bool UsePuertsByteBuf { get; set; }
-
-            [Option("embed_bright_types", Required = false, HelpText = "use puerts bytebuf class. default is false")]
-            public bool EmbedBrightTypes { get; set; }
         }
 
         private ICodeRender CreateCodeRender(string genType)
@@ -179,14 +165,8 @@ namespace Luban.Job.Cfg
                     return false;
                 }
 
-                if (!options.UsePuertsByteBuf && string.IsNullOrWhiteSpace(options.TypescriptBrightRequirePath))
+                if (!options.ValidateTypescriptRequire(options.GenType, ref errMsg))
                 {
-                    errMsg = $"while use_puerts_bytebuf is false, should provide option --typescript_bright_require_path";
-                    return false;
-                }
-                if (!options.EmbedBrightTypes && string.IsNullOrWhiteSpace(options.TypescriptBrightRequirePath))
-                {
-                    errMsg = $"while embed_bright_types is false, should provide option --typescript_bright_require_path";
                     return false;
                 }
 
