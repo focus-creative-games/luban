@@ -10,7 +10,12 @@ namespace Luban.Job.Db.TypeVisitors
 {
     class CompatibleSerializeNeedEmbedVisitor : AllFalseVisitor
     {
-        public static CompatibleSerializeNeedEmbedVisitor Ins { get; } = new CompatibleSerializeNeedEmbedVisitor();
+        public static CompatibleSerializeNeedEmbedVisitor Ins { get; } = new();
+
+        public override bool Accept(TBean type)
+        {
+            return true;
+        }
 
         public override bool Accept(TArray type)
         {

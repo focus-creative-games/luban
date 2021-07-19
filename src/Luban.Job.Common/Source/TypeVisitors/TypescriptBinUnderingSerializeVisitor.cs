@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Luban.Job.Common.TypeVisitors
 {
-    class TypescriptBinUnderingSerializeVisitor : ITypeFuncVisitor<string, string, string>
+    public class TypescriptBinUnderingSerializeVisitor : ITypeFuncVisitor<string, string, string>
     {
-        public static TypescriptBinUnderingSerializeVisitor Ins { get; } = new TypescriptBinUnderingSerializeVisitor();
+        public static TypescriptBinUnderingSerializeVisitor Ins { get; } = new();
 
         public string Accept(TBool type, string bufName, string fieldName)
         {
@@ -102,7 +102,7 @@ namespace Luban.Job.Common.TypeVisitors
             return $"{bufVarName}.WriteInt({fieldName});";
         }
 
-        public string Accept(TBean type, string bufVarName, string fieldName)
+        public virtual string Accept(TBean type, string bufVarName, string fieldName)
         {
             if (type.Bean.IsAbstractType)
             {
@@ -114,56 +114,22 @@ namespace Luban.Job.Common.TypeVisitors
             }
         }
 
-        private static string GetNewArray(TArray arrayType, string size)
-        {
-            switch (arrayType.ElementType)
-            {
-                case TByte _: return $"new Uint8Array({size})";
-                case TShort _:
-                case TFshort _: return $"new Int16Array({size})";
-                case TInt _:
-                case TFint _: return $"new Int32Array({size})";
-                case TLong _:
-                case TFlong _: return $"new Int64Array({size})";
-                case TFloat _: return $"new Float32Array({size})";
-                case TDouble _: return $"new Float64Array({size})";
-                default: return "[]";
-            }
-        }
-
-        private static bool IsRawArrayElementType(TType elementType)
-        {
-            switch (elementType)
-            {
-                case TByte _:
-                case TShort _:
-                case TFshort _:
-                case TInt _:
-                case TFint _:
-                case TLong _:
-                case TFlong _:
-                case TFloat _:
-                case TDouble _: return true;
-                default: return false;
-            }
-        }
-
         public string Accept(TArray type, string bufVarName, string fieldName)
         {
             return $"{{ {bufVarName}.WriteSize({fieldName}.length);   for(let _e of {fieldName}) {{ {type.ElementType.Apply(this, bufVarName, "_e")} }} }}";
         }
 
-        public string Accept(TList type, string bufVarName, string fieldName)
+        public virtual string Accept(TList type, string bufVarName, string fieldName)
         {
             return $"{{ {bufVarName}.WriteSize({fieldName}.length);   for(let _e of {fieldName}) {{ {type.ElementType.Apply(this, bufVarName, "_e")} }} }}";
         }
 
-        public string Accept(TSet type, string bufVarName, string fieldName)
+        public virtual string Accept(TSet type, string bufVarName, string fieldName)
         {
             return $"{{ {bufVarName}.WriteSize({fieldName}.size);   for(let _e of {fieldName}) {{ {type.ElementType.Apply(this, bufVarName, "_e")} }} }}";
         }
 
-        public string Accept(TMap type, string bufVarName, string fieldName)
+        public virtual string Accept(TMap type, string bufVarName, string fieldName)
         {
             return $"{{ {bufVarName}.WriteSize({fieldName}.size);   for(let [_k, _v] of {fieldName}) {{ {type.KeyType.Apply(this, bufVarName, "_k")} {type.ValueType.Apply(this, bufVarName, "_v")} }} }}";
         }

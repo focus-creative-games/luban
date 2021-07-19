@@ -30,6 +30,7 @@ namespace Luban.Job.Db.Defs
 
         public void Load(Defines defines, RemoteAgent agent)
         {
+            this.SupportNullable = false;
             this.Agent = agent;
             TopModule = defines.TopModule;
 

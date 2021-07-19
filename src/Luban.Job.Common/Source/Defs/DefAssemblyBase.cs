@@ -18,7 +18,9 @@ namespace Luban.Job.Common.Defs
 
         public string TopModule { get; protected set; }
 
-        public bool SupportDatetimeType { get; protected set; }
+        public bool SupportDatetimeType { get; protected set; } = false;
+
+        public bool SupportNullable { get; protected set; } = true;
 
         public void AddType(DefTypeBase type)
         {
@@ -112,6 +114,10 @@ namespace Luban.Job.Common.Defs
             bool nullable;
             if (type.EndsWith('?'))
             {
+                if (!SupportNullable)
+                {
+                    throw new Exception($"not support nullable type:{module}.{type}");
+                }
                 nullable = true;
                 type = type[0..^1];
             }

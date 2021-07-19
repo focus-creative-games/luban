@@ -4,9 +4,9 @@ using System;
 
 namespace Luban.Job.Db.TypeVisitors
 {
-    class DbWriteBlob
+    class DbCsWriteBlobVisitor
     {
-        public static DbCsCompatibleSerializeVisitor Ins { get; } = new DbCsCompatibleSerializeVisitor();
+        public static DbCsCompatibleSerializeVisitor Ins { get; } = new();
 
     }
 }

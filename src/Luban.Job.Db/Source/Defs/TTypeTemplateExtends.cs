@@ -82,50 +82,41 @@ namespace Luban.Job.Db.Defs
 
         public static string DbTsDefineType(TType type)
         {
-            return type.Apply(TypescriptDefineTypeName.Ins);
+            return type.Apply(DbTypescriptDefineTypeNameVisitor.Ins);
         }
 
         public static string DbTsInitField(string fieldName, string logType, TType type)
         {
-            return "// ts init field";// type.Apply(DbCsInitFieldVisitor.Ins, fieldName, logType);
+            return type.Apply(DbTypescriptInitFieldVisitor.Ins, fieldName, logType);
         }
 
         public static string TsWriteBlob(string bufName, string fieldName, TType type)
         {
-            //return type.Apply(DbWriteBlob.Ins, bufName, valueName);
-            return "// ts write blob"; // DbCsCompatibleSerialize(bufName, fieldName, type);
+            return DbTsCompatibleSerialize(bufName, fieldName, type);
         }
 
         public static string DbTsCompatibleSerialize(string bufName, string fieldName, TType type)
         {
-            //if (type.Apply(CompatibleSerializeNeedEmbedVisitor.Ins))
-            //{
-            //    var sb = new StringBuilder($"{bufName}.BeginWriteSegment(out var _state_);");
-            //    sb.Append(type.Apply(DbCsCompatibleSerializeVisitor.Ins, bufName, fieldName));
-            //    sb.Append("_buf.EndWriteSegment(_state_);");
-            //    return sb.ToString();
-            //}
-            //else
-            //{
-            //    return type.Apply(DbCsCompatibleSerializeVisitor.Ins, bufName, fieldName);
-            //}
-            return "/* db ts compatible serialize */";
+            if (type.Apply(CompatibleSerializeNeedEmbedVisitor.Ins))
+            {
+                return @$"{{let _state_ = {bufName}.BeginWriteSegment();{type.Apply(DbTypescriptCompatibleSerializeVisitor.Ins, bufName, fieldName)}; _buf.EndWriteSegment(_state_)}}";
+            }
+            else
+            {
+                return type.Apply(DbTypescriptCompatibleSerializeVisitor.Ins, bufName, fieldName);
+            }
         }
 
         public static string DbTsCompatibleDeserialize(string bufName, string fieldName, TType type)
         {
-            //if (type.Apply(CompatibleSerializeNeedEmbedVisitor.Ins))
-            //{
-            //    var sb = new StringBuilder($"{bufName}.EnterSegment(out var _state_);");
-            //    sb.Append(type.Apply(DbCsCompatibleDeserializeVisitor.Ins, bufName, fieldName));
-            //    sb.Append("_buf.LeaveSegment(_state_);");
-            //    return sb.ToString();
-            //}
-            //else
-            //{
-            //    return type.Apply(DbCsCompatibleDeserializeVisitor.Ins, bufName, fieldName);
-            //}
-            return "/* db ts compatible serialize */";
+            if (type.Apply(CompatibleSerializeNeedEmbedVisitor.Ins))
+            {
+                return $@"{{ let _state_ = {bufName}.EnterSegment(); {type.Apply(DbTypescriptCompatibleDeserializeVisitor.Ins, bufName, fieldName)} {bufName}.LeaveSegment(_state_); }}";
+            }
+            else
+            {
+                return type.Apply(DbTypescriptCompatibleDeserializeVisitor.Ins, bufName, fieldName);
+            }
         }
     }
 }

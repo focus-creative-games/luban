@@ -76,16 +76,6 @@ namespace Luban.Job.Common.TypeVisitors
         }
 
         public abstract string Accept(TBean type, string bufVarName, string fieldName);
-        //{
-        //    if (type.Bean.IsAbstractType)
-        //    {
-        //        return $"{fieldName} = {type.Bean.FullName}.deserialize({bufVarName});";
-        //    }
-        //    else
-        //    {
-        //        return $"{fieldName} = new {type.Bean.FullName}({bufVarName});";
-        //    }
-        //}
 
         private string GetNewArray(TArray arrayType, string size)
         {
@@ -123,23 +113,22 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TArray type, string bufVarName, string fieldName)
         {
-            return $"{{ let n = Math.min({bufVarName}.ReadSize(), {bufVarName}.Size); {fieldName} = {GetNewArray(type, "n")}; for(let i = 0 ; i < n ; i++) {{ let _e :{type.ElementType.Apply(TypescriptDefineTypeName.Ins)};{type.ElementType.Apply(this, bufVarName, "_e")}; { (IsRawArrayElementType(type.ElementType) ? $"{fieldName}[i] = _e" : $"{fieldName}.push(_e)") } }} }}";
+            return $"{{ let n = Math.min({bufVarName}.ReadSize(), {bufVarName}.Size); {fieldName} = {GetNewArray(type, "n")}; for(let i = 0 ; i < n ; i++) {{ let _e :{type.ElementType.Apply(TypescriptDefineTypeNameVisitor.Ins)};{type.ElementType.Apply(this, bufVarName, "_e")}; { (IsRawArrayElementType(type.ElementType) ? $"{fieldName}[i] = _e" : $"{fieldName}.push(_e)") } }} }}";
         }
 
-        public string Accept(TList type, string bufVarName, string fieldName)
+        public virtual string Accept(TList type, string bufVarName, string fieldName)
         {
-            return $"{{ {fieldName} = []; for(let i = 0, n = {bufVarName}.ReadSize() ; i < n ; i++) {{ let _e :{type.ElementType.Apply(TypescriptDefineTypeName.Ins)};{type.ElementType.Apply(this, bufVarName, "_e")}; {fieldName}.push(_e) }} }}";
+            return $"{{ {fieldName} = []; for(let i = 0, n = {bufVarName}.ReadSize() ; i < n ; i++) {{ let _e :{type.ElementType.Apply(TypescriptDefineTypeNameVisitor.Ins)};{type.ElementType.Apply(this, bufVarName, "_e")}; {fieldName}.push(_e) }} }}";
         }
 
-        public string Accept(TSet type, string bufVarName, string fieldName)
+        public virtual string Accept(TSet type, string bufVarName, string fieldName)
         {
-            return $"{{ {fieldName} = new {type.Apply(TypescriptDefineTypeName.Ins)}(); for(let i = 0, n = {bufVarName}.ReadSize() ; i < n ; i++) {{ let _e:{type.ElementType.Apply(TypescriptDefineTypeName.Ins)};{type.ElementType.Apply(this, bufVarName, "_e")}; {fieldName}.add(_e);}}}}";
+            return $"{{ {fieldName} = new {type.Apply(TypescriptDefineTypeNameVisitor.Ins)}(); for(let i = 0, n = {bufVarName}.ReadSize() ; i < n ; i++) {{ let _e:{type.ElementType.Apply(TypescriptDefineTypeNameVisitor.Ins)};{type.ElementType.Apply(this, bufVarName, "_e")}; {fieldName}.add(_e);}}}}";
         }
 
-        public string Accept(TMap type, string bufVarName, string fieldName)
+        public virtual string Accept(TMap type, string bufVarName, string fieldName)
         {
-            return $"{{ {fieldName} = new {type.Apply(TypescriptDefineTypeName.Ins)}(); for(let i = 0, n = {bufVarName}.ReadSize() ; i < n ; i++) {{ let _k:{type.KeyType.Apply(TypescriptDefineTypeName.Ins)}; {type.KeyType.Apply(this, bufVarName, "_k")}; let _v:{type.ValueType.Apply(TypescriptDefineTypeName.Ins)}; {type.ValueType.Apply(this, bufVarName, "_v")}; {fieldName}.set(_k, _v);  }} }}";
-
+            return $"{{ {fieldName} = new {type.Apply(TypescriptDefineTypeNameVisitor.Ins)}(); for(let i = 0, n = {bufVarName}.ReadSize() ; i < n ; i++) {{ let _k:{type.KeyType.Apply(TypescriptDefineTypeNameVisitor.Ins)}; {type.KeyType.Apply(this, bufVarName, "_k")}; let _v:{type.ValueType.Apply(TypescriptDefineTypeNameVisitor.Ins)}; {type.ValueType.Apply(this, bufVarName, "_v")}; {fieldName}.set(_k, _v);  }} }}";
         }
 
         public string Accept(TVector2 type, string bufVarName, string fieldName)

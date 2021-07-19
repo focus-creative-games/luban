@@ -2,9 +2,9 @@ using Luban.Job.Common.Types;
 
 namespace Luban.Job.Common.TypeVisitors
 {
-    public class TypescriptDefineTypeName : ITypeFuncVisitor<string>
+    public class TypescriptDefineTypeNameVisitor : ITypeFuncVisitor<string>
     {
-        public static TypescriptDefineTypeName Ins { get; } = new TypescriptDefineTypeName();
+        public static TypescriptDefineTypeNameVisitor Ins { get; } = new TypescriptDefineTypeNameVisitor();
 
         public string Accept(TBool type)
         {
@@ -99,22 +99,22 @@ namespace Luban.Job.Common.TypeVisitors
             }
         }
 
-        public string Accept(TArray type)
+        public virtual string Accept(TArray type)
         {
             return GetArrayType(type.ElementType);
         }
 
-        public string Accept(TList type)
+        public virtual string Accept(TList type)
         {
             return $"{type.ElementType.Apply(this)}[]";
         }
 
-        public string Accept(TSet type)
+        public virtual string Accept(TSet type)
         {
             return $"Set<{type.ElementType.Apply(this)}>";
         }
 
-        public string Accept(TMap type)
+        public virtual string Accept(TMap type)
         {
             return $"Map<{type.KeyType.Apply(this)}, {type.ValueType.Apply(this)}>";
         }

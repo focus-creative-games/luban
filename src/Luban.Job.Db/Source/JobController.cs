@@ -146,8 +146,16 @@ namespace Luban.Job.Db
                             fileContent.Add($"import TransactionContext from '{brightRequirePath}/transaction/TransactionContext'");
                             fileContent.Add($"import {{FieldTag}} from '{brightRequirePath}/serialization/FieldTag'");
                             fileContent.Add($"import TKey from '{brightRequirePath}/storage/TKey'");
+                            fileContent.Add($"import PList from '{brightRequirePath}/transaction/collections/PList'");
+                            fileContent.Add($"import PList1 from '{brightRequirePath}/transaction/collections/PList1'");
+                            fileContent.Add($"import PList2 from '{brightRequirePath}/transaction/collections/PList2'");
+                            fileContent.Add($"import PSet from '{brightRequirePath}/transaction/collections/PSet'");
+                            fileContent.Add($"import PMap from '{brightRequirePath}/transaction/collections/PMap'");
+                            fileContent.Add($"import PMap1 from '{brightRequirePath}/transaction/collections/PMap1'");
+                            fileContent.Add($"import PMap2 from '{brightRequirePath}/transaction/collections/PMap2'");
+                            fileContent.Add($"import SerializeFactory from '{brightRequirePath}/serialization/SerializeFactory'");
 
-                            fileContent.Add(@$"export namespace {ass.TopModule} {{");
+                            fileContent.Add($"export namespace {ass.TopModule} {{");
 
 
                             foreach (var type in exportTypes)

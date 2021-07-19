@@ -58,7 +58,7 @@ export {{x.ts_class_modifier}} class {{name}} extends {{if parent_def_type}} {{x
     constructor() {
         super()
         {{~ for field in fields~}}
-        {{db_ts_init_field field.internal_name field.log_type field.ctype }}
+        {{db_ts_init_field field.internal_name_with_this field.log_type field.ctype }}
         {{~end~}}
     }
 
@@ -66,8 +66,7 @@ export {{x.ts_class_modifier}} class {{name}} extends {{if parent_def_type}} {{x
         {{ctype = field.ctype}}
         {{~if has_setter field.ctype~}}
 
-    private static {{field.log_type}} = class extends FieldLoggerGeneric2<{{name}}, {{db_ts_define_type field.ctype}}>
-    {
+    private static {{field.log_type}} = class extends FieldLoggerGeneric2<{{name}}, {{db_ts_define_type field.ctype}}> {
         constructor(self:{{name}}, value: {{db_ts_define_type field.ctype}}) { super(self, value) }
 
         get fieldId(): number { return this.host.getObjectId() + {{field.id}} }
@@ -76,20 +75,21 @@ export {{x.ts_class_modifier}} class {{name}} extends {{if parent_def_type}} {{x
 
         writeBlob(_buf: ByteBuf) {
             _buf.WriteInt(FieldTag.{{tag_name field.ctype}});
-            {{ts_write_blob '_buf' 'this.Value' field.ctype}}
+            {{ts_write_blob '_buf' 'this.value' field.ctype}}
         }
     }
 
     get {{field.ts_style_name}}(): {{db_ts_define_type field.ctype}} {
         if (this.isManaged) {
             var txn = TransactionContext.current
-            if (txn == null) return this.{{field.internal_name}}
+            if (txn == null) return {{field.internal_name_with_this}}
             let log: any = txn.getField(this.getObjectId() + {{field.id}})
-            return log != null ? log.value : this.{{field.internal_name}}
+            return log != null ? log.value : {{field.internal_name_with_this}}
         } else {
-            return this.{{field.internal_name}};
+            return {{field.internal_name_with_this}};
         }
     }
+
     set {{field.ts_style_name}}(value: {{db_ts_define_type field.ctype}}) {
         {{~if db_field_cannot_null~}}
         if (value == null) throw new Error()
@@ -97,20 +97,16 @@ export {{x.ts_class_modifier}} class {{name}} extends {{if parent_def_type}} {{x
         if (this.isManaged) {
             let txn = TransactionContext.current
             txn.putFieldLong(this.getObjectId() + {{field.id}}, new {{name}}.{{field.log_type}}(this, value))
-            {{~if field.ctype.need_set_children_root}}
+            {{~if field.ctype.need_set_children_root~}}
             value?.initRoot(this.getRoot())
-            {{end}}
+            {{~end~}}
         } else {
-            this.{{field.internal_name}} = value
+            {{field.internal_name_with_this}} = value
         } 
     }
 
         {{~else~}}
-            {{~if field.ctype.is_collection~}}
-                // collection logger
-            {{~end~}}
-
-        get {{field.ts_style_name}}(): {{db_ts_define_type field.ctype}}  { return this.{{field.internal_name}} }
+    get {{field.ts_style_name}}(): {{db_ts_define_type field.ctype}}  { return {{field.internal_name_with_this}} }
         {{~end~}}
     {{~end~}}
 
@@ -136,7 +132,7 @@ export {{x.ts_class_modifier}} class {{name}} extends {{if parent_def_type}} {{x
     serialize(_buf: ByteBuf) {
         _buf.WriteNumberAsLong(this.getObjectId())
         {{~ for field in hierarchy_fields~}}
-        { _buf.WriteInt(FieldTag.{{tag_name field.ctype}} | ({{field.id}} << FieldTag.TAG_SHIFT)); {{db_ts_compatible_serialize '_buf' field.internal_name field.ctype}} }
+        { _buf.WriteInt(FieldTag.{{tag_name field.ctype}} | ({{field.id}} << FieldTag.TAG_SHIFT)); {{db_ts_compatible_serialize '_buf' field.internal_name_with_this field.ctype}} }
         {{~end}}
     }
 
@@ -146,7 +142,7 @@ export {{x.ts_class_modifier}} class {{name}} extends {{if parent_def_type}} {{x
             let _tag_ = _buf.ReadInt()
             switch (_tag_) {
             {{~ for field in hierarchy_fields~}}
-            case FieldTag.{{tag_name field.ctype}} | ({{field.id}} << FieldTag.TAG_SHIFT) : { {{db_ts_compatible_deserialize '_buf' field.internal_name field.ctype}}  break; }
+            case FieldTag.{{tag_name field.ctype}} | ({{field.id}} << FieldTag.TAG_SHIFT) : { {{db_ts_compatible_deserialize '_buf' field.internal_name_with_this field.ctype}}  break; }
             {{~end~}}
             default: { _buf.SkipUnknownField(_tag_); break; }
             }
@@ -159,7 +155,9 @@ export {{x.ts_class_modifier}} class {{name}} extends {{if parent_def_type}} {{x
 
     initChildrenRoot(root: TKey) {
         {{~ for field in hierarchy_fields~}}
-        {{if need_set_children_root field.ctype}}// this.{{field.internal_name}}?.initRoot(root);{{end}}
+        {{~if need_set_children_root field.ctype~}}
+        {{field.internal_name_with_this}}?.initRoot(root)
+        {{~end~}}
         {{~end}}
     }
 
