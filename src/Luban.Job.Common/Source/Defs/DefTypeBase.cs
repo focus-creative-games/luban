@@ -35,7 +35,7 @@ namespace Luban.Job.Common.Defs
 
         public string TypescriptNamespaceBegin => TypeUtil.MakeTypescriptNamespaceBegin(Namespace);
 
-        public string TypescriptNamespaceEnd => TypeUtil.MakeCppNamespaceEnd(Namespace);
+        public string TypescriptNamespaceEnd => TypeUtil.MakeTypescriptNamespaceEnd(Namespace);
 
         public string CppFullName => TypeUtil.MakeCppFullName(Namespace, Name);
 

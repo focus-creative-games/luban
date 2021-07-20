@@ -39,11 +39,19 @@ namespace Luban.Common.Utils
 
         public static string MakeCppNamespaceBegin(string module)
         {
+            if (string.IsNullOrEmpty(module))
+            {
+                return "";
+            }
             return string.Join("", module.Split('.').Select(n => $"namespace {n} {{"));
         }
 
         public static string MakeCppNamespaceEnd(string module)
         {
+            if (string.IsNullOrEmpty(module))
+            {
+                return "";
+            }
             return string.Join("", module.Split('.').Select(n => $"}}"));
         }
 
@@ -59,7 +67,20 @@ namespace Luban.Common.Utils
 
         public static string MakeTypescriptNamespaceBegin(string module)
         {
+            if (string.IsNullOrEmpty(module))
+            {
+                return "";
+            }
             return string.Join("", module.Split('.').Select(n => $"export namespace {n} {{"));
+        }
+
+        public static string MakeTypescriptNamespaceEnd(string module)
+        {
+            if (string.IsNullOrEmpty(module))
+            {
+                return "";
+            }
+            return MakeCppNamespaceEnd(module);
         }
 
         public static string MakeFullName(string module, string name)
@@ -83,6 +104,10 @@ namespace Luban.Common.Utils
 
         public static string MakeGoNamespace(string module)
         {
+            if (string.IsNullOrEmpty(module))
+            {
+                return "";
+            }
             return string.Join("", module.Split('.').Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => UpperCaseFirstChar(s)));
         }
 
@@ -146,6 +171,7 @@ namespace Luban.Common.Utils
             "const",
             "is",
             "as",
+            "of",
             "typeid",
             "typeof",
             "object",
@@ -154,6 +180,7 @@ namespace Luban.Common.Utils
             "in",
             "os",
             "sb",
+            "if",
             "ele",
             "new",
             "friend",
