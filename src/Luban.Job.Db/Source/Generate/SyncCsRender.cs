@@ -53,44 +53,45 @@ namespace {{x.namespace_with_top_module}}
 public interface {{readonly_name}} {{if parent_def_type}}: IReadOnly{{x.parent_def_type.name}} {{end}}
 {
     {{~ for field in fields~}}
-        {{db_cs_readonly_define_type field.ctype}} {{field.cs_style_name}} {get;}
+    {{db_cs_readonly_define_type field.ctype}} {{field.cs_style_name}} {get;}
     {{~end~}}
 }
    
-public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.parent}} {{else}} Bright.Transaction.TxnBeanBase {{end}}, {{readonly_name}} , Bright.Transaction.IUnsafeBean
+public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.parent}} {{else}} Bright.Transaction.TxnBeanBase {{end}}, {{readonly_name}}
 {
     {{~ for field in fields~}}
-        {{if is_abstract_type}}protected{{else}}private{{end}} {{db_cs_define_type field.ctype}} {{field.internal_name}};
+    {{if is_abstract_type}}protected{{else}}private{{end}} {{db_cs_define_type field.ctype}} {{field.internal_name}};
     {{~end}}
 
     public {{name}}()
     {
         {{~ for field in fields~}}
-        {{if cs_need_init field.ctype}}{{db_cs_init_field field.internal_name field.log_type field.ctype }} {{end}}
+        {{if cs_need_init field.ctype}}{{db_cs_init_field field.internal_name field.ctype}} {{end}}
         {{~end~}}
     }
 
     {{~ for field in fields~}}
         {{ctype = field.ctype}}
-        {{~if has_setter field.ctype~}}
+        {{~if has_setter ctype~}}
 
-    private sealed class {{field.log_type}} :  Bright.Transaction.FieldLogger<{{name}}, {{db_cs_define_type field.ctype}}>
+    private sealed class {{field.log_type}} :  Bright.Transaction.FieldLogger<{{name}}, {{db_cs_define_type ctype}}>
     {
-        public {{field.log_type}}({{name}} self, {{db_cs_define_type field.ctype}} value) : base(self, value) {  }
+        public {{field.log_type}}({{name}} self, {{db_cs_define_type ctype}} value) : base(self, value) {  }
 
-        public override long FieldId => host._objectId_ + {{field.id}};
+        public override long FieldId => this._host.GetObjectId() + {{field.id}};
 
-        public override void Commit() { this.host.{{field.internal_name}} = this.Value; }
+        public override int TagId => FieldTag.{{tag_name ctype}};
+
+        public override void Commit() { this._host.{{field.internal_name}} = this.Value; }
 
 
         public override void WriteBlob(ByteBuf _buf)
         {
-            _buf.WriteInt(FieldTag.{{tag_name field.ctype}});
-            {{cs_write_blob '_buf' 'this.Value' field.ctype}}
+            {{cs_write_blob '_buf' 'this.Value' ctype}}
         }
     }
 
-    public {{db_cs_define_type field.ctype}} {{field.cs_style_name}}
+    public {{db_cs_define_type ctype}} {{field.cs_style_name}}
     { 
         get
         {
@@ -98,7 +99,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
             {
                 var txn = Bright.Transaction.TransactionContext.ThreadStaticCtx;
                 if (txn == null) return {{field.internal_name}};
-                var log = ({{field.log_type}})txn.GetField(_objectId_ + {{field.id}});
+                var log = ({{field.log_type}})txn.GetField(this.GetObjectId() + {{field.id}});
                 return log != null ? log.Value : {{field.internal_name}};
             }
             else
@@ -114,8 +115,8 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
             if (this.IsManaged)
             {
                 var txn = Bright.Transaction.TransactionContext.ThreadStaticCtx;
-                txn.PutField(_objectId_ + {{field.id}}, new {{field.log_type}}(this, value));
-                {{~if field.ctype.need_set_children_root}}
+                txn.PutField(this.GetObjectId() + {{field.id}}, new {{field.log_type}}(this, value));
+                {{~if ctype.need_set_children_root}}
                 value?.InitRoot(GetRoot());
                 {{end}}
             }
@@ -126,30 +127,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
         }
     }
         {{~else~}}
-            {{~if field.ctype.is_collection~}}
-        private class {{field.log_type}} : {{db_cs_define_type field.ctype}}.Log
-        {
-            private readonly {{name}} host;
-            public {{field.log_type}}({{name}} host, {{cs_immutable_type field.ctype}} value) : base(value) { this.host = host;  }
-
-            public override long FieldId => host._objectId_ + {{field.id}};
-
-            public override Bright.Transaction.TxnBeanBase Host => host;
-
-            public override void Commit()
-            {
-                Commit(host.{{field.internal_name}});
-            }
-
-            public override void WriteBlob(ByteBuf _buf)
-            {
-                _buf.WriteInt(FieldTag.{{tag_name field.ctype}});
-                {{cs_write_blob '_buf' 'this.Value' field.ctype}}
-            }
-        }
-            {{~end~}}
-
-         public {{db_cs_define_type field.ctype}} {{field.cs_style_name}} => {{field.internal_name}};
+         public {{db_cs_define_type ctype}} {{field.cs_style_name}} => {{field.internal_name}};
         {{~end~}}
 
         {{~if ctype.bean || ctype.element_type ~}}
@@ -184,7 +162,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
     {{~else~}}
     public override void Serialize(ByteBuf _buf)
     {
-        _buf.WriteLong(_objectId_);
+        _buf.WriteLong(this.GetObjectId());
         {{~ for field in hierarchy_fields~}}
         { _buf.WriteInt(FieldTag.{{tag_name field.ctype}} | ({{field.id}} << FieldTag.TAG_SHIFT)); {{db_cs_compatible_serialize '_buf' field.internal_name field.ctype}} }
         {{~end}}
@@ -192,7 +170,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
 
     public override void Deserialize(ByteBuf _buf)
     {
-        _objectId_ = _buf.ReadLong();
+        this.SetObjectId(_buf.ReadLong());
         while(_buf.NotEmpty)
         {
             int _tag_ = _buf.ReadInt();
@@ -210,11 +188,13 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
     public override int GetTypeId() => ID;
     {{~end~}}
 
-    void Bright.Transaction.IUnsafeBean.InitChildrenRoot(Bright.Storage.TKey root)
+    protected override void InitChildrenRoot(Bright.Storage.TKey root)
     {
         {{~ for field in hierarchy_fields~}}
-        {{if need_set_children_root field.ctype}}((Bright.Transaction.IUnsafeBean)({{field.internal_name}}))?.InitRoot(root);{{end}}
-        {{~end}}
+        {{~if need_set_children_root field.ctype~}}
+        UnsafeUtil.InitRoot({{field.internal_name}}, root);
+        {{~end~}}
+        {{~end~}}
     }
 
     public override string ToString()

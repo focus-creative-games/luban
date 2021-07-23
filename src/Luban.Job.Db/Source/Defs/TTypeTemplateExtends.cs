@@ -23,9 +23,9 @@ namespace Luban.Job.Db.Defs
             return type.Apply(ImmutableTypeName.Ins);
         }
 
-        public static string DbCsInitField(string fieldName, string logType, TType type)
+        public static string DbCsInitField(string fieldName, TType type)
         {
-            return type.Apply(DbCsInitFieldVisitor.Ins, fieldName, logType);
+            return type.Apply(DbCsInitFieldVisitor.Ins, fieldName);
         }
 
         public static bool HasSetter(TType type)

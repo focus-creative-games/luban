@@ -126,17 +126,17 @@ namespace Luban.Job.Db.TypeVisitors
 
         public string Accept(TList type, string bufName, string fieldName)
         {
-            return $"{bufName}.WriteInt(FieldTag.{type.ElementType.Apply(TagNameVisitor.Ins)}); foreach(var _e in {fieldName}) {{ {EnterSegment(type.ElementType, bufName)} {type.ElementType.Apply(this, bufName, "_e")} {LeaveSegment(type.ElementType, bufName)} }}";
+            return $"{fieldName}.Serialize({bufName});";
         }
 
         public string Accept(TSet type, string bufName, string fieldName)
         {
-            return $"{bufName}.WriteInt(FieldTag.{type.ElementType.Apply(TagNameVisitor.Ins)}); foreach(var _e in {fieldName}) {{ {type.ElementType.Apply(this, bufName, "_e")} }}";
+            return $"{fieldName}.Serialize({bufName});";
         }
 
         public string Accept(TMap type, string bufName, string fieldName)
         {
-            return $"{bufName}.WriteInt(FieldTag.{type.KeyType.Apply(TagNameVisitor.Ins)}); {bufName}.WriteInt(FieldTag.{type.ValueType.Apply(TagNameVisitor.Ins)}); foreach((var _k, var _v) in {fieldName}) {{ {type.KeyType.Apply(this, bufName, "_k")} {EnterSegment(type.ValueType, bufName)} {type.ValueType.Apply(this, bufName, "_v")} {LeaveSegment(type.ValueType, bufName)} }}";
+            return $"{fieldName}.Serialize({bufName});";
         }
 
         public string Accept(TVector2 type, string bufName, string fieldName)

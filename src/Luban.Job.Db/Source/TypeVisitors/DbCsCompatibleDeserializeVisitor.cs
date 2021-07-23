@@ -121,17 +121,17 @@ namespace Luban.Job.Db.TypeVisitors
 
         public string Accept(TList type, string bufName, string fieldName)
         {
-            return $"int _tagType = {bufName}.ReadInt(); System.Diagnostics.Debug.Assert(_tagType == FieldTag.{type.ElementType.Apply(TagNameVisitor.Ins)}); while({bufName}.Size > 0) {{ {BeginSegment(type.ElementType, bufName)} {type.ElementType.Apply(DbCsDefineTypeVisitor.Ins)} _e;  {type.ElementType.Apply(this, bufName, "_e")} {EndSegment(type.ElementType, bufName)} {fieldName}.Add(_e);}}";
+            return $"{fieldName}.Deserialize({bufName});";
         }
 
         public string Accept(TSet type, string bufName, string fieldName)
         {
-            return $"int _tagType = {bufName}.ReadInt(); System.Diagnostics.Debug.Assert(_tagType == FieldTag.{type.ElementType.Apply(TagNameVisitor.Ins)}); while({bufName}.Size > 0) {{ {BeginSegment(type.ElementType, bufName)} {type.ElementType.Apply(DbCsDefineTypeVisitor.Ins)} _e;  {type.ElementType.Apply(this, bufName, "_e")} {EndSegment(type.ElementType, bufName)} {fieldName}.Add(_e);}}";
+            return $"{fieldName}.Deserialize({bufName});";
         }
 
         public string Accept(TMap type, string bufName, string fieldName)
         {
-            return $"int _keyTagType = {bufName}.ReadInt(); System.Diagnostics.Debug.Assert(_keyTagType == FieldTag.{type.KeyType.Apply(TagNameVisitor.Ins)}); int _valueTagType = {bufName}.ReadInt(); System.Diagnostics.Debug.Assert(_valueTagType == FieldTag.{type.ValueType.Apply(TagNameVisitor.Ins)}); while({bufName}.Size > 0) {{ {type.KeyType.Apply(DbCsDefineTypeVisitor.Ins)} _k;  {type.KeyType.Apply(this, bufName, "_k")} {BeginSegment(type.ValueType, bufName)} {type.ValueType.Apply(DbCsDefineTypeVisitor.Ins)} _v;  {type.ValueType.Apply(this, bufName, "_v")} {EndSegment(type.ValueType, bufName)} {fieldName}.Add(_k, _v);}}";
+            return $"{fieldName}.Deserialize({bufName});";
         }
 
         public string Accept(TVector2 type, string bufName, string fieldName)
