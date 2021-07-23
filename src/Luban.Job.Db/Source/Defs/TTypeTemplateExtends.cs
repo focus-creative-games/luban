@@ -118,5 +118,15 @@ namespace Luban.Job.Db.Defs
                 return type.Apply(DbTypescriptCompatibleDeserializeVisitor.Ins, bufName, fieldName);
             }
         }
+
+        public static string DbTsCompatibleSerializeWithoutSegment(string bufName, string fieldName, TType type)
+        {
+            return type.Apply(DbTypescriptCompatibleSerializeVisitor.Ins, bufName, fieldName);
+        }
+
+        public static string DbTsCompatibleDeserializeWithoutSegment(string bufName, string fieldName, TType type)
+        {
+            return type.Apply(DbTypescriptCompatibleDeserializeVisitor.Ins, bufName, fieldName);
+        }
     }
 }

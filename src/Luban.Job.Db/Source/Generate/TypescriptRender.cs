@@ -48,7 +48,6 @@ namespace Luban.Job.Db.Generate
     readonly_name = ""IReadOnly"" + name
 }}
 
-
 {{x.typescript_namespace_begin}}
 export {{x.ts_class_modifier}} class {{name}} extends {{if parent_def_type}} {{x.parent}} {{else}} TxnBeanBase {{end}}{
     {{~ for field in fields~}}
@@ -63,23 +62,23 @@ export {{x.ts_class_modifier}} class {{name}} extends {{if parent_def_type}} {{x
     }
 
     {{~ for field in fields~}}
-        {{ctype = field.ctype}}
-        {{~if has_setter field.ctype~}}
-
-    private static {{field.log_type}} = class extends FieldLoggerGeneric2<{{name}}, {{db_ts_define_type field.ctype}}> {
-        constructor(self:{{name}}, value: {{db_ts_define_type field.ctype}}) { super(self, value) }
+        {{~ctype = field.ctype~}}
+        {{~if has_setter ctype~}}
+    private static {{field.log_type}} = class extends FieldLoggerGeneric2<{{name}}, {{db_ts_define_type ctype}}> {
+        constructor(self:{{name}}, value: {{db_ts_define_type ctype}}) { super(self, value) }
 
         get fieldId(): number { return this.host.getObjectId() + {{field.id}} }
+
+        get tagId(): number { return FieldTag.{{tag_name ctype}} }
 
         commit() { this.host.{{field.internal_name}} = this.value }
 
         writeBlob(_buf: ByteBuf) {
-            _buf.WriteInt(FieldTag.{{tag_name field.ctype}});
-            {{ts_write_blob '_buf' 'this.value' field.ctype}}
+            {{ts_write_blob '_buf' 'this.value' ctype}}
         }
     }
 
-    get {{field.ts_style_name}}(): {{db_ts_define_type field.ctype}} {
+    get {{field.ts_style_name}}(): {{db_ts_define_type ctype}} {
         if (this.isManaged) {
             var txn = TransactionContext.current
             if (txn == null) return {{field.internal_name_with_this}}
@@ -90,14 +89,14 @@ export {{x.ts_class_modifier}} class {{name}} extends {{if parent_def_type}} {{x
         }
     }
 
-    set {{field.ts_style_name}}(value: {{db_ts_define_type field.ctype}}) {
+    set {{field.ts_style_name}}(value: {{db_ts_define_type ctype}}) {
         {{~if db_field_cannot_null~}}
         if (value == null) throw new Error()
         {{~end~}}
         if (this.isManaged) {
             let txn = TransactionContext.current
             txn.putFieldLong(this.getObjectId() + {{field.id}}, new {{name}}.{{field.log_type}}(this, value))
-            {{~if field.ctype.need_set_children_root~}}
+            {{~if ctype.need_set_children_root~}}
             value?.initRoot(this.getRoot())
             {{~end~}}
         } else {
@@ -106,7 +105,7 @@ export {{x.ts_class_modifier}} class {{name}} extends {{if parent_def_type}} {{x
     }
 
         {{~else~}}
-    get {{field.ts_style_name}}(): {{db_ts_define_type field.ctype}}  { return {{field.internal_name_with_this}} }
+    get {{field.ts_style_name}}(): {{db_ts_define_type ctype}}  { return {{field.internal_name_with_this}} }
         {{~end~}}
     {{~end~}}
 
@@ -198,19 +197,23 @@ export {{x.ts_class_modifier}} class {{name}} extends {{if parent_def_type}} {{x
     newValue(): {{db_ts_define_type value_ttype}} { return new {{db_ts_define_type value_ttype}}() }
 
     serializeKey(buf: ByteBuf, key: {{db_ts_define_type key_ttype}}) {
-        throw new Error('Method not implemented.')
+        {{db_ts_compatible_serialize_without_segment 'buf' 'key' key_ttype}}
     }
 
     serializeValue(buf: ByteBuf, value: {{db_ts_define_type value_ttype}}) {
-        throw new Error('Method not implemented.')
+        {{db_ts_compatible_serialize_without_segment 'buf' 'value' value_ttype}}
     }
 
     deserializeKey(buf: ByteBuf): {{db_ts_define_type key_ttype}} {
-        throw new Error('Method not implemented.')
+        let key: {{db_ts_define_type key_ttype}}
+        {{db_ts_compatible_deserialize_without_segment 'buf' 'key' key_ttype}}
+        return key
     }
 
     deserializeValue(buf: ByteBuf): {{db_ts_define_type value_ttype}} {
-        throw new Error('Method not implemented.')
+        let value = new {{db_ts_define_type value_ttype}}()
+        {{db_ts_compatible_deserialize_without_segment 'buf' 'value' value_ttype}}
+        return value
     }
 }
 

@@ -185,9 +185,18 @@ Options:
                 conn.Wait();
                 profile.EndPhaseAndLog();
 
-                profile.StartPhase("gen job");
-                exitCode = SubmitGenJob(options);
-                profile.EndPhaseAndLog();
+                if (GenClient.Ins.Session.Channel.IsOpen)
+                {
+                    profile.StartPhase("gen job");
+                    exitCode = SubmitGenJob(options);
+                    profile.EndPhaseAndLog();
+                }
+                else
+                {
+                    s_logger.Error("connect fail");
+                    exitCode = 2;
+                }
+
                 profile.EndPhaseAndLog();
             }
             catch (Exception e)
