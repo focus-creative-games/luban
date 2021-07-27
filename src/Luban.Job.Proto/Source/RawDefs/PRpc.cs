@@ -12,5 +12,7 @@ namespace Luban.Job.Proto.RawDefs
         public string ArgType { get; set; }
 
         public string ResType { get; set; }
+
+        public string Comment { get; set; }
     }
 }

@@ -40,6 +40,9 @@ namespace Luban.Job.Cfg.Generate
     hierarchy_export_fields = x.hierarchy_export_fields
 }}
 
+/**
+{{x.comment}}
+ */
 class {{name}} : public {{if parent_def_type}} {{parent_def_type.cpp_full_name}} {{else}} bright::CfgBean {{end}}
 {
     public:
@@ -68,6 +71,9 @@ class {{name}} : public {{if parent_def_type}} {{parent_def_type.cpp_full_name}}
     bool deserialize(ByteBuf& _buf);
 
     {{~ for field in export_fields ~}}
+    /**
+     {{field.comment}}
+     */
     {{cpp_define_type field.ctype}} {{field.cpp_style_name}};
     {{~end~}}
 
@@ -102,6 +108,9 @@ class {{name}} : public {{if parent_def_type}} {{parent_def_type.cpp_full_name}}
     value_type =  x.value_ttype
 ~}}
 
+/**
+{{x.comment}}
+ */
 class {{name}}
 {
     {{~if x.is_map_table ~}}
@@ -151,7 +160,10 @@ class {{name}}
 
 
     {{~ for field in value_type.bean.hierarchy_export_fields ~}}
-     {{cpp_define_type field.ctype}}& {{field.cpp_getter_name}}() const { return _data->{{field.cpp_style_name}}; }
+    /**
+    {{field.comment}}
+     */
+    const {{cpp_define_type field.ctype}}& {{field.cpp_getter_name}}() const { return _data->{{field.cpp_style_name}}; }
     {{~end~}}
 
     {{~end~}}
@@ -172,6 +184,9 @@ class {{name}}
 {
     public:
     {{~for table in tables ~}}
+    /**
+     {{table.comment}}
+     */
      {{table.cpp_full_name}} {{table.name}};
     {{~end~}}
 

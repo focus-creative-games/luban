@@ -16,6 +16,8 @@ namespace Luban.Job.Common.Defs
             public string Value { get; set; }
 
             public TType CType { get; set; }
+
+            public string Comment { get; set; }
         }
 
         public List<Item> Items { get; set; } = new List<Item>();
@@ -24,10 +26,11 @@ namespace Luban.Job.Common.Defs
         {
             Namespace = c.Namespace;
             Name = c.Name;
+            Comment = c.Comment;
 
             foreach (var item in c.Items)
             {
-                Items.Add(new Item { Name = item.Name, Type = item.Type, Value = item.Value });
+                Items.Add(new Item { Name = item.Name, Type = item.Type, Value = item.Value, Comment = item.Comment });
             }
         }
 

@@ -20,6 +20,7 @@ namespace Luban.Job.Cfg.Defs
             InputFiles = b.InputFiles;
             Groups = b.Groups;
             _branchInputFiles = b.BranchInputFiles;
+            Comment = b.Comment;
         }
 
 

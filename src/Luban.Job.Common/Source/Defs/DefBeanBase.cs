@@ -49,6 +49,7 @@ namespace Luban.Job.Common.Defs
             Parent = b.Parent;
             Id = b.TypeId;
             IsValueType = b.IsValueType;
+            Comment = b.Comment;
             foreach (var field in b.Fields)
             {
                 Fields.Add(CreateField(field, 0));

@@ -50,13 +50,19 @@ using Bright.Serialization;
 namespace {{x.namespace_with_top_module}}
 {
 
+/// <summary>
+/// {{x.comment}}
+/// </summary>
 public interface {{readonly_name}} {{if parent_def_type}}: IReadOnly{{x.parent_def_type.name}} {{end}}
 {
     {{~ for field in fields~}}
     {{db_cs_readonly_define_type field.ctype}} {{field.cs_style_name}} {get;}
     {{~end~}}
 }
-   
+
+/// <summary>
+/// {{x.comment}}
+/// </summary>
 public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.parent}} {{else}} Bright.Transaction.TxnBeanBase {{end}}, {{readonly_name}}
 {
     {{~ for field in fields~}}
@@ -91,6 +97,9 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
         }
     }
 
+    /// <summary>
+    /// {{field.comment}}
+    /// </summary>
     public {{db_cs_define_type ctype}} {{field.cs_style_name}}
     { 
         get
@@ -127,12 +136,21 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
         }
     }
         {{~else~}}
+        /// <summary>
+        /// {{field.comment}}
+        /// </summary>
          public {{db_cs_define_type ctype}} {{field.cs_style_name}} => {{field.internal_name}};
         {{~end~}}
 
         {{~if ctype.bean || ctype.element_type ~}}
+        /// <summary>
+        /// {{field.comment}}
+        /// </summary>
         {{db_cs_readonly_define_type ctype}} {{readonly_name}}.{{field.cs_style_name}} => {{field.internal_name}};
         {{~else if ctype.is_map~}}
+        /// <summary>
+        /// {{field.comment}}
+        /// </summary>
         {{db_cs_readonly_define_type ctype}} {{readonly_name}}.{{field.cs_style_name}} => new Bright.Transaction.Collections.PReadOnlyMap<{{db_cs_readonly_define_type ctype.key_type}}, {{db_cs_readonly_define_type ctype.value_type}}, {{db_cs_define_type ctype.value_type}}>({{field.internal_name}});
         {{~end~}}
     {{~end~}}
@@ -231,6 +249,9 @@ using System.Threading.Tasks;
 namespace {{x.namespace_with_top_module}}
 {
 
+/// <summary>
+/// {{x.comment}}
+/// </summary>
 public sealed class {{name}}
 {
     public static {{base_table_type}} Table { get; } = new {{internal_table_type}}();

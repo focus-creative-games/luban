@@ -23,6 +23,9 @@ namespace Luban.Job.Cfg.Generate
     hierarchy_export_fields = x.hierarchy_export_fields
 }}
 
+'''
+{{x.comment}}
+'''
 class {{name}} {{if parent_def_type}}({{parent_def_type.py_full_name}}){{end}}:
 {{~if x.is_abstract_type~}}
     _childrenTypes = None
@@ -75,7 +78,9 @@ class {{name}} {{if parent_def_type}}({{parent_def_type.py_full_name}}){{end}}:
     key_type2 =  x.key_ttype2
     value_type =  x.value_ttype
 }}
-
+'''
+{{x.comment}}
+'''
 class {{name}}:
     {{~if x.is_map_table ~}}
 
@@ -102,6 +107,9 @@ class {{name}}:
     def getData(self) : return self._data
 
     {{~ for field in value_type.bean.hierarchy_export_fields ~}}
+    '''
+    {{field.comment}}
+    '''
     def {{field.py_style_name}}(self) : return self._data.{{field.py_style_name}}
     {{~end~}}
     {{~end~}}

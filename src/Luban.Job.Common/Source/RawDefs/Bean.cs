@@ -18,6 +18,8 @@ namespace Luban.Job.Common.RawDefs
 
         public bool IsSerializeCompatible { get; set; }
 
+        public string Comment { get; set; }
+
         public List<Field> Fields { get; set; } = new List<Field>();
     }
 }

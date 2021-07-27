@@ -14,6 +14,7 @@ namespace Luban.Job.Proto.Defs
             Name = b.Name;
             Namespace = b.Namespace;
             Id = b.Id;
+            Comment = b.Comment;
 
             foreach (var field in b.Fields)
             {

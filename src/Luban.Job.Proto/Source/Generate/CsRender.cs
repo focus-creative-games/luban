@@ -52,7 +52,10 @@ using Bright.Serialization;
 
 namespace {{x.namespace_with_top_module}}
 {
-   
+
+    /// <summary>
+    /// {{x.comment}}
+    /// </summary>
     public  {{if is_value_type}}struct{{else}}{{x.cs_class_modifier}} class{{end}} {{name}} : {{if parent_def_type}} {{parent}} {{else}} Bright.Serialization.BeanBase {{end}}
     {
         {{~if !is_value_type~}}
@@ -108,8 +111,13 @@ namespace {{x.namespace_with_top_module}}
         {{~end~}}
             return x;
         }
+
         {{~ for field in fields ~}}
+        /// <summary>
+        /// {{field.comment}}
+        /// </summary>
          public {{cs_define_type field.ctype}} {{field.cs_style_name}};
+
         {{~end~}}
 
         {{~if !is_abstract_type~}}
@@ -164,11 +172,17 @@ using Bright.Serialization;
 
 namespace {{x.namespace_with_top_module}}
 {
-   
+    /// <summary>
+    /// {{x.comment}}
+    /// </summary>
     public sealed class {{name}} : Bright.Net.Codecs.Protocol
     {
         {{~ for field in fields ~}}
+        /// <summary>
+        /// {{field.comment}}
+        /// </summary>
          public {{cs_define_type field.ctype}} {{field.cs_style_name}};
+
         {{~end~}}
 
         public {{name}}()
@@ -250,6 +264,9 @@ using Bright.Serialization;
 namespace {{x.namespace_with_top_module}}
 {
    
+    /// <summary>
+    /// {{x.comment}}
+    /// </summary>
     public sealed class {{name}} : Bright.Net.Codecs.Rpc<{{cs_define_type targ_type}}, {{cs_define_type tres_type}}>
     {
         public {{name}}()
@@ -295,7 +312,6 @@ using Bright.Serialization;
 
 namespace {{namespace}}
 {
-   
     public static class {{name}}
     {
         public static System.Collections.Generic.Dictionary<int, Bright.Net.Codecs.ProtocolCreator> Factories { get; } = new System.Collections.Generic.Dictionary<int, Bright.Net.Codecs.ProtocolCreator>

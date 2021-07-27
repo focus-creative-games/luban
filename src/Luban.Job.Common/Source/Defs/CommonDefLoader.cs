@@ -195,7 +195,7 @@ namespace Luban.Job.Common.Defs
         }
 
         private static readonly List<string> _fieldRequireAttrs = new List<string> { "name", "type", };
-        private static readonly List<string> _fieldOptionalAttrs = new List<string> { "id", };
+        private static readonly List<string> _fieldOptionalAttrs = new List<string> { "id", "comment" };
 
         protected virtual Field CreateField(XElement e)
         {
@@ -205,6 +205,7 @@ namespace Luban.Job.Common.Defs
                 Id = XmlUtil.GetOptionIntAttribute(e, "id"),
                 Name = XmlUtil.GetRequiredAttribute(e, "name"),
                 Type = CreateType(e, "type"),
+                Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
             };
             return f;
         }
@@ -214,10 +215,10 @@ namespace Luban.Job.Common.Defs
             AddBean(e, "");
         }
 
-        private static readonly List<string> _beanOptinsAttrs1 = new List<string> { "compatible", "value_type" };
+        private static readonly List<string> _beanOptinsAttrs1 = new List<string> { "compatible", "value_type", "comment" };
         private static readonly List<string> _beanRequireAttrs1 = new List<string> { "id", "name" };
 
-        private static readonly List<string> _beanOptinsAttrs2 = new List<string> { "id", "compatible", "value_type" };
+        private static readonly List<string> _beanOptinsAttrs2 = new List<string> { "id", "compatible", "value_type", "comment" };
         private static readonly List<string> _beanRequireAttrs2 = new List<string> { "name" };
 
         protected virtual void AddBean(XElement e, string parent)
@@ -238,6 +239,7 @@ namespace Luban.Job.Common.Defs
                 TypeId = XmlUtil.GetOptionIntAttribute(e, "id"),
                 IsSerializeCompatible = XmlUtil.GetOptionBoolAttribute(e, "compatible", IsBeanDefaultCompatible),
                 IsValueType = XmlUtil.GetOptionBoolAttribute(e, "value_type"),
+                Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
             };
             var childBeans = new List<XElement>();
 
@@ -303,34 +305,40 @@ namespace Luban.Job.Common.Defs
 
 
         private static readonly List<string> _constRequiredAttrs = new List<string> { "name" };
-        private static readonly List<string> _constOptionalItemAttrs = new List<string> { "value" };
+        private static readonly List<string> _constOptionalAttrs = new List<string> { "comment" };
+
         private static readonly List<string> _constItemRequiredAttrs = new List<string> { "name", "type" };
+        private static readonly List<string> _constItemOptionalAttrs = new List<string> { "value", "comment" };
 
         protected void AddConst(XElement e)
         {
-            ValidAttrKeys(e, null, _constRequiredAttrs);
+            ValidAttrKeys(e, _constOptionalAttrs, _constRequiredAttrs);
             var c = new Const()
             {
                 Name = XmlUtil.GetRequiredAttribute(e, "name"),
                 Namespace = CurNamespace,
+                Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
             };
             foreach (XElement item in e.Elements())
             {
-                ValidAttrKeys(item, _constOptionalItemAttrs, _constItemRequiredAttrs);
+                ValidAttrKeys(item, _constItemOptionalAttrs, _constItemRequiredAttrs);
                 c.Items.Add(new ConstItem()
                 {
                     Name = XmlUtil.GetRequiredAttribute(item, "name"),
                     Type = CreateType(item, "type"),
                     Value = XmlUtil.GetRequiredAttribute(item, "value"),
+                    Comment = XmlUtil.GetOptionalAttribute(item, "comment"),
                 });
             }
             s_logger.Trace("add const {@const}", c);
             _consts.Add(c);
         }
 
-        private static readonly List<string> _enumOptionalAttrs = new List<string> { "flags" };
+        private static readonly List<string> _enumOptionalAttrs = new List<string> { "flags", "comment" };
         private static readonly List<string> _enumRequiredAttrs = new List<string> { "name" };
-        private static readonly List<string> _enumOptionalItemAttrs = new List<string> { "value", "alias" };
+
+
+        private static readonly List<string> _enumItemOptionalAttrs = new List<string> { "value", "alias", "comment" };
         private static readonly List<string> _enumItemRequiredAttrs = new List<string> { "name" };
 
         protected void AddEnum(XElement e)
@@ -340,17 +348,19 @@ namespace Luban.Job.Common.Defs
             {
                 Name = XmlUtil.GetRequiredAttribute(e, "name"),
                 Namespace = CurNamespace,
+                Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
                 IsFlags = XmlUtil.GetOptionBoolAttribute(e, "flags"),
             };
 
             foreach (XElement item in e.Elements())
             {
-                ValidAttrKeys(item, _enumOptionalItemAttrs, _enumItemRequiredAttrs);
+                ValidAttrKeys(item, _enumItemOptionalAttrs, _enumItemRequiredAttrs);
                 en.Items.Add(new EnumItem()
                 {
                     Name = XmlUtil.GetRequiredAttribute(item, "name"),
                     Alias = XmlUtil.GetOptionalAttribute(item, "alias"),
                     Value = XmlUtil.GetOptionalAttribute(item, "value"),
+                    Comment = XmlUtil.GetOptionalAttribute(item, "comment"),
                 });
             }
             s_logger.Trace("add enum:{@enum}", en);

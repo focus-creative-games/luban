@@ -26,7 +26,10 @@ using System.Text.Json;
 
 namespace {{x.namespace_with_top_module}}
 {
-   
+
+/// <summary>
+/// {{x.comment}}
+/// </summary>
 public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {{parent}} {{else}} Bright.Config.BeanBase {{end}}
 {
     public {{name}}(JsonElement _buf) {{if parent_def_type}} : base(_buf) {{end}}
@@ -65,6 +68,9 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
     }
 
     {{~ for field in export_fields ~}}
+    /// <summary>
+    /// {{field.comment}}
+    /// </summary>
     public readonly {{cs_define_type field.ctype}} {{field.cs_style_name}};
     {{~if field.index_field~}} 
     public readonly Dictionary<{{cs_define_type field.index_field.ctype}}, {{cs_define_type field.ctype.element_type}}> {{field.cs_style_name}}_Index = new Dictionary<{{cs_define_type field.index_field.ctype}}, {{cs_define_type field.ctype.element_type}}>();
@@ -132,6 +138,10 @@ using System.Text.Json;
 
 namespace {{x.namespace_with_top_module}}
 {
+
+/// <summary>
+/// {{x.comment}}
+/// </summary>
 public sealed partial class {{name}}
 {
     {{~if x.is_map_table ~}}
@@ -183,6 +193,9 @@ public sealed partial class {{name}}
     }
 
     {{~ for field in value_type.bean.hierarchy_export_fields ~}}
+    /// <summary>
+    /// {{field.comment}}
+    /// </summary>
      public {{cs_define_type field.ctype}} {{field.cs_style_name}} => _data.{{field.cs_style_name}};
     {{~if field.ref~}}
         public {{field.cs_ref_type_name}} {{field.cs_ref_var_name}} => _data.{{field.cs_ref_var_name}};
@@ -226,6 +239,9 @@ namespace {{namespace}}
 public sealed partial class {{name}}
 {
     {{~for table in tables ~}}
+    /// <summary>
+    /// {{table.comment}}
+    /// </summary>
     public {{table.full_name}} {{table.name}} {get; }
     {{~end~}}
 

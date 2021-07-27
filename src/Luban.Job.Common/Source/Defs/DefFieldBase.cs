@@ -69,12 +69,15 @@ namespace Luban.Job.Common.Defs
 
         public string UpperCaseName => Name.ToUpper();
 
+        public string Comment { get; }
+
         public DefFieldBase(DefTypeBase host, Field f, int idOffset)
         {
             HostType = host;
             Id = f.Id + idOffset;
             Name = f.Name;
             Type = f.Type;
+            Comment = f.Comment;
         }
 
         public virtual void Compile()

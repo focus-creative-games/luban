@@ -31,6 +31,8 @@ namespace Luban.Job.Cfg.RawDefs
 
         public ETableMode Mode { get; set; }
 
+        public string Comment { get; set; }
+
         public List<string> Groups { get; set; } = new List<string>();
 
         public List<string> InputFiles { get; set; } = new List<string>();

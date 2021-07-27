@@ -48,7 +48,10 @@ using Bright.Serialization;
 
 namespace {{x.namespace_with_top_module}}
 {
-   
+
+/// <summary>
+/// {{x.comment}}
+/// </summary>
 public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.parent}} {{else}} Bright.Transaction.TxnBeanBase {{end}}
 {
     {{~ for field in fields~}}
@@ -81,6 +84,9 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
         }
     }
 
+    /// <summary>
+    /// {{field.comment}}
+    /// </summary>
     public {{db_cs_define_type field.ctype}} {{field.cs_style_name}}
     { 
         get
@@ -139,8 +145,10 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
             }
         }
             {{~end~}}
-
-         public {{db_cs_define_type field.ctype}} {{field.cs_style_name}} => {{field.internal_name}};
+    /// <summary>
+    /// {{field.comment}}
+    /// </summary>
+    public {{db_cs_define_type field.ctype}} {{field.cs_style_name}} => {{field.internal_name}};
         {{~end~}}
     {{~end~}}
 
@@ -236,6 +244,9 @@ using System.Threading.Tasks;
 namespace {{x.namespace_with_top_module}}
 {
 
+/// <summary>
+/// {{x.comment}}
+/// </summary>
 public sealed class {{name}}
 {
     public static {{base_table_type}} Table { get; } = new {{internal_table_type}}();
@@ -298,12 +309,12 @@ namespace {{namespace}}
    
 public static class {{name}}
 {
-        public static System.Collections.Generic.List<Bright.Transaction.TxnTable> TableList { get; } = new System.Collections.Generic.List<Bright.Transaction.TxnTable>
-        {
-        {{~ for table in tables~}}
-            {{table.full_name}}.Table,
-        {{~end}}
-        };
+    public static System.Collections.Generic.List<Bright.Transaction.TxnTable> TableList { get; } = new System.Collections.Generic.List<Bright.Transaction.TxnTable>
+    {
+    {{~ for table in tables~}}
+        {{table.full_name}}.Table,
+    {{~end}}
+    };
 }
 
 }

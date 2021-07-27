@@ -101,6 +101,9 @@ class {{name}}:
     def getData(self) : return self._data
 
     {{~ for field in value_type.bean.hierarchy_export_fields ~}}
+    '''
+    {{field.comment}}
+    '''
     def {{field.py_style_name}}(self) : return self._data.{{field.py_style_name}}
     {{~end~}}
     {{~end~}}

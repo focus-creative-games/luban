@@ -23,7 +23,9 @@ namespace Luban.Job.Cfg.Generate
 }}
 
 {{x.typescript_namespace_begin}}
-
+/**
+ * {{x.comment}}
+ */
 export {{if x.is_abstract_type}} abstract {{end}} class {{name}} {{if parent_def_type}} extends {{x.parent}}{{end}} {
 {{~if x.is_abstract_type~}}
     static constructorFrom(_buf_: ByteBuf): {{name}} {
@@ -46,6 +48,9 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} {{if parent_def
     }
 
     {{~ for field in export_fields ~}}
+    /**
+     * {{field.comment}}
+     */
     readonly {{field.ts_style_name}}{{if field.is_nullable}}?{{end}}: {{ts_define_type field.ctype}}
     {{~if field.gen_ref~}}
     {{field.ts_ref_validator_define}}
@@ -86,6 +91,9 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} {{if parent_def
         value_type =  x.value_ttype
     }}
 {{x.typescript_namespace_begin}}
+/**
+ * {{x.comment}}
+ */
 export class {{name}} {
     {{~if x.is_map_table ~}}
     private _dataMap: Map<{{ts_define_type key_type}}, {{ts_define_type value_type}}>
@@ -126,6 +134,9 @@ export class {{name}} {
     getData(): {{ts_define_type value_type}} { return this._data }
 
     {{~ for field in value_type.bean.hierarchy_export_fields ~}}
+    /**
+     * {{field.comment}}
+     */
      get {{field.ts_style_name}}(): {{ts_define_type field.ctype}} { return this._data.{{field.ts_style_name}} }
     {{~end~}}
 
@@ -159,6 +170,9 @@ type ByteBufLoader = (file: string) => ByteBuf
 export class {{name}} {
     {{~ for table in tables ~}}
     private _{{table.name}}: {{table.full_name}}
+    /**
+     * {{table.comment}}
+     */
     get {{table.name}}(): {{table.full_name}}  { return this._{{table.name}}}
     {{~end~}}
 

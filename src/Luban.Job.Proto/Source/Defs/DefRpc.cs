@@ -16,6 +16,7 @@ namespace Luban.Job.Proto.Defs
             Id = r.Id;
             ArgType = r.ArgType;
             ResType = r.ResType;
+            Comment = r.Comment;
         }
 
         public string ArgType { get; set; }

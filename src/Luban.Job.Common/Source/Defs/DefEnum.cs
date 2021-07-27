@@ -10,15 +10,17 @@ namespace Luban.Job.Common.Defs
     {
         public class Item
         {
-            public string Name { get; set; }
+            public string Name { get; init; }
 
             public string Value { get; set; }
 
-            public string Alias { get; set; }
+            public string Alias { get; init; }
 
             public string AliasOrName => string.IsNullOrWhiteSpace(Alias) ? Name : Alias;
 
             public int IntValue { get; set; }
+
+            public string Comment { get; init; }
         }
 
         public bool IsFlags { get; set; }
@@ -68,10 +70,11 @@ namespace Luban.Job.Common.Defs
             Namespace = e.Namespace;
             IsFlags = e.IsFlags;
             IsUniqueItemId = e.IsUniqueItemId;
+            Comment = e.Comment;
 
             foreach (var item in e.Items)
             {
-                Items.Add(new Item { Name = item.Name, Alias = item.Alias, Value = item.Value });
+                Items.Add(new Item { Name = item.Name, Alias = item.Alias, Value = item.Value, Comment = item.Comment });
             }
         }
 

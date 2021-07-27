@@ -41,6 +41,8 @@ namespace Luban.Job.Common.Defs
 
         public string PyFullName => TypeUtil.MakePyFullName(Namespace, Name);
 
+        public string Comment { get; protected set; }
+
         public virtual void PreCompile() { }
 
         public abstract void Compile();

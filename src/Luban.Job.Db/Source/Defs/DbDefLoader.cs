@@ -33,7 +33,7 @@ namespace Luban.Job.Db.Defs
 
 
 
-        private readonly List<string> _tableOptionalAttrs = new List<string> { "memory" };
+        private readonly List<string> _tableOptionalAttrs = new List<string> { "memory", "comment" };
         private readonly List<string> _tableRequireAttrs = new List<string> { "name", "id", "key", "value" };
 
         private void AddTable(XElement e)
@@ -47,6 +47,7 @@ namespace Luban.Job.Db.Defs
                 KeyType = XmlUtil.GetRequiredAttribute(e, "key"),
                 ValueType = XmlUtil.GetRequiredAttribute(e, "value"),
                 IsPersistent = !XmlUtil.GetOptionBoolAttribute(e, "memory"),
+                Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
             };
 
             s_logger.Trace("add Db:{@Db}", p);

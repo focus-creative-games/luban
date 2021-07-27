@@ -44,6 +44,11 @@ namespace Luban.Job.Db.Defs
                 throw new Exception($"table:{FullName} key:{KeyType} 类型不合法");
             }
 
+            if (!(KeyTType is TLong) && !(KeyTType is TString))
+            {
+                throw new Exception($"table:{FullName} key:{KeyTType} 不支持。只支持long与string类型");
+            }
+
             if ((ValueTType = (TBean)ass.CreateType(Namespace, ValueType)) == null)
             {
                 throw new Exception($"table:{FullName} value:{ValueType} 类型不合法");

@@ -152,7 +152,7 @@ namespace Luban.Job.Cfg.Defs
             _cfgServices.Add(new Service() { Name = name, Manager = manager, Groups = groups, Refs = refs });
         }
 
-        private readonly List<string> _tableOptionalAttrs = new List<string> { "index", "mode", "group", "branch_input" };
+        private readonly List<string> _tableOptionalAttrs = new List<string> { "index", "mode", "group", "branch_input", "comment" };
         private readonly List<string> _tableRequireAttrs = new List<string> { "name", "value", "input" };
 
 
@@ -224,6 +224,7 @@ namespace Luban.Job.Cfg.Defs
                 ValueType = XmlUtil.GetRequiredAttribute(e, "value"),
                 Index = XmlUtil.GetOptionalAttribute(e, "index"),
                 Groups = CreateGroups(XmlUtil.GetOptionalAttribute(e, "group")),
+                Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
             };
             p.Mode = ConvertMode(p.Name, XmlUtil.GetOptionalAttribute(e, "mode"), p.Index);
 
@@ -267,7 +268,7 @@ namespace Luban.Job.Cfg.Defs
 
         private static readonly List<string> _fieldOptionalAttrs = new List<string> {
             "index", "sep", "validator", "key_validator", "value_validator",
-            "ref", "path", "range", "multi_rows", "group", "res", "convert" };
+            "ref", "path", "range", "multi_rows", "group", "res", "convert", "comment" };
 
         private static readonly List<string> _fieldRequireAttrs = new List<string> { "name", "type" };
 
@@ -283,6 +284,7 @@ namespace Luban.Job.Cfg.Defs
                 Groups = CreateGroups(XmlUtil.GetOptionalAttribute(e, "group")),
                 Resource = XmlUtil.GetOptionalAttribute(e, "res"),
                 Converter = XmlUtil.GetOptionalAttribute(e, "convert"),
+                Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
             };
 
             // 字段与table的默认组不一样。
@@ -309,7 +311,7 @@ namespace Luban.Job.Cfg.Defs
             return f;
         }
 
-        private static readonly List<string> _beanOptinsAttrs = new List<string> { "value_type", "alias", "sep" };
+        private static readonly List<string> _beanOptinsAttrs = new List<string> { "value_type", "alias", "sep", "comment" };
         private static readonly List<string> _beanRequireAttrs = new List<string> { "name" };
 
         protected override void AddBean(XElement e, string parent)
@@ -326,6 +328,7 @@ namespace Luban.Job.Cfg.Defs
                 IsValueType = XmlUtil.GetOptionBoolAttribute(e, "value_type"),
                 Alias = XmlUtil.GetOptionalAttribute(e, "alias"),
                 Sep = XmlUtil.GetOptionalAttribute(e, "sep"),
+                Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
             };
             var childBeans = new List<XElement>();
 

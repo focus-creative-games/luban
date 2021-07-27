@@ -47,24 +47,26 @@ namespace Luban.Job.Proto.Defs
                 Namespace = CurNamespace,
                 ArgType = XmlUtil.GetRequiredAttribute(e, "arg"),
                 ResType = XmlUtil.GetRequiredAttribute(e, "res"),
+                Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
             };
             s_logger.Trace("add rpc:{@rpc}", r);
             _rpcs.Add(r);
         }
 
 
-        private readonly List<string> protoAttrs = new List<string> { "id" };
+        private readonly List<string> protoOptionalAttrs = new List<string> { "id", "comment" };
         private readonly List<string> protoRequiredAttrs = new List<string> { "name" };
 
         private void AddProto(XElement e)
         {
-            ValidAttrKeys(e, protoAttrs, protoRequiredAttrs);
+            ValidAttrKeys(e, protoOptionalAttrs, protoRequiredAttrs);
 
             var p = new PProto()
             {
                 Name = XmlUtil.GetRequiredAttribute(e, "name"),
                 Namespace = CurNamespace,
                 Id = XmlUtil.GetOptionIntAttribute(e, "id"),
+                Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
             };
 
             foreach (XElement fe in e.Elements())
