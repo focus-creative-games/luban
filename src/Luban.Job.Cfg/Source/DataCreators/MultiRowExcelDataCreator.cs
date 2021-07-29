@@ -98,7 +98,7 @@ namespace Luban.Job.Cfg.DataCreators
                 }
                 catch (Exception e)
                 {
-                    var dce = new DataCreateException(e, stream.CurrentExcelPosition);
+                    var dce = new DataCreateException(e, stream.LastReadDataInfo);
                     throw dce;
                 }
             }
@@ -133,7 +133,7 @@ namespace Luban.Job.Cfg.DataCreators
                 }
                 catch (Exception e)
                 {
-                    var dce = new DataCreateException(e, stream.CurrentExcelPosition);
+                    var dce = new DataCreateException(e, stream.LastReadDataInfo);
                     throw dce;
                 }
             }

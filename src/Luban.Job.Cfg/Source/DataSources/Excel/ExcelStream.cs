@@ -6,6 +6,11 @@ using System.Text;
 
 namespace Luban.Job.Cfg.DataSources.Excel
 {
+    class DataNotEnoughException : System.Exception
+    {
+
+    }
+
     class ExcelStream
     {
 
@@ -80,7 +85,9 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         public string First => _datas[_curIndex].Value?.ToString();
 
-        public string CurrentExcelPosition => _datas[Math.Min(_curIndex, _datas.Count - 1)].ToString();
+        public string LastReadDataInfo => _datas[Math.Min(LastReadIndex, _datas.Count - 1)].ToString();
+
+        private int LastReadIndex { get; set; }
 
         public int IncludeNullAndEmptySize => _toIndex - _curIndex + 1;
 
@@ -106,9 +113,11 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 data = _datas[_curIndex++].Value;
                 if (!IsSkip(data))
                 {
+                    LastReadIndex = _curIndex - 1;
                     return true;
                 }
             }
+            LastReadIndex = _curIndex - 1;
             return false;
         }
 
@@ -127,7 +136,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         private object ReadMayNull()
         {
-            return _curIndex <= _toIndex ? _datas[_curIndex++].Value : null;
+            return _curIndex <= _toIndex ? _datas[LastReadIndex = _curIndex++].Value : null;
         }
 
         //public object Read(bool nullable)
@@ -142,9 +151,11 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 var data = _datas[_curIndex++];
                 if (!IsSkip(data.Value))
                 {
+                    LastReadIndex = _curIndex - 1;
                     return data;
                 }
             }
+            LastReadIndex = _curIndex - 1;
             throw new Exception($"cell:{_datas[_curIndex - 1]} 缺少数据");
         }
 
@@ -155,9 +166,11 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 var data = _datas[_curIndex++];
                 if (!IsSkip(data.Value))
                 {
+                    LastReadIndex = _curIndex - 1;
                     return data.Value;
                 }
             }
+            LastReadIndex = _curIndex - 1;
             throw new Exception($"cell:{_datas[_curIndex - 1]} 缺少数据");
         }
 
@@ -180,6 +193,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 {
                     if (value == END_OF_LIST)
                     {
+                        LastReadIndex = _curIndex - 1;
                         return true;
                     }
                     else

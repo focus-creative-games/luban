@@ -343,7 +343,7 @@ namespace Luban.Job.Cfg.DataCreators
                 }
                 catch (Exception e)
                 {
-                    var dce = new DataCreateException(e, stream.CurrentExcelPosition);
+                    var dce = new DataCreateException(e, stream.LastReadDataInfo);
                     dce.Push(bean, f);
                     throw dce;
                 }
