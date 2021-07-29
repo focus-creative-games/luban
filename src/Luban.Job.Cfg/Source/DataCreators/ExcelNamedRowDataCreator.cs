@@ -128,9 +128,16 @@ namespace Luban.Job.Cfg.DataCreators
                             list.Add(f.CType.Apply(this, row.GetSubTitleNamedRow(fname), f.IsMultiRow /* 肯定是 false */, f.IsNullable));
                         }
                     }
+                    catch (DataCreateException dce)
+                    {
+                        dce.Push(bean, f);
+                        throw;
+                    }
                     catch (Exception e)
                     {
-                        throw new Exception($"读取结构:{bean.FullName} 字段:{fname} 读取 出错 ==> {e.Message}", e);
+                        var dce = new DataCreateException(e, $"列：{fname}");
+                        dce.Push(bean, f);
+                        throw dce;
                     }
                 }
                 else
@@ -154,9 +161,16 @@ namespace Luban.Job.Cfg.DataCreators
                                 list.Add(f.CType.Apply(ExcelDataCreator.Ins, null, row.GetMultiRowStream(f.Name, sep), (DefAssembly)bean.AssemblyBase));
                             }
                         }
+                        catch (DataCreateException dce)
+                        {
+                            dce.Push(bean, f);
+                            throw;
+                        }
                         catch (Exception e)
                         {
-                            throw new Exception($"读取结构:{bean.FullName} 多行字段:{f.Name} 读取 出错 ==> {e.Message}", e);
+                            var dce = new DataCreateException(e, "");
+                            dce.Push(bean, f);
+                            throw dce;
                         }
                     }
                     else
@@ -166,9 +180,16 @@ namespace Luban.Job.Cfg.DataCreators
                         {
                             list.Add(f.CType.Apply(ExcelDataCreator.Ins, f.Remapper, stream, (DefAssembly)bean.AssemblyBase));
                         }
+                        catch (DataCreateException dce)
+                        {
+                            dce.Push(bean, f);
+                            throw;
+                        }
                         catch (Exception e)
                         {
-                            throw new Exception($"读取结构:{bean.FullName} 字段:{f.Name} 位置:{stream.CurrentExcelPosition} 出错 ==> {e.Message}", e);
+                            var dce = new DataCreateException(e, stream.CurrentExcelPosition);
+                            dce.Push(bean, f);
+                            throw dce;
                         }
                     }
                 }

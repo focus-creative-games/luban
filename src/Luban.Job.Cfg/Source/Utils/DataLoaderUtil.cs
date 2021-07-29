@@ -1,6 +1,7 @@
 ﻿using Bright.Time;
 using Luban.Common.Utils;
 using Luban.Job.Cfg.Cache;
+using Luban.Job.Cfg.DataCreators;
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.DataSources;
 using Luban.Job.Cfg.Defs;
@@ -185,6 +186,14 @@ namespace Luban.Job.Cfg.Utils
                     Record record = dataSource.ReadOne(recordType);
                     return record != null ? new List<Record> { record } : new List<Record>();
                 }
+            }
+            catch (DataCreateException dce)
+            {
+                if (string.IsNullOrWhiteSpace(dce.OriginDataLocation))
+                {
+                    dce.OriginDataLocation = originFile;
+                }
+                throw;
             }
             catch (Exception e)
             {

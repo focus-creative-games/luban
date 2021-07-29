@@ -1,4 +1,5 @@
 using ExcelDataReader;
+using Luban.Job.Cfg.DataCreators;
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Common.Types;
@@ -65,6 +66,11 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 try
                 {
                     datas.AddRange(sheet.ReadMulti(type, ((DefBean)type.Bean).IsMultiRow));
+                }
+                catch (DataCreateException dce)
+                {
+                    dce.OriginDataLocation = sheet.RawUrl;
+                    throw;
                 }
                 catch (Exception e)
                 {

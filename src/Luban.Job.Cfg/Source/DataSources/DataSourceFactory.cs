@@ -1,3 +1,4 @@
+using Luban.Job.Cfg.DataCreators;
 using System;
 using System.IO;
 
@@ -24,6 +25,10 @@ namespace Luban.Job.Cfg.DataSources
                 }
                 source.Load(url, sheetName, stream, exportTestData);
                 return source;
+            }
+            catch (DataCreateException dce)
+            {
+                throw;
             }
             catch (Exception e)
             {

@@ -8,5 +8,6 @@ namespace Luban.Common
         READ_FILE_FAIL,
         JOB_ARGUMENT_ERROR,
         JOB_EXCEPTION,
+        DATA_PARSE_ERROR,
     }
 }

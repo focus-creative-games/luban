@@ -130,40 +130,47 @@ namespace Luban.Job.Cfg.DataCreators
             }
 
             var fields = new List<DType>();
-            foreach (var field in implBean.HierarchyFields)
+            foreach (DefField f in implBean.HierarchyFields)
             {
-                if (x.TryGetProperty(field.Name, out var ele))
+                if (x.TryGetProperty(f.Name, out var ele))
                 {
                     if (ele.ValueKind == JsonValueKind.Null || ele.ValueKind == JsonValueKind.Undefined)
                     {
-                        if (field.CType.IsNullable)
+                        if (f.CType.IsNullable)
                         {
                             fields.Add(null);
                         }
                         else
                         {
-                            throw new Exception($"结构:{implBean.FullName} 字段:{field.Name} 不能 null or undefined ");
+                            throw new Exception($"结构:{implBean.FullName} 字段:{f.Name} 不能 null or undefined ");
                         }
                     }
                     else
                     {
                         try
                         {
-                            fields.Add(field.CType.Apply(this, ele, ass));
+                            fields.Add(f.CType.Apply(this, ele, ass));
+                        }
+                        catch (DataCreateException dce)
+                        {
+                            dce.Push(bean, f);
+                            throw;
                         }
                         catch (Exception e)
                         {
-                            throw new Exception($"结构:{implBean.FullName} 字段:{field.Name} 读取失败 => {e.Message}", e);
+                            var dce = new DataCreateException(e, "");
+                            dce.Push(bean, f);
+                            throw dce;
                         }
                     }
                 }
-                else if (field.CType.IsNullable)
+                else if (f.CType.IsNullable)
                 {
                     fields.Add(null);
                 }
                 else
                 {
-                    throw new Exception($"结构:{implBean.FullName} 字段:{field.Name} 缺失");
+                    throw new Exception($"结构:{implBean.FullName} 字段:{f.Name} 缺失");
                 }
             }
             return new DBean(bean, implBean, fields);

@@ -114,26 +114,33 @@ namespace Luban.Job.Cfg.DataCreators
             }
 
             var fields = new List<DType>();
-            foreach (var field in implBean.HierarchyFields)
+            foreach (DefField f in implBean.HierarchyFields)
             {
-                var feles = x.Elements(field.Name);
+                var feles = x.Elements(f.Name);
                 XElement fele = feles.FirstOrDefault();
                 if (fele == null)
                 {
-                    if (field.CType.IsNullable)
+                    if (f.CType.IsNullable)
                     {
                         fields.Add(null);
                         continue;
                     }
-                    throw new Exception($"字段:{field.Name} 缺失");
+                    throw new Exception($"字段:{f.Name} 缺失");
                 }
                 try
                 {
-                    fields.Add(field.CType.Apply(this, fele, ass));
+                    fields.Add(f.CType.Apply(this, fele, ass));
+                }
+                catch (DataCreateException dce)
+                {
+                    dce.Push(implBean, f);
+                    throw;
                 }
                 catch (Exception e)
                 {
-                    throw new Exception($"结构:{implBean.FullName} 字段:{field.Name} 读取失败 => {e.Message}", e);
+                    var dce = new DataCreateException(e, "");
+                    dce.Push(bean, f);
+                    throw dce;
                 }
 
             }

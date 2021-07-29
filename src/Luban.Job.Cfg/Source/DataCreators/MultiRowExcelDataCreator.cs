@@ -98,7 +98,8 @@ namespace Luban.Job.Cfg.DataCreators
                 }
                 catch (Exception e)
                 {
-                    throw new Exception($"位置:{stream.CurrentExcelPosition} 出错 ==> {e.Message}", e);
+                    var dce = new DataCreateException(e, stream.CurrentExcelPosition);
+                    throw dce;
                 }
             }
             return list;
@@ -132,7 +133,8 @@ namespace Luban.Job.Cfg.DataCreators
                 }
                 catch (Exception e)
                 {
-                    throw new Exception($"位置:{stream.CurrentExcelPosition} 出错 ==> {e.Message}", e);
+                    var dce = new DataCreateException(e, stream.CurrentExcelPosition);
+                    throw dce;
                 }
             }
             return new DMap(type, map);

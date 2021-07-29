@@ -336,9 +336,16 @@ namespace Luban.Job.Cfg.DataCreators
                         list.Add(f.CType.Apply(this, f.Remapper, new ExcelStream(stream.ReadCell(), sep, false), ass));
                     }
                 }
+                catch (DataCreateException dce)
+                {
+                    dce.Push(bean, f);
+                    throw;
+                }
                 catch (Exception e)
                 {
-                    throw new InvalidExcelDataException($"读取结构:{bean.FullName} 字段:{f.Name} 出错 ==> {e.Message}", e);
+                    var dce = new DataCreateException(e, stream.CurrentExcelPosition);
+                    dce.Push(bean, f);
+                    throw dce;
                 }
             }
             return list;

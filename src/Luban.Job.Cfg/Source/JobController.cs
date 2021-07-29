@@ -2,6 +2,7 @@ using Bright.Time;
 using CommandLine;
 using Luban.Common.Protos;
 using Luban.Common.Utils;
+using Luban.Job.Cfg.DataCreators;
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Cfg.Generate;
 using Luban.Job.Cfg.RawDefs;
@@ -423,6 +424,17 @@ namespace Luban.Job.Cfg
                 {
                     res.ScatteredFiles.AddRange(genScatteredFiles);
                 }
+            }
+            catch (DataCreateException e)
+            {
+                res.ErrCode = Luban.Common.EErrorCode.DATA_PARSE_ERROR;
+                res.ErrMsg = $@"加载数据失败.
+文件:        {e.OriginDataLocation}
+错误位置:    {e.DataLocationInFile}
+Err:         {e.OriginErrorMsg}
+变量:        {e.VariableFullPathStr}
+";
+                res.StackTrace = e.OriginStackTrace;
             }
             catch (Exception e)
             {
