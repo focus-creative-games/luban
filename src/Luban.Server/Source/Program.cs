@@ -37,6 +37,8 @@ namespace Luban.Server
 
         static void Main(string[] args)
         {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+
             var options = ParseOptions(args);
 
             Luban.Common.Utils.LogUtil.InitSimpleNLogConfigure(NLog.LogLevel.Info);

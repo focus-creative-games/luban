@@ -132,6 +132,8 @@ Options:
 
         static void Main(string[] args)
         {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
             var profile = new ProfileTimer();
 
             profile.StartPhase("all");
