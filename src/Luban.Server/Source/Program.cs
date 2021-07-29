@@ -16,6 +16,9 @@ namespace Luban.Server
         {
             [Option('p', "port", Required = false, HelpText = "listen port")]
             public int Port { get; set; } = 8899;
+
+            [Option('l', "loglevel", Required = false, HelpText = "log level. default INFO. avaliable value: TRACE,DEBUG,INFO,WARN,ERROR,FATAL,OFF")]
+            public string LogLevel { get; set; } = "INFO";
         }
 
         private static CommandLineOptions ParseOptions(String[] args)
@@ -41,7 +44,7 @@ namespace Luban.Server
 
             var options = ParseOptions(args);
 
-            Luban.Common.Utils.LogUtil.InitSimpleNLogConfigure(NLog.LogLevel.Info);
+            Luban.Common.Utils.LogUtil.InitSimpleNLogConfigure(NLog.LogLevel.FromString(options.LogLevel));
 
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 

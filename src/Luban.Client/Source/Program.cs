@@ -26,6 +26,8 @@ namespace Luban.Client
 
             public bool Verbose { get; set; }
 
+            public string LogLevel { get; set; } = "INFO";
+
             public string CacheMetaInfoFile { get; set; } = ".cache.meta";
 
             public string[] WatchDir { get; set; }
@@ -47,6 +49,7 @@ Options:
   -p  --port  <port>            port. default 8899
   -j  --job   <job>             Required. job type.  avaliable value: cfg
   -v  --verbose                 verbose print
+  -l  --loglevel <level>        log level. default INFO. avaliable value: TRACE,DEBUG,INFO,WARN,ERROR,FATAL,OFF
   -c  --cachemetafile <file>    cache meta file name. default is '.cache.meta'
   -w  --watch  <dir>            watch data change and regenerate.
   -h  --help            show usage
@@ -67,8 +70,16 @@ Options:
                         case "-h":
                         case "--host":
                         {
-
-                            ops.Host = args[++i];
+                            // 打个补丁。好多人忘了设置 LUBAN_SERVER_IP 环境变量，导致启动时出问题
+                            if (args[i + 1].StartsWith("-"))
+                            {
+                                Console.WriteLine("[WARN] --host (or -h) <LUBAN_SERVER_IP> argument is missing, use 127.0.0.1 as default. do you forget to set LUBAN_SERVER_IP env variable?");
+                                ops.Host = "127.0.0.1";
+                            }
+                            else
+                            {
+                                ops.Host = args[++i];
+                            }
                             break;
                         }
                         case "-p":
@@ -87,6 +98,12 @@ Options:
                         case "--verbose":
                         {
                             ops.Verbose = true;
+                            break;
+                        }
+                        case "-l":
+                        case "--loglevel":
+                        {
+                            ops.LogLevel = args[++i];
                             break;
                         }
                         case "-c":
@@ -148,7 +165,7 @@ Options:
             CommandLineOptions options = parseResult.Item2;
 
             profile.StartPhase("init logger");
-            LogUtil.InitSimpleNLogConfigure(NLog.LogLevel.Info);
+            Luban.Common.Utils.LogUtil.InitSimpleNLogConfigure(NLog.LogLevel.FromString(options.LogLevel));
             s_logger = NLog.LogManager.GetCurrentClassLogger();
             profile.EndPhaseAndLog();
 
