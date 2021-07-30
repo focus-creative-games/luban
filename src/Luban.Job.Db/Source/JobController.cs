@@ -162,19 +162,19 @@ namespace Luban.Job.Db
                             else
                             {
                                 fileContent.Add($"import {{FieldLogger, FieldLoggerGeneric1, FieldLoggerGeneric2}} from '{brightPackageName}'");
-                                fileContent.Add($"import TxnBeanBase from '{brightPackageName}'");
+                                fileContent.Add($"import {{TxnBeanBase}} from '{brightPackageName}'");
                                 fileContent.Add($"import {{TxnTable, TxnTableGeneric}} from '{brightPackageName}'");
-                                fileContent.Add($"import TransactionContext from '{brightPackageName}'");
+                                fileContent.Add($"import {{TransactionContext}} from '{brightPackageName}'");
                                 fileContent.Add($"import {{FieldTag}} from '{brightPackageName}'");
-                                fileContent.Add($"import TKey from '{brightPackageName}'");
-                                fileContent.Add($"import PList from '{brightPackageName}'");
-                                fileContent.Add($"import PList1 from '{brightPackageName}'");
-                                fileContent.Add($"import PList2 from '{brightPackageName}'");
-                                fileContent.Add($"import PSet from '{brightPackageName}'");
-                                fileContent.Add($"import PMap from '{brightPackageName}'");
-                                fileContent.Add($"import PMap1 from '{brightPackageName}'");
-                                fileContent.Add($"import PMap2 from '{brightPackageName}'");
-                                fileContent.Add($"import SerializeFactory from '{brightPackageName}'");
+                                fileContent.Add($"import {{TKey}} from '{brightPackageName}'");
+                                fileContent.Add($"import {{PList}} from '{brightPackageName}'");
+                                fileContent.Add($"import {{PList1}} from '{brightPackageName}'");
+                                fileContent.Add($"import {{PList2}} from '{brightPackageName}'");
+                                fileContent.Add($"import {{PSet}} from '{brightPackageName}'");
+                                fileContent.Add($"import {{PMap}} from '{brightPackageName}'");
+                                fileContent.Add($"import {{PMap1}} from '{brightPackageName}'");
+                                fileContent.Add($"import {{PMap2}} from '{brightPackageName}'");
+                                fileContent.Add($"import {{SerializeFactory}} from '{brightPackageName}'");
                             }
 
                             fileContent.Add($"export namespace {ass.TopModule} {{");

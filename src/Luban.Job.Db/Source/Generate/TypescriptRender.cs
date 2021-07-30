@@ -106,7 +106,7 @@ export {{x.ts_class_modifier}} class {{name}} extends {{if parent_def_type}} {{x
         if (value == null) throw new Error()
         {{~end~}}
         if (this.isManaged) {
-            let txn = TransactionContext.current
+            let txn = TransactionContext.current!
             txn.putFieldLong(this.getObjectId() + {{field.id}}, new {{name}}.{{field.log_type}}(this, value))
             {{~if ctype.need_set_children_root~}}
             value?.initRoot(this.getRoot())

@@ -261,6 +261,7 @@ namespace Luban.Job.Cfg
                 timer.StartPhase("build defines");
                 var loader = new CfgDefLoader(agent);
                 await loader.LoadAsync(args.DefineFile);
+                await loader.LoadDefinesFromFileAsync(inputDataDir);
                 timer.EndPhaseAndLog();
 
                 var rawDefines = loader.BuildDefines();

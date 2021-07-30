@@ -52,10 +52,46 @@ namespace Luban.Job.Cfg.DataSources.Excel
             }
         }
 
+        public Sheet LoadFirstSheet(string rawUrl, string sheetName, Stream stream)
+        {
+            s_logger.Trace("{filename} {sheet}", rawUrl, sheetName);
+            RawUrl = rawUrl;
+            string ext = Path.GetExtension(rawUrl);
+            using (var reader = ext != ".csv" ? ExcelReaderFactory.CreateReader(stream) : ExcelReaderFactory.CreateCsvReader(stream))
+            {
+                do
+                {
+                    if (sheetName == null || reader.Name == sheetName)
+                    {
+                        try
+                        {
+                            var sheet = ReadSheetHeader(rawUrl, reader);
+                            if (sheet != null)
+                            {
+                                return sheet;
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            throw new Exception($"excel:{rawUrl} sheet:{reader.Name} 读取失败. ==> {e.Message}", e);
+                        }
+
+                    }
+                } while (reader.NextResult());
+            }
+            throw new Exception($"excel:{rawUrl} 不包含有效的单元薄(有效单元薄的A0单元格必须是##).");
+        }
+
         private Sheet ReadSheet(string url, IExcelDataReader reader)
         {
             var sheet = new Sheet(url, reader.Name ?? "");
-            return sheet.Load(reader) ? sheet : null;
+            return sheet.Load(reader, false) ? sheet : null;
+        }
+
+        private Sheet ReadSheetHeader(string url, IExcelDataReader reader)
+        {
+            var sheet = new Sheet(url, reader.Name ?? "");
+            return sheet.Load(reader, true) ? sheet : null;
         }
 
         public override List<Record> ReadMulti(TBean type)

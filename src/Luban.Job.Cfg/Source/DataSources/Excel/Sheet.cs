@@ -25,6 +25,10 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         private Title _rootTitle;
 
+        public List<Title> RootFields => _rootTitle.SubTitleList;
+
+        public List<List<Cell>> RowColumns => _rowColumns;
+
         public class Title
         {
             public int FromIndex { get; set; }
@@ -213,7 +217,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
             this.Name = name;
         }
 
-        public bool Load(IExcelDataReader reader)
+        public bool Load(IExcelDataReader reader, bool headerOnly)
         {
             //s_logger.Info("read sheet:{sheet}", reader.Name);
             if (!ParseMeta(reader))
@@ -221,7 +225,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 return false;
             }
 
-            LoadRemainRows(reader);
+            LoadRemainRows(reader, headerOnly);
 
             return true;
         }
@@ -368,7 +372,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
         }
 
 
-        private void LoadRemainRows(IExcelDataReader reader)
+        private void LoadRemainRows(IExcelDataReader reader, bool headerOnly)
         {
             // TODO 优化性能
             // 几个思路
@@ -508,7 +512,14 @@ namespace Luban.Job.Cfg.DataSources.Excel
             //}
 
             // 删除标题行
-            this._rowColumns.RemoveRange(0, Math.Min(TitleRows + titleRowNum - 1, this._rowColumns.Count));
+            if (headerOnly)
+            {
+                this._rowColumns.RemoveRange(0, Math.Min(titleRowNum, this._rowColumns.Count));
+            }
+            else
+            {
+                this._rowColumns.RemoveRange(0, Math.Min(TitleRows + titleRowNum - 1, this._rowColumns.Count));
+            }
 
             // 删除忽略的记录行
             this._rowColumns.RemoveAll(row => AbstractDataSource.IsIgnoreTag(GetRowTag(row)));

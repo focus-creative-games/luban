@@ -18,7 +18,7 @@ import ByteBuf = Bright.Serialization.ByteBuf";
         }
 
         public const string BrightByteBufPathImportsFormat = "import ByteBuf from '{0}/serialization/ByteBuf'";
-        public const string BrightByteBufPackageImportsFormat = "import ByteBuf from '{0}'";
+        public const string BrightByteBufPackageImportsFormat = "import {{ByteBuf}} from '{0}'";
 
         public static string GetVectorImports(string path, string package)
         {
@@ -31,9 +31,9 @@ import Vector3 from '{0}/math/Vector3'
 import Vector4 from '{0}/math/Vector4'
 ";
         public const string VectorPackageImportsFormat = @"
-import Vector2 from '{0}'
-import Vector3 from '{0}'
-import Vector4 from '{0}'
+import {{Vector2}} from '{0}'
+import {{Vector3}} from '{0}'
+import {{Vector4}} from '{0}'
 ";
         public static string GetSerializeImports(string path, string package)
         {
@@ -41,14 +41,14 @@ import Vector4 from '{0}'
         }
 
         public const string SerializePathImportsFormat = @"import BeanBase from '{0}/serialization/BeanBase'";
-        public const string SerializePackageImportsFormat = @"import BeanBase from '{0}'";
+        public const string SerializePackageImportsFormat = @"import {{BeanBase}} from '{0}'";
 
         public static string GetProtocolImports(string path, string package)
         {
             return string.IsNullOrEmpty(package) ? string.Format(ProtocolPathImportsFormat, path) : string.Format(ProtocolPackageImportsFormat, package);
         }
         public const string ProtocolPathImportsFormat = "import Protocol from '{0}/net/Protocol'";
-        public const string ProtocolPackageImportsFormat = "import Protocol from '{0}'";
+        public const string ProtocolPackageImportsFormat = "import {{Protocol}} from '{0}'";
 
         public const string SerializeTypes = @"
 export interface ISerializable {

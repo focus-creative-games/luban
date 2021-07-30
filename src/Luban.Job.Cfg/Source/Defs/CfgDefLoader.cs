@@ -1,11 +1,15 @@
 using Luban.Common.Utils;
+using Luban.Job.Cfg.DataSources.Excel;
 using Luban.Job.Cfg.RawDefs;
+using Luban.Job.Cfg.Utils;
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.RawDefs;
 using Luban.Server.Common;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace Luban.Job.Cfg.Defs
@@ -152,9 +156,6 @@ namespace Luban.Job.Cfg.Defs
             _cfgServices.Add(new Service() { Name = name, Manager = manager, Groups = groups, Refs = refs });
         }
 
-        private readonly List<string> _tableOptionalAttrs = new List<string> { "index", "mode", "group", "branch_input", "comment" };
-        private readonly List<string> _tableRequireAttrs = new List<string> { "name", "value", "input" };
-
 
         private readonly Dictionary<string, Table> _name2CfgTable = new Dictionary<string, Table>();
 
@@ -213,6 +214,9 @@ namespace Luban.Job.Cfg.Defs
             return mode;
         }
 
+        private readonly List<string> _tableOptionalAttrs = new List<string> { "index", "mode", "group", "branch_input", "comment", "define_from_file" };
+        private readonly List<string> _tableRequireAttrs = new List<string> { "name", "value", "input" };
+
         private void AddTable(XElement e)
         {
             ValidAttrKeys(e, _tableOptionalAttrs, _tableRequireAttrs);
@@ -222,6 +226,7 @@ namespace Luban.Job.Cfg.Defs
                 Name = XmlUtil.GetRequiredAttribute(e, "name"),
                 Namespace = CurNamespace,
                 ValueType = XmlUtil.GetRequiredAttribute(e, "value"),
+                LoadDefineFromFile = XmlUtil.GetOptionBoolAttribute(e, "define_from_file"),
                 Index = XmlUtil.GetOptionalAttribute(e, "index"),
                 Groups = CreateGroups(XmlUtil.GetOptionalAttribute(e, "group")),
                 Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
@@ -264,6 +269,124 @@ namespace Luban.Job.Cfg.Defs
             _cfgTables.Add(p);
         }
 
+
+
+        private async Task<CfgBean> LoadDefineFromFileAsync(Table table, string dataDir)
+        {
+            var inputFileInfos = await DataLoaderUtil.CollectInputFilesAsync(this.Agent, table.InputFiles, dataDir);
+            var file = inputFileInfos[0];
+
+            var source = new ExcelDataSource();
+            var stream = new MemoryStream(await this.Agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5));
+            var sheet = source.LoadFirstSheet(file.OriginFile, file.SheetName, stream);
+
+            var cb = new CfgBean() { Namespace = table.Namespace, Name = table.ValueType, };
+
+            var rc = sheet.RowColumns;
+            var attrRow = sheet.RowColumns[0];
+            var titleRow = sheet.RowColumns[1];
+            var descRow = sheet.RowColumns[2];
+            foreach (var f in sheet.RootFields)
+            {
+                var cf = new CfgField() { Name = f.Name, Id = 0 };
+
+
+                string[] attrs = attrRow[f.FromIndex].Value?.ToString().Split('&');
+
+                if (attrs.Length == 0 || string.IsNullOrWhiteSpace(attrs[0]))
+                {
+                    throw new Exception($"table:{table.Name} file:{file.OriginFile} title:{f.Name} type missing!");
+                }
+
+                // 优先取desc行，如果为空,则取title行
+
+                cf.Comment = descRow[f.FromIndex].Value?.ToString();
+                if (string.IsNullOrWhiteSpace(cf.Comment))
+                {
+                    cf.Comment = titleRow[f.FromIndex].Value?.ToString();
+                }
+                if (string.IsNullOrWhiteSpace(cf.Comment))
+                {
+                    cf.Comment = "";
+                }
+
+                cf.Type = attrs[0];
+
+                for (int i = 1; i < attrs.Length; i++)
+                {
+                    var pair = attrs[i].Split('=');
+                    if (pair.Length != 2)
+                    {
+                        throw new Exception($"table:{table.Name} file:{file.OriginFile} title:{f.Name} attr: '{attrs[i]}' is invalid!");
+                    }
+                    var attrName = pair[0];
+                    var attrValue = pair[1];
+                    switch (attrName)
+                    {
+                        case "index":
+                        {
+                            cf.Index = attrValue;
+                            break;
+                        }
+                        case "sep":
+                        {
+                            cf.Sep = attrValue;
+                            break;
+                        }
+                        case "ref":
+                        case "path":
+                        case "range":
+                        {
+                            var validator = new Validator() { Type = attrName, Rule = attrValue };
+                            cf.Validators.Add(validator);
+                            cf.ValueValidators.Add(validator);
+                            break;
+                        }
+                        case "multi_lines":
+                        {
+                            cf.IsMultiRow = attrValue == "1" || attrValue.Equals("true", StringComparison.OrdinalIgnoreCase);
+                            break;
+                        }
+                        case "group":
+                        {
+                            cf.Groups = attrValue.Split(',').Select(s => s.Trim()).Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
+                            break;
+                        }
+                        case "comment":
+                        {
+                            cf.Comment = attrValue;
+                            break;
+                        }
+                        case "convert":
+                        {
+                            cf.Converter = attrValue;
+                            break;
+                        }
+                        default:
+                        {
+                            throw new Exception($"table:{table.Name} file:{file.OriginFile} title:{f.Name} attr: '{attrs[i]}' is invalid!");
+                        }
+                    }
+                }
+
+                cb.Fields.Add(cf);
+            }
+            return cb;
+        }
+
+        public async Task LoadDefinesFromFileAsync(string dataDir)
+        {
+            var loadTasks = new List<Task<CfgBean>>();
+            foreach (var table in this._cfgTables.Where(t => t.LoadDefineFromFile))
+            {
+                loadTasks.Add(Task.Run(async () => await this.LoadDefineFromFileAsync(table, dataDir)));
+            }
+
+            foreach (var task in loadTasks)
+            {
+                this._beans.Add(await task);
+            }
+        }
 
 
         private static readonly List<string> _fieldOptionalAttrs = new List<string> {

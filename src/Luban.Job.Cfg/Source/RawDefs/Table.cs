@@ -29,6 +29,8 @@ namespace Luban.Job.Cfg.RawDefs
 
         public string ValueType { get; set; }
 
+        public bool LoadDefineFromFile { get; set; }
+
         public ETableMode Mode { get; set; }
 
         public string Comment { get; set; }
