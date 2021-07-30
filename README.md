@@ -8,7 +8,12 @@
 
 ![icon](docs/images/icon.png)
 
-## [README - English](./README.en-us.md)
+-----
+## links
+- [README - English](./README.en-us.md)
+- [github link](https://github.com/focus-creative-games/luban)
+- [gitee link](https://gitee.com/focus-creative-games/luban)
+----
 
 ## 介绍
 
@@ -35,7 +40,8 @@ Luban适合有以下需求的开发者：
 - [Excel 配置数据简介](docs/data_excel.md)
 - [文档目录](docs/catalog.md)
 - [[TODO] 完整手册](docs/manual.md)
-- **[====>强烈推荐查看：示例项目 <====](https://github.com/focus-creative-games/luban_examples)**
+- **====>强烈推荐查看：示例项目** ([github](https://github.com/focus-creative-games/luban_examples)) ([gitee](https://gitee.com/focus-creative-games/luban_examples)) **<====**
+
 - 支持与联系
   - QQ群: 692890842 （Luban开发交流群）。有使用方面的疑问请及时加QQ群询问，随时有人帮助解决。
   - 邮箱: taojingjian#gmail.com

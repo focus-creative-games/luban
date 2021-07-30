@@ -428,11 +428,16 @@ namespace Luban.Job.Cfg
             catch (DataCreateException e)
             {
                 res.ErrCode = Luban.Common.EErrorCode.DATA_PARSE_ERROR;
-                res.ErrMsg = $@"加载数据失败.
-文件:        {e.OriginDataLocation}
-错误位置:    {e.DataLocationInFile}
-Err:         {e.OriginErrorMsg}
-变量:        {e.VariableFullPathStr}
+                res.ErrMsg = $@"
+=======================================================================
+    解析失败!
+
+        文件:        {e.OriginDataLocation}
+        错误位置:    {e.DataLocationInFile}
+        Err:         {e.OriginErrorMsg}
+        字段:        {e.VariableFullPathStr}
+
+=======================================================================
 ";
                 res.StackTrace = e.OriginStackTrace;
             }
