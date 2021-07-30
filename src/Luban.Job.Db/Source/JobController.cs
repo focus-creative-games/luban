@@ -131,29 +131,51 @@ namespace Luban.Job.Db
                     {
                         var render = new TypescriptRender();
                         var brightRequirePath = args.TypescriptBrightRequirePath;
+                        var brightPackageName = args.TypescriptBrightPackageName;
                         tasks.Add(Task.Run(() =>
                         {
                             var fileContent = new List<string>();
 
-                            fileContent.Add(string.Format(TypescriptStringTemplate.BrightByteBufImportsFormat, brightRequirePath));
+                            fileContent.Add(TypescriptStringTemplate.GetByteBufImports(brightRequirePath, brightPackageName));
 
-                            fileContent.Add(string.Format(TypescriptStringTemplate.SerializeImportsFormat, brightRequirePath));
-                            fileContent.Add(string.Format(TypescriptStringTemplate.ProtocolImportsFormat, brightRequirePath));
-                            fileContent.Add(string.Format(TypescriptStringTemplate.VectorImportsFormat, brightRequirePath));
-                            fileContent.Add($"import {{FieldLogger, FieldLoggerGeneric1, FieldLoggerGeneric2}} from '{brightRequirePath}/transaction/FieldLogger'");
-                            fileContent.Add($"import TxnBeanBase from '{brightRequirePath}/transaction/TxnBeanBase'");
-                            fileContent.Add($"import {{TxnTable, TxnTableGeneric}} from '{brightRequirePath}/transaction/TxnTable'");
-                            fileContent.Add($"import TransactionContext from '{brightRequirePath}/transaction/TransactionContext'");
-                            fileContent.Add($"import {{FieldTag}} from '{brightRequirePath}/serialization/FieldTag'");
-                            fileContent.Add($"import TKey from '{brightRequirePath}/storage/TKey'");
-                            fileContent.Add($"import PList from '{brightRequirePath}/transaction/collections/PList'");
-                            fileContent.Add($"import PList1 from '{brightRequirePath}/transaction/collections/PList1'");
-                            fileContent.Add($"import PList2 from '{brightRequirePath}/transaction/collections/PList2'");
-                            fileContent.Add($"import PSet from '{brightRequirePath}/transaction/collections/PSet'");
-                            fileContent.Add($"import PMap from '{brightRequirePath}/transaction/collections/PMap'");
-                            fileContent.Add($"import PMap1 from '{brightRequirePath}/transaction/collections/PMap1'");
-                            fileContent.Add($"import PMap2 from '{brightRequirePath}/transaction/collections/PMap2'");
-                            fileContent.Add($"import SerializeFactory from '{brightRequirePath}/serialization/SerializeFactory'");
+                            fileContent.Add(TypescriptStringTemplate.GetSerializeImports(brightRequirePath, brightPackageName));
+                            fileContent.Add(TypescriptStringTemplate.GetProtocolImports(brightRequirePath, brightPackageName));
+                            fileContent.Add(TypescriptStringTemplate.GetVectorImports(brightRequirePath, brightPackageName));
+
+                            if (!string.IsNullOrEmpty(brightRequirePath))
+                            {
+                                fileContent.Add($"import {{FieldLogger, FieldLoggerGeneric1, FieldLoggerGeneric2}} from '{brightRequirePath}/transaction/FieldLogger'");
+                                fileContent.Add($"import TxnBeanBase from '{brightRequirePath}/transaction/TxnBeanBase'");
+                                fileContent.Add($"import {{TxnTable, TxnTableGeneric}} from '{brightRequirePath}/transaction/TxnTable'");
+                                fileContent.Add($"import TransactionContext from '{brightRequirePath}/transaction/TransactionContext'");
+                                fileContent.Add($"import {{FieldTag}} from '{brightRequirePath}/serialization/FieldTag'");
+                                fileContent.Add($"import TKey from '{brightRequirePath}/storage/TKey'");
+                                fileContent.Add($"import PList from '{brightRequirePath}/transaction/collections/PList'");
+                                fileContent.Add($"import PList1 from '{brightRequirePath}/transaction/collections/PList1'");
+                                fileContent.Add($"import PList2 from '{brightRequirePath}/transaction/collections/PList2'");
+                                fileContent.Add($"import PSet from '{brightRequirePath}/transaction/collections/PSet'");
+                                fileContent.Add($"import PMap from '{brightRequirePath}/transaction/collections/PMap'");
+                                fileContent.Add($"import PMap1 from '{brightRequirePath}/transaction/collections/PMap1'");
+                                fileContent.Add($"import PMap2 from '{brightRequirePath}/transaction/collections/PMap2'");
+                                fileContent.Add($"import SerializeFactory from '{brightRequirePath}/serialization/SerializeFactory'");
+                            }
+                            else
+                            {
+                                fileContent.Add($"import {{FieldLogger, FieldLoggerGeneric1, FieldLoggerGeneric2}} from '{brightPackageName}'");
+                                fileContent.Add($"import TxnBeanBase from '{brightPackageName}'");
+                                fileContent.Add($"import {{TxnTable, TxnTableGeneric}} from '{brightPackageName}'");
+                                fileContent.Add($"import TransactionContext from '{brightPackageName}'");
+                                fileContent.Add($"import {{FieldTag}} from '{brightPackageName}'");
+                                fileContent.Add($"import TKey from '{brightPackageName}'");
+                                fileContent.Add($"import PList from '{brightPackageName}'");
+                                fileContent.Add($"import PList1 from '{brightPackageName}'");
+                                fileContent.Add($"import PList2 from '{brightPackageName}'");
+                                fileContent.Add($"import PSet from '{brightPackageName}'");
+                                fileContent.Add($"import PMap from '{brightPackageName}'");
+                                fileContent.Add($"import PMap1 from '{brightPackageName}'");
+                                fileContent.Add($"import PMap2 from '{brightPackageName}'");
+                                fileContent.Add($"import SerializeFactory from '{brightPackageName}'");
+                            }
 
                             fileContent.Add($"export namespace {ass.TopModule} {{");
 

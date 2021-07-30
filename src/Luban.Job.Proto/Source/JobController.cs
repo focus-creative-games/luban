@@ -153,6 +153,7 @@ namespace Luban.Job.Proto
                     {
                         var render = new TypescriptRender();
                         var brightRequirePath = args.TypescriptBrightRequirePath;
+                        var brightPackageName = args.TypescriptBrightPackageName;
 
                         tasks.Add(Task.Run(() =>
                         {
@@ -163,7 +164,7 @@ namespace Luban.Job.Proto
                             }
                             else
                             {
-                                fileContent.Add(string.Format(TypescriptStringTemplate.BrightByteBufImportsFormat, brightRequirePath));
+                                fileContent.Add(TypescriptStringTemplate.GetByteBufImports(brightRequirePath, brightPackageName));
                             }
                             if (args.EmbedBrightTypes)
                             {
@@ -173,9 +174,9 @@ namespace Luban.Job.Proto
                             }
                             else
                             {
-                                fileContent.Add(string.Format(TypescriptStringTemplate.SerializeImportsFormat, brightRequirePath));
-                                fileContent.Add(string.Format(TypescriptStringTemplate.ProtocolImportsFormat, brightRequirePath));
-                                fileContent.Add(string.Format(TypescriptStringTemplate.VectorImportsFormat, brightRequirePath));
+                                fileContent.Add(TypescriptStringTemplate.GetSerializeImports(brightRequirePath, brightPackageName));
+                                fileContent.Add(TypescriptStringTemplate.GetProtocolImports(brightRequirePath, brightPackageName));
+                                fileContent.Add(TypescriptStringTemplate.GetVectorImports(brightRequirePath, brightPackageName));
                             }
 
                             fileContent.Add(@$"export namespace {ass.TopModule} {{");

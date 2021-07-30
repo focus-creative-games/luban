@@ -26,7 +26,7 @@ namespace Luban.Job.Cfg.DataSources
                 source.Load(url, sheetName, stream, exportTestData);
                 return source;
             }
-            catch (DataCreateException dce)
+            catch (DataCreateException)
             {
                 throw;
             }

@@ -521,6 +521,7 @@ namespace Luban.Job.Cfg
             Action<List<string>> preContent = (fileContent) =>
             {
                 var brightRequirePath = args.TypescriptBrightRequirePath;
+                var brightPackageName = args.TypescriptBrightPackageName;
                 bool isGenBinary = genType.EndsWith("bin");
                 if (isGenBinary)
                 {
@@ -530,7 +531,7 @@ namespace Luban.Job.Cfg
                     }
                     else
                     {
-                        fileContent.Add(string.Format(TypescriptStringTemplate.BrightByteBufImportsFormat, brightRequirePath));
+                        fileContent.Add(TypescriptStringTemplate.GetByteBufImports(brightRequirePath, brightPackageName));
                     }
                 }
 
@@ -546,9 +547,9 @@ namespace Luban.Job.Cfg
                 {
                     if (isGenBinary)
                     {
-                        fileContent.Add(string.Format(TypescriptStringTemplate.SerializeImportsFormat, brightRequirePath));
+                        fileContent.Add(TypescriptStringTemplate.GetSerializeImports(brightRequirePath, brightPackageName));
                     }
-                    fileContent.Add(string.Format(TypescriptStringTemplate.VectorImportsFormat, brightRequirePath));
+                    fileContent.Add(TypescriptStringTemplate.GetVectorImports(brightRequirePath, brightPackageName));
                 }
 
                 fileContent.Add(@$"export namespace {ctx.TopModule} {{");
