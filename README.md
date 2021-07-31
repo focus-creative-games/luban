@@ -19,7 +19,7 @@
 
 luban是一个通用型对象生成与缓存方案, 在此基础上实现了一个功能**完备强大灵活易用**的 **游戏配置解决方案**。
 
-luban最初为无缝开放世界MMORPG这样的超大型项目而设计，擅长处理大型复杂的配置数据和结构，也适合向下用于卡牌、回合制、ARPG等中轻度游戏。
+luban最初为无缝开放世界MMORPG这样的超大型项目而设计，擅长处理大型复杂的配置数据和结构，也适合向下用于卡牌、回合制、SLG等中轻度游戏。
 
 luban基于 **meta定义 + 数据源** 的设计，实现了**完备的类型系统**，增强了excel格式，同时提供json、xml、lua等多种数据源支持，统一了数据定义、加载、检验、数据导出及代码生成的游戏配置Pipeline，彻底解决了中大型项目中难以在excel中配置复杂数据以及一个项目中excel、json等多种的配置方案并存的问题。
 
@@ -53,12 +53,12 @@ Luban适合有以下需求的开发者：
 - 支持表与字段级别分组。可以选择性地导出客户端或者服务器所用的表及字段
 - 多种导出数据格式支持。支持binary、json、lua 等导出数据格式
 - 支持数据标签。 可以选择导出符合要求的数据，发布正式数据时策划不必手动注释掉那些测试数据了
-- 强大的数据校验能力。支持内建数据格式检查；支持ref表引用检查（策划不用担心填错id）;支持path资源检查（策划不用担心填错资源路径）;支持高级自定义校验（比如两字段和必须100）
+- 强大的数据校验能力。支持内建数据格式检查；支持ref表引用检查（策划不用担心填错id）;支持path资源检查（策划不用担心填错资源路径）;支持range检查
 - 支持常量别名。策划不必再为诸如 升级丹 这样的道具手写具体道具id了
 - 支持多种常见数据表模式。 one(单例表)、map（常规key-value表）
 - 支持emmylua anntations。生成的lua包含符合emmylua 格式anntations信息。配合emmylua有良好的配置代码提示能力
 - 支持res资源标记。可以一键导出配置中引用的所有资源列表(icon,ui,assetbundle等等)
-- 生成代码良好模块化
+- 生成代码清晰易读、良好模块化
 - **本地化支持**
  	- 支持时间本地化。datetime类型数据会根据指定的timezone，转换为目标地区该时刻的UTC时间，方便程序使用。
 	- **支持文本静态本地化。导出时所有text类型数据正确替换为最终的本地化字符串。**
@@ -95,9 +95,36 @@ Luban适合有以下需求的开发者：
 
 ## 快速预览
 
-与常见的专注于excel的导表工具不同，luban的定义与数据分离，使用单独的xml定义 **表和结构**，数据文件只包含数据。
+**luban兼容传统的excel导表工具，可以在excel定义完整的数据表**，不过目前仍然需要在xml添加一行表定义。与常见的专注于excel的导表工具不同，由于luban支持强大的类型系统以及支持json、xml、lua等文件类型，luban原生做法为定义与数据分离，使用单独的xml定义 **表和结构**，数据文件只包含数据。
 
-### 常规的原生数据
+下面展示完普通兼容横表和纵表的例子后，剩余例子都是**定义与数据分离**的luban风格。使用者自己选择是定义与数据混合的方式还是定义与数据分离的方式。目前luban_examples项目中大多数示例使用定义与数据分离的方式。
+
+
+### 传统兼容横表
+
+定义
+
+```xml
+<table name="TbDefineFromExcel" value="DefineFromExcel" input="test/define_from_excel.xlsx" define_from_file="1"/>
+```
+
+数据
+
+![兼容横表](docs/images/examples/ex_01.png)
+
+### 传统兼容纵表
+
+定义
+
+```xml
+<table name="TbDefineFromExcelOne" value="DefineFromExcelOne" mode="one" input="test/define_from_excel_one.xlsx" define_from_file="1"/>
+```
+
+数据
+
+![兼容纵表](docs/images/examples/ex_02.png) 
+
+### 常规的原生数据 （从本示例起为定义与数据分离的模式）
 
 以下是一个包含所有常见简单原生数据的表。
 
@@ -111,7 +138,7 @@ Luban适合有以下需求的开发者：
 	<var name="x6" type="float"/>
 	<var name="x7" type="double"/>
 	<var name="s1" type="string" />
-	<var anme="s2" type="text"/> 本地化字符串,由key和text两个字段构成
+	<var name="s2" type="text"/> 本地化字符串,由key和text两个字段构成
 	<var name="v2" type="vector2"/>
 	<var name="v3" type="vector3"/>
 	<var name="v4" type="vector4"/>
