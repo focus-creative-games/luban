@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.Generate
 {
-    class CsCodeJsonRender : CsCodeRenderBase
+    class CsCodeUnityJsonRender : CsCodeRenderBase
     {
         [ThreadStatic]
         private static Template t_beanRender;
@@ -14,7 +14,7 @@ namespace Luban.Job.Cfg.Generate
             var template = t_beanRender ??= Template.Parse(@"
 using Bright.Serialization;
 using System.Collections.Generic;
-using System.Text.Json;
+using SimpleJSON;
 
 {{
     name = x.name
@@ -32,10 +32,10 @@ namespace {{x.namespace_with_top_module}}
 /// </summary>
 public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {{parent}} {{else}} Bright.Config.BeanBase {{end}}
 {
-    public {{name}}(JsonElement _json) {{if parent_def_type}} : base(_json) {{end}}
+    public {{name}}(JSONNode _json) {{if parent_def_type}} : base(_json) {{end}}
     {
         {{~ for field in export_fields ~}}
-        {{cs_json_deserialize '_json' field.cs_style_name field.name field.ctype}}
+        {{cs_unity_json_deserialize '_json' field.cs_style_name field.name field.ctype}}
         {{~if field.index_field~}}
         foreach(var _v in {{field.cs_style_name}}) { {{field.cs_style_name}}_Index.Add(_v.{{field.index_field.cs_style_name}}, _v); }
         {{~end~}}
@@ -52,10 +52,11 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
         {{~end~}}
     }
 
-    public static {{name}} Deserialize{{name}}(JsonElement _json)
+    public static {{name}} Deserialize{{name}}(JSONNode _json)
     {
     {{~if x.is_abstract_type~}}
-        switch (_json.GetProperty(""__type__"").GetString())
+        string type = _json[""__type__""];
+        switch (type)
         {
         {{~for child in x.hierarchy_not_abstract_children~}}
             case ""{{child.name}}"": return new {{child.full_name}}(_json);
@@ -126,7 +127,7 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
             var template = t_tableRender ??= Template.Parse(@"
 using Bright.Serialization;
 using System.Collections.Generic;
-using System.Text.Json;
+using SimpleJSON;
 
 {{ 
     name = x.name
@@ -148,12 +149,12 @@ public sealed partial class {{name}}
     private readonly Dictionary<{{cs_define_type key_type}}, {{cs_define_type value_type}}> _dataMap;
     private readonly List<{{cs_define_type value_type}}> _dataList;
     
-    public {{name}}(JsonElement _json)
+    public {{name}}(JSONNode _json)
     {
         _dataMap = new Dictionary<{{cs_define_type key_type}}, {{cs_define_type value_type}}>();
         _dataList = new List<{{cs_define_type value_type}}>();
         
-        foreach(JsonElement _row in _json.EnumerateArray())
+        foreach(JSONNode _row in _json.Children)
         {
             var _v = {{cs_define_type value_type}}.Deserialize{{value_type.bean.name}}(_row);
             _dataList.Add(_v);
@@ -185,10 +186,13 @@ public sealed partial class {{name}}
 
      private readonly {{cs_define_type value_type}} _data;
 
-    public {{name}}(JsonElement _json)
+    public {{name}}(JSONNode _json)
     {
-        int n = _json.GetArrayLength();
-        if (n != 1) throw new SerializationException(""table mode=one, but size != 1"");
+        if(!_json.IsArray)
+        {
+            throw new SerializationException();
+        }
+        if (_json.Count != 1) throw new SerializationException(""table mode=one, but size != 1"");
         _data = {{cs_define_type value_type}}.Deserialize{{value_type.bean.name}}(_json[0]);
     }
 
@@ -227,7 +231,7 @@ public sealed partial class {{name}}
         {
             var template = t_serviceRender ??= Template.Parse(@"
 using Bright.Serialization;
-using System.Text.Json;
+using SimpleJSON;
 {{
     name = x.name
     namespace = x.namespace
@@ -245,7 +249,7 @@ public sealed partial class {{name}}
     public {{table.full_name}} {{table.name}} {get; }
     {{~end~}}
 
-    public {{name}}(System.Func<string, JsonElement> loader)
+    public {{name}}(System.Func<string, JSONNode> loader)
     {
         var tables = new System.Collections.Generic.Dictionary<string, object>();
         {{~for table in tables ~}}

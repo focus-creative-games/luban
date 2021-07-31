@@ -45,7 +45,7 @@ namespace Luban.Job.Cfg
             [Option("output_data_json_monolithic_file", Required = false, HelpText = "output monolithic json file")]
             public string OutputDataJsonMonolithicFile { get; set; }
 
-            [Option("gen_types", Required = true, HelpText = "code_cs_bin,code_cs_json,code_lua_bin,code_java_bin,code_go_bin,code_go_json,code_cpp_bin,code_python27_json,code_python3_json,code_typescript_bin,code_typescript_json,data_bin,data_lua,data_json,data_json_monolithic . can be multi")]
+            [Option("gen_types", Required = true, HelpText = "code_cs_bin,code_cs_json,code_cs_unity_json,code_lua_bin,code_java_bin,code_go_bin,code_go_json,code_cpp_bin,code_python27_json,code_python3_json,code_typescript_bin,code_typescript_json,data_bin,data_lua,data_json,data_json_monolithic . can be multi")]
             public string GenType { get; set; }
 
             [Option('s', "service", Required = true, HelpText = "service")]
@@ -79,6 +79,7 @@ namespace Luban.Job.Cfg
             {
                 case "code_cs_bin": return new CsCodeBinRender();
                 case "code_cs_json": return new CsCodeJsonRender();
+                case "code_cs_unity_json": return new CsCodeUnityJsonRender();
                 case "code_java_bin": return new JavaCodeBinRender();
                 case "code_go_bin": return new GoCodeBinRender();
                 case "code_go_json": return new GoCodeJsonRender();
@@ -101,7 +102,9 @@ namespace Luban.Job.Cfg
             switch (genType)
             {
                 case "code_cs_bin":
-                case "code_cs_json": return ELanguage.CS;
+                case "code_cs_json":
+                case "code_cs_unity_json":
+                    return ELanguage.CS;
                 case "code_java_bin": return ELanguage.JAVA;
                 case "code_go_bin":
                 case "code_go_json": return ELanguage.GO;
@@ -329,6 +332,7 @@ namespace Luban.Job.Cfg
                     {
                         case "code_cs_bin":
                         case "code_cs_json":
+                        case "code_cs_unity_json":
                         case "code_java_bin":
                         case "code_go_bin":
                         case "code_go_json":

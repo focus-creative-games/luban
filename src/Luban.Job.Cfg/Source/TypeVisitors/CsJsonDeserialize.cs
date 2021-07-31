@@ -4,9 +4,9 @@ using System;
 
 namespace Luban.Job.Cfg.TypeVisitors
 {
-    class CsJsonUserialize : ITypeFuncVisitor<string, string, string>
+    class CsJsonDeserialize : ITypeFuncVisitor<string, string, string>
     {
-        public static CsJsonUserialize Ins { get; } = new CsJsonUserialize();
+        public static CsJsonDeserialize Ins { get; } = new();
 
         public string Accept(TBool type, string json, string x)
         {
@@ -85,37 +85,37 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TArray type, string json, string x)
         {
-            return $"{{ var _json = {json}; int _n = _json.GetArrayLength(); {x} = new {type.ElementType.CsUnderingDefineType()}[_n]; int _index=0; foreach(JsonElement __e in _json.EnumerateArray()) {{ {type.ElementType.CsUnderingDefineType()} __v;  {type.ElementType.Apply(this, "__e", "__v")}  {x}[_index++] = __v; }}   }}";
+            return $"{{ var _json0 = {json}; int _n = _json0.GetArrayLength(); {x} = new {type.ElementType.CsUnderingDefineType()}[_n]; int _index=0; foreach(JsonElement __e in _json0.EnumerateArray()) {{ {type.ElementType.CsUnderingDefineType()} __v;  {type.ElementType.Apply(this, "__e", "__v")}  {x}[_index++] = __v; }}   }}";
         }
 
         public string Accept(TList type, string json, string x)
         {
-            return $"{{ var _json = {json}; {x} = new {type.CsUnderingDefineType()}(_json.GetArrayLength()); foreach(JsonElement __e in _json.EnumerateArray()) {{ {type.ElementType.CsUnderingDefineType()} __v;  {type.ElementType.Apply(this, "__e", "__v")}  {x}.Add(__v); }}   }}";
+            return $"{{ var _json0 = {json}; {x} = new {type.CsUnderingDefineType()}(_json0.GetArrayLength()); foreach(JsonElement __e in _json0.EnumerateArray()) {{ {type.ElementType.CsUnderingDefineType()} __v;  {type.ElementType.Apply(this, "__e", "__v")}  {x}.Add(__v); }}   }}";
         }
 
         public string Accept(TSet type, string json, string x)
         {
-            return $"{{ var _json = {json}; {x} = new {type.CsUnderingDefineType()}(_json.GetArrayLength()); foreach(JsonElement __e in _json.EnumerateArray()) {{ {type.ElementType.CsUnderingDefineType()} __v;  {type.ElementType.Apply(this, "__e", "__v")}  {x}.Add(__v); }}   }}";
+            return $"{{ var _json0 = {json}; {x} = new {type.CsUnderingDefineType()}(_json0.GetArrayLength()); foreach(JsonElement __e in _json0.EnumerateArray()) {{ {type.ElementType.CsUnderingDefineType()} __v;  {type.ElementType.Apply(this, "__e", "__v")}  {x}.Add(__v); }}   }}";
         }
 
         public string Accept(TMap type, string json, string x)
         {
-            return @$"{{ var _json = {json}; {x} = new {type.CsUnderingDefineType()}(_json.GetArrayLength()); foreach(JsonElement __e in _json.EnumerateArray()) {{ {type.KeyType.CsUnderingDefineType()} __k;  {type.KeyType.Apply(this, "__e[0]", "__k")} {type.ValueType.CsUnderingDefineType()} __v;  {type.ValueType.Apply(this, "__e[1]", "__v")}  {x}.Add(__k, __v); }}   }}";
+            return @$"{{ var _json0 = {json}; {x} = new {type.CsUnderingDefineType()}(_json0.GetArrayLength()); foreach(JsonElement __e in _json0.EnumerateArray()) {{ {type.KeyType.CsUnderingDefineType()} __k;  {type.KeyType.Apply(this, "__e[0]", "__k")} {type.ValueType.CsUnderingDefineType()} __v;  {type.ValueType.Apply(this, "__e[1]", "__v")}  {x}.Add(__k, __v); }}   }}";
         }
 
         public string Accept(TVector2 type, string json, string x)
         {
-            return $"{{ var _json = {json}; float __x; {TFloat.Ins.Apply(this, "_json.GetProperty(\"x\")", "__x") } float __y; {TFloat.Ins.Apply(this, "_json.GetProperty(\"y\")", "__y") } {x} = new System.Numerics.Vector2(__x, __y); }}";
+            return $"{{ var _json0 = {json}; float __x; {TFloat.Ins.Apply(this, "_json0.GetProperty(\"x\")", "__x") } float __y; {TFloat.Ins.Apply(this, "_json0.GetProperty(\"y\")", "__y") } {x} = new System.Numerics.Vector2(__x, __y); }}";
         }
 
         public string Accept(TVector3 type, string json, string x)
         {
-            return $"{{ var _json = {json}; float __x; {TFloat.Ins.Apply(this, "_json.GetProperty(\"x\")", "__x") } float __y; {TFloat.Ins.Apply(this, "_json.GetProperty(\"y\")", "__y") } float __z; {TFloat.Ins.Apply(this, "_json.GetProperty(\"z\")", "__z") }  {x} = new System.Numerics.Vector3(__x, __y,__z); }}";
+            return $"{{ var _json0 = {json}; float __x; {TFloat.Ins.Apply(this, "_json0.GetProperty(\"x\")", "__x") } float __y; {TFloat.Ins.Apply(this, "_json0.GetProperty(\"y\")", "__y") } float __z; {TFloat.Ins.Apply(this, "_json0.GetProperty(\"z\")", "__z") }  {x} = new System.Numerics.Vector3(__x, __y,__z); }}";
         }
 
         public string Accept(TVector4 type, string json, string x)
         {
-            return $"{{ var _json = {json}; float __x; {TFloat.Ins.Apply(this, "_json.GetProperty(\"x\")", "__x") } float __y; {TFloat.Ins.Apply(this, "_json.GetProperty(\"y\")", "__y") } float __z; {TFloat.Ins.Apply(this, "_json.GetProperty(\"z\")", "__z") }  float __w; {TFloat.Ins.Apply(this, "_json.GetProperty(\"w\")", "__w") } {x} = new System.Numerics.Vector4(__x, __y, __z, __w); }}";
+            return $"{{ var _json0 = {json}; float __x; {TFloat.Ins.Apply(this, "_json0.GetProperty(\"x\")", "__x") } float __y; {TFloat.Ins.Apply(this, "_json0.GetProperty(\"y\")", "__y") } float __z; {TFloat.Ins.Apply(this, "_json0.GetProperty(\"z\")", "__z") }  float __w; {TFloat.Ins.Apply(this, "_json0.GetProperty(\"w\")", "__w") } {x} = new System.Numerics.Vector4(__x, __y, __z, __w); }}";
         }
 
         public string Accept(TDateTime type, string json, string x)
