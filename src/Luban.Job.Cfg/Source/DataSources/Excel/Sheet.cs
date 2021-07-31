@@ -386,7 +386,12 @@ namespace Luban.Job.Cfg.DataSources.Excel
             int rowIndex = 0;
             while (reader.Read())
             {
-                ++rowIndex; // 第一行是 meta ，跳过
+                ++rowIndex; // 第1行是 meta ，标题及数据行从第2行开始
+                // 重点优化横表的headerOnly模式， 此模式下只读前几行标题行，不读数据行
+                if (headerOnly && this.OrientRow && rowIndex >= 10)
+                {
+                    break;
+                }
                 var row = new List<Cell>();
                 for (int i = 0, n = reader.FieldCount; i < n; i++)
                 {
@@ -481,7 +486,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
             //TODO 其实有bug. 未处理只占一列的 多级标题头
 
-            // 有一些列不是MergeCell,所以还需要额外处理
+            // 上面的代码处理完Merge列,接下来处理非Merge的列
             var titleRow = _rowColumns[0];
             for (int i = 0; i < titleRow.Count; i++)
             {
@@ -509,23 +514,20 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 throw new Exception($"没有定义任何有效 列");
             }
             _rootTitle.SortSubTitles();
-            //foreach (var title in _rootTitle.SubTitleList)
-            //{
-            //    // s_logger.Info("============ sheet:{sheet} title:{title}", Name, title);
-            //}
 
-            // 删除标题行
             if (headerOnly)
             {
+                // 删除字段名行，保留属性行开始的行
                 this._rowColumns.RemoveRange(0, Math.Min(titleRowNum, this._rowColumns.Count));
             }
             else
             {
+                // 删除所有标题行，包含字段名行、属性行、标题、描述等等非有效数据行
                 this._rowColumns.RemoveRange(0, Math.Min(TitleRows + titleRowNum - 1, this._rowColumns.Count));
+                // 删除忽略的记录行
+                this._rowColumns.RemoveAll(row => AbstractDataSource.IsIgnoreTag(GetRowTag(row)));
             }
 
-            // 删除忽略的记录行
-            this._rowColumns.RemoveAll(row => AbstractDataSource.IsIgnoreTag(GetRowTag(row)));
         }
 
 
