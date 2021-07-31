@@ -250,28 +250,31 @@ namespace Luban.Job.Cfg.DataSources.Excel
                     continue;
                 }
 
-                var ss = attr.Split(':');
+                var ss = attr.Split(':', '=');
                 if (ss.Length != 2)
                 {
                     throw new Exception($"单元薄 meta 定义出错. attribute:{attr}");
                 }
                 string key = ss[0].ToLower();
-                string value = ss[1];
+                string value = ss[1].ToLower();
                 switch (key)
                 {
-                    case "row":
+                    case "orientation":
                     {
-                        if (int.TryParse(value, out var v1))
+                        switch (value)
                         {
-                            OrientRow = v1 != 0;
-                        }
-                        else if (bool.TryParse(value, out var v2))
-                        {
-                            OrientRow = v2;
-                        }
-                        else
-                        {
-                            throw new Exception($"单元薄 meta 定义 row:{value} 属性值只能为true或false或0或1");
+                            case "r":
+                            case "row":
+                            case "l":
+                            case "landscape": OrientRow = true; break;
+                            case "c":
+                            case "column":
+                            case "p":
+                            case "portrait": OrientRow = false; break;
+                            default:
+                            {
+                                throw new Exception($"单元薄 meta 定义 row:{value} 属性值只能为landscape(l,row,r)或portrait(p,row,r)");
+                            }
                         }
                         break;
                     }
@@ -281,7 +284,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                         {
                             throw new Exception($"单元薄 meta 定义 title_rows:{value} 属性值只能为整数[1,10]");
                         }
-                        if (v < 1 || v > 10)
+                        if (v < 2 || v > 10)
                         {
                             throw new Exception($"单元薄 title_rows 应该在 [1,10] 范围内,默认是3");
                         }
@@ -290,7 +293,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                     }
                     default:
                     {
-                        throw new Exception($"非法单元薄 meta 属性定义 {attr}");
+                        throw new Exception($"非法单元薄 meta 属性定义 {attr}, 合法属性有: orientation=landscape|l|r|row|portrait|p|r|row,title_rows=<number>");
                     }
                 }
             }
