@@ -1,9 +1,11 @@
 using Luban.Common.Utils;
+using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.DataSources.Excel;
 using Luban.Job.Cfg.RawDefs;
 using Luban.Job.Cfg.Utils;
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.RawDefs;
+using Luban.Job.Common.Types;
 using Luban.Server.Common;
 using System;
 using System.Collections.Generic;
@@ -18,6 +20,8 @@ namespace Luban.Job.Cfg.Defs
     {
         private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
+        private readonly List<string> _importExcels = new List<string>();
+
         private readonly List<Branch> _branches = new();
 
         private readonly List<Table> _cfgTables = new List<Table>();
@@ -30,6 +34,7 @@ namespace Luban.Job.Cfg.Defs
 
         public CfgDefLoader(RemoteAgent agent) : base(agent)
         {
+            RegisterRootDefineHandler("importexcel", AddImportExcel);
             RegisterRootDefineHandler("branch", AddBranch);
             RegisterRootDefineHandler("service", AddService);
             RegisterRootDefineHandler("group", AddGroup);
@@ -55,10 +60,22 @@ namespace Luban.Job.Cfg.Defs
             };
         }
 
+        private static readonly List<string> _excelImportRequireAttrs = new List<string> { "name" };
+        private void AddImportExcel(XElement e)
+        {
+            ValidAttrKeys(e, null, _excelImportRequireAttrs);
+            var importName = e.Attribute("name").Value;
+            if (string.IsNullOrWhiteSpace(importName))
+            {
+                throw new Exception("importexcel 属性name不能为空");
+            }
+            this._importExcels.Add(importName);
+        }
 
         private static readonly List<string> _branchRequireAttrs = new List<string> { "name" };
         private void AddBranch(XElement e)
         {
+            ValidAttrKeys(e, null, _branchRequireAttrs);
             var branchName = e.Attribute("name").Value;
             if (string.IsNullOrWhiteSpace(branchName))
             {
@@ -194,10 +211,10 @@ namespace Luban.Job.Cfg.Defs
                 }
                 case "map":
                 {
-                    if ((string.IsNullOrWhiteSpace(indexStr) || indexStr.Split(',').Length != 1))
-                    {
-                        throw new Exception($"定义文件:{CurImportFile} table:{tableName} 是单键表，必须在index属性里指定1个key");
-                    }
+                    //if ((string.IsNullOrWhiteSpace(indexStr) || indexStr.Split(',').Length != 1))
+                    //{
+                    //    throw new Exception($"定义文件:{CurImportFile} table:{tableName} 是单键表，必须在index属性里指定1个key");
+                    //}
                     mode = ETableMode.MAP;
                     break;
                 }
@@ -220,18 +237,33 @@ namespace Luban.Job.Cfg.Defs
         private void AddTable(XElement e)
         {
             ValidAttrKeys(e, _tableOptionalAttrs, _tableRequireAttrs);
+            string name = XmlUtil.GetRequiredAttribute(e, "name");
+            string module = CurNamespace;
+            string valueType = XmlUtil.GetRequiredAttribute(e, "value");
+            bool defineFromFile = XmlUtil.GetOptionBoolAttribute(e, "define_from_file");
+            string index = XmlUtil.GetOptionalAttribute(e, "index");
+            string group = XmlUtil.GetOptionalAttribute(e, "group");
+            string comment = XmlUtil.GetOptionalAttribute(e, "comment");
+            string input = XmlUtil.GetRequiredAttribute(e, "input");
+            string branchInput = XmlUtil.GetOptionalAttribute(e, "branch_input");
+            string mode = XmlUtil.GetOptionalAttribute(e, "mode");
+            AddTable(name, module, valueType, index, mode, group, comment, defineFromFile, input, branchInput);
+        }
 
+        private void AddTable(string name, string module, string valueType, string index, string mode, string group,
+            string comment, bool defineFromExcel, string input, string branchInput)
+        {
             var p = new Table()
             {
-                Name = XmlUtil.GetRequiredAttribute(e, "name"),
-                Namespace = CurNamespace,
-                ValueType = XmlUtil.GetRequiredAttribute(e, "value"),
-                LoadDefineFromFile = XmlUtil.GetOptionBoolAttribute(e, "define_from_file"),
-                Index = XmlUtil.GetOptionalAttribute(e, "index"),
-                Groups = CreateGroups(XmlUtil.GetOptionalAttribute(e, "group")),
-                Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
+                Name = name,
+                Namespace = module,
+                ValueType = valueType,
+                LoadDefineFromFile = defineFromExcel,
+                Index = index,
+                Groups = CreateGroups(group),
+                Comment = comment,
+                Mode = ConvertMode(name, mode, index),
             };
-            p.Mode = ConvertMode(p.Name, XmlUtil.GetOptionalAttribute(e, "mode"), p.Index);
 
             if (p.Groups.Count == 0)
             {
@@ -241,12 +273,11 @@ namespace Luban.Job.Cfg.Defs
             {
                 throw new Exception($"定义文件:{CurImportFile} table:{p.Name} group:{invalidGroup} 不存在");
             }
-            p.InputFiles.AddRange(XmlUtil.GetRequiredAttribute(e, "input").Split(','));
+            p.InputFiles.AddRange(input.Split(','));
 
-            var branchInputAttr = e.Attribute("branch_input");
-            if (branchInputAttr != null)
+            if (!string.IsNullOrWhiteSpace(branchInput))
             {
-                foreach (var subBranchStr in branchInputAttr.Value.Split('|').Select(s => s.Trim()).Where(s => !string.IsNullOrWhiteSpace(s)))
+                foreach (var subBranchStr in branchInput.Split('|').Select(s => s.Trim()).Where(s => !string.IsNullOrWhiteSpace(s)))
                 {
                     var nameAndDirs = subBranchStr.Split(':');
                     if (nameAndDirs.Length != 2)
@@ -261,6 +292,11 @@ namespace Luban.Job.Cfg.Defs
                 }
             }
 
+            AddTableList(p);
+        }
+
+        private void AddTableList(Table p)
+        {
             if (!_name2CfgTable.TryAdd(p.Name, p))
             {
                 var exist = _name2CfgTable[p.Name];
@@ -269,9 +305,7 @@ namespace Luban.Job.Cfg.Defs
             _cfgTables.Add(p);
         }
 
-
-
-        private async Task<CfgBean> LoadDefineFromFileAsync(Table table, string dataDir)
+        private async Task<CfgBean> LoadTableRecordDefineFromFileAsync(Table table, string dataDir)
         {
             var inputFileInfos = await DataLoaderUtil.CollectInputFilesAsync(this.Agent, table.InputFiles, dataDir);
             var file = inputFileInfos[0];
@@ -285,7 +319,8 @@ namespace Luban.Job.Cfg.Defs
             var rc = sheet.RowColumns;
             var attrRow = sheet.RowColumns[0];
             var titleRow = sheet.RowColumns[1];
-            var descRow = sheet.RowColumns[2];
+            // 有可能没有注释行，此时使用标题行，这个是必须有的
+            var descRow = sheet.TitleRows >= 3 ? sheet.RowColumns[2] : titleRow;
             foreach (var f in sheet.RootFields)
             {
                 var cf = new CfgField() { Name = f.Name, Id = 0 };
@@ -374,12 +409,12 @@ namespace Luban.Job.Cfg.Defs
             return cb;
         }
 
-        public async Task LoadDefinesFromFileAsync(string dataDir)
+        private async Task LoadTableRecordDefinesFromFileAsync(string dataDir)
         {
             var loadTasks = new List<Task<CfgBean>>();
             foreach (var table in this._cfgTables.Where(t => t.LoadDefineFromFile))
             {
-                loadTasks.Add(Task.Run(async () => await this.LoadDefineFromFileAsync(table, dataDir)));
+                loadTasks.Add(Task.Run(async () => await this.LoadTableRecordDefineFromFileAsync(table, dataDir)));
             }
 
             foreach (var task in loadTasks)
@@ -388,6 +423,75 @@ namespace Luban.Job.Cfg.Defs
             }
         }
 
+        private async Task LoadTableListFromFileAsync(string dataDir)
+        {
+            if (this._importExcels.Count == 0)
+            {
+                return;
+            }
+            var inputFileInfos = await DataLoaderUtil.CollectInputFilesAsync(this.Agent, this._importExcels, dataDir);
+
+            var defTableRecordType = new DefBean(new CfgBean()
+            {
+                Namespace = "__intern__",
+                Name = "__TextInfo__",
+                Parent = "",
+                Alias = "",
+                IsValueType = false,
+                Sep = "",
+                TypeId = 0,
+                IsSerializeCompatible = false,
+                Fields = new List<Common.RawDefs.Field>
+                {
+                    new CfgField() { Name = "name", Type = "string" },
+                    new CfgField() { Name = "module", Type = "string" },
+                    new CfgField() { Name = "value_type", Type = "string" },
+                    new CfgField() { Name = "index", Type = "string" },
+                    new CfgField() { Name = "mode", Type = "string" },
+                    new CfgField() { Name = "group", Type = "string" },
+                    new CfgField() { Name = "comment", Type = "string" },
+                    new CfgField() { Name = "define_from_excel", Type = "bool" },
+                    new CfgField() { Name = "input", Type = "string" },
+                    new CfgField() { Name = "branch_input", Type = "string" },
+                }
+            })
+            {
+                AssemblyBase = new DefAssembly("", null, true, Agent),
+            };
+            defTableRecordType.PreCompile();
+            defTableRecordType.Compile();
+            defTableRecordType.PostCompile();
+            var tableRecordType = new TBean(defTableRecordType, false);
+
+            foreach (var file in inputFileInfos)
+            {
+                var source = new ExcelDataSource();
+                var bytes = await this.Agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5);
+                var records = DataLoaderUtil.LoadCfgRecords(tableRecordType, file.OriginFile, null, bytes, true, false);
+                foreach (var r in records)
+                {
+                    DBean data = r.Data;
+                    //s_logger.Info("== read text:{}", r.Data);
+                    string name = (data.GetField("name") as DString).Value;
+                    string module = (data.GetField("module") as DString).Value;
+                    string valueType = (data.GetField("value_type") as DString).Value;
+                    string index = (data.GetField("index") as DString).Value;
+                    string mode = (data.GetField("mode") as DString).Value;
+                    string group = (data.GetField("group") as DString).Value;
+                    string comment = (data.GetField("commnet") as DString).Value;
+                    bool isDefineFromExcel = (data.GetField("define_from_excel") as DBool).Value;
+                    string inputFile = (data.GetField("input") as DString).Value;
+                    string branchInput = (data.GetField("branch_input") as DString).Value;
+                    AddTable(name, module, valueType, index, mode, group, comment, isDefineFromExcel, inputFile, branchInput);
+                };
+            }
+        }
+
+        public async Task LoadDefinesFromFileAsync(string dataDir)
+        {
+            await LoadTableListFromFileAsync(dataDir);
+            await LoadTableRecordDefinesFromFileAsync(dataDir);
+        }
 
         private static readonly List<string> _fieldOptionalAttrs = new List<string> {
             "index", "sep", "validator", "key_validator", "value_validator",

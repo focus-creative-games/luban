@@ -13,9 +13,13 @@ namespace Luban.Job.Cfg.DataSources.Excel
     {
         private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private bool OrientRow { get; set; } = true; //  以行为数据读取方向
+        private const int TITLE_MIN_ROW_NUM = 2;
+        private const int TITLE_MAX_ROW_NUM = 10;
+        private const int TITLE_DEFAULT_ROW_NUM = 3;
 
-        private int TitleRows { get; set; } = 3; // 默认有三行是标题行. 第一行是字段名，第二行是中文描述，第三行是注释
+        private bool IsOrientRow { get; set; } = true; //  以行为数据读取方向
+
+        public int TitleRows { get; private set; } = TITLE_DEFAULT_ROW_NUM; // 默认有三行是标题行. 第一行是字段名，第二行是中文描述，第三行是注释
 
         public string RawUrl { get; }
 
@@ -266,11 +270,11 @@ namespace Luban.Job.Cfg.DataSources.Excel
                             case "r":
                             case "row":
                             case "l":
-                            case "landscape": OrientRow = true; break;
+                            case "landscape": IsOrientRow = true; break;
                             case "c":
                             case "column":
                             case "p":
-                            case "portrait": OrientRow = false; break;
+                            case "portrait": IsOrientRow = false; break;
                             default:
                             {
                                 throw new Exception($"单元薄 meta 定义 row:{value} 属性值只能为landscape(l,row,r)或portrait(p,row,r)");
@@ -282,11 +286,11 @@ namespace Luban.Job.Cfg.DataSources.Excel
                     {
                         if (!int.TryParse(value, out var v))
                         {
-                            throw new Exception($"单元薄 meta 定义 title_rows:{value} 属性值只能为整数[1,10]");
+                            throw new Exception($"单元薄 meta 定义 title_rows:{value} 属性值只能为整数[{TITLE_MIN_ROW_NUM},{TITLE_MAX_ROW_NUM}]");
                         }
-                        if (v < 2 || v > 10)
+                        if (v < TITLE_MIN_ROW_NUM || v > TITLE_MAX_ROW_NUM)
                         {
-                            throw new Exception($"单元薄 title_rows 应该在 [1,10] 范围内,默认是3");
+                            throw new Exception($"单元薄 title_rows 应该在 [{TITLE_MIN_ROW_NUM},{TITLE_MAX_ROW_NUM}] 范围内,默认是{TITLE_DEFAULT_ROW_NUM}");
                         }
                         TitleRows = v;
                         break;
@@ -388,7 +392,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
             {
                 ++rowIndex; // 第1行是 meta ，标题及数据行从第2行开始
                 // 重点优化横表的headerOnly模式， 此模式下只读前几行标题行，不读数据行
-                if (headerOnly && this.OrientRow && rowIndex >= 10)
+                if (headerOnly && this.IsOrientRow && rowIndex >= 10)
                 {
                     break;
                 }
@@ -400,7 +404,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 rows.Add(row);
             }
 
-            if (OrientRow)
+            if (IsOrientRow)
             {
                 this._rowColumns = rows;
             }
@@ -430,7 +434,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
             int titleRowNum = 1;
             if (reader.MergeCells != null)
             {
-                if (OrientRow)
+                if (IsOrientRow)
                 {
                     foreach (var mergeCell in reader.MergeCells)
                     {
@@ -444,7 +448,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
                 foreach (var mergeCell in reader.MergeCells)
                 {
-                    if (OrientRow)
+                    if (IsOrientRow)
                     {
                         //if (mergeCell.FromRow <= 1 && mergeCell.ToRow >= 1)
                         if (mergeCell.FromRow == 1)
