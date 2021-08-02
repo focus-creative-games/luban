@@ -108,7 +108,7 @@ namespace Luban.Job.Cfg.Utils
                    tagName.Equals("false", System.StringComparison.OrdinalIgnoreCase)
                 || tagName.Equals("no", System.StringComparison.OrdinalIgnoreCase)
                 || tagName.Equals("##", System.StringComparison.Ordinal)
-                || tagName.Equals("·ñ", System.StringComparison.Ordinal)
+                //|| tagName.Equals("·ñ", System.StringComparison.Ordinal)
                 );
         }
 

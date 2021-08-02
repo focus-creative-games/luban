@@ -45,6 +45,10 @@ Luban适合有以下需求的开发者：
 - 支持与联系
   - QQ群: 692890842 （Luban开发交流群）。有使用方面的疑问请及时加QQ群询问，随时有人帮助解决。
   - 邮箱: taojingjian#gmail.com
+  - 微信群:
+  	
+	   ![link](docs/images/wxg.png)
+  		
 ## 特性
 - 支持增强的excel格式，可以在excel里比较简洁填写出任意复杂的数据
 - 支持excel族、json、xml、lua 多种数据格式，基本统一了游戏内的配置数据
@@ -102,13 +106,12 @@ Luban适合有以下需求的开发者：
 
 ### 传统兼容横表
 
-定义
 在xml中添加表定义
 
 ```xml
 <table name="TbDefineFromExcel" value="DefineFromExcel" input="test/define_from_excel.xlsx" define_from_file="1"/>
 ```
-或者在table定义列表excel文件中添加
+或者在tables.xlsx文件中添加
 ![tables.xlsx](docs/images/examples/ex_03.png)
 
 数据
@@ -117,14 +120,13 @@ Luban适合有以下需求的开发者：
 
 ### 传统兼容纵表
 
-定义
 在xml中添加表定义
 
 ```xml
 <table name="TbDefineFromExcelOne" value="DefineFromExcelOne" mode="one" input="test/define_from_excel_one.xlsx" define_from_file="1"/>
 ```
 
-或者在table定义列表excel文件中添加
+或者在tables.xlsx文件中添加
 ![tables.xlsx](docs/images/examples/ex_04.png)
 
 数据
