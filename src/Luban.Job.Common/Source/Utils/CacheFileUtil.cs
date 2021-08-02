@@ -25,6 +25,16 @@ namespace Luban.Job.Common.Utils
             }
         }
 
+        public static string GenStringOrBytesMd5AndAddCache(string fileName, object content)
+        {
+            switch (content)
+            {
+                case string s: return GenMd5AndAddCache(fileName, s);
+                case byte[] bs: return GenMd5AndAddCache(fileName, bs);
+                default: throw new System.NotSupportedException();
+            }
+        }
+
         public static string GenMd5AndAddCache(string fileName, string content)
         {
             content = content.Replace("\r\n", "\n");

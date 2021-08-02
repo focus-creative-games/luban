@@ -2,6 +2,7 @@ using Luban.Job.Cfg.DataCreators;
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Cfg.TypeVisitors;
+using Luban.Job.Cfg.Utils;
 using Luban.Job.Common.Types;
 using System;
 using System.Collections.Generic;
@@ -31,11 +32,11 @@ namespace Luban.Job.Cfg.DataSources.Json
             if (_data.TryGetProperty(TAG_KEY, out var tagEle))
             {
                 var tagName = tagEle.GetString();
-                if (IsIgnoreTag(tagName))
+                if (DataUtil.IsIgnoreTag(tagName))
                 {
                     return null;
                 }
-                isTest = IsTestTag(tagName);
+                isTest = DataUtil.IsTestTag(tagName);
             }
 
             var data = (DBean)type.Apply(JsonDataCreator.Ins, _data, (DefAssembly)type.Bean.AssemblyBase);

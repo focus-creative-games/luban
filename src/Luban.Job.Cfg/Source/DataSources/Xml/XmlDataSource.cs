@@ -2,6 +2,7 @@ using Luban.Job.Cfg.DataCreators;
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Cfg.TypeVisitors;
+using Luban.Job.Cfg.Utils;
 using Luban.Job.Common.Types;
 using System;
 using System.Collections.Generic;
@@ -28,12 +29,12 @@ namespace Luban.Job.Cfg.DataSources.Xml
         public override Record ReadOne(TBean type)
         {
             string tagName = _doc.Element(TAG_KEY)?.Value;
-            if (IsIgnoreTag(tagName))
+            if (DataUtil.IsIgnoreTag(tagName))
             {
                 return null;
             }
             var data = (DBean)type.Apply(XmlDataCreator.Ins, _doc, (DefAssembly)type.Bean.AssemblyBase);
-            bool isTest = IsTestTag(tagName);
+            bool isTest = DataUtil.IsTestTag(tagName);
             return new Record(data, RawUrl, isTest);
         }
     }

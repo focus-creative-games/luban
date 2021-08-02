@@ -17,7 +17,7 @@ namespace Luban.Job.Cfg.Utils
 {
     public static class DataExporterUtil
     {
-        public static byte[] ToOutputData(DefTable table, List<Record> records, string dataType)
+        public static object ToOutputData(DefTable table, List<Record> records, string dataType)
         {
             switch (dataType)
             {
@@ -40,7 +40,7 @@ namespace Luban.Job.Cfg.Utils
                     });
                     JsonExportor.Ins.WriteList(records, table.Assembly, jsonWriter);
                     jsonWriter.Flush();
-                    return DataUtil.StreamToBytes(ss);
+                    return System.Text.Encoding.UTF8.GetString(DataUtil.StreamToBytes(ss));
                 }
                 case "data_lua":
                 {
@@ -63,7 +63,7 @@ namespace Luban.Job.Cfg.Utils
                             throw new NotSupportedException();
                         }
                     }
-                    return System.Text.Encoding.UTF8.GetBytes(string.Join('\n', content));
+                    return string.Join('\n', content);
                 }
                 default:
                 {

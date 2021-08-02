@@ -100,6 +100,26 @@ namespace Luban.Job.Cfg.Utils
             }
         }
 
+
+        public static bool IsIgnoreTag(string tagName)
+        {
+            return !string.IsNullOrEmpty(tagName) &&
+                (
+                   tagName.Equals("false", System.StringComparison.OrdinalIgnoreCase)
+                || tagName.Equals("no", System.StringComparison.OrdinalIgnoreCase)
+                || tagName.Equals("##", System.StringComparison.Ordinal)
+                || tagName.Equals("∑Ò", System.StringComparison.Ordinal)
+                );
+        }
+
+        public static bool IsTestTag(string tagName)
+        {
+            return !string.IsNullOrEmpty(tagName) &&
+                (tagName.Equals("test", System.StringComparison.OrdinalIgnoreCase)
+                || tagName.Equals("≤‚ ‘", System.StringComparison.Ordinal)
+                );
+        }
+
         //public static string Data2String(DType data)
         //{
         //    var s = new StringBuilder();

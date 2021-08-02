@@ -2,6 +2,7 @@ using ExcelDataReader;
 using Luban.Job.Cfg.DataCreators;
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.TypeVisitors;
+using Luban.Job.Cfg.Utils;
 using Luban.Job.Common.Types;
 using System;
 using System.Collections.Generic;
@@ -529,7 +530,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 // 删除所有标题行，包含字段名行、属性行、标题、描述等等非有效数据行
                 this._rowColumns.RemoveRange(0, Math.Min(TitleRows + titleRowNum - 1, this._rowColumns.Count));
                 // 删除忽略的记录行
-                this._rowColumns.RemoveAll(row => AbstractDataSource.IsIgnoreTag(GetRowTag(row)));
+                this._rowColumns.RemoveAll(row => DataUtil.IsIgnoreTag(GetRowTag(row)));
             }
 
         }
@@ -629,7 +630,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 {
                     return null;
                 }
-                bool isTest = AbstractDataSource.IsTestTag(GetRowTag(row));
+                bool isTest = DataUtil.IsTestTag(GetRowTag(row));
                 var data = (DBean)ExcelNamedRowDataCreator.Ins.ReadExcel(new NamedRow(_rootTitle, row), type);
                 return new Record(data, RawUrl, isTest);
             }
@@ -640,7 +641,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 {
                     return null;
                 }
-                bool isTest = AbstractDataSource.IsTestTag(GetRowTag(rows[0]));
+                bool isTest = DataUtil.IsTestTag(GetRowTag(rows[0]));
                 var data = (DBean)ExcelNamedRowDataCreator.Ins.ReadExcel(new NamedRow(_rootTitle, rows), type);
                 return new Record(data, RawUrl, isTest);
             }

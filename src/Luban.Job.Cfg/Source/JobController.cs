@@ -770,7 +770,7 @@ namespace {ctx.TopModule}
                 {
                     var content = DataExporterUtil.ToOutputData(c, ctx.Assembly.GetTableExportDataList(c), genType);
                     var file = GetOutputFileName(genType, c.OutputDataFile);
-                    var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
+                    var md5 = CacheFileUtil.GenStringOrBytesMd5AndAddCache(file, content);
                     ctx.GenDataFilesInOutputDataDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                 }));
             }
@@ -779,32 +779,30 @@ namespace {ctx.TopModule}
         private async Task GenJsonDataMonolithic(GenContext ctx)
         {
             var exportTables = ctx.ExportTables;
-            List<Task<byte[]>> allJsonTask = new List<Task<byte[]>>();
+            var allJsonTask = new List<Task<string>>();
             foreach (var c in exportTables)
             {
                 allJsonTask.Add(Task.Run(() =>
                 {
-                    return DataExporterUtil.ToOutputData(c, ctx.Assembly.GetTableExportDataList(c), "data_json");
+                    return (string)DataExporterUtil.ToOutputData(c, ctx.Assembly.GetTableExportDataList(c), "data_json");
                 }));
             }
-            await Task.WhenAll(allJsonTask);
 
-            int estimatedCapacity = allJsonTask.Sum(t => t.Result.Length + 100);
-            var sb = new MemoryStream(estimatedCapacity);
-            sb.Write(System.Text.Encoding.UTF8.GetBytes("{\n"));
+            var lines = new List<string>();
+
+            lines.Add("{");
             for (int i = 0; i < exportTables.Count; i++)
             {
                 if (i != 0)
                 {
-                    sb.Write(System.Text.Encoding.UTF8.GetBytes((",\n")));
+                    lines.Add(",");
                 }
-                sb.Write(System.Text.Encoding.UTF8.GetBytes("\"" + exportTables[i].Name + "\":"));
-                sb.Write(allJsonTask[i].Result);
+                lines.Add($"\"{exportTables[i].NeedExport}\":");
+                lines.Add(await allJsonTask[i]);
             }
-            sb.Write(System.Text.Encoding.UTF8.GetBytes("\n}"));
+            lines.Add("}");
 
-            var content = sb.ToArray();
-            s_logger.Debug("estimated size:{0} actual size:{1}", estimatedCapacity, content.Length);
+            var content = string.Join('\n', lines);
             var outputFile = ctx.GenArgs.OutputDataJsonMonolithicFile;
             var md5 = CacheFileUtil.GenMd5AndAddCache(outputFile, content);
             ctx.GenScatteredFiles.Add(new FileInfo() { FilePath = outputFile, MD5 = md5 });
