@@ -220,7 +220,7 @@ namespace Luban.Job.Cfg
                         DType key = r.Data.Fields[table.IndexFieldIdIndex];
                         if (!mainRecordMap.TryAdd(key, r))
                         {
-                            throw new Exception($@"配置表 {table.FullName} 主文件 主键字段:{table.Index} 主键值:{key} 重复.
+                            throw new Exception($@"配置表 '{table.FullName}' 主文件 主键字段:'{table.Index}' 主键值:'{key}' 重复.
         记录1 来自文件:{r.Source}
         记录2 来自文件:{mainRecordMap[key].Source}
 ");
@@ -234,7 +234,7 @@ namespace Luban.Job.Cfg
                             DType key = r.Data.Fields[table.IndexFieldIdIndex];
                             if (!branchRecordMap.TryAdd(key, r))
                             {
-                                throw new Exception($@"配置表 {table.FullName} 分支文件 主键字段:{table.Index} 主键值:{key} 重复.
+                                throw new Exception($@"配置表 '{table.FullName}' 分支文件 主键字段:'{table.Index}' 主键值:'{key}' 重复.
         记录1 来自文件:{r.Source}
         记录2 来自文件:{branchRecordMap[key].Source}
 ");

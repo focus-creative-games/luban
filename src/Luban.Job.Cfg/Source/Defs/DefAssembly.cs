@@ -100,7 +100,7 @@ namespace Luban.Job.Cfg.Defs
         {
             if (!CfgTables.TryAdd(table.FullName, table))
             {
-                throw new Exception($"table:{table.FullName} duplicated");
+                throw new Exception($"table:'{table.FullName}' duplicated");
             }
         }
 
@@ -143,11 +143,11 @@ namespace Luban.Job.Cfg.Defs
             {
                 if (!this.Types.ContainsKey(refType))
                 {
-                    throw new Exception($"service:{targetService.Name} ref:{refType} 类型不存在");
+                    throw new Exception($"service:'{targetService.Name}' ref:'{refType}' 类型不存在");
                 }
                 if (!refTypes.TryAdd(refType, this.Types[refType]))
                 {
-                    throw new Exception($"service:{targetService.Name} ref:{refType} 重复引用");
+                    throw new Exception($"service:'{targetService.Name}' ref:'{refType}' 重复引用");
                 }
             }
             foreach ((var fullTypeName, var type) in this.Types)
@@ -185,7 +185,7 @@ namespace Luban.Job.Cfg.Defs
                 TargetBranch = defines.Branches.Find(b => b.Name == _branchName);
                 if (TargetBranch == null)
                 {
-                    throw new Exception($"branch {_branchName} not in valid branch set");
+                    throw new Exception($"branch '{_branchName}' not in valid branch set");
                 }
             }
 

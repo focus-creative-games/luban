@@ -19,7 +19,7 @@ namespace Luban.Job.Proto.Generate
                 case DefProto p: return Render(p);
                 case DefRpc r: return Render(r);
 
-                default: throw new Exception($"unknown render type:{o}");
+                default: throw new Exception($"unknown render type:'{o}'");
             }
         }
 

@@ -185,7 +185,7 @@ namespace Luban.Job.Cfg.Defs
             {
                 if ((ParentDefType = (DefBean)AssemblyBase.GetDefType(Namespace, Parent)) == null)
                 {
-                    throw new Exception($"bean:{FullName} parent:{Parent} not exist");
+                    throw new Exception($"bean:'{FullName}' parent:'{Parent}' not exist");
                 }
                 if (ParentDefType.Children == null)
                 {
@@ -210,7 +210,7 @@ namespace Luban.Job.Cfg.Defs
             HierarchyNotAbstractChildren = cs;
             if (Id != 0)
             {
-                throw new Exception($"bean:{FullName} beanid:{Id} should be 0!");
+                throw new Exception($"bean:'{FullName}' beanid:{Id} should be 0!");
             }
             else
             {
@@ -222,7 +222,7 @@ namespace Luban.Job.Cfg.Defs
             {
                 if (!string.IsNullOrWhiteSpace(c.Alias) && !nameOrAliasName.Add(c.Alias))
                 {
-                    throw new Exception($"bean:{FullName} alias:{c.Alias} 重复");
+                    throw new Exception($"bean:'{FullName}' alias:{c.Alias} 重复");
                 }
             }
             DefField.CompileFields(this, HierarchyFields, false);

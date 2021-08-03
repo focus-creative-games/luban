@@ -34,11 +34,11 @@ namespace Luban.Job.Db.Defs
             {
                 if (c.Id == 0)
                 {
-                    throw new Exception($"bean:{FullName} is child of dynamic type. beanid:{Id} can't be 0!");
+                    throw new Exception($"bean:'{FullName}' is child of dynamic type. beanid:{Id} can't be 0!");
                 }
                 if (!ids.Add(c.Id))
                 {
-                    throw new Exception($"bean:{c.FullName} beanid:{c.Id} duplicate!");
+                    throw new Exception($"bean:'{c.FullName}' beanid:{c.Id} duplicate!");
                 }
             }
 

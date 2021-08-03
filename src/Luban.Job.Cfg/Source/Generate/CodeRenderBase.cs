@@ -21,7 +21,7 @@ namespace Luban.Job.Cfg.Generate
                 case DefEnum e: return Render(e);
                 case DefBean b: return Render(b);
                 case DefTable r: return Render(r);
-                default: throw new Exception($"unknown render type:{o}");
+                default: throw new Exception($"unknown render type:'{o}'");
             }
         }
     }

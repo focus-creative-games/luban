@@ -113,7 +113,7 @@ namespace Luban.Job.Cfg.DataCreators
             {
                 if (!x.TryGetProperty(DefBean.TYPE_NAME_KEY, out var typeNameProp))
                 {
-                    throw new Exception($"结构:{bean.FullName} 是多态类型，必须用 {DefBean.TYPE_NAME_KEY} 字段指定 子类名");
+                    throw new Exception($"结构:'{bean.FullName}' 是多态类型，必须用 '{DefBean.TYPE_NAME_KEY}' 字段指定 子类名");
                 }
                 string subType = typeNameProp.GetString();
                 var fullName = TypeUtil.MakeFullName(bean.Namespace, subType);
@@ -122,7 +122,7 @@ namespace Luban.Job.Cfg.DataCreators
                 //{
                 //    throw new Exception($"type:{fullName} 是抽象类. 不能创建实例");
                 //}
-                implBean = defType ?? throw new Exception($"type:{fullName} 不是合法类型");
+                implBean = defType ?? throw new Exception($"type:'{fullName}' 不是合法类型");
             }
             else
             {
@@ -142,7 +142,7 @@ namespace Luban.Job.Cfg.DataCreators
                         }
                         else
                         {
-                            throw new Exception($"结构:{implBean.FullName} 字段:{f.Name} 不能 null or undefined ");
+                            throw new Exception($"结构:'{implBean.FullName}' 字段:'{f.Name}' 不能 null or undefined ");
                         }
                     }
                     else
@@ -170,7 +170,7 @@ namespace Luban.Job.Cfg.DataCreators
                 }
                 else
                 {
-                    throw new Exception($"结构:{implBean.FullName} 字段:{f.Name} 缺失");
+                    throw new Exception($"结构:'{implBean.FullName}' 字段:'{f.Name}' 缺失");
                 }
             }
             return new DBean(bean, implBean, fields);

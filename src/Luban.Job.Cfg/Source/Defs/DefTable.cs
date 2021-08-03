@@ -67,13 +67,13 @@ namespace Luban.Job.Cfg.Defs
             {
                 if (ass.GetBranch(branchName) == null)
                 {
-                    throw new Exception($"table:{FullName} branch_input branch:{branchName} 不存在");
+                    throw new Exception($"table:'{FullName}' branch_input branch:'{branchName}' 不存在");
                 }
             }
 
             if ((ValueTType = (TBean)ass.CreateType(Namespace, ValueType)) == null)
             {
-                throw new Exception($"table:{FullName} 的 value类型:{ValueType} 不存在");
+                throw new Exception($"table:'{FullName}' 的 value类型:'{ValueType}' 不存在");
             }
 
             switch (Mode)
@@ -94,12 +94,12 @@ namespace Luban.Job.Cfg.Defs
                         }
                         else
                         {
-                            throw new Exception($"table:{FullName} index:{Index} 字段不存在");
+                            throw new Exception($"table:'{FullName}' index:'{Index}' 字段不存在");
                         }
                     }
                     else if (ValueTType.Bean.HierarchyFields.Count == 0)
                     {
-                        throw new Exception($"table:{FullName} 必须定义至少一个字段");
+                        throw new Exception($"table:'{FullName}' 必须定义至少一个字段");
                     }
                     else
                     {
@@ -110,7 +110,7 @@ namespace Luban.Job.Cfg.Defs
                     KeyTType = IndexField.CType;
                     break;
                 }
-                default: throw new Exception($"unknown mode:{Mode}");
+                default: throw new Exception($"unknown mode:'{Mode}'");
             }
         }
     }

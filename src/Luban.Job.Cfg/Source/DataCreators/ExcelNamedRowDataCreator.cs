@@ -112,7 +112,7 @@ namespace Luban.Job.Cfg.DataCreators
                 Sheet.Title title = row.GetTitle(fname);
                 if (title == null)
                 {
-                    throw new Exception($"bean:{bean.FullName} 缺失 列:{fname}，请检查是否写错或者遗漏");
+                    throw new Exception($"bean:'{bean.FullName}' 缺失 列:'{fname}'，请检查是否写错或者遗漏");
                 }
                 // 多级标题
                 if (title.SubTitles.Count > 0)
@@ -208,7 +208,7 @@ namespace Luban.Job.Cfg.DataCreators
                 {
                     if (!type.IsNullable)
                     {
-                        throw new Exception($"type:{type} 不是可空类型 {type.Bean.FullName}? , 不能为空");
+                        throw new Exception($"type:'{type}' 不是可空类型 '{type.Bean.FullName}?' , 不能为空");
                     }
                     return null;
                 }
@@ -216,7 +216,7 @@ namespace Luban.Job.Cfg.DataCreators
                 DefBean implType = (DefBean)originBean.GetNotAbstractChildType(subType);
                 if (implType == null)
                 {
-                    throw new Exception($"type:{fullType} 不是 bean 类型");
+                    throw new Exception($"type:'{fullType}' 不是 bean 类型");
                 }
                 return new DBean(originBean, implType, CreateBeanFields(implType, row));
             }
@@ -231,7 +231,7 @@ namespace Luban.Job.Cfg.DataCreators
                     }
                     else if (subType != DefBean.BEAN_NOT_NULL_STR && subType != originBean.Name)
                     {
-                        throw new Exception($"type:{type.Bean.FullName} 可空标识:{subType} 不合法（只能为{DefBean.BEAN_NOT_NULL_STR}或{DefBean.BEAN_NULL_STR}或{originBean.Name})");
+                        throw new Exception($"type:'{type.Bean.FullName}' 可空标识:'{subType}' 不合法（只能为{DefBean.BEAN_NOT_NULL_STR}或{DefBean.BEAN_NULL_STR}或{originBean.Name})");
                     }
                 }
 

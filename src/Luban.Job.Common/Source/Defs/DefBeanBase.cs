@@ -125,7 +125,7 @@ namespace Luban.Job.Common.Defs
             {
                 if ((ParentDefType = (DefBeanBase)AssemblyBase.GetDefType(Namespace, Parent)) == null)
                 {
-                    throw new Exception($"bean:{FullName} parent:{Parent} not exist");
+                    throw new Exception($"bean:'{FullName}' parent:'{Parent}' not exist");
                 }
                 if (ParentDefType.Children == null)
                 {
@@ -152,11 +152,11 @@ namespace Luban.Job.Common.Defs
             {
                 if (c.Id <= 0)
                 {
-                    throw new Exception($"bean:{FullName} is child of dynamic type. beanid:{Id} can't less then 0!");
+                    throw new Exception($"bean:'{FullName}' is child of dynamic type. beanid:{Id} can't less then 0!");
                 }
                 if (!ids.Add(c.Id))
                 {
-                    throw new Exception($"bean:{c.FullName} beanid:{c.Id} duplicate!");
+                    throw new Exception($"bean:'{c.FullName}' beanid:{c.Id} duplicate!");
                 }
             }
             DefFieldBase.CompileFields(this, HierarchyFields, IsSerializeCompatible);

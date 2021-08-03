@@ -168,7 +168,7 @@ namespace Luban.Job.Cfg.Defs
                 {
                     if (t.ElementType is TBean e && !e.IsDynamic && e.Bean.HierarchyFields.Count == 0)
                     {
-                        throw new Exception($"container element type can't be empty bean");
+                        throw new Exception($"container element type:'{e.Bean.FullName}' can't be empty bean");
                     }
                     break;
                 }
@@ -176,7 +176,7 @@ namespace Luban.Job.Cfg.Defs
                 {
                     if (t.ElementType is TBean e && !e.IsDynamic && e.Bean.HierarchyFields.Count == 0)
                     {
-                        throw new Exception($"container element type can't be empty bean");
+                        throw new Exception($"container element type:'{e.Bean.FullName}' can't be empty bean");
                     }
                     break;
                 }
@@ -197,19 +197,19 @@ namespace Luban.Job.Cfg.Defs
                 {
                     if ((IndexField = b.GetBeanAs<DefBean>().GetField(Index)) == null)
                     {
-                        throw new Exception($"type:{HostType.FullName} field:{Name} index:{Index}. index not exist");
+                        throw new Exception($"type:'{HostType.FullName}' field:'{Name}' index:'{Index}'. index not exist");
                     }
                 }
                 else if ((CType is TList tlist) && (tlist.ElementType is TBean tb))
                 {
                     if ((IndexField = tb.GetBeanAs<DefBean>().GetField(Index)) == null)
                     {
-                        throw new Exception($"type:{HostType.FullName} field:{Name} index:{Index}. index not exist");
+                        throw new Exception($"type:'{HostType.FullName}' field:'{Name}' index:'{Index}'. index not exist");
                     }
                 }
                 else
                 {
-                    throw new Exception($"type:{HostType.FullName} field:{Name} index:{Index}. only array:bean or list:bean support index");
+                    throw new Exception($"type:'{HostType.FullName}' field:'{Name}' index:'{Index}'. only array:bean or list:bean support index");
                 }
             }
 
@@ -223,7 +223,7 @@ namespace Luban.Job.Cfg.Defs
                 this.Remapper = AssemblyBase.GetDefTType(HostType.Namespace, this.RawDefine.Converter, this.IsNullable) as TEnum;
                 if (this.Remapper == null)
                 {
-                    throw new Exception($"type:{HostType.FullName} field:{Name} converter:{this.RawDefine.Converter} not exists");
+                    throw new Exception($"type:'{HostType.FullName}' field:'{Name}' converter:'{this.RawDefine.Converter}' not exists");
                 }
             }
 
@@ -238,7 +238,7 @@ namespace Luban.Job.Cfg.Defs
                 {
                     if (val is RefValidator refValidator && !Assembly.GetCfgTable(refValidator.FirstTable).NeedExport)
                     {
-                        throw new Exception($"type:{HostType.FullName} field:{Name} ref 引用的表:{refValidator.FirstTable} 没有导出");
+                        throw new Exception($"type:'{HostType.FullName}' field:'{Name}' ref 引用的表:'{refValidator.FirstTable}' 没有导出");
                     }
                 }
             }
@@ -259,12 +259,12 @@ namespace Luban.Job.Cfg.Defs
                     {
                         if (mapType.KeyType.GetType() != cfgTable.KeyTType.GetType())
                         {
-                            throw new Exception($"type:{HostType.FullName} field:{Name} key类型:{mapType.KeyType.GetType()} 与 被引用的表:{cfgTable.FullName} key类型:{cfgTable.KeyTType.GetType()} 不一致");
+                            throw new Exception($"type:'{HostType.FullName}' field:'{Name}' key类型:'{mapType.KeyType.GetType()}' 与 被引用的表:'{cfgTable.FullName}' key类型:'{cfgTable.KeyTType.GetType()}' 不一致");
                         }
                     }
                     else
                     {
-                        throw new Exception($"type:{HostType.FullName} field:{Name} 不是 map类型. 不能指定 key_validator 引用");
+                        throw new Exception($"type:'{HostType.FullName}' field:'{Name}' 不是 map类型. 不能指定 key_validator 引用");
                     }
                 }
             }
@@ -288,7 +288,7 @@ namespace Luban.Job.Cfg.Defs
 
                     if (valueType.GetType() != cfgTable.KeyTType.GetType())
                     {
-                        throw new Exception($"type:{HostType.FullName} field:{Name} 类型:{valueType.GetType()} 与 被引用的表:{cfgTable.FullName} key类型:{cfgTable.KeyTType.GetType()} 不一致");
+                        throw new Exception($"type:'{HostType.FullName}' field:'{Name}' 类型:'{valueType.GetType()}' 与 被引用的表:'{cfgTable.FullName}' key类型:'{cfgTable.KeyTType.GetType()}' 不一致");
                     }
 
                 }

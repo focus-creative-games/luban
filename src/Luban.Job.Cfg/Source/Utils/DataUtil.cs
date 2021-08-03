@@ -96,7 +96,7 @@ namespace Luban.Job.Cfg.Utils
             }
             if (key == "" && text != "")
             {
-                throw new Exception($"text  key为空, 但text:{text}不为空");
+                throw new Exception($"text  key为空, 但text:'{text}'不为空");
             }
         }
 

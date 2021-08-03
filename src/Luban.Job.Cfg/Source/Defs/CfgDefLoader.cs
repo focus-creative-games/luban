@@ -83,7 +83,7 @@ namespace Luban.Job.Cfg.Defs
             }
             if (this._branches.Any(b => b.Name == branchName))
             {
-                throw new Exception($"branch {branchName} 重复");
+                throw new Exception($"branch '{branchName}' 重复");
             }
             _branches.Add(new Branch(branchName));
         }
@@ -100,7 +100,7 @@ namespace Luban.Job.Cfg.Defs
             {
                 if (_cfgGroups.Any(cg => cg.Names.Contains(g)))
                 {
-                    throw new Exception($"group名:{g} 重复");
+                    throw new Exception($"group名:'{g}' 重复");
                 }
             }
 
@@ -131,7 +131,7 @@ namespace Luban.Job.Cfg.Defs
                     var sepIndex = validatorStr.IndexOf(':');
                     if (sepIndex < 0)
                     {
-                        throw new Exception($"定义文件:{CurImportFile} 类型:{CurDefine} 字段:{e} key:{key} 不是合法的 validator 定义 (key1:value1#key2:value2 ...)");
+                        throw new Exception($"定义文件:{CurImportFile} 类型:'{CurDefine}' 字段:'{e}' key:'{key}' 不是合法的 validator 定义 (key1:value1#key2:value2 ...)");
                     }
                     result.Add(new Validator() { Type = validatorStr[..sepIndex], Rule = validatorStr[(sepIndex + 1)..] });
                 }
@@ -162,13 +162,13 @@ namespace Luban.Job.Cfg.Defs
                     }
                     default:
                     {
-                        throw new Exception($"service:{name} tag:{tagName} 非法");
+                        throw new Exception($"service:'{name}' tag:'{tagName}' 非法");
                     }
                 }
             }
             if (!ValidGroup(groups, out var invalidGroup))
             {
-                throw new Exception($"service:{name} group:{invalidGroup} 不存在");
+                throw new Exception($"service:'{name}' group:'{invalidGroup}' 不存在");
             }
             _cfgServices.Add(new Service() { Name = name, Manager = manager, Groups = groups, Refs = refs });
         }
@@ -204,7 +204,7 @@ namespace Luban.Job.Cfg.Defs
                 {
                     if (!string.IsNullOrWhiteSpace(indexStr))
                     {
-                        throw new Exception($"定义文件:{CurImportFile} table:{tableName} mode=one 是单例表，不支持定义index属性");
+                        throw new Exception($"定义文件:{CurImportFile} table:'{tableName}' mode=one 是单例表，不支持定义index属性");
                     }
                     mode = ETableMode.ONE;
                     break;
@@ -271,7 +271,7 @@ namespace Luban.Job.Cfg.Defs
             }
             else if (!ValidGroup(p.Groups, out var invalidGroup))
             {
-                throw new Exception($"定义文件:{CurImportFile} table:{p.Name} group:{invalidGroup} 不存在");
+                throw new Exception($"定义文件:{CurImportFile} table:'{p.Name}' group:'{invalidGroup}' 不存在");
             }
             p.InputFiles.AddRange(input.Split(','));
 
@@ -282,12 +282,12 @@ namespace Luban.Job.Cfg.Defs
                     var nameAndDirs = subBranchStr.Split(':');
                     if (nameAndDirs.Length != 2)
                     {
-                        throw new Exception($"定义文件:{CurImportFile} table:{p.Name} branch_input:{subBranchStr} 定义不合法");
+                        throw new Exception($"定义文件:{CurImportFile} table:'{p.Name}' branch_input:'{subBranchStr}' 定义不合法");
                     }
                     var branchDirs = nameAndDirs[1].Split(',', ';').ToList();
                     if (!p.BranchInputFiles.TryAdd(nameAndDirs[0], branchDirs))
                     {
-                        throw new Exception($"定义文件:{CurImportFile} table:{p.Name} branch_input:{subBranchStr} 子branch:{nameAndDirs[0]} 重复");
+                        throw new Exception($"定义文件:{CurImportFile} table:'{p.Name}' branch_input:'{subBranchStr}' 子branch:'{nameAndDirs[0]}' 重复");
                     }
                 }
             }
@@ -300,7 +300,7 @@ namespace Luban.Job.Cfg.Defs
             if (!_name2CfgTable.TryAdd(p.Name, p))
             {
                 var exist = _name2CfgTable[p.Name];
-                throw new Exception($"定义文件:{CurImportFile} table:{p.Namespace}.{p.Name} 与 {exist.Namespace}.{exist.Name} 名称不能重复");
+                throw new Exception($"定义文件:{CurImportFile} table:'{p.Namespace}.{p.Name}' 与 '{exist.Namespace}.{exist.Name}' 名称不能重复");
             }
             _cfgTables.Add(p);
         }
@@ -326,11 +326,11 @@ namespace Luban.Job.Cfg.Defs
                 var cf = new CfgField() { Name = f.Name, Id = 0 };
 
 
-                string[] attrs = attrRow[f.FromIndex].Value?.ToString().Split('&');
+                string[] attrs = (attrRow[f.FromIndex].Value?.ToString() ?? "").Trim().Split('&').Select(s => s.Trim()).ToArray();
 
                 if (attrs.Length == 0 || string.IsNullOrWhiteSpace(attrs[0]))
                 {
-                    throw new Exception($"table:{table.Name} file:{file.OriginFile} title:{f.Name} type missing!");
+                    throw new Exception($"table:'{table.Name}' file:{file.OriginFile} title:'{f.Name}' type missing!");
                 }
 
                 // 优先取desc行，如果为空,则取title行
@@ -352,10 +352,10 @@ namespace Luban.Job.Cfg.Defs
                     var pair = attrs[i].Split('=');
                     if (pair.Length != 2)
                     {
-                        throw new Exception($"table:{table.Name} file:{file.OriginFile} title:{f.Name} attr: '{attrs[i]}' is invalid!");
+                        throw new Exception($"table:'{table.Name}' file:{file.OriginFile} title:'{f.Name}' attr:'{attrs[i]}' is invalid!");
                     }
-                    var attrName = pair[0];
-                    var attrValue = pair[1];
+                    var attrName = pair[0].Trim();
+                    var attrValue = pair[1].Trim();
                     switch (attrName)
                     {
                         case "index":
@@ -399,7 +399,7 @@ namespace Luban.Job.Cfg.Defs
                         }
                         default:
                         {
-                            throw new Exception($"table:{table.Name} file:{file.OriginFile} title:{f.Name} attr: '{attrs[i]}' is invalid!");
+                            throw new Exception($"table:'{table.Name}' file:{file.OriginFile} title:'{f.Name}' attr:'{attrs[i]}' is invalid!");
                         }
                     }
                 }
@@ -472,16 +472,16 @@ namespace Luban.Job.Cfg.Defs
                 {
                     DBean data = r.Data;
                     //s_logger.Info("== read text:{}", r.Data);
-                    string name = (data.GetField("name") as DString).Value;
-                    string module = (data.GetField("module") as DString).Value;
-                    string valueType = (data.GetField("value_type") as DString).Value;
-                    string index = (data.GetField("index") as DString).Value;
-                    string mode = (data.GetField("mode") as DString).Value;
-                    string group = (data.GetField("group") as DString).Value;
-                    string comment = (data.GetField("commnet") as DString).Value;
+                    string name = (data.GetField("name") as DString).Value.Trim();
+                    string module = (data.GetField("module") as DString).Value.Trim();
+                    string valueType = (data.GetField("value_type") as DString).Value.Trim();
+                    string index = (data.GetField("index") as DString).Value.Trim();
+                    string mode = (data.GetField("mode") as DString).Value.Trim();
+                    string group = (data.GetField("group") as DString).Value.Trim();
+                    string comment = (data.GetField("commnet") as DString).Value.Trim();
                     bool isDefineFromExcel = (data.GetField("define_from_excel") as DBool).Value;
-                    string inputFile = (data.GetField("input") as DString).Value;
-                    string branchInput = (data.GetField("branch_input") as DString).Value;
+                    string inputFile = (data.GetField("input") as DString).Value.Trim();
+                    string branchInput = (data.GetField("branch_input") as DString).Value.Trim();
                     AddTable(name, module, valueType, index, mode, group, comment, isDefineFromExcel, inputFile, branchInput);
                 };
             }
@@ -523,7 +523,7 @@ namespace Luban.Job.Cfg.Defs
             }
             else if (!ValidGroup(f.Groups, out var invalidGroup))
             {
-                throw new Exception($"定义文件:{CurImportFile} field:{e} group:{invalidGroup} 不存在");
+                throw new Exception($"定义文件:{CurImportFile} field:'{e}' group:'{invalidGroup}' 不存在");
             }
             f.Type = CreateType(e, "type");
 

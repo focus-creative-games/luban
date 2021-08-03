@@ -23,7 +23,7 @@ namespace Luban.Job.Proto.Defs
         {
             if (!id2Protos.TryAdd(proto.Id, proto))
             {
-                throw new Exception($"proto:{proto.FullName} id:{proto.Id} duplicated with {id2Protos[proto.Id].FullName}");
+                throw new Exception($"proto:'{proto.FullName}' id:{proto.Id} duplicated with '{id2Protos[proto.Id].FullName}'");
             }
         }
 

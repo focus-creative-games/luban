@@ -17,7 +17,7 @@ namespace Luban.Job.Db.Generate
                 case DefEnum e: return Render(e);
                 case DefBean b: return Render(b);
                 case DefTable p: return Render(p);
-                default: throw new Exception($"unknown render type:{o}");
+                default: throw new Exception($"unknown render type:'{o}'");
             }
         }
 

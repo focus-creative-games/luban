@@ -60,7 +60,7 @@ namespace Luban.Job.Common.Defs
             }
             else
             {
-                throw new Exception($"{name} 不是有效 枚举:{FullName} 值");
+                throw new Exception($"'{name}' 不是有效 枚举:'{FullName}' 值");
             }
         }
 
@@ -89,7 +89,7 @@ namespace Luban.Job.Common.Defs
                 string value = item.Value.ToLower();
                 if (!names.Add(item.Name))
                 {
-                    throw new Exception($"enum:{fullName} 字段:{item.Name} 重复");
+                    throw new Exception($"enum:'{fullName}' 字段:'{item.Name}' 重复");
                 }
                 if (string.IsNullOrEmpty(value))
                 {
@@ -113,7 +113,7 @@ namespace Luban.Job.Common.Defs
                     }
                     else
                     {
-                        throw new Exception($"enum:{fullName} 枚举名:{item.Name} value:{item.Value} 非法");
+                        throw new Exception($"enum:'{fullName}' 枚举名:'{item.Name}' value:'{item.Value}' 非法");
                     }
                 }
                 else if (IsFlags)
@@ -125,24 +125,24 @@ namespace Luban.Job.Common.Defs
                         var index = Items.FindIndex(i => i.Name == n);
                         if (index < 0)
                         {
-                            throw new Exception($"enum:{fullName} 枚举名:{item.Name} 值:{item.Value} 非法");
+                            throw new Exception($"enum:'{fullName}' 枚举名:'{item.Name}' 值:'{item.Value}' 非法");
                         }
                         item.IntValue |= Items[index].IntValue;
                     }
                 }
                 else
                 {
-                    throw new Exception($"enum:{fullName} 枚举名:{item.Name} value:{item.Value} 非法");
+                    throw new Exception($"enum:'{fullName}' 枚举名:'{item.Name}' value:'{item.Value}' 非法");
                 }
 
                 if (!string.IsNullOrWhiteSpace(item.Name) && !_nameOrAlias2Value.TryAdd(item.Name, item.IntValue))
                 {
-                    throw new Exception($"enum:{fullName} 枚举名:{Name} 重复");
+                    throw new Exception($"enum:'{fullName}' 枚举名:'{Name}' 重复");
                 }
 
                 if (!string.IsNullOrWhiteSpace(item.Alias) && !_nameOrAlias2Value.TryAdd(item.Alias, item.IntValue))
                 {
-                    throw new Exception($"enum:{fullName} 枚举名:{Name} alias:{item.Alias} 重复");
+                    throw new Exception($"enum:'{fullName}' 枚举名:'{Name}' alias:'{item.Alias}' 重复");
                 }
             }
         }

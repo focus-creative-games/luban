@@ -98,7 +98,7 @@ namespace Luban.Job.Cfg.DataCreators
                 string subType = x.Attribute(DefBean.TYPE_NAME_KEY)?.Value;
                 if (string.IsNullOrWhiteSpace(subType))
                 {
-                    throw new Exception($"bean:{bean.FullName}是多态，需要指定{DefBean.TYPE_NAME_KEY}属性.\n xml:{x}");
+                    throw new Exception($"bean:'{bean.FullName}'是多态，需要指定{DefBean.TYPE_NAME_KEY}属性.\n xml:{x}");
                 }
                 var fullName = TypeUtil.MakeFullName(bean.Namespace, subType);
                 var defType = (DefBean)bean.GetNotAbstractChildType(subType);
@@ -106,7 +106,7 @@ namespace Luban.Job.Cfg.DataCreators
                 //{
                 //    throw new Exception($"type:{fullName} 是抽象类. 不能创建实例");
                 //}
-                implBean = defType ?? throw new Exception($"type:{fullName} 不是合法类型");
+                implBean = defType ?? throw new Exception($"type:'{fullName}' 不是合法类型");
             }
             else
             {

@@ -39,12 +39,12 @@ namespace Luban.Job.Proto.Defs
 
             if ((TArgType = Assembly.CreateType(Namespace, ArgType)) == null)
             {
-                throw new Exception($"rpc name:{FullName} arg:{ArgType} is invalid");
+                throw new Exception($"rpc name:'{FullName}' arg:{ArgType} is invalid");
             }
 
             if ((TResType = Assembly.CreateType(Namespace, ResType)) == null)
             {
-                throw new Exception($"rpc name:{FullName} res:{ResType} is invalid");
+                throw new Exception($"rpc name:'{FullName}' res:{ResType} is invalid");
             }
         }
     }

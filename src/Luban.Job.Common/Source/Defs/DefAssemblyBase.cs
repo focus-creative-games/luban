@@ -46,7 +46,7 @@ namespace Luban.Job.Common.Defs
             string fullName = type.FullName;
             if (Types.ContainsKey(fullName))
             {
-                throw new Exception($"type:{fullName} duplicate");
+                throw new Exception($"type:'{fullName}' duplicate");
             }
             Types.Add(fullName, type);
         }
@@ -135,7 +135,7 @@ namespace Luban.Job.Common.Defs
             {
                 if (!SupportNullable)
                 {
-                    throw new Exception($"not support nullable type:{module}.{type}");
+                    throw new Exception($"not support nullable type:'{module}.{type}'");
                 }
                 nullable = true;
                 type = type[0..^1];
@@ -173,7 +173,7 @@ namespace Luban.Job.Common.Defs
                     }
                     else
                     {
-                        throw new ArgumentException($"invalid type. module:{module} type:{type}");
+                        throw new ArgumentException($"invalid type. module:'{module}' type:'{type}'");
                     }
                 }
             }
@@ -184,7 +184,7 @@ namespace Luban.Job.Common.Defs
             string[] elementTypes = keyValueType.Split(',').Select(s => s.Trim()).ToArray();
             if (elementTypes.Length != 2)
             {
-                throw new ArgumentException($"invalid map element type: {keyValueType}");
+                throw new ArgumentException($"invalid map element type:'{keyValueType}'");
             }
             return new TMap(CreateNotContainerType(module, elementTypes[0]), CreateNotContainerType(module, elementTypes[1]), isTreeMap);
         }
@@ -205,7 +205,7 @@ namespace Luban.Job.Common.Defs
                 case "hashmap": return CreateMapType(module, elementType, false);
                 default:
                 {
-                    throw new ArgumentException($"invalid container type. module:{module} container:{containerType} element:{elementType}");
+                    throw new ArgumentException($"invalid container type. module:'{module}' container:'{containerType}' element:'{elementType}'");
                 }
             }
         }
