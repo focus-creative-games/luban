@@ -269,16 +269,12 @@ namespace Luban.Job.Cfg.DataSources.Excel
                         switch (value)
                         {
                             case "r":
-                            case "row":
-                            case "l":
-                            case "landscape": IsOrientRow = true; break;
+                            case "row": IsOrientRow = true; break;
                             case "c":
-                            case "column":
-                            case "p":
-                            case "portrait": IsOrientRow = false; break;
+                            case "column": IsOrientRow = false; break;
                             default:
                             {
-                                throw new Exception($"单元薄 meta 定义 row:{value} 属性值只能为landscape(l,row,r)或portrait(p,row,r)");
+                                throw new Exception($"单元薄 meta 定义 orientation:{value} 属性值只能为row|r|column|c");
                             }
                         }
                         break;
@@ -298,7 +294,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                     }
                     default:
                     {
-                        throw new Exception($"非法单元薄 meta 属性定义 {attr}, 合法属性有: orientation=landscape|l|r|row|portrait|p|r|row,title_rows=<number>");
+                        throw new Exception($"非法单元薄 meta 属性定义 {attr}, 合法属性有: orientation=r|row|c|column,title_rows=<number>");
                     }
                 }
             }

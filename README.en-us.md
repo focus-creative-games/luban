@@ -32,6 +32,7 @@ If you have any questions about the use, please add the QQ group to ask in time,
 
   - QQ group: 692890842
   - Email: taojingjian#gmail.com
+  - Skypy group: https://join.skype.com/xr2nhdMKjac0
 
 
 ## Documentation
@@ -94,8 +95,40 @@ If you have any questions about the use, please add the QQ group to ask in time,
 ![pipeline](docs/images/pipeline.jpg)
 
 ## Quick preview
+**luban is compatible with commonplace excel table generation tools, and a complete data table can be defined in excel**. Unlike common table guide tools that focus on excel, because luban supports a powerful type system and supports json, xml, lua and other file types, luban’s native usage is to separate definition and data, and use separate xml to define tables and structures* *, the data file only contains data.
 
-Unlike common table guide tools that focus on excel, the definition of luban is separated from the data, and a separate xml definition is used to define the table and structure. The data file only contains data.
+After showing the examples of common compatible horizontal and vertical tables below, the remaining examples are all in the luban style of **definition and data separation**. The user chooses whether to define the method of mixing with the data or the method of separating it from the data or mixture of these two style. At present, most of the examples in the luban_examples project use the method of separating definition and data.
+
+### commonplace compatible horizontal table
+
+Add table definition in xml
+```xml
+<table name="TbDefineFromExcel" value="DefineFromExcel" input="test/define_from_excel.xlsx" define_from_file="1"/>
+```
+
+Or add in the tables.xlsx file
+
+![tables.xlsx](docs/images/examples/ex_03.png)
+
+excel file
+
+![excel](docs/images/examples/ex_01.png)
+
+### commonplace compatible vertical table
+
+Add table definition in xml
+
+```xml
+<table name="TbDefineFromExcelOne" value="DefineFromExcelOne" mode="one" input="test/define_from_excel_one.xlsx" define_from_file="1"/>
+```
+
+Or add in the tables.xlsx file
+
+![tables.xlsx](docs/images/examples/ex_04.png)
+
+excel file
+
+![Compatible vertical table](docs/images/examples/ex_02.png)
 
 ### Regular primitive data
 

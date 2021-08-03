@@ -38,6 +38,7 @@ Luban适合有以下需求的开发者：
 - [特性](docs/traits.md)
 - [快速上手](docs/install.md)
 - [Excel 配置数据简介](docs/data_excel.md)
+- [client&server安装与使用说明](docs/luban_install_manual.md)
 - [文档目录](docs/catalog.md)
 - [[TODO] 完整手册](docs/manual.md)
 - **====>强烈推荐查看：示例项目** ([github](https://github.com/focus-creative-games/luban_examples)) ([gitee](https://gitee.com/focus-creative-games/luban_examples)) **<====**
@@ -45,9 +46,7 @@ Luban适合有以下需求的开发者：
 - 支持与联系
   - QQ群: 692890842 （Luban开发交流群）。有使用方面的疑问请及时加QQ群询问，随时有人帮助解决。
   - 邮箱: taojingjian#gmail.com
-  - 微信群:
-  	
-	   ![link](docs/images/wxg.png)
+  - Skypy群: https://join.skype.com/xr2nhdMKjac0
   		
 ## 特性
 - 支持增强的excel格式，可以在excel里比较简洁填写出任意复杂的数据
@@ -101,7 +100,7 @@ Luban适合有以下需求的开发者：
 
 **luban兼容传统的excel导表工具，可以在excel定义完整的数据表**。与常见的专注于excel的导表工具不同，由于luban支持强大的类型系统以及支持json、xml、lua等文件类型，luban原生做法为定义与数据分离，使用单独的xml定义 **表和结构**，数据文件只包含数据。
 
-下面展示完普通兼容横表和纵表的例子后，剩余例子都是**定义与数据分离**的luban风格。使用者自己选择是定义与数据混合的方式还是定义与数据分离的方式。目前luban_examples项目中大多数示例使用定义与数据分离的方式。
+下面展示完普通兼容横表和纵表的例子后，剩余例子都是**定义与数据分离**的luban风格。使用者自己选择是定义与数据混合的方式还是定义与数据分离的方式或者混用两种方式。目前luban_examples项目中大多数示例使用定义与数据分离的方式。
 
 
 ### 传统兼容横表
@@ -828,27 +827,9 @@ return
 - 安装 [VS2019 社区版](https://visualstudio.microsoft.com/zh-hans/vs/)
 - 安装 [.dotnet core sdk 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
 
-## 部属 luban-server
+## 安装与使用
 
-- 基于 docker 
-
-	docker run -d --rm --name luban-server -p 8899:8899 focuscreativegames/luban-server:latest
-
-- 基于 .net 5 runtime （推荐win平台使用，可跨平台，不需要重新编译）
-	- 自行安装 .net 5 runtime.
-	- 从[示例项目](https://github.com/focus-creative-games/luban_examples/tree/main/Tools/Luban.Server)拷贝 Luban.Server（**可跨平台，即使在linux、mac平台也不需要重新编译**）
-	- 在Luban.Server目录下运行 dotnet Luban.Server.dll
-
-## 使用 luban-client
-- 基于 docker (推荐 linux、mac平台使用)
-
-	docker run --rm -v $PWD/.cache.meta:/bin/.cache.meta  focuscreativegames/luban-client <参数>
-	
-	提醒！ .cache.meta这个文件用于保存本地生成或者提交到远程的文件md5缓存，**强烈推荐** 添加-v 映射，不然每次重新计算所有涉及文件的md5,这可能在项目后期会造成多达几秒的延迟。
-- 基于 .net 5 runtime （推荐win平台使用，可跨平台，不需要重新编译）
-	- 自行安装 .net 5 runtime.
-	- 从[示例项目](https://github.com/focus-creative-games/luban_examples/tree/main/Tools/Luban.Client)拷贝 Luban.Client（**可跨平台，即使在linux、mac平台也不需要重新编译**）
-	- 在Luban.Client目录下运行 dotnet Luban.Client.dll <参数>
+参见 [client&server安装与使用说明](docs/luban_install_manual.md)
 
 ## 如何贡献
 
