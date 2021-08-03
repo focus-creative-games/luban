@@ -27,6 +27,9 @@ namespace Luban.Job.Common
         [Option("embed_bright_types", Required = false, HelpText = "use puerts bytebuf class")]
         public bool EmbedBrightTypes { get; set; }
 
+        [Option("use_unity_vector", Required = false, HelpText = "use UnityEngine.Vector{2,3,4}")]
+        public bool UseUnityVectors { get; set; }
+
         public bool ValidateOutouptCodeDir(ref string errMsg)
         {
             if (string.IsNullOrWhiteSpace(this.OutputCodeDir))

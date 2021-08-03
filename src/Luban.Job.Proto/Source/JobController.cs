@@ -93,9 +93,11 @@ namespace Luban.Job.Proto
 
                 var rawDefines = loader.BuildDefines();
 
-                var ass = new DefAssembly();
+                var ass = new DefAssembly() { UseUnityVectors = args.UseUnityVectors };
 
                 ass.Load(rawDefines, agent);
+
+                DefAssemblyBase.LocalAssebmly = ass;
 
                 var targetService = args.Service;
 
@@ -215,6 +217,9 @@ namespace Luban.Job.Proto
                 res.ErrCode = Luban.Common.EErrorCode.JOB_EXCEPTION;
                 res.ErrMsg = $"{e.Message} \n {e.StackTrace}";
             }
+
+            DefAssemblyBase.LocalAssebmly = null;
+
             timer.EndPhaseAndLog();
 
             agent.Session.ReplyRpc<GenJob, GenJobArg, GenJobRes>(rpc, res);

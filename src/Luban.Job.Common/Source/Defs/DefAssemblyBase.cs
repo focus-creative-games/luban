@@ -5,12 +5,29 @@ using Luban.Server.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace Luban.Job.Common.Defs
 {
     public abstract class DefAssemblyBase
     {
         private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
+
+        private static readonly AsyncLocal<DefAssemblyBase> _localAssembly = new();
+
+        public static DefAssemblyBase LocalAssebmly
+        {
+            get
+            {
+                return _localAssembly.Value;
+            }
+            set
+            {
+                _localAssembly.Value = value;
+            }
+        }
+
+        public static bool IsUseUnityVectors => LocalAssebmly?.UseUnityVectors == true;
 
         public Dictionary<string, DefTypeBase> Types { get; } = new Dictionary<string, DefTypeBase>();
 
@@ -21,6 +38,8 @@ namespace Luban.Job.Common.Defs
         public bool SupportDatetimeType { get; protected set; } = false;
 
         public bool SupportNullable { get; protected set; } = true;
+
+        public bool UseUnityVectors { get; set; }
 
         public void AddType(DefTypeBase type)
         {

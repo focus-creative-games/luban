@@ -271,9 +271,14 @@ namespace Luban.Job.Cfg
 
                 TimeZoneInfo timeZoneInfo = string.IsNullOrEmpty(args.TimeZone) ? null : TimeZoneInfo.FindSystemTimeZoneById(args.TimeZone);
 
-                var ass = new DefAssembly(args.BranchName, timeZoneInfo, args.ExportTestData, agent);
+                var ass = new DefAssembly(args.BranchName, timeZoneInfo, args.ExportTestData, agent)
+                {
+                    UseUnityVectors = args.UseUnityVectors
+                };
 
                 ass.Load(args.Service, rawDefines);
+
+                DefAssemblyBase.LocalAssebmly = ass;
 
                 var targetService = ass.CfgTargetService;
 
@@ -451,6 +456,7 @@ namespace Luban.Job.Cfg
                 res.ErrCode = Luban.Common.EErrorCode.JOB_EXCEPTION;
                 res.ErrMsg = $"{e.Message} \n {e.StackTrace}";
             }
+            DefAssemblyBase.LocalAssebmly = null;
             timer.EndPhaseAndLog();
 
             agent.Session.ReplyRpc<GenJob, GenJobArg, GenJobRes>(rpc, res);

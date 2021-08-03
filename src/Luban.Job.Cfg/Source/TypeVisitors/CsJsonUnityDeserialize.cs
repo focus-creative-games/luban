@@ -110,19 +110,19 @@ namespace Luban.Job.Cfg.TypeVisitors
         public string Accept(TVector2 type, string json, string x)
         {
             string tempJsonName = $"_json2";
-            return $"{{ var {tempJsonName} = {json}; if(!{tempJsonName}.IsObject) {{ throw new SerializationException(); }}  float __x; {TFloat.Ins.Apply(this, $"{tempJsonName}[\"x\"]", "__x") } float __y; {TFloat.Ins.Apply(this, $"{tempJsonName}[\"y\"]", "__y") } {x} = new System.Numerics.Vector2(__x, __y); }}";
+            return $"{{ var {tempJsonName} = {json}; if(!{tempJsonName}.IsObject) {{ throw new SerializationException(); }}  float __x; {TFloat.Ins.Apply(this, $"{tempJsonName}[\"x\"]", "__x") } float __y; {TFloat.Ins.Apply(this, $"{tempJsonName}[\"y\"]", "__y") } {x} = new {type.Apply(CsDefineTypeName.Ins)}(__x, __y); }}";
         }
 
         public string Accept(TVector3 type, string json, string x)
         {
             string tempJsonName = $"_json2";
-            return $"{{ var {tempJsonName} = {json}; if(!{tempJsonName}.IsObject) {{ throw new SerializationException(); }} float __x; {TFloat.Ins.Apply(this, $"{tempJsonName}[\"x\"]", "__x") } float __y; {TFloat.Ins.Apply(this, $"{tempJsonName}[\"y\"]", "__y") } float __z; {TFloat.Ins.Apply(this, $"{tempJsonName}[\"z\"]", "__z") }  {x} = new System.Numerics.Vector3(__x, __y,__z); }}";
+            return $"{{ var {tempJsonName} = {json}; if(!{tempJsonName}.IsObject) {{ throw new SerializationException(); }} float __x; {TFloat.Ins.Apply(this, $"{tempJsonName}[\"x\"]", "__x") } float __y; {TFloat.Ins.Apply(this, $"{tempJsonName}[\"y\"]", "__y") } float __z; {TFloat.Ins.Apply(this, $"{tempJsonName}[\"z\"]", "__z") }  {x} = new {type.Apply(CsDefineTypeName.Ins)}(__x, __y,__z); }}";
         }
 
         public string Accept(TVector4 type, string json, string x)
         {
             string tempJsonName = $"_json2";
-            return $"{{ var {tempJsonName} = {json}; if(!{tempJsonName}.IsObject) {{ throw new SerializationException(); }} float __x; {TFloat.Ins.Apply(this, $"{tempJsonName}[\"x\"]", "__x") } float __y; {TFloat.Ins.Apply(this, $"{tempJsonName}[\"y\"]", "__y") } float __z; {TFloat.Ins.Apply(this, $"{tempJsonName}[\"z\"]", "__z") }  float __w; {TFloat.Ins.Apply(this, $"{tempJsonName}[\"w\"]", "__w") } {x} = new System.Numerics.Vector4(__x, __y, __z, __w); }}";
+            return $"{{ var {tempJsonName} = {json}; if(!{tempJsonName}.IsObject) {{ throw new SerializationException(); }} float __x; {TFloat.Ins.Apply(this, $"{tempJsonName}[\"x\"]", "__x") } float __y; {TFloat.Ins.Apply(this, $"{tempJsonName}[\"y\"]", "__y") } float __z; {TFloat.Ins.Apply(this, $"{tempJsonName}[\"z\"]", "__z") }  float __w; {TFloat.Ins.Apply(this, $"{tempJsonName}[\"w\"]", "__w") } {x} = new {type.Apply(CsDefineTypeName.Ins)}(__x, __y, __z, __w); }}";
         }
 
         public string Accept(TDateTime type, string json, string x)
