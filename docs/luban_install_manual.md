@@ -48,7 +48,7 @@
     -j,--job <job>              必选参数。 生成类型。目前支持的生成类型有: cfg,proto,db。 生成配置请取cfg。
     -l,--loglevel <log level>   可选参数。 日志级别。默认为INFO。有效值有: TRACE,DEBUG,INFO,WARN,ERROR,FATAL,OFF
     -c,--cachemetafile <meta file>  可选参数。 meta缓存文件名。 默认为 .cache.meta
-    -w,--watch <watch dirs>     可选参数。 监测目录或者目录列表，以逗号','分隔。当开启此选项后，生成结束后不会退出程序，而是进入自动生成模式。监听到目标目录发生变化后，自动重新运行生成。省去改动后手动运行生成脚本的麻烦。
+    -w,--watch <dir1;dir2...>     可选参数。 监测目录或者目录列表，以逗号';'分隔。当开启此选项后，生成结束后不会退出程序，而是进入自动生成模式。监听到目标目录发生变化后，自动重新运行生成。省去改动后手动运行生成脚本的麻烦。
     -h,--help                   可选参数。显示帮助信息
     --  <job options>           必选参数。 从此参数起，便是 不同job的特有选项
 
@@ -176,7 +176,29 @@
         --service server ^
         --export_test_data
 
-        
+案例5：
+    
+    你要为服务器生成代码和数据。同时让luban.client执行生成后不退出，进入监控状态，只要配置定义或者数据有变化，就自动生成代码和数据。
+
+    你期望使用json导出数据格式。
+    你期望包含测试数据。
+    你为服务器选择的service为server
+
+    则 win下命令为：
+
+    dotnet d:\tools\Luban.Client\Luban.Client.dll ^
+        -h 127.0.0.1 ^
+        -p 8899 ^
+        -j cfg ^
+        -w d:\raw_config\defines;d:\raw_configs\datas
+        -- ^
+        --define_file d:\raw_config\defines\__root__.xml ^
+        --input_data_dir d:\raw_configs\datas ^
+        --output_code_dir d:\server\src\Gen ^
+        --output_data_dir d:\server\GameData ^
+        --gen_types code_cs_json,data_json ^
+        --service server ^
+        --export_test_data    
 
 
 
