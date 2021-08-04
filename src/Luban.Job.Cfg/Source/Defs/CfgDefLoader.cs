@@ -125,27 +125,26 @@ namespace Luban.Job.Cfg.Defs
             _cfgGroups.Add(new Group() { Names = groupNames });
         }
 
-        private void FillValueValidator(CfgField f, XAttribute e, string validatorName)
+        private void FillValueValidator(CfgField f, string attrValue, string validatorName)
         {
-            if (e != null)
+            if (!string.IsNullOrWhiteSpace(attrValue))
             {
-                var validator = new Validator() { Type = validatorName, Rule = e.Value };
+                var validator = new Validator() { Type = validatorName, Rule = attrValue };
                 f.Validators.Add(validator);
                 f.ValueValidators.Add(validator);
             }
         }
 
-        private void FillValidators(XElement e, string key, List<Validator> result)
+        private void FillValidators(string key, string attr, List<Validator> result)
         {
-            var attr = e.Attribute(key);
-            if (attr != null)
+            if (!string.IsNullOrWhiteSpace(attr))
             {
-                foreach (var validatorStr in attr.Value.Split('#', StringSplitOptions.RemoveEmptyEntries))
+                foreach (var validatorStr in attr.Split('#', StringSplitOptions.RemoveEmptyEntries))
                 {
                     var sepIndex = validatorStr.IndexOf(':');
                     if (sepIndex < 0)
                     {
-                        throw new Exception($"定义文件:{CurImportFile} 类型:'{CurDefine}' 字段:'{e}' key:'{key}' 不是合法的 validator 定义 (key1:value1#key2:value2 ...)");
+                        throw new Exception($"定义文件:{CurImportFile} 类型:'{CurDefine}' key:'{key}' attr:'{attr}' 不是合法的 validator 定义 (key1:value1#key2:value2 ...)");
                     }
                     result.Add(new Validator() { Type = validatorStr[..sepIndex], Rule = validatorStr[(sepIndex + 1)..] });
                 }
@@ -606,6 +605,8 @@ namespace Luban.Job.Cfg.Defs
                     new CfgField() { Name = "sep", Type = "string" },
                     new CfgField() { Name = "is_multi_rows", Type = "bool" },
                     new CfgField() { Name = "group", Type = "string" },
+                    new CfgField() { Name = "reference", Type = "string" },
+                    new CfgField() { Name = "path", Type = "string" },
                     new CfgField() { Name = "comment", Type = "string" },
                 }
             })
@@ -680,15 +681,23 @@ namespace Luban.Job.Cfg.Defs
                         Sep = sep,
                         Comment = comment,
                         Parent = "",
-                        Fields = fields.Datas.Select(d => (DBean)d).Select(b => (Field)new CfgField()
-                        {
-                            Name = (b.GetField("name") as DString).Value.Trim(),
-                            Type = (b.GetField("type") as DString).Value.Trim(),
-                            Sep = (b.GetField("sep") as DString).Value.Trim(),
-                            IsMultiRow = (b.GetField("is_multi_rows") as DBool).Value,
-                            Groups = (b.GetField("group") as DString).Value.Trim().Split(',').Select(g => g.Trim()).ToList(),
-                            Comment = (b.GetField("comment") as DString).Value.Trim(),
-                        }).ToList(),
+                        Fields = fields.Datas.Select(d => (DBean)d).Select(b => this.CreateField(
+                            (b.GetField("name") as DString).Value.Trim(),
+                            (b.GetField("type") as DString).Value.Trim(),
+                            "",
+                            (b.GetField("sep") as DString).Value.Trim(),
+                            (b.GetField("is_multi_rows") as DBool).Value,
+                            (b.GetField("group") as DString).Value,
+                            "",
+                            "",
+                            (b.GetField("comment") as DString).Value.Trim(),
+                            (b.GetField("reference") as DString).Value.Trim(),
+                            (b.GetField("path") as DString).Value.Trim(),
+                            "",
+                            "",
+                            "",
+                            ""
+                            )).ToList(),
                     };
                     this._beans.Add(curBean);
                 };
@@ -710,16 +719,38 @@ namespace Luban.Job.Cfg.Defs
         protected override Field CreateField(XElement e)
         {
             ValidAttrKeys(e, _fieldOptionalAttrs, _fieldRequireAttrs);
+
+            return CreateField(XmlUtil.GetRequiredAttribute(e, "name"),
+                XmlUtil.GetRequiredAttribute(e, "type"),
+                XmlUtil.GetOptionalAttribute(e, "index"),
+                 XmlUtil.GetOptionalAttribute(e, "sep"),
+                 XmlUtil.GetOptionBoolAttribute(e, "multi_rows"),
+                 XmlUtil.GetOptionalAttribute(e, "group"),
+                 XmlUtil.GetOptionalAttribute(e, "res"),
+                 XmlUtil.GetOptionalAttribute(e, "convert"),
+                 XmlUtil.GetOptionalAttribute(e, "comment"),
+                 XmlUtil.GetOptionalAttribute(e, "ref"),
+                 XmlUtil.GetOptionalAttribute(e, "path"),
+                 XmlUtil.GetOptionalAttribute(e, "range"),
+                 XmlUtil.GetOptionalAttribute(e, "key_validator"),
+                 XmlUtil.GetOptionalAttribute(e, "value_validator"),
+                 XmlUtil.GetOptionalAttribute(e, "validator")
+                );
+        }
+
+        private Field CreateField(string name, string type, string index, string sep, bool isMultiRow, string group, string resource, string converter,
+            string comment, string refs, string path, string range, string keyValidator, string valueValidator, string validator)
+        {
             var f = new CfgField()
             {
-                Name = XmlUtil.GetRequiredAttribute(e, "name"),
-                Index = XmlUtil.GetOptionalAttribute(e, "index"),
-                Sep = XmlUtil.GetOptionalAttribute(e, "sep"),
-                IsMultiRow = XmlUtil.GetOptionBoolAttribute(e, "multi_rows"),
-                Groups = CreateGroups(XmlUtil.GetOptionalAttribute(e, "group")),
-                Resource = XmlUtil.GetOptionalAttribute(e, "res"),
-                Converter = XmlUtil.GetOptionalAttribute(e, "convert"),
-                Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
+                Name = name,
+                Index = index,
+                Sep = sep,
+                IsMultiRow = isMultiRow,
+                Groups = CreateGroups(group),
+                Resource = resource,
+                Converter = converter,
+                Comment = comment,
             };
 
             // 字段与table的默认组不一样。
@@ -731,18 +762,18 @@ namespace Luban.Job.Cfg.Defs
             }
             else if (!ValidGroup(f.Groups, out var invalidGroup))
             {
-                throw new Exception($"定义文件:{CurImportFile} field:'{e}' group:'{invalidGroup}' 不存在");
+                throw new Exception($"定义文件:{CurImportFile} field:'{name}' group:'{invalidGroup}' 不存在");
             }
-            f.Type = CreateType(e, "type");
+            f.Type = type;
 
 
-            FillValueValidator(f, e.Attribute("ref"), "ref");
-            FillValueValidator(f, e.Attribute("path"), "path"); // (ue4|unity|normal|regex);xxx;xxx
-            FillValueValidator(f, e.Attribute("range"), "range");
+            FillValueValidator(f, refs, "ref");
+            FillValueValidator(f, path, "path"); // (ue4|unity|normal|regex);xxx;xxx
+            FillValueValidator(f, range, "range");
 
-            FillValidators(e, "key_validator", f.KeyValidators);
-            FillValidators(e, "value_validator", f.ValueValidators);
-            FillValidators(e, "validator", f.Validators);
+            FillValidators("key_validator", keyValidator, f.KeyValidators);
+            FillValidators("value_validator", valueValidator, f.ValueValidators);
+            FillValidators("validator", validator, f.Validators);
             return f;
         }
 
