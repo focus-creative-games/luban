@@ -101,37 +101,27 @@ Luban适合有以下需求的开发者：
 
 **luban兼容传统的excel导表工具，可以在excel定义完整的数据表**。与常见的专注于excel的导表工具不同，由于luban支持强大的类型系统以及支持json、xml、lua等文件类型，luban原生做法为定义与数据分离，使用单独的xml定义 **表和结构**，数据文件只包含数据。
 
-下面展示完普通兼容横表和纵表的例子后，剩余例子都是**定义与数据分离**的luban风格。使用者自己选择是定义与数据混合的方式还是定义与数据分离的方式或者混用两种方式。目前luban_examples项目中大多数示例使用定义与数据分离的方式。
+下面展示完普通兼容例子后，剩余例子都是**定义与数据分离**的luban风格。使用者自己选择是定义与数据混合的方式还是定义与数据分离的方式或者混用两种方式。目前luban_examples项目中大多数示例使用定义与数据分离的方式。
 
+-----
 
 ### 传统兼容横表
-
-在xml中添加表定义
-
-```xml
-<table name="TbDefineFromExcel" value="DefineFromExcel" input="test/define_from_excel.xlsx" define_from_file="1"/>
-```
-或者在tables.xlsx文件中添加
-![tables.xlsx](docs/images/examples/ex_03.png)
-
-数据
 
 ![兼容横表](docs/images/examples/ex_01.png)
 
 ### 传统兼容纵表
 
-在xml中添加表定义
-
-```xml
-<table name="TbDefineFromExcelOne" value="DefineFromExcelOne" mode="one" input="test/define_from_excel_one.xlsx" define_from_file="1"/>
-```
-
-或者在tables.xlsx文件中添加
-![tables.xlsx](docs/images/examples/ex_04.png)
-
-数据
-
 ![兼容纵表](docs/images/examples/ex_02.png) 
+
+### excel中添加table到导出列表
+
+![tables.xlsx](docs/images/examples/ex_06.png) 
+
+### 在excel中定义enum类型
+
+![enums.xlsx](docs/images/examples/ex_05.png)
+
+-----
 
 ### 常规的原生数据 （从本示例起为定义与数据分离的模式）
 
