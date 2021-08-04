@@ -20,7 +20,9 @@ namespace Luban.Job.Cfg.Defs
     {
         private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private readonly List<string> _importExcels = new List<string>();
+        private readonly List<string> _importExcelTables = new();
+
+        private readonly List<string> _importExcelEnums = new();
 
         private readonly List<Branch> _branches = new();
 
@@ -60,16 +62,26 @@ namespace Luban.Job.Cfg.Defs
             };
         }
 
-        private static readonly List<string> _excelImportRequireAttrs = new List<string> { "name" };
+        private static readonly List<string> _excelImportRequireAttrs = new List<string> { "name", "type" };
         private void AddImportExcel(XElement e)
         {
             ValidAttrKeys(e, null, _excelImportRequireAttrs);
-            var importName = e.Attribute("name").Value;
+            var importName = XmlUtil.GetRequiredAttribute(e, "name");
             if (string.IsNullOrWhiteSpace(importName))
             {
                 throw new Exception("importexcel 属性name不能为空");
             }
-            this._importExcels.Add(importName);
+            var type = XmlUtil.GetRequiredAttribute(e, "type");
+            if (string.IsNullOrWhiteSpace(type))
+            {
+                throw new Exception($"importexcel name:'{importName}' type属性不能为空");
+            }
+            switch (type)
+            {
+                case "table": this._importExcelTables.Add(importName); break;
+                case "enum": this._importExcelEnums.Add(importName); break;
+                default: throw new Exception($"importexcel name:'{importName}' type:'{type}' 不合法. 有效值为 table 或者 enum");
+            }
         }
 
         private static readonly List<string> _branchRequireAttrs = new List<string> { "name" };
@@ -425,23 +437,23 @@ namespace Luban.Job.Cfg.Defs
 
         private async Task LoadTableListFromFileAsync(string dataDir)
         {
-            if (this._importExcels.Count == 0)
+            if (this._importExcelTables.Count == 0)
             {
                 return;
             }
-            var inputFileInfos = await DataLoaderUtil.CollectInputFilesAsync(this.Agent, this._importExcels, dataDir);
+            var inputFileInfos = await DataLoaderUtil.CollectInputFilesAsync(this.Agent, this._importExcelTables, dataDir);
 
             var defTableRecordType = new DefBean(new CfgBean()
             {
                 Namespace = "__intern__",
-                Name = "__TextInfo__",
+                Name = "__TableRecord__",
                 Parent = "",
                 Alias = "",
                 IsValueType = false,
                 Sep = "",
                 TypeId = 0,
                 IsSerializeCompatible = false,
-                Fields = new List<Common.RawDefs.Field>
+                Fields = new List<Field>
                 {
                     new CfgField() { Name = "name", Type = "string" },
                     new CfgField() { Name = "module", Type = "string" },
@@ -487,9 +499,82 @@ namespace Luban.Job.Cfg.Defs
             }
         }
 
+        private async Task LoadEnumListFromFileAsync(string dataDir)
+        {
+            if (this._importExcelTables.Count == 0)
+            {
+                return;
+            }
+            var inputFileInfos = await DataLoaderUtil.CollectInputFilesAsync(this.Agent, this._importExcelEnums, dataDir);
+
+            var defTableRecordType = new DefBean(new CfgBean()
+            {
+                Namespace = "__intern__",
+                Name = "__EnumInfo__",
+                Parent = "",
+                Alias = "",
+                IsValueType = false,
+                Sep = "",
+                TypeId = 0,
+                IsSerializeCompatible = false,
+                Fields = new List<Field>
+                {
+                    new CfgField() { Name = "name", Type = "string" },
+                    new CfgField() { Name = "module", Type = "string" },
+                    new CfgField() { Name = "item", Type = "string" },
+                    new CfgField() { Name = "alias", Type = "string" },
+                    new CfgField() { Name = "value", Type = "string" },
+                    new CfgField() { Name = "comment", Type = "string" },
+                }
+            })
+            {
+                AssemblyBase = new DefAssembly("", null, true, Agent),
+            };
+            defTableRecordType.PreCompile();
+            defTableRecordType.Compile();
+            defTableRecordType.PostCompile();
+            var tableRecordType = new TBean(defTableRecordType, false);
+
+            foreach (var file in inputFileInfos)
+            {
+                var source = new ExcelDataSource();
+                var bytes = await this.Agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5);
+                var records = DataLoaderUtil.LoadCfgRecords(tableRecordType, file.OriginFile, null, bytes, true, false);
+
+                PEnum curEnum = null;
+                foreach (var r in records)
+                {
+                    DBean data = r.Data;
+                    //s_logger.Info("== read text:{}", r.Data);
+                    string name = (data.GetField("name") as DString).Value.Trim();
+                    string module = (data.GetField("module") as DString).Value.Trim();
+                    if (curEnum == null || curEnum.Name != name || curEnum.Namespace != module)
+                    {
+                        curEnum = new PEnum() { Name = name, Namespace = module, IsFlags = false, Comment = "", IsUniqueItemId = true };
+                        this._enums.Add(curEnum);
+                    }
+
+                    if (string.IsNullOrWhiteSpace(name))
+                    {
+                        throw new Exception($"file:{file.ActualFile} 定义了一个空枚举类名");
+                    }
+
+                    string item = (data.GetField("item") as DString).Value.Trim();
+                    if (string.IsNullOrWhiteSpace(item))
+                    {
+                        throw new Exception($"file:{file.ActualFile} module:'{module}' name:'{name}' 定义了一个空枚举项");
+                    }
+                    string alias = (data.GetField("alias") as DString).Value.Trim();
+                    string value = (data.GetField("value") as DString).Value.Trim();
+                    string comment = (data.GetField("comment") as DString).Value.Trim();
+                    curEnum.Items.Add(new EnumItem() { Name = item, Alias = alias, Value = value, Comment = comment });
+                };
+            }
+        }
+
         public async Task LoadDefinesFromFileAsync(string dataDir)
         {
-            await LoadTableListFromFileAsync(dataDir);
+            await Task.WhenAll(LoadTableListFromFileAsync(dataDir), LoadEnumListFromFileAsync(dataDir));
             await LoadTableRecordDefinesFromFileAsync(dataDir);
         }
 
