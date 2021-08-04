@@ -21,8 +21,14 @@ namespace Luban.Job.Cfg.Datas
 
         public DType GetField(string fieldName)
         {
-            ImplType.TryGetField(fieldName, out var _, out var findex);
-            return Fields[findex];
+            if (ImplType.TryGetField(fieldName, out var _, out var findex))
+            {
+                return Fields[findex];
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public override void Apply<T>(IDataActionVisitor<T> visitor, T x)

@@ -496,7 +496,7 @@ namespace Luban.Job.Cfg.Defs
                     string index = (data.GetField("index") as DString).Value.Trim();
                     string mode = (data.GetField("mode") as DString).Value.Trim();
                     string group = (data.GetField("group") as DString).Value.Trim();
-                    string comment = (data.GetField("commnet") as DString).Value.Trim();
+                    string comment = (data.GetField("comment") as DString).Value.Trim();
                     bool isDefineFromExcel = (data.GetField("define_from_excel") as DBool).Value;
                     string inputFile = (data.GetField("input") as DString).Value.Trim();
                     string branchInput = (data.GetField("branch_input") as DString).Value.Trim();
@@ -632,6 +632,7 @@ namespace Luban.Job.Cfg.Defs
                 Fields = new List<Field>
                 {
                     new CfgField() { Name = "full_name", Type = "string" },
+                    new CfgField() { Name = "sep", Type = "string" },
                     new CfgField() { Name = "comment", Type = "string" },
                     new CfgField() { Name = "fields", Type = "list,__FieldInfo__", IsMultiRow = true },
                 }
