@@ -483,6 +483,10 @@ namespace Luban.Job.Cfg.DataCreators
             {
                 return null;
             }
+            if (d is System.DateTime datetime)
+            {
+                return new DDateTime(datetime);
+            }
             return DataUtil.CreateDateTime(d.ToString());
         }
     }

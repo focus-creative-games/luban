@@ -392,11 +392,15 @@ text的key和text字段都是string类型，因此在连续单元格或者sep产
 ## datetime 类型
 
 - 时间是常用的数据类型。Luban 特地提供了支持。  
-  填写格式为 以下 4 种。
-  - yyyy-mm-dd hh:mm:ss 如 1999-08-08 01:30:29
-  - yyyy-mm-dd hh:mm 如 2000-08-07 07:40
-  - yyyy-mm-dd hh 如 2001-09-05 07
-  - yyyy-mm-dd 如 2003-04-05
+  有两种形式，一种以纯字符串的方式填写。
+  - 以纯字符串方式填写
+      填写格式为 以下 4 种。
+    - yyyy-mm-dd hh:mm:ss 如 1999-08-08 01:30:29
+    - yyyy-mm-dd hh:mm 如 2000-08-07 07:40
+    - yyyy-mm-dd hh 如 2001-09-05 07
+    - yyyy-mm-dd 如 2003-04-05
+  - 以 excel内置的时间格式填写
+    
 - 为 Item 新增一个 失效时间字段 expire_time 。  
 - [定义](images/adv/def_38.png)  
   ``` xml
@@ -405,7 +409,10 @@ text的key和text字段都是string类型，因此在连续单元格或者sep产
     <var name="expire_time" type="datetime"/>
   </bean>
   ```
-- 配置    
+- 配置  
+  图中红框中第一个时间以 excel的时间格式填写
+  剩下第2，3，4个时间以 纯字符串形式填写
+
   ![如图](images/adv/def_39.png)
 
 ## convert 常量替换
