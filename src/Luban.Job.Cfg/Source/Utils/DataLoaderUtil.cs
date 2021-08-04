@@ -197,7 +197,7 @@ namespace Luban.Job.Cfg.Utils
             }
             catch (Exception e)
             {
-                throw new Exception($"配置文件:{originFile} 生成失败. ==> {e.Message}", e);
+                throw new Exception($"配置文件:{originFile} 生成失败.", e);
             }
         }
 
@@ -220,7 +220,7 @@ namespace Luban.Job.Cfg.Utils
                 }
                 catch (Exception e)
                 {
-                    throw new Exception($"load text table file:{files[i]} fail. ==> {e.Message} ");
+                    throw new Exception($"load text table file:{files[i]} fail", e);
                 }
             }
         }

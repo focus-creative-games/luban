@@ -44,9 +44,10 @@ Luban适合有以下需求的开发者：
 - **====>强烈推荐查看：示例项目** ([github](https://github.com/focus-creative-games/luban_examples)) ([gitee](https://gitee.com/focus-creative-games/luban_examples)) **<====**
 
 - 支持与联系
-  - QQ群: 692890842 （Luban开发交流群）。有使用方面的疑问请及时加QQ群询问，随时有人帮助解决。
+  - QQ群: 692890842 （Luban开发交流群） [点击链接加入](https://qm.qq.com/cgi-bin/qm/qr?k=4bMoe11knBW7Tcs1sqMafZE1I4zpT4sh&jump_from=webapi)。 有使用方面的疑问请及时加QQ群询问，随时有人帮助解决。
   - 邮箱: taojingjian#gmail.com
   - Skypy群: https://join.skype.com/xr2nhdMKjac0
+  		
   		
 ## 特性
 - 支持增强的excel格式，可以在excel里比较简洁填写出任意复杂的数据

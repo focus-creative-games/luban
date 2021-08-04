@@ -32,7 +32,7 @@ namespace Luban.Job.Cfg.DataSources
             }
             catch (Exception e)
             {
-                throw new Exception($"文件{url} 加载失败 ==> {e.Message}", e);
+                throw new Exception($"文件{url} 加载失败", e);
             }
         }
     }

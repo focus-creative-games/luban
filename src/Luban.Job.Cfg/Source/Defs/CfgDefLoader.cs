@@ -529,7 +529,7 @@ namespace Luban.Job.Cfg.Defs
 
 
             FillValueValidator(f, e.Attribute("ref"), "ref");
-            FillValueValidator(f, e.Attribute("path"), "path"); // (ue4|normal|regex);xxx;xxx
+            FillValueValidator(f, e.Attribute("path"), "path"); // (ue4|unity|normal|regex);xxx;xxx
             FillValueValidator(f, e.Attribute("range"), "range");
 
             FillValidators(e, "key_validator", f.KeyValidators);

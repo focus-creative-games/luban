@@ -215,7 +215,8 @@ namespace Luban.Job.Proto
             catch (Exception e)
             {
                 res.ErrCode = Luban.Common.EErrorCode.JOB_EXCEPTION;
-                res.ErrMsg = $"{e.Message} \n {e.StackTrace}";
+                res.ErrMsg = ExceptionUtil.ExtractMessage(e);
+                res.StackTrace = e.StackTrace;
             }
 
             DefAssemblyBase.LocalAssebmly = null;

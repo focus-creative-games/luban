@@ -40,7 +40,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                         }
                         catch (Exception e)
                         {
-                            throw new Exception($"excel:{rawUrl} sheet:{reader.Name} 读取失败. ==> {e.Message}", e);
+                            throw new Exception($"excel:{rawUrl} sheet:{reader.Name} 读取失败.", e);
                         }
 
                     }
@@ -73,7 +73,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                         }
                         catch (Exception e)
                         {
-                            throw new Exception($"excel:{rawUrl} sheet:{reader.Name} 读取失败. ==> {e.Message}", e);
+                            throw new Exception($"excel:{rawUrl} sheet:{reader.Name} 读取失败.", e);
                         }
 
                     }
@@ -110,7 +110,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 }
                 catch (Exception e)
                 {
-                    throw new Exception($"sheet:{sheet.Name} ==> {e.Message} {e.StackTrace}", e);
+                    throw new Exception($"sheet:{sheet.Name}", e);
                 }
             }
             return datas;
