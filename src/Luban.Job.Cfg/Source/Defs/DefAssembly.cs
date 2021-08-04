@@ -269,6 +269,11 @@ namespace Luban.Job.Cfg.Defs
 
             // 递归 设置DefBean及DefField 的 IsMultiRow
 
+            MarkMultiRows();
+        }
+
+        public void MarkMultiRows()
+        {
             var multiRowBeans = new HashSet<DefBean>();
             for (bool anyMark = true; anyMark;)
             {

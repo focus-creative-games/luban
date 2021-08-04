@@ -113,13 +113,17 @@ Luban适合有以下需求的开发者：
 
 ![兼容纵表](docs/images/examples/ex_02.png) 
 
-### excel中添加table到导出列表
+### excel中添加table声明
 
 ![tables.xlsx](docs/images/examples/ex_06.png) 
 
-### 在excel中定义enum类型
+### 在excel中定义enum 类型
 
 ![enums.xlsx](docs/images/examples/ex_05.png)
+
+### 在excel中定义bean 类型
+
+![enums.xlsx](docs/images/examples/ex_07.png)
 
 -----
 

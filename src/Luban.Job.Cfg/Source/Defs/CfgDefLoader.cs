@@ -20,9 +20,10 @@ namespace Luban.Job.Cfg.Defs
     {
         private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private readonly List<string> _importExcelTables = new();
+        private readonly List<string> _importExcelTableFiles = new();
+        private readonly List<string> _importExcelEnumFiles = new();
+        private readonly List<string> _importExcelBeanFiles = new();
 
-        private readonly List<string> _importExcelEnums = new();
 
         private readonly List<Branch> _branches = new();
 
@@ -78,9 +79,10 @@ namespace Luban.Job.Cfg.Defs
             }
             switch (type)
             {
-                case "table": this._importExcelTables.Add(importName); break;
-                case "enum": this._importExcelEnums.Add(importName); break;
-                default: throw new Exception($"importexcel name:'{importName}' type:'{type}' 不合法. 有效值为 table 或者 enum");
+                case "table": this._importExcelTableFiles.Add(importName); break;
+                case "enum": this._importExcelEnumFiles.Add(importName); break;
+                case "bean": this._importExcelBeanFiles.Add(importName); break;
+                default: throw new Exception($"importexcel name:'{importName}' type:'{type}' 不合法. 有效值为 table|enum|bean");
             }
         }
 
@@ -437,11 +439,11 @@ namespace Luban.Job.Cfg.Defs
 
         private async Task LoadTableListFromFileAsync(string dataDir)
         {
-            if (this._importExcelTables.Count == 0)
+            if (this._importExcelTableFiles.Count == 0)
             {
                 return;
             }
-            var inputFileInfos = await DataLoaderUtil.CollectInputFilesAsync(this.Agent, this._importExcelTables, dataDir);
+            var inputFileInfos = await DataLoaderUtil.CollectInputFilesAsync(this.Agent, this._importExcelTableFiles, dataDir);
 
             var defTableRecordType = new DefBean(new CfgBean()
             {
@@ -455,8 +457,7 @@ namespace Luban.Job.Cfg.Defs
                 IsSerializeCompatible = false,
                 Fields = new List<Field>
                 {
-                    new CfgField() { Name = "name", Type = "string" },
-                    new CfgField() { Name = "module", Type = "string" },
+                    new CfgField() { Name = "full_name", Type = "string" },
                     new CfgField() { Name = "value_type", Type = "string" },
                     new CfgField() { Name = "index", Type = "string" },
                     new CfgField() { Name = "mode", Type = "string" },
@@ -484,8 +485,13 @@ namespace Luban.Job.Cfg.Defs
                 {
                     DBean data = r.Data;
                     //s_logger.Info("== read text:{}", r.Data);
-                    string name = (data.GetField("name") as DString).Value.Trim();
-                    string module = (data.GetField("module") as DString).Value.Trim();
+                    string fullName = (data.GetField("full_name") as DString).Value.Trim();
+                    if (string.IsNullOrWhiteSpace(fullName))
+                    {
+                        throw new Exception($"file:{file.ActualFile} 定义了一个空的table类名");
+                    }
+                    string name = TypeUtil.GetName(fullName);
+                    string module = TypeUtil.GetNamespace(fullName);
                     string valueType = (data.GetField("value_type") as DString).Value.Trim();
                     string index = (data.GetField("index") as DString).Value.Trim();
                     string mode = (data.GetField("mode") as DString).Value.Trim();
@@ -501,11 +507,11 @@ namespace Luban.Job.Cfg.Defs
 
         private async Task LoadEnumListFromFileAsync(string dataDir)
         {
-            if (this._importExcelTables.Count == 0)
+            if (this._importExcelEnumFiles.Count == 0)
             {
                 return;
             }
-            var inputFileInfos = await DataLoaderUtil.CollectInputFilesAsync(this.Agent, this._importExcelEnums, dataDir);
+            var inputFileInfos = await DataLoaderUtil.CollectInputFilesAsync(this.Agent, this._importExcelEnumFiles, dataDir);
 
             var defTableRecordType = new DefBean(new CfgBean()
             {
@@ -519,8 +525,7 @@ namespace Luban.Job.Cfg.Defs
                 IsSerializeCompatible = false,
                 Fields = new List<Field>
                 {
-                    new CfgField() { Name = "name", Type = "string" },
-                    new CfgField() { Name = "module", Type = "string" },
+                    new CfgField() { Name = "full_name", Type = "string" },
                     new CfgField() { Name = "item", Type = "string" },
                     new CfgField() { Name = "alias", Type = "string" },
                     new CfgField() { Name = "value", Type = "string" },
@@ -546,17 +551,18 @@ namespace Luban.Job.Cfg.Defs
                 {
                     DBean data = r.Data;
                     //s_logger.Info("== read text:{}", r.Data);
-                    string name = (data.GetField("name") as DString).Value.Trim();
-                    string module = (data.GetField("module") as DString).Value.Trim();
+                    string fullName = (data.GetField("full_name") as DString).Value.Trim();
+                    if (string.IsNullOrWhiteSpace(fullName))
+                    {
+                        throw new Exception($"file:{file.ActualFile} 定义了一个空的enum类名");
+                    }
+                    string name = TypeUtil.GetName(fullName);
+                    string module = TypeUtil.GetNamespace(fullName);
+
                     if (curEnum == null || curEnum.Name != name || curEnum.Namespace != module)
                     {
                         curEnum = new PEnum() { Name = name, Namespace = module, IsFlags = false, Comment = "", IsUniqueItemId = true };
                         this._enums.Add(curEnum);
-                    }
-
-                    if (string.IsNullOrWhiteSpace(name))
-                    {
-                        throw new Exception($"file:{file.ActualFile} 定义了一个空枚举类名");
                     }
 
                     string item = (data.GetField("item") as DString).Value.Trim();
@@ -572,9 +578,125 @@ namespace Luban.Job.Cfg.Defs
             }
         }
 
+        private async Task LoadBeanListFromFileAsync(string dataDir)
+        {
+            if (this._importExcelBeanFiles.Count == 0)
+            {
+                return;
+            }
+            var inputFileInfos = await DataLoaderUtil.CollectInputFilesAsync(this.Agent, this._importExcelBeanFiles, dataDir);
+
+
+            var ass = new DefAssembly("", null, true, Agent);
+
+            var defBeanFieldType = new DefBean(new CfgBean()
+            {
+                Namespace = "__intern__",
+                Name = "__FieldInfo__",
+                Parent = "",
+                Alias = "",
+                IsValueType = false,
+                Sep = "",
+                TypeId = 0,
+                IsSerializeCompatible = false,
+                Fields = new List<Field>
+                {
+                    new CfgField() { Name = "name", Type = "string" },
+                    new CfgField() { Name = "type", Type = "string" },
+                    new CfgField() { Name = "sep", Type = "string" },
+                    new CfgField() { Name = "is_multi_rows", Type = "bool" },
+                    new CfgField() { Name = "group", Type = "string" },
+                    new CfgField() { Name = "comment", Type = "string" },
+                }
+            })
+            {
+                AssemblyBase = ass,
+            };
+
+            defBeanFieldType.PreCompile();
+            defBeanFieldType.Compile();
+            defBeanFieldType.PostCompile();
+
+            ass.AddType(defBeanFieldType);
+
+            var defTableRecordType = new DefBean(new CfgBean()
+            {
+                Namespace = "__intern__",
+                Name = "__BeanInfo__",
+                Parent = "",
+                Alias = "",
+                IsValueType = false,
+                Sep = "",
+                TypeId = 0,
+                IsSerializeCompatible = false,
+                Fields = new List<Field>
+                {
+                    new CfgField() { Name = "full_name", Type = "string" },
+                    new CfgField() { Name = "comment", Type = "string" },
+                    new CfgField() { Name = "fields", Type = "list,__FieldInfo__", IsMultiRow = true },
+                }
+            })
+            {
+                AssemblyBase = ass,
+            };
+            ass.AddType(defTableRecordType);
+            defTableRecordType.PreCompile();
+            defTableRecordType.Compile();
+            defTableRecordType.PostCompile();
+            ass.MarkMultiRows();
+            var tableRecordType = new TBean(defTableRecordType, false);
+
+            foreach (var file in inputFileInfos)
+            {
+                var source = new ExcelDataSource();
+                var bytes = await this.Agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5);
+                var records = DataLoaderUtil.LoadCfgRecords(tableRecordType, file.OriginFile, null, bytes, true, false);
+
+                foreach (var r in records)
+                {
+                    DBean data = r.Data;
+                    //s_logger.Info("== read text:{}", r.Data);
+                    string fullName = (data.GetField("full_name") as DString).Value.Trim();
+                    if (string.IsNullOrWhiteSpace(fullName))
+                    {
+                        throw new Exception($"file:{file.ActualFile} 定义了一个空的bean类名");
+                    }
+                    string name = TypeUtil.GetName(fullName);
+                    string module = TypeUtil.GetNamespace(fullName);
+
+                    if (string.IsNullOrWhiteSpace(name))
+                    {
+                        throw new Exception($"file:{file.ActualFile} 定义了一个空bean类名");
+                    }
+
+                    string sep = (data.GetField("sep") as DString).Value.Trim();
+                    string comment = (data.GetField("comment") as DString).Value.Trim();
+                    DList fields = data.GetField("fields") as DList;
+                    var curBean = new CfgBean()
+                    {
+                        Name = name,
+                        Namespace = module,
+                        Sep = sep,
+                        Comment = comment,
+                        Parent = "",
+                        Fields = fields.Datas.Select(d => (DBean)d).Select(b => (Field)new CfgField()
+                        {
+                            Name = (b.GetField("name") as DString).Value.Trim(),
+                            Type = (b.GetField("type") as DString).Value.Trim(),
+                            Sep = (b.GetField("sep") as DString).Value.Trim(),
+                            IsMultiRow = (b.GetField("is_multi_rows") as DBool).Value,
+                            Groups = (b.GetField("group") as DString).Value.Trim().Split(',').Select(g => g.Trim()).ToList(),
+                            Comment = (b.GetField("comment") as DString).Value.Trim(),
+                        }).ToList(),
+                    };
+                    this._beans.Add(curBean);
+                };
+            }
+        }
+
         public async Task LoadDefinesFromFileAsync(string dataDir)
         {
-            await Task.WhenAll(LoadTableListFromFileAsync(dataDir), LoadEnumListFromFileAsync(dataDir));
+            await Task.WhenAll(LoadTableListFromFileAsync(dataDir), LoadEnumListFromFileAsync(dataDir), LoadBeanListFromFileAsync(dataDir));
             await LoadTableRecordDefinesFromFileAsync(dataDir);
         }
 
