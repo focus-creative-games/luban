@@ -390,7 +390,7 @@ namespace Luban.Job.Cfg.Defs
                             cf.ValueValidators.Add(validator);
                             break;
                         }
-                        case "multi_lines":
+                        case "multi_rows":
                         {
                             cf.IsMultiRow = attrValue == "1" || attrValue.Equals("true", StringComparison.OrdinalIgnoreCase);
                             break;

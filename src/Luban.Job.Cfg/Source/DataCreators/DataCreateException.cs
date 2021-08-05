@@ -19,12 +19,14 @@ namespace Luban.Job.Cfg.DataCreators
 
         public string OriginStackTrace { get; }
 
-        public DataCreateException(Exception e, string dataLocation) : base("DataCreateException", e)
+        public DataCreateException(Exception e, string dataLocation) : base(e.Message, e)
         {
             this.OriginStackTrace = e.StackTrace;
             this.OriginErrorMsg = e.Message;
             this.DataLocationInFile = dataLocation;
         }
+
+        public override string Message => this.OriginErrorMsg;
 
         public void Push(DefBean bean, DefField f)
         {
