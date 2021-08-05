@@ -524,7 +524,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
             else
             {
                 // 删除所有标题行，包含字段名行、属性行、标题、描述等等非有效数据行
-                this._rowColumns.RemoveRange(0, Math.Min(TitleRows + titleRowNum - 1, this._rowColumns.Count));
+                this._rowColumns.RemoveRange(0, Math.Min(TitleRows, this._rowColumns.Count));
                 // 删除忽略的记录行
                 this._rowColumns.RemoveAll(row => DataUtil.IsIgnoreTag(GetRowTag(row)));
             }
