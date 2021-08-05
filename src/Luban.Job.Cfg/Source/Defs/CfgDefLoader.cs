@@ -527,7 +527,7 @@ namespace Luban.Job.Cfg.Defs
                     new CfgField() { Name = "full_name", Type = "string" },
                     new CfgField() { Name = "item", Type = "string" },
                     new CfgField() { Name = "alias", Type = "string" },
-                    new CfgField() { Name = "value", Type = "string" },
+                    new CfgField() { Name = "value", Type = "int" },
                     new CfgField() { Name = "comment", Type = "string" },
                 }
             })
@@ -570,7 +570,7 @@ namespace Luban.Job.Cfg.Defs
                         throw new Exception($"file:{file.ActualFile} module:'{module}' name:'{name}' 定义了一个空枚举项");
                     }
                     string alias = (data.GetField("alias") as DString).Value.Trim();
-                    string value = (data.GetField("value") as DString).Value.Trim();
+                    string value = (data.GetField("value") as DInt).Value.ToString();
                     string comment = (data.GetField("comment") as DString).Value.Trim();
                     curEnum.Items.Add(new EnumItem() { Name = item, Alias = alias, Value = value, Comment = comment });
                 };
