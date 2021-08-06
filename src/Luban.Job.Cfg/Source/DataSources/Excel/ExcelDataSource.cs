@@ -117,7 +117,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
             {
                 try
                 {
-                    datas.AddRange(sheet.ReadMulti(type, ((DefBean)type.Bean).IsMultiRow));
+                    datas.AddRange(sheet.ReadMulti(type));
                 }
                 catch (DataCreateException dce)
                 {

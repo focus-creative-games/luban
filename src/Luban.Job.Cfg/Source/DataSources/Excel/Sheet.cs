@@ -1,6 +1,8 @@
 using ExcelDataReader;
 using Luban.Job.Cfg.DataCreators;
 using Luban.Job.Cfg.Datas;
+using Luban.Job.Cfg.Defs;
+using Luban.Job.Cfg.RawDefs;
 using Luban.Job.Cfg.TypeVisitors;
 using Luban.Job.Cfg.Utils;
 using Luban.Job.Common.Types;
@@ -103,6 +105,60 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         public class NamedRow
         {
+            public static IEnumerable<NamedRow> CreateMultiRowNamedRow(List<List<Cell>> rows, Title title, TBean bean)
+            {
+                if (!((DefBean)bean.Bean).IsMultiRow)
+                {
+                    foreach (var row in rows)
+                    {
+                        if (Sheet.IsBlankRow(row, title.FromIndex, title.ToIndex))
+                        {
+                            continue;
+                        }
+                        yield return new NamedRow(title, row);
+                    }
+                }
+                else
+                {
+                    List<DefField> notMultiRowFields = bean.Bean.HierarchyFields.Select(f => (DefField)f).Where(f => !f.IsMultiRow).ToList();
+                    List<List<Cell>> recordRows = null;
+                    foreach (var row in rows)
+                    {
+                        // 忽略全空的行
+                        if (Sheet.IsBlankRow(row, title.FromIndex, title.ToIndex))
+                        {
+                            continue;
+                        }
+                        // 如果非多行数据全空，说明该行属于多行数据
+                        if (notMultiRowFields.All(f =>
+                        {
+                            var fieldTitle = title.SubTitles[f.Name];
+                            return Sheet.IsBlankRow(row, fieldTitle.FromIndex, fieldTitle.ToIndex);
+                        }))
+                        {
+                            if (recordRows == null)
+                            {
+                                recordRows = new List<List<Cell>>();
+                            }
+                            recordRows.Add(row);
+                        }
+                        else
+                        {
+                            if (recordRows != null)
+                            {
+                                yield return new NamedRow(title, recordRows);
+                            }
+                            recordRows = new List<List<Cell>>();
+                            recordRows.Add(row);
+                        }
+                    }
+                    if (recordRows != null)
+                    {
+                        yield return new NamedRow(title, recordRows);
+                    }
+                }
+            }
+
             public Title SelfTitle { get; }
 
             public List<List<Cell>> Rows { get; }
@@ -156,20 +212,20 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 }
             }
 
-            public NamedRow GetSubTitleNamedRow(string name)
-            {
-                Title title = this.Titles[name];
-                CheckEmptySinceSecondRow(name, title.FromIndex, title.ToIndex);
-                return new NamedRow(title, this.Rows[0]);
-            }
+            //public NamedRow GetSubTitleNamedRow(string name)
+            //{
+            //    Title title = this.Titles[name];
+            //    CheckEmptySinceSecondRow(name, title.FromIndex, title.ToIndex);
+            //    return new NamedRow(title, this.Rows[0]);
+            //}
 
-            public NamedRow GetSubTitleNamedRowOfMultiRows(string name)
+            public NamedRow GetSubTitleNamedRow(string name)
             {
                 Title title = Titles[name];
                 return new NamedRow(title, this.Rows);
             }
 
-            public IEnumerable<NamedRow> GenerateSubNameRows()
+            public IEnumerable<NamedRow> GenerateSubNameRows(TBean bean)
             {
                 foreach (var row in Rows)
                 {
@@ -301,7 +357,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
             return true;
         }
 
-        private string GetRowTag(List<Cell> row)
+        private static string GetRowTag(List<Cell> row)
         {
             if (row.Count == 0)
             {
@@ -531,15 +587,14 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         }
 
-
-        public static bool IsBlankRow(List<Cell> row)
+        private static bool IsBlankRow(List<Cell> row)
         {
             // 第一列被策划用于表示是否注释掉此行
             // 忽略此列是否空白
             return row.GetRange(1, row.Count - 1).All(c => c.Value == null || (c.Value is string s && string.IsNullOrWhiteSpace(s)));
         }
 
-        public static bool IsBlankRow(List<Cell> row, int fromIndex, int toIndex)
+        private static bool IsBlankRow(List<Cell> row, int fromIndex, int toIndex)
         {
             for (int i = Math.Max(1, fromIndex), n = Math.Min(toIndex, row.Count - 1); i <= n; i++)
             {
@@ -552,94 +607,13 @@ namespace Luban.Job.Cfg.DataSources.Excel
             return true;
         }
 
-        private List<Cell> GetNextRecordRow()
+        public IEnumerable<Record> ReadMulti(TBean type)
         {
-            while (curReadIndex < _rowColumns.Count)
+            foreach (var recordNamedRow in NamedRow.CreateMultiRowNamedRow(this._rowColumns, this._rootTitle, type))
             {
-                var row = _rowColumns[curReadIndex++];
-                if (IsBlankRow(row))
-                {
-                    continue;
-                }
-
-                return row;
-            }
-            return null;
-        }
-
-        private bool HasNotMainKey(List<Cell> row)
-        {
-            return string.IsNullOrWhiteSpace(row[1].Value?.ToString());
-        }
-
-        private List<List<Cell>> GetNextRecordRows()
-        {
-            List<List<Cell>> rows = null;
-            while (curReadIndex < _rowColumns.Count)
-            {
-                var row = _rowColumns[curReadIndex++];
-                if (IsBlankRow(row))
-                {
-                    continue;
-                }
-
-                if (rows == null)
-                {
-                    rows = new List<List<Cell>>() { row };
-                }
-                else
-                {
-                    if (HasNotMainKey(row))
-                    {
-                        rows.Add(row);
-                    }
-                    else
-                    {
-                        --curReadIndex;
-                        return rows;
-                    }
-                }
-            }
-            return rows;
-        }
-
-
-
-        public List<Record> ReadMulti(TBean type, bool enableMultiRowRecord)
-        {
-            var datas = new List<Record>();
-
-            for (Record data; (data = ReadOne(type, enableMultiRowRecord)) != null;)
-            {
-                datas.Add(data);
-            }
-            return datas;
-        }
-
-        private int curReadIndex = 0;
-        public Record ReadOne(TBean type, bool enableMultiRowRecord)
-        {
-            if (!enableMultiRowRecord)
-            {
-                List<Cell> row = GetNextRecordRow();
-                if (row == null)
-                {
-                    return null;
-                }
-                bool isTest = DataUtil.IsTestTag(GetRowTag(row));
-                var data = (DBean)ExcelNamedRowDataCreator.Ins.ReadExcel(new NamedRow(_rootTitle, row), type);
-                return new Record(data, RawUrl, isTest);
-            }
-            else
-            {
-                List<List<Cell>> rows = GetNextRecordRows();
-                if (rows == null)
-                {
-                    return null;
-                }
-                bool isTest = DataUtil.IsTestTag(GetRowTag(rows[0]));
-                var data = (DBean)ExcelNamedRowDataCreator.Ins.ReadExcel(new NamedRow(_rootTitle, rows), type);
-                return new Record(data, RawUrl, isTest);
+                bool isTest = DataUtil.IsTestTag(GetRowTag(recordNamedRow.Rows[0]));
+                var data = (DBean)ExcelNamedRowDataCreator.Ins.ReadExcel(recordNamedRow, type);
+                yield return new Record(data, RawUrl, isTest);
             }
         }
     }

@@ -90,7 +90,7 @@ namespace Luban.Job.Cfg.DataCreators
             throw new NotSupportedException();
         }
 
-        public bool IsContainerAndElementNotSepType(TType type)
+        private static bool IsContainerAndElementNotSepType(TType type)
         {
             switch (type)
             {
@@ -119,14 +119,15 @@ namespace Luban.Job.Cfg.DataCreators
                 {
                     try
                     {
-                        if (f.IsMultiRow)
-                        {
-                            list.Add(f.CType.Apply(this, row.GetSubTitleNamedRowOfMultiRows(fname), f.IsMultiRow, f.IsNullable));
-                        }
-                        else
-                        {
-                            list.Add(f.CType.Apply(this, row.GetSubTitleNamedRow(fname), f.IsMultiRow /* 肯定是 false */, f.IsNullable));
-                        }
+                        list.Add(f.CType.Apply(this, row.GetSubTitleNamedRow(fname), f.IsMultiRow, f.IsNullable));
+                        //if (f.IsMultiRow)
+                        //{
+                        //    list.Add(f.CType.Apply(this, row.GetSubTitleNamedRowOfMultiRows(fname), f.IsMultiRow, f.IsNullable));
+                        //}
+                        //else
+                        //{
+                        //    list.Add(f.CType.Apply(this, row.GetSubTitleNamedRow(fname), f.IsMultiRow /* 肯定是 false */, f.IsNullable));
+                        //}
                     }
                     catch (DataCreateException dce)
                     {
@@ -246,7 +247,8 @@ namespace Luban.Job.Cfg.DataCreators
             // 如果是多行数据，以当前title为title,每行读入一个element
             if (multirow)
             {
-                foreach (var sub in row.GenerateSubNameRows())
+                //foreach (var sub in row.GenerateSubNameRows(elementType))
+                foreach (var sub in Sheet.NamedRow.CreateMultiRowNamedRow(row.Rows, row.SelfTitle, elementType))
                 {
                     list.Add(this.Accept(elementType, sub, false, false));
                 }
@@ -255,17 +257,18 @@ namespace Luban.Job.Cfg.DataCreators
             {
                 // 如果不是多行，并且定义了子标题的话。以一个子标题所占的列，读入一个数据
 
-                foreach (var sub in row.SelfTitle.SubTitleList)
-                {
-                    list.Add(this.Accept(elementType, new Sheet.NamedRow(sub, row.Rows), false, false));
-                }
+                //foreach (var sub in row.SelfTitle.SubTitleList)
+                //{
+                //    list.Add(this.Accept(elementType, new Sheet.NamedRow(sub, row.Rows), false, false));
+                //}
+                throw new NotSupportedException("只有multi_rows=1的list,bean类型才允许有子title");
             }
             return list;
         }
 
         public DType Accept(TArray type, Sheet.NamedRow x, bool multirow, bool nullable)
         {
-            if (!(type.ElementType is TBean bean))
+            if (type.ElementType is not TBean bean)
             {
                 throw new Exception($"NamedRow 只支持 bean 类型的容器");
             }
@@ -277,7 +280,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TList type, Sheet.NamedRow x, bool multirow, bool nullable)
         {
-            if (!(type.ElementType is TBean bean))
+            if (type.ElementType is not TBean bean)
             {
                 throw new Exception($"NamedRow 只支持 bean 类型的容器");
             }
