@@ -286,7 +286,7 @@ namespace Luban.Job.Cfg.Defs
             {
                 throw new Exception($"定义文件:{CurImportFile} table:'{p.Name}' group:'{invalidGroup}' 不存在");
             }
-            p.InputFiles.AddRange(input.Split(','));
+            p.InputFiles.AddRange(input.Split(',').Select(s => s.Trim()).Where(s => !string.IsNullOrWhiteSpace(s)));
 
             if (!string.IsNullOrWhiteSpace(branchInput))
             {

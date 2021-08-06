@@ -18,13 +18,29 @@ namespace Luban.Job.Cfg.DataSources.Excel
         private readonly List<Sheet> _sheets = new List<Sheet>();
 
 
+        private System.Text.Encoding DetectCsvEncoding(Stream fs)
+        {
+            Ude.CharsetDetector cdet = new Ude.CharsetDetector();
+            cdet.Feed(fs);
+            cdet.DataEnd();
+            fs.Seek(0, SeekOrigin.Begin);
+            if (cdet.Charset != null)
+            {
+                Console.WriteLine("Charset: {0}, confidence: {1}", cdet.Charset, cdet.Confidence);
+                return System.Text.Encoding.GetEncoding(cdet.Charset) ?? System.Text.Encoding.Default;
+            }
+            else
+            {
+                return System.Text.Encoding.Default;
+            }
+        }
 
         public override void Load(string rawUrl, string sheetName, Stream stream, bool exportTestData)
         {
             s_logger.Trace("{filename} {sheet}", rawUrl, sheetName);
             RawUrl = rawUrl;
             string ext = Path.GetExtension(rawUrl);
-            using (var reader = ext != ".csv" ? ExcelReaderFactory.CreateReader(stream) : ExcelReaderFactory.CreateCsvReader(stream))
+            using (var reader = ext != ".csv" ? ExcelReaderFactory.CreateReader(stream) : ExcelReaderFactory.CreateCsvReader(stream, new ExcelReaderConfiguration() { FallbackEncoding = DetectCsvEncoding(stream) }))
             {
                 do
                 {
