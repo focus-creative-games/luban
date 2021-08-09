@@ -40,6 +40,7 @@ namespace Luban.Server
 
         static void Main(string[] args)
         {
+            ConsoleWindow.EnableQuickEditMode(false);
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
             var options = ParseOptions(args);

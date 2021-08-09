@@ -149,6 +149,7 @@ Options:
 
         static void Main(string[] args)
         {
+            ConsoleWindow.EnableQuickEditMode(false);
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
             var profile = new ProfileTimer();
