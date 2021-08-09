@@ -61,10 +61,6 @@ namespace Luban.Job.Proto.Generate
 export {{if x.is_abstract_type}} abstract {{end}} class {{name}} extends {{if parent_def_type}}{{x.parent}}{{else}}BeanBase{{end}} {
 {{~if x.is_abstract_type~}}
     static serializeTo(_buf_ : ByteBuf, _bean_ : {{name}}) {
-        if (_bean_ == null) {
-            _buf_.WriteInt(0)
-            return
-        }
         _buf_.WriteInt(_bean_.getTypeId())
         _bean_.serialize(_buf_)
     }
@@ -72,7 +68,6 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} extends {{if pa
     static deserializeFrom(_buf_ : ByteBuf) : {{name}} {
         let  _bean_ :{{name}}
         switch (_buf_.ReadInt()) {
-            case 0 : return null
         {{~ for child in x.hierarchy_not_abstract_children~}}
             case {{child.id}}: _bean_ = new {{child.full_name}}(); break
         {{~end~}}

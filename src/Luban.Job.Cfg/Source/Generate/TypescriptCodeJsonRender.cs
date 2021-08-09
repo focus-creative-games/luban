@@ -44,7 +44,7 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} {{if parent_def
         {{~end~}}
         {{~ for field in export_fields ~}}
         {{~if !field.ctype.is_nullable~}}
-        if (_json_.{{field.name}} == null) { throw new Error() }
+        if (_json_.{{field.name}} == undefined) { throw new Error() }
         {{~end~}}
         {{ts_json_constructor ('this.' + field.ts_style_name) ( '_json_.' + field.name) field.ctype}}
         {{~end~}}
@@ -115,7 +115,7 @@ export class {{name}}{
     getDataMap(): Map<{{ts_define_type key_type}}, {{ts_define_type value_type}}> { return this._dataMap; }
     getDataList(): {{ts_define_type value_type}}[] { return this._dataList; }
 
-    get(key: {{ts_define_type key_type}}): {{ts_define_type value_type}}  { return this._dataMap.get(key); }
+    get(key: {{ts_define_type key_type}}): {{ts_define_type value_type}} | undefined { return this._dataMap.get(key); }
 
     resolve(_tables: Map<string, any>) {
         for(var v of this._dataList) {

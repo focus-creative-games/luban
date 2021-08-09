@@ -114,7 +114,7 @@ export class {{name}} {
     getDataMap(): Map<{{ts_define_type key_type}}, {{ts_define_type value_type}}> { return this._dataMap }
     getDataList(): {{ts_define_type value_type}}[] { return this._dataList }
 
-    get(key: {{ts_define_type key_type}}): {{ts_define_type value_type}}  { return this._dataMap.get(key) }
+    get(key: {{ts_define_type key_type}}): {{ts_define_type value_type}} | undefined { return this._dataMap.get(key) }
 
     resolve(_tables: Map<string, any>) {
         for(var v of this._dataList) {

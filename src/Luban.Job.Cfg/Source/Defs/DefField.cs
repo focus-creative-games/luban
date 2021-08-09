@@ -94,7 +94,7 @@ namespace Luban.Job.Cfg.Defs
             get
             {
                 var table = Assembly.GetCfgTable(Ref.FirstTable);
-                return $"{TsRefVarName} : {table.ValueTType.Apply(TypescriptDefineTypeNameVisitor.Ins)}";
+                return $"{TsRefVarName} : {table.ValueTType.Apply(TypescriptDefineTypeNameVisitor.Ins)}{(IsNullable ? " | undefined" : " = undefined!")}";
             }
         }
 
