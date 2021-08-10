@@ -102,7 +102,7 @@ namespace Luban.Job.Db
                 {
                     case "cs":
                     {
-                        var render = new SyncCsRender();
+                        var render = new AsyncCsRender();
                         foreach (var c in ass.Types.Values)
                         {
                             tasks.Add(Task.Run(() =>

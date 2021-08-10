@@ -43,6 +43,7 @@ namespace Luban.Job.Db.Generate
     fields = x.fields
     hierarchy_fields = x.hierarchy_fields
     is_abstract_type = x.is_abstract_type
+    readonly_name = ""IReadOnly"" + name
 }}
 using Bright.Serialization;
 
@@ -52,7 +53,17 @@ namespace {{x.namespace_with_top_module}}
 /// <summary>
 /// {{x.comment}}
 /// </summary>
-public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.parent}} {{else}} Bright.Transaction.TxnBeanBase {{end}}
+public interface {{readonly_name}} {{if parent_def_type}}: IReadOnly{{x.parent_def_type.name}} {{end}}
+{
+    {{~ for field in fields~}}
+    {{db_cs_readonly_define_type field.ctype}} {{field.cs_style_name}} {get;}
+    {{~end~}}
+}
+
+/// <summary>
+/// {{x.comment}}
+/// </summary>
+public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.parent}} {{else}} Bright.Transaction.TxnBeanBase {{end}}, {{readonly_name}}
 {
     {{~ for field in fields~}}
     {{if is_abstract_type}}protected{{else}}private{{end}} {{db_cs_define_type field.ctype}} {{field.internal_name}};
@@ -61,41 +72,43 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
     public {{name}}()
     {
         {{~ for field in fields~}}
-        {{if cs_need_init field.ctype}}{{db_cs_init_field field.internal_name field.log_type field.ctype }} {{end}}
+        {{if cs_need_init field.ctype}}{{db_cs_init_field field.internal_name field.ctype}} {{end}}
         {{~end~}}
     }
 
     {{~ for field in fields~}}
-        {{~if has_setter field.ctype~}}
+        {{ctype = field.ctype}}
+        {{~if has_setter ctype~}}
 
-    private sealed class {{field.log_type}} :  Bright.Transaction.FieldLogger<{{name}}, {{db_cs_define_type field.ctype}}>
+    private sealed class {{field.log_type}} :  Bright.Transaction.FieldLogger<{{name}}, {{db_cs_define_type ctype}}>
     {
-        public {{field.log_type}}({{name}} self, {{db_cs_define_type field.ctype}} value) : base(self, value) {  }
+        public {{field.log_type}}({{name}} self, {{db_cs_define_type ctype}} value) : base(self, value) {  }
 
-        public override long FieldId => host._objectId_ + {{field.id}};
+        public override long FieldId => this._host.GetObjectId() + {{field.id}};
 
-        public override void Commit() { this.host.{{field.internal_name}} = this.Value; }
+        public override int TagId => FieldTag.{{tag_name ctype}};
+
+        public override void Commit() { this._host.{{field.internal_name}} = this.Value; }
 
 
         public override void WriteBlob(ByteBuf _buf)
         {
-            _buf.WriteInt(FieldTag.{{tag_name field.ctype}});
-            {{cs_write_blob '_buf' 'this.Value' field.ctype}}
+            {{cs_write_blob '_buf' 'this.Value' ctype}}
         }
     }
 
     /// <summary>
     /// {{field.comment}}
     /// </summary>
-    public {{db_cs_define_type field.ctype}} {{field.cs_style_name}}
+    public {{db_cs_define_type ctype}} {{field.cs_style_name}}
     { 
         get
         {
-            if (this.InitedObjectId)
+            if (this.IsManaged)
             {
-                var txn = Bright.Transaction.TransactionContext.AsyncLocalCtx;
+                var txn = Bright.Transaction.TransactionContext.ThreadStaticCtx;
                 if (txn == null) return {{field.internal_name}};
-                var log = ({{field.log_type}})txn.GetField(_objectId_ + {{field.id}});
+                var log = ({{field.log_type}})txn.GetField(this.GetObjectId() + {{field.id}});
                 return log != null ? log.Value : {{field.internal_name}};
             }
             else
@@ -108,13 +121,13 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
             {{~if db_field_cannot_null~}}
             if (value == null) throw new ArgumentNullException();
             {{~end~}}
-            if (this.InitedObjectId)
+            if (this.IsManaged)
             {
-                var txn = Bright.Transaction.TransactionContext.AsyncLocalCtx;
-                txn.PutField(_objectId_ + {{field.id}}, new {{field.log_type}}(this, value));
-                {{~if field.ctype.need_set_children_root~}}
+                var txn = Bright.Transaction.TransactionContext.ThreadStaticCtx;
+                txn.PutField(this.GetObjectId() + {{field.id}}, new {{field.log_type}}(this, value));
+                {{~if ctype.need_set_children_root}}
                 value?.InitRoot(GetRoot());
-                {{~end~}}
+                {{end}}
             }
             else
             {
@@ -123,32 +136,22 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
         }
     }
         {{~else~}}
-            {{~if field.ctype.is_collection~}}
-        private class {{field.log_type}} : {{db_cs_define_type field.ctype}}.Log
-        {
-            private readonly {{name}} host;
-            public {{field.log_type}}({{name}} host, {{cs_immutable_type field.ctype}} value) : base(value) { this.host = host;  }
+        /// <summary>
+        /// {{field.comment}}
+        /// </summary>
+         public {{db_cs_define_type ctype}} {{field.cs_style_name}} => {{field.internal_name}};
+        {{~end~}}
 
-            public override long FieldId => host._objectId_ + {{field.id}};
-
-            public override Bright.Transaction.TxnBeanBase Host => host;
-
-            public override void Commit()
-            {
-                Commit(host.{{field.internal_name}});
-            }
-
-            public override void WriteBlob(ByteBuf _buf)
-            {
-                _buf.WriteInt(FieldTag.{{tag_name field.ctype}});
-                {{cs_write_blob '_buf' 'this.Value' field.ctype}}
-            }
-        }
-            {{~end~}}
-    /// <summary>
-    /// {{field.comment}}
-    /// </summary>
-    public {{db_cs_define_type field.ctype}} {{field.cs_style_name}} => {{field.internal_name}};
+        {{~if ctype.bean || ctype.element_type ~}}
+        /// <summary>
+        /// {{field.comment}}
+        /// </summary>
+        {{db_cs_readonly_define_type ctype}} {{readonly_name}}.{{field.cs_style_name}} => {{field.internal_name}};
+        {{~else if ctype.is_map~}}
+        /// <summary>
+        /// {{field.comment}}
+        /// </summary>
+        {{db_cs_readonly_define_type ctype}} {{readonly_name}}.{{field.cs_style_name}} => new Bright.Transaction.Collections.PReadOnlyMap<{{db_cs_readonly_define_type ctype.key_type}}, {{db_cs_readonly_define_type ctype.value_type}}, {{db_cs_define_type ctype.value_type}}>({{field.internal_name}});
         {{~end~}}
     {{~end~}}
 
@@ -177,7 +180,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
     {{~else~}}
     public override void Serialize(ByteBuf _buf)
     {
-        _buf.WriteLong(_objectId_);
+        _buf.WriteLong(this.GetObjectId());
         {{~ for field in hierarchy_fields~}}
         { _buf.WriteInt(FieldTag.{{tag_name field.ctype}} | ({{field.id}} << FieldTag.TAG_SHIFT)); {{db_cs_compatible_serialize '_buf' field.internal_name field.ctype}} }
         {{~end}}
@@ -185,7 +188,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
 
     public override void Deserialize(ByteBuf _buf)
     {
-        _objectId_ = _buf.ReadLong();
+        this.SetObjectId(_buf.ReadLong());
         while(_buf.NotEmpty)
         {
             int _tag_ = _buf.ReadInt();
@@ -206,7 +209,9 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
     protected override void InitChildrenRoot(Bright.Storage.TKey root)
     {
         {{~ for field in hierarchy_fields~}}
-        {{if need_set_children_root field.ctype}}{{field.internal_name}}?.InitRoot(root);{{end}}
+        {{~if need_set_children_root field.ctype~}}
+        UnsafeUtil.InitRoot({{field.internal_name}}, root);
+        {{~end~}}
         {{~end~}}
     }
 
@@ -284,9 +289,9 @@ public sealed class {{name}}
         return Table.PutAsync(key, value);
     }
 
-    public static ValueTask<{{db_cs_define_type value_ttype}}> SelectAsync({{db_cs_define_type key_ttype}} key)
+    public static ValueTask<{{db_cs_readonly_define_type value_ttype}}> SelectAsync({{db_cs_define_type key_ttype}} key)
     {
-        return Table.SelectAsync(key);
+        return Table.SelectAsync<{{db_cs_readonly_define_type value_ttype}}>(key);
     }
 }
 }
