@@ -11,7 +11,7 @@ namespace Luban.Job.Cfg.TypeVisitors
         {
             if (type.IsNullable)
             {
-                return $"{{ bool _has_value_; if(!{bufName}.readBool(_has_value_)){{return false;}}  if(_has_value_) {{{type.Apply(CppUnderingDefineTypeName.Ins)} _temp_;  {type.Apply(CppUnderingDeserializeVisitor.Ins, bufName, "_temp_")} {(type.IsBean ? $"{fieldName} = _temp_;" : $"{fieldName} = new {type.Apply(CppUnderingDefineTypeName.Ins)}; *{fieldName} = _temp_;")} }} else {{ {fieldName} = nullptr; }} }}";
+                return $"{{ bool _has_value_; if(!{bufName}.readBool(_has_value_)){{return false;}}  if(_has_value_) {{ {fieldName}.reset({(type.IsBean ? "" : $"new {type.Apply(CppRawUnderingDefineTypeName.Ins)}()")}); {type.Apply(CppUnderingDeserializeVisitor.Ins, bufName, $"{(type.IsBean ? "" : "*")}{fieldName}")} }} else {{ {fieldName}.reset(); }} }}";
             }
             else
             {

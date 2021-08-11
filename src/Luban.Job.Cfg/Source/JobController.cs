@@ -625,6 +625,7 @@ namespace Luban.Job.Cfg
                                     @$"
 #pragma once
 #include <functional>
+#include <memory>
 
 #include ""bright/serialization/ByteBuf.h""
 #include ""bright/CfgBean.hpp""

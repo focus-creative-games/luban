@@ -2,9 +2,9 @@ using Luban.Job.Common.Types;
 
 namespace Luban.Job.Common.TypeVisitors
 {
-    public class CppUnderingDefineTypeName : ITypeFuncVisitor<string>
+    public class CppRawUnderingDefineTypeName : ITypeFuncVisitor<string>
     {
-        public static CppUnderingDefineTypeName Ins { get; } = new CppUnderingDefineTypeName();
+        public static CppRawUnderingDefineTypeName Ins { get; } = new();
 
         public string Accept(TBool type)
         {
@@ -76,9 +76,9 @@ namespace Luban.Job.Common.TypeVisitors
             return "std::string";
         }
 
-        public string Accept(TBean type)
+        public virtual string Accept(TBean type)
         {
-            return type.Bean.CppFullName + "*";
+            return $"{type.Bean.CppFullName}*";
         }
 
         public string Accept(TArray type)

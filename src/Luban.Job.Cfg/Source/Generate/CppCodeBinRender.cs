@@ -47,7 +47,7 @@ class {{name}} : public {{if parent_def_type}} {{parent_def_type.cpp_full_name}}
 {
     public:
 
-    static bool deserialize{{name}}(ByteBuf& _buf, {{name}}*& _out);
+    static bool deserialize{{name}}(ByteBuf& _buf, std::shared_ptr<{{name}}>& _out);
 
     {{name}}()
     { 
@@ -142,6 +142,12 @@ class {{name}}
 
     const std::unordered_map<{{cpp_define_type key_type}}, {{cpp_define_type value_type}}>& getDataMap() const { return _dataMap; }
     const std::vector<{{cpp_define_type value_type}}>& getDataList() const { return _dataList; }
+
+    {{value_type.bean.cpp_full_name}}* getRaw({{cpp_define_type key_type}} key)
+    { 
+        auto it = _dataMap.find(key);
+        return it != _dataMap.end() ? it->second.get() : nullptr;
+    }
 
     {{cpp_define_type value_type}} get({{cpp_define_type key_type}} key)
     { 
@@ -267,7 +273,7 @@ namespace {{x.top_module}}
         return true;
     }
 
-    bool {{type.cpp_full_name}}::deserialize{{type.name}}(ByteBuf& _buf, {{type.cpp_full_name}}*& _out)
+    bool {{type.cpp_full_name}}::deserialize{{type.name}}(ByteBuf& _buf, std::shared_ptr<{{type.cpp_full_name}}>& _out)
     {
     {{~if type.is_abstract_type~}}
         int id;
@@ -275,20 +281,19 @@ namespace {{x.top_module}}
         switch (id)
         {
         {{~for child in type.hierarchy_not_abstract_children~}}
-            case {{child.cpp_full_name}}::ID: { _out = new {{child.cpp_full_name}}(); if (_out->deserialize(_buf)) { return true; } else { delete _out; _out = nullptr; return false;} }
+            case {{child.cpp_full_name}}::ID: { _out.reset(new {{child.cpp_full_name}}()); if (_out->deserialize(_buf)) { return true; } else { _out.reset(); return false;} }
         {{~end~}}
             default: { _out = nullptr; return false;}
         }
     {{~else~}}
-        _out = new {{type.cpp_full_name}}();
+        _out.reset(new {{type.cpp_full_name}}());
         if (_out->deserialize(_buf))
         {
             return true;
         }
         else
         { 
-            delete _out;
-            _out = nullptr;
+            _out.reset();
             return false;
         }
     {{~end~}}
