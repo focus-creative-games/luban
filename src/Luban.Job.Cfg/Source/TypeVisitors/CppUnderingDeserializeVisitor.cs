@@ -59,7 +59,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TEnum type, string bufName, string fieldName)
         {
-            return $"{{int _temp_; if(!{bufName}.readInt(_temp_)) return false; {fieldName} = {type.DefineEnum.CppFullName}(_temp_); }}";
+            return $"{{int __enum_temp__; if(!{bufName}.readInt(__enum_temp__)) return false; {fieldName} = {type.DefineEnum.CppFullName}(__enum_temp__); }}";
         }
 
         public string Accept(TString type, string bufName, string fieldName)

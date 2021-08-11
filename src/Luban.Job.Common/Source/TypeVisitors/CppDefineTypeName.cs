@@ -9,7 +9,7 @@ namespace Luban.Job.Common.TypeVisitors
         public override string DoAccept(TType type)
         {
             //return type.IsNullable ? $"std::optional<{type.Apply(CppUnderingDefineTypeName.Ins)}>" : type.Apply(CppUnderingDefineTypeName.Ins);
-            return type.Apply(CppUnderingDefineTypeName.Ins);
+            return type.Apply(CppUnderingDefineTypeName.Ins) + (type.IsNullable ? "*" : "");
         }
 
         public override string Accept(TBean type)

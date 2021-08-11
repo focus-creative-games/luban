@@ -75,6 +75,12 @@ class {{name}} : public {{if parent_def_type}} {{parent_def_type.cpp_full_name}}
      {{field.comment}}
      */
     {{cpp_define_type field.ctype}} {{field.cpp_style_name}};
+    {{~if field.index_field~}} 
+    std::unordered_map<{{cpp_define_type field.index_field.ctype}}, {{cpp_define_type field.ctype.element_type}}> {{field.cpp_style_name}}_Index;
+    {{~end~}}
+    {{~if field.gen_ref~}}
+    {{field.cpp_ref_validator_define}}
+    {{~end~}}
     {{~end~}}
 
 {{~if !x.is_abstract_type~}}
@@ -83,6 +89,7 @@ class {{name}} : public {{if parent_def_type}} {{parent_def_type.cpp_full_name}}
     int getTypeId() const { return ID; }
 {{~end~}}
 
+    virtual void resolve(std::unordered_map<bright::String, void*>& _tables);
 };
 
 {{x.cpp_namespace_end}}
@@ -136,10 +143,18 @@ class {{name}}
     const std::unordered_map<{{cpp_define_type key_type}}, {{cpp_define_type value_type}}>& getDataMap() const { return _dataMap; }
     const std::vector<{{cpp_define_type value_type}}>& getDataList() const { return _dataList; }
 
-    const {{cpp_define_type value_type}} get({{cpp_define_type key_type}} key)
+    {{cpp_define_type value_type}} get({{cpp_define_type key_type}} key)
     { 
         auto it = _dataMap.find(key);
         return it != _dataMap.end() ? it->second : nullptr;
+    }
+
+    void resolve(std::unordered_map<bright::String, void*>& _tables)
+    {
+        for(auto v : _dataList)
+        {
+            v->resolve(_tables);
+        }
     }
 
     {{~else~}}
@@ -147,7 +162,7 @@ class {{name}}
     {{cpp_define_type value_type}} _data;
 
     public:
-    const {{cpp_define_type value_type}} data() const { return _data; }
+    {{cpp_define_type value_type}} data() const { return _data; }
 
     bool load(ByteBuf& _buf)
     {
@@ -158,14 +173,17 @@ class {{name}}
         return true;
     }
 
+    void resolve(std::unordered_map<bright::String, void*>& _tables)
+    {
+        _data->resolve(_tables);
+    }
 
     {{~ for field in value_type.bean.hierarchy_export_fields ~}}
     /**
     {{field.comment}}
      */
-    const {{cpp_define_type field.ctype}}& {{field.cpp_getter_name}}() const { return _data->{{field.cpp_style_name}}; }
+    {{cpp_define_type field.ctype}}& {{field.cpp_getter_name}}() const { return _data->{{field.cpp_style_name}}; }
     {{~end~}}
-
     {{~end~}}
 };
 {{x.cpp_namespace_end}}
@@ -190,12 +208,19 @@ class {{name}}
      {{table.cpp_full_name}} {{table.name}};
     {{~end~}}
 
-    bool load(std::function<bool(ByteBuf&, const std::string&)> loader)
+    bool load(std::function<bool(ByteBuf&, const bright::String&)> loader)
     {
+        std::unordered_map<bright::String, void*> __tables__;
+
         ByteBuf buf;
         {{~for table in tables~}}
         if (!loader(buf, ""{{table.output_data_file}}"")) return false;
         if (!{{table.name}}.load(buf)) return false;
+        __tables__[""{{table.full_name}}""] = &{{table.name}};
+        {{~end~}}
+
+        {{~for table in tables ~}}
+        {{table.name}}.resolve(__tables__); 
         {{~end~}}
         return true;
     }
@@ -225,6 +250,7 @@ using ByteBuf = bright::serialization::ByteBuf;
 namespace {{x.top_module}}
 {
     {{~for type in x.types~}}
+
     bool {{type.cpp_full_name}}::deserialize(ByteBuf& _buf)
     {
         {{~if type.parent_def_type~}}
@@ -266,6 +292,20 @@ namespace {{x.top_module}}
             return false;
         }
     {{~end~}}
+    }
+
+    void {{type.cpp_full_name}}::resolve(std::unordered_map<bright::String, void*>& _tables)
+    {
+        {{~if type.parent_def_type~}}
+        {{type.parent_def_type.name}}::resolve(_tables);
+        {{~end~}}
+        {{~ for field in type.export_fields ~}}
+        {{~if field.gen_ref~}}
+        {{cpp_ref_validator_resolve field}}
+        {{~else if field.has_recursive_ref~}}
+        {{cpp_recursive_resolve field '_tables'}}
+        {{~end~}}
+        {{~end~}}
     }
     {{~end~}}
 }

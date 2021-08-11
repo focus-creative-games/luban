@@ -71,11 +71,11 @@ namespace Luban.Job.Cfg.Defs
             var table = field.Assembly.GetCfgTable(field.Ref.FirstTable);
             if (field.IsNullable)
             {
-                return $"this.{refVarName} = this.{name} != null ? (({table.FullNameWithTopModule})_tables.get(\"{tableName}\")).get({name}) : null;";
+                return $"this.{refVarName} = this.{name} != null ? (({table.CppFullName})_tables.get(\"{tableName}\")).get({name}) : null;";
             }
             else
             {
-                return $"this.{refVarName} = (({table.FullNameWithTopModule})_tables.get(\"{tableName}\")).get({name});";
+                return $"this.{refVarName} = (({table.CppFullName})_tables.get(\"{tableName}\")).get({name});";
             }
         }
 
@@ -84,6 +84,26 @@ namespace Luban.Job.Cfg.Defs
             return type.Apply(CppDeserializeVisitor.Ins, bufName, fieldName);
         }
 
+        public static string CppRecursiveResolve(DefField field, string tables)
+        {
+            return field.CType.Apply(CppRecursiveResolveVisitor.Ins, field.CsStyleName, tables);
+        }
+
+        public static string CppRefValidatorResolve(DefField field)
+        {
+            var refVarName = field.CppRefVarName;
+            var name = field.CsStyleName;
+            var tableName = field.Ref.FirstTable;
+            var table = field.Assembly.GetCfgTable(field.Ref.FirstTable);
+            if (field.IsNullable)
+            {
+                return $"this->{refVarName} = this->{name} != nullptr ? (({table.CppFullName}*)(_tables[\"{tableName}\"]))->get(*(this->{name})) : nullptr;";
+            }
+            else
+            {
+                return $"this->{refVarName} = (({table.CppFullName}*)(_tables[\"{tableName}\"]))->get({name});";
+            }
+        }
 
         public static string GoDefineType(TType type)
         {

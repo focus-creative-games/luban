@@ -89,6 +89,15 @@ namespace Luban.Job.Cfg.Defs
             }
         }
 
+        public string CppRefValidatorDefine
+        {
+            get
+            {
+                var table = Assembly.GetCfgTable(Ref.FirstTable);
+                return $"{table.ValueTType.Apply(CppDefineTypeName.Ins)} {CppRefVarName};";
+            }
+        }
+
         public string TsRefValidatorDefine
         {
             get
@@ -118,6 +127,8 @@ namespace Luban.Job.Cfg.Defs
         public string CsRefVarName => $"{CsStyleName}_Ref";
 
         public string JavaRefVarName => $"{JavaStyleName}_Ref";
+
+        public string CppRefVarName => $"{CsStyleName}_Ref";
 
         public string TsRefVarName => $"{TsStyleName}_Ref";
 
