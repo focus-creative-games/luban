@@ -101,9 +101,9 @@ namespace Luban.Job.Cfg.DataCreators
             }
             if (CheckIsDefault(x.NamedMode, d))
             {
-                return new DBool(false);
+                return DBool.ValueOf(false);
             }
-            return new DBool(CreateBool(d));
+            return DBool.ValueOf(CreateBool(d));
         }
 
         public DType Accept(TByte type, object converter, ExcelStream x, DefAssembly ass)
@@ -185,21 +185,21 @@ namespace Luban.Job.Cfg.DataCreators
             }
             if (CheckIsDefault(x.NamedMode, d))
             {
-                return DInt.Default;
+                return DInt.ValueOf(0);
             }
             var ds = d.ToString();
             if (converter is TEnum te)
             {
                 if (te.DefineEnum.TryValueByNameOrAlias(ds, out var c))
                 {
-                    return new DInt(c);
+                    return DInt.ValueOf(c);
                 }
             }
             if (!int.TryParse(ds, out var v))
             {
                 throw new InvalidExcelDataException($"{d} 不是 int 类型值");
             }
-            return new DInt(v);
+            return DInt.ValueOf(v);
         }
 
         public DType Accept(TFint type, object converter, ExcelStream x, DefAssembly ass)
@@ -252,14 +252,14 @@ namespace Luban.Job.Cfg.DataCreators
             {
                 if (te.DefineEnum.TryValueByNameOrAlias(ds, out var c))
                 {
-                    return new DLong(c);
+                    return DLong.ValueOf(c);
                 }
             }
             if (!long.TryParse(ds, out var v))
             {
                 throw new InvalidExcelDataException($"{d} 不是 long 类型值");
             }
-            return new DLong(v);
+            return DLong.ValueOf(v);
         }
 
         public DType Accept(TFlong type, object converter, ExcelStream x, DefAssembly ass)
@@ -305,13 +305,13 @@ namespace Luban.Job.Cfg.DataCreators
             }
             if (CheckIsDefault(x.NamedMode, d))
             {
-                return DFloat.Default;
+                return DFloat.ValueOf(0);
             }
             if (!float.TryParse(d.ToString(), out var v))
             {
                 throw new InvalidExcelDataException($"{d} 不是 float 类型值");
             }
-            return new DFloat(v);
+            return DFloat.ValueOf(v);
         }
 
         public DType Accept(TDouble type, object converter, ExcelStream x, DefAssembly ass)

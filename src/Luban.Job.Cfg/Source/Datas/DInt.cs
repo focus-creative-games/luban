@@ -4,9 +4,27 @@ namespace Luban.Job.Cfg.Datas
 {
     public class DInt : DType<int>
     {
-        public static DInt Default { get; } = new DInt(0);
+        private const int POOL_SIZE = 128;
+        private static readonly DInt[] s_pool = new DInt[POOL_SIZE];
 
-        public DInt(int x) : base(x)
+        static DInt()
+        {
+            for (int i = 0; i < POOL_SIZE; i++)
+            {
+                s_pool[i] = new DInt(i);
+            }
+        }
+
+        public static DInt ValueOf(int x)
+        {
+            if (x >= 0 && x < POOL_SIZE)
+            {
+                return s_pool[x];
+            }
+            return new DInt(x);
+        }
+
+        private DInt(int x) : base(x)
         {
         }
 

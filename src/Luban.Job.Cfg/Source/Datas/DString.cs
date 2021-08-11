@@ -4,6 +4,17 @@ namespace Luban.Job.Cfg.Datas
 {
     public class DString : DType<string>
     {
+        private static readonly DString s_empty = new DString("");
+
+        public static DString ValueOf(string s)
+        {
+            if (s.Length == 0)
+            {
+                return s_empty;
+            }
+            return new DString(s);
+        }
+
         public DString(string x) : base(x)
         {
         }

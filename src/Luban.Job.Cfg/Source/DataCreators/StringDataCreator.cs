@@ -14,7 +14,7 @@ namespace Luban.Job.Cfg.DataCreators
         {
             if (bool.TryParse(x, out var b))
             {
-                return new DBool(b);
+                return DBool.ValueOf(b);
             }
             else
             {
@@ -62,7 +62,7 @@ namespace Luban.Job.Cfg.DataCreators
         {
             if (int.TryParse(x, out var b))
             {
-                return new DInt(b);
+                return DInt.ValueOf(b);
             }
             else
             {
@@ -86,7 +86,7 @@ namespace Luban.Job.Cfg.DataCreators
         {
             if (long.TryParse(x, out var b))
             {
-                return new DLong(b);
+                return DLong.ValueOf(b);
             }
             else
             {
@@ -110,7 +110,7 @@ namespace Luban.Job.Cfg.DataCreators
         {
             if (float.TryParse(x, out var b))
             {
-                return new DFloat(b);
+                return DFloat.ValueOf(b);
             }
             else
             {

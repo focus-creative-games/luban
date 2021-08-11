@@ -4,7 +4,16 @@ namespace Luban.Job.Cfg.Datas
 {
     public class DBool : DType<bool>
     {
-        public DBool(bool x) : base(x)
+
+        private static readonly DBool s_false = new DBool(false);
+        private static readonly DBool s_true = new DBool(true);
+
+        public static DBool ValueOf(bool x)
+        {
+            return x ? s_true : s_false;
+        }
+
+        private DBool(bool x) : base(x)
         {
         }
 

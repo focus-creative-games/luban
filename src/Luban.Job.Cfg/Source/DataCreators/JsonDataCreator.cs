@@ -16,7 +16,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TBool type, JsonElement x, DefAssembly ass)
         {
-            return new DBool(x.GetBoolean());
+            return DBool.ValueOf(x.GetBoolean());
         }
 
         public DType Accept(TByte type, JsonElement x, DefAssembly ass)
@@ -36,7 +36,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TInt type, JsonElement x, DefAssembly ass)
         {
-            return new DInt(x.GetInt32());
+            return DInt.ValueOf(x.GetInt32());
         }
 
         public DType Accept(TFint type, JsonElement x, DefAssembly ass)
@@ -46,7 +46,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TLong type, JsonElement x, DefAssembly ass)
         {
-            return new DLong(x.GetInt64());
+            return DLong.ValueOf(x.GetInt64());
         }
 
         public DType Accept(TFlong type, JsonElement x, DefAssembly ass)
@@ -56,7 +56,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TFloat type, JsonElement x, DefAssembly ass)
         {
-            return new DFloat(x.GetSingle());
+            return DFloat.ValueOf(x.GetSingle());
         }
 
         public DType Accept(TDouble type, JsonElement x, DefAssembly ass)
