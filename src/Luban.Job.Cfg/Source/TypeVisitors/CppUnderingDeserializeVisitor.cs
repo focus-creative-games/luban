@@ -64,7 +64,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TString type, string bufName, string fieldName)
         {
-            return $"if(!BYTEBUF_READ_STRING({bufName}, {fieldName})) return false;";
+            return $"if(!{bufName}.readString({fieldName})) return false;";
         }
 
         public string Accept(TBytes type, string bufName, string fieldName)

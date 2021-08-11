@@ -63,7 +63,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TString type)
         {
-            return "bright::String";
+            return "std::string";
         }
 
         public string Accept(TBytes type)
@@ -73,7 +73,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TText type)
         {
-            return "bright::String";
+            return "std::string";
         }
 
         public string Accept(TBean type)

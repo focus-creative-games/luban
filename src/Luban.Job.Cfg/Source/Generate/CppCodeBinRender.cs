@@ -89,7 +89,7 @@ class {{name}} : public {{if parent_def_type}} {{parent_def_type.cpp_full_name}}
     int getTypeId() const { return ID; }
 {{~end~}}
 
-    virtual void resolve(std::unordered_map<bright::String, void*>& _tables);
+    virtual void resolve(std::unordered_map<std::string, void*>& _tables);
 };
 
 {{x.cpp_namespace_end}}
@@ -149,7 +149,7 @@ class {{name}}
         return it != _dataMap.end() ? it->second : nullptr;
     }
 
-    void resolve(std::unordered_map<bright::String, void*>& _tables)
+    void resolve(std::unordered_map<std::string, void*>& _tables)
     {
         for(auto v : _dataList)
         {
@@ -173,7 +173,7 @@ class {{name}}
         return true;
     }
 
-    void resolve(std::unordered_map<bright::String, void*>& _tables)
+    void resolve(std::unordered_map<std::string, void*>& _tables)
     {
         _data->resolve(_tables);
     }
@@ -208,9 +208,9 @@ class {{name}}
      {{table.cpp_full_name}} {{table.name}};
     {{~end~}}
 
-    bool load(std::function<bool(ByteBuf&, const bright::String&)> loader)
+    bool load(std::function<bool(ByteBuf&, const std::string&)> loader)
     {
-        std::unordered_map<bright::String, void*> __tables__;
+        std::unordered_map<std::string, void*> __tables__;
 
         ByteBuf buf;
         {{~for table in tables~}}
@@ -294,7 +294,7 @@ namespace {{x.top_module}}
     {{~end~}}
     }
 
-    void {{type.cpp_full_name}}::resolve(std::unordered_map<bright::String, void*>& _tables)
+    void {{type.cpp_full_name}}::resolve(std::unordered_map<std::string, void*>& _tables)
     {
         {{~if type.parent_def_type~}}
         {{type.parent_def_type.name}}::resolve(_tables);
