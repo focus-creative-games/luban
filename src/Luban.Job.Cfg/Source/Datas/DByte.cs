@@ -4,6 +4,8 @@ namespace Luban.Job.Cfg.Datas
 {
     public class DByte : DType<byte>
     {
+        public static DByte Default { get; } = new DByte(0);
+
         public DByte(byte x) : base(x)
         {
         }

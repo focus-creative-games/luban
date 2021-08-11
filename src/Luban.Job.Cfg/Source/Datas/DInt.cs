@@ -4,6 +4,8 @@ namespace Luban.Job.Cfg.Datas
 {
     public class DInt : DType<int>
     {
+        public static DInt Default { get; } = new DInt(0);
+
         public DInt(int x) : base(x)
         {
         }

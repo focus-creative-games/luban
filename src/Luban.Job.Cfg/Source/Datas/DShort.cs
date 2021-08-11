@@ -4,6 +4,8 @@ namespace Luban.Job.Cfg.Datas
 {
     public class DShort : DType<short>
     {
+        public static DShort Default { get; } = new DShort(0);
+
         public DShort(short x) : base(x)
         {
         }

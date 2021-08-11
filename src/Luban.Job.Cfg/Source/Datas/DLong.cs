@@ -4,6 +4,8 @@ namespace Luban.Job.Cfg.Datas
 {
     public class DLong : DType<long>
     {
+        public static DLong Default { get; } = new DLong(0);
+
         public DLong(long x) : base(x)
         {
         }

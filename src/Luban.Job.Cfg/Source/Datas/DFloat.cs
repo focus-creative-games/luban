@@ -4,6 +4,8 @@ namespace Luban.Job.Cfg.Datas
 {
     public class DFloat : DType<float>
     {
+        public static DFloat Default { get; } = new DFloat(0);
+
         public DFloat(float x) : base(x)
         {
         }
