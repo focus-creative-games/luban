@@ -72,7 +72,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TString type, XElement x, DefAssembly ass)
         {
-            return new DString(x.Value);
+            return DString.ValueOf(x.Value);
         }
 
         public DType Accept(TBytes type, XElement x, DefAssembly ass)

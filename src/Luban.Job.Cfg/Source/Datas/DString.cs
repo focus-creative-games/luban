@@ -15,7 +15,7 @@ namespace Luban.Job.Cfg.Datas
             return new DString(s);
         }
 
-        public DString(string x) : base(x)
+        private DString(string x) : base(x)
         {
         }
 

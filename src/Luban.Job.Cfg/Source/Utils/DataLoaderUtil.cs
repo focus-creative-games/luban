@@ -157,14 +157,15 @@ namespace Luban.Job.Cfg.Utils
 
             foreach (DefTable c in exportTables)
             {
+                var table = c;
                 genDataTasks.Add(Task.Run(async () =>
                 {
                     long beginTime = TimeUtil.NowMillis;
-                    await LoadTableAsync(agent, c, dataDir, branchName, branchDataDir, exportTestData);
+                    await LoadTableAsync(agent, table, dataDir, branchName, branchDataDir, exportTestData);
                     long endTime = TimeUtil.NowMillis;
                     if (endTime - beginTime > 100)
                     {
-                        ctx.Info("====== load {0} cost {1} ms ======", c.FullName, (endTime - beginTime));
+                        ctx.Info("====== load {0} cost {1} ms ======", table.FullName, (endTime - beginTime));
                     }
                 }));
             }

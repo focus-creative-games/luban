@@ -105,10 +105,11 @@ namespace Luban.Job.Db
                         var render = new AsyncCsRender();
                         foreach (var c in ass.Types.Values)
                         {
+                            var type = c;
                             tasks.Add(Task.Run(() =>
                             {
-                                var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderAny(c), Common.ELanguage.CS);
-                                var file = RenderFileUtil.GetDefTypePath(c.FullName, Common.ELanguage.CS);
+                                var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderAny(type), Common.ELanguage.CS);
+                                var file = RenderFileUtil.GetDefTypePath(type.FullName, Common.ELanguage.CS);
                                 var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
                                 genCodeFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                             }));

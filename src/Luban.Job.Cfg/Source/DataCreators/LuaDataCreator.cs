@@ -110,7 +110,7 @@ namespace Luban.Job.Cfg.DataCreators
         {
             if (x is string s)
             {
-                return new DString(s);
+                return DString.ValueOf(s);
             }
             else
             {

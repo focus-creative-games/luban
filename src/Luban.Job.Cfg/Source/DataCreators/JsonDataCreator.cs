@@ -71,7 +71,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TString type, JsonElement x, DefAssembly ass)
         {
-            return new DString(x.GetString());
+            return DString.ValueOf(x.GetString());
         }
 
         public DType Accept(TBytes type, JsonElement x, DefAssembly ass)

@@ -364,7 +364,7 @@ namespace Luban.Job.Cfg.DataCreators
                     throw new InvalidExcelDataException("字段不是nullable类型，不能为null");
                 }
             }
-            return new DString(s);
+            return DString.ValueOf(s);
         }
 
         public DType Accept(TBytes type, object converter, ExcelStream x, DefAssembly ass)

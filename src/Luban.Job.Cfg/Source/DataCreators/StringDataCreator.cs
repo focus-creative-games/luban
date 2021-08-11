@@ -137,7 +137,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TString type, string x)
         {
-            return new DString(x);
+            return DString.ValueOf(x);
         }
 
         public DType Accept(TBytes type, string x)

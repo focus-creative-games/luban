@@ -87,7 +87,10 @@ namespace Luban.Job.Cfg
                         {
                             CurrentVisitor = visitor;
                             visitor.ValidateTable(t, records);
-                            ValidateText(t, records);
+                            if (this.Assembly.NeedL10nTextTranslate)
+                            {
+                                ValidateText(t, records);
+                            }
                         }
                         finally
                         {
