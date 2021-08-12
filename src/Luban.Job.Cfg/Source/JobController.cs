@@ -680,7 +680,7 @@ namespace {ctx.TopModule}
 
                 var content = FileHeaderUtil.ConcatAutoGenerationHeader(string.Join('\n', headerFileContent), ELanguage.CPP);
                 var file = "gen_types.h";
-                var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
+                var md5 = CacheFileUtil.GenMd5AndAddCache(file, content, true);
                 ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
             }));
 
@@ -698,7 +698,7 @@ namespace {ctx.TopModule}
                         render.RenderStub(ctx.TopModule, beanTypes.GetRange(startIndex, Math.Min(TYPE_PER_STUB_FILE, beanTypes.Count - startIndex))),
                         ELanguage.CPP);
                     var file = $"gen_stub_{index}.cpp";
-                    var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
+                    var md5 = CacheFileUtil.GenMd5AndAddCache(file, content, true);
                     ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                 }));
             }
@@ -716,7 +716,7 @@ namespace {ctx.TopModule}
                 {
                     var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderAny(c), ELanguage.CPP);
                     var file = "editor_" + RenderFileUtil.GetUeCppDefTypeHeaderFilePath(c.FullName);
-                    var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
+                    var md5 = CacheFileUtil.GenMd5AndAddCache(file, content, true);
                     ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                 }));
             }
@@ -733,7 +733,7 @@ namespace {ctx.TopModule}
                         render.RenderStub(renderTypes.GetRange(startIndex, Math.Min(TYPE_PER_STUB_FILE, renderTypes.Count - startIndex))),
                         ELanguage.CPP);
                     var file = $"stub_{index}.cpp";
-                    var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
+                    var md5 = CacheFileUtil.GenMd5AndAddCache(file, content, true);
                     ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                 }));
             }
@@ -768,7 +768,7 @@ namespace {ctx.TopModule}
                 {
                     var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderAny(c), ELanguage.CPP);
                     var file = "bp_" + RenderFileUtil.GetUeCppDefTypeHeaderFilePath(c.FullName);
-                    var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
+                    var md5 = CacheFileUtil.GenMd5AndAddCache(file, content, true);
                     ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                 }));
             }

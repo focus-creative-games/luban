@@ -26,7 +26,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
             fs.Seek(0, SeekOrigin.Begin);
             if (cdet.Charset != null)
             {
-                Console.WriteLine("Charset: {0}, confidence: {1}", cdet.Charset, cdet.Confidence);
+                s_logger.Debug("Charset: {}, confidence: {}", cdet.Charset, cdet.Confidence);
                 return System.Text.Encoding.GetEncoding(cdet.Charset) ?? System.Text.Encoding.Default;
             }
             else
