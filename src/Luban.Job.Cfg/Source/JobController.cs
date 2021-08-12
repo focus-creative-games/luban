@@ -626,16 +626,14 @@ namespace Luban.Job.Cfg
                                     @$"
 #pragma once
 #include <functional>
-#include <memory>
 
 #include ""bright/serialization/ByteBuf.h""
 #include ""bright/CfgBean.hpp""
 
-using ByteBuf = bright::serialization::ByteBuf;
+using ByteBuf = ::bright::serialization::ByteBuf;
 
 namespace {ctx.TopModule}
 {{
-
 "
                                 };
 

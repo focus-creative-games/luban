@@ -76,7 +76,7 @@ class {{name}} : public {{if parent_def_type}} {{parent_def_type.cpp_full_name}}
      */
     {{cpp_define_type field.ctype}} {{field.cpp_style_name}};
     {{~if field.index_field~}} 
-    std::unordered_map<{{cpp_define_type field.index_field.ctype}}, {{cpp_define_type field.ctype.element_type}}> {{field.cpp_style_name}}_Index;
+    ::bright::HashMap<{{cpp_define_type field.index_field.ctype}}, {{cpp_define_type field.ctype.element_type}}> {{field.cpp_style_name}}_Index;
     {{~end~}}
     {{~if field.gen_ref~}}
     {{field.cpp_ref_validator_define}}
@@ -89,7 +89,7 @@ class {{name}} : public {{if parent_def_type}} {{parent_def_type.cpp_full_name}}
     int getTypeId() const { return ID; }
 {{~end~}}
 
-    virtual void resolve(std::unordered_map<std::string, void*>& _tables);
+    virtual void resolve(::bright::HashMap<::bright::String, void*>& _tables);
 };
 
 {{x.cpp_namespace_end}}
@@ -122,8 +122,8 @@ class {{name}}
 {
     {{~if x.is_map_table ~}}
     private:
-    std::unordered_map<{{cpp_define_type key_type}}, {{cpp_define_type value_type}}> _dataMap;
-    std::vector<{{cpp_define_type value_type}}> _dataList;
+    ::bright::HashMap<{{cpp_define_type key_type}}, {{cpp_define_type value_type}}> _dataMap;
+    ::bright::Vector<{{cpp_define_type value_type}}> _dataList;
     
     public:
     bool load(ByteBuf& _buf)
@@ -140,8 +140,8 @@ class {{name}}
         return true;
     }
 
-    const std::unordered_map<{{cpp_define_type key_type}}, {{cpp_define_type value_type}}>& getDataMap() const { return _dataMap; }
-    const std::vector<{{cpp_define_type value_type}}>& getDataList() const { return _dataList; }
+    const ::bright::HashMap<{{cpp_define_type key_type}}, {{cpp_define_type value_type}}>& getDataMap() const { return _dataMap; }
+    const ::bright::Vector<{{cpp_define_type value_type}}>& getDataList() const { return _dataList; }
 
     {{value_type.bean.cpp_full_name}}* getRaw({{cpp_define_type key_type}} key)
     { 
@@ -155,7 +155,7 @@ class {{name}}
         return it != _dataMap.end() ? it->second : nullptr;
     }
 
-    void resolve(std::unordered_map<std::string, void*>& _tables)
+    void resolve(::bright::HashMap<::bright::String, void*>& _tables)
     {
         for(auto v : _dataList)
         {
@@ -179,7 +179,7 @@ class {{name}}
         return true;
     }
 
-    void resolve(std::unordered_map<std::string, void*>& _tables)
+    void resolve(::bright::HashMap<::bright::String, void*>& _tables)
     {
         _data->resolve(_tables);
     }
@@ -214,9 +214,9 @@ class {{name}}
      {{table.cpp_full_name}} {{table.name}};
     {{~end~}}
 
-    bool load(std::function<bool(ByteBuf&, const std::string&)> loader)
+    bool load(::bright::Function<bool(ByteBuf&, const ::bright::String&)> loader)
     {
-        std::unordered_map<std::string, void*> __tables__;
+        ::bright::HashMap<::bright::String, void*> __tables__;
 
         ByteBuf buf;
         {{~for table in tables~}}
@@ -299,7 +299,7 @@ namespace {{x.top_module}}
     {{~end~}}
     }
 
-    void {{type.cpp_full_name}}::resolve(std::unordered_map<std::string, void*>& _tables)
+    void {{type.cpp_full_name}}::resolve(::bright::HashMap<::bright::String, void*>& _tables)
     {
         {{~if type.parent_def_type~}}
         {{type.parent_def_type.name}}::resolve(_tables);

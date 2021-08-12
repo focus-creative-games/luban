@@ -118,7 +118,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TDateTime type)
         {
-            return "::bright::datetime_t";
+            return "::bright::datetime";
         }
     }
 }
