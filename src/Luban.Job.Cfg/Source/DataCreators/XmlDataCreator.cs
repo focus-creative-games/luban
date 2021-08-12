@@ -77,7 +77,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TBytes type, XElement x, DefAssembly ass)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public DType Accept(TText type, XElement x, DefAssembly ass)

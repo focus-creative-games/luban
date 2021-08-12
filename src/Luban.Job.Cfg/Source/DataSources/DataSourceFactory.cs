@@ -21,6 +21,7 @@ namespace Luban.Job.Cfg.DataSources
                     case "lua": source = new Lua.LuaDataSource(); break;
                     case "json": source = new Json.JsonDataSource(); break;
                     case "b": source = new Binary.BinaryDataSource(); break;
+                    case "yml": source = new Yaml.YamlDataSource(); break;
                     default: throw new Exception($"不支持的文件类型:{url}");
                 }
                 source.Load(url, sheetName, stream, exportTestData);
