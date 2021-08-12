@@ -26,9 +26,11 @@ import bright.serialization.*;
     hierarchy_export_fields = x.hierarchy_export_fields
 }}
 
+{{~if x.comment != '' ~}}
 /**
  * {{x.comment}}
  */
+{{~end~}}
 public {{x.java_class_modifier}} class {{name}} extends {{if parent_def_type}} {{x.parent_def_type.full_name_with_top_module}} {{else}} bright.serialization.AbstractBean {{end}}
 {
     public {{name}}(ByteBuf _buf)
@@ -79,9 +81,11 @@ public {{x.java_class_modifier}} class {{name}} extends {{if parent_def_type}} {
     }
 
     {{~ for field in export_fields ~}}
+{{~if field.comment != '' ~}}
     /**
      * {{field.comment}}
      */
+{{~end~}}
     public final {{java_define_type field.ctype}} {{field.java_style_name}};
     {{~if field.index_field~}} 
     public final java.util.HashMap<{{java_box_define_type field.index_field.ctype}}, {{java_box_define_type field.ctype.element_type}}> {{field.java_style_name}}_Index = new java.util.HashMap<>();
@@ -158,9 +162,11 @@ import bright.serialization.*;
     value_type =  x.value_ttype
 ~}}
 
+{{~if x.comment != '' ~}}
 /**
  * {{x.comment}}
  */
+{{~end~}}
 public final class {{name}}
 {
     {{~if x.is_map_table ~}}
@@ -212,9 +218,11 @@ public final class {{name}}
 
 
     {{~ for field in value_type.bean.hierarchy_export_fields ~}}
+{{~if field.comment != '' ~}}
     /**
      * {{field.comment}}
      */
+{{~end~}}
      public {{java_define_type field.ctype}} {{field.java_getter_name}}() { return _data.{{field.java_style_name}}; }
     {{~end~}}
 
@@ -247,9 +255,11 @@ public final class {{name}}
     }
 
     {{~for table in tables ~}}
+{{~if table.comment != '' ~}}
     /**
      * {{table.comment}}
      */
+{{~end~}}
     public final {{table.full_name_with_top_module}} {{table.name}};
     {{~end~}}
 

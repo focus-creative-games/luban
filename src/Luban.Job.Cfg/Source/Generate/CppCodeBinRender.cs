@@ -40,9 +40,11 @@ namespace Luban.Job.Cfg.Generate
     hierarchy_export_fields = x.hierarchy_export_fields
 }}
 
+{{~if x.comment != '' ~}}
 /**
-{{x.comment}}
+ * {{x.comment}}
  */
+{{~end~}}
 class {{name}} : public {{if parent_def_type}} {{parent_def_type.cpp_full_name}} {{else}} bright::CfgBean {{end}}
 {
     public:
@@ -71,9 +73,11 @@ class {{name}} : public {{if parent_def_type}} {{parent_def_type.cpp_full_name}}
     bool deserialize(ByteBuf& _buf);
 
     {{~ for field in export_fields ~}}
+{{~if field.comment != '' ~}}
     /**
-     {{field.comment}}
+     * {{field.comment}}
      */
+{{~end~}}
     {{cpp_define_type field.ctype}} {{field.cpp_style_name}};
     {{~if field.index_field~}} 
     ::bright::HashMap<{{cpp_define_type field.index_field.ctype}}, {{cpp_define_type field.ctype.element_type}}> {{field.cpp_style_name}}_Index;
@@ -115,9 +119,11 @@ class {{name}} : public {{if parent_def_type}} {{parent_def_type.cpp_full_name}}
     value_type =  x.value_ttype
 ~}}
 
+{{~if x.comment != '' ~}}
 /**
-{{x.comment}}
+ * {{x.comment}}
  */
+{{~end~}}
 class {{name}}
 {
     {{~if x.is_map_table ~}}
@@ -185,9 +191,11 @@ class {{name}}
     }
 
     {{~ for field in value_type.bean.hierarchy_export_fields ~}}
+{{~if field.comment != '' ~}}
     /**
-    {{field.comment}}
+     * {{field.comment}}
      */
+{{~end~}}
     {{cpp_define_type field.ctype}}& {{field.cpp_getter_name}}() const { return _data->{{field.cpp_style_name}}; }
     {{~end~}}
     {{~end~}}
@@ -208,9 +216,11 @@ class {{name}}
 {
     public:
     {{~for table in tables ~}}
+{{~if table.comment != '' ~}}
     /**
      {{table.comment}}
      */
+{{~end~}}
      {{table.cpp_full_name}} {{table.name}};
     {{~end~}}
 

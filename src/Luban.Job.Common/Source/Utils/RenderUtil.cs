@@ -21,15 +21,19 @@ namespace Luban.Job.Common.Utils
             var template = t_constRender ??= Template.Parse(@"
 namespace {{x.namespace_with_top_module}}
 {
+{{~if x.comment != '' ~}}
     /// <summary>
     /// {{x.comment}}
     /// </summary>
+{{~end~}}
     public sealed class {{x.name}}
     {
         {{~ for item in x.items ~}}
+{{~if item.comment != '' ~}}
         /// <summary>
         /// {{item.comment}}
         /// </summary>
+{{~end~}}
         public const {{cs_define_type item.ctype}} {{item.name}} = {{cs_const_value item.ctype item.value}};
         {{~end~}}
     }
@@ -48,18 +52,22 @@ namespace {{x.namespace_with_top_module}}
             var template = t_enumRender ??= Template.Parse(@"
 namespace {{namespace_with_top_module}}
 {
+{{~if comment != '' ~}}
     /// <summary>
     /// {{comment}}
     /// </summary>
+{{~end~}}
     {{~if is_flags~}}
     [System.Flags]
     {{~end~}}
     public enum {{name}}
     {
         {{~ for item in items ~}}
+{{~if item.comment != '' ~}}
         /// <summary>
         /// {{item.comment}}
         /// </summary>
+{{~end~}}
         {{item.name}} = {{item.value}},
         {{~end~}}
     }
@@ -87,15 +95,19 @@ namespace {{namespace_with_top_module}}
             var template = t_javaConstRender ??= Template.Parse(@"
 package {{x.namespace_with_top_module}};
 
+{{~if x.comment != '' ~}}
 /**
  * {{x.comment}}
  */
+{{~end~}}
 public final class {{x.name}}
 {
     {{~ for item in x.items ~}}
+{{~if item.comment != '' ~}}
     /**
      * {{item.comment}}
      */
+{{~end~}}
     public static final {{java_define_type item.ctype}} {{item.name}} = {{java_const_value item.ctype item.value}};
     {{~end~}}
 }
@@ -113,15 +125,19 @@ public final class {{x.name}}
         {
             var template = t_javaEnumRender ??= Template.Parse(@"
 package {{namespace_with_top_module}};
+{{~if comment != '' ~}}
 /**
  * {{comment}}
  */
+{{~end~}}
 public enum {{name}}
 {
     {{~ for item in items ~}}
+{{~if item.comment != '' ~}}
     /**
      * {{item.comment}}
      */
+{{~end~}}
     {{item.name}}({{item.value}}),
     {{~end~}}
     ;
@@ -163,15 +179,19 @@ public enum {{name}}
 
             var template = t_cppConstRender ??= Template.Parse(@"
 {{x.cpp_namespace_begin}}
+{{~if comment != '' ~}}
 /**
-{{x.comment}}
-*/
+ * {{comment}}
+ */
+{{~end~}}
 struct {{x.name}}
 {
     {{~ for item in x.items ~}}
+{{~if item.comment != '' ~}}
     /**
-    {{item.comment}}
+     * {{item.comment}}
     */
+{{~end~}}
     static constexpr {{cpp_define_type item.ctype}} {{item.name}} = {{cpp_const_value item.ctype item.value}};
     {{~end~}}
 };
@@ -189,15 +209,19 @@ struct {{x.name}}
         {
             var template = t_cppEnumRender ??= Template.Parse(@"
 {{cpp_namespace_begin}}
+{{~if comment != '' ~}}
 /**
-{{comment}}
-*/
+ * {{comment}}
+ */
+{{~end~}}
 enum class {{name}}
 {
     {{~ for item in items ~}}
+{{~if item.comment != '' ~}}
     /**
-    {{item.comment}}
+     * {{item.comment}}
     */
+{{~end~}}
     {{item.name}} = {{item.value}},
     {{~end~}}
 };
@@ -223,14 +247,18 @@ enum class {{name}}
 
             var template = t_tsConstRender ??= Template.Parse(@"
 {{x.typescript_namespace_begin}}
+{{~if x.comment != '' ~}}
 /**
  * {{x.comment}}
  */
+{{~end~}}
 export class {{x.name}} {
     {{~ for item in x.items ~}}
+{{~if item.comment != '' ~}}
     /**
      * {{item.comment}}
      */
+{{~end~}}
     static {{item.name}} = {{ts_const_value item.ctype item.value}};
     {{~end~}}
 }
@@ -248,14 +276,18 @@ export class {{x.name}} {
         {
             var template = t_tsEnumRender ??= Template.Parse(@"
 {{typescript_namespace_begin}}
+{{~if comment != '' ~}}
 /**
  * {{comment}}
  */
+{{~end~}}
 export enum {{name}} {
     {{~for item in items ~}}
+{{~if item.comment != '' ~}}
     /**
      * {{item.comment}}
      */
+{{~end~}}
     {{item.name}} = {{item.value}},
     {{~end~}}
 }

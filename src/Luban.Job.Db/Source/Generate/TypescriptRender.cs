@@ -49,14 +49,18 @@ namespace Luban.Job.Db.Generate
 }}
 
 {{x.typescript_namespace_begin}}
+{{~if x.comment != '' ~}}
 /**
  * {{x.comment}}
  */
+{{~end~}}
 export {{x.ts_class_modifier}} class {{name}} extends {{if parent_def_type}} {{x.parent}} {{else}} TxnBeanBase {{end}}{
     {{~ for field in fields~}}
+{{~if field.comment != '' ~}}
     /**
      * {{field.comment}}
      */
+{{~end~}}
     {{if is_abstract_type}}protected{{else}}private{{end}} {{field.internal_name}}: {{db_ts_define_type field.ctype}} 
     {{~end}}
 
@@ -84,9 +88,11 @@ export {{x.ts_class_modifier}} class {{name}} extends {{if parent_def_type}} {{x
         }
     }
 
+{{~if field.comment != '' ~}}
     /**
      * {{field.comment}}
      */
+{{~end~}}
     get {{field.ts_style_name}}(): {{db_ts_define_type ctype}} {
         if (this.isManaged) {
             var txn = TransactionContext.current
@@ -98,9 +104,11 @@ export {{x.ts_class_modifier}} class {{name}} extends {{if parent_def_type}} {{x
         }
     }
 
+{{~if field.comment != '' ~}}
     /**
      * {{field.comment}}
      */
+{{~end~}}
     set {{field.ts_style_name}}(value: {{db_ts_define_type ctype}}) {
         {{~if db_field_cannot_null~}}
         if (value == null) throw new Error()
@@ -117,9 +125,11 @@ export {{x.ts_class_modifier}} class {{name}} extends {{if parent_def_type}} {{x
     }
 
         {{~else~}}
+{{~if field.comment != '' ~}}
     /**
      * {{field.comment}}
      */
+{{~end~}}
     get {{field.ts_style_name}}(): {{db_ts_define_type ctype}}  { return {{field.internal_name_with_this}} }
         {{~end~}}
     {{~end~}}
@@ -231,9 +241,11 @@ export {{x.ts_class_modifier}} class {{name}} extends {{if parent_def_type}} {{x
     }
 }
 
+{{~if x.comment != '' ~}}
 /**
  * {{x.comment}}
  */
+{{~end~}}
 export class {{name}} {
     static readonly _table = new {{internal_table_type}}();
     static get table(): TxnTableGeneric<{{db_ts_define_type key_ttype}},{{db_ts_define_type value_ttype}}> { return this._table }

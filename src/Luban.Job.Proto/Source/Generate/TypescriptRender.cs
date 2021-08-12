@@ -55,9 +55,11 @@ namespace Luban.Job.Proto.Generate
 
 {{x.typescript_namespace_begin}}
 
+{{~if x.comment != '' ~}}
 /**
  * {{x.comment}}
  */
+{{~end~}}
 export {{if x.is_abstract_type}} abstract {{end}} class {{name}} extends {{if parent_def_type}}{{x.parent}}{{else}}BeanBase{{end}} {
 {{~if x.is_abstract_type~}}
     static serializeTo(_buf_ : ByteBuf, _bean_ : {{name}}) {
@@ -84,9 +86,11 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} extends {{if pa
 
 
     {{~ for field in fields ~}}
+{{~if field.comment != '' ~}}
     /**
      * {{field.comment}}
      */
+{{~end~}}
      {{field.ts_style_name}}{{if field.is_nullable}}?{{end}} : {{ts_define_type field.ctype}}
     {{~end~}}
 
@@ -144,18 +148,22 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} extends {{if pa
 }}
 {{x.typescript_namespace_begin}}
 
+{{~if x.comment != '' ~}}
 /**
  * {{x.comment}}
  */
+{{~end~}}
 export class {{name}} extends Protocol {
     static readonly ID = {{x.id}}
     getTypeId() { return {{name}}.ID }
 
 
     {{~ for field in fields ~}}
+{{~if field.comment != '' ~}}
     /**
      * {{field.comment}}
      */
+{{~end~}}
      {{field.ts_style_name}}{{if field.is_nullable}}?{{end}} : {{ts_define_type field.ctype}}
     {{~end~}}
 

@@ -23,9 +23,11 @@ namespace Luban.Job.Cfg.Generate
 }}
 
 {{x.typescript_namespace_begin}}
+{{~if x.comment != '' ~}}
 /**
  * {{x.comment}}
  */
+{{~end~}}
 export {{if x.is_abstract_type}} abstract {{end}} class {{name}} {{if parent_def_type}} extends {{x.parent}}{{end}} {
 {{~if x.is_abstract_type~}}
     static constructorFrom(_json_: any): {{name}} {
@@ -51,9 +53,11 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} {{if parent_def
     }
 
     {{~ for field in export_fields ~}}
+{{~if field.comment != '' ~}}
     /**
      * {{field.comment}}
      */
+{{~end~}}
     readonly {{field.ts_style_name}}{{if field.is_nullable}}?{{end}}: {{ts_define_type field.ctype}}
     {{~if field.gen_ref~}}
     {{field.ts_ref_validator_define}}
@@ -94,9 +98,11 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} {{if parent_def
         value_type =  x.value_ttype
     }}
 {{x.typescript_namespace_begin}}
+{{~if x.comment != '' ~}}
 /**
  * {{x.comment}}
  */
+{{~end~}}
 export class {{name}}{
     {{~if x.is_map_table ~}}
     private _dataMap: Map<{{ts_define_type key_type}}, {{ts_define_type value_type}}>
@@ -134,9 +140,11 @@ export class {{name}}{
     getData(): {{ts_define_type value_type}} { return this._data; }
 
     {{~ for field in value_type.bean.hierarchy_export_fields ~}}
+{{~if field.comment != '' ~}}
     /**
      * {{field.comment}}
      */
+{{~end~}}
      get  {{field.ts_style_name}}(): {{ts_define_type field.ctype}} { return this._data.{{field.ts_style_name}}; }
     {{~end~}}
 
@@ -170,9 +178,11 @@ type JsonLoader = (file: string) => any
 export class {{name}} {
     {{~ for table in tables ~}}
     private _{{table.name}}: {{table.full_name}}
+{{~if table.comment != '' ~}}
     /**
      * {{table.comment}}
      */
+{{~end~}}
     get {{table.name}}(): {{table.full_name}}  { return this._{{table.name}};}
     {{~end~}}
 

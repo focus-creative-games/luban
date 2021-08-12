@@ -53,9 +53,11 @@ using Bright.Serialization;
 namespace {{x.namespace_with_top_module}}
 {
 
+{{~if x.comment != '' ~}}
     /// <summary>
     /// {{x.comment}}
     /// </summary>
+{{~end~}}
     public  {{if is_value_type}}struct{{else}}{{x.cs_class_modifier}} class{{end}} {{name}} : {{if parent_def_type}} {{parent}} {{else}} Bright.Serialization.BeanBase {{end}}
     {
         {{~if !is_value_type~}}
@@ -113,9 +115,11 @@ namespace {{x.namespace_with_top_module}}
         }
 
         {{~ for field in fields ~}}
+{{~if field.comment != '' ~}}
         /// <summary>
         /// {{field.comment}}
         /// </summary>
+{{~end~}}
          public {{cs_define_type field.ctype}} {{field.cs_style_name}};
 
         {{~end~}}
@@ -172,15 +176,19 @@ using Bright.Serialization;
 
 namespace {{x.namespace_with_top_module}}
 {
+{{~if x.comment != '' ~}}
     /// <summary>
     /// {{x.comment}}
     /// </summary>
+{{~end~}}
     public sealed class {{name}} : Bright.Net.Codecs.Protocol
     {
         {{~ for field in fields ~}}
+{{~if field.comment != '' ~}}
         /// <summary>
         /// {{field.comment}}
         /// </summary>
+{{~end~}}
          public {{cs_define_type field.ctype}} {{field.cs_style_name}};
 
         {{~end~}}
@@ -264,9 +272,11 @@ using Bright.Serialization;
 namespace {{x.namespace_with_top_module}}
 {
    
+{{~if x.comment != '' ~}}
     /// <summary>
     /// {{x.comment}}
     /// </summary>
+{{~end~}}
     public sealed class {{name}} : Bright.Net.Codecs.Rpc<{{cs_define_type targ_type}}, {{cs_define_type tres_type}}>
     {
         public {{name}}()

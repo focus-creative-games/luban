@@ -21,14 +21,18 @@ namespace Luban.Job.Cfg.Generate
 
 
             var template = t_tsConstRender ??= Template.Parse(@"
+{{~if x.comment != '' ~}}
 '''
 {{x.comment}}
 '''
+{{~end~}}
 class {{x.py_full_name}}:
     {{~ for item in x.items ~}}
+{{~if item.comment != '' ~}}
     '''
     {{item.comment}}
     '''
+{{~end~}}
     {{item.name}} = {{py_const_value item.ctype item.value}}
     {{~end~}}
     {{~if (x.items == empty)~}}
@@ -46,14 +50,18 @@ class {{x.py_full_name}}:
         public override string Render(DefEnum e)
         {
             var template = t_tsEnumRender ??= Template.Parse(@"
+{{~if comment != '' ~}}
 '''
 {{comment}}
 '''
+{{~end~}}
 class {{py_full_name}}:
     {{~ for item in items ~}}
+{{~if item.comment != '' ~}}
     '''
     {{item.comment}}
     '''
+{{~end~}}
     {{item.name}} = {{item.value}}
     {{~end~}}
     {{~if (items == empty)~}}

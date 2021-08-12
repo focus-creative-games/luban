@@ -50,9 +50,11 @@ using Bright.Serialization;
 namespace {{x.namespace_with_top_module}}
 {
 
+{{~if x.comment != '' ~}}
 /// <summary>
 /// {{x.comment}}
 /// </summary>
+{{~end~}}
 public interface {{readonly_name}} {{if parent_def_type}}: IReadOnly{{x.parent_def_type.name}} {{end}}
 {
     {{~ for field in fields~}}
@@ -60,9 +62,11 @@ public interface {{readonly_name}} {{if parent_def_type}}: IReadOnly{{x.parent_d
     {{~end~}}
 }
 
+{{~if x.comment != '' ~}}
 /// <summary>
 /// {{x.comment}}
 /// </summary>
+{{~end~}}
 public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.parent}} {{else}} Bright.Transaction.TxnBeanBase {{end}}, {{readonly_name}}
 {
     {{~ for field in fields~}}
@@ -97,9 +101,11 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
         }
     }
 
+{{~if field.comment != '' ~}}
     /// <summary>
     /// {{field.comment}}
     /// </summary>
+{{~end~}}
     public {{db_cs_define_type ctype}} {{field.cs_style_name}}
     { 
         get
@@ -136,21 +142,27 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
         }
     }
         {{~else~}}
+{{~if field.comment != '' ~}}
         /// <summary>
         /// {{field.comment}}
         /// </summary>
+{{~end~}}
          public {{db_cs_define_type ctype}} {{field.cs_style_name}} => {{field.internal_name}};
         {{~end~}}
 
         {{~if ctype.bean || ctype.element_type ~}}
+{{~if field.comment != '' ~}}
         /// <summary>
         /// {{field.comment}}
         /// </summary>
+{{~end~}}
         {{db_cs_readonly_define_type ctype}} {{readonly_name}}.{{field.cs_style_name}} => {{field.internal_name}};
         {{~else if ctype.is_map~}}
+{{~if field.comment != '' ~}}
         /// <summary>
         /// {{field.comment}}
         /// </summary>
+{{~end~}}
         {{db_cs_readonly_define_type ctype}} {{readonly_name}}.{{field.cs_style_name}} => new Bright.Transaction.Collections.PReadOnlyMap<{{db_cs_readonly_define_type ctype.key_type}}, {{db_cs_readonly_define_type ctype.value_type}}, {{db_cs_define_type ctype.value_type}}>({{field.internal_name}});
         {{~end~}}
     {{~end~}}
@@ -249,9 +261,11 @@ using System.Threading.Tasks;
 namespace {{x.namespace_with_top_module}}
 {
 
+{{~if x.comment != '' ~}}
 /// <summary>
 /// {{x.comment}}
 /// </summary>
+{{~end~}}
 public sealed class {{name}}
 {
     public static {{base_table_type}} Table { get; } = new {{internal_table_type}}();
