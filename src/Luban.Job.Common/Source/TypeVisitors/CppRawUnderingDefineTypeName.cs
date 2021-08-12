@@ -13,47 +13,47 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TByte type)
         {
-            return "uint8_t";
+            return "::bright::byte";
         }
 
         public string Accept(TShort type)
         {
-            return "int16_t";
+            return "::bright::int16";
         }
 
         public string Accept(TFshort type)
         {
-            return "int16_t";
+            return "::bright::int16";
         }
 
         public string Accept(TInt type)
         {
-            return "int32_t";
+            return "::bright::int32";
         }
 
         public string Accept(TFint type)
         {
-            return "int32_t";
+            return "::bright::int32";
         }
 
         public string Accept(TLong type)
         {
-            return "int64_t";
+            return "::bright::int64";
         }
 
         public string Accept(TFlong type)
         {
-            return "int64_t";
+            return "::bright::int64";
         }
 
         public string Accept(TFloat type)
         {
-            return "float";
+            return "::bright::float32";
         }
 
         public string Accept(TDouble type)
         {
-            return "double";
+            return "::bright::float64";
         }
 
         public string Accept(TEnum type)
@@ -63,17 +63,17 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TString type)
         {
-            return "std::string";
+            return "::bright::String";
         }
 
         public string Accept(TBytes type)
         {
-            return "bright::Bytes";
+            return "::bright::Bytes";
         }
 
         public string Accept(TText type)
         {
-            return "std::string";
+            return "::bright::String";
         }
 
         public virtual string Accept(TBean type)
@@ -83,42 +83,42 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TArray type)
         {
-            return $"std::vector<{type.ElementType.Apply(this)}>";
+            return $"::bright::Vector<{type.ElementType.Apply(this)}>";
         }
 
         public string Accept(TList type)
         {
-            return $"std::vector<{type.ElementType.Apply(this)}>";
+            return $"::bright::Vector<{type.ElementType.Apply(this)}>";
         }
 
         public string Accept(TSet type)
         {
-            return $"std::unordered_set<{type.ElementType.Apply(this)}>";
+            return $"::bright::HashSet<{type.ElementType.Apply(this)}>";
         }
 
         public string Accept(TMap type)
         {
-            return $"std::unordered_map<{type.KeyType.Apply(this)}, {type.ValueType.Apply(this)}>";
+            return $"::bright::HashMap<{type.KeyType.Apply(this)}, {type.ValueType.Apply(this)}>";
         }
 
         public string Accept(TVector2 type)
         {
-            return "bright::math::Vector2";
+            return "::bright::Vector2";
         }
 
         public string Accept(TVector3 type)
         {
-            return "bright::math::Vector3";
+            return "::bright::Vector3";
         }
 
         public string Accept(TVector4 type)
         {
-            return "bright::math::Vector4";
+            return "::bright::Vector4";
         }
 
         public string Accept(TDateTime type)
         {
-            return "int32_t";
+            return "::bright::datetime_t";
         }
     }
 }

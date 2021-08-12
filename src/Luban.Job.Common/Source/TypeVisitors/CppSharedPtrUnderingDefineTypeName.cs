@@ -8,7 +8,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public override string Accept(TBean type)
         {
-            return $"std::shared_ptr<{type.Bean.CppFullName}>";
+            return $"::bright::SharedPtr<{type.Bean.CppFullName}>";
         }
     }
 }

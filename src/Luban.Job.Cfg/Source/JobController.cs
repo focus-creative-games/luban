@@ -477,11 +477,10 @@ namespace Luban.Job.Cfg
             ctx.Lan = GetLanguage(genType);
             foreach (var c in ctx.ExportTypes)
             {
-                var t = c;
                 ctx.Tasks.Add(Task.Run(() =>
                 {
-                    var content = FileHeaderUtil.ConcatAutoGenerationHeader(ctx.Render.RenderAny(t), ctx.Lan);
-                    var file = RenderFileUtil.GetDefTypePath(t.FullName, ctx.Lan);
+                    var content = FileHeaderUtil.ConcatAutoGenerationHeader(ctx.Render.RenderAny(c), ctx.Lan);
+                    var file = RenderFileUtil.GetDefTypePath(c.FullName, ctx.Lan);
                     var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
                     ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                 }));
@@ -715,11 +714,10 @@ namespace {ctx.TopModule}
 
             foreach (var c in renderTypes)
             {
-                var table = c;
                 ctx.Tasks.Add(Task.Run(() =>
                 {
-                    var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderAny(table), ELanguage.CPP);
-                    var file = "editor_" + RenderFileUtil.GetUeCppDefTypeHeaderFilePath(table.FullName);
+                    var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderAny(c), ELanguage.CPP);
+                    var file = "editor_" + RenderFileUtil.GetUeCppDefTypeHeaderFilePath(c.FullName);
                     var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
                     ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                 }));
@@ -748,11 +746,10 @@ namespace {ctx.TopModule}
             var render = new EditorCsRender();
             foreach (var c in ctx.Assembly.Types.Values)
             {
-                var type = c;
                 ctx.Tasks.Add(Task.Run(() =>
                 {
-                    var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderAny(type), ELanguage.CS);
-                    var file = RenderFileUtil.GetDefTypePath(type.FullName, ELanguage.CS);
+                    var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderAny(c), ELanguage.CS);
+                    var file = RenderFileUtil.GetDefTypePath(c.FullName, ELanguage.CS);
                     var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
                     ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                 }));
@@ -764,16 +761,15 @@ namespace {ctx.TopModule}
             var render = new UE4BpCppRender();
             foreach (var c in ctx.ExportTypes)
             {
-                var type = c;
-                if (!(type is DefEnum || type is DefBean))
+                if (!(c is DefEnum || c is DefBean))
                 {
                     continue;
                 }
 
                 ctx.Tasks.Add(Task.Run(() =>
                 {
-                    var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderAny(type), ELanguage.CPP);
-                    var file = "bp_" + RenderFileUtil.GetUeCppDefTypeHeaderFilePath(type.FullName);
+                    var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderAny(c), ELanguage.CPP);
+                    var file = "bp_" + RenderFileUtil.GetUeCppDefTypeHeaderFilePath(c.FullName);
                     var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
                     ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                 }));
@@ -783,9 +779,8 @@ namespace {ctx.TopModule}
         private void GenDataScatter(GenContext ctx)
         {
             string genType = ctx.GenType;
-            foreach (var c in ctx.ExportTables)
+            foreach (var table in ctx.ExportTables)
             {
-                var table = c;
                 ctx.Tasks.Add(Task.Run(() =>
                 {
                     var file = GetOutputFileName(genType, table.OutputDataFile);
@@ -807,10 +802,9 @@ namespace {ctx.TopModule}
             var allJsonTask = new List<Task<string>>();
             foreach (var c in exportTables)
             {
-                var table = c;
                 allJsonTask.Add(Task.Run(() =>
                 {
-                    return (string)DataExporterUtil.ToOutputData(table, ctx.Assembly.GetTableExportDataList(table), "data_json");
+                    return (string)DataExporterUtil.ToOutputData(c, ctx.Assembly.GetTableExportDataList(c), "data_json");
                 }));
             }
 
@@ -839,10 +833,9 @@ namespace {ctx.TopModule}
             var genDataTasks = new List<Task<List<ResourceInfo>>>();
             foreach (var c in ctx.ExportTables)
             {
-                var table = c;
                 genDataTasks.Add(Task.Run(() =>
                 {
-                    return DataExporterUtil.ExportResourceList(ctx.Assembly.GetTableExportDataList(table));
+                    return DataExporterUtil.ExportResourceList(ctx.Assembly.GetTableExportDataList(c));
                 }));
             }
 

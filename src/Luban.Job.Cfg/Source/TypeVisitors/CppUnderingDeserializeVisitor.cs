@@ -84,22 +84,22 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TArray type, string bufName, string fieldName)
         {
-            return $"{{int32_t n; if(!{bufName}.readSize(n)) return false; n = std::min(n, {bufName}.size());{fieldName}.reserve(n);for(int i = 0 ; i < n ; i++) {{ {type.ElementType.Apply(CppDefineTypeName.Ins)} _e;{type.ElementType.Apply(this, bufName, "_e")} {fieldName}.push_back(_e);}}}}";
+            return $"{{::bright::int32 n; if(!{bufName}.readSize(n)) return false; n = std::min(n, ::bright::int32({bufName}.size()));{fieldName}.reserve(n);for(int i = 0 ; i < n ; i++) {{ {type.ElementType.Apply(CppDefineTypeName.Ins)} _e;{type.ElementType.Apply(this, bufName, "_e")} {fieldName}.push_back(_e);}}}}";
         }
 
         public string Accept(TList type, string bufName, string fieldName)
         {
-            return $"{{int32_t n; if(!{bufName}.readSize(n)) return false; n = std::min(n, {bufName}.size()); {fieldName}.reserve(n);for(int i = 0 ; i < n ; i++) {{ {type.ElementType.Apply(CppDefineTypeName.Ins)} _e;  {type.ElementType.Apply(this, bufName, "_e")} {fieldName}.push_back(_e);}}}}";
+            return $"{{::bright::int32 n; if(!{bufName}.readSize(n)) return false; n = std::min(n, ::bright::int32({bufName}.size())); {fieldName}.reserve(n);for(int i = 0 ; i < n ; i++) {{ {type.ElementType.Apply(CppDefineTypeName.Ins)} _e;  {type.ElementType.Apply(this, bufName, "_e")} {fieldName}.push_back(_e);}}}}";
         }
 
         public string Accept(TSet type, string bufName, string fieldName)
         {
-            return $"{{int32_t n; if(!{bufName}.readSize(n)) return false; n = std::min(n, {bufName}.size()); {fieldName}.reserve(n * 3 / 2);for(int i = 0 ; i < n ; i++) {{ {type.ElementType.Apply(CppDefineTypeName.Ins)} _e;  {type.ElementType.Apply(this, bufName, "_e")} {fieldName}.insert(_e);}}}}";
+            return $"{{::bright::int32 n; if(!{bufName}.readSize(n)) return false; n = std::min(n, ::bright::int32({bufName}.size())); {fieldName}.reserve(n * 3 / 2);for(int i = 0 ; i < n ; i++) {{ {type.ElementType.Apply(CppDefineTypeName.Ins)} _e;  {type.ElementType.Apply(this, bufName, "_e")} {fieldName}.insert(_e);}}}}";
         }
 
         public string Accept(TMap type, string bufName, string fieldName)
         {
-            return $"{{int32_t n; if(!{bufName}.readSize(n)) return false; n = std::min(n, {bufName}.size()); {fieldName}.reserve(n * 3 / 2);for(int i = 0 ; i < n ; i++) {{ {type.KeyType.Apply(CppDefineTypeName.Ins)} _k;  {type.KeyType.Apply(this, bufName, "_k")} {type.ValueType.Apply(CppDefineTypeName.Ins)} _v;  {type.ValueType.Apply(this, bufName, "_v")}     {fieldName}[_k] = _v;}}}}";
+            return $"{{::bright::int32 n; if(!{bufName}.readSize(n)) return false; n = std::min(n, (::bright::int32){bufName}.size()); {fieldName}.reserve(n * 3 / 2);for(int i = 0 ; i < n ; i++) {{ {type.KeyType.Apply(CppDefineTypeName.Ins)} _k;  {type.KeyType.Apply(this, bufName, "_k")} {type.ValueType.Apply(CppDefineTypeName.Ins)} _v;  {type.ValueType.Apply(this, bufName, "_v")}     {fieldName}[_k] = _v;}}}}";
 
         }
 
