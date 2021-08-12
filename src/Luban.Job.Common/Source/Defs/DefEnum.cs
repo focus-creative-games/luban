@@ -74,7 +74,14 @@ namespace Luban.Job.Common.Defs
 
             foreach (var item in e.Items)
             {
-                Items.Add(new Item { Name = item.Name, Alias = item.Alias, Value = item.Value, Comment = item.Comment });
+                Items.Add(new Item
+                {
+                    Name =
+                    item.Name,
+                    Alias = item.Alias,
+                    Value = item.Value,
+                    Comment = string.IsNullOrWhiteSpace(item.Comment) ? item.Alias : item.Comment,
+                });
             }
         }
 
