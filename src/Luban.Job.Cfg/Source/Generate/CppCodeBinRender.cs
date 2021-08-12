@@ -47,7 +47,7 @@ class {{name}} : public {{if parent_def_type}} {{parent_def_type.cpp_full_name}}
 {
     public:
 
-    static bool deserialize{{name}}(ByteBuf& _buf, std::shared_ptr<{{name}}>& _out);
+    static bool deserialize{{name}}(ByteBuf& _buf, ::bright::SharedPtr<{{name}}>& _out);
 
     {{name}}()
     { 
@@ -273,7 +273,7 @@ namespace {{x.top_module}}
         return true;
     }
 
-    bool {{type.cpp_full_name}}::deserialize{{type.name}}(ByteBuf& _buf, std::shared_ptr<{{type.cpp_full_name}}>& _out)
+    bool {{type.cpp_full_name}}::deserialize{{type.name}}(ByteBuf& _buf, ::bright::SharedPtr<{{type.cpp_full_name}}>& _out)
     {
     {{~if type.is_abstract_type~}}
         int id;

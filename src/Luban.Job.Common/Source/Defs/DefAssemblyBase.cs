@@ -147,15 +147,24 @@ namespace Luban.Job.Common.Defs
             switch (type)
             {
                 case "bool": return nullable ? TBool.NullableIns : TBool.Ins;
+                case "uint8":
                 case "byte": return nullable ? TByte.NullableIns : TByte.Ins;
+                case "int16":
                 case "short": return nullable ? TShort.NullableIns : TShort.Ins;
+                case "fint16":
                 case "fshort": return nullable ? TFshort.NullableIns : TFshort.Ins;
+                case "int32":
                 case "int": return nullable ? TInt.NullableIns : TInt.Ins;
+                case "fint32":
                 case "fint": return nullable ? TFint.NullableIns : TFint.Ins;
+                case "int64":
                 case "long": return nullable ? TLong.NullableIns : TLong.Ins;
                 case "bigint": return nullable ? TLong.NullableBigIns : TLong.BigIns;
+                case "fint64":
                 case "flong": return nullable ? TFlong.NullableIns : TFlong.Ins;
+                case "float32":
                 case "float": return nullable ? TFloat.NullableIns : TFloat.Ins;
+                case "float64":
                 case "double": return nullable ? TDouble.NullableIns : TDouble.Ins;
                 case "bytes": return TBytes.Ins;
                 case "string": return nullable ? TString.NullableIns : TString.Ins;
