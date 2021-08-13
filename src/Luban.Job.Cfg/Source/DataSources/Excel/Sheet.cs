@@ -129,12 +129,16 @@ namespace Luban.Job.Cfg.DataSources.Excel
                         {
                             continue;
                         }
-                        // 如果非多行数据全空，说明该行属于多行数据
+                        // 如果非多行数据全空，或者跟记录第一行完全相同说明该行属于多行数据
                         if (notMultiRowFields.All(f =>
                         {
                             var fieldTitle = title.SubTitles[f.Name];
                             return Sheet.IsBlankRow(row, fieldTitle.FromIndex, fieldTitle.ToIndex);
-                        }))
+                        }) || (recordRows != null && notMultiRowFields.All(f =>
+                        {
+                            var fieldTitle = title.SubTitles[f.Name];
+                            return Sheet.IsSameRow(row, recordRows[0], fieldTitle.FromIndex, fieldTitle.ToIndex);
+                        })))
                         {
                             if (recordRows == null)
                             {
@@ -202,7 +206,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
             {
                 if (Titles.TryGetValue(name, out var title))
                 {
-                    CheckEmptySinceSecondRow(name, title.FromIndex, title.ToIndex);
+                    // CheckEmptySinceSecondRow(name, title.FromIndex, title.ToIndex);
                     var es = new ExcelStream(Rows[0], title.FromIndex, title.ToIndex, sep, namedMode);
                     return es;
                 }
@@ -602,6 +606,41 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 if (v != null && !(v is string s && string.IsNullOrEmpty(s)))
                 {
                     return false;
+                }
+            }
+            return true;
+        }
+
+        private static bool IsSameRow(List<Cell> row1, List<Cell> row2, int fromIndex, int toIndex)
+        {
+            if (row2.Count < toIndex - 1)
+            {
+                return false;
+            }
+            for (int i = Math.Max(1, fromIndex), n = Math.Min(toIndex, row1.Count - 1); i <= n; i++)
+            {
+                var v1 = row1[i].Value;
+                var v2 = row2[i].Value;
+                if (v1 != v2)
+                {
+                    if (v1 == null)
+                    {
+                        if (!(v2 is string s && string.IsNullOrWhiteSpace(s)))
+                        {
+                            return false;
+                        }
+                    }
+                    else if (v2 == null)
+                    {
+                        if (!(v1 is string s && string.IsNullOrWhiteSpace(s)))
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        return v1.ToString() == v2.ToString();
+                    }
                 }
             }
             return true;
