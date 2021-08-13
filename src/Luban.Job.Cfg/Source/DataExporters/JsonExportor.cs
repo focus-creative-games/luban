@@ -150,7 +150,7 @@ namespace Luban.Job.Cfg.DataExporters
             WriteList(type.Datas, ass, x);
         }
 
-        public void Accept(DMap type, DefAssembly ass, Utf8JsonWriter x)
+        public virtual void Accept(DMap type, DefAssembly ass, Utf8JsonWriter x)
         {
             x.WriteStartArray();
             foreach (var d in type.Datas)
