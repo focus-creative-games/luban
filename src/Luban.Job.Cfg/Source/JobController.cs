@@ -804,7 +804,7 @@ namespace {ctx.TopModule}
             {
                 allJsonTask.Add(Task.Run(() =>
                 {
-                    return (string)DataExporterUtil.ToOutputData(c, ctx.Assembly.GetTableExportDataList(c), "data_json");
+                    return (string)DataExporterUtil.ToOutputData(c, ctx.Assembly.GetTableExportDataList(c), "data_json2");
                 }));
             }
 
