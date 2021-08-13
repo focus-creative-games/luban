@@ -260,10 +260,10 @@ namespace Luban.Job.Cfg.Defs
             string input = XmlUtil.GetRequiredAttribute(e, "input");
             string branchInput = XmlUtil.GetOptionalAttribute(e, "branch_input");
             string mode = XmlUtil.GetOptionalAttribute(e, "mode");
-            AddTable(name, module, valueType, index, mode, group, comment, defineFromFile, input, branchInput);
+            AddTable(CurImportFile, name, module, valueType, index, mode, group, comment, defineFromFile, input, branchInput);
         }
 
-        private void AddTable(string name, string module, string valueType, string index, string mode, string group,
+        private void AddTable(string defineFile, string name, string module, string valueType, string index, string mode, string group,
             string comment, bool defineFromExcel, string input, string branchInput)
         {
             var p = new Table()
@@ -284,7 +284,7 @@ namespace Luban.Job.Cfg.Defs
             }
             else if (!ValidGroup(p.Groups, out var invalidGroup))
             {
-                throw new Exception($"定义文件:{CurImportFile} table:'{p.Name}' group:'{invalidGroup}' 不存在");
+                throw new Exception($"定义文件:{defineFile} table:'{p.Name}' group:'{invalidGroup}' 不存在");
             }
             p.InputFiles.AddRange(input.Split(',').Select(s => s.Trim()).Where(s => !string.IsNullOrWhiteSpace(s)));
 
@@ -295,26 +295,16 @@ namespace Luban.Job.Cfg.Defs
                     var nameAndDirs = subBranchStr.Split(':');
                     if (nameAndDirs.Length != 2)
                     {
-                        throw new Exception($"定义文件:{CurImportFile} table:'{p.Name}' branch_input:'{subBranchStr}' 定义不合法");
+                        throw new Exception($"定义文件:{defineFile} table:'{p.Name}' branch_input:'{subBranchStr}' 定义不合法");
                     }
                     var branchDirs = nameAndDirs[1].Split(',', ';').ToList();
                     if (!p.BranchInputFiles.TryAdd(nameAndDirs[0], branchDirs))
                     {
-                        throw new Exception($"定义文件:{CurImportFile} table:'{p.Name}' branch_input:'{subBranchStr}' 子branch:'{nameAndDirs[0]}' 重复");
+                        throw new Exception($"定义文件:{defineFile} table:'{p.Name}' branch_input:'{subBranchStr}' 子branch:'{nameAndDirs[0]}' 重复");
                     }
                 }
             }
 
-            AddTableList(p);
-        }
-
-        private void AddTableList(Table p)
-        {
-            if (!_name2CfgTable.TryAdd(p.Name, p))
-            {
-                var exist = _name2CfgTable[p.Name];
-                throw new Exception($"定义文件:{CurImportFile} table:'{p.Namespace}.{p.Name}' 与 '{exist.Namespace}.{exist.Name}' 名称不能重复");
-            }
             _cfgTables.Add(p);
         }
 
@@ -322,7 +312,6 @@ namespace Luban.Job.Cfg.Defs
         {
             var inputFileInfos = await DataLoaderUtil.CollectInputFilesAsync(this.Agent, table.InputFiles, dataDir);
             var file = inputFileInfos[0];
-
             var source = new ExcelDataSource();
             var stream = new MemoryStream(await this.Agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5));
             var sheet = source.LoadFirstSheet(file.OriginFile, file.SheetName, stream);
@@ -485,11 +474,11 @@ namespace Luban.Job.Cfg.Defs
                     DBean data = r.Data;
                     //s_logger.Info("== read text:{}", r.Data);
                     string fullName = (data.GetField("full_name") as DString).Value.Trim();
-                    if (string.IsNullOrWhiteSpace(fullName))
+                    string name = TypeUtil.GetName(fullName);
+                    if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(name))
                     {
                         throw new Exception($"file:{file.ActualFile} 定义了一个空的table类名");
                     }
-                    string name = TypeUtil.GetName(fullName);
                     string module = TypeUtil.GetNamespace(fullName);
                     string valueType = (data.GetField("value_type") as DString).Value.Trim();
                     string index = (data.GetField("index") as DString).Value.Trim();
@@ -499,7 +488,7 @@ namespace Luban.Job.Cfg.Defs
                     bool isDefineFromExcel = (data.GetField("define_from_excel") as DBool).Value;
                     string inputFile = (data.GetField("input") as DString).Value.Trim();
                     string branchInput = (data.GetField("branch_input") as DString).Value.Trim();
-                    AddTable(name, module, valueType, index, mode, group, comment, isDefineFromExcel, inputFile, branchInput);
+                    AddTable(file.OriginFile, name, module, valueType, index, mode, group, comment, isDefineFromExcel, inputFile, branchInput);
                 };
             }
         }
@@ -551,11 +540,11 @@ namespace Luban.Job.Cfg.Defs
                     DBean data = r.Data;
                     //s_logger.Info("== read text:{}", r.Data);
                     string fullName = (data.GetField("full_name") as DString).Value.Trim();
-                    if (string.IsNullOrWhiteSpace(fullName))
+                    string name = TypeUtil.GetName(fullName);
+                    if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(name))
                     {
                         throw new Exception($"file:{file.ActualFile} 定义了一个空的enum类名");
                     }
-                    string name = TypeUtil.GetName(fullName);
                     string module = TypeUtil.GetNamespace(fullName);
 
                     if (curEnum == null || curEnum.Name != name || curEnum.Namespace != module)
@@ -660,17 +649,13 @@ namespace Luban.Job.Cfg.Defs
                     DBean data = r.Data;
                     //s_logger.Info("== read text:{}", r.Data);
                     string fullName = (data.GetField("full_name") as DString).Value.Trim();
-                    if (string.IsNullOrWhiteSpace(fullName))
-                    {
-                        throw new Exception($"file:{file.ActualFile} 定义了一个空的bean类名");
-                    }
                     string name = TypeUtil.GetName(fullName);
-                    string module = TypeUtil.GetNamespace(fullName);
-
-                    if (string.IsNullOrWhiteSpace(name))
+                    if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(name))
                     {
                         throw new Exception($"file:{file.ActualFile} 定义了一个空bean类名");
                     }
+                    string module = TypeUtil.GetNamespace(fullName);
+
 
                     string sep = (data.GetField("sep") as DString).Value.Trim();
                     string comment = (data.GetField("comment") as DString).Value.Trim();
