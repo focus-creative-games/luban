@@ -604,6 +604,7 @@ namespace Luban.Job.Cfg.Defs
                     new CfgField() { Name = "type", Type = "string" },
                     new CfgField() { Name = "sep", Type = "string" },
                     new CfgField() { Name = "is_multi_rows", Type = "bool" },
+                    new CfgField() { Name = "index", Type = "string" },
                     new CfgField() { Name = "group", Type = "string" },
                     new CfgField() { Name = "reference", Type = "string" },
                     new CfgField() { Name = "path", Type = "string" },
@@ -684,7 +685,7 @@ namespace Luban.Job.Cfg.Defs
                         Fields = fields.Datas.Select(d => (DBean)d).Select(b => this.CreateField(
                             (b.GetField("name") as DString).Value.Trim(),
                             (b.GetField("type") as DString).Value.Trim(),
-                            "",
+                            (b.GetField("index") as DString).Value.Trim(),
                             (b.GetField("sep") as DString).Value.Trim(),
                             (b.GetField("is_multi_rows") as DBool).Value,
                             (b.GetField("group") as DString).Value,
