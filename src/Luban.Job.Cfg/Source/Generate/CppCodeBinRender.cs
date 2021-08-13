@@ -218,7 +218,7 @@ class {{name}}
     {{~for table in tables ~}}
 {{~if table.comment != '' ~}}
     /**
-     {{table.comment}}
+     * {{table.comment}}
      */
 {{~end~}}
      {{table.cpp_full_name}} {{table.name}};

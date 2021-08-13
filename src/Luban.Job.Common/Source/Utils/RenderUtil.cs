@@ -220,7 +220,7 @@ enum class {{name}}
 {{~if item.comment != '' ~}}
     /**
      * {{item.comment}}
-    */
+     */
 {{~end~}}
     {{item.name}} = {{item.value}},
     {{~end~}}
