@@ -12,7 +12,7 @@ namespace Luban.Job.Cfg.Defs
         {
             if (type.IsNullable)
             {
-                return $"{{ var _j = {bufName}.GetProperty(\"{jsonFieldName}\"); if (_j.ValueKind != JsonValueKind.Null) {{ {type.Apply(TypeVisitors.CsJsonDeserialize.Ins, "_j", fieldName)} }} else {{ {fieldName} = null; }} }}";
+                return $"{{ if ({bufName}.TryGetProperty(\"{jsonFieldName}\", out var _j) && _j.ValueKind != JsonValueKind.Null) {{ {type.Apply(TypeVisitors.CsJsonDeserialize.Ins, "_j", fieldName)} }} else {{ {fieldName} = null; }} }}";
             }
             else
             {
@@ -156,14 +156,52 @@ namespace Luban.Job.Cfg.Defs
             }
         }
 
-        public static string Py3Deserialize(string fieldName, string jsonFieldName, TType type)
+        public static string Py3DeserializeValue(string fieldName, string jsonVarName, TType type)
         {
-            return type.Apply(PyDeserializeVisitor.Py3Ins, $"{jsonFieldName}", fieldName);
+            if (type.IsNullable)
+            {
+                return $"if {jsonVarName} != None: {type.Apply(PyUnderingDeserializeVisitor.Py3Ins, jsonVarName, fieldName)}";
+            }
+            else
+            {
+                return type.Apply(PyUnderingDeserializeVisitor.Py3Ins, jsonVarName, fieldName);
+            }
         }
 
-        public static string Py27Deserialize(string fieldName, string jsonFieldName, TType type)
+        public static string Py27DeserializeValue(string fieldName, string jsonVarName, TType type)
         {
-            return type.Apply(PyDeserializeVisitor.Py27Ins, $"{jsonFieldName}", fieldName);
+            if (type.IsNullable)
+            {
+                return $"if {jsonVarName} != None: {type.Apply(PyUnderingDeserializeVisitor.Py27Ins, jsonVarName, fieldName)}";
+            }
+            else
+            {
+                return type.Apply(PyUnderingDeserializeVisitor.Py3Ins, jsonVarName, fieldName);
+            }
+        }
+
+        public static string Py3DeserializeField(string fieldName, string jsonVarName, string jsonFieldName, TType type)
+        {
+            if (type.IsNullable)
+            {
+                return $"if {jsonVarName}.get('{jsonFieldName}') != None: {type.Apply(PyUnderingDeserializeVisitor.Py3Ins, $"{jsonVarName}['{jsonFieldName}']", fieldName)}";
+            }
+            else
+            {
+                return type.Apply(PyUnderingDeserializeVisitor.Py3Ins, $"{jsonVarName}['{jsonFieldName}']", fieldName);
+            }
+        }
+
+        public static string Py27DeserializeField(string fieldName, string jsonVarName, string jsonFieldName, TType type)
+        {
+            if (type.IsNullable)
+            {
+                return $"if {jsonVarName}.get('{jsonFieldName}') != None: {type.Apply(PyUnderingDeserializeVisitor.Py3Ins, $"{jsonVarName}['{jsonFieldName}']", fieldName)}";
+            }
+            else
+            {
+                return type.Apply(PyUnderingDeserializeVisitor.Py27Ins, $"{jsonVarName}['{jsonFieldName}']", fieldName);
+            }
         }
     }
 }

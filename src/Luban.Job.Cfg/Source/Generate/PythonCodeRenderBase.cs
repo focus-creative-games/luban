@@ -55,7 +55,7 @@ class {{x.py_full_name}}:
 {{comment}}
 '''
 {{~end~}}
-class {{py_full_name}}:
+class {{py_full_name}}(Enum):
     {{~ for item in items ~}}
 {{~if item.comment != '' ~}}
     '''

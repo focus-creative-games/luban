@@ -48,10 +48,7 @@ class {{name}} {{if parent_def_type}}({{parent_def_type.py_full_name}}){{else if
         {{parent_def_type.py_full_name}}.__init__(self, _json_)
         {{~end~}}
         {{~ for field in export_fields ~}}
-            {{~if !field.ctype.is_nullable~}}
-        if _json_['{{field.name}}'] == None: raise Exception()
-            {{~end~}}
-        {{py3_deserialize ('self.' + field.py_style_name) ('_json_[""' + field.name + '""]') field.ctype}}
+        {{py3_deserialize_field ('self.' + field.py_style_name) '_json_' field.name field.ctype}}
         {{~end~}}
         {{~if export_fields.empty?}}
         pass
@@ -83,7 +80,7 @@ class {{name}}:
         self._dataList = []
         
         for _json2_ in _json_:
-            {{py3_deserialize '_v' '_json2_' value_type}}
+            {{py3_deserialize_value '_v' '_json2_' value_type}}
             self._dataList.append(_v)
             self._dataMap[_v.{{x.index_field.py_style_name}}] = _v
 
@@ -96,7 +93,7 @@ class {{name}}:
 
     def __init__(self, _json_):
         if (len(_json_) != 1): raise Exception('table mode=one, but size != 1')
-        {{py3_deserialize 'self._data' '_json_[0]' value_type}}
+        {{py3_deserialize_value 'self._data' '_json_[0]' value_type}}
 
     def getData(self) : return self._data
 
