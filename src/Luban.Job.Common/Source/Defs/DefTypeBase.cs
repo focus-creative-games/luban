@@ -23,6 +23,8 @@ namespace Luban.Job.Common.Defs
 
         public string FullNameWithTopModule => TypeUtil.MakeFullName(AssemblyBase.TopModule, FullName);
 
+        public string JavaFullName => TypeUtil.MakeFullName(Namespace, Name);
+
         public string GoFullName => TypeUtil.MakeGoFullName(Namespace, Name);
 
         public string GoPkgName => TypeUtil.MakeGoPkgName(Namespace);

@@ -7,72 +7,72 @@ namespace Luban.Job.Common.TypeVisitors
     {
         public string Accept(TBool type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadBool();";
+            return $"{fieldName} = {bufName}.ReadBool()";
         }
 
         public string Accept(TByte type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadByte();";
+            return $"{fieldName} = {bufName}.ReadByte()";
         }
 
         public string Accept(TShort type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadShort();";
+            return $"{fieldName} = {bufName}.ReadShort()";
         }
 
         public string Accept(TFshort type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadFshort();";
+            return $"{fieldName} = {bufName}.ReadFshort()";
         }
 
         public string Accept(TInt type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadInt();";
+            return $"{fieldName} = {bufName}.ReadInt()";
         }
 
         public string Accept(TFint type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadFint();";
+            return $"{fieldName} = {bufName}.ReadFint()";
         }
 
         public string Accept(TLong type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.{(type.IsBigInt ? "ReadLong" : "ReadLongAsNumber")}();";
+            return $"{fieldName} = {bufName}.{(type.IsBigInt ? "ReadLong" : "ReadLongAsNumber")}()";
         }
 
         public string Accept(TFlong type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadFlong();";
+            return $"{fieldName} = {bufName}.ReadFlong()";
         }
 
         public string Accept(TFloat type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadFloat();";
+            return $"{fieldName} = {bufName}.ReadFloat()";
         }
 
         public string Accept(TDouble type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadDouble();";
+            return $"{fieldName} = {bufName}.ReadDouble()";
         }
 
         public string Accept(TEnum type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadInt();";
+            return $"{fieldName} = {bufName}.ReadInt()";
         }
 
         public string Accept(TString type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadString();";
+            return $"{fieldName} = {bufName}.ReadString()";
         }
 
         public string Accept(TBytes type, string bufName, string fieldName)
         {
-            return $"{fieldName} = new Uint8Array({bufName}.ReadArrayBuffer());";
+            return $"{fieldName} = new Uint8Array({bufName}.ReadArrayBuffer())";
         }
 
         public string Accept(TText type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadString();";
+            return $"{fieldName} = {bufName}.ReadString()";
         }
 
         public abstract string Accept(TBean type, string bufVarName, string fieldName);
@@ -118,7 +118,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public virtual string Accept(TList type, string bufVarName, string fieldName)
         {
-            return $"{{ {fieldName} = []; for(let i = 0, n = {bufVarName}.ReadSize() ; i < n ; i++) {{ let _e :{type.ElementType.Apply(TypescriptDefineTypeNameVisitor.Ins)};{type.ElementType.Apply(this, bufVarName, "_e")}; {fieldName}.push(_e) }} }}";
+            return $"{{ {fieldName} = []; for(let i = 0, n = {bufVarName}.ReadSize() ; i < n ; i++) {{ let _e :{type.ElementType.Apply(TypescriptDefineTypeNameVisitor.Ins)}; {type.ElementType.Apply(this, bufVarName, "_e")}; {fieldName}.push(_e) }} }}";
         }
 
         public virtual string Accept(TSet type, string bufVarName, string fieldName)
@@ -148,7 +148,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TDateTime type, string bufVarName, string fieldName)
         {
-            return $"{fieldName} = {bufVarName}.ReadInt();";
+            return $"{fieldName} = {bufVarName}.ReadInt()";
         }
     }
 }

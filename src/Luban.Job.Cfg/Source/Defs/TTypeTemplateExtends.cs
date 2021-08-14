@@ -71,11 +71,11 @@ namespace Luban.Job.Cfg.Defs
             var table = field.Assembly.GetCfgTable(field.Ref.FirstTable);
             if (field.IsNullable)
             {
-                return $"this.{refVarName} = this.{name} != null ? (({table.CppFullName})_tables.get(\"{tableName}\")).get({name}) : null;";
+                return $"this.{refVarName} = this.{name} != null ? (({table.FullNameWithTopModule})_tables.get(\"{tableName}\")).get({name}) : null;";
             }
             else
             {
-                return $"this.{refVarName} = (({table.CppFullName})_tables.get(\"{tableName}\")).get({name});";
+                return $"this.{refVarName} = (({table.FullNameWithTopModule})_tables.get(\"{tableName}\")).get({name});";
             }
         }
 
@@ -179,31 +179,5 @@ namespace Luban.Job.Cfg.Defs
                 return type.Apply(PyUnderingDeserializeVisitor.Ins, $"{jsonVarName}['{jsonFieldName}']", fieldName);
             }
         }
-
-        /* 
-        public static string Py27DeserializeValue(string fieldName, string jsonVarName, TType type)
-        {
-            if (type.IsNullable)
-            {
-                return $"if {jsonVarName} != None: {type.Apply(PyUnderingDeserializeVisitor.Py27Ins, jsonVarName, fieldName)}";
-            }
-            else
-            {
-                return type.Apply(PyUnderingDeserializeVisitor.Py3Ins, jsonVarName, fieldName);
-            }
-        }
-
-        public static string Py27DeserializeField(string fieldName, string jsonVarName, string jsonFieldName, TType type)
-        {
-            if (type.IsNullable)
-            {
-                return $"if {jsonVarName}.get('{jsonFieldName}') != None: {type.Apply(PyUnderingDeserializeVisitor.Py3Ins, $"{jsonVarName}['{jsonFieldName}']", fieldName)}";
-            }
-            else
-            {
-                return type.Apply(PyUnderingDeserializeVisitor.Py27Ins, $"{jsonVarName}['{jsonFieldName}']", fieldName);
-            }
-        }
-        */
     }
 }
