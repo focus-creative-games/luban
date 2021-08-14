@@ -45,8 +45,10 @@ Luban适合有以下需求的开发者：
   - QQ群: 692890842 （Luban开发交流群） [点击链接加入](https://qm.qq.com/cgi-bin/qm/qr?k=4bMoe11knBW7Tcs1sqMafZE1I4zpT4sh&jump_from=webapi)。 有使用方面的疑问请及时加QQ群询问，随时有人帮助解决。
   - 邮箱: taojingjian#gmail.com
   - Skypy群: https://join.skype.com/xr2nhdMKjac0
-  		
-  		
+
+
+-----
+
 ## 特性
 - 支持excel族、json、xml、lua、yaml 多种数据格式，基本统一了游戏常见的配置数据
 - **强大完备的类型系统**。**可以优雅表达任意复杂的数据结构**。支持所有常见原生类型、datetime类型、容器类型list,set,map、枚举和结构、**多态结构**以及**可空类型**。
@@ -92,40 +94,129 @@ Luban适合有以下需求的开发者：
    - 其他所有支持lua的引擎和平台
    - 其他所有支持js的引擎和平台
 
+-----
 
 ## luban工作流程Pipeline
 
+<br/>
+<br/>
+
 ![pipeline](docs/images/pipeline.jpg)
 
-## 快速预览
+
+<br/>
+<br/>
+
+-------
+## benchmark 性能测试结果
+
+硬件：Intel(R) Core i7-10700 @ 2.9G 16核，32G 内存
+
+数据集：500个excel表，每个表有1000行的记录，记录较为复杂
+
+测试结果：
+
+| 格式 | 全量生成耗时 | 增量生成耗时 | 单个输出文件大小 | 输出文件总大小 |
+| ---- | --------| ------  | ----            | ------ |
+| bin  | 15.652 s| 797 ms  | 164 K            | 59.5 M |
+| json | 17.746 s| 796 ms  | 1.11 M           | 555 M   |
+| lua  | 17.323 s| 739 ms  | 433 K           | 212 M   |
+
+
+<br/>
+
+-----
+## 代码快速预览
+
+
+这儿只简略展示lua、c#、typescript、go语言在开发中的用法，更多语言以及更详细的使用范例和代码见[示例项目](https://github.com/focus-creative-games/luban_examples)。
+
+
+- Lua 使用示例
+
+  ```Lua
+  -- 访问一个单例表
+  print(require("TbGlobal").name)
+  -- 访问普通的 key-value 表
+  print(require("TbItem")[12].x1)
+  ```
+
+- C# 使用示例
+
+  ```C#
+  // 一行代码可以加载所有配置。 cfg.Tables 包含所有表的一个实例字段。
+  var tables = new cfg.Tables(file => return new ByteBuf(File.ReadAllBytes("<数据路径>/" + file)));
+  // 访问一个单例表
+  Console.WriteLine(tables.TbGlobal.Name);
+  // 访问普通的 key-value 表
+  Console.WriteLine(tables.TbItem.Get(12).X1);
+  // 支持 operator []用法
+  Console.WriteLine(tables.TbMail[1001].X2);
+  ```
+
+- typescript 使用示例
+
+	```typescript
+	// 一行代码可以加载所有配置。 cfg.Tables 包含所有表的一个实例字段。
+	let tables = new cfg.Tables(f => JsHelpers.LoadFromFile(gameConfDir, f))
+	// 访问一个单例表
+	console.log(tables.TbGlobal.name)
+	// 访问普通的 key-value 表
+	console.log(tables.TbItem.get(12).x1)
+	```
+
+- go 使用示例
+	```go
+	// 一行代码可以加载所有配置。 cfg.Tables 包含所有表的一个实例字段。
+	if tables , err := cfg.NewTables(loader) ; err != nil {
+		println(err.Error())
+		return
+	}
+	// 访问一个单例表
+	println(tables.TbGlobal.Name)
+	// 访问普通的 key-value 表
+	println(tables.TbItem.Get(12).X1)
+
+	```
+
+------
+
+## 配置快速预览
 
 **luban兼容传统的excel导表工具，可以在excel定义完整的数据表**。与常见的专注于excel的导表工具不同，luban传统做法为定义与数据分离，使用单独的xml定义 **表和结构**，数据文件只包含数据。
 
 下面展示完普通兼容例子后，剩余例子都是**定义与数据分离**的传统风格。使用者自己选择是定义与数据混合的方式还是定义与数据分离的方式或者混用两种方式。目前luban_examples项目中大多数示例使用定义与数据分离的方式。
 
------
-
 ### 传统兼容横表
+
+<br/>
 
 ![兼容横表](docs/images/examples/ex_01.png)
 
 ### 传统兼容纵表
 
+<br/>
+
 ![兼容纵表](docs/images/examples/ex_02.png) 
 
 ### excel中添加table声明
+<br/>
 
 ![tables.xlsx](docs/images/examples/ex_06.png) 
 
 ### 在excel中定义enum 类型
 
+<br/>
+
 ![enums.xlsx](docs/images/examples/ex_05.png)
 
 ### 在excel中定义bean 类型
 
+<br/>
+
 ![enums.xlsx](docs/images/examples/ex_07.png)
 
------
+<br/>
 
 ### 常规的原生数据 （从本示例起为定义与数据分离的模式）
 
@@ -826,85 +917,6 @@ k15:
   x2: 2
 
 ```
-------
-
-## 代码使用示例
-
-这儿只简略展示lua、c#、typescript、go语言在开发中的用法，更多语言以及更详细的使用范例和代码见[示例项目](https://github.com/focus-creative-games/luban_examples)。
-
-- Lua 使用示例
-
-  ```Lua
-  -- 访问一个单例表
-  print(require("TbGlobal").name)
-  -- 访问普通的 key-value 表
-  print(require("TbItem")[12].x1)
-  ```
-
-- C# 使用示例
-
-  ```C#
-  // 一行代码可以加载所有配置。 cfg.Tables 包含所有表的一个实例字段。
-  var tables = new cfg.Tables(file => return new ByteBuf(File.ReadAllBytes("<数据路径>/" + file)));
-  // 访问一个单例表
-  Console.WriteLine(tables.TbGlobal.Name);
-  // 访问普通的 key-value 表
-  Console.WriteLine(tables.TbItem.Get(12).X1);
-  // 支持 operator []用法
-  Console.WriteLine(tables.TbMail[1001].X2);
-  ```
-
-- typescript 使用示例
-
-	```typescript
-	// 一行代码可以加载所有配置。 cfg.Tables 包含所有表的一个实例字段。
-	let tables = new cfg.Tables(f => JsHelpers.LoadFromFile(gameConfDir, f))
-	// 访问一个单例表
-	console.log(tables.TbGlobal.name)
-	// 访问普通的 key-value 表
-	console.log(tables.TbItem.get(12).x1)
-	```
-
-- go 使用示例
-	```go
-	// 一行代码可以加载所有配置。 cfg.Tables 包含所有表的一个实例字段。
-	if tables , err := cfg.NewTables(loader) ; err != nil {
-		println(err.Error())
-		return
-	}
-	// 访问一个单例表
-	println(tables.TbGlobal.Name)
-	// 访问普通的 key-value 表
-	println(tables.TbItem.Get(12).X1)
-
-	```
-- [更多语言的例子](docs/samples.md)
-
-------
-
-
-## benchmark 性能测试结果
-
-
-硬件：
-
-	Intel(R) Core i7-10700 @ 2.9G 16核
-
-	32G 内存
-
-数据集
- 	
-	 500个excel表
-	 每个表有1000行比较大的记录
-	 每个表文件大小 132k
-
-测试结果：
-
-| 格式 | 首次耗时 | 累积耗时 | 单个输出文件大小 | 输出文件总大小 |
-| ---- | --------| ------  | ----            | ------ |
-| bin  | 15.652 s| 797 ms  | 164 K            | 59.5 M |
-| json | 17.746 s| 796 ms  | 1.11 M           | 555 M   |
-| lua  | 17.323 s| 739 ms  | 433 K           | 212 M   |
 
 -----
 
