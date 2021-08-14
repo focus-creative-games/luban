@@ -46,7 +46,7 @@ namespace Luban.Job.Cfg
             [Option("output_data_json_monolithic_file", Required = false, HelpText = "output monolithic json file")]
             public string OutputDataJsonMonolithicFile { get; set; }
 
-            [Option("gen_types", Required = true, HelpText = "code_cs_bin,code_cs_json,code_cs_unity_json,code_lua_bin,code_java_bin,code_go_bin,code_go_json,code_cpp_bin,code_python27_json,code_python3_json,code_typescript_bin,code_typescript_json,data_bin,data_lua,data_json,data_json2,data_json_monolithic . can be multi")]
+            [Option("gen_types", Required = true, HelpText = "code_cs_bin,code_cs_json,code_cs_unity_json,code_lua_bin,code_java_bin,code_go_bin,code_go_json,code_cpp_bin,code_python3_json,code_typescript_bin,code_typescript_json,data_bin,data_lua,data_json,data_json2,data_json_monolithic . can be multi")]
             public string GenType { get; set; }
 
             [Option('s', "service", Required = true, HelpText = "service")]
@@ -87,7 +87,6 @@ namespace Luban.Job.Cfg
                 case "code_cpp_bin": return new CppCodeBinRender();
                 case "code_lua_bin": return new LuaCodeBinRender();
                 case "code_lua_lua": return new LuaCodeLuaRender();
-                case "code_python27_json": return new Python27CodeJsonRender();
                 case "code_python3_json": return new Python3CodeJsonRender();
                 case "code_typescript_bin": return new TypescriptCodeBinRender();
                 case "code_typescript_json": return new TypescriptCodeJsonRender();
@@ -112,7 +111,6 @@ namespace Luban.Job.Cfg
                 case "code_cpp_bin": return ELanguage.CPP;
                 case "code_lua_bin":
                 case "code_lua_lua": return ELanguage.LUA;
-                case "code_python27_json":
                 case "code_python3_json": return ELanguage.PYTHON;
                 case "code_typescript_bin":
                 case "code_typescript_json": return ELanguage.TYPESCRIPT;
@@ -359,7 +357,7 @@ namespace Luban.Job.Cfg
                             GenTypescriptCode(ctx);
                             break;
                         }
-                        case "code_python27_json":
+                        case "code_python3_json":
                         {
                             GenPythonCodes(ctx);
                             break;
@@ -590,29 +588,14 @@ namespace Luban.Job.Cfg
             ctx.Render = CreateCodeRender(genType);
             ctx.Lan = GetLanguage(genType);
 
-            var isPython3 = genType.Contains("python3");
-
             var lines = new List<string>(10000);
-            Action<List<string>> preContent = (fileContent) =>
+            static void PreContent(List<string> fileContent)
             {
-                if (isPython3)
-                {
-                    fileContent.Add(PythonStringTemplates.ImportTython3Enum);
-                }
+                fileContent.Add(PythonStringTemplates.ImportTython3Enum);
                 fileContent.Add(PythonStringTemplates.PythonVectorTypes);
-            };
+            }
 
-            GenerateCodeMonolithic(ctx, "Types.py", lines, preContent, null);
-
-
-            ctx.Tasks.Add(Task.Run(() =>
-            {
-                var moduleInitContent = "";
-                var initFile = "__init__.py";
-
-                var initMd5 = CacheFileUtil.GenMd5AndAddCache(initFile, moduleInitContent);
-                ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = initFile, MD5 = initMd5 });
-            }));
+            GenerateCodeMonolithic(ctx, "Types.py", lines, PreContent, null);
         }
 
         private void GenCppCode(GenContext ctx)

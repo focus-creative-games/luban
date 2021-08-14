@@ -5,16 +5,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 {
     class PyUnderingDeserializeVisitor : ITypeFuncVisitor<string, string, string>
     {
-        public static PyUnderingDeserializeVisitor Py3Ins { get; } = new PyUnderingDeserializeVisitor(true);
-
-        public static PyUnderingDeserializeVisitor Py27Ins { get; } = new PyUnderingDeserializeVisitor(false);
-
-        public PyUnderingDeserializeVisitor(bool py3)
-        {
-            Python3 = py3;
-        }
-
-        public bool Python3 { get; }
+        public static PyUnderingDeserializeVisitor Ins { get; } = new();
 
         public string Accept(TBool type, string jsonVarName, string fieldName)
         {
@@ -68,7 +59,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TEnum type, string jsonVarName, string fieldName)
         {
-            return Python3 ? $"{fieldName} = {type.DefineEnum.PyFullName}({jsonVarName})" : $"{fieldName} = {jsonVarName}";
+            return $"{fieldName} = {type.DefineEnum.PyFullName}({jsonVarName})";
         }
 
         public string Accept(TString type, string jsonVarName, string fieldName)

@@ -160,14 +160,27 @@ namespace Luban.Job.Cfg.Defs
         {
             if (type.IsNullable)
             {
-                return $"if {jsonVarName} != None: {type.Apply(PyUnderingDeserializeVisitor.Py3Ins, jsonVarName, fieldName)}";
+                return $"if {jsonVarName} != None: {type.Apply(PyUnderingDeserializeVisitor.Ins, jsonVarName, fieldName)}";
             }
             else
             {
-                return type.Apply(PyUnderingDeserializeVisitor.Py3Ins, jsonVarName, fieldName);
+                return type.Apply(PyUnderingDeserializeVisitor.Ins, jsonVarName, fieldName);
             }
         }
 
+        public static string Py3DeserializeField(string fieldName, string jsonVarName, string jsonFieldName, TType type)
+        {
+            if (type.IsNullable)
+            {
+                return $"if {jsonVarName}.get('{jsonFieldName}') != None: {type.Apply(PyUnderingDeserializeVisitor.Ins, $"{jsonVarName}['{jsonFieldName}']", fieldName)}";
+            }
+            else
+            {
+                return type.Apply(PyUnderingDeserializeVisitor.Ins, $"{jsonVarName}['{jsonFieldName}']", fieldName);
+            }
+        }
+
+        /* 
         public static string Py27DeserializeValue(string fieldName, string jsonVarName, TType type)
         {
             if (type.IsNullable)
@@ -177,18 +190,6 @@ namespace Luban.Job.Cfg.Defs
             else
             {
                 return type.Apply(PyUnderingDeserializeVisitor.Py3Ins, jsonVarName, fieldName);
-            }
-        }
-
-        public static string Py3DeserializeField(string fieldName, string jsonVarName, string jsonFieldName, TType type)
-        {
-            if (type.IsNullable)
-            {
-                return $"if {jsonVarName}.get('{jsonFieldName}') != None: {type.Apply(PyUnderingDeserializeVisitor.Py3Ins, $"{jsonVarName}['{jsonFieldName}']", fieldName)}";
-            }
-            else
-            {
-                return type.Apply(PyUnderingDeserializeVisitor.Py3Ins, $"{jsonVarName}['{jsonFieldName}']", fieldName);
             }
         }
 
@@ -203,5 +204,6 @@ namespace Luban.Job.Cfg.Defs
                 return type.Apply(PyUnderingDeserializeVisitor.Py27Ins, $"{jsonVarName}['{jsonFieldName}']", fieldName);
             }
         }
+        */
     }
 }
