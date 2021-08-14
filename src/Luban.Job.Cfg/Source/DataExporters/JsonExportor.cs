@@ -111,14 +111,15 @@ namespace Luban.Job.Cfg.DataExporters
                     continue;
                 }
 
-                x.WritePropertyName(defField.Name);
                 // 特殊处理 bean 多态类型
+                // 另外，不生成  xxx:null 这样
                 if (d == null || (d is DBean db && db.ImplType == null))
                 {
-                    x.WriteNullValue();
+                    //x.WriteNullValue();
                 }
                 else
                 {
+                    x.WritePropertyName(defField.Name);
                     d.Apply(this, ass, x);
                 }
             }
