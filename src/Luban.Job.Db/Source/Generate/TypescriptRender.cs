@@ -166,7 +166,7 @@ export {{x.ts_class_modifier}} class {{name}} extends {{if parent_def_type}} {{x
             let _tag_ = _buf.ReadInt()
             switch (_tag_) {
             {{~ for field in hierarchy_fields~}}
-            case FieldTag.{{tag_name field.ctype}} | ({{field.id}} << FieldTag.TAG_SHIFT) : { {{db_ts_compatible_deserialize '_buf' field.internal_name_with_this field.ctype}}  break; }
+            case FieldTag.{{tag_name field.ctype}} | ({{field.id}} << FieldTag.TAG_SHIFT) : { {{db_ts_compatible_deserialize '_buf' field.internal_name_with_this field.ctype}};  break; }
             {{~end~}}
             default: { _buf.SkipUnknownField(_tag_); break; }
             }
