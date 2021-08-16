@@ -52,7 +52,7 @@ namespace Luban.Job.Db.TypeVisitors
 
         public override string Accept(TList type, string bufName, string fieldName)
         {
-            return $"{{ {bufName}.WriteInt(FieldTag.{type.ElementType.Apply(TagNameVisitor.Ins)}); {bufName}.WriteSize({fieldName}.length); for(let _e of {fieldName}) {{ {BeginSegment(type.ElementType, bufName)} {type.ElementType.Apply(this, bufName, "_e")} {EndSegment(type.ElementType, bufName)} }}  }}";
+            return $"{{ {bufName}.WriteInt(FieldTag.{type.ElementType.Apply(TagNameVisitor.Ins)}); {bufName}.WriteSize({fieldName}.length); for(let _e of {fieldName}) {{ {BeginSegment(type.ElementType, bufName)} {type.ElementType.Apply(this, bufName, "_e")}; {EndSegment(type.ElementType, bufName)} }}  }}";
         }
 
         public override string Accept(TSet type, string bufName, string fieldName)
@@ -62,7 +62,7 @@ namespace Luban.Job.Db.TypeVisitors
 
         public override string Accept(TMap type, string bufName, string fieldName)
         {
-            return $"{{ {bufName}.WriteInt(FieldTag.{type.KeyType.Apply(TagNameVisitor.Ins)}); {bufName}.WriteInt(FieldTag.{type.ValueType.Apply(TagNameVisitor.Ins)}); {bufName}.WriteSize({fieldName}.length);   for(let [_k, _v] of {fieldName}.entries()) {{ {type.KeyType.Apply(this, bufName, "_k")} {BeginSegment(type.ValueType, bufName)} {type.ValueType.Apply(this, bufName, "_v")} {EndSegment(type.ValueType, bufName)} }} }}";
+            return $"{{ {bufName}.WriteInt(FieldTag.{type.KeyType.Apply(TagNameVisitor.Ins)}); {bufName}.WriteInt(FieldTag.{type.ValueType.Apply(TagNameVisitor.Ins)}); {bufName}.WriteSize({fieldName}.length);   for(let [_k, _v] of {fieldName}.entries()) {{ {type.KeyType.Apply(this, bufName, "_k")}; {BeginSegment(type.ValueType, bufName)} {type.ValueType.Apply(this, bufName, "_v")}; {EndSegment(type.ValueType, bufName)} }} }}";
         }
     }
 }

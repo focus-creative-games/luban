@@ -77,7 +77,7 @@ Luban适合有以下需求的开发者：
    - go (1.10+)
    - lua (5.1+)
    - js 和 typescript (3.0+)
-   - python (2.7+ 及 3.0+)  
+   - python (3.0+)  
 - 支持主流引擎和平台
    - unity + c#
    - unity + tolua、xlua
@@ -145,7 +145,7 @@ Luban适合有以下需求的开发者：
 
   ```C#
   // 一行代码可以加载所有配置。 cfg.Tables 包含所有表的一个实例字段。
-  var tables = new cfg.Tables(file => return new ByteBuf(File.ReadAllBytes("<数据路径>/" + file)));
+  var tables = new cfg.Tables(file => return new ByteBuf(File.ReadAllBytes(gameConfDir + "/" + file)));
   // 访问一个单例表
   Console.WriteLine(tables.TbGlobal.Name);
   // 访问普通的 key-value 表
@@ -856,9 +856,9 @@ return
  	
 ```
 
-以目录为数据源，递归遍历整个目录树，将每个xml数据当作一个记录读入。
+以目录为数据源，递归遍历整个目录树，将每个yml数据当作一个记录读入。
 
-其中 1.yaml 文件内容如下
+其中 1.yml 文件内容如下
 ```yaml
 ---
 x1: true
