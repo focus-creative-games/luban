@@ -38,6 +38,8 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         public class Title
         {
+            public bool Root { get; set; }
+
             public int FromIndex { get; set; }
 
             public int ToIndex { get; set; }
@@ -134,7 +136,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                         {
                             var fieldTitle = title.SubTitles[f.Name];
                             return Sheet.IsBlankRow(row, fieldTitle.FromIndex, fieldTitle.ToIndex);
-                        }) || (recordRows != null && notMultiRowFields.All(f =>
+                        }) || (title.Root && recordRows != null && notMultiRowFields.All(f =>
                         {
                             var fieldTitle = title.SubTitles[f.Name];
                             return Sheet.IsSameRow(row, recordRows[0], fieldTitle.FromIndex, fieldTitle.ToIndex);
@@ -206,7 +208,11 @@ namespace Luban.Job.Cfg.DataSources.Excel
             {
                 if (Titles.TryGetValue(name, out var title))
                 {
-                    // CheckEmptySinceSecondRow(name, title.FromIndex, title.ToIndex);
+                    // 只有顶级root支持才允许非multi_rows字段与第一行相同时，判定为同个记录
+                    if (!this.SelfTitle.Root)
+                    {
+                        CheckEmptySinceSecondRow(name, title.FromIndex, title.ToIndex);
+                    }
                     var es = new ExcelStream(Rows[0], title.FromIndex, title.ToIndex, sep, namedMode);
                     return es;
                 }
@@ -215,13 +221,6 @@ namespace Luban.Job.Cfg.DataSources.Excel
                     throw new Exception($"单元薄 缺失 列:{name}，请检查是否写错或者遗漏");
                 }
             }
-
-            //public NamedRow GetSubTitleNamedRow(string name)
-            //{
-            //    Title title = this.Titles[name];
-            //    CheckEmptySinceSecondRow(name, title.FromIndex, title.ToIndex);
-            //    return new NamedRow(title, this.Rows[0]);
-            //}
 
             public NamedRow GetSubTitleNamedRow(string name)
             {
@@ -435,6 +434,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
             }
         }
 
+        const string ROOT_TITLE_NAME = "__<root>__";
 
         private void LoadRemainRows(IExcelDataReader reader, bool headerOnly)
         {
@@ -486,7 +486,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 throw new Exception($"没有定义字段名行");
             }
 
-            _rootTitle = new Title() { Name = "_root_", FromIndex = 1, ToIndex = rows.Select(r => r.Count).Max() - 1 };
+            _rootTitle = new Title() { Root = true, Name = ROOT_TITLE_NAME, FromIndex = 1, ToIndex = rows.Select(r => r.Count).Max() - 1 };
 
             int titleRowNum = 1;
             if (reader.MergeCells != null)

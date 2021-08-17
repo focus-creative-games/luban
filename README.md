@@ -80,13 +80,14 @@ Luban适合有以下需求的开发者：
    - python (3.0+)  
 - 支持主流引擎和平台
    - unity + c#
-   - unity + tolua、xlua
-   - unity + ILRuntime
-   - unity + puerts
+   - unity + [tolua](https://github.com/topameng/tolua)、[xlua](https://github.com/Tencent/xLua)
+   - unity + [ILRuntime](https://github.com/Ourpalm/ILRuntime)
+   - unity + [puerts](https://github.com/Tencent/puerts)
+   - unity + [ET游戏框架](https://github.com/egametang/ET)
    - unreal + c++
-   - unreal + unlua
-   - unreal + sluaunreal
-   - unreal + puerts
+   - unreal + [unlua](https://github.com/Tencent/UnLua)
+   - unreal + [sluaunreal](https://github.com/Tencent/sluaunreal)
+   - unreal + [puerts](https://github.com/Tencent/puerts)
    - cocos2d-x + lua
    - cocos2d-x + js
    - 微信小程序平台
