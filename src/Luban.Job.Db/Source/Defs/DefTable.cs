@@ -31,7 +31,7 @@ namespace Luban.Job.Db.Defs
 
         public string InternalTableType => "_" + Name;
 
-        public string BaseTableType => $"Bright.Transaction.TxnTable<{KeyTType.Apply(DbCsDefineTypeVisitor.Ins)},{ValueTType.Apply(DbCsDefineTypeVisitor.Ins)}>";
+        public string BaseTableType => $"Bright.Transaction.{(KeyTType is TLong ? "Long" : "String")}TxnTable<{ValueTType.Apply(DbCsDefineTypeVisitor.Ins)}>";
 
         public override void Compile()
         {

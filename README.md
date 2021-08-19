@@ -83,6 +83,7 @@ Luban适合有以下需求的开发者：
    - unity + [tolua](https://github.com/topameng/tolua)、[xlua](https://github.com/Tencent/xLua)
    - unity + [ILRuntime](https://github.com/Ourpalm/ILRuntime)
    - unity + [puerts](https://github.com/Tencent/puerts)
+   - unity + [GameFramework](https://github.com/EllanJiang/GameFramework)
    - unity + [ET游戏框架](https://github.com/egametang/ET)
    - unreal + c++
    - unreal + [unlua](https://github.com/Tencent/UnLua)
@@ -90,6 +91,7 @@ Luban适合有以下需求的开发者：
    - unreal + [puerts](https://github.com/Tencent/puerts)
    - cocos2d-x + lua
    - cocos2d-x + js
+   - [skynet](https://github.com/cloudwu/skynet)
    - 微信小程序平台
    - 其他家基于js的小程序平台
    - 其他所有支持lua的引擎和平台
@@ -193,6 +195,12 @@ Luban适合有以下需求的开发者：
 <br/>
 
 ![兼容横表](docs/images/examples/ex_01.png)
+
+### 轻松表达传统导表工具难以支持的复杂配置
+
+<br/>
+
+![复杂表](docs/images/examples/ex_08.png)
 
 ### 传统兼容纵表
 
