@@ -1,4 +1,5 @@
 ﻿using Luban.Job.Cfg.Datas;
+using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Common.Types;
 using System;
@@ -16,38 +17,10 @@ namespace Luban.Job.Cfg.DataExporters
 
         public override void Accept(DMap type, DefAssembly ass, Utf8JsonWriter x)
         {
-            var keyType = type.Type.KeyType;
-            if (keyType is not TString
-                && keyType is not TInt
-                && keyType is not TLong)
-            {
-                throw new Exception($"data_json2格式只支持key为int,long,string类型的map");
-            }
             x.WriteStartObject();
             foreach (var d in type.Datas)
             {
-                switch (d.Key)
-                {
-                    case DString ds:
-                    {
-                        x.WritePropertyName(ds.Value);
-                        break;
-                    }
-                    case DInt di:
-                    {
-                        x.WritePropertyName(di.Value.ToString());
-                        break;
-                    }
-                    case DLong dl:
-                    {
-                        x.WritePropertyName(dl.Value.ToString());
-                        break;
-                    }
-                    default:
-                    {
-                        throw new Exception($"data_json2格式只支持key为int,long,string类型的map");
-                    }
-                }
+                x.WritePropertyName(d.Key.Apply(ToJsonPropertyNameVisitor.Ins));
                 d.Value.Apply(this, ass, x);
             }
             x.WriteEndObject();

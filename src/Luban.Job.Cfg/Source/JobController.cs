@@ -46,7 +46,7 @@ namespace Luban.Job.Cfg
             [Option("output_data_json_monolithic_file", Required = false, HelpText = "output monolithic json file")]
             public string OutputDataJsonMonolithicFile { get; set; }
 
-            [Option("gen_types", Required = true, HelpText = "code_cs_bin,code_cs_json,code_cs_unity_json,code_lua_bin,code_java_bin,code_go_bin,code_go_json,code_cpp_bin,code_python3_json,code_typescript_bin,code_typescript_json,data_bin,data_lua,data_json,data_json_monolithic,data_resources . can be multi")]
+            [Option("gen_types", Required = true, HelpText = "code_cs_bin,code_cs_json,code_cs_unity_json,code_lua_bin,code_java_bin,code_go_bin,code_go_json,code_cpp_bin,code_python3_json,code_typescript_bin,code_typescript_json,data_bin,data_lua,data_json,data_json2,data_json_monolithic,data_resources . can be multi")]
             public string GenType { get; set; }
 
             [Option('s', "service", Required = true, HelpText = "service")]
@@ -126,7 +126,8 @@ namespace Luban.Job.Cfg
             switch (genType)
             {
                 case "data_bin": return "bin";
-                case "data_json": return "json";
+                case "data_json":
+                case "data_json2": return "json";
                 case "data_lua": return "lua";
                 default: throw new Exception($"not support output data type:{genType}");
             }
@@ -167,8 +168,7 @@ namespace Luban.Job.Cfg
                     errMsg = "--outputcodedir missing";
                     return false;
                 }
-                List<string> dataGenTypes = genTypes.Where(t => t.StartsWith("data_", StringComparison.Ordinal)).ToList();
-                if (dataGenTypes.Count > 0)
+                if (genTypes.Any(t => t.StartsWith("data_", StringComparison.Ordinal)))
                 {
                     if (string.IsNullOrWhiteSpace(inputDataDir))
                     {
@@ -384,6 +384,7 @@ namespace Luban.Job.Cfg
                         }
                         case "data_bin":
                         case "data_json":
+                        case "data_json2":
                         case "data_lua":
                         {
                             await CheckLoadCfgDataAsync();
@@ -786,7 +787,7 @@ namespace {ctx.TopModule}
             {
                 allJsonTask.Add(Task.Run(() =>
                 {
-                    return (string)DataExporterUtil.ToOutputData(c, ctx.Assembly.GetTableExportDataList(c), "data_json");
+                    return (string)DataExporterUtil.ToOutputData(c, ctx.Assembly.GetTableExportDataList(c), "data_json2");
                 }));
             }
 
