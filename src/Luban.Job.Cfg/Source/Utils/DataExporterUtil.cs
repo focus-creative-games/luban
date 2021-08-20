@@ -44,12 +44,12 @@ namespace Luban.Job.Cfg.Utils
                     });
                     if (dataType == "data_json")
                     {
-                        JsonExportor.Ins.WriteList(records, table.Assembly, jsonWriter);
+                        JsonExportor.Ins.WriteAsArray(records, table.Assembly, jsonWriter);
                     }
                     else
                     {
 
-                        Json2Exportor.Ins.WriteList(records, table.Assembly, jsonWriter);
+                        Json2Exportor.Ins.WriteAsObject(table, records, table.Assembly, jsonWriter);
                     }
                     jsonWriter.Flush();
                     return System.Text.Encoding.UTF8.GetString(DataUtil.StreamToBytes(ss));

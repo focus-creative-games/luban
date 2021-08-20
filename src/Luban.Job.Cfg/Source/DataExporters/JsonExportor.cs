@@ -11,7 +11,7 @@ namespace Luban.Job.Cfg.DataExporters
     {
         public static JsonExportor Ins { get; } = new JsonExportor();
 
-        public void WriteList(List<Record> datas, DefAssembly ass, Utf8JsonWriter x)
+        public void WriteAsArray(List<Record> datas, DefAssembly ass, Utf8JsonWriter x)
         {
             x.WriteStartArray();
             foreach (var d in datas)
@@ -19,6 +19,51 @@ namespace Luban.Job.Cfg.DataExporters
                 d.Data.Apply(this, ass, x);
             }
             x.WriteEndArray();
+        }
+
+        public string ToStringValue(DType data)
+        {
+            switch (data)
+            {
+                case DInt dint: return dint.Value.ToString();
+                case DLong dlong: return dlong.Value.ToString();
+                case DString dstring: return dstring.Value;
+                case DEnum denum: return denum.Value.ToString();
+                case DShort dshort: return dshort.Value.ToString();
+                default: throw new NotSupportedException($"data_json2 not support key type:{data.GetType().Name}");
+            }
+        }
+
+        public void WriteAsObject(DefTable table, List<Record> datas, DefAssembly ass, Utf8JsonWriter x)
+        {
+            switch (table.Mode)
+            {
+                case RawDefs.ETableMode.ONE:
+                {
+                    this.Accept(datas[0].Data, ass, x);
+                    break;
+                }
+                case RawDefs.ETableMode.MAP:
+                {
+
+                    x.WriteStartObject();
+                    string indexName = table.IndexField.Name;
+                    foreach (var rec in datas)
+                    {
+                        var indexFieldData = rec.Data.GetField(indexName);
+
+                        x.WritePropertyName(ToStringValue(indexFieldData));
+                        this.Accept(rec.Data, ass, x);
+                    }
+
+                    x.WriteEndObject();
+                    break;
+                }
+                default:
+                {
+                    throw new NotSupportedException($"not support table mode:{table.Mode}");
+                }
+            }
         }
 
         public void Accept(DBool type, DefAssembly ass, Utf8JsonWriter x)
