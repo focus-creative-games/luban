@@ -21,19 +21,6 @@ namespace Luban.Job.Cfg.DataExporters
             x.WriteEndArray();
         }
 
-        public string ToStringValue(DType data)
-        {
-            switch (data)
-            {
-                case DInt dint: return dint.Value.ToString();
-                case DLong dlong: return dlong.Value.ToString();
-                case DString dstring: return dstring.Value;
-                case DEnum denum: return denum.Value.ToString();
-                case DShort dshort: return dshort.Value.ToString();
-                default: throw new NotSupportedException($"data_json2 not support key type:{data.GetType().Name}");
-            }
-        }
-
         public void WriteAsObject(DefTable table, List<Record> datas, DefAssembly ass, Utf8JsonWriter x)
         {
             switch (table.Mode)
@@ -52,7 +39,7 @@ namespace Luban.Job.Cfg.DataExporters
                     {
                         var indexFieldData = rec.Data.GetField(indexName);
 
-                        x.WritePropertyName(ToStringValue(indexFieldData));
+                        x.WritePropertyName(indexFieldData.Apply(ToJsonPropertyNameVisitor.Ins));
                         this.Accept(rec.Data, ass, x);
                     }
 
