@@ -1,4 +1,4 @@
-name: sync-gitee-mirror
+- name: sync-gitee-mirror
   uses: abersheeran/sync-gitee-mirror@v1-beta
   with:
     repository: https://gitee.com/focus-creative-games/luban.git
