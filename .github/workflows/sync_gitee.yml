@@ -20,6 +20,9 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: sync-gitee-mirror
         uses: wangchucheng/git-repo-sync@v0.1.0
         with:
