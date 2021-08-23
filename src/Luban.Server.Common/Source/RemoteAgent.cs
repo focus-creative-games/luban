@@ -2,8 +2,10 @@ using Bright.Net.ServiceModes.Managers;
 using Bright.Time;
 using Luban.Common.Protos;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -37,9 +39,9 @@ namespace Luban.Server.Common
 
         private readonly bool _trace;
 
-        private readonly Dictionary<string, Task<byte[]>> _remoteReadAllBytesTasks = new Dictionary<string, Task<byte[]>>();
+        private readonly ConcurrentDictionary<string, Task<byte[]>> _remoteReadAllBytesTasks = new();
 
-        private readonly Dictionary<string, Task<GetImportFileOrDirectoryRes>> _getImportFileOrDirTasks = new Dictionary<string, Task<GetImportFileOrDirectoryRes>>();
+        private readonly ConcurrentDictionary<string, Task<GetImportFileOrDirectoryRes>> _getImportFileOrDirTasks = new();
 
         public RemoteAgent(SessionBase session, bool trace)
         {
@@ -63,40 +65,35 @@ namespace Luban.Server.Common
 
         public Task<byte[]> ReadAllBytesAsync(string file)
         {
-            lock (_remoteReadAllBytesTasks)
+            return _remoteReadAllBytesTasks.GetOrAdd(file, f =>
             {
-                if (!_remoteReadAllBytesTasks.TryGetValue(file, out var task))
+                return Task.Run(async () =>
                 {
-                    task = Task.Run(async () =>
+                    long t1 = TimeUtil.NowMillis;
+                    var res = await Session.CallRpcAsync<GetInputFile, GetInputFileArg, GetInputFileRes>(new GetInputFileArg() { File = f }, GET_INPUT_FILE_TIMEOUT);
+                    if (res.Err != Luban.Common.EErrorCode.OK)
                     {
-                        long t1 = TimeUtil.NowMillis;
-                        var res = await Session.CallRpcAsync<GetInputFile, GetInputFileArg, GetInputFileRes>(new GetInputFileArg() { File = file }, GET_INPUT_FILE_TIMEOUT);
-                        if (res.Err != Luban.Common.EErrorCode.OK)
-                        {
-                            throw new ReadRemoteFailException($"{res.Err}");
-                        }
-                        s_logger.Info("read remote file:{file} cost:{time}", file, TimeUtil.NowMillis - t1);
-                        return res.Content;
-                    });
-                    task.ConfigureAwait(false);
-                    _remoteReadAllBytesTasks.Add(file, task);
-                }
-                return task;
-            }
-
+                        throw new ReadRemoteFailException($"{res.Err}");
+                    }
+                    s_logger.Info("read remote file:{file} cost:{time}", f, TimeUtil.NowMillis - t1);
+                    return res.Content;
+                });
+            });
         }
 
-        public Task<GetImportFileOrDirectoryRes> GetFileOrDirectoryAsync(string file)
+        public Task<GetImportFileOrDirectoryRes> GetFileOrDirectoryAsync(string file, params string[] searchPatterns)
         {
-            lock (_getImportFileOrDirTasks)
-            {
-                if (!_getImportFileOrDirTasks.TryGetValue(file, out var task))
+            return _getImportFileOrDirTasks.GetOrAdd(file, f =>
                 {
-                    task = Task.Run(async () =>
+                    return Task.Run(async () =>
                     {
                         long t1 = TimeUtil.NowMillis;
                         var res = await Session.CallRpcAsync<GetImportFileOrDirectory, GetImportFileOrDirectoryArg, GetImportFileOrDirectoryRes>(
-                            new GetImportFileOrDirectoryArg() { FileOrDirName = file },
+                            new GetImportFileOrDirectoryArg()
+                            {
+                                FileOrDirName = file,
+                                InclusiveSuffixs = new List<string>(searchPatterns.Select(s => s.Trim()).Where(s => !string.IsNullOrWhiteSpace(s))),
+                            },
                             GET_INPUT_FILE_TIMEOUT);
                         if (res.Err != Luban.Common.EErrorCode.OK)
                         {
@@ -105,11 +102,7 @@ namespace Luban.Server.Common
                         s_logger.Trace("read GetFileOrDirectoryAsync end. file:{file} cost:{time}", file, TimeUtil.NowMillis - t1);
                         return res;
                     });
-                    _getImportFileOrDirTasks.Add(file, task);
-                }
-                return task;
-            }
-
+                });
         }
 
         const int QUERY_FILE_EXISTS_TIMEOUT = 10;

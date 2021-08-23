@@ -124,7 +124,7 @@ namespace Luban.Job.Common.Defs
             var xmlFullPath = FileUtil.Combine(RootDir, xmlFile);
             s_logger.Trace("import {file} {full_path}", xmlFile, xmlFullPath);
 
-            var fileOrDirContent = await Agent.GetFileOrDirectoryAsync(xmlFullPath);
+            var fileOrDirContent = await Agent.GetFileOrDirectoryAsync(xmlFullPath, ".xml");
 
             if (fileOrDirContent.IsFile)
             {

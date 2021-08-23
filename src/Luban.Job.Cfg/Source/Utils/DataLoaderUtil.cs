@@ -45,7 +45,7 @@ namespace Luban.Job.Cfg.Utils
 
                 collectTasks.Add(Task.Run(async () =>
                 {
-                    var fileOrDirContent = await agent.GetFileOrDirectoryAsync(actualFullPath);
+                    var fileOrDirContent = await agent.GetFileOrDirectoryAsync(actualFullPath, DataSourceFactory.validDataSourceSuffixes);
                     if (fileOrDirContent.IsFile)
                     {
                         return new List<InputFileInfo> { new InputFileInfo() { OriginFile = file, ActualFile = actualFullPath, SheetName = sheetName, MD5 = fileOrDirContent.Md5 } };
