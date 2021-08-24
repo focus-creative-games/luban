@@ -58,7 +58,7 @@ namespace Luban.Server
 
         public void RegisterJob(string jobType, IJobController jobController)
         {
-            s_logger.Info("register job. name:{name} class:{class}", jobType, jobController.GetType().FullName);
+            s_logger.Debug("register job. name:{name} class:{class}", jobType, jobController.GetType().FullName);
             _jobs.Add(jobType, jobController);
         }
 

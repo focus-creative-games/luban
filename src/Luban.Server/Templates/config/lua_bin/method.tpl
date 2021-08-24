@@ -1,47 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Luban.Job.Common.Utils
-{
-    public static class LuaStringTemplate
-    {
-        public const string BaseDefines = @"
-{{
-    consts = x.consts
-    enums = x.enums
-    beans = x.beans
-    tables = x.tables
-}}
-local setmetatable = setmetatable
-local pairs = pairs
-local ipairs = ipairs
-local tinsert = table.insert
-
-local function SimpleClass()
-    local class = {}
-    class.__index = class
-    class.New = function(...)
-        local ctor = class.ctor
-        local o = ctor and ctor(...) or {}
-        setmetatable(o, class)
-        return o
-    end
-    return class
-end
-
-
-local function get_map_size(m)
-    local n = 0
-    for _ in pairs(m) do
-        n = n + 1
-    end
-    return n
-end";
-
-        public const string MethodHeader = @"local function InitTypes(methods)
+local function InitTypes(methods)
     local readBool = methods.readBool
     local readByte = methods.readByte
     local readShort = methods.readShort
@@ -102,6 +59,4 @@ end";
         if readBool(bs) then
             return readBool(bs)
         end
-    end";
-    }
-}
+    end

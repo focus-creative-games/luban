@@ -556,7 +556,9 @@ namespace Luban.Job.Cfg
 
                 if (args.EmbedBrightTypes)
                 {
-                    fileContent.Add(isGenBinary ? TypescriptStringTemplate.VectorTypesByteBuf : TypescriptStringTemplate.VectorTypesJson);
+                    fileContent.Add(isGenBinary ?
+                        StringTemplateUtil.GetTemplateString("config/typescript_bin/vectors")
+                        : StringTemplateUtil.GetTemplateString("config/typescript_json/vectors"));
                     if (isGenBinary)
                     {
                         fileContent.Add(TypescriptStringTemplate.SerializeTypes);

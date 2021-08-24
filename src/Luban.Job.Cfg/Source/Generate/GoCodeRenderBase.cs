@@ -1,5 +1,6 @@
 ﻿using Luban.Job.Cfg.Defs;
 using Luban.Job.Common.Defs;
+using Luban.Job.Common.Utils;
 using Scriban;
 using System;
 using System.Collections.Generic;
@@ -17,19 +18,8 @@ namespace Luban.Job.Cfg.Generate
         public override string Render(DefConst c)
         {
             string package = "cfg";
-
-            var template = t_constRender ??= Template.Parse(@"
-
-package {{package}}
-
-const (
-    {{~for item in x.items ~}}
-    {{x.go_full_name}}_{{item.name}} = {{go_const_value item.ctype item.value}}
-    {{~end~}}
-)
-");
+            var template = t_constRender ??= Template.Parse(StringTemplateUtil.GetTemplateString("common/go/const"));
             var result = template.RenderCode(c, new Dictionary<string, object>() { ["package"] = package });
-
             return result;
         }
 
@@ -39,20 +29,8 @@ const (
         public override string Render(DefEnum e)
         {
             string package = "cfg";
-
-            var template = t_enumRender ??= Template.Parse(@"
-
-package {{package}}
-
-const (
-    {{~for item in x.items ~}}
-    {{x.go_full_name}}_{{item.name}} = {{item.value}}
-    {{~end~}}
-)
-
-");
+            var template = t_enumRender ??= Template.Parse(StringTemplateUtil.GetTemplateString("common/go/enum"));
             var result = template.RenderCode(e, new Dictionary<string, object>() { ["package"] = package });
-
             return result;
         }
 

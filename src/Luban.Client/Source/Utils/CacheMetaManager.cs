@@ -169,7 +169,7 @@ namespace Luban.Client.Common.Utils
                 lock (_lock)
                 {
                     _dirty = true;
-                    _cacheFileMetas.Add(meta.FullPath, meta);
+                    _cacheFileMetas[meta.FullPath] = meta;
                 }
                 s_logger.Debug("[add] meta not find, build it. file:{file} path:{path} md5:{md5} length:{length}", file, meta.FullPath, meta.Md5, meta.FileLength);
             }
@@ -195,7 +195,7 @@ namespace Luban.Client.Common.Utils
                 lock (_lock)
                 {
                     _dirty = true;
-                    _cacheFileMetas.Add(meta.FullPath, meta);
+                    _cacheFileMetas[meta.FullPath] = meta;
                 }
                 s_logger.Debug("[add] meta not find, create it. file:{file} path:{path} md5:{md5} length:{length}", outputPath, meta.FullPath, meta.Md5, meta.FileLength);
             }

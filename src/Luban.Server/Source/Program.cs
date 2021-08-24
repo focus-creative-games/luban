@@ -19,6 +19,9 @@ namespace Luban.Server
 
             [Option('l', "loglevel", Required = false, HelpText = "log level. default INFO. avaliable value: TRACE,DEBUG,INFO,WARN,ERROR,FATAL,OFF")]
             public string LogLevel { get; set; } = "INFO";
+
+            [Option('t', "string template directory", Required = false, HelpText = "string template directory.")]
+            public string StringTemplateDir { get; set; } = "Templates";
         }
 
         private static CommandLineOptions ParseOptions(String[] args)
@@ -45,6 +48,8 @@ namespace Luban.Server
 
             var options = ParseOptions(args);
 
+            Job.Common.Utils.StringTemplateUtil.TemplateDir = options.StringTemplateDir;
+
             Luban.Common.Utils.LogUtil.InitSimpleNLogConfigure(NLog.LogLevel.FromString(options.LogLevel));
 
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
@@ -58,6 +63,8 @@ namespace Luban.Server
             int processorCount = System.Environment.ProcessorCount;
             ThreadPool.SetMinThreads(Math.Max(4, processorCount), 5);
             ThreadPool.SetMaxThreads(Math.Max(16, processorCount * 4), 10);
+
+            Console.WriteLine("== running ==");
         }
 
     }

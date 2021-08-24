@@ -170,7 +170,7 @@ namespace Luban.Job.Proto
                             }
                             if (args.EmbedBrightTypes)
                             {
-                                fileContent.Add(TypescriptStringTemplate.VectorTypesByteBuf);
+                                fileContent.Add(StringTemplateUtil.GetTemplateString("config/typescript_bin/vectors"));
                                 fileContent.Add(TypescriptStringTemplate.SerializeTypes);
                                 fileContent.Add(TypescriptStringTemplate.ProtoTypes);
                             }

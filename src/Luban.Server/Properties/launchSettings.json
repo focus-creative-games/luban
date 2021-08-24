@@ -2,7 +2,7 @@
   "profiles": {
     "Luban.Server": {
       "commandName": "Project",
-      "commandLineArgs": "-p 8899"
+      "commandLineArgs": "-p 8899 -t ../../../Templates"
     }
   }
 }
