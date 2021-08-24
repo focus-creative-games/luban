@@ -35,6 +35,7 @@ WORKDIR /app/Luban.Server
 COPY Luban.Server/Luban.Server.csproj ./
 COPY Luban.Server/.editorconfig .
 COPY Luban.Server/Source ./Source
+COPY Luban.Server/Templates ./Templates
 COPY nuget.config ./nuget.config
 
 RUN dotnet publish -c Release -o out
