@@ -120,14 +120,6 @@ namespace Luban.Job.Cfg.DataCreators
                     try
                     {
                         list.Add(f.CType.Apply(this, row.GetSubTitleNamedRow(fname), f.IsMultiRow, f.IsNullable));
-                        //if (f.IsMultiRow)
-                        //{
-                        //    list.Add(f.CType.Apply(this, row.GetSubTitleNamedRowOfMultiRows(fname), f.IsMultiRow, f.IsNullable));
-                        //}
-                        //else
-                        //{
-                        //    list.Add(f.CType.Apply(this, row.GetSubTitleNamedRow(fname), f.IsMultiRow /* 肯定是 false */, f.IsNullable));
-                        //}
                     }
                     catch (DataCreateException dce)
                     {

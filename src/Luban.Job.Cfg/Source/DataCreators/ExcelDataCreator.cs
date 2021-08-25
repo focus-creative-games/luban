@@ -44,15 +44,16 @@ namespace Luban.Job.Cfg.DataCreators
 
         private bool CheckNull(bool nullable, object o)
         {
-            if (o is string s && s == "null")
+            return nullable && (o == null || (o is string s && s == "null"));
+        }
+
+        private bool CheckIsDefault(bool namedMode, object value)
+        {
+            if (namedMode)
             {
-                if (nullable)
+                if (value == null || (value is string s && string.IsNullOrEmpty(s)))
                 {
                     return true;
-                }
-                else
-                {
-                    throw new InvalidExcelDataException($"单元格没有填有效数据");
                 }
             }
             return false;
@@ -73,18 +74,6 @@ namespace Luban.Job.Cfg.DataCreators
                 case "否": return false;
                 default: throw new InvalidExcelDataException($"{s} 不是 bool 类型的值 (true 或 false)");
             }
-        }
-
-        private bool CheckIsDefault(bool namedMode, object value)
-        {
-            if (namedMode)
-            {
-                if (value == null || (value is string s && string.IsNullOrEmpty(s)))
-                {
-                    return true;
-                }
-            }
-            return false;
         }
 
         public DType Accept(TBool type, object converter, ExcelStream x, DefAssembly ass)
@@ -338,7 +327,11 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TEnum type, object converter, ExcelStream x, DefAssembly ass)
         {
-            var d = x.Read();
+            var d = x.Read(x.NamedMode);
+            if (CheckNull(type.IsNullable, d))
+            {
+                return null;
+            }
             if (CheckNull(type.IsNullable, d))
             {
                 return null;
@@ -541,30 +534,54 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TVector2 type, object converter, ExcelStream x, DefAssembly ass)
         {
-            var d = x.Read();
+            if (x.NamedMode && x.IncludeNullAndEmptySize != 1)
+            {
+                throw new InvalidExcelDataException("在标题头对应模式下必须正好占据1个单元格");
+            }
+            var d = x.Read(x.NamedMode);
             if (CheckNull(type.IsNullable, d))
             {
                 return null;
+            }
+            if (CheckIsDefault(x.NamedMode, d))
+            {
+                return DVector2.Default;
             }
             return DataUtil.CreateVector(type, d.ToString());
         }
 
         public DType Accept(TVector3 type, object converter, ExcelStream x, DefAssembly ass)
         {
-            var d = x.Read();
+            if (x.NamedMode && x.IncludeNullAndEmptySize != 1)
+            {
+                throw new InvalidExcelDataException("在标题头对应模式下必须正好占据1个单元格");
+            }
+            var d = x.Read(x.NamedMode);
             if (CheckNull(type.IsNullable, d))
             {
                 return null;
+            }
+            if (CheckIsDefault(x.NamedMode, d))
+            {
+                return DVector3.Default;
             }
             return DataUtil.CreateVector(type, d.ToString());
         }
 
         public DType Accept(TVector4 type, object converter, ExcelStream x, DefAssembly ass)
         {
-            var d = x.Read();
+            if (x.NamedMode && x.IncludeNullAndEmptySize != 1)
+            {
+                throw new InvalidExcelDataException("在标题头对应模式下必须正好占据1个单元格");
+            }
+            var d = x.Read(x.NamedMode);
             if (CheckNull(type.IsNullable, d))
             {
                 return null;
+            }
+            if (CheckIsDefault(x.NamedMode, d))
+            {
+                return DVector4.Default;
             }
             return DataUtil.CreateVector(type, d.ToString());
         }

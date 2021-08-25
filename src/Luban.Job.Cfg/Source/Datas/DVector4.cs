@@ -5,6 +5,8 @@ namespace Luban.Job.Cfg.Datas
 {
     public class DVector4 : DType<Vector4>
     {
+        public static DVector4 Default { get; } = new DVector4(default);
+
         public DVector4(Vector4 x) : base(x)
         {
         }
