@@ -47,7 +47,7 @@ e.g.
 Options:
   -h, --host  <host>            Required. host ip
   -p  --port  <port>            port. default 8899
-  -j  --job   <job>             Required. job type.  avaliable value: cfg
+  -j  --job   <job>             required. job type.  avaliable value: cfg
   -v  --verbose                 verbose print
   -l  --loglevel <level>        log level. default INFO. avaliable value: TRACE,DEBUG,INFO,WARN,ERROR,FATAL,OFF
   -c  --cachemetafile <file>    cache meta file name. default is '.cache.meta'

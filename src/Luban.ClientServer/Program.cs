@@ -17,7 +17,7 @@ namespace Luban.ClientServer
     {
         public class AllCommandLineOptions
         {
-            public string StringTemplateDir { get; set; } = "Templates";
+            public string Host { get; set; }
 
             public int Port { get; set; } = 8899;
 
@@ -32,6 +32,8 @@ namespace Luban.ClientServer
             public string CacheMetaInfoFile { get; set; } = ".cache.meta";
 
             public string[] WatchDir { get; set; }
+
+            public string StringTemplateDir { get; set; } = "Templates";
         }
 
         private static void PrintUsage(string err)
@@ -44,14 +46,15 @@ e.g.
     Luban.ClientServer -j cfg --  --name abc
 
 Options:
+  -h, --host  <host>            host. default use embed Luban.Server
   -p  --port  <port>            port. default 8899
-  -j  --job   <job>             Required. job type.  avaliable value: cfg
+  -j  --job   <job>             required. job type.  avaliable value: cfg
   -v  --verbose                 verbose print
   -l  --loglevel <level>        log level. default INFO. avaliable value: TRACE,DEBUG,INFO,WARN,ERROR,FATAL,OFF
   -c  --cachemetafile <file>    cache meta file name. default is '.cache.meta'
   -w  --watch  <dir>            watch data change and regenerate.
   -t  --templatedirectory <dir> string templates directory. default is 'Templates'
-  -h  --help            show usage
+  -h  --help                    show usage
 ");
         }
 
@@ -66,6 +69,21 @@ Options:
                 {
                     switch (arg)
                     {
+                        case "-h":
+                        case "--host":
+                        {
+                            // 打个补丁。好多人忘了设置 LUBAN_SERVER_IP 环境变量，导致启动时出问题
+                            if (args[i + 1].StartsWith("-"))
+                            {
+                                Console.WriteLine("[WARN] --host (or -h) <LUBAN_SERVER_IP> argument is missing, use 127.0.0.1 as default. do you forget to set LUBAN_SERVER_IP env variable?");
+                                ops.Host = "127.0.0.1";
+                            }
+                            else
+                            {
+                                ops.Host = args[++i];
+                            }
+                            break;
+                        }
                         case "-p":
                         case "--port":
                         {
@@ -142,15 +160,10 @@ Options:
             GenServer.Ins.RegisterJob("cfg", new Luban.Job.Cfg.JobController());
             GenServer.Ins.RegisterJob("proto", new Luban.Job.Proto.JobController());
             GenServer.Ins.RegisterJob("db", new Luban.Job.Db.JobController());
-
-            int processorCount = System.Environment.ProcessorCount;
-            ThreadPool.SetMinThreads(Math.Max(4, processorCount), 5);
-            ThreadPool.SetMaxThreads(Math.Max(16, processorCount * 4), 10);
         }
 
         private static void StartClient(AllCommandLineOptions options, ProfileTimer profile)
         {
-
             if (options.WatchDir == null || options.WatchDir.Length == 0)
             {
                 int exitCode = GenOnce(options, profile);
@@ -159,7 +172,6 @@ Options:
             else
             {
                 GenOnce(options, profile);
-
                 new MultiFileWatcher(options.WatchDir, () => GenOnce(options, profile));
             }
         }
@@ -187,7 +199,16 @@ Options:
             LogUtil.InitSimpleNLogConfigure(NLog.LogLevel.FromString(options.LogLevel));
             s_logger = NLog.LogManager.GetCurrentClassLogger();
 
-            StartServer(options);
+
+
+            int processorCount = System.Environment.ProcessorCount;
+            ThreadPool.SetMinThreads(Math.Max(4, processorCount), 5);
+            ThreadPool.SetMaxThreads(Math.Max(16, processorCount * 4), 10);
+
+            if (string.IsNullOrWhiteSpace(options.Host))
+            {
+                StartServer(options);
+            }
 
             StartClient(options, profile);
         }
@@ -198,15 +219,13 @@ Options:
             try
             {
                 profile.StartPhase("generation");
-                profile.StartPhase("connect server");
-                var conn = GenClient.Start("127.0.0.1", options.Port, ProtocolStub.Factories);
+                var conn = GenClient.Start(options.Host, options.Port, ProtocolStub.Factories);
 
                 profile.StartPhase("load cache meta file");
                 CacheMetaManager.Ins.Load(options.CacheMetaInfoFile);
                 profile.EndPhaseAndLog();
 
                 conn.Wait();
-                profile.EndPhaseAndLog();
 
                 if (GenClient.Ins.Session.Channel.IsOpen)
                 {
