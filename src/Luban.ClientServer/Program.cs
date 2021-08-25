@@ -207,6 +207,7 @@ Options:
 
             if (string.IsNullOrWhiteSpace(options.Host))
             {
+                options.Host = "127.0.0.1";
                 StartServer(options);
             }
 
