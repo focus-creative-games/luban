@@ -6,8 +6,7 @@ package {{x.namespace_with_top_module}};
  * {{x.comment}}
  */
 {{~end~}}
-public final class {{x.name}}
-{
+public final class {{x.name}} {
     {{~ for item in x.items ~}}
 {{~if item.comment != '' ~}}
     /**

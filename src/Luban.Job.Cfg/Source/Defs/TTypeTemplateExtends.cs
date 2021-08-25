@@ -58,6 +58,18 @@ namespace Luban.Job.Cfg.Defs
             return type.Apply(JavaDeserializeVisitor.Ins, bufName, fieldName);
         }
 
+        public static string JavaJsonDeserialize(string jsonName, string fieldName, string jsonFieldName, TType type)
+        {
+            if (type.IsNullable)
+            {
+                return $"{{ if ({jsonName}.has(\"{jsonFieldName}\") && !{jsonName}.get(\"{jsonFieldName}\").isJsonNull()) {{ {type.Apply(TypeVisitors.JavaJsonDeserialize.Ins, $"{jsonName}.get(\"{jsonFieldName}\")", fieldName)} }} else {{ {fieldName} = null; }} }}";
+            }
+            else
+            {
+                return type.Apply(TypeVisitors.JavaJsonDeserialize.Ins, $"{jsonName}.get(\"{jsonFieldName}\")", fieldName);
+            }
+        }
+
         public static string JavaRecursiveResolve(DefField field, string tables)
         {
             return field.CType.Apply(JavaRecursiveResolveVisitor.Ins, field.JavaStyleName, tables);

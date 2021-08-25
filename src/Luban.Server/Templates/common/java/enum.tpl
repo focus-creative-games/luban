@@ -4,8 +4,7 @@ package {{namespace_with_top_module}};
  * {{comment}}
  */
 {{~end~}}
-public enum {{name}}
-{
+public enum {{name}} {
     {{~ for item in items ~}}
 {{~if item.comment != '' ~}}
     /**

@@ -1,4 +1,5 @@
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Common.Defs;
 using Luban.Job.Common.Utils;
 using Scriban;
 using System;
@@ -6,11 +7,11 @@ using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.Generate
 {
-    class CsCodeJsonRender : CsCodeRenderBase
+    class JavaCodeJsonRender : JavaCodeRenderBase
     {
         public override string Render(DefBean b)
         {
-            var template = StringTemplateUtil.GetTemplate("config/cs_json/bean");
+            var template = StringTemplateUtil.GetTemplate("config/java_json/bean");
             var result = template.RenderCode(b);
 
             return result;
@@ -18,7 +19,7 @@ namespace Luban.Job.Cfg.Generate
 
         public override string Render(DefTable p)
         {
-            var template = StringTemplateUtil.GetTemplate("config/cs_json/table");
+            var template = StringTemplateUtil.GetTemplate("config/java_json/table");
             var result = template.RenderCode(p);
 
             return result;
@@ -26,11 +27,11 @@ namespace Luban.Job.Cfg.Generate
 
         public override string RenderService(string name, string module, List<DefTable> tables)
         {
-            var template = StringTemplateUtil.GetTemplate("config/cs_json/tables");
-            var result = template.RenderCode(new
+            var template = StringTemplateUtil.GetTemplate("config/java_json/tables");
+            var result = template.Render(new
             {
                 Name = name,
-                Namespace = module,
+                Package = module,
                 Tables = tables,
             });
 

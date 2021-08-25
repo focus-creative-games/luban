@@ -46,7 +46,7 @@ namespace Luban.Job.Cfg
             [Option("output_data_json_monolithic_file", Required = false, HelpText = "output monolithic json file")]
             public string OutputDataJsonMonolithicFile { get; set; }
 
-            [Option("gen_types", Required = true, HelpText = "code_cs_bin,code_cs_json,code_cs_unity_json,code_lua_bin,code_java_bin,code_go_bin,code_go_json,code_cpp_bin,code_python3_json,code_typescript_bin,code_typescript_json,data_bin,data_lua,data_json,data_json2,data_json_monolithic,data_resources . can be multi")]
+            [Option("gen_types", Required = true, HelpText = "code_cs_bin,code_cs_json,code_cs_unity_json,code_lua_bin,code_java_bin,code_java_json,code_go_bin,code_go_json,code_cpp_bin,code_python3_json,code_typescript_bin,code_typescript_json,data_bin,data_lua,data_json,data_json2,data_json_monolithic,data_resources . can be multi")]
             public string GenType { get; set; }
 
             [Option('s', "service", Required = true, HelpText = "service")]
@@ -82,6 +82,7 @@ namespace Luban.Job.Cfg
                 case "code_cs_json": return new CsCodeJsonRender();
                 case "code_cs_unity_json": return new CsCodeUnityJsonRender();
                 case "code_java_bin": return new JavaCodeBinRender();
+                case "code_java_json": return new JavaCodeJsonRender();
                 case "code_go_bin": return new GoCodeBinRender();
                 case "code_go_json": return new GoCodeJsonRender();
                 case "code_cpp_bin": return new CppCodeBinRender();
@@ -90,9 +91,9 @@ namespace Luban.Job.Cfg
                 case "code_python3_json": return new Python3CodeJsonRender();
                 case "code_typescript_bin": return new TypescriptCodeBinRender();
                 case "code_typescript_json": return new TypescriptCodeJsonRender();
-                case "code_cpp_ue_editor": return new UE4EditorCppRender();
-                case "code_cpp_ue_bp": return new UE4BpCppRender();
-                case "code_cs_unity_editor": return new EditorCsRender();
+                case "code_cpp_ue_editor": return new CppUE4EditorRender();
+                case "code_cpp_ue_bp": return new CppUE4BpRender();
+                case "code_cs_unity_editor": return new CsEditorRender();
                 default: throw new ArgumentException($"not support gen type:{genType}");
             }
         }
@@ -103,9 +104,9 @@ namespace Luban.Job.Cfg
             {
                 case "code_cs_bin":
                 case "code_cs_json":
-                case "code_cs_unity_json":
-                    return ELanguage.CS;
-                case "code_java_bin": return ELanguage.JAVA;
+                case "code_cs_unity_json": return ELanguage.CS;
+                case "code_java_bin":
+                case "code_java_json": return ELanguage.JAVA;
                 case "code_go_bin":
                 case "code_go_json": return ELanguage.GO;
                 case "code_cpp_bin": return ELanguage.CPP;
@@ -339,6 +340,7 @@ namespace Luban.Job.Cfg
                         case "code_cs_json":
                         case "code_cs_unity_json":
                         case "code_java_bin":
+                        case "code_java_json":
                         case "code_go_bin":
                         case "code_go_json":
                         {
@@ -406,8 +408,7 @@ namespace Luban.Job.Cfg
 
                         default:
                         {
-                            s_logger.Error("unknown gentype:{gentype}", genType);
-                            break;
+                            throw new Exception($"unknown gentype:{genType}");
                         }
                     }
                 }
@@ -693,7 +694,7 @@ namespace {ctx.TopModule}
 
         private void GenCppUeEditor(GenContext ctx)
         {
-            var render = new UE4EditorCppRender();
+            var render = new CppUE4EditorRender();
 
             var renderTypes = ctx.Assembly.Types.Values.Where(c => c is DefEnum || c is DefBean).ToList();
 
@@ -728,7 +729,7 @@ namespace {ctx.TopModule}
 
         private void GenCsUnityEditor(GenContext ctx)
         {
-            var render = new EditorCsRender();
+            var render = new CsEditorRender();
             foreach (var c in ctx.Assembly.Types.Values)
             {
                 ctx.Tasks.Add(Task.Run(() =>
@@ -743,7 +744,7 @@ namespace {ctx.TopModule}
 
         private void GenCppUeBp(GenContext ctx)
         {
-            var render = new UE4BpCppRender();
+            var render = new CppUE4BpRender();
             foreach (var c in ctx.ExportTypes)
             {
                 if (!(c is DefEnum || c is DefBean))

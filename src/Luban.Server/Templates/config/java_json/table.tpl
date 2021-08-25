@@ -1,6 +1,6 @@
 package {{x.namespace_with_top_module}};
 
-import bright.serialization.*;
+import com.google.gson.JsonElement;
 
 {{~
     name = x.name
@@ -20,13 +20,13 @@ public final class {{name}} {
     private final java.util.HashMap<{{java_box_define_type key_type}}, {{java_box_define_type value_type}}> _dataMap;
     private final java.util.ArrayList<{{java_box_define_type value_type}}> _dataList;
     
-    public {{name}}(ByteBuf _buf) {
+    public {{name}}(JsonElement __json__) {
         _dataMap = new java.util.HashMap<{{java_box_define_type key_type}}, {{java_box_define_type value_type}}>();
         _dataList = new java.util.ArrayList<{{java_box_define_type value_type}}>();
         
-        for(int n = _buf.readSize() ; n > 0 ; --n) {
+        for(var _e_ : __json__.getAsJsonArray()) {
             {{java_box_define_type value_type}} _v;
-            {{java_deserialize '_buf' '_v' value_type}}
+            {{java_deserialize '_e_.getAsJsonObject()' '_v' value_type}}
             _dataList.add(_v);
             _dataMap.put(_v.{{x.index_field.java_style_name}}, _v);
         }
@@ -52,10 +52,10 @@ public final class {{name}} {
 
     public final {{java_define_type value_type}} data() { return _data; }
 
-    public {{name}}(ByteBuf _buf) {
-        int n = _buf.readSize();
-        if (n != 1) throw new SerializationException("table mode=one, but size != 1");
-        {{java_deserialize '_buf' '_data' value_type}}
+    public {{name}}(JsonElement __json__) {
+        int n = __json__.getAsJsonArray().size();
+        if (n != 1) throw new bright.serialization.SerializationException("table mode=one, but size != 1");
+        {{java_deserialize '__json__.getAsJsonArray().get(0).getAsJsonObject()' '_data' value_type}}
     }
 
 
@@ -71,5 +71,6 @@ public final class {{name}} {
     public void resolve(java.util.HashMap<String, Object> _tables) {
         _data.resolve(_tables);
     }
+
     {{~end~}}
 }

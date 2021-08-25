@@ -52,6 +52,8 @@ namespace Luban.Job.Cfg.Defs
 
         public string OutputDataFile => FullName;
 
+        public string InnerName => "_" + this.Name;
+
         public string OutputDataFileEscapeDot => FullName.Replace('.', '_');
 
         public List<string> GetBranchInputFiles(string branchName)

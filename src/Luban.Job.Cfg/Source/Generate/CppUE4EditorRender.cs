@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.Generate
 {
-    class UE4EditorCppRender : CodeRenderBase
+    class CppUE4EditorRender : CodeRenderBase
     {
         [ThreadStatic]
         private static Template t_enumRender;

@@ -31,30 +31,24 @@ namespace Luban.Job.Db.Generate
             return RenderUtil.RenderCsEnumClass(e);
         }
 
-        [ThreadStatic]
-        private static Template t_beanRender;
         public string Render(DefBean b)
         {
-            var template = t_beanRender ??= Template.Parse(StringTemplateUtil.GetTemplateString("db/cs_async/bean"));
+            var template = StringTemplateUtil.GetTemplate("db/cs_async/bean");
             var result = template.RenderCode(b);
             return result;
         }
 
-        [ThreadStatic]
-        private static Template t_tableRender;
         public string Render(DefTable p)
         {
-            var template = t_tableRender ??= Template.Parse(StringTemplateUtil.GetTemplateString("db/cs_async/table"));
+            var template = StringTemplateUtil.GetTemplate("db/cs_async/table");
             var result = template.RenderCode(p);
 
             return result;
         }
 
-        [ThreadStatic]
-        private static Template t_stubRender;
         public string RenderTables(string name, string module, List<DefTable> tables)
         {
-            var template = t_stubRender ??= Template.Parse(StringTemplateUtil.GetTemplateString("db/cs_async/tables"));
+            var template = StringTemplateUtil.GetTemplate("db/cs_async/tables");
             var result = template.Render(new
             {
                 Name = name,

@@ -1,11 +1,11 @@
 package {{package}};
 
-import bright.serialization.*;
+import com.google.gson.JsonElement;
 
 public final class {{name}}
 {
-    public  static interface  IByteBufLoader {
-        ByteBuf load(String file) throws java.io.IOException;
+    public  interface  IJsonLoader {
+        JsonElement load(String file) throws java.io.IOException;
     }
 
     {{~for table in tables ~}}
@@ -18,7 +18,7 @@ public final class {{name}}
     public {{table.full_name_with_top_module}} get{{table.name}}() { return {{table.inner_name}}; }
     {{~end~}}
 
-    public {{name}}(IByteBufLoader loader) throws java.io.IOException {
+    public {{name}}(IJsonLoader loader) throws java.io.IOException {
         var tables = new java.util.HashMap<String, Object>();
         {{~for table in tables ~}}
         {{table.inner_name}} = new {{table.full_name_with_top_module}}(loader.load("{{table.output_data_file}}")); 

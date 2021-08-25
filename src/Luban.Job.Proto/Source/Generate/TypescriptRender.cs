@@ -36,41 +36,33 @@ namespace Luban.Job.Proto.Generate
             return RenderUtil.RenderTypescriptEnumClass(e);
         }
 
-        [ThreadStatic]
-        private static Template t_beanRender;
         private string Render(DefBean b)
         {
-            var template = t_beanRender ??= Template.Parse(StringTemplateUtil.GetTemplateString("proto/typescript/bean"));
+            var template = StringTemplateUtil.GetTemplate("proto/typescript/bean");
             var result = template.RenderCode(b);
 
             return result;
         }
 
-        [ThreadStatic]
-        private static Template t_protoRender;
         private string Render(DefProto p)
         {
-            var template = t_protoRender ??= Template.Parse(StringTemplateUtil.GetTemplateString("proto/typescript/proto"));
+            var template = StringTemplateUtil.GetTemplate("proto/typescript/proto");
             var result = template.RenderCode(p);
 
             return result;
         }
 
-        [ThreadStatic]
-        private static Template t_rpcRender;
         private string Render(DefRpc r)
         {
-            var template = t_rpcRender ??= Template.Parse(StringTemplateUtil.GetTemplateString("proto/typescript/rpc"));
+            var template = StringTemplateUtil.GetTemplate("proto/typescript/rpc");
             var result = template.RenderCode(r);
 
             return result;
         }
 
-        [ThreadStatic]
-        private static Template t_stubRender;
         public string RenderStubs(string name, string module, List<DefTypeBase> protos, List<DefTypeBase> rpcs)
         {
-            var template = t_stubRender ??= Template.Parse(StringTemplateUtil.GetTemplateString("proto/typescript/stub"));
+            var template = StringTemplateUtil.GetTemplate("proto/typescript/stub");
             var result = template.Render(new
             {
                 Name = name,

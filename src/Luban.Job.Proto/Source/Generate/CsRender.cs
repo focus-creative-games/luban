@@ -33,41 +33,33 @@ namespace Luban.Job.Proto.Generate
             return RenderUtil.RenderCsEnumClass(e);
         }
 
-        [ThreadStatic]
-        private static Template t_beanRender;
         private string Render(DefBean b)
         {
-            var template = t_beanRender ??= Template.Parse(StringTemplateUtil.GetTemplateString("proto/cs/bean"));
+            var template = StringTemplateUtil.GetTemplate("proto/cs/bean");
             var result = template.RenderCode(b);
 
             return result;
         }
 
-        [ThreadStatic]
-        private static Template t_protoRender;
         private string Render(DefProto p)
         {
-            var template = t_protoRender ??= Template.Parse(StringTemplateUtil.GetTemplateString("proto/cs/proto"));
+            var template = StringTemplateUtil.GetTemplate("proto/cs/proto");
             var result = template.RenderCode(p);
 
             return result;
         }
 
-        [ThreadStatic]
-        private static Template t_rpcRender;
         private string Render(DefRpc r)
         {
-            var template = t_rpcRender ??= Template.Parse(StringTemplateUtil.GetTemplateString("proto/cs/rpc"));
+            var template = StringTemplateUtil.GetTemplate("proto/cs/rpc");
             var result = template.RenderCode(r);
 
             return result;
         }
 
-        [ThreadStatic]
-        private static Template t_stubRender;
         public string RenderStubs(string name, string module, List<DefTypeBase> protos, List<DefTypeBase> rpcs)
         {
-            var template = t_stubRender ??= Template.Parse(StringTemplateUtil.GetTemplateString("proto/cs/stub"));
+            var template = StringTemplateUtil.GetTemplate("proto/cs/stub");
             var result = template.Render(new
             {
                 Name = name,

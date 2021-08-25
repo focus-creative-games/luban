@@ -1,6 +1,7 @@
 package {{x.namespace_with_top_module}};
 
-import bright.serialization.*;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 {{
     name = x.name
@@ -15,12 +16,12 @@ import bright.serialization.*;
  */
 {{~end~}}
 public {{x.java_class_modifier}} class {{name}}{{if parent_def_type}} extends {{x.parent_def_type.full_name_with_top_module}}{{end}} {
-    public {{name}}(ByteBuf _buf) { 
+    public {{name}}(JsonObject __json__) { 
         {{~if parent_def_type~}}
-        super(_buf);
+        super(__json__);
         {{~end~}}
         {{~ for field in export_fields ~}}
-        {{java_deserialize '_buf' field.java_style_name field.ctype}}
+        {{java_json_deserialize '__json__' field.java_style_name field.name field.ctype}}
         {{~if field.index_field~}}
         for({{java_box_define_type field.ctype.element_type}} _v : {{field.java_style_name}}) {
             {{field.java_style_name}}_Index.put(_v.{{field.index_field.java_style_name}}, _v); 
@@ -43,16 +44,18 @@ public {{x.java_class_modifier}} class {{name}}{{if parent_def_type}} extends {{
         {{~end~}}
     }
 
+    public static {{name}} deserialize{{name}}(JsonObject __json__) {
     {{~if x.is_abstract_type~}}
-    public static {{name}} deserialize{{name}}(ByteBuf _buf) {
-        switch (_buf.readInt()) {
+        switch (__json__.get("__type__").getAsString()) {
         {{~for child in x.hierarchy_not_abstract_children~}}
-            case {{child.full_name_with_top_module}}.ID: return new {{child.full_name_with_top_module}}(_buf);
+            case "{{child.name}}": return new {{child.full_name_with_top_module}}(__json__);
         {{~end~}}
-            default: throw new SerializationException();
+            default: throw new bright.serialization.SerializationException();
         }
-    }
+    {{~else~}}
+        return new {{name}}(__json__);
     {{~end~}}
+    }
 
     {{~ for field in export_fields ~}}
 {{~if field.comment != '' ~}}
