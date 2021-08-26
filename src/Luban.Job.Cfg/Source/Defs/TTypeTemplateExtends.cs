@@ -2,6 +2,7 @@ using Luban.Job.Cfg.TypeVisitors;
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.Types;
 using Luban.Job.Common.TypeVisitors;
+using System;
 
 namespace Luban.Job.Cfg.Defs
 {
@@ -191,5 +192,23 @@ namespace Luban.Job.Cfg.Defs
                 return type.Apply(PyUnderingDeserializeVisitor.Ins, $"{jsonVarName}['{jsonFieldName}']", fieldName);
             }
         }
+
+        public static string DefineTextKeyField(DefField field, string lan)
+        {
+            switch (lan)
+            {
+                case "cpp": return $"{CppDefineTypeName.Ins.Accept(field.CType.IsNullable ? TString.NullableIns : TString.Ins)} {field.CppStyleName}{TText.L10N_FIELD_SUFFIX};";
+                default: throw new NotSupportedException($"not support lan:{lan}");
+            }
+        }
+
+        //public static string DeserializeTextKeyField(DefField field, string lan, string bufName)
+        //{
+        //    switch (lan)
+        //    {
+        //        case "cpp": return $"{CppDefineTypeName.Ins.Accept(TString.Ins)} {field.CppStyleName}{L10N_FIELD_SUFFIX};";
+        //        default: throw new NotSupportedException($"not support lan:{lan}");
+        //    }
+        //}
     }
 }

@@ -87,6 +87,7 @@ namespace Luban.Job.Cfg.DataExporters
 
         public void Accept(DText type, DefAssembly ass, ByteBuf x)
         {
+            x.WriteString(type.Key);
             x.WriteString(type.GetText(ass.ExportTextTable, ass.NotConvertTextSet));
         }
 

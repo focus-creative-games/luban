@@ -21,38 +21,6 @@ namespace Luban.Job.Cfg.DataExporters
             x.WriteEndArray();
         }
 
-        public void WriteAsObject(DefTable table, List<Record> datas, DefAssembly ass, Utf8JsonWriter x)
-        {
-            switch (table.Mode)
-            {
-                case RawDefs.ETableMode.ONE:
-                {
-                    this.Accept(datas[0].Data, ass, x);
-                    break;
-                }
-                case RawDefs.ETableMode.MAP:
-                {
-
-                    x.WriteStartObject();
-                    string indexName = table.IndexField.Name;
-                    foreach (var rec in datas)
-                    {
-                        var indexFieldData = rec.Data.GetField(indexName);
-
-                        x.WritePropertyName(indexFieldData.Apply(ToJsonPropertyNameVisitor.Ins));
-                        this.Accept(rec.Data, ass, x);
-                    }
-
-                    x.WriteEndObject();
-                    break;
-                }
-                default:
-                {
-                    throw new NotSupportedException($"not support table mode:{table.Mode}");
-                }
-            }
-        }
-
         public void Accept(DBool type, DefAssembly ass, Utf8JsonWriter x)
         {
             x.WriteBooleanValue(type.Value);
@@ -120,7 +88,12 @@ namespace Luban.Job.Cfg.DataExporters
 
         public void Accept(DText type, DefAssembly ass, Utf8JsonWriter x)
         {
+            x.WriteStartObject();
+            x.WritePropertyName(DText.KEY_NAME);
+            x.WriteStringValue(type.Key);
+            x.WritePropertyName(DText.TEXT_NAME);
             x.WriteStringValue(type.GetText(ass.ExportTextTable, ass.NotConvertTextSet));
+            x.WriteEndObject();
         }
 
         public void Accept(DBean type, DefAssembly ass, Utf8JsonWriter x)
@@ -145,7 +118,7 @@ namespace Luban.Job.Cfg.DataExporters
 
                 // 特殊处理 bean 多态类型
                 // 另外，不生成  xxx:null 这样
-                if (d == null || (d is DBean db && db.ImplType == null))
+                if (d == null /*|| (d is DBean db && db.ImplType == null)*/)
                 {
                     //x.WriteNullValue();
                 }

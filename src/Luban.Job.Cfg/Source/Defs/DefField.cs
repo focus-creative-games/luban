@@ -142,6 +142,8 @@ namespace Luban.Job.Cfg.Defs
 
         public CfgField RawDefine { get; }
 
+        public bool GenTextKey => this.CType is TText;
+
         public DefField(DefTypeBase host, CfgField f, int idOffset) : base(host, f, idOffset)
         {
             Index = f.Index;
@@ -181,6 +183,10 @@ namespace Luban.Job.Cfg.Defs
                     {
                         throw new Exception($"container element type:'{e.Bean.FullName}' can't be empty bean");
                     }
+                    if (t.ElementType is TText)
+                    {
+                        throw new Exception($"bean:{HostType.FullName} field:{Name} container element type can't text");
+                    }
                     break;
                 }
                 case TList t:
@@ -188,6 +194,30 @@ namespace Luban.Job.Cfg.Defs
                     if (t.ElementType is TBean e && !e.IsDynamic && e.Bean.HierarchyFields.Count == 0)
                     {
                         throw new Exception($"container element type:'{e.Bean.FullName}' can't be empty bean");
+                    }
+                    if (t.ElementType is TText)
+                    {
+                        throw new Exception($"bean:{HostType.FullName} field:{Name} container element type can't text");
+                    }
+                    break;
+                }
+                case TSet t:
+                {
+                    if (t.ElementType is TText)
+                    {
+                        throw new Exception($"bean:{HostType.FullName} field:{Name} container element type can't text");
+                    }
+                    break;
+                }
+                case TMap t:
+                {
+                    if (t.KeyType is TText)
+                    {
+                        throw new Exception($"bean:{HostType.FullName} field:{Name} container key type can't text");
+                    }
+                    if (t.ValueType is TText)
+                    {
+                        throw new Exception($"bean:{HostType.FullName} field:{Name} container value type can't text");
                     }
                     break;
                 }

@@ -4,6 +4,8 @@ namespace Luban.Job.Common.Types
 {
     public class TText : TType
     {
+        public const string L10N_FIELD_SUFFIX = "_l10n_key";
+
         public static TText Ins { get; } = new TText(false);
 
         public static TText NullableIns { get; } = new TText(true);

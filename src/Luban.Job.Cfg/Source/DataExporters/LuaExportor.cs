@@ -117,7 +117,7 @@ namespace Luban.Job.Cfg.DataExporters
 
         public void Accept(DText type, DefAssembly ass, StringBuilder line)
         {
-            line.Append('\'').Append(EscapeString(type.GetText(ass.ExportTextTable, ass.NotConvertTextSet))).Append('\'');
+            line.Append($"{{{DText.KEY_NAME}='{type.Key}',{DText.TEXT_NAME}='{EscapeString(type.GetText(ass.ExportTextTable, ass.NotConvertTextSet))}'}}");
         }
 
         public void Accept(DBean type, DefAssembly ass, StringBuilder line)
