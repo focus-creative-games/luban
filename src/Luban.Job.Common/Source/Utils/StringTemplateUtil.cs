@@ -11,11 +11,24 @@ namespace Luban.Job.Common.Utils
 {
     public static class StringTemplateUtil
     {
-        public static string TemplateDir { get; set; }
+        private static List<string> TemplateSearchPaths { get; } = new List<string>();
+
+        public static void AddTemplateSearchPath(string path)
+        {
+            TemplateSearchPaths.Add(path);
+        }
 
         public static string GetTemplateString(string templateName)
         {
-            return File.ReadAllText($"{TemplateDir}/{templateName}.tpl", Encoding.UTF8);
+            foreach (var searchPath in TemplateSearchPaths)
+            {
+                var fullPath = $"{searchPath}/{templateName}.tpl";
+                if (File.Exists(fullPath))
+                {
+                    return File.ReadAllText(fullPath, Encoding.UTF8);
+                }
+            }
+            throw new FileNotFoundException($"can't find {templateName}.tpl in paths:{string.Join(';', TemplateSearchPaths)}");
         }
 
         private static readonly ConcurrentDictionary<string, Template> s_templates = new();

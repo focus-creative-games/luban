@@ -2,6 +2,7 @@ using Bright.Common;
 using CommandLine;
 using Luban.Common.Protos;
 using Luban.Common.Utils;
+using Luban.Job.Common.Utils;
 using Luban.Server.Common;
 using System;
 using System.IO;
@@ -20,8 +21,8 @@ namespace Luban.Server
             [Option('l', "loglevel", Required = false, HelpText = "log level. default INFO. avaliable value: TRACE,DEBUG,INFO,WARN,ERROR,FATAL,OFF")]
             public string LogLevel { get; set; } = "INFO";
 
-            [Option('t', "string template directory", Required = false, HelpText = "string template directory.")]
-            public string StringTemplateDir { get; set; }
+            [Option('t', "template_search_path", Required = false, HelpText = "additional template search path")]
+            public string TemplateSearchPath { get; set; }
         }
 
         private static CommandLineOptions ParseOptions(String[] args)
@@ -48,11 +49,11 @@ namespace Luban.Server
 
             var options = ParseOptions(args);
 
-            if (string.IsNullOrEmpty(options.StringTemplateDir))
+            if (!string.IsNullOrEmpty(options.TemplateSearchPath))
             {
-                options.StringTemplateDir = FileUtil.GetPathRelateApplicationDirectory("Templates");
+                StringTemplateUtil.AddTemplateSearchPath(options.TemplateSearchPath);
             }
-            Job.Common.Utils.StringTemplateUtil.TemplateDir = options.StringTemplateDir;
+            StringTemplateUtil.AddTemplateSearchPath(FileUtil.GetPathRelateApplicationDirectory("Templates"));
 
             Luban.Common.Utils.LogUtil.InitSimpleNLogConfigure(NLog.LogLevel.FromString(options.LogLevel));
 

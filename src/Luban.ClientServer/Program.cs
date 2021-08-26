@@ -4,6 +4,7 @@ using Luban.Client.Common.Utils;
 using Luban.Client.Utils;
 using Luban.Common.Protos;
 using Luban.Common.Utils;
+using Luban.Job.Common.Utils;
 using Luban.Server;
 using System;
 using System.Collections.Generic;
@@ -34,7 +35,8 @@ namespace Luban.ClientServer
 
             public string[] WatchDir { get; set; }
 
-            public string StringTemplateDir { get; set; }
+            [Option('t', "template_search_path", Required = false, HelpText = "string template search path.")]
+            public string TemplateSearchPath { get; set; }
         }
 
         private static void PrintUsage(string err)
@@ -54,7 +56,7 @@ Options:
   -l  --loglevel <level>        log level. default INFO. avaliable value: TRACE,DEBUG,INFO,WARN,ERROR,FATAL,OFF
   -c  --cachemetafile <file>    cache meta file name. default is '.cache.meta'
   -w  --watch  <dir>            watch data change and regenerate.
-  -t  --templatedirectory <dir> string templates directory. default is 'Templates'
+  -t  --template_search_path <dir> additional template search path
   -h  --help                    show usage
 ");
         }
@@ -122,9 +124,9 @@ Options:
                             break;
                         }
                         case "-t":
-                        case "--templatedirectory":
+                        case "--template_search_path":
                         {
-                            ops.StringTemplateDir = args[++i];
+                            ops.TemplateSearchPath = args[++i];
                             break;
                         }
                         case "--":
@@ -154,7 +156,11 @@ Options:
 
         private static void StartServer(AllCommandLineOptions options)
         {
-            Job.Common.Utils.StringTemplateUtil.TemplateDir = options.StringTemplateDir;
+            if (!string.IsNullOrEmpty(options.TemplateSearchPath))
+            {
+                StringTemplateUtil.AddTemplateSearchPath(options.TemplateSearchPath);
+            }
+            StringTemplateUtil.AddTemplateSearchPath(FileUtil.GetPathRelateApplicationDirectory("Templates"));
 
             GenServer.Ins.Start(options.Port, ProtocolStub.Factories);
 
@@ -206,9 +212,9 @@ Options:
             ThreadPool.SetMinThreads(Math.Max(4, processorCount), 5);
             ThreadPool.SetMaxThreads(Math.Max(16, processorCount * 4), 10);
 
-            if (string.IsNullOrEmpty(options.StringTemplateDir))
+            if (string.IsNullOrEmpty(options.TemplateSearchPath))
             {
-                options.StringTemplateDir = FileUtil.GetPathRelateApplicationDirectory("Templates");
+                options.TemplateSearchPath = FileUtil.GetPathRelateApplicationDirectory("Templates");
             }
             if (string.IsNullOrWhiteSpace(options.Host))
             {
