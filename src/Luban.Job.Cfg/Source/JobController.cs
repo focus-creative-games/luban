@@ -64,7 +64,7 @@ namespace Luban.Job.Cfg
             [Option("l10n_text_field_name", Required = false, HelpText = "text value field name of text table files. default is text")]
             public string TextValueFieldName { get; set; }
 
-            [Option("output_l10n_not_converted_text_file", Required = false, HelpText = "the file save not converted l10n texts.")]
+            [Option("output_l10n_not_translated_text_file", Required = false, HelpText = "the file save not translated l10n texts.")]
             public string OutputNotConvertTextFile { get; set; }
 
             [Option("branch", Required = false, HelpText = "branch name")]
@@ -194,7 +194,7 @@ namespace Luban.Job.Cfg
 
                     if (string.IsNullOrWhiteSpace(options.InputTextTableFiles) ^ string.IsNullOrWhiteSpace(options.OutputNotConvertTextFile))
                     {
-                        errMsg = "--input_l10n_text_files must be provided with --output_l10n_not_converted_text_file";
+                        errMsg = "--input_l10n_text_files must be provided with --output_l10n_not_translated_text_file";
                         return false;
                     }
                 }
