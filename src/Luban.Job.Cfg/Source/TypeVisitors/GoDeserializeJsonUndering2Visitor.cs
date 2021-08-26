@@ -1,3 +1,4 @@
+using Luban.Job.Cfg.Datas;
 using Luban.Job.Common.Types;
 using Luban.Job.Common.TypeVisitors;
 
@@ -86,7 +87,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TText type, string varName, string bufName)
         {
-            return DeserializeString(type, varName, bufName);
+            return $"{{var _ok_ bool; var __json_text__ map[string]interface{{}}; if __json_text__, _ok_ = {bufName}.(map[string]interface{{}}) ; !_ok_ {{ err = errors.New(\"{varName} error\"); return }};   {DeserializeString(type, "_", $"__json_text__[\"{DText.KEY_NAME}\"]")}; {DeserializeString(type, varName, $"__json_text__[\"{DText.TEXT_NAME}\"]")} }}";
         }
 
         public string Accept(TBean type, string varName, string bufName)

@@ -74,7 +74,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TText type, string fieldName, string bufName)
         {
-            return $"{{ if {fieldName}, err = {bufName}.ReadString(); err != nil {{ return }} }}";
+            return $"{{ if _, err = {bufName}.ReadString(); err != nil {{ return }}; if {fieldName}, err = {bufName}.ReadString(); err != nil {{ return }} }}";
         }
 
         public string Accept(TBean type, string fieldName, string bufName)
