@@ -1,3 +1,4 @@
+using Luban.Job.Cfg.Datas;
 using Luban.Job.Common.Types;
 using Luban.Job.Common.TypeVisitors;
 
@@ -74,7 +75,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TText type, string jsonVarName, string fieldName)
         {
-            return $"{fieldName} = {jsonVarName}";
+            return $"{fieldName} = {jsonVarName}['{DText.TEXT_NAME}']";
         }
 
         public string Accept(TBean type, string jsonVarName, string fieldName)

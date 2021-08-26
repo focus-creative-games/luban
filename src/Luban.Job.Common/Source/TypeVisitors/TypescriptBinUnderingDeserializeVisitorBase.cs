@@ -72,7 +72,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TText type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadString()";
+            return $" {bufName}.ReadString(); {fieldName} = {bufName}.ReadString()";
         }
 
         public abstract string Accept(TBean type, string bufVarName, string fieldName);
