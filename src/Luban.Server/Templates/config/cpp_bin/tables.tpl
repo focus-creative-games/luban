@@ -10,7 +10,7 @@ class {{name}}
      {{table.cpp_full_name}} {{table.name}};
     {{~end~}}
 
-    bool load(::bright::Function<bool(ByteBuf&, const ::bright::String&)> loader)
+    bool load(::bright::Loader<ByteBuf> loader)
     {
         ::bright::HashMap<::bright::String, void*> __tables__;
 

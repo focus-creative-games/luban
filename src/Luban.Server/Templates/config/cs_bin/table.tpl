@@ -15,7 +15,7 @@ namespace {{x.namespace_with_top_module}}
 /// {{x.comment}}
 /// </summary>
 {{~end~}}
-public sealed partial class {{name}}
+public sealed class {{name}}
 {
     {{~if x.is_map_table ~}}
     private readonly Dictionary<{{cs_define_type key_type}}, {{cs_define_type value_type}}> _dataMap;
@@ -52,7 +52,14 @@ public sealed partial class {{name}}
         {
             v.Resolve(_tables);
         }
-        OnResolveFinish(_tables);
+    }
+
+    public void TranslateText(System.Func<string, string, string> translator)
+    {
+        foreach(var v in _dataList)
+        {
+            v.TranslateText(translator);
+        }
     }
 
     {{~else~}}
@@ -82,12 +89,14 @@ public sealed partial class {{name}}
     public void Resolve(Dictionary<string, object> _tables)
     {
         _data.Resolve(_tables);
-        OnResolveFinish(_tables);
+    }
+
+    public void TranslateText(System.Func<string, string, string> translator)
+    {
+        _data.TranslateText(translator);
     }
 
     {{~end~}}
-
-    partial void OnResolveFinish(Dictionary<string, object> _tables);
 }
 
 }

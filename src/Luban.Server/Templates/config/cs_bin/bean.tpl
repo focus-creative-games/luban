@@ -31,19 +31,6 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
         {{~end~}}
     }
 
-    public {{name}}({{- for field in hierarchy_export_fields }}{{cs_define_type field.ctype}} {{field.name}}{{if !for.last}},{{end}} {{end}}) {{if parent_def_type}} : base({{- for field in parent_def_type.hierarchy_export_fields }}{{field.name}}{{if !for.last}},{{end}}{{end}}) {{end}}
-    {
-        {{~ for field in export_fields ~}}
-        this.{{field.cs_style_name}} = {{field.name}};
-        {{~if field.index_field~}}
-        foreach(var _v in {{field.cs_style_name}})
-        {
-            {{field.cs_style_name}}_Index.Add(_v.{{field.index_field.cs_style_name}}, _v); 
-        }
-        {{~end~}}
-        {{~end~}}
-    }
-
     public static {{name}} Deserialize{{name}}(ByteBuf _buf)
     {
     {{~if x.is_abstract_type~}}
@@ -65,12 +52,15 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
     /// {{field.comment}}
     /// </summary>
 {{~end~}}
-    public readonly {{cs_define_type field.ctype}} {{field.cs_style_name}};
+    public {{cs_define_type field.ctype}} {{field.cs_style_name}} {get; private set;}
     {{~if field.index_field~}} 
     public readonly Dictionary<{{cs_define_type field.index_field.ctype}}, {{cs_define_type field.ctype.element_type}}> {{field.cs_style_name}}_Index = new Dictionary<{{cs_define_type field.index_field.ctype}}, {{cs_define_type field.ctype.element_type}}>();
     {{~end~}}
     {{~if field.gen_ref~}}
     public {{field.cs_ref_validator_define}}
+    {{~end~}}
+    {{~if field.gen_text_key~}}
+    public {{cs_define_text_key_field field}} {get;}
     {{~end~}}
     {{~end~}}
 
@@ -91,10 +81,21 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
         {{cs_recursive_resolve field '_tables'}}
         {{~end~}}
         {{~end~}}
-        OnResolveFinish(_tables);
     }
 
-    partial void OnResolveFinish(Dictionary<string, object> _tables);
+    public {{x.cs_method_modifier}} void TranslateText(System.Func<string, string, string> translator)
+    {
+        {{~if parent_def_type~}}
+        base.TranslateText(translator);
+        {{~end~}}
+        {{~ for field in export_fields ~}}
+        {{~if field.gen_text_key~}}
+        {{cs_translate_text field 'translator'}}
+        {{~else if field.has_recursive_text~}}
+        {{cs_recursive_translate_text field 'translator'}}
+        {{~end~}}
+        {{~end~}}
+    }
 
     public override string ToString()
     {

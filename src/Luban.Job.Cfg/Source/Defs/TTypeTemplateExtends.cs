@@ -8,6 +8,20 @@ namespace Luban.Job.Cfg.Defs
 {
     class TTypeTemplateExtends : TTypeTemplateCommonExtends
     {
+        public static string CsDefineTextKeyField(DefField field)
+        {
+            return $"string {field.GetTextKeyName(field.CsStyleName)}";
+        }
+
+        public static string CsTranslateText(DefField field, string translatorName)
+        {
+            return $"{field.CsStyleName} = {translatorName}({field.GetTextKeyName(field.CsStyleName)}, {field.CsStyleName});";
+        }
+
+        public static string CsRecursiveTranslateText(DefField field, string translatorName)
+        {
+            return field.CType.Apply(CsRecursiveTranslateVisitor.Ins, field.CsStyleName, translatorName);
+        }
 
         public static string CsJsonDeserialize(string bufName, string fieldName, string jsonFieldName, TType type)
         {
@@ -197,7 +211,7 @@ namespace Luban.Job.Cfg.Defs
         {
             switch (lan)
             {
-                case "cpp": return $"{CppDefineTypeName.Ins.Accept(field.CType.IsNullable ? TString.NullableIns : TString.Ins)} {field.CppStyleName}{TText.L10N_FIELD_SUFFIX};";
+                case "cs": return $"string {field.CsStyleName}{TText.L10N_FIELD_SUFFIX};";
                 default: throw new NotSupportedException($"not support lan:{lan}");
             }
         }

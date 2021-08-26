@@ -75,7 +75,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TText type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadString();";
+            return $"{fieldName}{TText.L10N_FIELD_SUFFIX} = {bufName}.ReadString(); {fieldName} = {bufName}.ReadString();";
         }
 
         public string Accept(TBean type, string bufName, string fieldName)

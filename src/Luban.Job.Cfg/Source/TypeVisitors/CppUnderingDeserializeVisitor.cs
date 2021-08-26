@@ -74,7 +74,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TText type, string bufName, string fieldName)
         {
-            return $"if(!{bufName}.readString({fieldName})) return false;";
+            return $"if(!{bufName}.readString({fieldName})) return false; /* key */ if(!{bufName}.readString({fieldName})) return false; /* text */";
         }
 
         public string Accept(TBean type, string bufName, string fieldName)

@@ -142,7 +142,11 @@ namespace Luban.Job.Cfg.Defs
 
         public CfgField RawDefine { get; }
 
+        public string GetTextKeyName(string name) => name + TText.L10N_FIELD_SUFFIX;
+
         public bool GenTextKey => this.CType is TText;
+
+        public bool HasRecursiveText => HasRecursiveRef;
 
         public DefField(DefTypeBase host, CfgField f, int idOffset) : base(host, f, idOffset)
         {

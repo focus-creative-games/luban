@@ -32,6 +32,13 @@ public sealed class {{name}}
         {{table.name}}.Resolve(tables); 
         {{~end~}}
     }
+
+    public void TranslateText(System.Func<string, string, string> translator)
+    {
+        {{~for table in tables ~}}
+        {{table.name}}.TranslateText(translator); 
+        {{~end~}}
+    }
 }
 
 }
