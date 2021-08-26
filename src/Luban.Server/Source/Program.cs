@@ -21,7 +21,7 @@ namespace Luban.Server
             public string LogLevel { get; set; } = "INFO";
 
             [Option('t', "string template directory", Required = false, HelpText = "string template directory.")]
-            public string StringTemplateDir { get; set; } = "Templates";
+            public string StringTemplateDir { get; set; }
         }
 
         private static CommandLineOptions ParseOptions(String[] args)
@@ -48,6 +48,10 @@ namespace Luban.Server
 
             var options = ParseOptions(args);
 
+            if (string.IsNullOrEmpty(options.StringTemplateDir))
+            {
+                options.StringTemplateDir = FileUtil.GetPathRelateApplicationDirectory("Templates");
+            }
             Job.Common.Utils.StringTemplateUtil.TemplateDir = options.StringTemplateDir;
 
             Luban.Common.Utils.LogUtil.InitSimpleNLogConfigure(NLog.LogLevel.FromString(options.LogLevel));

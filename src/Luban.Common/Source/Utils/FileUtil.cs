@@ -10,6 +10,16 @@ namespace Luban.Common.Utils
     {
         private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
+        public static string GetApplicationDirectory()
+        {
+            return Path.GetDirectoryName(System.Reflection.Assembly.GetCallingAssembly().Location);
+        }
+
+        public static string GetPathRelateApplicationDirectory(string relatePath)
+        {
+            return Path.Combine(GetApplicationDirectory(), relatePath);
+        }
+
         public static string GetFileName(string path)
         {
             int index = path.Replace('\\', '/').LastIndexOf('/');

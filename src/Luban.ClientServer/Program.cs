@@ -7,6 +7,7 @@ using Luban.Common.Utils;
 using Luban.Server;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,7 +34,7 @@ namespace Luban.ClientServer
 
             public string[] WatchDir { get; set; }
 
-            public string StringTemplateDir { get; set; } = "Templates";
+            public string StringTemplateDir { get; set; }
         }
 
         private static void PrintUsage(string err)
@@ -205,6 +206,10 @@ Options:
             ThreadPool.SetMinThreads(Math.Max(4, processorCount), 5);
             ThreadPool.SetMaxThreads(Math.Max(16, processorCount * 4), 10);
 
+            if (string.IsNullOrEmpty(options.StringTemplateDir))
+            {
+                options.StringTemplateDir = FileUtil.GetPathRelateApplicationDirectory("Templates");
+            }
             if (string.IsNullOrWhiteSpace(options.Host))
             {
                 options.Host = "127.0.0.1";
