@@ -20,7 +20,7 @@ namespace {{x.namespace_with_top_module}}
 public interface {{readonly_name}} {{if parent_def_type}}: IReadOnly{{x.parent_def_type.name}} {{end}}
 {
     {{~ for field in fields~}}
-    {{db_cs_readonly_define_type field.ctype}} {{field.cs_style_name}} {get;}
+    {{db_cs_readonly_define_type field.ctype}} {{field.cs_style_name}} { get; }
     {{~end~}}
 }
 

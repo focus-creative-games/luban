@@ -67,7 +67,7 @@ namespace Luban.Job.Cfg.Defs
             get
             {
                 var table = Assembly.GetCfgTable(Ref.FirstTable);
-                return $"{table.ValueTType.Apply(CsDefineTypeName.Ins)} {CsRefVarName} {{get; private set;}}";
+                return $"{table.ValueTType.Apply(CsDefineTypeName.Ins)} {CsRefVarName} {{ get; private set; }}";
             }
         }
 

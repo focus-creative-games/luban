@@ -52,7 +52,7 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
     /// {{field.comment}}
     /// </summary>
 {{~end~}}
-    public {{cs_define_type field.ctype}} {{field.cs_style_name}} {get; private set;}
+    public {{cs_define_type field.ctype}} {{field.cs_style_name}} { get; private set; }
     {{~if field.index_field~}} 
     public readonly Dictionary<{{cs_define_type field.index_field.ctype}}, {{cs_define_type field.ctype.element_type}}> {{field.cs_style_name}}_Index = new Dictionary<{{cs_define_type field.index_field.ctype}}, {{cs_define_type field.ctype.element_type}}>();
     {{~end~}}
@@ -60,7 +60,7 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
     public {{field.cs_ref_validator_define}}
     {{~end~}}
     {{~if field.gen_text_key~}}
-    public {{cs_define_text_key_field field}} {get;}
+    public {{cs_define_text_key_field field}} { get; }
     {{~end~}}
     {{~end~}}
 

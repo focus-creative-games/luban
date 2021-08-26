@@ -62,12 +62,15 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
     /// {{field.comment}}
     /// </summary>
 {{~end~}}
-    public readonly {{cs_define_type field.ctype}} {{field.cs_style_name}};
+    public {{cs_define_type field.ctype}} {{field.cs_style_name}} { get; private set; }
     {{~if field.index_field~}} 
     public readonly Dictionary<{{cs_define_type field.index_field.ctype}}, {{cs_define_type field.ctype.element_type}}> {{field.cs_style_name}}_Index = new Dictionary<{{cs_define_type field.index_field.ctype}}, {{cs_define_type field.ctype.element_type}}>();
     {{~end~}}
     {{~if field.gen_ref~}}
     public {{field.cs_ref_validator_define}}
+    {{~end~}}
+    {{~if field.gen_text_key~}}
+    public {{cs_define_text_key_field field}} { get; }
     {{~end~}}
     {{~end~}}
 
@@ -88,10 +91,21 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
         {{cs_recursive_resolve field '_tables'}}
         {{~end~}}
         {{~end~}}
-        OnResolveFinish(_tables);
     }
 
-    partial void OnResolveFinish(Dictionary<string, object> _tables);
+    public {{x.cs_method_modifier}} void TranslateText(System.Func<string, string, string> translator)
+    {
+        {{~if parent_def_type~}}
+        base.TranslateText(translator);
+        {{~end~}}
+        {{~ for field in export_fields ~}}
+        {{~if field.gen_text_key~}}
+        {{cs_translate_text field 'translator'}}
+        {{~else if field.has_recursive_text~}}
+        {{cs_recursive_translate_text field 'translator'}}
+        {{~end~}}
+        {{~end~}}
+    }
 
     public override string ToString()
     {

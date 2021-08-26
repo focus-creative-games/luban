@@ -1,3 +1,4 @@
+using Luban.Job.Cfg.Datas;
 using Luban.Job.Common.Types;
 using Luban.Job.Common.TypeVisitors;
 using System;
@@ -75,7 +76,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TText type, string json, string x)
         {
-            return $"{{ if(!{json}.IsString) {{ throw new SerializationException(); }}  {x} = {json}; }}";
+            return $"{{ if(!{json}[\"{DText.KEY_NAME}\"].IsString) {{ throw new SerializationException(); }}  {x}{TText.L10N_FIELD_SUFFIX} = {json}[\"{DText.KEY_NAME}\"]; if(!{json}[\"{DText.TEXT_NAME}\"].IsString) {{ throw new SerializationException(); }}  {x} = {json}[\"{DText.TEXT_NAME}\"]; }}";
         }
 
         public string Accept(TBean type, string json, string x)
