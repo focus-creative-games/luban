@@ -20,6 +20,8 @@ namespace Luban.Job.Common.RawDefs
 
         public string Comment { get; set; }
 
+        public string Attrs { get; set; }
+
         public List<Field> Fields { get; set; } = new List<Field>();
     }
 }

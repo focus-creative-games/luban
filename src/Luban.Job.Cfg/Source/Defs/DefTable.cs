@@ -1,5 +1,6 @@
 using Luban.Job.Cfg.RawDefs;
 using Luban.Job.Common.Types;
+using Luban.Job.Common.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace Luban.Job.Cfg.Defs
             Groups = b.Groups;
             _branchInputFiles = b.BranchInputFiles;
             Comment = b.Comment;
+            Attrs = DefUtil.ParseAttrs(b.Attrs);
         }
 
 

@@ -162,5 +162,15 @@ namespace Luban.Job.Common.Defs
         {
             return type.Apply(LuaConstValueVisitor.Ins, value);
         }
+
+        public static bool HasAttr(dynamic obj, string attrName)
+        {
+            return obj.HasAttr(attrName);
+        }
+
+        public static string GetAttr(dynamic obj, string attrName)
+        {
+            return obj.GetAttr(attrName);
+        }
     }
 }

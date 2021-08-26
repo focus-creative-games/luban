@@ -11,6 +11,8 @@ namespace Luban.Job.Common.RawDefs
         public string Value { get; set; }
 
         public string Comment { get; set; }
+
+        public string Attrs { get; set; }
     }
 
     public class PEnum
@@ -25,6 +27,8 @@ namespace Luban.Job.Common.RawDefs
         public bool IsUniqueItemId { get; set; }
 
         public string Comment { get; set; }
+
+        public string Attrs { get; set; }
 
         public List<EnumItem> Items { get; set; } = new List<EnumItem>();
     }

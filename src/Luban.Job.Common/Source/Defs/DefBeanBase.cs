@@ -1,4 +1,5 @@
 using Luban.Job.Common.RawDefs;
+using Luban.Job.Common.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,6 +51,7 @@ namespace Luban.Job.Common.Defs
             Id = b.TypeId;
             IsValueType = b.IsValueType;
             Comment = b.Comment;
+            Attrs = DefUtil.ParseAttrs(b.Attrs);
             foreach (var field in b.Fields)
             {
                 Fields.Add(CreateField(field, 0));

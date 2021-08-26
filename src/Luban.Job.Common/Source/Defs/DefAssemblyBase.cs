@@ -1,6 +1,7 @@
 
 using Luban.Common.Utils;
 using Luban.Job.Common.Types;
+using Luban.Job.Common.Utils;
 using Luban.Server.Common;
 using System;
 using System.Collections.Generic;
@@ -128,9 +129,11 @@ namespace Luban.Job.Common.Defs
             }
         }
 
-        protected TType CreateNotContainerType(string module, string type)
+        protected TType CreateNotContainerType(string module, string rawType)
         {
             bool nullable;
+            var (type, attrs) = DefUtil.ParseType(rawType);
+
             if (type.EndsWith('?'))
             {
                 if (!SupportNullable)
@@ -146,33 +149,33 @@ namespace Luban.Job.Common.Defs
             }
             switch (type)
             {
-                case "bool": return nullable ? TBool.NullableIns : TBool.Ins;
+                case "bool": return attrs == null ? (nullable ? TBool.NullableIns : TBool.Ins) : new TBool(nullable) { Attrs = attrs };
                 case "uint8":
-                case "byte": return nullable ? TByte.NullableIns : TByte.Ins;
+                case "byte": return attrs == null ? (nullable ? TByte.NullableIns : TByte.Ins) : new TByte(nullable) { Attrs = attrs };
                 case "int16":
-                case "short": return nullable ? TShort.NullableIns : TShort.Ins;
+                case "short": return attrs == null ? (nullable ? TShort.NullableIns : TShort.Ins) : new TShort(nullable) { Attrs = attrs };
                 case "fint16":
-                case "fshort": return nullable ? TFshort.NullableIns : TFshort.Ins;
+                case "fshort": return attrs == null ? (nullable ? TFshort.NullableIns : TFshort.Ins) : new TFshort(nullable) { Attrs = attrs };
                 case "int32":
-                case "int": return nullable ? TInt.NullableIns : TInt.Ins;
+                case "int": return attrs == null ? (nullable ? TInt.NullableIns : TInt.Ins) : new TInt(nullable) { Attrs = attrs };
                 case "fint32":
-                case "fint": return nullable ? TFint.NullableIns : TFint.Ins;
+                case "fint": return attrs == null ? (nullable ? TFint.NullableIns : TFint.Ins) : new TFint(nullable) { Attrs = attrs };
                 case "int64":
-                case "long": return nullable ? TLong.NullableIns : TLong.Ins;
-                case "bigint": return nullable ? TLong.NullableBigIns : TLong.BigIns;
+                case "long": return attrs == null ? (nullable ? TLong.NullableIns : TLong.Ins) : new TLong(nullable, false) { Attrs = attrs };
+                case "bigint": return attrs == null ? (nullable ? TLong.NullableBigIns : TLong.BigIns) : new TLong(nullable, true) { Attrs = attrs };
                 case "fint64":
-                case "flong": return nullable ? TFlong.NullableIns : TFlong.Ins;
+                case "flong": return attrs == null ? (nullable ? TFlong.NullableIns : TFlong.Ins) : new TFlong(nullable) { Attrs = attrs };
                 case "float32":
-                case "float": return nullable ? TFloat.NullableIns : TFloat.Ins;
+                case "float": return attrs == null ? (nullable ? TFloat.NullableIns : TFloat.Ins) : new TFloat(nullable) { Attrs = attrs };
                 case "float64":
-                case "double": return nullable ? TDouble.NullableIns : TDouble.Ins;
-                case "bytes": return TBytes.Ins;
-                case "string": return nullable ? TString.NullableIns : TString.Ins;
-                case "text": return nullable ? TText.NullableIns : TText.Ins;
-                case "vector2": return nullable ? TVector2.NullableIns : TVector2.Ins;
-                case "vector3": return nullable ? TVector3.NullableIns : TVector3.Ins;
-                case "vector4": return nullable ? TVector4.NullableIns : TVector4.Ins;
-                case "datetime": return SupportDatetimeType ? (nullable ? TDateTime.NullableIns : TDateTime.Ins) : throw new NotSupportedException($"只有配置支持datetime数据类型");
+                case "double": return attrs == null ? (nullable ? TDouble.NullableIns : TDouble.Ins) : new TDouble(nullable) { Attrs = attrs };
+                case "bytes": return attrs == null ? (nullable ? new TBytes(true) : TBytes.Ins) : new TBytes(false) { Attrs = attrs };
+                case "string": return attrs == null ? (nullable ? TString.NullableIns : TString.Ins) : new TString(nullable) { Attrs = attrs };
+                case "text": return attrs == null ? (nullable ? TText.NullableIns : TText.Ins) : new TText(nullable) { Attrs = attrs };
+                case "vector2": return attrs == null ? (nullable ? TVector2.NullableIns : TVector2.Ins) : new TVector2(nullable) { Attrs = attrs };
+                case "vector3": return attrs == null ? (nullable ? TVector3.NullableIns : TVector3.Ins) : new TVector3(nullable) { Attrs = attrs };
+                case "vector4": return attrs == null ? (nullable ? TVector4.NullableIns : TVector4.Ins) : new TVector4(nullable) { Attrs = attrs };
+                case "datetime": return SupportDatetimeType ? (attrs == null ? (nullable ? TDateTime.NullableIns : TDateTime.Ins) : new TDateTime(nullable) { Attrs = attrs }) : throw new NotSupportedException($"只有配置支持datetime数据类型");
                 default:
                 {
                     var dtype = GetDefTType(module, type, nullable);

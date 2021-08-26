@@ -1,6 +1,7 @@
 using Luban.Common.Utils;
 using Luban.Job.Common.RawDefs;
 using Luban.Job.Common.Types;
+using Luban.Job.Common.Utils;
 using System;
 using System.Collections.Generic;
 
@@ -71,6 +72,18 @@ namespace Luban.Job.Common.Defs
 
         public string Comment { get; }
 
+        public Dictionary<string, string> Attrs { get; }
+
+        public bool HasAttr(string attrName)
+        {
+            return Attrs != null && Attrs.ContainsKey(attrName);
+        }
+
+        public string GetAttr(string attrName)
+        {
+            return Attrs != null && Attrs.TryGetValue(attrName, out var value) ? value : null;
+        }
+
         public DefFieldBase(DefTypeBase host, Field f, int idOffset)
         {
             HostType = host;
@@ -78,6 +91,7 @@ namespace Luban.Job.Common.Defs
             Name = f.Name;
             Type = f.Type;
             Comment = f.Comment;
+            Attrs = DefUtil.ParseAttrs(f.Attrs);
         }
 
         public virtual void Compile()
