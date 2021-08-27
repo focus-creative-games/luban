@@ -89,6 +89,46 @@ text的key和text字段都是string类型，因此在连续单元格或者sep产
 ![数据](images/examples/ex_i10n_2.png)
 
 
+## datetime 类型
+
+- 时间是常用的数据类型。Luban 特地提供了支持。  
+  有两种形式，一种以纯字符串的方式填写。
+  - 以纯字符串方式填写
+      填写格式为 以下 4 种。
+    - yyyy-mm-dd hh:mm:ss 如 1999-08-08 01:30:29
+    - yyyy-mm-dd hh:mm 如 2000-08-07 07:40
+    - yyyy-mm-dd hh 如 2001-09-05 07
+    - yyyy-mm-dd 如 2003-04-05
+  - 以 excel内置的时间格式填写
+    
+- 为 Item 新增一个 失效时间字段 expire_time 。  
+- [定义](images/adv/def_38.png)  
+  ``` xml
+  <bean name="Item">
+    ...
+    <var name="expire_time" type="datetime"/>
+  </bean>
+  ```
+- 配置  
+  图中红框中第一个时间以 excel的时间格式填写
+  剩下第2，3，4个时间以 纯字符串形式填写
+
+  ![如图](images/adv/def_39.png)
+
+## 可空变量
+
+- 有时候会有一种变量，我们希望它 功能生效时填一个有效值，功能不生效里，用一个值来表示。 例如 int 类型，常常拿 0 或者-1 作无效值常量。 但有时候，0 或-1 也是有效值时，这种做法就不生效了。或者说 项目组内 有时候拿 0，有时候拿-1 作无效值标记，很不统一。我们借鉴 sql 及 c#,引入 可空值概念，用 null 表达空值。
+- 我们为 Item 添加 min_use_level 字段，类型为 int? 当填有效值时，使用时要检查等级，否则不检查。
+- [定义](images/adv/def_36.png)
+  ``` xml
+  <bean name="Item">
+    ...
+    <var name="min_use_level" type="int?"/>
+  </bean>
+  ```
+- 配置  
+  ![如图](images/adv/def_37.png)
+
 ## 列表类型 list,int
 
 - 我们新增一个字段， 宝箱的随机抽取道具列表 random_item_ids。
@@ -375,45 +415,22 @@ text的key和text字段都是string类型，因此在连续单元格或者sep产
 - 定义不变，但 excel 的填法有区别，数据如下：
 - ![如图](images/adv/def_35.png)
 
-## 可空变量
 
-- 有时候会有一种变量，我们希望它 功能生效时填一个有效值，功能不生效里，用一个值来表示。 例如 int 类型，常常拿 0 或者-1 作无效值常量。 但有时候，0 或-1 也是有效值时，这种做法就不生效了。或者说 项目组内 有时候拿 0，有时候拿-1 作无效值标记，很不统一。我们借鉴 sql 及 c#,引入 可空值概念，用 null 表达空值。
-- 我们为 Item 添加 min_use_level 字段，类型为 int? 当填有效值时，使用时要检查等级，否则不检查。
-- [定义](images/adv/def_36.png)
-  ``` xml
-  <bean name="Item">
-    ...
-    <var name="min_use_level" type="int?"/>
-  </bean>
-  ```
-- 配置  
-  ![如图](images/adv/def_37.png)
+## 默认值
 
-## datetime 类型
+该特性只对excel格式文件有效。当单元格为空时，该字段使用默认值。
 
-- 时间是常用的数据类型。Luban 特地提供了支持。  
-  有两种形式，一种以纯字符串的方式填写。
-  - 以纯字符串方式填写
-      填写格式为 以下 4 种。
-    - yyyy-mm-dd hh:mm:ss 如 1999-08-08 01:30:29
-    - yyyy-mm-dd hh:mm 如 2000-08-07 07:40
-    - yyyy-mm-dd hh 如 2001-09-05 07
-    - yyyy-mm-dd 如 2003-04-05
-  - 以 excel内置的时间格式填写
-    
-- 为 Item 新增一个 失效时间字段 expire_time 。  
-- [定义](images/adv/def_38.png)  
-  ``` xml
-  <bean name="Item">
-    ...
-    <var name="expire_time" type="datetime"/>
-  </bean>
-  ```
-- 配置  
-  图中红框中第一个时间以 excel的时间格式填写
-  剩下第2，3，4个时间以 纯字符串形式填写
+```xml
+<bean name="DemoDefault">
+  <var name="id" type="int"/>
+  <var name="x" type="int" default="10">
+</bean>
 
-  ![如图](images/adv/def_39.png)
+<table name="TbDemoDefault" value="DemoDefault" input="default.xlsx"/>
+
+```
+
+![default](images/adv/def_50.png)
 
 ## convert 常量替换
 

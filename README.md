@@ -591,6 +591,22 @@ luban同时支持两种级别的分组：
 
 ![tag](docs/images/examples/tag_01.png)
 
+## excel 列 默认值
+
+该特性只对excel格式文件有效。当单元格为空时，该字段使用默认值。
+
+```xml
+<bean name="DemoDefault">
+  <var name="id" type="int"/>
+  <var name="x" type="int" default="10">
+</bean>
+
+<table name="TbDemoDefault" value="DemoDefault" input="default.xlsx"/>
+
+```
+
+![default](docs/images/adv/def_50.png)
+
 ### 常量别名
 
 游戏里经常会出现一些常用的类似枚举的值，比如说 升级丹的 id,在很多地方都要填，如果直接它的道具 id,既不直观，也容易出错。 Luban 支持常量替换。对于需要常量替换的字段，添加 convert=”枚举类”。 如果填写的值是 枚举名或者别名，则替换为 相应的整数。否则 按照整数解析。

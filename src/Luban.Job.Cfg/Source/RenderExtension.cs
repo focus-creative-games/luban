@@ -1,3 +1,4 @@
+using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.Defs;
 using Scriban;
 using System.Collections.Generic;
@@ -12,6 +13,25 @@ namespace Luban.Job.Cfg
             var env = new TTypeTemplateExtends
             {
                 ["x"] = model
+            };
+            if (extraModels != null)
+            {
+                foreach ((var k, var v) in extraModels)
+                {
+                    env[k] = v;
+                }
+            }
+            ctx.PushGlobal(env);
+            return template.Render(ctx);
+        }
+
+        public static string RenderData(this Template template, DefTable table, List<DBean> exportDatas, Dictionary<string, object> extraModels = null)
+        {
+            var ctx = new TemplateContext();
+            var env = new TTypeTemplateExtends
+            {
+                ["table"] = table,
+                ["datas"] = exportDatas,
             };
             if (extraModels != null)
             {

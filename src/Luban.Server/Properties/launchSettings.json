@@ -2,6 +2,10 @@
   "profiles": {
     "Luban.Server": {
       "commandName": "Project"
+    },
+    "TestTemplate": {
+      "commandName": "Project",
+      "commandLineArgs": "-t D:\\workspace\\luban_examples\\Projects\\CustomTemplates"
     }
   }
 }

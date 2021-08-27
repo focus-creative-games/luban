@@ -5,6 +5,8 @@ using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Cfg.l10n;
 using Luban.Job.Cfg.RawDefs;
+using Luban.Job.Common.Utils;
+using Scriban;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,6 +21,11 @@ namespace Luban.Job.Cfg.Utils
     {
         public static object ToOutputData(DefTable table, List<Record> records, string dataType)
         {
+            if (StringTemplateUtil.TryGetTemplate($"config/data/{dataType[5..]}", out Template template))
+            {
+                return template.RenderData(table, records.Select(r => r.Data).ToList());
+            }
+
             switch (dataType)
             {
                 case "data_bin":
