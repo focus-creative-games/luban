@@ -53,7 +53,7 @@ namespace Luban.Job.Cfg.l10n
             defTextRowType.PreCompile();
             defTextRowType.Compile();
             defTextRowType.PostCompile();
-            _textRowType = new TBean(defTextRowType, false);
+            _textRowType = TBean.Create(false, defTextRowType);
         }
 
         public void AddText(string key, string text)

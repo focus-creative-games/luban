@@ -1,15 +1,28 @@
 using Luban.Job.Common.TypeVisitors;
 using System;
+using System.Collections.Generic;
 
 namespace Luban.Job.Common.Types
 {
     public class TDateTime : TType
     {
-        public static TDateTime Ins { get; } = new TDateTime(false);
+        private static TDateTime Ins { get; } = new TDateTime(false, null);
 
-        public static TDateTime NullableIns { get; } = new TDateTime(true);
+        private static TDateTime NullableIns { get; } = new TDateTime(true, null);
 
-        public TDateTime(bool isNullable) : base(isNullable)
+        public static TDateTime Create(bool isNullable, Dictionary<string, string> tags)
+        {
+            if (tags == null)
+            {
+                return isNullable ? NullableIns : Ins;
+            }
+            else
+            {
+                return new TDateTime(isNullable, tags);
+            }
+        }
+
+        private TDateTime(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)
         {
         }
 

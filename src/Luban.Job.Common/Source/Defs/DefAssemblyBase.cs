@@ -83,7 +83,7 @@ namespace Luban.Job.Common.Defs
             }
             else
             {
-                return cacheDefTTypes[(defType, nullable)] = new TEnum(defType, nullable);
+                return cacheDefTTypes[(defType, nullable)] = TEnum.Create(nullable, defType);
             }
         }
 
@@ -95,7 +95,7 @@ namespace Luban.Job.Common.Defs
             }
             else
             {
-                return cacheDefTTypes[(defType, nullable)] = new TBean((DefBeanBase)defType, nullable);
+                return cacheDefTTypes[(defType, nullable)] = TBean.Create(nullable, (DefBeanBase)defType);
             }
         }
 
@@ -149,33 +149,33 @@ namespace Luban.Job.Common.Defs
             }
             switch (type)
             {
-                case "bool": return tags == null ? (nullable ? TBool.NullableIns : TBool.Ins) : new TBool(nullable) { Tags = tags };
+                case "bool": return TBool.Create(nullable, tags);
                 case "uint8":
-                case "byte": return tags == null ? (nullable ? TByte.NullableIns : TByte.Ins) : new TByte(nullable) { Tags = tags };
+                case "byte": return TByte.Create(nullable, tags);
                 case "int16":
-                case "short": return tags == null ? (nullable ? TShort.NullableIns : TShort.Ins) : new TShort(nullable) { Tags = tags };
+                case "short": return TShort.Create(nullable, tags);
                 case "fint16":
-                case "fshort": return tags == null ? (nullable ? TFshort.NullableIns : TFshort.Ins) : new TFshort(nullable) { Tags = tags };
+                case "fshort": return TFshort.Create(nullable, tags);
                 case "int32":
-                case "int": return tags == null ? (nullable ? TInt.NullableIns : TInt.Ins) : new TInt(nullable) { Tags = tags };
+                case "int": return TInt.Create(nullable, tags);
                 case "fint32":
-                case "fint": return tags == null ? (nullable ? TFint.NullableIns : TFint.Ins) : new TFint(nullable) { Tags = tags };
+                case "fint": return TFint.Create(nullable, tags);
                 case "int64":
-                case "long": return tags == null ? (nullable ? TLong.NullableIns : TLong.Ins) : new TLong(nullable, false) { Tags = tags };
-                case "bigint": return tags == null ? (nullable ? TLong.NullableBigIns : TLong.BigIns) : new TLong(nullable, true) { Tags = tags };
+                case "long": return TLong.Create(nullable, tags, false);
+                case "bigint": return TLong.Create(nullable, tags, true);
                 case "fint64":
-                case "flong": return tags == null ? (nullable ? TFlong.NullableIns : TFlong.Ins) : new TFlong(nullable) { Tags = tags };
+                case "flong": return TFlong.Create(nullable, tags);
                 case "float32":
-                case "float": return tags == null ? (nullable ? TFloat.NullableIns : TFloat.Ins) : new TFloat(nullable) { Tags = tags };
+                case "float": return TFloat.Create(nullable, tags);
                 case "float64":
-                case "double": return tags == null ? (nullable ? TDouble.NullableIns : TDouble.Ins) : new TDouble(nullable) { Tags = tags };
-                case "bytes": return tags == null ? (nullable ? new TBytes(true) : TBytes.Ins) : new TBytes(false) { Tags = tags };
-                case "string": return tags == null ? (nullable ? TString.NullableIns : TString.Ins) : new TString(nullable) { Tags = tags };
-                case "text": return tags == null ? (nullable ? TText.NullableIns : TText.Ins) : new TText(nullable) { Tags = tags };
-                case "vector2": return tags == null ? (nullable ? TVector2.NullableIns : TVector2.Ins) : new TVector2(nullable) { Tags = tags };
-                case "vector3": return tags == null ? (nullable ? TVector3.NullableIns : TVector3.Ins) : new TVector3(nullable) { Tags = tags };
-                case "vector4": return tags == null ? (nullable ? TVector4.NullableIns : TVector4.Ins) : new TVector4(nullable) { Tags = tags };
-                case "datetime": return SupportDatetimeType ? (tags == null ? (nullable ? TDateTime.NullableIns : TDateTime.Ins) : new TDateTime(nullable) { Tags = tags }) : throw new NotSupportedException($"只有配置支持datetime数据类型");
+                case "double": return TDouble.Create(nullable, tags);
+                case "bytes": return TBytes.Create(nullable, tags);
+                case "string": return TString.Create(nullable, tags);
+                case "text": return TText.Create(nullable, tags);
+                case "vector2": return TVector2.Create(nullable, tags);
+                case "vector3": return TVector3.Create(nullable, tags);
+                case "vector4": return TVector4.Create(nullable, tags);
+                case "datetime": return SupportDatetimeType ? TDateTime.Create(nullable, tags) : throw new NotSupportedException($"只有配置支持datetime数据类型");
                 default:
                 {
                     var dtype = GetDefTType(module, type, nullable);
@@ -198,20 +198,20 @@ namespace Luban.Job.Common.Defs
             {
                 throw new ArgumentException($"invalid map element type:'{keyValueType}'");
             }
-            return new TMap(CreateNotContainerType(module, elementTypes[0]), CreateNotContainerType(module, elementTypes[1]), isTreeMap);
+            return TMap.Create(false, null, CreateNotContainerType(module, elementTypes[0]), CreateNotContainerType(module, elementTypes[1]), isTreeMap);
         }
 
         protected TType CreateContainerType(string module, string containerType, string elementType)
         {
             switch (containerType)
             {
-                case "array": return new TArray(CreateNotContainerType(module, elementType));
-                case "list": return new TList(CreateNotContainerType(module, elementType), false);
-                case "linkedlist": return new TList(CreateNotContainerType(module, elementType), true);
-                case "arraylist": return new TList(CreateNotContainerType(module, elementType), false);
-                case "set": return new TSet(CreateNotContainerType(module, elementType), false);
-                case "hashset": return new TSet(CreateNotContainerType(module, elementType), true);
-                case "treeset": return new TSet(CreateNotContainerType(module, elementType), false);
+                case "array": return TArray.Create(false, null, CreateNotContainerType(module, elementType));
+                case "list": return TList.Create(false, null, CreateNotContainerType(module, elementType), true);
+                case "linkedlist": return TList.Create(false, null, CreateNotContainerType(module, elementType), false);
+                case "arraylist": return TList.Create(false, null, CreateNotContainerType(module, elementType), true);
+                case "set": return TSet.Create(false, null, CreateNotContainerType(module, elementType), false);
+                case "hashset": return TSet.Create(false, null, CreateNotContainerType(module, elementType), false);
+                case "treeset": return TSet.Create(false, null, CreateNotContainerType(module, elementType), true);
                 case "map": return CreateMapType(module, elementType, false);
                 case "treemap": return CreateMapType(module, elementType, true);
                 case "hashmap": return CreateMapType(module, elementType, false);

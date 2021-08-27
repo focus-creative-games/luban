@@ -1,14 +1,27 @@
 using Luban.Job.Common.TypeVisitors;
+using System.Collections.Generic;
 
 namespace Luban.Job.Common.Types
 {
     public class TShort : TType
     {
-        public static TShort Ins { get; } = new TShort(false);
+        private static TShort Ins { get; } = new TShort(false, null);
 
-        public static TShort NullableIns { get; } = new TShort(true);
+        private static TShort NullableIns { get; } = new TShort(true, null);
 
-        public TShort(bool isNullable) : base(isNullable)
+        public static TShort Create(bool isNullable, Dictionary<string, string> tags)
+        {
+            if (tags == null)
+            {
+                return isNullable ? NullableIns : Ins;
+            }
+            else
+            {
+                return new TShort(isNullable, tags);
+            }
+        }
+
+        private TShort(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)
         {
         }
 

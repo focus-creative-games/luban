@@ -464,7 +464,7 @@ namespace Luban.Job.Cfg.Defs
             defTableRecordType.PreCompile();
             defTableRecordType.Compile();
             defTableRecordType.PostCompile();
-            var tableRecordType = new TBean(defTableRecordType, false);
+            var tableRecordType = TBean.Create(false, defTableRecordType);
 
             foreach (var file in inputFileInfos)
             {
@@ -530,7 +530,7 @@ namespace Luban.Job.Cfg.Defs
             defTableRecordType.PreCompile();
             defTableRecordType.Compile();
             defTableRecordType.PostCompile();
-            var tableRecordType = new TBean(defTableRecordType, false);
+            var tableRecordType = TBean.Create(false, defTableRecordType);
 
             foreach (var file in inputFileInfos)
             {
@@ -643,7 +643,7 @@ namespace Luban.Job.Cfg.Defs
             defTableRecordType.Compile();
             defTableRecordType.PostCompile();
             ass.MarkMultiRows();
-            var tableRecordType = new TBean(defTableRecordType, false);
+            var tableRecordType = TBean.Create(false, defTableRecordType);
 
             foreach (var file in inputFileInfos)
             {

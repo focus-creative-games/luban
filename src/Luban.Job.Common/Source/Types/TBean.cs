@@ -1,16 +1,22 @@
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.TypeVisitors;
 using System;
+using System.Collections.Generic;
 
 namespace Luban.Job.Common.Types
 {
     public class TBean : TType
     {
+        public static TBean Create(bool isNullable, DefBeanBase defBean)
+        {
+            return new TBean(isNullable, defBean.Tags, defBean);
+        }
+
         public DefBeanBase Bean { get; set; }
 
         public T GetBeanAs<T>() where T : DefBeanBase => (T)Bean;
 
-        public TBean(DefBeanBase defBean, bool isNullable) : base(isNullable)
+        private TBean(bool isNullable, Dictionary<string, string> attrs, DefBeanBase defBean) : base(isNullable, attrs)
         {
             this.Bean = defBean;
         }

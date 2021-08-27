@@ -1,15 +1,28 @@
 using Luban.Job.Common.TypeVisitors;
 using System;
+using System.Collections.Generic;
 
 namespace Luban.Job.Common.Types
 {
     public class TVector2 : TType
     {
-        public static TVector2 Ins { get; } = new TVector2(false);
+        private static TVector2 Ins { get; } = new TVector2(false, null);
 
-        public static TVector2 NullableIns { get; } = new TVector2(true);
+        private static TVector2 NullableIns { get; } = new TVector2(true, null);
 
-        public TVector2(bool isNullable) : base(isNullable)
+        public static TVector2 Create(bool isNullable, Dictionary<string, string> tags)
+        {
+            if (tags == null)
+            {
+                return isNullable ? NullableIns : Ins;
+            }
+            else
+            {
+                return new TVector2(isNullable, tags);
+            }
+        }
+
+        private TVector2(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)
         {
         }
 

@@ -7,12 +7,13 @@ namespace Luban.Job.Common.Types
     {
         public bool IsNullable { get; }
 
-        protected TType(bool isNullable)
+        public Dictionary<string, string> Tags { get; }
+
+        protected TType(bool isNullable, Dictionary<string, string> tags)
         {
             IsNullable = isNullable;
+            Tags = tags;
         }
-
-        public Dictionary<string, string> Tags { get; set; }
 
         public bool HasTag(string attrName)
         {

@@ -1,13 +1,26 @@
 using Luban.Job.Common.TypeVisitors;
 using System;
+using System.Collections.Generic;
 
 namespace Luban.Job.Common.Types
 {
     public class TBytes : TType
     {
-        public static TBytes Ins { get; } = new TBytes(false);
+        private static TBytes Ins { get; } = new TBytes(false, null);
 
-        public TBytes(bool isNullable) : base(isNullable)
+        public static TBytes Create(bool isNullable, Dictionary<string, string> tags)
+        {
+            if (tags == null)
+            {
+                return isNullable ? new TBytes(true, null) : Ins;
+            }
+            else
+            {
+                return new TBytes(isNullable, tags);
+            }
+        }
+
+        private TBytes(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)
         {
         }
 

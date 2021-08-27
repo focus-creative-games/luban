@@ -1,14 +1,27 @@
 using Luban.Job.Common.TypeVisitors;
+using System.Collections.Generic;
 
 namespace Luban.Job.Common.Types
 {
     public class TFint : TType
     {
-        public static TFint Ins { get; } = new TFint(false);
+        private static TFint Ins { get; } = new TFint(false, null);
 
-        public static TFint NullableIns { get; } = new TFint(true);
+        private static TFint NullableIns { get; } = new TFint(true, null);
 
-        public TFint(bool isNullable) : base(isNullable)
+        public static TFint Create(bool isNullable, Dictionary<string, string> tags)
+        {
+            if (tags == null)
+            {
+                return isNullable ? NullableIns : Ins;
+            }
+            else
+            {
+                return new TFint(isNullable, tags);
+            }
+        }
+
+        private TFint(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)
         {
         }
 

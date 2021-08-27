@@ -1,20 +1,33 @@
 using Luban.Job.Common.TypeVisitors;
+using System.Collections.Generic;
 
 namespace Luban.Job.Common.Types
 {
     public class TLong : TType
     {
-        public static TLong Ins { get; } = new TLong(false, false);
+        private static TLong Ins { get; } = new TLong(false, null, false);
 
-        public static TLong NullableIns { get; } = new TLong(true, false);
+        private static TLong NullableIns { get; } = new TLong(true, null, false);
 
-        public static TLong BigIns { get; } = new TLong(false, true);
+        private static TLong BigIns { get; } = new TLong(false, null, true);
 
-        public static TLong NullableBigIns { get; } = new TLong(true, true);
+        private static TLong NullableBigIns { get; } = new TLong(true, null, true);
+
+        public static TLong Create(bool isNullable, Dictionary<string, string> tags, bool isBigInt)
+        {
+            if (tags == null)
+            {
+                return isNullable ? NullableIns : Ins;
+            }
+            else
+            {
+                return new TLong(isNullable, tags, isBigInt);
+            }
+        }
 
         public bool IsBigInt { get; }
 
-        public TLong(bool isNullable, bool isBigInt) : base(isNullable)
+        private TLong(bool isNullable, Dictionary<string, string> tags, bool isBigInt) : base(isNullable, tags)
         {
             IsBigInt = isBigInt;
         }

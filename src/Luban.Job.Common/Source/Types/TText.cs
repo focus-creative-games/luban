@@ -1,4 +1,5 @@
 using Luban.Job.Common.TypeVisitors;
+using System.Collections.Generic;
 
 namespace Luban.Job.Common.Types
 {
@@ -6,11 +7,23 @@ namespace Luban.Job.Common.Types
     {
         public const string L10N_FIELD_SUFFIX = "_l10n_key";
 
-        public static TText Ins { get; } = new TText(false);
+        private static TText Ins { get; } = new TText(false, null);
 
-        public static TText NullableIns { get; } = new TText(true);
+        private static TText NullableIns { get; } = new TText(true, null);
 
-        public TText(bool isNullable) : base(isNullable)
+        public static TText Create(bool isNullable, Dictionary<string, string> tags)
+        {
+            if (tags == null)
+            {
+                return isNullable ? NullableIns : Ins;
+            }
+            else
+            {
+                return new TText(isNullable, tags);
+            }
+        }
+
+        private TText(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)
         {
         }
 

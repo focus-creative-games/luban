@@ -1,14 +1,27 @@
 using Luban.Job.Common.TypeVisitors;
+using System.Collections.Generic;
 
 namespace Luban.Job.Common.Types
 {
     public class TString : TType
     {
-        public static TString Ins { get; } = new TString(false);
+        private static TString Ins { get; } = new TString(false, null);
 
-        public static TString NullableIns { get; } = new TString(true);
+        private static TString NullableIns { get; } = new TString(true, null);
 
-        public TString(bool isNullable) : base(isNullable)
+        public static TString Create(bool isNullable, Dictionary<string, string> tags)
+        {
+            if (tags == null)
+            {
+                return isNullable ? NullableIns : Ins;
+            }
+            else
+            {
+                return new TString(isNullable, tags);
+            }
+        }
+
+        private TString(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)
         {
         }
 

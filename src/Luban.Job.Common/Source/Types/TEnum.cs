@@ -1,14 +1,20 @@
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.TypeVisitors;
 using System;
+using System.Collections.Generic;
 
 namespace Luban.Job.Common.Types
 {
     public class TEnum : TType
     {
+        public static TEnum Create(bool isNullable, DefEnum defEnum)
+        {
+            return new TEnum(isNullable, defEnum.Tags, defEnum);
+        }
+
         public DefEnum DefineEnum { get; }
 
-        public TEnum(DefEnum defEnum, bool isNullable) : base(isNullable)
+        private TEnum(bool isNullable, Dictionary<string, string> tags, DefEnum defEnum) : base(isNullable, tags)
         {
             this.DefineEnum = defEnum;
         }
