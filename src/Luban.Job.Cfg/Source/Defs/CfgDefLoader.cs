@@ -260,12 +260,12 @@ namespace Luban.Job.Cfg.Defs
             string input = XmlUtil.GetRequiredAttribute(e, "input");
             string branchInput = XmlUtil.GetOptionalAttribute(e, "branch_input");
             string mode = XmlUtil.GetOptionalAttribute(e, "mode");
-            string attrs = XmlUtil.GetOptionalAttribute(e, "attrs");
-            AddTable(CurImportFile, name, module, valueType, index, mode, group, comment, defineFromFile, input, branchInput, attrs);
+            string tags = XmlUtil.GetOptionalAttribute(e, "tags");
+            AddTable(CurImportFile, name, module, valueType, index, mode, group, comment, defineFromFile, input, branchInput, tags);
         }
 
         private void AddTable(string defineFile, string name, string module, string valueType, string index, string mode, string group,
-            string comment, bool defineFromExcel, string input, string branchInput, string attrs)
+            string comment, bool defineFromExcel, string input, string branchInput, string tags)
         {
             var p = new Table()
             {
@@ -277,7 +277,7 @@ namespace Luban.Job.Cfg.Defs
                 Groups = CreateGroups(group),
                 Comment = comment,
                 Mode = ConvertMode(name, mode, index),
-                Attrs = attrs,
+                Tags = tags,
             };
 
             if (p.Groups.Count == 0)
@@ -328,7 +328,6 @@ namespace Luban.Job.Cfg.Defs
             foreach (var f in sheet.RootFields)
             {
                 var cf = new CfgField() { Name = f.Name, Id = 0 };
-
 
                 string[] attrs = (attrRow[f.FromIndex].Value?.ToString() ?? "").Trim().Split('&').Select(s => s.Trim()).ToArray();
 
@@ -456,7 +455,7 @@ namespace Luban.Job.Cfg.Defs
                     new CfgField() { Name = "define_from_excel", Type = "bool" },
                     new CfgField() { Name = "input", Type = "string" },
                     new CfgField() { Name = "branch_input", Type = "string" },
-                    new CfgField() { Name = "attrs", Type = "string" },
+                    new CfgField() { Name = "tags", Type = "string" },
                 }
             })
             {
@@ -491,8 +490,8 @@ namespace Luban.Job.Cfg.Defs
                     bool isDefineFromExcel = (data.GetField("define_from_excel") as DBool).Value;
                     string inputFile = (data.GetField("input") as DString).Value.Trim();
                     string branchInput = (data.GetField("branch_input") as DString).Value.Trim();
-                    string attrs = (data.GetField("attrs") as DString).Value.Trim();
-                    AddTable(file.OriginFile, name, module, valueType, index, mode, group, comment, isDefineFromExcel, inputFile, branchInput, attrs);
+                    string tags = (data.GetField("tags") as DString).Value.Trim();
+                    AddTable(file.OriginFile, name, module, valueType, index, mode, group, comment, isDefineFromExcel, inputFile, branchInput, tags);
                 };
             }
         }
@@ -522,7 +521,7 @@ namespace Luban.Job.Cfg.Defs
                     new CfgField() { Name = "alias", Type = "string" },
                     new CfgField() { Name = "value", Type = "int" },
                     new CfgField() { Name = "comment", Type = "string" },
-                    new CfgField() { Name = "attrs", Type = "string" },
+                    new CfgField() { Name = "tags", Type = "string" },
                 }
             })
             {
@@ -566,8 +565,8 @@ namespace Luban.Job.Cfg.Defs
                     string alias = (data.GetField("alias") as DString).Value.Trim();
                     string value = (data.GetField("value") as DInt).Value.ToString();
                     string comment = (data.GetField("comment") as DString).Value.Trim();
-                    string attrs = (data.GetField("attrs") as DString).Value.Trim();
-                    curEnum.Items.Add(new EnumItem() { Name = item, Alias = alias, Value = value, Comment = comment, Attrs = attrs });
+                    string tags = (data.GetField("tags") as DString).Value.Trim();
+                    curEnum.Items.Add(new EnumItem() { Name = item, Alias = alias, Value = value, Comment = comment, Tags = tags });
                 };
             }
         }
@@ -604,7 +603,7 @@ namespace Luban.Job.Cfg.Defs
                     new CfgField() { Name = "reference", Type = "string" },
                     new CfgField() { Name = "path", Type = "string" },
                     new CfgField() { Name = "comment", Type = "string" },
-                    new CfgField() { Name = "attrs", Type = "string" },
+                    new CfgField() { Name = "tags", Type = "string" },
                 }
             })
             {
@@ -632,7 +631,7 @@ namespace Luban.Job.Cfg.Defs
                     new CfgField() { Name = "full_name", Type = "string" },
                     new CfgField() { Name = "sep", Type = "string" },
                     new CfgField() { Name = "comment", Type = "string" },
-                    new CfgField() { Name = "attrs", Type = "string" },
+                    new CfgField() { Name = "tags", Type = "string" },
                     new CfgField() { Name = "fields", Type = "list,__FieldInfo__", IsMultiRow = true },
                 }
             })
@@ -667,7 +666,7 @@ namespace Luban.Job.Cfg.Defs
 
                     string sep = (data.GetField("sep") as DString).Value.Trim();
                     string comment = (data.GetField("comment") as DString).Value.Trim();
-                    string attrs = (data.GetField("attrs") as DString).Value.Trim();
+                    string tags = (data.GetField("tags") as DString).Value.Trim();
                     DList fields = data.GetField("fields") as DList;
                     var curBean = new CfgBean()
                     {
@@ -675,7 +674,7 @@ namespace Luban.Job.Cfg.Defs
                         Namespace = module,
                         Sep = sep,
                         Comment = comment,
-                        Attrs = attrs,
+                        Tags = tags,
                         Parent = "",
                         Fields = fields.Datas.Select(d => (DBean)d).Select(b => this.CreateField(
                             (b.GetField("name") as DString).Value.Trim(),
@@ -693,7 +692,7 @@ namespace Luban.Job.Cfg.Defs
                             "",
                             "",
                             "",
-                            (b.GetField("attrs") as DString).Value.Trim()
+                            (b.GetField("tags") as DString).Value.Trim()
                             )).ToList(),
                     };
                     this._beans.Add(curBean);
@@ -709,7 +708,7 @@ namespace Luban.Job.Cfg.Defs
 
         private static readonly List<string> _fieldOptionalAttrs = new List<string> {
             "index", "sep", "validator", "key_validator", "value_validator",
-            "ref", "path", "range", "multi_rows", "group", "res", "convert", "comment", "attrs" };
+            "ref", "path", "range", "multi_rows", "group", "res", "convert", "comment", "tags" };
 
         private static readonly List<string> _fieldRequireAttrs = new List<string> { "name", "type" };
 
@@ -732,12 +731,12 @@ namespace Luban.Job.Cfg.Defs
                  XmlUtil.GetOptionalAttribute(e, "key_validator"),
                  XmlUtil.GetOptionalAttribute(e, "value_validator"),
                  XmlUtil.GetOptionalAttribute(e, "validator"),
-                 XmlUtil.GetOptionalAttribute(e, "attrs")
+                 XmlUtil.GetOptionalAttribute(e, "tags")
                 );
         }
 
         private Field CreateField(string name, string type, string index, string sep, bool isMultiRow, string group, string resource, string converter,
-            string comment, string refs, string path, string range, string keyValidator, string valueValidator, string validator, string attrs)
+            string comment, string refs, string path, string range, string keyValidator, string valueValidator, string validator, string tags)
         {
             var f = new CfgField()
             {
@@ -749,7 +748,7 @@ namespace Luban.Job.Cfg.Defs
                 Resource = resource,
                 Converter = converter,
                 Comment = comment,
-                Attrs = attrs,
+                Tags = tags,
             };
 
             // 字段与table的默认组不一样。
@@ -776,7 +775,7 @@ namespace Luban.Job.Cfg.Defs
             return f;
         }
 
-        private static readonly List<string> _beanOptinsAttrs = new List<string> { "value_type", "alias", "sep", "comment", "attrs" };
+        private static readonly List<string> _beanOptinsAttrs = new List<string> { "value_type", "alias", "sep", "comment", "tags" };
         private static readonly List<string> _beanRequireAttrs = new List<string> { "name" };
 
         protected override void AddBean(XElement e, string parent)
@@ -794,7 +793,7 @@ namespace Luban.Job.Cfg.Defs
                 Alias = XmlUtil.GetOptionalAttribute(e, "alias"),
                 Sep = XmlUtil.GetOptionalAttribute(e, "sep"),
                 Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
-                Attrs = XmlUtil.GetOptionalAttribute(e, "attrs"),
+                Tags = XmlUtil.GetOptionalAttribute(e, "tags"),
             };
             var childBeans = new List<XElement>();
 

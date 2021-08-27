@@ -12,16 +12,16 @@ namespace Luban.Job.Common.Types
             IsNullable = isNullable;
         }
 
-        public Dictionary<string, string> Attrs { get; set; }
+        public Dictionary<string, string> Tags { get; set; }
 
-        public bool HasAttr(string attrName)
+        public bool HasTag(string attrName)
         {
-            return Attrs != null && Attrs.ContainsKey(attrName);
+            return Tags != null && Tags.ContainsKey(attrName);
         }
 
-        public string GetAttr(string attrName)
+        public string GetTag(string attrName)
         {
-            return Attrs != null && Attrs.TryGetValue(attrName, out var value) ? value : null;
+            return Tags != null && Tags.TryGetValue(attrName, out var value) ? value : null;
         }
 
         public abstract bool TryParseFrom(string s);

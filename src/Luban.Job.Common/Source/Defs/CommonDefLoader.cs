@@ -195,7 +195,7 @@ namespace Luban.Job.Common.Defs
         }
 
         private static readonly List<string> _fieldRequireAttrs = new List<string> { "name", "type", };
-        private static readonly List<string> _fieldOptionalAttrs = new List<string> { "id", "comment", "attrs" };
+        private static readonly List<string> _fieldOptionalAttrs = new List<string> { "id", "comment", "tags" };
 
         protected virtual Field CreateField(XElement e)
         {
@@ -206,7 +206,7 @@ namespace Luban.Job.Common.Defs
                 Name = XmlUtil.GetRequiredAttribute(e, "name"),
                 Type = CreateType(e, "type"),
                 Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
-                Attrs = XmlUtil.GetOptionalAttribute(e, "attrs"),
+                Tags = XmlUtil.GetOptionalAttribute(e, "tags"),
             };
             return f;
         }
@@ -216,10 +216,10 @@ namespace Luban.Job.Common.Defs
             AddBean(e, "");
         }
 
-        private static readonly List<string> _beanOptinsAttrs1 = new List<string> { "compatible", "value_type", "comment", "attrs" };
+        private static readonly List<string> _beanOptinsAttrs1 = new List<string> { "compatible", "value_type", "comment", "tags" };
         private static readonly List<string> _beanRequireAttrs1 = new List<string> { "id", "name" };
 
-        private static readonly List<string> _beanOptinsAttrs2 = new List<string> { "id", "compatible", "value_type", "comment", "attrs" };
+        private static readonly List<string> _beanOptinsAttrs2 = new List<string> { "id", "compatible", "value_type", "comment", "tags" };
         private static readonly List<string> _beanRequireAttrs2 = new List<string> { "name" };
 
         protected virtual void AddBean(XElement e, string parent)
@@ -241,7 +241,7 @@ namespace Luban.Job.Common.Defs
                 IsSerializeCompatible = XmlUtil.GetOptionBoolAttribute(e, "compatible", IsBeanDefaultCompatible),
                 IsValueType = XmlUtil.GetOptionBoolAttribute(e, "value_type"),
                 Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
-                Attrs = XmlUtil.GetOptionalAttribute(e, "attrs"),
+                Tags = XmlUtil.GetOptionalAttribute(e, "tags"),
             };
             var childBeans = new List<XElement>();
 
@@ -336,11 +336,11 @@ namespace Luban.Job.Common.Defs
             _consts.Add(c);
         }
 
-        private static readonly List<string> _enumOptionalAttrs = new List<string> { "flags", "comment", "attrs" };
+        private static readonly List<string> _enumOptionalAttrs = new List<string> { "flags", "comment", "tags" };
         private static readonly List<string> _enumRequiredAttrs = new List<string> { "name" };
 
 
-        private static readonly List<string> _enumItemOptionalAttrs = new List<string> { "value", "alias", "comment", "attrs" };
+        private static readonly List<string> _enumItemOptionalAttrs = new List<string> { "value", "alias", "comment", "tags" };
         private static readonly List<string> _enumItemRequiredAttrs = new List<string> { "name" };
 
         protected void AddEnum(XElement e)
@@ -352,7 +352,7 @@ namespace Luban.Job.Common.Defs
                 Namespace = CurNamespace,
                 Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
                 IsFlags = XmlUtil.GetOptionBoolAttribute(e, "flags"),
-                Attrs = XmlUtil.GetOptionalAttribute(e, "attrs"),
+                Tags = XmlUtil.GetOptionalAttribute(e, "tags"),
             };
 
             foreach (XElement item in e.Elements())
@@ -364,7 +364,7 @@ namespace Luban.Job.Common.Defs
                     Alias = XmlUtil.GetOptionalAttribute(item, "alias"),
                     Value = XmlUtil.GetOptionalAttribute(item, "value"),
                     Comment = XmlUtil.GetOptionalAttribute(item, "comment"),
-                    Attrs = XmlUtil.GetOptionalAttribute(item, "attrs"),
+                    Tags = XmlUtil.GetOptionalAttribute(item, "tags"),
                 });
             }
             s_logger.Trace("add enum:{@enum}", en);

@@ -51,7 +51,7 @@ namespace Luban.Job.Common.Defs
             Id = b.TypeId;
             IsValueType = b.IsValueType;
             Comment = b.Comment;
-            Attrs = DefUtil.ParseAttrs(b.Attrs);
+            Tags = DefUtil.ParseAttrs(b.Tags);
             foreach (var field in b.Fields)
             {
                 Fields.Add(CreateField(field, 0));

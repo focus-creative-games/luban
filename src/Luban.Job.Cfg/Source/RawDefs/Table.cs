@@ -35,7 +35,7 @@ namespace Luban.Job.Cfg.RawDefs
 
         public string Comment { get; set; }
 
-        public string Attrs { get; set; }
+        public string Tags { get; set; }
 
         public List<string> Groups { get; set; } = new List<string>();
 

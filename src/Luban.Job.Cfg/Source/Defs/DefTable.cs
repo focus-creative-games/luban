@@ -22,7 +22,7 @@ namespace Luban.Job.Cfg.Defs
             Groups = b.Groups;
             _branchInputFiles = b.BranchInputFiles;
             Comment = b.Comment;
-            Attrs = DefUtil.ParseAttrs(b.Attrs);
+            Tags = DefUtil.ParseAttrs(b.Tags);
         }
 
 

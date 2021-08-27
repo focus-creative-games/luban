@@ -163,14 +163,14 @@ namespace Luban.Job.Common.Defs
             return type.Apply(LuaConstValueVisitor.Ins, value);
         }
 
-        public static bool HasAttr(dynamic obj, string attrName)
+        public static bool HasTag(dynamic obj, string attrName)
         {
-            return obj.HasAttr(attrName);
+            return obj.HasTag(attrName);
         }
 
-        public static string GetAttr(dynamic obj, string attrName)
+        public static string GetTag(dynamic obj, string attrName)
         {
-            return obj.GetAttr(attrName);
+            return obj.GetTag(attrName);
         }
     }
 }

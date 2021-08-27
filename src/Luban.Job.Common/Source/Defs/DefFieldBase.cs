@@ -72,16 +72,16 @@ namespace Luban.Job.Common.Defs
 
         public string Comment { get; }
 
-        public Dictionary<string, string> Attrs { get; }
+        public Dictionary<string, string> Tags { get; }
 
-        public bool HasAttr(string attrName)
+        public bool HasTag(string attrName)
         {
-            return Attrs != null && Attrs.ContainsKey(attrName);
+            return Tags != null && Tags.ContainsKey(attrName);
         }
 
-        public string GetAttr(string attrName)
+        public string GetTag(string attrName)
         {
-            return Attrs != null && Attrs.TryGetValue(attrName, out var value) ? value : null;
+            return Tags != null && Tags.TryGetValue(attrName, out var value) ? value : null;
         }
 
         public DefFieldBase(DefTypeBase host, Field f, int idOffset)
@@ -91,7 +91,7 @@ namespace Luban.Job.Common.Defs
             Name = f.Name;
             Type = f.Type;
             Comment = f.Comment;
-            Attrs = DefUtil.ParseAttrs(f.Attrs);
+            Tags = DefUtil.ParseAttrs(f.Tags);
         }
 
         public virtual void Compile()

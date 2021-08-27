@@ -12,14 +12,14 @@ namespace Luban.Job.Common.Utils
 
         private readonly static char[] s_attrKeyValueSep = new char[] { '=', ':' };
 
-        public static Dictionary<string, string> ParseAttrs(string attrs)
+        public static Dictionary<string, string> ParseAttrs(string tags)
         {
-            if (string.IsNullOrWhiteSpace(attrs))
+            if (string.IsNullOrWhiteSpace(tags))
             {
                 return null;
             }
             var am = new Dictionary<string, string>();
-            foreach (var pair in attrs.Split(s_attrSep))
+            foreach (var pair in tags.Split(s_attrSep))
             {
                 int sepIndex = pair.IndexOfAny(s_attrKeyValueSep);
                 if (sepIndex >= 0)

@@ -12,7 +12,7 @@ namespace Luban.Job.Common.RawDefs
 
         public string Comment { get; set; }
 
-        public string Attrs { get; set; }
+        public string Tags { get; set; }
     }
 
     public class PEnum
@@ -28,7 +28,7 @@ namespace Luban.Job.Common.RawDefs
 
         public string Comment { get; set; }
 
-        public string Attrs { get; set; }
+        public string Tags { get; set; }
 
         public List<EnumItem> Items { get; set; } = new List<EnumItem>();
     }

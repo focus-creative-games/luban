@@ -23,16 +23,16 @@ namespace Luban.Job.Common.Defs
 
             public string Comment { get; init; }
 
-            public Dictionary<string, string> Attrs { get; init; }
+            public Dictionary<string, string> Tags { get; init; }
 
-            public bool HasAttr(string attrName)
+            public bool HasTag(string attrName)
             {
-                return Attrs != null && Attrs.ContainsKey(attrName);
+                return Tags != null && Tags.ContainsKey(attrName);
             }
 
-            public string GetAttr(string attrName)
+            public string GetTag(string attrName)
             {
-                return Attrs != null && Attrs.TryGetValue(attrName, out var value) ? value : null;
+                return Tags != null && Tags.TryGetValue(attrName, out var value) ? value : null;
             }
         }
 
@@ -84,7 +84,7 @@ namespace Luban.Job.Common.Defs
             IsFlags = e.IsFlags;
             IsUniqueItemId = e.IsUniqueItemId;
             Comment = e.Comment;
-            Attrs = DefUtil.ParseAttrs(e.Attrs);
+            Tags = DefUtil.ParseAttrs(e.Tags);
 
             foreach (var item in e.Items)
             {
@@ -95,7 +95,7 @@ namespace Luban.Job.Common.Defs
                     Alias = item.Alias,
                     Value = item.Value,
                     Comment = string.IsNullOrWhiteSpace(item.Comment) ? item.Alias : item.Comment,
-                    Attrs = DefUtil.ParseAttrs(item.Attrs),
+                    Tags = DefUtil.ParseAttrs(item.Tags),
                 });
             }
         }

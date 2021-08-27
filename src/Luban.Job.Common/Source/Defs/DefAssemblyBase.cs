@@ -132,7 +132,7 @@ namespace Luban.Job.Common.Defs
         protected TType CreateNotContainerType(string module, string rawType)
         {
             bool nullable;
-            var (type, attrs) = DefUtil.ParseType(rawType);
+            var (type, tags) = DefUtil.ParseType(rawType);
 
             if (type.EndsWith('?'))
             {
@@ -149,33 +149,33 @@ namespace Luban.Job.Common.Defs
             }
             switch (type)
             {
-                case "bool": return attrs == null ? (nullable ? TBool.NullableIns : TBool.Ins) : new TBool(nullable) { Attrs = attrs };
+                case "bool": return tags == null ? (nullable ? TBool.NullableIns : TBool.Ins) : new TBool(nullable) { Tags = tags };
                 case "uint8":
-                case "byte": return attrs == null ? (nullable ? TByte.NullableIns : TByte.Ins) : new TByte(nullable) { Attrs = attrs };
+                case "byte": return tags == null ? (nullable ? TByte.NullableIns : TByte.Ins) : new TByte(nullable) { Tags = tags };
                 case "int16":
-                case "short": return attrs == null ? (nullable ? TShort.NullableIns : TShort.Ins) : new TShort(nullable) { Attrs = attrs };
+                case "short": return tags == null ? (nullable ? TShort.NullableIns : TShort.Ins) : new TShort(nullable) { Tags = tags };
                 case "fint16":
-                case "fshort": return attrs == null ? (nullable ? TFshort.NullableIns : TFshort.Ins) : new TFshort(nullable) { Attrs = attrs };
+                case "fshort": return tags == null ? (nullable ? TFshort.NullableIns : TFshort.Ins) : new TFshort(nullable) { Tags = tags };
                 case "int32":
-                case "int": return attrs == null ? (nullable ? TInt.NullableIns : TInt.Ins) : new TInt(nullable) { Attrs = attrs };
+                case "int": return tags == null ? (nullable ? TInt.NullableIns : TInt.Ins) : new TInt(nullable) { Tags = tags };
                 case "fint32":
-                case "fint": return attrs == null ? (nullable ? TFint.NullableIns : TFint.Ins) : new TFint(nullable) { Attrs = attrs };
+                case "fint": return tags == null ? (nullable ? TFint.NullableIns : TFint.Ins) : new TFint(nullable) { Tags = tags };
                 case "int64":
-                case "long": return attrs == null ? (nullable ? TLong.NullableIns : TLong.Ins) : new TLong(nullable, false) { Attrs = attrs };
-                case "bigint": return attrs == null ? (nullable ? TLong.NullableBigIns : TLong.BigIns) : new TLong(nullable, true) { Attrs = attrs };
+                case "long": return tags == null ? (nullable ? TLong.NullableIns : TLong.Ins) : new TLong(nullable, false) { Tags = tags };
+                case "bigint": return tags == null ? (nullable ? TLong.NullableBigIns : TLong.BigIns) : new TLong(nullable, true) { Tags = tags };
                 case "fint64":
-                case "flong": return attrs == null ? (nullable ? TFlong.NullableIns : TFlong.Ins) : new TFlong(nullable) { Attrs = attrs };
+                case "flong": return tags == null ? (nullable ? TFlong.NullableIns : TFlong.Ins) : new TFlong(nullable) { Tags = tags };
                 case "float32":
-                case "float": return attrs == null ? (nullable ? TFloat.NullableIns : TFloat.Ins) : new TFloat(nullable) { Attrs = attrs };
+                case "float": return tags == null ? (nullable ? TFloat.NullableIns : TFloat.Ins) : new TFloat(nullable) { Tags = tags };
                 case "float64":
-                case "double": return attrs == null ? (nullable ? TDouble.NullableIns : TDouble.Ins) : new TDouble(nullable) { Attrs = attrs };
-                case "bytes": return attrs == null ? (nullable ? new TBytes(true) : TBytes.Ins) : new TBytes(false) { Attrs = attrs };
-                case "string": return attrs == null ? (nullable ? TString.NullableIns : TString.Ins) : new TString(nullable) { Attrs = attrs };
-                case "text": return attrs == null ? (nullable ? TText.NullableIns : TText.Ins) : new TText(nullable) { Attrs = attrs };
-                case "vector2": return attrs == null ? (nullable ? TVector2.NullableIns : TVector2.Ins) : new TVector2(nullable) { Attrs = attrs };
-                case "vector3": return attrs == null ? (nullable ? TVector3.NullableIns : TVector3.Ins) : new TVector3(nullable) { Attrs = attrs };
-                case "vector4": return attrs == null ? (nullable ? TVector4.NullableIns : TVector4.Ins) : new TVector4(nullable) { Attrs = attrs };
-                case "datetime": return SupportDatetimeType ? (attrs == null ? (nullable ? TDateTime.NullableIns : TDateTime.Ins) : new TDateTime(nullable) { Attrs = attrs }) : throw new NotSupportedException($"只有配置支持datetime数据类型");
+                case "double": return tags == null ? (nullable ? TDouble.NullableIns : TDouble.Ins) : new TDouble(nullable) { Tags = tags };
+                case "bytes": return tags == null ? (nullable ? new TBytes(true) : TBytes.Ins) : new TBytes(false) { Tags = tags };
+                case "string": return tags == null ? (nullable ? TString.NullableIns : TString.Ins) : new TString(nullable) { Tags = tags };
+                case "text": return tags == null ? (nullable ? TText.NullableIns : TText.Ins) : new TText(nullable) { Tags = tags };
+                case "vector2": return tags == null ? (nullable ? TVector2.NullableIns : TVector2.Ins) : new TVector2(nullable) { Tags = tags };
+                case "vector3": return tags == null ? (nullable ? TVector3.NullableIns : TVector3.Ins) : new TVector3(nullable) { Tags = tags };
+                case "vector4": return tags == null ? (nullable ? TVector4.NullableIns : TVector4.Ins) : new TVector4(nullable) { Tags = tags };
+                case "datetime": return SupportDatetimeType ? (tags == null ? (nullable ? TDateTime.NullableIns : TDateTime.Ins) : new TDateTime(nullable) { Tags = tags }) : throw new NotSupportedException($"只有配置支持datetime数据类型");
                 default:
                 {
                     var dtype = GetDefTType(module, type, nullable);

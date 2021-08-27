@@ -46,16 +46,16 @@ namespace Luban.Job.Common.Defs
 
         public string Comment { get; protected set; }
 
-        public Dictionary<string, string> Attrs { get; protected set; }
+        public Dictionary<string, string> Tags { get; protected set; }
 
-        public bool HasAttr(string attrName)
+        public bool HasTag(string attrName)
         {
-            return Attrs != null && Attrs.ContainsKey(attrName);
+            return Tags != null && Tags.ContainsKey(attrName);
         }
 
-        public string GetAttr(string attrName)
+        public string GetTag(string attrName)
         {
-            return Attrs != null && Attrs.TryGetValue(attrName, out var value) ? value : null;
+            return Tags != null && Tags.TryGetValue(attrName, out var value) ? value : null;
         }
 
         public virtual void PreCompile() { }
