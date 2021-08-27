@@ -98,47 +98,6 @@ namespace Luban.Job.Cfg
             }
         }
 
-        private ELanguage GetLanguage(string genType)
-        {
-            switch (genType)
-            {
-                case "code_cs_bin":
-                case "code_cs_json":
-                case "code_cs_unity_json": return ELanguage.CS;
-                case "code_java_bin":
-                case "code_java_json": return ELanguage.JAVA;
-                case "code_go_bin":
-                case "code_go_json": return ELanguage.GO;
-                case "code_cpp_bin": return ELanguage.CPP;
-                case "code_lua_bin":
-                case "code_lua_lua": return ELanguage.LUA;
-                case "code_python3_json": return ELanguage.PYTHON;
-                case "code_typescript_bin":
-                case "code_typescript_json": return ELanguage.TYPESCRIPT;
-                case "code_cpp_ue_editor":
-                case "code_cpp_ue_bp": return ELanguage.CPP;
-                case "code_cs_unity_editor": return ELanguage.CS;
-                default: throw new ArgumentException($"not support output data type:{genType}");
-            }
-        }
-
-        private string GetOutputFileSuffix(string genType)
-        {
-            switch (genType)
-            {
-                case "data_bin": return "bin";
-                case "data_json":
-                case "data_json2": return "json";
-                case "data_lua": return "lua";
-                default: throw new Exception($"not support output data type:{genType}");
-            }
-        }
-
-        private string GetOutputFileName(string genType, string fileName)
-        {
-            return $"{(genType.EndsWith("lua") ? fileName.Replace('.', '_') : fileName)}.{GetOutputFileSuffix(genType)}";
-        }
-
         private static bool TryParseArg(List<string> args, out GenArgs options, out string errMsg)
         {
             var helpWriter = new StringWriter();
@@ -475,7 +434,7 @@ namespace Luban.Job.Cfg
         {
             string genType = ctx.GenType;
             ctx.Render = CreateCodeRender(genType);
-            ctx.Lan = GetLanguage(genType);
+            ctx.Lan = RenderFileUtil.GetLanguage(genType);
             foreach (var c in ctx.ExportTypes)
             {
                 ctx.Tasks.Add(Task.Run(() =>
@@ -535,7 +494,7 @@ namespace Luban.Job.Cfg
             string genType = ctx.GenType;
             var args = ctx.GenArgs;
             ctx.Render = CreateCodeRender(genType);
-            ctx.Lan = GetLanguage(genType);
+            ctx.Lan = RenderFileUtil.GetLanguage(genType);
 
             var lines = new List<string>(10000);
             Action<List<string>> preContent = (fileContent) =>
@@ -589,7 +548,7 @@ namespace Luban.Job.Cfg
         {
             string genType = ctx.GenType;
             ctx.Render = CreateCodeRender(genType);
-            ctx.Lan = GetLanguage(genType);
+            ctx.Lan = RenderFileUtil.GetLanguage(genType);
 
             var lines = new List<string>(10000);
             static void PreContent(List<string> fileContent)
@@ -769,7 +728,7 @@ namespace {ctx.TopModule}
             {
                 ctx.Tasks.Add(Task.Run(() =>
                 {
-                    var file = GetOutputFileName(genType, table.OutputDataFile);
+                    var file = RenderFileUtil.GetOutputFileName(genType, table.OutputDataFile);
                     var records = ctx.Assembly.GetTableExportDataList(table);
                     if (!FileRecordCacheManager.Ins.TryGetRecordOutputData(table, records, genType, out string md5))
                     {

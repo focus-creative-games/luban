@@ -205,12 +205,12 @@ namespace Luban.Common.Utils
 
         public static string ToCsStyleName(string orginName)
         {
-            return string.Join("", orginName.Split('_').Select(c => UpperCaseFirstChar(c)));
+            return string.Join("", orginName.Split('_').Where(s => !string.IsNullOrWhiteSpace(s)).Select(c => UpperCaseFirstChar(c)));
         }
 
         public static string ToJavaStyleName(string orginName)
         {
-            var words = orginName.Split('_');
+            var words = orginName.Split('_').Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
             var s = new StringBuilder();
             s.Append(words[0]);
             for (int i = 1; i < words.Length; i++)
@@ -222,7 +222,7 @@ namespace Luban.Common.Utils
 
         public static string ToJavaGetterName(string orginName)
         {
-            var words = orginName.Split('_');
+            var words = orginName.Split('_').Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
             var s = new StringBuilder("get");
             foreach (var word in words)
             {

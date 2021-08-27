@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Luban.Job.Common.Utils
 {
@@ -83,6 +84,60 @@ namespace Luban.Job.Common.Utils
                     return (url[(sheetSepIndex + 1)..], url[(lastPathSep + 1)..sheetSepIndex]);
                 }
             }
+        }
+
+        private readonly static Dictionary<string, ELanguage> s_name2Lans = new()
+        {
+            { "cs", ELanguage.CS },
+            { "java", ELanguage.JAVA },
+            { "go", ELanguage.GO },
+            { "cpp", ELanguage.CPP },
+            { "lua", ELanguage.LUA },
+            { "python", ELanguage.PYTHON },
+            { "typescript", ELanguage.TYPESCRIPT },
+            { "javascript", ELanguage.JS },
+            { "erlang", ELanguage.ERLANG },
+        };
+
+        public static ELanguage GetLanguage(string genType)
+        {
+            foreach (var (name, lan) in s_name2Lans)
+            {
+                if (genType.Contains(name))
+                {
+                    return lan;
+                }
+            }
+            throw new ArgumentException($"not support output data type:{genType}");
+        }
+
+        private readonly static Dictionary<string, string> s_name2Suxxifx = new()
+        {
+            { "json", "json" },
+            { "lua", "lua" },
+            { "bin", "bin" },
+            { "xml", "xml" },
+            { "yaml", "yml" },
+            { "yml", "yml" },
+            { "erlang", "erl" },
+            { "erl", "erl" },
+        };
+
+        public static string GetOutputFileSuffix(string genType)
+        {
+            foreach (var (name, suffix) in s_name2Suxxifx)
+            {
+                if (genType.Contains(name))
+                {
+                    return suffix;
+                }
+            }
+            throw new Exception($"not support output data type:{genType}");
+        }
+
+        public static string GetOutputFileName(string genType, string fileName)
+        {
+            return $"{(genType.EndsWith("lua") ? fileName.Replace('.', '_') : fileName)}.{GetOutputFileSuffix(genType)}";
         }
     }
 }

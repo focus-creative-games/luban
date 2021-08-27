@@ -10,5 +10,6 @@ namespace Luban.Job.Common
         JS,
         TYPESCRIPT,
         PYTHON,
+        ERLANG,
     }
 }
