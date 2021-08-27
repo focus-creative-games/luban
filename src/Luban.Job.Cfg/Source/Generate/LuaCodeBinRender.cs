@@ -8,6 +8,7 @@ using System.Linq;
 
 namespace Luban.Job.Cfg.Generate
 {
+    [Render("code_lua_bin")]
     class LuaCodeBinRender : LuaCodeRenderBase
     {
         public override string RenderAll(List<DefTypeBase> types)

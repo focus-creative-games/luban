@@ -8,6 +8,7 @@ using System.Linq;
 
 namespace Luban.Job.Cfg.Generate
 {
+    [Render("code_lua_lua")]
     class LuaCodeLuaRender : LuaCodeRenderBase
     {
         [ThreadStatic]

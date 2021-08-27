@@ -1,13 +1,55 @@
+using Luban.Common.Protos;
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Common;
 using Luban.Job.Common.Defs;
+using Luban.Job.Common.Utils;
 using Scriban;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Luban.Job.Cfg.Generate
 {
+    [Render("code_cpp_ue_editor")]
     class CppUE4EditorRender : CodeRenderBase
     {
+        public override void Render(GenContext ctx)
+        {
+            var render = new CppUE4EditorRender();
+
+            var renderTypes = ctx.Assembly.Types.Values.Where(c => c is DefEnum || c is DefBean).ToList();
+
+            foreach (var c in renderTypes)
+            {
+                ctx.Tasks.Add(Task.Run(() =>
+                {
+                    var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderAny(c), ELanguage.CPP);
+                    var file = "editor_" + RenderFileUtil.GetUeCppDefTypeHeaderFilePath(c.FullName);
+                    var md5 = CacheFileUtil.GenMd5AndAddCache(file, content, true);
+                    ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                }));
+            }
+
+            int TYPE_PER_STUB_FILE = 200;
+
+            for (int i = 0, n = (renderTypes.Count + TYPE_PER_STUB_FILE - 1) / TYPE_PER_STUB_FILE; i < n; i++)
+            {
+                int index = i;
+                ctx.Tasks.Add(Task.Run(() =>
+                {
+                    int startIndex = index * TYPE_PER_STUB_FILE;
+                    var content = FileHeaderUtil.ConcatAutoGenerationHeader(
+                        render.RenderStub(renderTypes.GetRange(startIndex, Math.Min(TYPE_PER_STUB_FILE, renderTypes.Count - startIndex))),
+                        ELanguage.CPP);
+                    var file = $"stub_{index}.cpp";
+                    var md5 = CacheFileUtil.GenMd5AndAddCache(file, content, true);
+                    ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                }));
+            }
+        }
+
+
         [ThreadStatic]
         private static Template t_enumRender;
         public override string Render(DefEnum e)

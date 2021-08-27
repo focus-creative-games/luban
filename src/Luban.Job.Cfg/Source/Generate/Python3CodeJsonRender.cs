@@ -5,6 +5,8 @@ using System;
 
 namespace Luban.Job.Cfg.Generate
 {
+    [Render("code_python_json")]
+    [Render("code_python3_json")]
     class Python3CodeJsonRender : PythonCodeRenderBase
     {
         public override string Render(DefBean b)

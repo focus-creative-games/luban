@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.Generate
 {
+    [Render("code_cs_unity_json")]
     class CsCodeUnityJsonRender : CsCodeRenderBase
     {
         public override string Render(DefBean b)

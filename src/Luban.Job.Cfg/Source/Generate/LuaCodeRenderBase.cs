@@ -1,5 +1,7 @@
-﻿using Luban.Job.Cfg.Defs;
+﻿using Luban.Common.Protos;
+using Luban.Job.Cfg.Defs;
 using Luban.Job.Common.Defs;
+using Luban.Job.Common.Utils;
 using Scriban;
 using System;
 using System.Collections.Generic;
@@ -11,6 +13,13 @@ namespace Luban.Job.Cfg.Generate
 {
     abstract class LuaCodeRenderBase : CodeRenderBase
     {
+        public override void Render(GenContext ctx)
+        {
+            var file = "Types.lua";
+            var content = this.RenderAll(ctx.ExportTypes);
+            var md5 = CacheFileUtil.GenMd5AndAddCache(file, string.Join('\n', content));
+            ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+        }
 
         public override string Render(DefConst c)
         {

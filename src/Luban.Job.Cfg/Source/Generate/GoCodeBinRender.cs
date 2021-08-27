@@ -7,6 +7,7 @@ using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.Generate
 {
+    [Render("code_go_bin")]
     class GoCodeBinRender : GoCodeRenderBase
     {
         public override string Render(DefBean b)

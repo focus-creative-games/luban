@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.Generate
 {
-    interface ICfgCodeRender : ICodeRender<DefTable>
+    interface ICfgCodeRender : ICodeRender<DefTable>, IRender
     {
         string Render(DefBean b);
 

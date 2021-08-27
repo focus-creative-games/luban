@@ -9,6 +9,21 @@ namespace Luban.Job.Cfg.Generate
 {
     abstract class PythonCodeRenderBase : CodeRenderBase
     {
+        public override void Render(GenContext ctx)
+        {
+            ctx.Render = this;
+            ctx.Lan = Common.ELanguage.PYTHON;
+
+            var lines = new List<string>(10000);
+            static void PreContent(List<string> fileContent)
+            {
+                fileContent.Add(PythonStringTemplates.ImportTython3Enum);
+                fileContent.Add(PythonStringTemplates.PythonVectorTypes);
+            }
+
+            GenerateCodeMonolithic(ctx, "Types.py", lines, PreContent, null);
+        }
+
         public override string Render(DefConst c)
         {
             return RenderUtil.RenderPythonConstClass(c);

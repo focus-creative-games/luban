@@ -7,6 +7,7 @@ using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.Generate
 {
+    [Render("code_typescript_json")]
     class TypescriptCodeJsonRender : TypescriptCodeRenderBase
     {
         public override string Render(DefBean b)

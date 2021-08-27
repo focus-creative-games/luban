@@ -12,6 +12,11 @@ namespace Luban.Job.Cfg.Generate
 {
     abstract class GoCodeRenderBase : CodeRenderBase
     {
+        public override void Render(GenContext ctx)
+        {
+            GenerateCodeScatter(ctx);
+        }
+
         public override string Render(DefConst c)
         {
             string package = "cfg";
