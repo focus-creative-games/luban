@@ -1,6 +1,7 @@
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Cfg.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -100,14 +101,9 @@ namespace Luban.Job.Cfg.DataExporters
             line.Append(type.Value);
         }
 
-        private string EscapeString(string s)
-        {
-            return s.Replace("\\", "\\\\").Replace("'", "\\'");
-        }
-
         public void Accept(DString type, DefAssembly ass, StringBuilder line)
         {
-            line.Append('\'').Append(EscapeString(type.Value)).Append('\'');
+            line.Append('\'').Append(DataUtil.EscapeString(type.Value)).Append('\'');
         }
 
         public void Accept(DBytes type, DefAssembly ass, StringBuilder line)
@@ -117,7 +113,7 @@ namespace Luban.Job.Cfg.DataExporters
 
         public void Accept(DText type, DefAssembly ass, StringBuilder line)
         {
-            line.Append($"{{{DText.KEY_NAME}='{type.Key}',{DText.TEXT_NAME}='{EscapeString(type.GetText(ass.ExportTextTable, ass.NotConvertTextSet))}'}}");
+            line.Append($"{{{DText.KEY_NAME}='{type.Key}',{DText.TEXT_NAME}='{DataUtil.EscapeString(type.GetText(ass.ExportTextTable, ass.NotConvertTextSet))}'}}");
         }
 
         public void Accept(DBean type, DefAssembly ass, StringBuilder line)

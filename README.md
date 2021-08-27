@@ -58,6 +58,7 @@ Luban适合有以下需求的开发者：
 - 灵活的数据源定义。一个表可以来自多个文件或者一个文件内定义多个表或者一个目录下所有文件甚至来自云表格，以及以上的组合
 - 支持表与字段级别分组。可以选择性地导出客户端或者服务器所用的表及字段
 - 多种导出数据格式支持。支持binary、json、lua 等导出数据格式
+- 支持自定义数据模板。可以用模板文件定制导出格式。
 - 支持数据标签。 可以选择导出符合要求的数据，发布正式数据时策划不必手动注释掉那些测试数据了
 - 强大的数据校验能力。支持内建数据格式检查；支持ref表引用检查（策划不用担心填错id）;支持path资源检查（策划不用担心填错资源路径）;支持range检查
 - 支持常量别名。策划不必再为诸如 升级丹 这样的道具手写具体道具id了
@@ -942,6 +943,66 @@ k15:
 - __type__: DemoD2
   x1: 1
   x2: 2
+
+```
+
+### 自定义导出数据格式
+
+支持使用scriban模板文件定制导出数据格式。
+
+lua数据模板 定义
+
+```
+// {{table.name}}
+
+{{for d in datas}}
+	// {{d.impl_type.full_name}}
+	{{~i = 0~}}
+	{{~for f in d.fields~}}
+		{{~if f ~}}
+		// {{d.impl_type.hierarchy_export_fields[i].name}} = {{f.value}}
+		{{~end~}}
+		{{i = i + 1}}
+	{{~end~}}
+{{end}}
+```
+
+输出数据
+
+```
+// TbItem
+
+
+	// item.Item
+		// id = 1
+		
+		// name = 钻石
+		
+		// major_type = 1
+		
+		// minor_type = 101
+		
+		// max_pile_num = 9999999
+		
+		// quality = 0
+		
+		// icon = /Game/UI/UIText/UI_TestIcon_3.UI_TestIcon_3
+		
+
+	// item.Item
+		// id = 2
+		
+		// name = 金币
+		
+		// major_type = 1
+		
+		// minor_type = 102
+		
+		// max_pile_num = 9999999
+		
+		// quality = 0
+		
+		// icon = /Game/UI/UIText/UI_TestIcon_1.UI_TestIcon_1
 
 ```
 

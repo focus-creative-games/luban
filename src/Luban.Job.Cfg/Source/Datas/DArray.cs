@@ -9,6 +9,8 @@ namespace Luban.Job.Cfg.Datas
         public TArray Type { get; }
         public List<DType> Datas { get; }
 
+        public bool IsArray => true;
+
         public DArray(TArray type, List<DType> datas)
         {
             this.Type = type;

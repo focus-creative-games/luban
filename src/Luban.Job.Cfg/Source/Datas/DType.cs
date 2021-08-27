@@ -20,6 +20,10 @@ namespace Luban.Job.Cfg.Datas
             this.Apply(ToStringVisitor.Ins, s);
             return s.ToString();
         }
+
+        public string JsonValue => this.Apply(ToJsonStringVisitor.Ins);
+
+        public string LuaValue => this.Apply(ToLuaStringVisitor.Ins);
     }
 
     public abstract class DType<T> : DType

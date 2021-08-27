@@ -10,7 +10,7 @@ namespace Luban.Job.Cfg.DataVisitors
 
         public void Accept(DBool type, StringBuilder x)
         {
-            x.Append(type.Value);
+            x.Append(type.Value ? "true" : "false");
         }
 
         public void Accept(DByte type, StringBuilder x)

@@ -1,3 +1,4 @@
+using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.TypeVisitors;
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.Types;
@@ -8,6 +9,20 @@ namespace Luban.Job.Cfg.Defs
 {
     class TTypeTemplateExtends : TTypeTemplateCommonExtends
     {
+        public static DType GetField(DBean bean, string fieldName)
+        {
+            int index = 0;
+            foreach (var f in bean.ImplType.HierarchyExportFields)
+            {
+                if (f.Name == fieldName)
+                {
+                    return bean.Fields[index];
+                }
+                ++index;
+            }
+            return null;
+        }
+
         public static string CsDefineTextKeyField(DefField field)
         {
             return $"string {field.GetTextKeyName(field.CsStyleName)}";
