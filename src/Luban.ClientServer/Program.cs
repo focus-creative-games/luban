@@ -162,7 +162,7 @@ Options:
             }
             StringTemplateUtil.AddTemplateSearchPath(FileUtil.GetPathRelateApplicationDirectory("Templates"));
 
-            GenServer.Ins.Start(options.Port, ProtocolStub.Factories);
+            GenServer.Ins.Start(true, options.Port, ProtocolStub.Factories);
 
             GenServer.Ins.RegisterJob("cfg", new Luban.Job.Cfg.JobController());
             GenServer.Ins.RegisterJob("proto", new Luban.Job.Proto.JobController());

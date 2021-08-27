@@ -31,22 +31,19 @@ namespace Luban.Server.Common
         }
     }
 
-    public class RemoteAgent
+    public class RemoteAgent : IAgent
     {
         private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
         public SessionBase Session { get; }
 
-        private readonly bool _trace;
-
         private readonly ConcurrentDictionary<string, Task<byte[]>> _remoteReadAllBytesTasks = new();
 
         private readonly ConcurrentDictionary<string, Task<GetImportFileOrDirectoryRes>> _getImportFileOrDirTasks = new();
 
-        public RemoteAgent(SessionBase session, bool trace)
+        public RemoteAgent(SessionBase session)
         {
             Session = session;
-            _trace = trace;
         }
 
         private const int GET_INPUT_FILE_TIMEOUT = 10;
@@ -63,7 +60,7 @@ namespace Luban.Server.Common
             return content;
         }
 
-        public Task<byte[]> ReadAllBytesAsync(string file)
+        public virtual Task<byte[]> ReadAllBytesAsync(string file)
         {
             return _remoteReadAllBytesTasks.GetOrAdd(file, f =>
             {
@@ -129,7 +126,6 @@ namespace Luban.Server.Common
             }
         }
 
-
         #region log
 
         public void Error(string fmt, params object[] objs)
@@ -137,42 +133,14 @@ namespace Luban.Server.Common
             Log("error", string.Format(fmt, objs));
         }
 
-        public void Error(Exception e, string s)
-        {
-            LogException(e, s);
-        }
-
-        public void Error(Exception e, string fmt, params object[] objs)
-        {
-            LogException(e, string.Format(fmt, objs));
-        }
-
         public void Info(string fmt, params object[] objs)
         {
             Log("info", string.Format(fmt, objs));
         }
 
-        public void Info(string s)
-        {
-            Log("info", s);
-        }
-
-        public void Trace(string fmt, params object[] objs)
-        {
-            if (_trace)
-            {
-                Log("trace", string.Format(fmt, objs));
-            }
-        }
-
         private void Log(string level, string content)
         {
             Session.Send(new PushLog() { Level = level, LogContent = content });
-        }
-
-        private void LogException(Exception e, string content)
-        {
-            Session.Send(new PushException() { LogContent = content, Message = e.Message, StackTrace = e.StackTrace });
         }
         #endregion
     }

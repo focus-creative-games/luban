@@ -59,7 +59,7 @@ namespace Luban.Server
 
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
-            GenServer.Ins.Start(options.Port, ProtocolStub.Factories);
+            GenServer.Ins.Start(false, options.Port, ProtocolStub.Factories);
 
             GenServer.Ins.RegisterJob("cfg", new Luban.Job.Cfg.JobController());
             GenServer.Ins.RegisterJob("proto", new Luban.Job.Proto.JobController());
