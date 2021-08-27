@@ -171,7 +171,7 @@ namespace Luban.Job.Cfg.DataCreators
                         ExcelStream stream = row.GetColumn(f.Name, sep, !f.CType.Apply(IsMultiData.Ins));
                         try
                         {
-                            list.Add(f.CType.Apply(ExcelDataCreator.Ins, f.Remapper, stream, (DefAssembly)bean.AssemblyBase));
+                            list.Add(f.CType.Apply(ExcelDataCreator.Ins, f, stream, (DefAssembly)bean.AssemblyBase));
                         }
                         catch (DataCreateException dce)
                         {

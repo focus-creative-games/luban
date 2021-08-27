@@ -400,6 +400,11 @@ namespace Luban.Job.Cfg.Defs
                             cf.Converter = attrValue;
                             break;
                         }
+                        case "default":
+                        {
+                            cf.DefaultValue = attrValue;
+                            break;
+                        }
                         default:
                         {
                             throw new Exception($"table:'{table.Name}' file:{file.OriginFile} title:'{f.Name}' attr:'{attrs[i]}' is invalid!");
@@ -600,7 +605,7 @@ namespace Luban.Job.Cfg.Defs
                     new CfgField() { Name = "is_multi_rows", Type = "bool" },
                     new CfgField() { Name = "index", Type = "string" },
                     new CfgField() { Name = "group", Type = "string" },
-                    new CfgField() { Name = "reference", Type = "string" },
+                    new CfgField() { Name = "ref", Type = "string", IgnoreNameValidation = true },
                     new CfgField() { Name = "path", Type = "string" },
                     new CfgField() { Name = "comment", Type = "string" },
                     new CfgField() { Name = "tags", Type = "string" },
@@ -686,13 +691,14 @@ namespace Luban.Job.Cfg.Defs
                             "",
                             "",
                             (b.GetField("comment") as DString).Value.Trim(),
-                            (b.GetField("reference") as DString).Value.Trim(),
+                            (b.GetField("ref") as DString).Value.Trim(),
                             (b.GetField("path") as DString).Value.Trim(),
                             "",
                             "",
                             "",
                             "",
-                            (b.GetField("tags") as DString).Value.Trim()
+                            (b.GetField("tags") as DString).Value.Trim(),
+                            false
                             )).ToList(),
                     };
                     this._beans.Add(curBean);
@@ -706,9 +712,24 @@ namespace Luban.Job.Cfg.Defs
             await LoadTableRecordDefinesFromFileAsync(dataDir);
         }
 
-        private static readonly List<string> _fieldOptionalAttrs = new List<string> {
-            "index", "sep", "validator", "key_validator", "value_validator",
-            "ref", "path", "range", "multi_rows", "group", "res", "convert", "comment", "tags" };
+        private static readonly List<string> _fieldOptionalAttrs = new()
+        {
+            "index",
+            "sep",
+            "validator",
+            "key_validator",
+            "value_validator",
+            "ref",
+            "path",
+            "range",
+            "multi_rows",
+            "group",
+            "res",
+            "convert",
+            "comment",
+            "tags",
+            "default"
+        };
 
         private static readonly List<string> _fieldRequireAttrs = new List<string> { "name", "type" };
 
@@ -731,12 +752,13 @@ namespace Luban.Job.Cfg.Defs
                  XmlUtil.GetOptionalAttribute(e, "key_validator"),
                  XmlUtil.GetOptionalAttribute(e, "value_validator"),
                  XmlUtil.GetOptionalAttribute(e, "validator"),
-                 XmlUtil.GetOptionalAttribute(e, "tags")
+                 XmlUtil.GetOptionalAttribute(e, "tags"),
+                 false
                 );
         }
 
         private Field CreateField(string name, string type, string index, string sep, bool isMultiRow, string group, string resource, string converter,
-            string comment, string refs, string path, string range, string keyValidator, string valueValidator, string validator, string tags)
+            string comment, string refs, string path, string range, string keyValidator, string valueValidator, string validator, string tags, bool ignoreNameValidation)
         {
             var f = new CfgField()
             {
@@ -749,6 +771,7 @@ namespace Luban.Job.Cfg.Defs
                 Converter = converter,
                 Comment = comment,
                 Tags = tags,
+                IgnoreNameValidation = ignoreNameValidation,
             };
 
             // 字段与table的默认组不一样。

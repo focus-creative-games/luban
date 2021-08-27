@@ -23,6 +23,8 @@ namespace Luban.Job.Cfg.RawDefs
 
         public string Converter { get; set; } = "";
 
+        public string DefaultValue { get; set; } = "";
+
         public List<string> Groups { get; set; } = new List<string>();
 
         public List<Validator> KeyValidators { get; } = new List<Validator>();

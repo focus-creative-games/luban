@@ -1,4 +1,6 @@
 using Luban.Common.Utils;
+using Luban.Job.Cfg.DataCreators;
+using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.RawDefs;
 using Luban.Job.Cfg.Validators;
 using Luban.Job.Common.Defs;
@@ -148,6 +150,10 @@ namespace Luban.Job.Cfg.Defs
 
         public bool HasRecursiveText => HasRecursiveRef;
 
+        public string DefaultValue { get; }
+
+        public DType DefalutDtypeValue { get; private set; }
+
         public DefField(DefTypeBase host, CfgField f, int idOffset) : base(host, f, idOffset)
         {
             Index = f.Index;
@@ -159,6 +165,7 @@ namespace Luban.Job.Cfg.Defs
             this.ValueValidators.AddRange(f.ValueValidators.Select(v => ValidatorFactory.Create(v)));
             this.Groups = f.Groups;
             this.RawDefine = f;
+            this.DefaultValue = f.DefaultValue;
         }
 
         public override void Compile()
@@ -177,6 +184,11 @@ namespace Luban.Job.Cfg.Defs
             foreach (var v in this.ValueValidators)
             {
                 v.Compile(this);
+            }
+
+            if (!string.IsNullOrWhiteSpace(this.DefaultValue))
+            {
+                this.DefalutDtypeValue = CType.Apply(StringDataCreator.Ins, this.DefaultValue);
             }
 
             switch (CType)

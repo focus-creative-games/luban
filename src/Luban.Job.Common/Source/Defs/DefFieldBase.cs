@@ -74,6 +74,8 @@ namespace Luban.Job.Common.Defs
 
         public Dictionary<string, string> Tags { get; }
 
+        public bool IgnoreNameValidation { get; set; }
+
         public bool HasTag(string attrName)
         {
             return Tags != null && Tags.ContainsKey(attrName);
@@ -92,6 +94,7 @@ namespace Luban.Job.Common.Defs
             Type = f.Type;
             Comment = f.Comment;
             Tags = DefUtil.ParseAttrs(f.Tags);
+            IgnoreNameValidation = f.IgnoreNameValidation;
         }
 
         public virtual void Compile()
@@ -101,7 +104,7 @@ namespace Luban.Job.Common.Defs
             {
                 throw new Exception($"type:'{HostType.FullName}' field:'{Name}' id:{Id} 超出范围");
             }
-            if (!TypeUtil.IsValidName(Name))
+            if (!IgnoreNameValidation && !TypeUtil.IsValidName(Name))
             {
                 throw new Exception($"type:'{HostType.FullName}' filed name:'{Name}' is reserved");
             }

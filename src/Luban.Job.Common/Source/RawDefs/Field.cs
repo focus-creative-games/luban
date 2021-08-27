@@ -12,5 +12,7 @@ namespace Luban.Job.Common.RawDefs
         public string Comment { get; set; }
 
         public string Tags { get; set; }
+
+        public bool IgnoreNameValidation { get; set; }
     }
 }

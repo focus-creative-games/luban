@@ -38,7 +38,7 @@ namespace Luban.Job.Cfg.DataCreators
         }
     }
 
-    class ExcelDataCreator : ITypeFuncVisitor<object, ExcelStream, DefAssembly, DType>
+    class ExcelDataCreator : ITypeFuncVisitor<DefField, ExcelStream, DefAssembly, DType>
     {
         public static ExcelDataCreator Ins { get; } = new ExcelDataCreator();
 
@@ -76,7 +76,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
         }
 
-        public DType Accept(TBool type, object converter, ExcelStream x, DefAssembly ass)
+        public DType Accept(TBool type, DefField field, ExcelStream x, DefAssembly ass)
         {
             if (x.NamedMode && x.IncludeNullAndEmptySize != 1)
             {
@@ -90,12 +90,12 @@ namespace Luban.Job.Cfg.DataCreators
             }
             if (CheckIsDefault(x.NamedMode, d))
             {
-                return DBool.ValueOf(false);
+                return field?.DefalutDtypeValue ?? DBool.ValueOf(false);
             }
             return DBool.ValueOf(CreateBool(d));
         }
 
-        public DType Accept(TByte type, object converter, ExcelStream x, DefAssembly ass)
+        public DType Accept(TByte type, DefField field, ExcelStream x, DefAssembly ass)
         {
             if (x.NamedMode && x.IncludeNullAndEmptySize != 1)
             {
@@ -108,7 +108,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
             if (CheckIsDefault(x.NamedMode, d))
             {
-                return DByte.Default;
+                return field?.DefalutDtypeValue ?? DByte.Default;
             }
             if (!byte.TryParse(d.ToString(), out byte v))
             {
@@ -117,7 +117,7 @@ namespace Luban.Job.Cfg.DataCreators
             return new DByte(v);
         }
 
-        public DType Accept(TShort type, object converter, ExcelStream x, DefAssembly ass)
+        public DType Accept(TShort type, DefField field, ExcelStream x, DefAssembly ass)
         {
             if (x.NamedMode && x.IncludeNullAndEmptySize != 1)
             {
@@ -130,7 +130,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
             if (CheckIsDefault(x.NamedMode, d))
             {
-                return DShort.Default;
+                return field?.DefalutDtypeValue ?? DShort.Default;
             }
             if (!short.TryParse(d.ToString(), out short v))
             {
@@ -139,7 +139,7 @@ namespace Luban.Job.Cfg.DataCreators
             return new DShort(v);
         }
 
-        public DType Accept(TFshort type, object converter, ExcelStream x, DefAssembly ass)
+        public DType Accept(TFshort type, DefField field, ExcelStream x, DefAssembly ass)
         {
             if (x.NamedMode && x.IncludeNullAndEmptySize != 1)
             {
@@ -152,7 +152,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
             if (CheckIsDefault(x.NamedMode, d))
             {
-                return DFshort.Default;
+                return field?.DefalutDtypeValue ?? DFshort.Default;
             }
             if (!short.TryParse(d.ToString(), out short v))
             {
@@ -161,7 +161,7 @@ namespace Luban.Job.Cfg.DataCreators
             return new DFshort(v);
         }
 
-        public DType Accept(TInt type, object converter, ExcelStream x, DefAssembly ass)
+        public DType Accept(TInt type, DefField field, ExcelStream x, DefAssembly ass)
         {
             if (x.NamedMode && x.IncludeNullAndEmptySize != 1)
             {
@@ -174,10 +174,10 @@ namespace Luban.Job.Cfg.DataCreators
             }
             if (CheckIsDefault(x.NamedMode, d))
             {
-                return DInt.ValueOf(0);
+                return field?.DefalutDtypeValue ?? DInt.ValueOf(0);
             }
             var ds = d.ToString();
-            if (converter is TEnum te)
+            if (field?.Remapper is TEnum te)
             {
                 if (te.DefineEnum.TryValueByNameOrAlias(ds, out var c))
                 {
@@ -191,7 +191,7 @@ namespace Luban.Job.Cfg.DataCreators
             return DInt.ValueOf(v);
         }
 
-        public DType Accept(TFint type, object converter, ExcelStream x, DefAssembly ass)
+        public DType Accept(TFint type, DefField field, ExcelStream x, DefAssembly ass)
         {
             if (x.NamedMode && x.IncludeNullAndEmptySize != 1)
             {
@@ -204,10 +204,10 @@ namespace Luban.Job.Cfg.DataCreators
             }
             if (CheckIsDefault(x.NamedMode, d))
             {
-                return DFint.Default;
+                return field?.DefalutDtypeValue ?? DFint.Default;
             }
             var ds = d.ToString();
-            if (converter is TEnum te)
+            if (field?.Remapper is TEnum te)
             {
                 if (te.DefineEnum.TryValueByNameOrAlias(ds, out var c))
                 {
@@ -221,7 +221,7 @@ namespace Luban.Job.Cfg.DataCreators
             return new DFint(v);
         }
 
-        public DType Accept(TLong type, object converter, ExcelStream x, DefAssembly ass)
+        public DType Accept(TLong type, DefField field, ExcelStream x, DefAssembly ass)
         {
             if (x.NamedMode && x.IncludeNullAndEmptySize != 1)
             {
@@ -234,10 +234,10 @@ namespace Luban.Job.Cfg.DataCreators
             }
             if (CheckIsDefault(x.NamedMode, d))
             {
-                return DLong.Default;
+                return field?.DefalutDtypeValue ?? DLong.Default;
             }
             var ds = d.ToString();
-            if (converter is TEnum te)
+            if (field?.Remapper is TEnum te)
             {
                 if (te.DefineEnum.TryValueByNameOrAlias(ds, out var c))
                 {
@@ -251,7 +251,7 @@ namespace Luban.Job.Cfg.DataCreators
             return DLong.ValueOf(v);
         }
 
-        public DType Accept(TFlong type, object converter, ExcelStream x, DefAssembly ass)
+        public DType Accept(TFlong type, DefField field, ExcelStream x, DefAssembly ass)
         {
             if (x.NamedMode && x.IncludeNullAndEmptySize != 1)
             {
@@ -264,10 +264,10 @@ namespace Luban.Job.Cfg.DataCreators
             }
             if (CheckIsDefault(x.NamedMode, d))
             {
-                return DFlong.Default;
+                return field?.DefalutDtypeValue ?? DFlong.Default;
             }
             var ds = d.ToString();
-            if (converter is TEnum te)
+            if (field?.Remapper is TEnum te)
             {
                 if (te.DefineEnum.TryValueByNameOrAlias(ds, out var c))
                 {
@@ -281,7 +281,7 @@ namespace Luban.Job.Cfg.DataCreators
             return new DFlong(v);
         }
 
-        public DType Accept(TFloat type, object converter, ExcelStream x, DefAssembly ass)
+        public DType Accept(TFloat type, DefField field, ExcelStream x, DefAssembly ass)
         {
             if (x.NamedMode && x.IncludeNullAndEmptySize != 1)
             {
@@ -294,7 +294,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
             if (CheckIsDefault(x.NamedMode, d))
             {
-                return DFloat.ValueOf(0);
+                return field?.DefalutDtypeValue ?? DFloat.ValueOf(0);
             }
             if (!float.TryParse(d.ToString(), out var v))
             {
@@ -303,7 +303,7 @@ namespace Luban.Job.Cfg.DataCreators
             return DFloat.ValueOf(v);
         }
 
-        public DType Accept(TDouble type, object converter, ExcelStream x, DefAssembly ass)
+        public DType Accept(TDouble type, DefField field, ExcelStream x, DefAssembly ass)
         {
             if (x.NamedMode && x.IncludeNullAndEmptySize != 1)
             {
@@ -316,7 +316,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
             if (CheckIsDefault(x.NamedMode, d))
             {
-                return DDouble.Default;
+                return field?.DefalutDtypeValue ?? DDouble.Default;
             }
             if (!double.TryParse(d.ToString(), out var v))
             {
@@ -325,21 +325,21 @@ namespace Luban.Job.Cfg.DataCreators
             return new DDouble(v);
         }
 
-        public DType Accept(TEnum type, object converter, ExcelStream x, DefAssembly ass)
+        public DType Accept(TEnum type, DefField field, ExcelStream x, DefAssembly ass)
         {
             var d = x.Read(x.NamedMode);
             if (CheckNull(type.IsNullable, d))
             {
                 return null;
             }
-            if (CheckNull(type.IsNullable, d))
+            if (CheckIsDefault(type.IsNullable, d) && field?.DefalutDtypeValue != null)
             {
-                return null;
+                return field?.DefalutDtypeValue;
             }
             return new DEnum(type, d.ToString().Trim());
         }
 
-        public DType Accept(TString type, object converter, ExcelStream x, DefAssembly ass)
+        public DType Accept(TString type, DefField field, ExcelStream x, DefAssembly ass)
         {
             if (x.NamedMode && x.IncludeNullAndEmptySize != 1)
             {
@@ -360,7 +360,7 @@ namespace Luban.Job.Cfg.DataCreators
             return DString.ValueOf(s);
         }
 
-        public DType Accept(TBytes type, object converter, ExcelStream x, DefAssembly ass)
+        public DType Accept(TBytes type, DefField field, ExcelStream x, DefAssembly ass)
         {
             throw new NotImplementedException();
         }
@@ -381,7 +381,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
         }
 
-        public DType Accept(TText type, object converter, ExcelStream x, DefAssembly ass)
+        public DType Accept(TText type, DefField field, ExcelStream x, DefAssembly ass)
         {
             if (x.NamedMode && x.IncludeNullAndEmptySize != 2)
             {
@@ -415,11 +415,11 @@ namespace Luban.Job.Cfg.DataCreators
                     string sep = f.ActualSep;
                     if (string.IsNullOrWhiteSpace(sep))
                     {
-                        list.Add(f.CType.Apply(this, f.Remapper, stream, ass));
+                        list.Add(f.CType.Apply(this, f, stream, ass));
                     }
                     else
                     {
-                        list.Add(f.CType.Apply(this, f.Remapper, new ExcelStream(stream.ReadCell(), sep, false), ass));
+                        list.Add(f.CType.Apply(this, f, new ExcelStream(stream.ReadCell(), sep, false), ass));
                     }
                 }
                 catch (DataCreateException dce)
@@ -437,7 +437,7 @@ namespace Luban.Job.Cfg.DataCreators
             return list;
         }
 
-        public DType Accept(TBean type, object converter, ExcelStream x, DefAssembly ass)
+        public DType Accept(TBean type, DefField field, ExcelStream x, DefAssembly ass)
         {
             var originBean = (DefBean)type.Bean;
 
@@ -480,7 +480,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         // 容器类统统不支持 type.IsNullable
         // 因为貌似没意义？
-        public List<DType> ReadList(TType type, object converter, ExcelStream stream, DefAssembly ass)
+        public List<DType> ReadList(TType type, DefField field, ExcelStream stream, DefAssembly ass)
         {
             stream.NamedMode = false;
             string sep = type is TBean bean ? ((DefBean)bean.Bean).Sep : null;
@@ -489,32 +489,32 @@ namespace Luban.Job.Cfg.DataCreators
             {
                 if (string.IsNullOrWhiteSpace(sep))
                 {
-                    datas.Add(type.Apply(this, converter, stream, ass));
+                    datas.Add(type.Apply(this, field, stream, ass));
                 }
                 else
                 {
-                    datas.Add(type.Apply(this, converter, new ExcelStream(stream.ReadCell(), sep, false), ass)); ;
+                    datas.Add(type.Apply(this, field, new ExcelStream(stream.ReadCell(), sep, false), ass)); ;
                 }
             }
             return datas;
         }
 
-        public DType Accept(TArray type, object converter, ExcelStream x, DefAssembly ass)
+        public DType Accept(TArray type, DefField field, ExcelStream x, DefAssembly ass)
         {
-            return new DArray(type, ReadList(type.ElementType, converter, x, ass));
+            return new DArray(type, ReadList(type.ElementType, field, x, ass));
         }
 
-        public DType Accept(TList type, object converter, ExcelStream x, DefAssembly ass)
+        public DType Accept(TList type, DefField field, ExcelStream x, DefAssembly ass)
         {
-            return new DList(type, ReadList(type.ElementType, converter, x, ass));
+            return new DList(type, ReadList(type.ElementType, field, x, ass));
         }
 
-        public DType Accept(TSet type, object converter, ExcelStream x, DefAssembly ass)
+        public DType Accept(TSet type, DefField field, ExcelStream x, DefAssembly ass)
         {
-            return new DSet(type, ReadList(type.ElementType, converter, x, ass));
+            return new DSet(type, ReadList(type.ElementType, field, x, ass));
         }
 
-        public DType Accept(TMap type, object converter, ExcelStream x, DefAssembly ass)
+        public DType Accept(TMap type, DefField field, ExcelStream x, DefAssembly ass)
         {
             x.NamedMode = false;
             string sep = type.ValueType is TBean bean ? ((DefBean)bean.Bean).Sep : null;
@@ -532,7 +532,7 @@ namespace Luban.Job.Cfg.DataCreators
             return new DMap(type, datas);
         }
 
-        public DType Accept(TVector2 type, object converter, ExcelStream x, DefAssembly ass)
+        public DType Accept(TVector2 type, DefField field, ExcelStream x, DefAssembly ass)
         {
             if (x.NamedMode && x.IncludeNullAndEmptySize != 1)
             {
@@ -545,12 +545,12 @@ namespace Luban.Job.Cfg.DataCreators
             }
             if (CheckIsDefault(x.NamedMode, d))
             {
-                return DVector2.Default;
+                return field?.DefalutDtypeValue ?? DVector2.Default;
             }
             return DataUtil.CreateVector(type, d.ToString());
         }
 
-        public DType Accept(TVector3 type, object converter, ExcelStream x, DefAssembly ass)
+        public DType Accept(TVector3 type, DefField field, ExcelStream x, DefAssembly ass)
         {
             if (x.NamedMode && x.IncludeNullAndEmptySize != 1)
             {
@@ -563,12 +563,12 @@ namespace Luban.Job.Cfg.DataCreators
             }
             if (CheckIsDefault(x.NamedMode, d))
             {
-                return DVector3.Default;
+                return field?.DefalutDtypeValue ?? DVector3.Default;
             }
             return DataUtil.CreateVector(type, d.ToString());
         }
 
-        public DType Accept(TVector4 type, object converter, ExcelStream x, DefAssembly ass)
+        public DType Accept(TVector4 type, DefField field, ExcelStream x, DefAssembly ass)
         {
             if (x.NamedMode && x.IncludeNullAndEmptySize != 1)
             {
@@ -581,17 +581,21 @@ namespace Luban.Job.Cfg.DataCreators
             }
             if (CheckIsDefault(x.NamedMode, d))
             {
-                return DVector4.Default;
+                return field?.DefalutDtypeValue ?? DVector4.Default;
             }
             return DataUtil.CreateVector(type, d.ToString());
         }
 
-        public DType Accept(TDateTime type, object converter, ExcelStream x, DefAssembly ass)
+        public DType Accept(TDateTime type, DefField field, ExcelStream x, DefAssembly ass)
         {
             var d = x.Read();
             if (CheckNull(type.IsNullable, d))
             {
                 return null;
+            }
+            if (CheckIsDefault(x.NamedMode, d) && field?.DefalutDtypeValue != null)
+            {
+                return field?.DefalutDtypeValue;
             }
             if (d is System.DateTime datetime)
             {
