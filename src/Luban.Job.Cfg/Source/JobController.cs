@@ -87,6 +87,11 @@ namespace Luban.Job.Cfg
                         errMsg = "--input_l10n_text_files must be provided with --output_l10n_not_translated_text_file";
                         return false;
                     }
+                    if (genTypes.Contains("data_template") ^ !string.IsNullOrWhiteSpace(options.TemplateName))
+                    {
+                        errMsg = "gen_types data_template should use with --template_name";
+                        return false;
+                    }
                 }
 
                 if (string.IsNullOrWhiteSpace(options.BranchName) ^ string.IsNullOrWhiteSpace(options.BranchInputDataDir))

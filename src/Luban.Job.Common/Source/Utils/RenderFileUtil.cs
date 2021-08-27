@@ -137,7 +137,7 @@ namespace Luban.Job.Common.Utils
 
         public static string GetOutputFileName(string genType, string fileName)
         {
-            return $"{(genType.EndsWith("lua") ? fileName.Replace('.', '_') : fileName)}.{GetOutputFileSuffix(genType)}";
+            return $"{(genType.Contains("lua") ? fileName.Replace('.', '_') : fileName)}.{GetOutputFileSuffix(genType)}";
         }
     }
 }
