@@ -6,9 +6,9 @@ using System.Text;
 
 namespace Luban.Job.Cfg.DataVisitors
 {
-    class ToLuaStringVisitor : ToJsonStringVisitor
+    class ToXmlLiteralVisitor : ToJsonLiteralVisitor
     {
-        public static new ToLuaStringVisitor Ins { get; } = new();
+        public static new ToXmlLiteralVisitor Ins { get; } = new();
 
         public override string Accept(DText type)
         {

@@ -16,14 +16,8 @@ namespace Luban.Job.Cfg.Datas
 
         public override string ToString()
         {
-            var s = new StringBuilder();
-            this.Apply(ToStringVisitor.Ins, s);
-            return s.ToString();
+            return this.Apply(ToStringVisitor.Ins);
         }
-
-        public string JsonValue => this.Apply(ToJsonStringVisitor.Ins);
-
-        public string LuaValue => this.Apply(ToLuaStringVisitor.Ins);
     }
 
     public abstract class DType<T> : DType

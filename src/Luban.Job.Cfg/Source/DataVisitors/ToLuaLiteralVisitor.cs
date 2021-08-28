@@ -6,14 +6,14 @@ using System.Text;
 
 namespace Luban.Job.Cfg.DataVisitors
 {
-    class ToStringVisitor : ToLiteralVisitorBase
+    class ToLuaLiteralVisitor : ToLiteralVisitorBase
     {
-        public static ToStringVisitor Ins { get; } = new ToStringVisitor();
+        public static ToLuaLiteralVisitor Ins { get; } = new();
 
         public override string Accept(DText type)
         {
             var ass = DefAssembly.LocalAssebmly as DefAssembly;
-            return $"\"{type.Key}#{type.GetText(ass.ExportTextTable, ass.NotConvertTextSet)}\"";
+            return $"{{{DText.KEY_NAME}='{type.Key}',{DText.TEXT_NAME}=\"{DataUtil.EscapeString(type.GetText(ass.ExportTextTable, ass.NotConvertTextSet))}\"}}";
         }
 
         public override string Accept(DBean type)
@@ -22,7 +22,7 @@ namespace Luban.Job.Cfg.DataVisitors
             var bean = type.ImplType;
             if (bean.IsAbstractType)
             {
-                x.Append($"{{ _name:\"{type.ImplType.Name}\",");
+                x.Append($"{{ _name='{type.ImplType.Name}',");
             }
             else
             {
@@ -33,14 +33,14 @@ namespace Luban.Job.Cfg.DataVisitors
             foreach (var f in type.Fields)
             {
                 var defField = type.ImplType.HierarchyExportFields[index++];
-                x.Append(defField.Name).Append(':');
+                x.Append(defField.Name).Append('=');
                 if (f != null)
                 {
                     x.Append(f.Apply(this));
                 }
                 else
                 {
-                    x.Append("null");
+                    x.Append("nil");
                 }
                 x.Append(',');
             }
@@ -51,12 +51,13 @@ namespace Luban.Job.Cfg.DataVisitors
 
         protected void Append(List<DType> datas, StringBuilder x)
         {
-            x.Append('[');
+            x.Append('{');
             foreach (var e in datas)
             {
-                x.Append(e.Apply(this)).Append(',');
+                x.Append(e.Apply(this));
+                x.Append(',');
             }
-            x.Append(']');
+            x.Append('}');
         }
 
         public override string Accept(DArray type)
@@ -86,9 +87,12 @@ namespace Luban.Job.Cfg.DataVisitors
             x.Append('{');
             foreach (var e in type.Datas)
             {
-                x.Append('"').Append(e.Key.ToString()).Append('"');
-                x.Append(':');
-                x.Append(e.Value.Apply(this)).Append(',');
+                x.Append('[');
+                x.Append(e.Key.Apply(this));
+                x.Append(']');
+                x.Append('=');
+                x.Append(e.Value.Apply(this));
+                x.Append(',');
             }
             x.Append('}');
             return x.ToString();
@@ -97,19 +101,19 @@ namespace Luban.Job.Cfg.DataVisitors
         public override string Accept(DVector2 type)
         {
             var v = type.Value;
-            return $"{{x:{v.X},y:{v.Y}}}";
+            return $"{{x={v.X},y={v.Y}}}";
         }
 
         public override string Accept(DVector3 type)
         {
             var v = type.Value;
-            return $"{{x:{v.X},y:{v.Y},z:{v.Z}}}";
+            return $"{{x={v.X},y={v.Y},z={v.Z}}}";
         }
 
         public override string Accept(DVector4 type)
         {
             var v = type.Value;
-            return $"{{x:{v.X},y:{v.Y},z:{v.Z},w:{v.W}}}";
+            return $"{{x={v.X},y={v.Y},z={v.Z},w={v.W}}}";
         }
     }
 }

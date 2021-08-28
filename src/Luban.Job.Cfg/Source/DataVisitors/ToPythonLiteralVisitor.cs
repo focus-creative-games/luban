@@ -6,14 +6,14 @@ using System.Text;
 
 namespace Luban.Job.Cfg.DataVisitors
 {
-    class ToStringVisitor : ToLiteralVisitorBase
+    class ToPythonLiteralVisitor : ToLiteralVisitorBase
     {
-        public static ToStringVisitor Ins { get; } = new ToStringVisitor();
+        public static ToPythonLiteralVisitor Ins { get; } = new();
 
         public override string Accept(DText type)
         {
             var ass = DefAssembly.LocalAssebmly as DefAssembly;
-            return $"\"{type.Key}#{type.GetText(ass.ExportTextTable, ass.NotConvertTextSet)}\"";
+            return $"{{\"{DText.KEY_NAME}\":\"{type.Key}\",\"{DText.TEXT_NAME}\":\"{DataUtil.EscapeString(type.GetText(ass.ExportTextTable, ass.NotConvertTextSet))}\"}}";
         }
 
         public override string Accept(DBean type)
@@ -22,7 +22,7 @@ namespace Luban.Job.Cfg.DataVisitors
             var bean = type.ImplType;
             if (bean.IsAbstractType)
             {
-                x.Append($"{{ _name:\"{type.ImplType.Name}\",");
+                x.Append($"{{ \"_name\":\"{type.ImplType.Name}\",");
             }
             else
             {
@@ -32,8 +32,12 @@ namespace Luban.Job.Cfg.DataVisitors
             int index = 0;
             foreach (var f in type.Fields)
             {
+                if (index >= 1)
+                {
+                    x.Append(',');
+                }
                 var defField = type.ImplType.HierarchyExportFields[index++];
-                x.Append(defField.Name).Append(':');
+                x.Append('\"').Append(defField.Name).Append('\"').Append(':');
                 if (f != null)
                 {
                     x.Append(f.Apply(this));
@@ -42,19 +46,24 @@ namespace Luban.Job.Cfg.DataVisitors
                 {
                     x.Append("null");
                 }
-                x.Append(',');
             }
             x.Append('}');
             return x.ToString();
         }
 
 
-        protected void Append(List<DType> datas, StringBuilder x)
+        protected virtual void Append(List<DType> datas, StringBuilder x)
         {
             x.Append('[');
+            int index = 0;
             foreach (var e in datas)
             {
-                x.Append(e.Apply(this)).Append(',');
+                if (index > 0)
+                {
+                    x.Append(',');
+                }
+                ++index;
+                x.Append(e.Apply(this));
             }
             x.Append(']');
         }
@@ -84,11 +93,17 @@ namespace Luban.Job.Cfg.DataVisitors
         {
             var x = new StringBuilder();
             x.Append('{');
+            int index = 0;
             foreach (var e in type.Datas)
             {
+                if (index > 0)
+                {
+                    x.Append(',');
+                }
+                ++index;
                 x.Append('"').Append(e.Key.ToString()).Append('"');
                 x.Append(':');
-                x.Append(e.Value.Apply(this)).Append(',');
+                x.Append(e.Value.Apply(this));
             }
             x.Append('}');
             return x.ToString();
@@ -97,19 +112,19 @@ namespace Luban.Job.Cfg.DataVisitors
         public override string Accept(DVector2 type)
         {
             var v = type.Value;
-            return $"{{x:{v.X},y:{v.Y}}}";
+            return $"{{\"x\":{v.X},\"y\":{v.Y}}}";
         }
 
         public override string Accept(DVector3 type)
         {
             var v = type.Value;
-            return $"{{x:{v.X},y:{v.Y},z:{v.Z}}}";
+            return $"{{\"x\":{v.X},\"y\":{v.Y},\"z\":{v.Z}}}";
         }
 
         public override string Accept(DVector4 type)
         {
             var v = type.Value;
-            return $"{{x:{v.X},y:{v.Y},z:{v.Z},w:{v.W}}}";
+            return $"{{\"x\":{v.X},\"y\":{v.Y},\"z\":{v.Z},\"w\":{v.W}}}";
         }
     }
 }

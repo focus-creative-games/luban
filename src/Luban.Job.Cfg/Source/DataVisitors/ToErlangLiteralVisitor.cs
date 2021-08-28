@@ -6,82 +6,17 @@ using System.Text;
 
 namespace Luban.Job.Cfg.DataVisitors
 {
-    class ToJsonStringVisitor : IDataFuncVisitor<string>
+    class ToErlangLiteralVisitor : ToLiteralVisitorBase
     {
-        public static ToJsonStringVisitor Ins { get; } = new();
+        public static ToErlangLiteralVisitor Ins { get; } = new();
 
-        public string Accept(DBool type)
-        {
-            return type.Value ? "true" : "false";
-        }
-
-        public string Accept(DByte type)
-        {
-            return type.Value.ToString();
-        }
-
-        public string Accept(DShort type)
-        {
-            return type.Value.ToString();
-        }
-
-        public string Accept(DFshort type)
-        {
-            return type.Value.ToString();
-        }
-
-        public string Accept(DInt type)
-        {
-            return type.Value.ToString();
-        }
-
-        public string Accept(DFint type)
-        {
-            return type.Value.ToString();
-        }
-
-        public string Accept(DLong type)
-        {
-            return type.Value.ToString();
-        }
-
-        public string Accept(DFlong type)
-        {
-            return type.Value.ToString();
-        }
-
-        public string Accept(DFloat type)
-        {
-            return type.Value.ToString();
-        }
-
-        public string Accept(DDouble type)
-        {
-            return type.Value.ToString();
-        }
-
-        public string Accept(DEnum type)
-        {
-            return type.Value.ToString();
-        }
-
-        public string Accept(DString type)
-        {
-            return "\"" + DataUtil.EscapeString(type.Value) + "\"";
-        }
-
-        public string Accept(DBytes type)
-        {
-            throw new System.NotSupportedException();
-        }
-
-        public virtual string Accept(DText type)
+        public override string Accept(DText type)
         {
             var ass = DefAssembly.LocalAssebmly as DefAssembly;
             return $"{{\"{DText.KEY_NAME}\":\"{type.Key}\",\"{DText.TEXT_NAME}\":\"{DataUtil.EscapeString(type.GetText(ass.ExportTextTable, ass.NotConvertTextSet))}\"}}";
         }
 
-        public virtual string Accept(DBean type)
+        public override string Accept(DBean type)
         {
             var x = new StringBuilder();
             var bean = type.ImplType;
@@ -117,7 +52,7 @@ namespace Luban.Job.Cfg.DataVisitors
         }
 
 
-        protected virtual void Append(List<DType> datas, StringBuilder x)
+        protected void Append(List<DType> datas, StringBuilder x)
         {
             x.Append('[');
             int index = 0;
@@ -133,28 +68,28 @@ namespace Luban.Job.Cfg.DataVisitors
             x.Append(']');
         }
 
-        public string Accept(DArray type)
+        public override string Accept(DArray type)
         {
             var x = new StringBuilder();
             Append(type.Datas, x);
             return x.ToString();
         }
 
-        public string Accept(DList type)
+        public override string Accept(DList type)
         {
             var x = new StringBuilder();
             Append(type.Datas, x);
             return x.ToString();
         }
 
-        public string Accept(DSet type)
+        public override string Accept(DSet type)
         {
             var x = new StringBuilder();
             Append(type.Datas, x);
             return x.ToString();
         }
 
-        public virtual string Accept(DMap type)
+        public override string Accept(DMap type)
         {
             var x = new StringBuilder();
             x.Append('{');
@@ -174,28 +109,22 @@ namespace Luban.Job.Cfg.DataVisitors
             return x.ToString();
         }
 
-        public virtual string Accept(DVector2 type)
+        public override string Accept(DVector2 type)
         {
             var v = type.Value;
             return $"{{\"x\":{v.X},\"y\":{v.Y}}}";
         }
 
-        public virtual string Accept(DVector3 type)
+        public override string Accept(DVector3 type)
         {
             var v = type.Value;
             return $"{{\"x\":{v.X},\"y\":{v.Y},\"z\":{v.Z}}}";
         }
 
-        public virtual string Accept(DVector4 type)
+        public override string Accept(DVector4 type)
         {
             var v = type.Value;
             return $"{{\"x\":{v.X},\"y\":{v.Y},\"z\":{v.Z},\"w\":{v.W}}}";
-        }
-
-        public string Accept(DDateTime type)
-        {
-            var ass = DefAssembly.LocalAssebmly as DefAssembly;
-            return type.GetUnixTime(ass.TimeZone).ToString();
         }
     }
 }

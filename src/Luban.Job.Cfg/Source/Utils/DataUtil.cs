@@ -80,12 +80,12 @@ namespace Luban.Job.Cfg.Utils
 
         public static string EscapeString(string s)
         {
-            return s.Replace("\\", "\\\\").Replace("'", "\\'");
+            return s.Replace("\\", "\\\\");
         }
 
         public static string EscapeStringWithQuote(string s)
         {
-            return "'" + s.Replace("\\", "\\\\").Replace("'", "\\'") + "'";
+            return "\"" + s.Replace("\\", "\\\\") + "\"";
         }
 
         public static (string Key, string Text) ExtractText(string rawKeyAndText)
