@@ -13,6 +13,8 @@ namespace Luban.Job.Cfg.Datas
             return x ? s_true : s_false;
         }
 
+        public override string TypeName => "bool";
+
         private DBool(bool x) : base(x)
         {
         }

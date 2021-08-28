@@ -7,118 +7,110 @@ using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.DataExporters
 {
-    class BinaryExportor : IDataActionVisitor<DefAssembly, ByteBuf>
+    class BinaryExportor : IDataActionVisitor<ByteBuf>
     {
         public static BinaryExportor Ins { get; } = new BinaryExportor();
 
-        public void WriteList(List<Record> datas, DefAssembly ass, ByteBuf x)
+        public void WriteList(DefTable table, List<Record> datas, ByteBuf x)
         {
             x.WriteSize(datas.Count);
             foreach (var d in datas)
             {
-                d.Data.Apply(this, ass, x);
+                d.Data.Apply(this, x);
             }
         }
 
-        public void Accept(DBool type, DefAssembly ass, ByteBuf x)
+        public void Accept(DBool type, ByteBuf x)
         {
             x.WriteBool(type.Value);
         }
 
-        public void Accept(DByte type, DefAssembly ass, ByteBuf x)
+        public void Accept(DByte type, ByteBuf x)
         {
             x.WriteByte(type.Value);
         }
 
-        public void Accept(DShort type, DefAssembly ass, ByteBuf x)
+        public void Accept(DShort type, ByteBuf x)
         {
             x.WriteShort(type.Value);
         }
 
-        public void Accept(DFshort type, DefAssembly ass, ByteBuf x)
+        public void Accept(DFshort type, ByteBuf x)
         {
             x.WriteFshort(type.Value);
         }
 
-        public void Accept(DInt type, DefAssembly ass, ByteBuf x)
+        public void Accept(DInt type, ByteBuf x)
         {
             x.WriteInt(type.Value);
         }
 
-        public void Accept(DFint type, DefAssembly ass, ByteBuf x)
+        public void Accept(DFint type, ByteBuf x)
         {
             x.WriteFint(type.Value);
         }
 
-        public void Accept(DLong type, DefAssembly ass, ByteBuf x)
+        public void Accept(DLong type, ByteBuf x)
         {
             x.WriteLong(type.Value);
         }
 
-        public void Accept(DFlong type, DefAssembly ass, ByteBuf x)
+        public void Accept(DFlong type, ByteBuf x)
         {
             x.WriteFlong(type.Value);
         }
 
-        public void Accept(DFloat type, DefAssembly ass, ByteBuf x)
+        public void Accept(DFloat type, ByteBuf x)
         {
             x.WriteFloat(type.Value);
         }
 
-        public void Accept(DDouble type, DefAssembly ass, ByteBuf x)
+        public void Accept(DDouble type, ByteBuf x)
         {
             x.WriteDouble(type.Value);
         }
 
-        public void Accept(DEnum type, DefAssembly ass, ByteBuf x)
+        public void Accept(DEnum type, ByteBuf x)
         {
             x.WriteInt(type.Value);
         }
 
-        public void Accept(DString type, DefAssembly ass, ByteBuf x)
+        public void Accept(DString type, ByteBuf x)
         {
             x.WriteString(type.Value);
         }
 
-        public void Accept(DBytes type, DefAssembly ass, ByteBuf x)
+        public void Accept(DBytes type, ByteBuf x)
         {
             x.WriteBytes(type.Value);
         }
 
-        public void Accept(DText type, DefAssembly ass, ByteBuf x)
+        public void Accept(DText type, ByteBuf x)
         {
             x.WriteString(type.Key);
+            var ass = DefAssembly.LocalAssebmly;
             x.WriteString(type.GetText(ass.ExportTextTable, ass.NotConvertTextSet));
         }
 
-        public void Accept(DBean type, DefAssembly ass, ByteBuf x)
+        public void Accept(DBean type, ByteBuf x)
         {
             var bean = type.Type;
             if (bean.IsAbstractType)
             {
-                // 调整设计后，多态bean不会为空
-                //if (type.ImplType == null)
-                //{
-                //    x.WriteInt(0);
-                //    return;
-                //}
                 x.WriteInt(type.ImplType.Id);
             }
-            int index = -1;
+
+            var defFields = type.ImplType.HierarchyExportFields;
+            int index = 0;
             foreach (var field in type.Fields)
             {
-                ++index;
-                var defField = (DefField)type.ImplType.HierarchyFields[index];
-                if (!defField.NeedExport)
-                {
-                    continue;
-                }
+                var defField = defFields[index++];
                 if (defField.CType.IsNullable)
                 {
                     if (field != null)
                     {
                         x.WriteBool(true);
-                        field.Apply(this, ass, x);
+                        field.Apply(this, x);
                     }
                     else
                     {
@@ -127,64 +119,64 @@ namespace Luban.Job.Cfg.DataExporters
                 }
                 else
                 {
-                    field.Apply(this, ass, x);
+                    field.Apply(this, x);
                 }
             }
         }
 
-        public void WriteList(List<DType> datas, DefAssembly ass, ByteBuf x)
+        public void WriteList(List<DType> datas, ByteBuf x)
         {
             x.WriteSize(datas.Count);
             foreach (var d in datas)
             {
-                d.Apply(this, ass, x);
+                d.Apply(this, x);
             }
         }
 
-        public void Accept(DArray type, DefAssembly ass, ByteBuf x)
+        public void Accept(DArray type, ByteBuf x)
         {
-            WriteList(type.Datas, ass, x);
+            WriteList(type.Datas, x);
         }
 
-        public void Accept(DList type, DefAssembly ass, ByteBuf x)
+        public void Accept(DList type, ByteBuf x)
         {
-            WriteList(type.Datas, ass, x);
+            WriteList(type.Datas, x);
         }
 
-        public void Accept(DSet type, DefAssembly ass, ByteBuf x)
+        public void Accept(DSet type, ByteBuf x)
         {
-            WriteList(type.Datas, ass, x);
+            WriteList(type.Datas, x);
         }
 
-        public void Accept(DMap type, DefAssembly ass, ByteBuf x)
+        public void Accept(DMap type, ByteBuf x)
         {
             Dictionary<DType, DType> datas = type.Datas;
             x.WriteSize(datas.Count);
             foreach (var e in datas)
             {
-                e.Key.Apply(this, ass, x);
-                e.Value.Apply(this, ass, x);
+                e.Key.Apply(this, x);
+                e.Value.Apply(this, x);
             }
         }
 
-        public void Accept(DVector2 type, DefAssembly ass, ByteBuf x)
+        public void Accept(DVector2 type, ByteBuf x)
         {
             x.WriteVector2(type.Value);
         }
 
-        public void Accept(DVector3 type, DefAssembly ass, ByteBuf x)
+        public void Accept(DVector3 type, ByteBuf x)
         {
             x.WriteVector3(type.Value);
         }
 
-        public void Accept(DVector4 type, DefAssembly ass, ByteBuf x)
+        public void Accept(DVector4 type, ByteBuf x)
         {
             x.WriteVector4(type.Value);
         }
 
-        public void Accept(DDateTime type, DefAssembly ass, ByteBuf x)
+        public void Accept(DDateTime type, ByteBuf x)
         {
-            x.WriteInt(type.GetUnixTime(ass.TimeZone));
+            x.WriteInt(type.GetUnixTime(DefAssembly.LocalAssebmly.TimeZone));
         }
     }
 }

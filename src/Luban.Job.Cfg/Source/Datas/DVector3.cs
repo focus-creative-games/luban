@@ -7,6 +7,8 @@ namespace Luban.Job.Cfg.Datas
     {
         public static DVector3 Default { get; } = new DVector3(default);
 
+        public override string TypeName => "vector3";
+
         public DVector3(Vector3 x) : base(x)
         {
         }

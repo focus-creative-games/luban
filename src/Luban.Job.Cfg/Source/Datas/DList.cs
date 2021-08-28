@@ -9,7 +9,7 @@ namespace Luban.Job.Cfg.Datas
         public TList Type { get; }
         public List<DType> Datas { get; }
 
-        public bool IsList => true;
+        public override string TypeName => "list";
 
         public DList(TList type, List<DType> datas)
         {

@@ -15,13 +15,13 @@ namespace Luban.Job.Cfg.DataExporters
     {
         public new static Json2Exportor Ins { get; } = new();
 
-        public void WriteAsObject(DefTable table, List<Record> datas, DefAssembly ass, Utf8JsonWriter x)
+        public void WriteAsObject(DefTable table, List<Record> datas, Utf8JsonWriter x)
         {
             switch (table.Mode)
             {
                 case RawDefs.ETableMode.ONE:
                 {
-                    this.Accept(datas[0].Data, ass, x);
+                    this.Accept(datas[0].Data, x);
                     break;
                 }
                 case RawDefs.ETableMode.MAP:
@@ -34,7 +34,7 @@ namespace Luban.Job.Cfg.DataExporters
                         var indexFieldData = rec.Data.GetField(indexName);
 
                         x.WritePropertyName(indexFieldData.Apply(ToJsonPropertyNameVisitor.Ins));
-                        this.Accept(rec.Data, ass, x);
+                        this.Accept(rec.Data, x);
                     }
 
                     x.WriteEndObject();
@@ -47,13 +47,13 @@ namespace Luban.Job.Cfg.DataExporters
             }
         }
 
-        public override void Accept(DMap type, DefAssembly ass, Utf8JsonWriter x)
+        public override void Accept(DMap type, Utf8JsonWriter x)
         {
             x.WriteStartObject();
             foreach (var d in type.Datas)
             {
                 x.WritePropertyName(d.Key.Apply(ToJsonPropertyNameVisitor.Ins));
-                d.Value.Apply(this, ass, x);
+                d.Value.Apply(this, x);
             }
             x.WriteEndObject();
         }

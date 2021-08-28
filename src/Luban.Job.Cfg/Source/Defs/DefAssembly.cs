@@ -45,6 +45,8 @@ namespace Luban.Job.Cfg.Defs
     {
         private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
+        public new static DefAssembly LocalAssebmly { get => (DefAssembly)DefAssemblyBase.LocalAssebmly; set => DefAssemblyBase.LocalAssebmly = value; }
+
         public Service CfgTargetService { get; private set; }
 
         private readonly string _branchName;

@@ -15,6 +15,8 @@ namespace Luban.Job.Cfg.Datas
 
         public string RawValue => _rawValue;
 
+        public override string TypeName => "text";
+
         public DText(string key, string x)
         {
             Key = key;

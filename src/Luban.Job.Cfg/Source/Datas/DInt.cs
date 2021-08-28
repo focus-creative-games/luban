@@ -24,6 +24,8 @@ namespace Luban.Job.Cfg.Datas
             return new DInt(x);
         }
 
+        public override string TypeName => "int";
+
         private DInt(int x) : base(x)
         {
         }

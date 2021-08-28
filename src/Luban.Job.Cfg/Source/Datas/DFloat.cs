@@ -6,6 +6,8 @@ namespace Luban.Job.Cfg.Datas
     {
         private static DFloat Default { get; } = new DFloat(0);
 
+        public override string TypeName => "float";
+
         public static DFloat ValueOf(float x)
         {
             if (x == 0)

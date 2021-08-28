@@ -13,39 +13,38 @@ namespace Luban.Job.Cfg.DataVisitors
         public override string Accept(DText type)
         {
             var ass = DefAssembly.LocalAssebmly as DefAssembly;
-            return $"{{\"{DText.KEY_NAME}\":\"{type.Key}\",\"{DText.TEXT_NAME}\":\"{DataUtil.EscapeString(type.GetText(ass.ExportTextTable, ass.NotConvertTextSet))}\"}}";
+            return $"#{{{DText.KEY_NAME}=>\"{type.Key}\",{DText.TEXT_NAME}=>\"{DataUtil.EscapeString(type.GetText(ass.ExportTextTable, ass.NotConvertTextSet))}\"}}";
         }
 
         public override string Accept(DBean type)
         {
             var x = new StringBuilder();
-            var bean = type.ImplType;
-            if (bean.IsAbstractType)
+            if (type.Type.IsAbstractType)
             {
-                x.Append($"{{ \"_name\":\"{type.ImplType.Name}\",");
+                x.Append($"#{{name__ => \"{type.ImplType.Name}\"");
+                if (type.Fields.Count > 0)
+                {
+                    x.Append(',');
+                }
             }
             else
             {
-                x.Append('{');
+                x.Append("#{");
             }
 
             int index = 0;
             foreach (var f in type.Fields)
             {
-                if (index >= 1)
+                var defField = type.ImplType.HierarchyFields[index++];
+                if (f == null)
+                {
+                    continue;
+                }
+                if (index > 1)
                 {
                     x.Append(',');
                 }
-                var defField = type.ImplType.HierarchyFields[index++];
-                x.Append('\"').Append(defField.Name).Append('\"').Append(':');
-                if (f != null)
-                {
-                    x.Append(f.Apply(this));
-                }
-                else
-                {
-                    x.Append("null");
-                }
+                x.Append($"{defField.Name} => {f.Apply(this)}");
             }
             x.Append('}');
             return x.ToString();
@@ -58,11 +57,10 @@ namespace Luban.Job.Cfg.DataVisitors
             int index = 0;
             foreach (var e in datas)
             {
-                if (index > 0)
+                if (index++ > 0)
                 {
                     x.Append(',');
                 }
-                ++index;
                 x.Append(e.Apply(this));
             }
             x.Append(']');
@@ -92,18 +90,15 @@ namespace Luban.Job.Cfg.DataVisitors
         public override string Accept(DMap type)
         {
             var x = new StringBuilder();
-            x.Append('{');
+            x.Append("#{");
             int index = 0;
             foreach (var e in type.Datas)
             {
-                if (index > 0)
+                if (index++ > 0)
                 {
                     x.Append(',');
                 }
-                ++index;
-                x.Append('"').Append(e.Key.ToString()).Append('"');
-                x.Append(':');
-                x.Append(e.Value.Apply(this));
+                x.Append($"{e.Key.Apply(this)} => {e.Value.Apply(this)}");
             }
             x.Append('}');
             return x.ToString();
@@ -112,19 +107,19 @@ namespace Luban.Job.Cfg.DataVisitors
         public override string Accept(DVector2 type)
         {
             var v = type.Value;
-            return $"{{\"x\":{v.X},\"y\":{v.Y}}}";
+            return $"#{{x=>{v.X},y=>{v.Y}}}";
         }
 
         public override string Accept(DVector3 type)
         {
             var v = type.Value;
-            return $"{{\"x\":{v.X},\"y\":{v.Y},\"z\":{v.Z}}}";
+            return $"#{{x=>{v.X},y=>{v.Y},z=>{v.Z}}}";
         }
 
         public override string Accept(DVector4 type)
         {
             var v = type.Value;
-            return $"{{\"x\":{v.X},\"y\":{v.Y},\"z\":{v.Z},\"w\":{v.W}}}";
+            return $"#{{x=>{v.X},y=>{v.Y},z=>{v.Z},w=>{v.W}}}";
         }
     }
 }

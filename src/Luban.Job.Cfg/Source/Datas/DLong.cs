@@ -25,6 +25,7 @@ namespace Luban.Job.Cfg.Datas
             return new DLong(x);
         }
 
+        public override string TypeName => "long";
 
         private DLong(long x) : base(x)
         {

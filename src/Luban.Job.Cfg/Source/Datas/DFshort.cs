@@ -6,6 +6,8 @@ namespace Luban.Job.Cfg.Datas
     {
         public static DFshort Default { get; } = new DFshort(0);
 
+        public override string TypeName => "fshort";
+
         public DFshort(short x) : base(x)
         {
         }

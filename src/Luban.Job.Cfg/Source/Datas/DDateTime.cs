@@ -10,6 +10,8 @@ namespace Luban.Job.Cfg.Datas
         //public int UnixTime { get; }
         private readonly int _localTime;
 
+        public override string TypeName => "datetime";
+
         public DDateTime(DateTime time)
         {
             this.Time = time;

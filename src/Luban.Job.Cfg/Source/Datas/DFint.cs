@@ -6,6 +6,8 @@ namespace Luban.Job.Cfg.Datas
     {
         public static DFint Default { get; } = new DFint(0);
 
+        public override string TypeName => "fint";
+
         public DFint(int x) : base(x)
         {
         }

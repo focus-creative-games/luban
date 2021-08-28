@@ -19,8 +19,7 @@ namespace Luban.Job.Cfg.DataVisitors
         public override string Accept(DBean type)
         {
             var x = new StringBuilder();
-            var bean = type.ImplType;
-            if (bean.IsAbstractType)
+            if (type.Type.IsAbstractType)
             {
                 x.Append($"{{ _name='{type.ImplType.Name}',");
             }
@@ -33,15 +32,12 @@ namespace Luban.Job.Cfg.DataVisitors
             foreach (var f in type.Fields)
             {
                 var defField = type.ImplType.HierarchyExportFields[index++];
+                if (f == null)
+                {
+                    continue;
+                }
                 x.Append(defField.Name).Append('=');
-                if (f != null)
-                {
-                    x.Append(f.Apply(this));
-                }
-                else
-                {
-                    x.Append("nil");
-                }
+                x.Append(f.Apply(this));
                 x.Append(',');
             }
             x.Append('}');

@@ -44,7 +44,7 @@ namespace Luban.Job.Cfg.DataVisitors
                 }
                 else
                 {
-                    x.Append("null");
+                    x.Append("None");
                 }
             }
             x.Append('}');

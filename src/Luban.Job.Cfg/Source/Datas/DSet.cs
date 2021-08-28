@@ -10,7 +10,7 @@ namespace Luban.Job.Cfg.Datas
         public TSet Type { get; }
         public List<DType> Datas { get; }
 
-        public bool IsSet => true;
+        public override string TypeName => "set";
 
         public DSet(TSet type, List<DType> datas)
         {

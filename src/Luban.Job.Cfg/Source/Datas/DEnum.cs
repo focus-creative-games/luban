@@ -11,6 +11,8 @@ namespace Luban.Job.Cfg.Datas
 
         public TEnum Type { get; }
 
+        public override string TypeName => "enum";
+
         public DEnum(TEnum type, string value)
         {
             Type = type;

@@ -12,17 +12,20 @@ namespace Luban.Job.Cfg.DataVisitors
 
         public override string Accept(DText type)
         {
-            var ass = DefAssembly.LocalAssebmly as DefAssembly;
+            var ass = DefAssembly.LocalAssebmly;
             return $"{{\"{DText.KEY_NAME}\":\"{type.Key}\",\"{DText.TEXT_NAME}\":\"{DataUtil.EscapeString(type.GetText(ass.ExportTextTable, ass.NotConvertTextSet))}\"}}";
         }
 
         public override string Accept(DBean type)
         {
             var x = new StringBuilder();
-            var bean = type.ImplType;
-            if (bean.IsAbstractType)
+            if (type.Type.IsAbstractType)
             {
-                x.Append($"{{ \"_name\":\"{type.ImplType.Name}\",");
+                x.Append($"{{ \"_name\":\"{type.ImplType.Name}\"");
+                if (type.Fields.Count > 0)
+                {
+                    x.Append(',');
+                }
             }
             else
             {
@@ -32,20 +35,17 @@ namespace Luban.Job.Cfg.DataVisitors
             int index = 0;
             foreach (var f in type.Fields)
             {
-                if (index >= 1)
+                var defField = type.ImplType.HierarchyExportFields[index++];
+                if (f == null)
+                {
+                    continue;
+                }
+                if (index > 1)
                 {
                     x.Append(',');
                 }
-                var defField = type.ImplType.HierarchyExportFields[index++];
                 x.Append('\"').Append(defField.Name).Append('\"').Append(':');
-                if (f != null)
-                {
-                    x.Append(f.Apply(this));
-                }
-                else
-                {
-                    x.Append("null");
-                }
+                x.Append(f.Apply(this));
             }
             x.Append('}');
             return x.ToString();
@@ -58,11 +58,10 @@ namespace Luban.Job.Cfg.DataVisitors
             int index = 0;
             foreach (var e in datas)
             {
-                if (index > 0)
+                if (index++ > 0)
                 {
                     x.Append(',');
                 }
-                ++index;
                 x.Append(e.Apply(this));
             }
             x.Append(']');
@@ -96,11 +95,10 @@ namespace Luban.Job.Cfg.DataVisitors
             int index = 0;
             foreach (var e in type.Datas)
             {
-                if (index > 0)
+                if (index++ > 0)
                 {
                     x.Append(',');
                 }
-                ++index;
                 x.Append('"').Append(e.Key.Apply(ToJsonPropertyNameVisitor.Ins)).Append('"');
                 x.Append(':');
                 x.Append(e.Value.Apply(this));
