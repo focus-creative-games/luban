@@ -287,9 +287,46 @@ namespace Luban.Job.Cfg.DataCreators
             throw new NotSupportedException();
         }
 
+
+        private bool TryCreateColumnStream(Sheet.NamedRow x, Sheet.Title title, out ExcelStream stream)
+        {
+            var cells = new List<Sheet.Cell>();
+            for (int i = title.FromIndex; i <= title.ToIndex; i++)
+            {
+                foreach (var row in x.Rows)
+                {
+                    if (row.Count > i)
+                    {
+                        var value = row[i].Value;
+                        if (!(value == null || (value is string s && string.IsNullOrEmpty(s))))
+                        {
+                            cells.Add(row[i]);
+                        }
+                    }
+                }
+            }
+            if (cells.Count > 0)
+            {
+                stream = new ExcelStream(cells, 0, cells.Count - 1, "", false);
+                return true;
+            }
+            stream = null;
+            return false;
+        }
+
         public DType Accept(TMap type, Sheet.NamedRow x, bool multirow, bool nullable)
         {
-            throw new NotSupportedException();
+            var map = new Dictionary<DType, DType>();
+            foreach (var (key, keyTitle) in x.Titles)
+            {
+                if (TryCreateColumnStream(x, keyTitle, out var stream))
+                {
+                    var keyData = type.KeyType.Apply(StringDataCreator.Ins, key);
+                    var valueData = type.ValueType.Apply(ExcelDataCreator.Ins, null, stream, DefAssembly.LocalAssebmly);
+                    map.Add(keyData, valueData);
+                }
+            }
+            return new DMap(type, map);
         }
 
         public DType Accept(TVector2 type, Sheet.NamedRow x, bool multirow, bool nullable)

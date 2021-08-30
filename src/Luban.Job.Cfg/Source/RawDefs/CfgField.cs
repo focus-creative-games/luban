@@ -25,7 +25,7 @@ namespace Luban.Job.Cfg.RawDefs
 
         public string DefaultValue { get; set; } = "";
 
-        public bool IsRowOrient { get; set; } = false;
+        public bool IsRowOrient { get; set; } = true;
 
         public List<string> Groups { get; set; } = new List<string>();
 

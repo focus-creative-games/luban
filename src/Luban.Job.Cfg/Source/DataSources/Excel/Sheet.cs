@@ -123,7 +123,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 }
                 else
                 {
-                    List<DefField> notMultiRowFields = bean.Bean.HierarchyFields.Select(f => (DefField)f).Where(f => !f.IsMultiRow).ToList();
+                    List<DefField> notMultiRowFields = bean.Bean.HierarchyFields.Select(f => (DefField)f).Where(f => !f.IsMultiRow && f.IsRowOrient).ToList();
                     List<List<Cell>> recordRows = null;
                     foreach (var row in rows)
                     {
@@ -262,7 +262,8 @@ namespace Luban.Job.Cfg.DataSources.Excel
                         {
                             if (!IsBlankColumn(Rows, i))
                             {
-                                yield return new ExcelStream(Rows.Select(r => r[i]).ToList(), 0, Rows.Count - 1, sep, false);
+                                var cells = Rows.Where(r => r.Count > i).Select(r => r[i]).Where(v => !(v.Value == null || (v.Value is string s && string.IsNullOrEmpty(s)))).ToList();
+                                yield return new ExcelStream(cells, 0, cells.Count - 1, sep, false);
                             }
                         }
                     }
@@ -661,6 +662,10 @@ namespace Luban.Job.Cfg.DataSources.Excel
         {
             foreach (List<Cell> row in rows)
             {
+                if (column >= row.Count)
+                {
+                    continue;
+                }
                 var v = row[column].Value;
                 if (v != null && !(v is string s && string.IsNullOrEmpty(s)))
                 {
