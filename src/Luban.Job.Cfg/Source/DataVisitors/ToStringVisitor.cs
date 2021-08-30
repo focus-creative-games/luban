@@ -31,7 +31,7 @@ namespace Luban.Job.Cfg.DataVisitors
             int index = 0;
             foreach (var f in type.Fields)
             {
-                var defField = type.ImplType.HierarchyExportFields[index++];
+                var defField = type.ImplType.HierarchyFields[index++];
                 x.Append(defField.Name).Append(':');
                 if (f != null)
                 {

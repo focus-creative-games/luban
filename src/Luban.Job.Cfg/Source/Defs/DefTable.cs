@@ -52,11 +52,9 @@ namespace Luban.Job.Cfg.Defs
 
         public bool NeedExport => Assembly.NeedExport(this.Groups);
 
-        public string OutputDataFile => FullName;
+        public string OutputDataFile => FullName.Replace('.', '_').ToLower();
 
         public string InnerName => "_" + this.Name;
-
-        public string OutputDataFileEscapeDot => FullName.Replace('.', '_');
 
         public List<string> GetBranchInputFiles(string branchName)
         {

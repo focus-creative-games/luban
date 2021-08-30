@@ -107,15 +107,15 @@ namespace Luban.Job.Cfg.DataExporters
                 x.WriteStringValue(type.ImplType.Name);
             }
 
-            var defFields = type.ImplType.HierarchyExportFields;
+            var defFields = type.ImplType.HierarchyFields;
             int index = 0;
             foreach (var d in type.Fields)
             {
-                var defField = defFields[index++];
+                var defField = (DefField)defFields[index++];
 
                 // 特殊处理 bean 多态类型
                 // 另外，不生成  xxx:null 这样
-                if (d == null /*|| (d is DBean db && db.ImplType == null)*/)
+                if (d == null || !defField.NeedExport)
                 {
                     //x.WriteNullValue();
                 }

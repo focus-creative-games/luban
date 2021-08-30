@@ -18,14 +18,14 @@ namespace Luban.Job.Cfg.Utils
 
         public static string ToLocalizedText(DText type)
         {
-            var ass = DefAssembly.LocalAssebmly as DefAssembly;
+            var ass = DefAssembly.LocalAssebmly;
             return type.GetText(ass.ExportTextTable, ass.NotConvertTextSet);
         }
 
         public static DType GetField(DBean bean, string fieldName)
         {
             int index = 0;
-            foreach (var f in bean.ImplType.HierarchyExportFields)
+            foreach (var f in bean.ImplType.HierarchyFields)
             {
                 if (f.Name == fieldName)
                 {

@@ -19,13 +19,11 @@ namespace Luban.Job.Cfg.DataVisitors
         public override string Accept(DBean type)
         {
             var x = new StringBuilder();
+            bool prevProperty = false;
             if (type.Type.IsAbstractType)
             {
                 x.Append($"{{ \"_name\":\"{type.ImplType.Name}\"");
-                if (type.Fields.Count > 0)
-                {
-                    x.Append(',');
-                }
+                prevProperty = true;
             }
             else
             {
@@ -35,14 +33,18 @@ namespace Luban.Job.Cfg.DataVisitors
             int index = 0;
             foreach (var f in type.Fields)
             {
-                var defField = type.ImplType.HierarchyExportFields[index++];
-                if (f == null)
+                var defField = (DefField)type.ImplType.HierarchyFields[index++];
+                if (f == null || !defField.NeedExport)
                 {
                     continue;
                 }
-                if (index > 1)
+                if (prevProperty)
                 {
                     x.Append(',');
+                }
+                else
+                {
+                    prevProperty = true;
                 }
                 x.Append('\"').Append(defField.Name).Append('\"').Append(':');
                 x.Append(f.Apply(this));

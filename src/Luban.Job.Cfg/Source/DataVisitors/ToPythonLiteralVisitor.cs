@@ -32,20 +32,14 @@ namespace Luban.Job.Cfg.DataVisitors
             int index = 0;
             foreach (var f in type.Fields)
             {
-                if (index >= 1)
+                var defField = (DefField)type.ImplType.HierarchyFields[index++];
+                if (f == null || !defField.NeedExport)
                 {
-                    x.Append(',');
+                    continue;
                 }
-                var defField = type.ImplType.HierarchyExportFields[index++];
                 x.Append('\"').Append(defField.Name).Append('\"').Append(':');
-                if (f != null)
-                {
-                    x.Append(f.Apply(this));
-                }
-                else
-                {
-                    x.Append("None");
-                }
+                x.Append(f.Apply(this));
+                x.Append(',');
             }
             x.Append('}');
             return x.ToString();

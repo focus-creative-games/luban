@@ -100,11 +100,15 @@ namespace Luban.Job.Cfg.DataExporters
                 x.WriteInt(type.ImplType.Id);
             }
 
-            var defFields = type.ImplType.HierarchyExportFields;
+            var defFields = type.ImplType.HierarchyFields;
             int index = 0;
             foreach (var field in type.Fields)
             {
-                var defField = defFields[index++];
+                var defField = (DefField)defFields[index++];
+                if (!defField.NeedExport)
+                {
+                    continue;
+                }
                 if (defField.CType.IsNullable)
                 {
                     if (field != null)

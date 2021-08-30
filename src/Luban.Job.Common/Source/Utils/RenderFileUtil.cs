@@ -137,7 +137,7 @@ namespace Luban.Job.Common.Utils
 
         public static string GetOutputFileName(string genType, string fileName)
         {
-            return $"{fileName.Replace('.', '_')}.{GetOutputFileSuffix(genType)}";
+            return $"{fileName}.{GetOutputFileSuffix(genType)}";
         }
     }
 }
