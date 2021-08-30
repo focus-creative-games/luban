@@ -6,6 +6,7 @@ using Luban.Job.Cfg.RawDefs;
 using Luban.Job.Cfg.TypeVisitors;
 using Luban.Job.Cfg.Utils;
 using Luban.Job.Common.Types;
+using Luban.Job.Common.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -240,17 +241,30 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 }
             }
 
-            public IEnumerable<ExcelStream> GetColumnOfMultiRows(string name, string sep)
+            public IEnumerable<ExcelStream> GetColumnOfMultiRows(string name, string sep, bool isRowOrient)
             {
                 if (Titles.TryGetValue(name, out var title))
                 {
-                    foreach (var row in Rows)
+                    if (isRowOrient)
                     {
-                        if (IsBlankRow(row, title.FromIndex, title.ToIndex))
+                        foreach (var row in Rows)
                         {
-                            continue;
+                            if (IsBlankRow(row, title.FromIndex, title.ToIndex))
+                            {
+                                continue;
+                            }
+                            yield return new ExcelStream(row, title.FromIndex, title.ToIndex, sep, false);
                         }
-                        yield return new ExcelStream(row, title.FromIndex, title.ToIndex, sep, false);
+                    }
+                    else
+                    {
+                        for (int i = title.FromIndex; i <= title.ToIndex; i++)
+                        {
+                            if (!IsBlankColumn(Rows, i))
+                            {
+                                yield return new ExcelStream(Rows.Select(r => r[i]).ToList(), 0, Rows.Count - 1, sep, false);
+                            }
+                        }
                     }
                 }
                 else
@@ -260,13 +274,20 @@ namespace Luban.Job.Cfg.DataSources.Excel
             }
 
 
-            public ExcelStream GetMultiRowStream(string name, string sep)
+            public ExcelStream GetMultiRowStream(string name, string sep, bool isRowOrient)
             {
                 if (Titles.TryGetValue(name, out var title))
                 {
-                    var totalCells = Rows.SelectMany(r => r.GetRange(title.FromIndex, title.ToIndex - title.FromIndex + 1))
-                        .Where(c => c.Value != null && !(c.Value is string s && string.IsNullOrWhiteSpace(s))).ToList();
-                    return new ExcelStream(totalCells, 0, totalCells.Count - 1, sep, false);
+                    if (isRowOrient)
+                    {
+                        var totalCells = Rows.SelectMany(r => r.GetRange(title.FromIndex, title.ToIndex - title.FromIndex + 1))
+                            .Where(c => c.Value != null && !(c.Value is string s && string.IsNullOrWhiteSpace(s))).ToList();
+                        return new ExcelStream(totalCells, 0, totalCells.Count - 1, sep, false);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"bean类型多行数据不支持纵向填写");
+                    }
                 }
                 else
                 {
@@ -325,17 +346,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 {
                     case "orientation":
                     {
-                        switch (value)
-                        {
-                            case "r":
-                            case "row": IsOrientRow = true; break;
-                            case "c":
-                            case "column": IsOrientRow = false; break;
-                            default:
-                            {
-                                throw new Exception($"单元薄 meta 定义 orientation:{value} 属性值只能为row|r|column|c");
-                            }
-                        }
+                        IsOrientRow = DefUtil.ParseOrientation(value);
                         break;
                     }
                     case "title_rows":
@@ -641,6 +652,19 @@ namespace Luban.Job.Cfg.DataSources.Excel
                     {
                         return v1.ToString() == v2.ToString();
                     }
+                }
+            }
+            return true;
+        }
+
+        private static bool IsBlankColumn(List<List<Cell>> rows, int column)
+        {
+            foreach (List<Cell> row in rows)
+            {
+                var v = row[column].Value;
+                if (v != null && !(v is string s && string.IsNullOrEmpty(s)))
+                {
+                    return false;
                 }
             }
             return true;

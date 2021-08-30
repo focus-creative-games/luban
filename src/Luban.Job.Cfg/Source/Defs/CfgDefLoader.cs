@@ -6,6 +6,7 @@ using Luban.Job.Cfg.Utils;
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.RawDefs;
 using Luban.Job.Common.Types;
+using Luban.Job.Common.Utils;
 using Luban.Server.Common;
 using System;
 using System.Collections.Generic;
@@ -609,6 +610,7 @@ namespace Luban.Job.Cfg.Defs
                     new CfgField() { Name = "path", Type = "string" },
                     new CfgField() { Name = "comment", Type = "string" },
                     new CfgField() { Name = "tags", Type = "string" },
+                    new CfgField() { Name = "orientation", Type = "string" },
                 }
             })
             {
@@ -698,7 +700,8 @@ namespace Luban.Job.Cfg.Defs
                             "",
                             "",
                             (b.GetField("tags") as DString).Value.Trim(),
-                            false
+                            false,
+                            DefUtil.ParseOrientation((b.GetField("orientation") as DString).Value)
                             )).ToList(),
                     };
                     this._beans.Add(curBean);
@@ -728,7 +731,8 @@ namespace Luban.Job.Cfg.Defs
             "convert",
             "comment",
             "tags",
-            "default"
+            "default",
+            "orientation",
         };
 
         private static readonly List<string> _fieldRequireAttrs = new List<string> { "name", "type" };
@@ -753,12 +757,14 @@ namespace Luban.Job.Cfg.Defs
                  XmlUtil.GetOptionalAttribute(e, "value_validator"),
                  XmlUtil.GetOptionalAttribute(e, "validator"),
                  XmlUtil.GetOptionalAttribute(e, "tags"),
-                 false
+                 false,
+                 DefUtil.ParseOrientation(XmlUtil.GetOptionalAttribute(e, "orientation"))
                 );
         }
 
         private Field CreateField(string name, string type, string index, string sep, bool isMultiRow, string group, string resource, string converter,
-            string comment, string refs, string path, string range, string keyValidator, string valueValidator, string validator, string tags, bool ignoreNameValidation)
+            string comment, string refs, string path, string range, string keyValidator, string valueValidator, string validator, string tags,
+            bool ignoreNameValidation, bool isRowOrient)
         {
             var f = new CfgField()
             {
@@ -772,6 +778,7 @@ namespace Luban.Job.Cfg.Defs
                 Comment = comment,
                 Tags = tags,
                 IgnoreNameValidation = ignoreNameValidation,
+                IsRowOrient = isRowOrient,
             };
 
             // 字段与table的默认组不一样。

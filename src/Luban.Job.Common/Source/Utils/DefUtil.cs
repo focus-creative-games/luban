@@ -46,5 +46,21 @@ namespace Luban.Job.Common.Utils
                 return (s[..sepIndex], ParseAttrs(s[(sepIndex + 1)..]));
             }
         }
+
+        public static bool ParseOrientation(string value)
+        {
+            switch (value.Trim())
+            {
+                case "":
+                case "r":
+                case "row": return true;
+                case "c":
+                case "column": return false;
+                default:
+                {
+                    throw new Exception($"orientation 属性值只能为row|r|column|c");
+                }
+            }
+        }
     }
 }

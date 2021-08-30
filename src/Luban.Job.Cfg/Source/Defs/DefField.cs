@@ -154,6 +154,8 @@ namespace Luban.Job.Cfg.Defs
 
         public DType DefalutDtypeValue { get; private set; }
 
+        public bool IsRowOrient { get; }
+
         public DefField(DefTypeBase host, CfgField f, int idOffset) : base(host, f, idOffset)
         {
             Index = f.Index;
@@ -166,6 +168,7 @@ namespace Luban.Job.Cfg.Defs
             this.Groups = f.Groups;
             this.RawDefine = f;
             this.DefaultValue = f.DefaultValue;
+            this.IsRowOrient = f.IsRowOrient;
         }
 
         public override void Compile()

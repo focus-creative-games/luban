@@ -147,11 +147,11 @@ namespace Luban.Job.Cfg.DataCreators
                         {
                             if (f.CType.IsCollection)
                             {
-                                list.Add(f.CType.Apply(MultiRowExcelDataCreator.Ins, row.GetColumnOfMultiRows(f.Name, sep), f.IsNullable, (DefAssembly)bean.AssemblyBase));
+                                list.Add(f.CType.Apply(MultiRowExcelDataCreator.Ins, row.GetColumnOfMultiRows(f.Name, sep, f.IsRowOrient), f.IsNullable, (DefAssembly)bean.AssemblyBase));
                             }
                             else
                             {
-                                list.Add(f.CType.Apply(ExcelDataCreator.Ins, null, row.GetMultiRowStream(f.Name, sep), (DefAssembly)bean.AssemblyBase));
+                                list.Add(f.CType.Apply(ExcelDataCreator.Ins, null, row.GetMultiRowStream(f.Name, sep, f.IsRowOrient), (DefAssembly)bean.AssemblyBase));
                             }
                         }
                         catch (DataCreateException dce)
