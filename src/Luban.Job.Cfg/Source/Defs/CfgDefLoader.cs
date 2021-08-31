@@ -353,7 +353,7 @@ namespace Luban.Job.Cfg.Defs
 
                 for (int i = 1; i < attrs.Length; i++)
                 {
-                    var pair = attrs[i].Split('=');
+                    var pair = attrs[i].Split('=', 2);
                     if (pair.Length != 2)
                     {
                         throw new Exception($"table:'{table.Name}' file:{file.OriginFile} title:'{f.Name}' attr:'{attrs[i]}' is invalid!");
@@ -404,6 +404,11 @@ namespace Luban.Job.Cfg.Defs
                         case "default":
                         {
                             cf.DefaultValue = attrValue;
+                            break;
+                        }
+                        case "tags":
+                        {
+                            cf.Tags = attrValue;
                             break;
                         }
                         default:

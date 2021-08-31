@@ -16,6 +16,11 @@ namespace Luban.Job.Cfg.Utils
             return type.Apply(IsSimpleLiteralDataVisitor.Ins);
         }
 
+        public static bool IsSimpleLiteralData2(DType type)
+        {
+            return type.Apply(IsSimpleLiteralDataVisitor2.Ins);
+        }
+
         public static string ToLocalizedText(DText type)
         {
             var ass = DefAssembly.LocalAssebmly;
