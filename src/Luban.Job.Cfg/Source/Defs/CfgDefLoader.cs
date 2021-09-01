@@ -411,6 +411,11 @@ namespace Luban.Job.Cfg.Defs
                             cf.Tags = attrValue;
                             break;
                         }
+                        case "orientation":
+                        {
+                            cf.IsRowOrient = DefUtil.ParseOrientation(attrValue);
+                            break;
+                        }
                         default:
                         {
                             throw new Exception($"table:'{table.Name}' file:{file.OriginFile} title:'{f.Name}' attr:'{attrs[i]}' is invalid!");
