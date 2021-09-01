@@ -38,9 +38,9 @@ namespace Luban.Job.Proto.Defs
 
         private readonly List<string> rpcAttrs = new List<string> { "id" };
         private readonly List<string> rpcRequiredAttrs = new List<string> { "name", "arg", "res" };
-        private void AddRpc(XElement e)
+        private void AddRpc(string defineFile, XElement e)
         {
-            ValidAttrKeys(e, rpcAttrs, rpcRequiredAttrs);
+            ValidAttrKeys(defineFile, e, rpcAttrs, rpcRequiredAttrs);
             var r = new PRpc()
             {
                 Name = XmlUtil.GetRequiredAttribute(e, "name"),
@@ -57,9 +57,9 @@ namespace Luban.Job.Proto.Defs
         private readonly List<string> protoOptionalAttrs = new List<string> { "id", "comment" };
         private readonly List<string> protoRequiredAttrs = new List<string> { "name" };
 
-        private void AddProto(XElement e)
+        private void AddProto(string defineFile, XElement e)
         {
-            ValidAttrKeys(e, protoOptionalAttrs, protoRequiredAttrs);
+            ValidAttrKeys(defineFile, e, protoOptionalAttrs, protoRequiredAttrs);
 
             var p = new PProto()
             {
@@ -75,12 +75,12 @@ namespace Luban.Job.Proto.Defs
                 {
                     case "var":
                     {
-                        p.Fields.Add(CreateField(fe)); ;
+                        p.Fields.Add(CreateField(defineFile, fe)); ;
                         break;
                     }
                     default:
                     {
-                        throw new Exception($"定义文件:{CurImportFile} 不支持 tag:{fe.Name}");
+                        throw new Exception($"定义文件:{defineFile} 不支持 tag:{fe.Name}");
                     }
                 }
 
@@ -95,7 +95,7 @@ namespace Luban.Job.Proto.Defs
         {
             var name = XmlUtil.GetRequiredAttribute(e, "name");
             s_logger.Trace("service {service}", name);
-            ValidAttrKeys(e, serviceAttrs, serviceAttrs);
+            ValidAttrKeys(RootXml, e, serviceAttrs, serviceAttrs);
             foreach (XElement ele in e.Elements())
             {
                 s_logger.Trace("service {service_name} node: {name} {value}", name, ele.Name, ele.Attribute("value")?.Value);

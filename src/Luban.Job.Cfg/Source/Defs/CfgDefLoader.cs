@@ -67,7 +67,7 @@ namespace Luban.Job.Cfg.Defs
         private static readonly List<string> _excelImportRequireAttrs = new List<string> { "name", "type" };
         private void AddImportExcel(XElement e)
         {
-            ValidAttrKeys(e, null, _excelImportRequireAttrs);
+            ValidAttrKeys(RootXml, e, null, _excelImportRequireAttrs);
             var importName = XmlUtil.GetRequiredAttribute(e, "name");
             if (string.IsNullOrWhiteSpace(importName))
             {
@@ -90,7 +90,7 @@ namespace Luban.Job.Cfg.Defs
         private static readonly List<string> _branchRequireAttrs = new List<string> { "name" };
         private void AddBranch(XElement e)
         {
-            ValidAttrKeys(e, null, _branchRequireAttrs);
+            ValidAttrKeys(RootXml, e, null, _branchRequireAttrs);
             var branchName = e.Attribute("name").Value;
             if (string.IsNullOrWhiteSpace(branchName))
             {
@@ -108,7 +108,7 @@ namespace Luban.Job.Cfg.Defs
 
         private void AddGroup(XElement e)
         {
-            ValidAttrKeys(e, _groupOptionalAttrs, _groupRequireAttrs);
+            ValidAttrKeys(RootXml, e, _groupOptionalAttrs, _groupRequireAttrs);
             List<string> groupNames = CreateGroups(e.Attribute("name").Value);
 
             foreach (var g in groupNames)
@@ -136,7 +136,7 @@ namespace Luban.Job.Cfg.Defs
             }
         }
 
-        private void FillValidators(string key, string attr, List<Validator> result)
+        private void FillValidators(string defineFile, string key, string attr, List<Validator> result)
         {
             if (!string.IsNullOrWhiteSpace(attr))
             {
@@ -145,7 +145,7 @@ namespace Luban.Job.Cfg.Defs
                     var sepIndex = validatorStr.IndexOf(':');
                     if (sepIndex < 0)
                     {
-                        throw new Exception($"定义文件:{CurImportFile} 类型:'{CurDefine}' key:'{key}' attr:'{attr}' 不是合法的 validator 定义 (key1:value1#key2:value2 ...)");
+                        throw new Exception($"定义文件:{defineFile} key:'{key}' attr:'{attr}' 不是合法的 validator 定义 (key1:value1#key2:value2 ...)");
                     }
                     result.Add(new Validator() { Type = validatorStr[..sepIndex], Rule = validatorStr[(sepIndex + 1)..] });
                 }
@@ -162,7 +162,7 @@ namespace Luban.Job.Cfg.Defs
             var refs = new List<string>();
 
             s_logger.Trace("service name:{name} manager:{manager}", name, manager);
-            ValidAttrKeys(e, _serviceAttrs, _serviceAttrs);
+            ValidAttrKeys(RootXml, e, _serviceAttrs, _serviceAttrs);
             foreach (XElement ele in e.Elements())
             {
                 string tagName = ele.Name.LocalName;
@@ -209,7 +209,7 @@ namespace Luban.Job.Cfg.Defs
             return true;
         }
 
-        private ETableMode ConvertMode(string tableName, string modeStr, string indexStr)
+        private ETableMode ConvertMode(string defineFile, string tableName, string modeStr, string indexStr)
         {
             ETableMode mode;
             switch (modeStr)
@@ -218,7 +218,7 @@ namespace Luban.Job.Cfg.Defs
                 {
                     if (!string.IsNullOrWhiteSpace(indexStr))
                     {
-                        throw new Exception($"定义文件:{CurImportFile} table:'{tableName}' mode=one 是单例表，不支持定义index属性");
+                        throw new Exception($"定义文件:{defineFile} table:'{tableName}' mode=one 是单例表，不支持定义index属性");
                     }
                     mode = ETableMode.ONE;
                     break;
@@ -248,9 +248,9 @@ namespace Luban.Job.Cfg.Defs
         private readonly List<string> _tableOptionalAttrs = new List<string> { "index", "mode", "group", "branch_input", "comment", "define_from_file" };
         private readonly List<string> _tableRequireAttrs = new List<string> { "name", "value", "input" };
 
-        private void AddTable(XElement e)
+        private void AddTable(string defineFile, XElement e)
         {
-            ValidAttrKeys(e, _tableOptionalAttrs, _tableRequireAttrs);
+            ValidAttrKeys(defineFile, e, _tableOptionalAttrs, _tableRequireAttrs);
             string name = XmlUtil.GetRequiredAttribute(e, "name");
             string module = CurNamespace;
             string valueType = XmlUtil.GetRequiredAttribute(e, "value");
@@ -262,7 +262,7 @@ namespace Luban.Job.Cfg.Defs
             string branchInput = XmlUtil.GetOptionalAttribute(e, "branch_input");
             string mode = XmlUtil.GetOptionalAttribute(e, "mode");
             string tags = XmlUtil.GetOptionalAttribute(e, "tags");
-            AddTable(CurImportFile, name, module, valueType, index, mode, group, comment, defineFromFile, input, branchInput, tags);
+            AddTable(defineFile, name, module, valueType, index, mode, group, comment, defineFromFile, input, branchInput, tags);
         }
 
         private void AddTable(string defineFile, string name, string module, string valueType, string index, string mode, string group,
@@ -277,7 +277,7 @@ namespace Luban.Job.Cfg.Defs
                 Index = index,
                 Groups = CreateGroups(group),
                 Comment = comment,
-                Mode = ConvertMode(name, mode, index),
+                Mode = ConvertMode(defineFile, name, mode, index),
                 Tags = tags,
             };
 
@@ -689,6 +689,7 @@ namespace Luban.Job.Cfg.Defs
                         Tags = tags,
                         Parent = "",
                         Fields = fields.Datas.Select(d => (DBean)d).Select(b => this.CreateField(
+                            file.ActualFile,
                             (b.GetField("name") as DString).Value.Trim(),
                             (b.GetField("type") as DString).Value.Trim(),
                             (b.GetField("index") as DString).Value.Trim(),
@@ -742,11 +743,11 @@ namespace Luban.Job.Cfg.Defs
 
         private static readonly List<string> _fieldRequireAttrs = new List<string> { "name", "type" };
 
-        protected override Field CreateField(XElement e)
+        protected override Field CreateField(string defineFile, XElement e)
         {
-            ValidAttrKeys(e, _fieldOptionalAttrs, _fieldRequireAttrs);
+            ValidAttrKeys(defineFile, e, _fieldOptionalAttrs, _fieldRequireAttrs);
 
-            return CreateField(XmlUtil.GetRequiredAttribute(e, "name"),
+            return CreateField(defineFile, XmlUtil.GetRequiredAttribute(e, "name"),
                 XmlUtil.GetRequiredAttribute(e, "type"),
                 XmlUtil.GetOptionalAttribute(e, "index"),
                  XmlUtil.GetOptionalAttribute(e, "sep"),
@@ -767,7 +768,7 @@ namespace Luban.Job.Cfg.Defs
                 );
         }
 
-        private Field CreateField(string name, string type, string index, string sep, bool isMultiRow, string group, string resource, string converter,
+        private Field CreateField(string defileFile, string name, string type, string index, string sep, bool isMultiRow, string group, string resource, string converter,
             string comment, string refs, string path, string range, string keyValidator, string valueValidator, string validator, string tags,
             bool ignoreNameValidation, bool isRowOrient)
         {
@@ -795,7 +796,7 @@ namespace Luban.Job.Cfg.Defs
             }
             else if (!ValidGroup(f.Groups, out var invalidGroup))
             {
-                throw new Exception($"定义文件:{CurImportFile} field:'{name}' group:'{invalidGroup}' 不存在");
+                throw new Exception($"定义文件:{defileFile} field:'{name}' group:'{invalidGroup}' 不存在");
             }
             f.Type = type;
 
@@ -804,18 +805,18 @@ namespace Luban.Job.Cfg.Defs
             FillValueValidator(f, path, "path"); // (ue4|unity|normal|regex);xxx;xxx
             FillValueValidator(f, range, "range");
 
-            FillValidators("key_validator", keyValidator, f.KeyValidators);
-            FillValidators("value_validator", valueValidator, f.ValueValidators);
-            FillValidators("validator", validator, f.Validators);
+            FillValidators(defileFile, "key_validator", keyValidator, f.KeyValidators);
+            FillValidators(defileFile, "value_validator", valueValidator, f.ValueValidators);
+            FillValidators(defileFile, "validator", validator, f.Validators);
             return f;
         }
 
         private static readonly List<string> _beanOptinsAttrs = new List<string> { "value_type", "alias", "sep", "comment", "tags" };
         private static readonly List<string> _beanRequireAttrs = new List<string> { "name" };
 
-        protected override void AddBean(XElement e, string parent)
+        protected override void AddBean(string defineFile, XElement e, string parent)
         {
-            ValidAttrKeys(e, _beanOptinsAttrs, _beanRequireAttrs);
+            ValidAttrKeys(defineFile, e, _beanOptinsAttrs, _beanRequireAttrs);
 
             var b = new CfgBean()
             {
@@ -841,9 +842,9 @@ namespace Luban.Job.Cfg.Defs
                     {
                         if (defineAnyChildBean)
                         {
-                            throw new LoadDefException($"定义文件:{CurImportFile} 类型:{b.FullName} 的多态子bean必须在所有成员字段 <var> 之前定义");
+                            throw new LoadDefException($"定义文件:{defineFile} 类型:{b.FullName} 的多态子bean必须在所有成员字段 <var> 之前定义");
                         }
-                        b.Fields.Add(CreateField(fe)); ;
+                        b.Fields.Add(CreateField(defineFile, fe)); ;
                         break;
                     }
                     case "bean":
@@ -854,7 +855,7 @@ namespace Luban.Job.Cfg.Defs
                     }
                     default:
                     {
-                        throw new LoadDefException($"定义文件:{CurImportFile} 类型:{b.FullName} 不支持 tag:{fe.Name}");
+                        throw new LoadDefException($"定义文件:{defineFile} 类型:{b.FullName} 不支持 tag:{fe.Name}");
                     }
                 }
             }
@@ -864,7 +865,7 @@ namespace Luban.Job.Cfg.Defs
             var fullname = b.FullName;
             foreach (var cb in childBeans)
             {
-                AddBean(cb, fullname);
+                AddBean(defineFile, cb, fullname);
             }
         }
     }

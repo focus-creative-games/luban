@@ -36,9 +36,9 @@ namespace Luban.Job.Db.Defs
         private readonly List<string> _tableOptionalAttrs = new List<string> { "memory", "comment" };
         private readonly List<string> _tableRequireAttrs = new List<string> { "name", "id", "key", "value" };
 
-        private void AddTable(XElement e)
+        private void AddTable(string defineFile, XElement e)
         {
-            ValidAttrKeys(e, _tableOptionalAttrs, _tableRequireAttrs);
+            ValidAttrKeys(defineFile, e, _tableOptionalAttrs, _tableRequireAttrs);
             var p = new Table()
             {
                 Id = XmlUtil.GetRequiredIntAttribute(e, "id"),

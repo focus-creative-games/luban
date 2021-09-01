@@ -11,6 +11,7 @@ namespace Luban.Job.Cfg.Utils
 {
     class DTypeTemplateExtends : TTypeTemplateExtends
     {
+
         public static bool IsSimpleLiteralData(DType type)
         {
             return type.Apply(IsSimpleLiteralDataVisitor.Ins);
