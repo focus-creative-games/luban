@@ -27,6 +27,9 @@ namespace Luban.Job.Cfg
         [Option("template_name", Required = false, HelpText = "template name. use with gen_types=data_template")]
         public string TemplateName { get; set; }
 
+        [Option("data_file_extension", Required = false, HelpText = "data file name extension. default choose by gen_type")]
+        public string DataFileExtension { get; set; }
+
         [Option('s', "service", Required = true, HelpText = "service")]
         public string Service { get; set; }
 

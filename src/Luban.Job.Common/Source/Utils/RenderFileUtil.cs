@@ -135,9 +135,9 @@ namespace Luban.Job.Common.Utils
             throw new Exception($"not support output data type:{genType}");
         }
 
-        public static string GetOutputFileName(string genType, string fileName)
+        public static string GetOutputFileName(string genType, string fileName, string fileExtension)
         {
-            return $"{fileName}.{GetOutputFileSuffix(genType)}";
+            return $"{fileName}.{(string.IsNullOrEmpty(fileExtension) ? GetOutputFileSuffix(genType) : fileExtension)}";
         }
     }
 }
