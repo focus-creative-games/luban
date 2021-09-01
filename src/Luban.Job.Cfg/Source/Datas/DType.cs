@@ -1,6 +1,5 @@
 
 using Luban.Job.Cfg.DataVisitors;
-using System.Text;
 
 namespace Luban.Job.Cfg.Datas
 {

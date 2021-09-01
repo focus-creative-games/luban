@@ -1,6 +1,5 @@
 using Luban.Job.Cfg.RawDefs;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Luban.Job.Cfg.Validators

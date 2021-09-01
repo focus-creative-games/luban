@@ -6,7 +6,6 @@ using Luban.Job.Common.Defs;
 using Luban.Job.Common.Utils;
 using Luban.Job.Proto.Defs;
 using Luban.Job.Proto.Generate;
-using Luban.Job.Proto.RawDefs;
 using Luban.Server.Common;
 using System;
 using System.Collections.Concurrent;

@@ -1,6 +1,5 @@
-using Luban.Job.Common.Utils;
-using Luban.Job.Common.Defs;
 using Luban.Common.Utils;
+using Luban.Job.Common.Defs;
 
 namespace Luban.Job.Proto.Defs
 {

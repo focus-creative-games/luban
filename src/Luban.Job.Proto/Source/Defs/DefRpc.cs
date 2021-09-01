@@ -1,8 +1,7 @@
-using Luban.Job.Common.Utils;
-using Luban.Job.Common.Types;
-using System;
-using Luban.Job.Proto.RawDefs;
 using Luban.Common.Utils;
+using Luban.Job.Common.Types;
+using Luban.Job.Proto.RawDefs;
+using System;
 
 namespace Luban.Job.Proto.Defs
 {

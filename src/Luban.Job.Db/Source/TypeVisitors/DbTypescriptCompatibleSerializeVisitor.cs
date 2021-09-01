@@ -1,10 +1,5 @@
 ﻿using Luban.Job.Common.Types;
 using Luban.Job.Common.TypeVisitors;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Luban.Job.Db.TypeVisitors
 {

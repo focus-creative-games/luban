@@ -1,12 +1,8 @@
 ﻿using Luban.Job.Common.Defs;
 using Luban.Job.Common.Utils;
 using Luban.Job.Proto.Defs;
-using Scriban;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Luban.Job.Proto.Generate
 {

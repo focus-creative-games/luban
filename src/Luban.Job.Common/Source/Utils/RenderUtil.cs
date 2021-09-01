@@ -1,6 +1,5 @@
 using Luban.Job.Common.Defs;
 using Scriban;
-using System;
 
 namespace Luban.Job.Common.Utils
 {

@@ -1,9 +1,7 @@
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.RawDefs;
-using Luban.Job.Db.TypeVisitors;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Luban.Job.Db.Defs
 {

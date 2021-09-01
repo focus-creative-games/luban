@@ -1,5 +1,4 @@
 using Luban.Job.Common.Types;
-using Luban.Job.Common.TypeVisitors;
 
 namespace Luban.Job.Common.TypeVisitors
 {

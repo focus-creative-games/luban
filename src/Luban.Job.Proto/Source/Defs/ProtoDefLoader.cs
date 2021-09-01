@@ -1,11 +1,10 @@
-using Luban.Job.Common.Utils;
+using Luban.Common.Utils;
 using Luban.Job.Common.Defs;
+using Luban.Job.Proto.RawDefs;
 using Luban.Server.Common;
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using Luban.Common.Utils;
-using Luban.Job.Proto.RawDefs;
 
 namespace Luban.Job.Proto.Defs
 {

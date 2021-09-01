@@ -1,5 +1,4 @@
 using Luban.Job.Cfg.Datas;
-using Luban.Job.Cfg.Utils;
 using Luban.Job.Common.Types;
 using Luban.Job.Common.TypeVisitors;
 using System;

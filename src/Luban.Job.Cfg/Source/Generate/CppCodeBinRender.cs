@@ -3,7 +3,6 @@ using Luban.Job.Cfg.Defs;
 using Luban.Job.Common;
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.Utils;
-using Scriban;
 using System;
 using System.Collections.Generic;
 using System.Linq;

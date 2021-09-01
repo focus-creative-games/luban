@@ -1,6 +1,5 @@
 
 using Luban.Common.Utils;
-using Luban.Job.Common.Utils;
 using Luban.Job.Proto.RawDefs;
 using System.Collections.Generic;
 

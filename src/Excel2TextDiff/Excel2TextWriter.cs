@@ -1,11 +1,6 @@
-﻿using CommandLine;
-using ExcelDataReader;
-using System;
+﻿using ExcelDataReader;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Excel2TextDiff
 {

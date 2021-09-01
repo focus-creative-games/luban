@@ -1,6 +1,5 @@
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.Types;
-using Luban.Job.Common.TypeVisitors;
 using Luban.Job.Db.TypeVisitors;
 using System.Text;
 

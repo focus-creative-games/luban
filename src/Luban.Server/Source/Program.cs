@@ -1,12 +1,9 @@
-using Bright.Common;
 using CommandLine;
 using Luban.Common.Protos;
 using Luban.Common.Utils;
 using Luban.Job.Common.Utils;
-using Luban.Server.Common;
 using System;
 using System.IO;
-using System.Reflection;
 using System.Threading;
 
 namespace Luban.Server
