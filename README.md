@@ -25,6 +25,7 @@ luban基于 **meta定义 + 数据源** 的设计，实现了**完备的类型系
 
 Luban适合有以下需求的开发者：
 - 希望找一个功能完备经受过上线项目检验的满足**中大型**游戏项目配置需求的游戏配置解决方案
+- 希望有较完善的工作流，有效提高策划与程序的开发效率
 - 希望针对项目需求方便地定制配置、消息等生成，满足更严苛的内存和性能的要求
 - 希望做其他自定义生成或者缓存
 
@@ -54,13 +55,13 @@ Luban适合有以下需求的开发者：
 - **强大完备的类型系统**。**可以优雅表达任意复杂的数据结构**。支持所有常见原生类型、datetime类型、容器类型list,set,map、枚举和结构、**多态结构**以及**可空类型**。
 - 支持增强的excel格式。可以在excel里比较简洁填写出非常复杂的数据（比如顶层字段包含"list,A"类型字段， 而A是结构并且其中又包含"list,B"类型字段，B也是结构并且包含"list,C"这样的字段...）。
 - 生成代码清晰易读、良好模块化。特地支持运行时原子性热更新配置。
-- 使用云生成模式。生成极快，MMORPG这样大型项目也能秒内生成。日常增量生成基本在300ms以内。节省迭代时间。支持watch监测模式，数据目录变化立即重新生成。
+- 生成极快。支持常规的本地缓存增量生成模式，也支持云生成模式。MMORPG这样大型项目也能秒内生成。日常增量生成基本在300ms以内，项目后期极大节省了迭代时间。另外支持**watch监测模式**，数据目录变化立即重新生成。
 - 灵活的数据源定义。一个表可以来自多个文件或者一个文件内定义多个表或者一个目录下所有文件甚至来自云表格，以及以上的组合
 - 支持表与字段级别分组。可以选择性地导出客户端或者服务器所用的表及字段
 - 多种导出数据格式支持。支持binary、json、lua、xml、erlang 等导出数据格式
-- **====>强大灵活的定制能力<====**
-	- **支持代码模板，可以用自定义模板定制生成的代码格式**
-	- **支持数据模板，可以用模板文件定制导出格式**。意味着可以在不改动现有程序代码的情况下，把luban当作**配置处理前端**，生成自定义格式的数据与自己项目的配置加载代码配合工作。开发已久的项目或者已经上线的老项目，也能从luban强大的数据处理工作流中获益
+- 强大灵活的定制能力
+	- 支持代码模板，可以用自定义模板定制生成的代码格式
+	- **支持数据模板**，可以用模板文件定制导出格式。意味着可以在不改动现有程序代码的情况下，把luban当作**配置处理前端**，生成自定义格式的数据与自己项目的配置加载代码配合工作。开发已久的项目或者已经上线的老项目，也能从luban强大的数据处理工作流中获益
 - 支持数据标签。 可以选择导出符合要求的数据，发布正式数据时策划不必手动注释掉那些测试数据了
 - 强大的数据校验能力。支持内建数据格式检查；支持ref表引用检查（策划不用担心填错id）;支持path资源检查（策划不用担心填错资源路径）;支持range检查
 - 支持常量别名。策划不必再为诸如 升级丹 这样的道具手写具体道具id了
@@ -140,60 +141,59 @@ Luban适合有以下需求的开发者：
 这儿只简略展示lua、c#、typescript、go语言在开发中的用法，更多语言以及更详细的使用范例和代码见[示例项目](https://github.com/focus-creative-games/luban_examples)。
 
 
-- Lua 使用示例
-
-  ```Lua
-  -- 访问一个单例表
-  print(require("TbGlobal").name)
-  -- 访问普通的 key-value 表
-  print(require("TbItem")[12].x1)
-  ```
 
 - C# 使用示例
 
-  ```C#
-  // 一行代码可以加载所有配置。 cfg.Tables 包含所有表的一个实例字段。
-  var tables = new cfg.Tables(file => return new ByteBuf(File.ReadAllBytes(gameConfDir + "/" + file)));
-  // 访问一个单例表
-  Console.WriteLine(tables.TbGlobal.Name);
-  // 访问普通的 key-value 表
-  Console.WriteLine(tables.TbItem.Get(12).X1);
-  // 支持 operator []用法
-  Console.WriteLine(tables.TbMail[1001].X2);
-  ```
+```C#
+// 一行代码可以加载所有配置。 cfg.Tables 包含所有表的一个实例字段。
+var tables = new cfg.Tables(file => return new ByteBuf(File.ReadAllBytes(gameConfDir + "/" + file)));
+// 访问一个单例表
+Console.WriteLine(tables.TbGlobal.Name);
+// 访问普通的 key-value 表
+Console.WriteLine(tables.TbItem.Get(12).X1);
+// 支持 operator []用法
+Console.WriteLine(tables.TbMail[1001].X2);
+```
 
 - typescript 使用示例
 
-	```typescript
-	// 一行代码可以加载所有配置。 cfg.Tables 包含所有表的一个实例字段。
-	let tables = new cfg.Tables(f => JsHelpers.LoadFromFile(gameConfDir, f))
-	// 访问一个单例表
-	console.log(tables.TbGlobal.name)
-	// 访问普通的 key-value 表
-	console.log(tables.TbItem.get(12).x1)
-	```
+```typescript
+// 一行代码可以加载所有配置。 cfg.Tables 包含所有表的一个实例字段。
+let tables = new cfg.Tables(f => JsHelpers.LoadFromFile(gameConfDir, f))
+// 访问一个单例表
+console.log(tables.TbGlobal.name)
+// 访问普通的 key-value 表
+console.log(tables.TbItem.get(12).x1)
+```
 
 - go 使用示例
-	```go
-	// 一行代码可以加载所有配置。 cfg.Tables 包含所有表的一个实例字段。
-	if tables , err := cfg.NewTables(loader) ; err != nil {
-		println(err.Error())
-		return
-	}
-	// 访问一个单例表
-	println(tables.TbGlobal.Name)
-	// 访问普通的 key-value 表
-	println(tables.TbItem.Get(12).X1)
+```go
+// 一行代码可以加载所有配置。 cfg.Tables 包含所有表的一个实例字段。
+if tables , err := cfg.NewTables(loader) ; err != nil {
+	println(err.Error())
+	return
+}
+// 访问一个单例表
+println(tables.TbGlobal.Name)
+// 访问普通的 key-value 表
+println(tables.TbItem.Get(12).X1)
 
-	```
+```
+
+- Lua 使用示例
+
+```Lua
+-- 访问一个单例表
+print(require("TbGlobal").name)
+-- 访问普通的 key-value 表
+print(require("TbItem")[12].x1)
+```
 
 ------
 
 ## 配置快速预览
 
-**luban兼容传统的excel导表工具，可以在excel定义完整的数据表**。与常见的专注于excel的导表工具不同，luban传统做法为定义与数据分离，使用单独的xml定义 **表和结构**，数据文件只包含数据。
-
-下面展示完普通兼容例子后，剩余例子都是**定义与数据分离**的传统风格。使用者自己选择是定义与数据混合的方式还是定义与数据分离的方式或者混用两种方式。目前luban_examples项目中大多数示例使用定义与数据分离的方式。
+**luban兼容传统的excel导表工具，可以在excel定义完整的数据表**。与常见的专注于excel的导表工具不同，luban推荐做法为定义与数据分离，使用单独的xml定义 **表和结构**，数据文件只包含数据。
 
 ### 传统兼容横表
 
@@ -232,7 +232,7 @@ Luban适合有以下需求的开发者：
 
 <br/>
 
-### 常规的原生数据 （从本示例起为定义与数据分离的模式）
+### 常规的原生数据 （虽然示例中这些表都在xml中定义，实际上它们可以完全只在excel定义）
 
 以下是一个包含所有常见简单原生数据的表。
 

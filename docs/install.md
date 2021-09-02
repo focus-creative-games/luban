@@ -7,49 +7,44 @@
 
     下载项目 [luban_examples](https://github.com/focus-creative-games/luban_examples)。
     项目中包含测试配置、最新的luban_client&luban_server工作以及大量的示例项目。为方便起见，后续提及到的文件，默认都指这个项目中的文件。
-1. 部属 luban-server
 
-    - 基于 docker 
-
-        docker run -d --rm --name luban-server -p 8899:8899 focuscreativegames/luban-server:latest
-
-    - 基于 .net 5 runtime （推荐win平台使用，可跨平台，不需要重新编译）
-        - 从[示例项目](https://github.com/focus-creative-games/luban_examples/tree/main/Tools/Luban.Server)拷贝 Luban.Server（**可跨平台，即使在linux、mac平台也不需要重新编译**）
-        - 在Luban.Server目录下运行 dotnet Luban.Server.dll
-
-1. 使用 luban-client
-    - 基于 docker (推荐 linux、mac平台使用)
-
-        docker run --rm -v $PWD/.cache.meta:/bin/.cache.meta  focuscreativegames/luban-client <参数>
-        
-        提醒！ .cache.meta这个文件用于保存本地生成或者提交到远程的文件md5缓存，**强烈推荐** 添加-v 映射，不然每次重新计算所有涉及文件的md5,这可能在项目后期会造成多达几秒的延迟。
-    - 基于 .net 5 runtime （推荐win平台使用，可跨平台，不需要重新编译）
-        - 从[示例项目](https://github.com/focus-creative-games/luban_examples/tree/main/Tools/Luban.Client)拷贝 Luban.Client（**可跨平台，即使在linux、mac平台也不需要重新编译**）
-        - 在Luban.Client目录下运行 dotnet Luban.Client.dll <参数>
-
-1. 设置全局环境变量 
-
-    set_global_envs.bat 脚本文件，它会设置全局环境变量 LUBAN_SERVER_IP 为 127.0.0.1。如果你在其他机器上部属luban-server，请将LUBAN_SERVER_IP改为相应地址。
 ## 创建游戏配置
 
 1. 创建目录结构  
    config 为根目录，下面创建两个子目录 Datas 和 Defines，分别用于 存放策划 excel 及各种配置数据 以及 配置定义。
    ![如图](images/install/install_01.png)
 2. 在 Defines 目录下创建 \_\_root__.xml 根定义文件  
-   ![如图](images/install/install_02.png)  
-   可以直接从 [示例配置](https://github.com/focus-creative-games/luban_examples/tree/main/DesignerConfigs/Defines) 拷贝这个文件。
-   这个 root 文件描述了：
+```xml
+<root>
 
-    - 生成代码的默认顶层命名空间为 cfg
-    - 有 3 个分组 c,s,e 对应 client，server，editor 分组。 分组用于配置选择性导出。后面再介绍。
-    - import name=”.” 表明从当前目录导入所有子模块定义文件。我们会把所有子模块定义文件也放到 Defines 目录下。
-    - server 表示最终输出的目标。当前定义了 4 个目标。service 的 group 属性指明了这个目标会包含哪些分组。例如： server 目标就只包含 s 分组，而 all 目标包含了所有分组。我们先不细究这些定义的含义。
+	<topmodule name="cfg"/>
 
-7. 创建第一个配置表 物品表
+	<branch name="cn"/>
+	<branch name="tw"/>
+	<branch name="en"/>
+	<branch name="jp"/>
 
-8. 添加物品表 excel 文件
-   我们可以直接在 Datas 目录下添加 物品表.xlsx 文件，不过如果所有表都放到 Datas 目录下，查找起来很不方便。  
-   为了方便，我们按模块组织配置文件，在 Datas 目录下新建一个 item 目录，目录下创建一个 “物品表.xlsx” 文件。  
+	<group name="c" default="1"/> client
+	<group name="s" default="1"/> server
+	<group name="e" default="1"/> editor
+	
+	<import name="."/>
+	
+	<importexcel name="tables.xlsx" type="table"/> 补充table表声明。文件相对data目录
+	<importexcel name="enums.xlsx" type="enum"/> 补充enum定义。相对data目录
+	<importexcel name="beans.xlsx" type="bean"/> 补充bean定义。相对data目录
+
+	<service name="server" manager="Tables" group="s"/>
+	<service name="client" manager="Tables" group="c"/>
+	<service name="all" manager="Tables" group="c,s,e"/>
+</root>
+```
+
+可以直接从 [示例配置](https://github.com/focus-creative-games/luban_examples/tree/main/DesignerConfigs/Defines) 拷贝这个文件。
+
+
+4. 添加物品表 excel 文件
+    在 Datas 目录下新建一个 item 目录，目录下创建一个 “物品表.xlsx” 文件。  
    
    ![如图](images/install/install_03.png) 
    
@@ -57,121 +52,87 @@
 
    ![配置](images/install/install_04.png)
 
-   - 第 1 行是 meta 行。有一些关于 excel 文件的元描述，默认全空，使用默认默认值即可。  
+   - 第 1 行是 meta 行，包含关于excel文件的元描述，title_rows:4表示除了meta行外，有4行标题头。  
      单元格 A1 必须是 ##。表示这是一个有效数据表。
    - 第 2 行是程序字段名行。
-   - 第 3 行是标题头行。策划自行填写，可留空。
-   - 第 4 行是描述行。策划可以填写字段的补充描述。可留空。
-   - 从第 5 开始为实际的数据行。如果某个数据行整行为空，则会被跳过。
+   - 第3行是属性行。格式为 type&属性1=值1&属性2=值2 ...
+   - 第 4 行是标题头行。策划自行填写，可留空。
+   - 第 5 行是描述行。策划可以填写字段的补充描述。可留空。
+   - 从第 6 开始为实际的数据行。如果某个数据行整行为空，则会被跳过。
 
-   我们定义一个简单的物品表，有 4 个字段。
+然后再在 Datas 目录下的tables.xlsx（请从 DesignerConfigs/Datas目录拷贝过来）添加表声明。如下图：
 
-   - id 道具 id
-   - name 道具名
-   - desc 道具描述
-   - price 道具购买价格
+![添加声明](images/install/install_10.png)
 
-9. 创建定义  
-   我们已经填好了第一个配置表，此时应该会有疑问：
-
-   1. 字段类型呢？字段类型怎么没有定义啊？
-   2. 生成的代码中相关的类名又在哪儿获得呢？
-   3. 如何导出？最终导出的数据在哪个文件？ 导出文件又是啥格式？  
-
-   ---
-   我们正式开始：
-
-    每个配置表都需要在某个子模块定义文件中添加一个相应的定义描述，每个模块可以包含多个表定义。  
-
-    我们在 Defines 目录创建 item.xml，item.xml 是一个子模块定义文件，用于包含物品模块的所有结构，枚举及配表定义。接着在 item.xml 里添加物品表相关定义。
-
-    文件内容如下：
-
-    ![定义](images/install/install_05.png)
-
-   - 简略介绍一下定义:
-     - table 是表定义，每个表都有一个对应的表定义。
-     - name 表名。推荐采取 TbXXXX 这种名字约定。
-     - value 记录的类型。即配置表里每行记录的类型。
-     - index 以 value 的哪个字段为主键。这里用 Item 结构里的 id 字段做主键。可为空，默认为第一个字段。
-     - input 数据源。这个表的数据文件来源，相对 Datas 目录。可以是多个，以英文分号 ; 分割。
-     - bean 用于定义公用结构，同时也用于定义表记录结构。
-     - name 类型名。 这儿取 Item，最终生成的 c#代码会使用 cfg.item.Item 这样的类名。
-     - var 用于定义字段。
-       - name 字段名。推荐统一 xx_yy_zz 这种风格。
-       - type 字段类型。 可以是 bool,int,float,string 等等，完整的类型参见链接。
 
 10. 至此,物品表的创建工作大功告成!
 
 ## 生成代码和数据以及在程序中使用
 
-- 根据前后端以及引擎和平台类型以及所用语言，介绍常见组合下，如何生成代码和数据。
 
-  1.  项目准备。  
-      拷贝示例项目中 Csharp_DotNetCore_bin\Core 目录到项目中，可以自由组织位置。  
-      此时尝试编译项目，理论上应该能成功编译。
-  2.  运行生成命令  
+1.  项目准备。  
+
+拷贝示例项目中 Csharp_DotNetCore_bin\Core 目录到项目中，可以自由组织位置。  此时尝试编译项目，理论上应该能成功编译。
+
+2.  运行生成命令  
     
-
-      ```bat
-      <luban.client>
-      -h 127.0.0.1 ^
-      -p 8899 ^
+```bat
+      dotnet <luban.clientserver.dll>
       -j cfg ^
       --^
       --define_file <root.xml 定义文件的路径>^
       --input_data_dir <配置数据根目录(Datas)的路径>^
-      --output_code_dir <输出的代码文件的路径>^
+      --output_code_dir <生成的代码文件的路径>^
       --output_data_dir <导出的数据文件的路径>^
-      --service server^
+      --service all^
       --export_test_data^
       --gen_types "code_cs_bin,data_bin"
-      ```
+ ```
 
-      **============提醒=============**
+其中 
 
-      **如果你们项目使用json导出格式，需要将 --gen_types的参数改为 "code_cs_json,data_json"**
+- <luban.clientserver.dll> 指向  Tools/Luban.ClientServer/Luban.ClientServer.dll
+- <root.xml定义文件路径> 指向 Define/__root__.xml
 
-      **如果你们项目使用typescript并且json导出格式，需要将 --gen_types的参数改为 "code_typescript_json, data_json"**
 
-      更多语言或者导出类型的组合，请参考 [luban_examples](https://github.com/focus-creative-games/luban_examples)
+详细的命令文档请看 [install_manual](./luban_install_manual.md)。
 
-      **=============================**
+更多语言或者导出类型的组合，请参考 [luban_examples](https://github.com/focus-creative-games/luban_examples)
 
-      如果一切正常，会产生一系列日志，最终一行是 == succ == 。
-      ![类似这样](images/install/install_07.png)
 
-      如果遇到 类似这样的错误，说明服务器未启动。 启动 luban-server 即可。
+如果一切正常，会产生一系列日志，最终一行是 == succ == 。
+
+![类似这样](images/install/install_07.png)
+
+
+如果一切顺利。生成的代码文件会在 –output_code_dir 参数指定的 目录中，生成的配置数据会在 –output_data_dir 参数指定的目录中。  
+把 –output_code_dir 加入到 项目中，编译。此时应该能编译成功。
+
+3.  加载配置  
       
-      ![错误例子](images/install/install_08.png)
+只需一行代码既可完成所有配置表的加载工具
 
-      如果一切顺利。生成的代码文件会在 –output_code_dir 参数指定的 目录中，生成的配置数据会在 –output_data_dir 参数指定的目录中。  
-      把 –output_code_dir 加入到 项目中，编译。此时应该能编译成功。
+```c#
+    var tables = new cfg.Tables(file =>
+        new Bright.Serialization.ByteBuf(
+            System.IO.File.ReadAllBytes( <output_data_dir 指向的生成数据目录> + "/" + file)));
+```
 
-  3.  加载配置  
-      只需一行代码既可完成所有配置表的加载工具
+![代码](images/install/install_09.png)
 
-      ```c#
-          var tables = new cfg.Tables(file =>
-              new Bright.Serialization.ByteBuf(
-                  System.IO.File.ReadAllBytes( <output_data_dir 指向的生成数据目录> + "/" + file)));
-      ```
+4.  使用加载后的配置表
+    cfg.Tables 里包含所有配置表的一个实例字段。  
+    加载完 cfg.Tables 后，只需要用 tables.<表名> 就能获得那个表实例，接着可以做各种操作。  
+    例如我们要访问 id = 1 的那个记录。代码如下
 
-      ![代码](images/install/install_09.png)
 
-  4.  使用加载后的配置表
-      cfg.Tables 里包含所有配置表的一个实例字段。  
-      加载完 cfg.Tables 后，只需要用 tables.<表名> 就能获得那个表实例，接着可以做各种操作。  
-      例如我们要访问 id = 1 的那个记录。代码如下
+```c#
+    cfg.item.Item itemInfo = tables.TbItem.Get(1);
+    Console.WriteLine(“{0} {1} {2} {3}”,
+    itemInfo.Id, itemInfo.X1, itemInfo.X2,itemInfo.X3)
+```
 
-      ```c#
-          cfg.item.Item itemInfo = tables.TbItem.Get(1);
-          Console.WriteLine(“{0} {1} {2} {3}”,
-          itemInfo.Id, itemInfo.Name, itemInfo.Desc,itemInfo.Price)
-      ```
 
-      可能你会注意到，item.xml 里定义 Item 时，字段名 id,name,desc,price 首字母被大写了。
-      工具会根据输出的语言，自动作相应代码风格的字段名转换，也即 boo_bar 会被转换为 BooBar 这样的名字。
-      这也是为什么推荐 配置字段定义时统一使用 xx_yy_zz 的风格。
+可能你会注意到，item.xml 里定义 Item 时，字段名 id,x1,x2,x3 首字母被大写了。工具会根据输出的语言，自动作相应代码风格的字段名转换，也即 boo_bar 会被转换为 BooBar 这样的名字。这也是为什么推荐 配置字段定义时统一使用 xx_yy_zz 的风格。
 
   5.  至此完成 配置加载与使用!

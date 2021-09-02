@@ -1,7 +1,11 @@
 
 ## 部属
 
-### 部属 luban-server
+Luban工具有两种部属方式。
+
+### 方法1： Luban.Client与Luban.Server独立部属，云生成模式
+
+#### 部属 luban-server
 
 - 基于 docker (强烈推荐以这种方式在服务器上部属luban-server，因为可以充分利用缓存机制大幅缩短生成时间)
 
@@ -10,9 +14,9 @@
 - 基于 .net 5 runtime （可跨平台，不需要重新编译）
 	- 自行安装 .net 5 runtime.
 	- 从[示例项目](https://github.com/focus-creative-games/luban_examples/tree/main/Tools/Luban.Server)拷贝 Luban.Server（**可跨平台，即使在linux、mac平台也不需要重新编译**）
-	- 在Luban.Server目录下运行 dotnet Luban.Server.dll (Win平台可以直接运行 Luban.Server.exe)
+	- 在Luban.Server目录下运行 dotnet Luban.Server.dll (提示：Win平台可以直接运行 Luban.Server.exe)
 
-### 安装 luban-client
+#### 安装 luban-client
 - 基于 docker (只推荐与jenkins之类devops工具配合使用，因为docker容器启动会增加一定的延迟)
 
 	docker run --rm -v $PWD/.cache.meta:/bin/.cache.meta  focuscreativegames/luban-client <参数>
@@ -21,6 +25,16 @@
 - 基于 .net 5 runtime （推荐win平台使用，可跨平台，不需要重新编译）
 	- 自行安装 .net 5 runtime.
 	- 从[示例项目](https://github.com/focus-creative-games/luban_examples/tree/main/Tools/Luban.Client)拷贝 Luban.Client（**可跨平台，即使在linux、mac平台也不需要重新编译**）
+
+
+
+### 方法2： Client与Server一体模式
+
+  Client与Server在同个进程内运行，不需要单独部属Luban.Server。
+
+  将运行脚本中%LUBAN_CLIENT%变量由 Luban.Client/Luban.Client 改为 Luban.ClientServer/Luban.ClientServer，同时删除 -h (--host ) 选项及其参数（如果指定了-h选项，则不启动内嵌Luban.Server，使用云生成）。
+
+  Luban.ClientServer是Luban.Client的功能超集，可以完全替代Luban.Client。
 
 
 -----
