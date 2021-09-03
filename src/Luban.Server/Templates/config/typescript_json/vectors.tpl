@@ -1,8 +1,8 @@
 
 export class Vector2 {
     static deserializeFromJson(json: any): Vector2 {
-        let x = json['x']
-        let y = json['y']
+        let x = json.x
+        let y = json.y
         if (x == null || y == null) {
             throw new Error()
         }
@@ -19,9 +19,9 @@ export class Vector2 {
 
 export class Vector3 {
     static deserializeFromJson(json: any): Vector3 {
-        let x = json['x']
-        let y = json['y']
-        let z = json['z']
+        let x = json.x
+        let y = json.y
+        let z = json.z
         if (x == null || y == null || z == null) {
             throw new Error()
         }
@@ -41,10 +41,10 @@ export class Vector3 {
 
 export class Vector4 {
     static deserializeFromJson(json: any): Vector4 {
-        let x = json['x']
-        let y = json['y']
-        let z = json['z']
-        let w = json['w']
+        let x = json.x
+        let y = json.y
+        let z = json.z
+        let w = json.w
         if (x == null || y == null || z == null || w == null) {
             throw new Error()
         }

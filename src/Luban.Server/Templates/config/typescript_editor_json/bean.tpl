@@ -42,24 +42,9 @@ export {{if x.is_abstract_type}}abstract {{end}}class {{name}}{{if parent_def_ty
      * {{field.comment}}
      */
 {{~end~}}
-    readonly {{field.ts_style_name}}: {{ts_define_type field.ctype}}
-    {{~if field.gen_ref~}}
-    {{field.ts_ref_validator_define}}
-    {{~end~}}
+    {{field.ts_style_name}}: {{ts_define_type field.ctype}}
     {{~end~}}
 
-    resolve(_tables: Map<string, any>) {
-        {{~if parent_def_type~}}
-        super.resolve(_tables)
-        {{~end~}}
-        {{~ for field in export_fields ~}}
-        {{~if field.gen_ref~}}
-        {{ts_ref_validator_resolve field}}
-        {{~else if field.has_recursive_ref~}}
-        {{ts_recursive_resolve field '_tables'}}
-        {{~end~}}
-        {{~end~}}
-    }
 }
 
 {{x.typescript_namespace_end}}

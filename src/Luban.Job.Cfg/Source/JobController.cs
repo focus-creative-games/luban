@@ -94,7 +94,7 @@ namespace Luban.Job.Cfg
                     return false;
                 }
 
-                if (!options.ValidateTypescriptRequire(options.GenType, ref errMsg))
+                if (options.GenType.Contains("typescript_bin") && !options.ValidateTypescriptRequire(options.GenType, ref errMsg))
                 {
                     return false;
                 }

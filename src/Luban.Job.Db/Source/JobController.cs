@@ -47,7 +47,7 @@ namespace Luban.Job.Db
             {
                 return false;
             }
-            if (!options.ValidateTypescriptRequire(options.GenType, ref errMsg))
+            if (options.GenType.Contains("typescript") && !options.ValidateTypescriptRequire(options.GenType, ref errMsg))
             {
                 return false;
             }

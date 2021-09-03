@@ -37,24 +37,21 @@ namespace Luban.Job.Common
 
         public bool ValidateTypescriptRequire(string genType, ref string errMsg)
         {
-            if (genType.Contains("typescript"))
+            if (!string.IsNullOrWhiteSpace(this.TypescriptBrightRequirePath) && !string.IsNullOrWhiteSpace(this.TypescriptBrightPackageName))
             {
-                if (!string.IsNullOrWhiteSpace(this.TypescriptBrightRequirePath) && !string.IsNullOrWhiteSpace(this.TypescriptBrightPackageName))
-                {
-                    errMsg = "can't use options --typescript_bright_require_path and --typescript_bright_package_name at the same time";
-                    return false;
-                }
-                bool hasBrightPathOrPacakge = !string.IsNullOrWhiteSpace(this.TypescriptBrightRequirePath) || !string.IsNullOrWhiteSpace(this.TypescriptBrightPackageName);
-                if (!this.UsePuertsByteBuf && !hasBrightPathOrPacakge)
-                {
-                    errMsg = "while --use_puerts_bytebuf is false, should provide option --typescript_bright_require_path or --typescript_bright_package_name";
-                    return false;
-                }
-                if (!this.EmbedBrightTypes && !hasBrightPathOrPacakge)
-                {
-                    errMsg = "while --embed_bright_types is false, should provide option --typescript_bright_require_path or --typescript_bright_package_name";
-                    return false;
-                }
+                errMsg = "can't use options --typescript_bright_require_path and --typescript_bright_package_name at the same time";
+                return false;
+            }
+            bool hasBrightPathOrPacakge = !string.IsNullOrWhiteSpace(this.TypescriptBrightRequirePath) || !string.IsNullOrWhiteSpace(this.TypescriptBrightPackageName);
+            if (!this.UsePuertsByteBuf && !hasBrightPathOrPacakge)
+            {
+                errMsg = "while --use_puerts_bytebuf is false, should provide option --typescript_bright_require_path or --typescript_bright_package_name";
+                return false;
+            }
+            if (!this.EmbedBrightTypes && !hasBrightPathOrPacakge)
+            {
+                errMsg = "while --embed_bright_types is false, should provide option --typescript_bright_require_path or --typescript_bright_package_name";
+                return false;
             }
             return true;
         }
