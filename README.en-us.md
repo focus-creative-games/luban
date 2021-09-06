@@ -7,64 +7,73 @@
 
 ![icon](docs/images/icon.png)
 
-## Introduction
+-----
+## links
+- [README - English](./README.en-us.md)
+- [github link](https://github.com/focus-creative-games/luban)
+- [gitee link](https://gitee.com/focus-creative-games/luban)
+----
 
-Luban is a general-purpose object generation and caching solution. On this basis, a **game configuration solution** that is **complete, powerful, flexible and easy to use** is implemented.
+## introduce
 
-Luban was originally designed for super-large projects such as seamless open world MMORPG. It is good at handling large and complex configuration data and structures. It is also suitable for use in card, turn-based, ARPG and other light and medium games.
+Luban is a subordinated project of [BrightDB](https://github.com/focus-creative-games/BrightDB), a general-purpose object generation and caching tool, on this basis it has realized a function ** complete, powerful, flexible and easy to use **The **Game Configuration Solution**.
 
-Based on the design of **meta definition + data source**, luban implements a **complete type system**, enhances the excel format, and provides support for multiple data sources such as json, xml, lua, and unified data definition and loading The game configuration pipeline of, inspection, data export and code generation completely solves the problem that it is difficult to configure complex data in excel in medium and large projects and the coexistence of multiple configuration schemes such as excel and json in one project.
+Based on the design of **meta definition + data source**, luban implements a **complete type system**, enhances the excel format, and provides rich data source support such as json, xml, lua, yaml, etc. It can handle both conventional simple configurations and complex configurations such as **AI, skills, and duengon**. It truly realizes the game configuration workflow of unified data definition, loading, verification, data export and code generation. It is better to solve the problem that it is difficult to check complex configuration errors in real-time and iteratively edit the program in the planning of medium and large projects, and the problem that complex AI, skills and other configuration data cannot be unified with the excel configuration and need to be dealt with separately by the programmer.
 
-The Luban generation process is extremely fast. For ordinary meter guide tools, it often takes tens of seconds to generate the configuration in the later stage of a typical MMORPG project. Luban uses the client/server cloud generation model, through multi-threading and generation + object caching mechanism, in most cases, the entire generation process can be completed within 1 second.
+**Luban has relatively complete functions and supports almost all mainstream front-end and back-end languages ​​and client engines in the game industry**. Luban is currently maintained by a professional team to maintain active feature updates and function optimizations, and R&D personnel provide timely development guidance and follow-up feedback.
 
 Luban is suitable for developers with the following needs:
-1. I hope to find a fast and powerful game configuration solution that has passed the test of the online project and meets the configuration requirements of **medium and large** game projects
-2. Hope to easily customize configuration and message generation according to project requirements to meet more stringent memory and performance requirements
-3. Hope to do other custom generation or caching
+-I hope to find a game configuration solution that meets the configuration requirements of **medium and large** game projects with complete functions and has been tested by online projects
+-Hope to have a more complete workflow to effectively improve the efficiency of planning and program development
+-Hope to easily customize configuration and message generation according to project requirements to meet more stringent memory and performance requirements
+-Hope to do other custom generation or caching
 
-
-
-====** If you feel usable, please give it a like, your support will give us great motivation ^_^**====
-
-## Support and contact
-
-If you have any questions about the use, please add the QQ group to ask in time, and someone can help solve it at any time.
-
-  - QQ group: 692890842
-  - Email: taojingjian#gmail.com
-  - Skypy group: https://join.skype.com/xr2nhdMKjac0
-
+====** If you feel good, please click a star, your support will give us great motivation ^_^**====
 
 ## Documentation
 
 - [Homepage](https://focus-creative-games.github.io/luban/index.html)
 - [Features](docs/traits.md)
+- [Quick Start](docs/install.md)
 - [Introduction to Excel Configuration Data](docs/data_excel.md)
+- [Client&server installation and usage instructions](docs/luban_install_manual.md)
 - [Document Catalog](docs/catalog.md)
-- [FAQ](docs/faq.md)
-- [[TODO] Quick Start and Advanced](docs/start_up.md)
 - [[TODO] Complete Manual](docs/manual.md)
-- **[====>Highly recommended to explore: example project <====](https://github.com/focus-creative-games/luban_examples)**
+- **====>Highly recommended to view: Example project** ([github](https://github.com/focus-creative-games/luban_examples)) ([gitee](https://gitee.com /focus-creative-games/luban_examples)) **<====**
+
+- Support and contact
+  - QQ group: 692890842 (Luban development exchange group) [click the link to join](https://qm.qq.com/cgi-bin/qm/qr?k=4bMoe11knBW7Tcs1sqMafZE1I4zpT4sh&jump_from=webapi). If you have any questions about use, please add to the QQ group to ask, and someone can help solve it at any time.
+  - Email: taojingjian#gmail.com
+  - Skypy group: https://join.skype.com/xr2nhdMKjac0
+
+
+-----
 
 ## Features
-- Supports enhanced excel format, you can fill in arbitrarily complex data more concisely in excel
-- Supports multiple data formats of excel, json, xml, and lua, which basically unifies the configuration data in the game
-- Powerful and complete type system. Supports all common primitive types, datetime types, container types list, set, map, enumeration and structure, **polymorphic structure** and **nullable type**
+- Supports multiple data formats of excel family, json, xml, lua, yaml, which basically unifies the common configuration data of the game
+- **Powerful and complete type system**. **Any complex data structure can be expressed elegantly**. Supports all common primitive types, datetime types, container types list, set, map, enumeration and structure, **polymorphic structure** and **nullable type**.
+- Support enhanced excel format. You can fill in very complex data more concisely in excel (for example, the top-level field contains "list, A" type fields, and A is a structure and it contains "list, B" type fields, and B is also a structure and contains "list, C" "Such a field...).
+- The generated code is clear, easy to read, and well modularized. Specially supports atomic hot update configuration at runtime.
+- Generate extremely fast. It supports the regular local cache incremental generation mode, and also supports the cloud generation mode. Large projects like MMORPG can also be generated within seconds. The daily incremental generation is basically within 300ms, which greatly saves iteration time in the later stage of the project. In addition, it supports **watch monitoring mode**, and the data directory changes are regenerated immediately.
 - Flexible data source definition. A table can come from multiple files or multiple tables defined in a file, or all files in a directory or even from cloud tables, and a combination of the above
 - Support table and field level grouping. You can selectively export tables and fields used by the client or server
-- Multiple export data format support. Support export data formats such as binary, json, lua, etc.
+- Multiple export data format support. Support export data formats such as binary, json, lua, xml, erlang, etc.
+- Powerful and flexible customization capabilities
+- Support code templates, you can use custom templates to customize the generated code format
+- **Support data template**, you can customize the export format with the template file. It means that you can use luban as a **configuration processing front end** without changing the existing program code, and generate data in a custom format to work with the configuration loading code of your own project. Long-developed projects or old projects that have been launched can also benefit from luban's powerful data processing workflow
 - Support data tags. You can choose to export the data that meets the requirements, and you don’t have to manually comment out those test data when planning to release the official data.
-- Powerful data verification capabilities. Support built-in data format check; support ref table reference check (don't worry about filling in the wrong id for planning); support path resource check (don't worry about filling in the wrong resource path for planning); support advanced custom verification (for example, two fields and must be 100)
+- Powerful data verification capabilities. Support built-in data format check; support ref table reference check (don’t worry about filling in the wrong id for planning); support path resource check (don’t worry about filling in the wrong resource path for planning); support range check
 - Support constant alias. Planning no longer has to write specific item IDs for items such as Upgrade Dan
 - Support a variety of common data table modes. one (singleton table), map (regular key-value table)
-- Support emmylua anntations. The generated lua contains anntations information that conforms to the emmylua format. Cooperate with emmylua, have good configuration code prompt ability
 - Support res resource mark. You can export all resource lists (icon, ui, assetbundle, etc.) referenced in the configuration with one click
-- Good modularity of generated code
+- Unify the configuration data of the custom editor. It works well with Unity and UE4 custom editors, and generates suitable c# (Unity) or c++ (UE4) code for loading and saving json configuration for the editor. The saved json configuration can be recognized and processed by luban.
+- Support emmylua anntations. The generated lua contains anntations information that conforms to the emmylua format. Cooperate with emmylua, have good configuration code prompt ability
 - **Localization Support**
-   - Support time localization. The datetime type data will be converted to UTC time in the target area at that time according to the specified timezone, which is convenient for the program to use.
-  - **Support text static localization. When exporting, all text type data is correctly replaced with the final localized string.**
-  - [TODO] supports dynamic localization of text. Dynamically switch all text type data to the target localized string at runtime.
-  - **Support main + patches data merging. On the basic data, differential data is applied to generate the final complete data, which is suitable for the production of configuration data with subtle differences in multiple regions.**
+	- Support time localization. The datetime type data will be converted to UTC time in the target area at that time according to the specified timezone, which is convenient for the program to use.
+	- Support text static localization. When exporting, all text type data is correctly replaced with the final localized string. Most business functions no longer need to run to find the content of the text according to the localized id, simplifying the programmer's work.
+	- Support text dynamic localization. Dynamically switch all text type data to the target localized string at runtime.
+	- Support main + patches data merging. On the basic data, differential data is applied to generate the final complete data, which is suitable for the production of configuration data with subtle differences in multiple regions.
+	- [TODO] [Original] Support the localization of any granularity and any type of data (such as int, bean, list, map).
 - Support mainstream game development languages
    - c++ (11+)
    - c# (.net framework 4+. dotnet core 3+)
@@ -72,27 +81,102 @@ If you have any questions about the use, please add the QQ group to ask in time,
    - go (1.10+)
    - lua (5.1+)
    - js and typescript (3.0+)
-   - python (2.7+ and 3.0+)
+   - python (3.0+)
+   - erlang (18+)
 - Support mainstream engines and platforms
    - unity + c#
-   - unity + tolua, xlua
-   - unity + ILRuntime
-   - unity + puerts
+   - unity + [tolua](https://github.com/topameng/tolua), [xlua](https://github.com/Tencent/xLua)
+   - unity + [ILRuntime](https://github.com/Ourpalm/ILRuntime)
+   - unity + [puerts](https://github.com/Tencent/puerts)
+   - unity + [GameFramework](https://github.com/EllanJiang/GameFramework)
+   - unity + [ET game framework](https://github.com/egametang/ET)
    - unreal + c++
-   - unreal + unlua
-   - unreal + sluaunreal
-   - unreal + puerts
+   - unreal + [unlua](https://github.com/Tencent/UnLua)
+   - unreal + [sluaunreal](https://github.com/Tencent/sluaunreal)
+   - unreal + [puerts](https://github.com/Tencent/puerts)
    - cocos2d-x + lua
    - cocos2d-x + js
-   - WeChat Mini Program Platform
+   - [skynet](https://github.com/cloudwu/skynet)
+   - WeChat app Program Platform
    - Other js-based small program platforms
    - All other engines and platforms that support lua
    - All other engines and platforms that support js
 
-
+-----
 ## luban workflow Pipeline
 
 ![pipeline](docs/images/pipeline.jpg)
+
+## benchmark performance test results
+
+Hardware: Intel(R) Core i7-10700 @ 2.9G 16 core, 32G memory
+
+Data set: 500 excel tables, each table has 1000 rows of records, the records are complicated
+
+Test Results:
+
+| Format | Time-consuming full generation | Time-consuming incremental generation | Single output file size | Total output file size |
+| ---- | --------| ------ | ---- | ------ |
+| bin | 15.652 s| 797 ms | 164 K | 59.5 M |
+| json | 17.746 s| 796 ms | 1.11 M | 555 M |
+| lua | 17.323 s| 739 ms | 433 K | 212 M |
+
+
+## Code usage example
+
+Here is only a brief display of the usage of lua, c#, typescript, and go languages ​​in development. For more languages ​​and more detailed usage examples and codes, please see [Sample Project](https://github.com/focus-creative-games/luban_examples ).
+
+
+- C# usage example
+
+```C#
+  // One line of code can load all configurations. cfg.Tables contains an instance field for all tables.
+  var tables = new cfg.Tables(file => return new ByteBuf(File.ReadAllBytes("<data path>/" + file)));
+  // Access a singleton table
+  Console.WriteLine(tables.TbGlobal.Name);
+  // Access the ordinary key-value table
+  Console.WriteLine(tables.TbItem.Get(12).X1);
+  // Support operator [] usage
+  Console.WriteLine(tables.TbMail[1001].X2);
+```
+
+- Typescript usage example
+
+```typescript
+// One line of code can load all configurations. cfg.Tables contains an instance field for all tables.
+let tables = new cfg.Tables(f => JsHelpers.LoadFromFile(gameConfDir, f))
+// Access a singleton table
+console.log(tables.TbGlobal.name)
+// Access ordinary key-value table
+console.log(tables.TbItem.get(12).x1)
+```
+
+- golang usage example
+```go
+// One line of code can load all configurations. cfg.Tables contains an instance field for all tables.
+if tables, err := cfg.NewTables(loader); err != nil {
+   println(err.Error())
+   return
+}
+// Access a singleton table
+println(tables.TbGlobal.Name)
+// Access the ordinary key-value table
+println(tables.TbItem.Get(12).X1)
+
+```
+
+- Lua usage example
+
+```Lua
+  -- Access a singleton table
+  print(require("TbGlobal").name)
+  -- Access ordinary key-value table
+  print(require("TbItem")[12].x1)
+```
+
+- [Examples in more languages](docs/samples.md)
+
+------
 
 ## Quick preview
 **luban is compatible with commonplace excel table generation tools, and a complete data table can be defined in excel**. Unlike common table guide tools that focus on excel, because luban supports a powerful type system and supports json, xml, lua and other file types, luban’s native usage is to separate definition and data, and use separate xml to define tables and structures* *, the data file only contains data.
@@ -740,60 +824,6 @@ return
    k15 = {{ __type__="DemoD2", x1 = 1, x2=3}},
 }
 ```
-
-------
-
-## Code usage example
-
-Here is only a brief display of the usage of lua, c#, typescript, and go languages ​​in development. For more languages ​​and more detailed usage examples and codes, please see [Sample Project](https://github.com/focus-creative-games/luban_examples ).
-
-- Lua usage example
-
-  ```Lua
-  -- Access a singleton table
-  print(require("TbGlobal").name)
-  -- Access ordinary key-value table
-  print(require("TbItem")[12].x1)
-  ```
-
-- C# usage example
-
-  ```C#
-  // One line of code can load all configurations. cfg.Tables contains an instance field for all tables.
-  var tables = new cfg.Tables(file => return new ByteBuf(File.ReadAllBytes("<data path>/" + file)));
-  // Access a singleton table
-  Console.WriteLine(tables.TbGlobal.Name);
-  // Access the ordinary key-value table
-  Console.WriteLine(tables.TbItem.Get(12).X1);
-  // Support operator [] usage
-  Console.WriteLine(tables.TbMail[1001].X2);
-  ```
-
-- Typescript usage example
-
-```typescript
-// One line of code can load all configurations. cfg.Tables contains an instance field for all tables.
-let tables = new cfg.Tables(f => JsHelpers.LoadFromFile(gameConfDir, f))
-// Access a singleton table
-console.log(tables.TbGlobal.name)
-// Access ordinary key-value table
-console.log(tables.TbItem.get(12).x1)
-```
-
-- golang usage example
-```go
-// One line of code can load all configurations. cfg.Tables contains an instance field for all tables.
-if tables, err := cfg.NewTables(loader); err != nil {
-   println(err.Error())
-   return
-}
-// Access a singleton table
-println(tables.TbGlobal.Name)
-// Access the ordinary key-value table
-println(tables.TbItem.Get(12).X1)
-
-```
-- [Examples in more languages](docs/samples.md)
 
 ------
 ## route map

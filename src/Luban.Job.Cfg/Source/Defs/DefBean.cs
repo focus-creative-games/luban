@@ -20,7 +20,7 @@ namespace Luban.Job.Cfg.Defs
 
         public bool IsMultiRow { get; set; }
 
-        public String Sep { get; }
+        public string Sep { get; }
 
         public List<DefField> HierarchyExportFields { get; private set; }
 
