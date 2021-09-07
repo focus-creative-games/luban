@@ -26,7 +26,7 @@ namespace Luban.Job.Cfg.Defs
         private readonly List<string> _importExcelBeanFiles = new();
 
 
-        private readonly List<Branch> _branches = new();
+        private readonly List<Patch> _patches = new();
 
         private readonly List<Table> _cfgTables = new List<Table>();
 
@@ -39,7 +39,7 @@ namespace Luban.Job.Cfg.Defs
         public CfgDefLoader(RemoteAgent agent) : base(agent)
         {
             RegisterRootDefineHandler("importexcel", AddImportExcel);
-            RegisterRootDefineHandler("branch", AddBranch);
+            RegisterRootDefineHandler("patch", AddPatch);
             RegisterRootDefineHandler("service", AddService);
             RegisterRootDefineHandler("group", AddGroup);
 
@@ -54,7 +54,7 @@ namespace Luban.Job.Cfg.Defs
             return new Defines()
             {
                 TopModule = TopModule,
-                Branches = _branches,
+                Patches = _patches,
                 Consts = this._consts,
                 Enums = _enums,
                 Beans = _beans,
@@ -87,20 +87,20 @@ namespace Luban.Job.Cfg.Defs
             }
         }
 
-        private static readonly List<string> _branchRequireAttrs = new List<string> { "name" };
-        private void AddBranch(XElement e)
+        private static readonly List<string> _patchRequireAttrs = new List<string> { "name" };
+        private void AddPatch(XElement e)
         {
-            ValidAttrKeys(RootXml, e, null, _branchRequireAttrs);
-            var branchName = e.Attribute("name").Value;
-            if (string.IsNullOrWhiteSpace(branchName))
+            ValidAttrKeys(RootXml, e, null, _patchRequireAttrs);
+            var patchName = e.Attribute("name").Value;
+            if (string.IsNullOrWhiteSpace(patchName))
             {
-                throw new Exception("branch 属性name不能为空");
+                throw new Exception("patch 属性name不能为空");
             }
-            if (this._branches.Any(b => b.Name == branchName))
+            if (this._patches.Any(b => b.Name == patchName))
             {
-                throw new Exception($"branch '{branchName}' 重复");
+                throw new Exception($"patch '{patchName}' 重复");
             }
-            _branches.Add(new Branch(branchName));
+            _patches.Add(new Patch(patchName));
         }
 
         private static readonly List<string> _groupOptionalAttrs = new List<string> { "default" };
@@ -245,7 +245,7 @@ namespace Luban.Job.Cfg.Defs
             return mode;
         }
 
-        private readonly List<string> _tableOptionalAttrs = new List<string> { "index", "mode", "group", "branch_input", "comment", "define_from_file" };
+        private readonly List<string> _tableOptionalAttrs = new List<string> { "index", "mode", "group", "patch_input", "comment", "define_from_file" };
         private readonly List<string> _tableRequireAttrs = new List<string> { "name", "value", "input" };
 
         private void AddTable(string defineFile, XElement e)
@@ -259,14 +259,14 @@ namespace Luban.Job.Cfg.Defs
             string group = XmlUtil.GetOptionalAttribute(e, "group");
             string comment = XmlUtil.GetOptionalAttribute(e, "comment");
             string input = XmlUtil.GetRequiredAttribute(e, "input");
-            string branchInput = XmlUtil.GetOptionalAttribute(e, "branch_input");
+            string patchInput = XmlUtil.GetOptionalAttribute(e, "patch_input");
             string mode = XmlUtil.GetOptionalAttribute(e, "mode");
             string tags = XmlUtil.GetOptionalAttribute(e, "tags");
-            AddTable(defineFile, name, module, valueType, index, mode, group, comment, defineFromFile, input, branchInput, tags);
+            AddTable(defineFile, name, module, valueType, index, mode, group, comment, defineFromFile, input, patchInput, tags);
         }
 
         private void AddTable(string defineFile, string name, string module, string valueType, string index, string mode, string group,
-            string comment, bool defineFromExcel, string input, string branchInput, string tags)
+            string comment, bool defineFromExcel, string input, string patchInput, string tags)
         {
             var p = new Table()
             {
@@ -291,19 +291,19 @@ namespace Luban.Job.Cfg.Defs
             }
             p.InputFiles.AddRange(input.Split(',').Select(s => s.Trim()).Where(s => !string.IsNullOrWhiteSpace(s)));
 
-            if (!string.IsNullOrWhiteSpace(branchInput))
+            if (!string.IsNullOrWhiteSpace(patchInput))
             {
-                foreach (var subBranchStr in branchInput.Split('|').Select(s => s.Trim()).Where(s => !string.IsNullOrWhiteSpace(s)))
+                foreach (var subPatchStr in patchInput.Split('|').Select(s => s.Trim()).Where(s => !string.IsNullOrWhiteSpace(s)))
                 {
-                    var nameAndDirs = subBranchStr.Split(':');
+                    var nameAndDirs = subPatchStr.Split(':');
                     if (nameAndDirs.Length != 2)
                     {
-                        throw new Exception($"定义文件:{defineFile} table:'{p.Name}' branch_input:'{subBranchStr}' 定义不合法");
+                        throw new Exception($"定义文件:{defineFile} table:'{p.Name}' patch_input:'{subPatchStr}' 定义不合法");
                     }
-                    var branchDirs = nameAndDirs[1].Split(',', ';').ToList();
-                    if (!p.BranchInputFiles.TryAdd(nameAndDirs[0], branchDirs))
+                    var patchDirs = nameAndDirs[1].Split(',', ';').ToList();
+                    if (!p.PatchInputFiles.TryAdd(nameAndDirs[0], patchDirs))
                     {
-                        throw new Exception($"定义文件:{defineFile} table:'{p.Name}' branch_input:'{subBranchStr}' 子branch:'{nameAndDirs[0]}' 重复");
+                        throw new Exception($"定义文件:{defineFile} table:'{p.Name}' patch_input:'{subPatchStr}' 子patch:'{nameAndDirs[0]}' 重复");
                     }
                 }
             }
@@ -470,7 +470,7 @@ namespace Luban.Job.Cfg.Defs
                     new CfgField() { Name = "comment", Type = "string" },
                     new CfgField() { Name = "define_from_excel", Type = "bool" },
                     new CfgField() { Name = "input", Type = "string" },
-                    new CfgField() { Name = "branch_input", Type = "string" },
+                    new CfgField() { Name = "patch_input", Type = "string" },
                     new CfgField() { Name = "tags", Type = "string" },
                 }
             })
@@ -505,9 +505,9 @@ namespace Luban.Job.Cfg.Defs
                     string comment = (data.GetField("comment") as DString).Value.Trim();
                     bool isDefineFromExcel = (data.GetField("define_from_excel") as DBool).Value;
                     string inputFile = (data.GetField("input") as DString).Value.Trim();
-                    string branchInput = (data.GetField("branch_input") as DString).Value.Trim();
+                    string patchInput = (data.GetField("patch_input") as DString).Value.Trim();
                     string tags = (data.GetField("tags") as DString).Value.Trim();
-                    AddTable(file.OriginFile, name, module, valueType, index, mode, group, comment, isDefineFromExcel, inputFile, branchInput, tags);
+                    AddTable(file.OriginFile, name, module, valueType, index, mode, group, comment, isDefineFromExcel, inputFile, patchInput, tags);
                 };
             }
         }

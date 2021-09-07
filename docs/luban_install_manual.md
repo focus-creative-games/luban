@@ -74,17 +74,19 @@ Luban工具有两种部属方式。
     --input_data_dir  <input data dir>      必选参数。 配置数据文件根目录。
     -c,--output_code_dir <output code dir>  可选参数。 生成代码文件的目录。
     -s,--service                            必选参数。生成分组目标。一般来说，会定义client,server,editor等好几个目标，不同目标的生成内容不同。
-    --gen_types <type1,type2,,,>            必选参数。生成任务类型。既可以是生成代码也可以是生成数据或者其他。目前支持的有 code_cs_bin,code_cs_json,code_cs_unity_json,code_lua_bin,code_java_bin,code_go_bin,code_go_json,code_cpp_bin,code_python27_json,code_python3_json，code_typescript_bin,code_typescript_json,data_bin,data_lua,data_json,data_json_monolithic
+    --gen_types <type1,type2,,,>            必选参数。生成任务类型。既可以是生成代码也可以是生成数据或者其他。目前支持的有 code_cs_bin,code_cs_json,code_cs_unity_json,code_lua_bin,code_java_bin,code_go_bin,code_go_json,code_cpp_bin,code_python27_json,code_python3_json，code_typescript_bin,code_typescript_json,data_bin,data_lua,data_json,data_json_monolithic,data_template
     --output_data_dir <output data dir>     可选参数。 导出的数据文件的目录。
     --validate_root_dir <path validate root dir>. 可选参数。 配置path检查的根目录。
     --export_test_data                      可选参数。 是否导出测试数据。默认为false
+    --template_name  <template name>        可选参数。数据模板的名称（不包含后缀），当gen_types包含 data_template时必须指定。
+    --data_file_extension  <output data file extension>     可选参数。 导出数据文件的后缀。默认按照生成类型自动选择。
 
     -t,--l10n_timezone <timezone>           可选参数。 指定所在时区。影响datetime类型转换为utc时间。 默认为中国北京时间。
     --input_l10n_text_files <file1,file2..> 可选参数。 本地化的文本映射表。可以有多个。
     --l10n_text_field_name <field name>     可选参数。 文本映射表中，目标映射列的列名，默认为text
-    --output_l10n_not_converted_text_file <file> 可选参数。 未被本地化映射的text key和value的输出文件。不提供该参数则不生成
-    --branch <branch name>                  可选参数。当前需要生成的分支名称。
-    --branch_input_data_dir <branch data root dir> 可选参数。分支数据的根目录。
+    --output_l10n_not_translated_text_file <file> 可选参数。 未被本地化映射的text key和value的输出文件。不提供该参数则不生成
+    --patch <patch name>                  可选参数。当前需要生成的分支名称。
+    --patch_input_data_dir <patch data root dir> 可选参数。分支数据的根目录。
 
 
 ## 示例

@@ -15,7 +15,7 @@ namespace Luban.Job.Cfg.Defs
     {
         public List<Record> MainRecords { get; }
 
-        public List<Record> BranchRecords { get; }
+        public List<Record> PatchRecords { get; }
 
         public List<Record> FinalRecords { get; set; }
 
@@ -34,10 +34,10 @@ namespace Luban.Job.Cfg.Defs
 
         public Dictionary<DType, Record> FinalRecordMap { get; set; }
 
-        public TableDataInfo(List<Record> mainRecords, List<Record> branchRecords)
+        public TableDataInfo(List<Record> mainRecords, List<Record> patchRecords)
         {
             MainRecords = mainRecords;
-            BranchRecords = branchRecords;
+            PatchRecords = patchRecords;
         }
     }
 
@@ -49,16 +49,16 @@ namespace Luban.Job.Cfg.Defs
 
         public Service CfgTargetService { get; private set; }
 
-        private readonly string _branchName;
+        private readonly string _patchName;
         private readonly bool _exportTestData;
 
-        public Branch TargetBranch { get; private set; }
+        public Patch TargetPatch { get; private set; }
 
         public TimeZoneInfo TimeZone { get; }
 
-        public DefAssembly(string branchName, TimeZoneInfo timezone, bool exportTestData, RemoteAgent agent)
+        public DefAssembly(string patchName, TimeZoneInfo timezone, bool exportTestData, RemoteAgent agent)
         {
-            this._branchName = branchName;
+            this._patchName = patchName;
             this.TimeZone = timezone;
             this._exportTestData = exportTestData;
             this.Agent = agent;
@@ -73,7 +73,7 @@ namespace Luban.Job.Cfg.Defs
             return groups.Any(g => CfgTargetService.Groups.Contains(g));
         }
 
-        private readonly List<Branch> _branches = new List<Branch>();
+        private readonly List<Patch> _patches = new List<Patch>();
 
         private readonly List<Service> _cfgServices = new List<Service>();
 
@@ -95,9 +95,9 @@ namespace Luban.Job.Cfg.Defs
             NotConvertTextSet = new NotConvertTextSet();
         }
 
-        public Branch GetBranch(string name)
+        public Patch GetPatch(string name)
         {
-            return _branches.Find(b => b.Name == name);
+            return _patches.Find(b => b.Name == name);
         }
 
         public void AddCfgTable(DefTable table)
@@ -113,9 +113,9 @@ namespace Luban.Job.Cfg.Defs
             return CfgTables.TryGetValue(name, out var t) ? t : null;
         }
 
-        public void AddDataTable(DefTable table, List<Record> mainRecords, List<Record> branchRecords)
+        public void AddDataTable(DefTable table, List<Record> mainRecords, List<Record> patchRecords)
         {
-            _recordsByTables[table.FullName] = new TableDataInfo(mainRecords, branchRecords);
+            _recordsByTables[table.FullName] = new TableDataInfo(mainRecords, patchRecords);
         }
 
         public List<Record> GetTableAllDataList(DefTable table)
@@ -184,16 +184,16 @@ namespace Luban.Job.Cfg.Defs
                 throw new ArgumentException($"service:{outputService} not exists");
             }
 
-            if (!string.IsNullOrWhiteSpace(_branchName))
+            if (!string.IsNullOrWhiteSpace(_patchName))
             {
-                TargetBranch = defines.Branches.Find(b => b.Name == _branchName);
-                if (TargetBranch == null)
+                TargetPatch = defines.Patches.Find(b => b.Name == _patchName);
+                if (TargetPatch == null)
                 {
-                    throw new Exception($"branch '{_branchName}' not in valid branch set");
+                    throw new Exception($"patch '{_patchName}' not in valid patch set");
                 }
             }
 
-            this._branches.AddRange(defines.Branches);
+            this._patches.AddRange(defines.Patches);
 
             foreach (var c in defines.Consts)
             {

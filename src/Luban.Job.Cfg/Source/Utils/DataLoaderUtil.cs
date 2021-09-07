@@ -103,20 +103,20 @@ namespace Luban.Job.Cfg.Utils
             }
         }
 
-        public static async Task LoadTableAsync(RemoteAgent agent, DefTable table, string dataDir, string branchName, string branchDataDir, bool exportTestData)
+        public static async Task LoadTableAsync(RemoteAgent agent, DefTable table, string dataDir, string patchName, string patchDataDir, bool exportTestData)
         {
             var mainLoadTasks = new List<Task<List<Record>>>();
             var mainGenerateTask = GenerateLoadRecordFromFileTasksAsync(agent, table, dataDir, table.InputFiles, exportTestData, mainLoadTasks);
 
-            var branchLoadTasks = new List<Task<List<Record>>>();
+            var patchLoadTasks = new List<Task<List<Record>>>();
 
-            Task branchGenerateTask = null;
-            if (!string.IsNullOrWhiteSpace(branchName))
+            Task patchGenerateTask = null;
+            if (!string.IsNullOrWhiteSpace(patchName))
             {
-                var branchInputFiles = table.GetBranchInputFiles(branchName);
-                if (branchInputFiles != null)
+                var patchInputFiles = table.GetPatchInputFiles(patchName);
+                if (patchInputFiles != null)
                 {
-                    branchGenerateTask = GenerateLoadRecordFromFileTasksAsync(agent, table, branchDataDir, branchInputFiles, exportTestData, branchLoadTasks);
+                    patchGenerateTask = GenerateLoadRecordFromFileTasksAsync(agent, table, patchDataDir, patchInputFiles, exportTestData, patchLoadTasks);
                 }
             }
 
@@ -129,24 +129,24 @@ namespace Luban.Job.Cfg.Utils
             }
             s_logger.Trace("== load main records. count:{count}", mainRecords.Count);
 
-            List<Record> branchRecords = null;
-            if (branchGenerateTask != null)
+            List<Record> patchRecords = null;
+            if (patchGenerateTask != null)
             {
-                branchRecords = new List<Record>(64);
-                await branchGenerateTask;
-                foreach (var task in branchLoadTasks)
+                patchRecords = new List<Record>(64);
+                await patchGenerateTask;
+                foreach (var task in patchLoadTasks)
                 {
-                    branchRecords.AddRange(await task);
+                    patchRecords.AddRange(await task);
                 }
-                s_logger.Trace("== load branch records. count:{count}", branchRecords.Count);
+                s_logger.Trace("== load patch records. count:{count}", patchRecords.Count);
             }
 
-            table.Assembly.AddDataTable(table, mainRecords, branchRecords);
+            table.Assembly.AddDataTable(table, mainRecords, patchRecords);
 
             s_logger.Trace("table:{name} record num:{num}", table.FullName, mainRecords.Count);
         }
 
-        public static async Task LoadCfgDataAsync(RemoteAgent agent, DefAssembly ass, string dataDir, string branchName, string branchDataDir, bool exportTestData)
+        public static async Task LoadCfgDataAsync(RemoteAgent agent, DefAssembly ass, string dataDir, string patchName, string patchDataDir, bool exportTestData)
         {
             var ctx = agent;
             List<DefTable> exportTables = ass.Types.Values.Where(t => t is DefTable ct && ct.NeedExport).Select(t => (DefTable)t).ToList();
@@ -160,7 +160,7 @@ namespace Luban.Job.Cfg.Utils
                 genDataTasks.Add(Task.Run(async () =>
                 {
                     long beginTime = TimeUtil.NowMillis;
-                    await LoadTableAsync(agent, table, dataDir, branchName, branchDataDir, exportTestData);
+                    await LoadTableAsync(agent, table, dataDir, patchName, patchDataDir, exportTestData);
                     long endTime = TimeUtil.NowMillis;
                     if (endTime - beginTime > 100)
                     {

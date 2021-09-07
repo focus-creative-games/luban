@@ -1,10 +1,10 @@
 ﻿namespace Luban.Job.Cfg.RawDefs
 {
-    public class Branch
+    public class Patch
     {
         public string Name { get; }
 
-        public Branch(string name)
+        public Patch(string name)
         {
             Name = name;
         }

@@ -81,7 +81,7 @@ namespace Luban.Job.Cfg.Cache
                 var cacheAss = cacheInfo.Table.Assembly;
                 var curAss = table.Assembly;
                 if (cacheAss.TimeZone == curAss.TimeZone
-                    && cacheAss.TargetBranch == null && curAss.TargetBranch == null
+                    && cacheAss.TargetPatch == null && curAss.TargetPatch == null
                     && !cacheAss.NeedL10nTextTranslate && !curAss.NeedL10nTextTranslate
                     && records.Count == cacheInfo.Records.Count && records.SequenceEqual(cacheInfo.Records))
                 {
@@ -97,7 +97,7 @@ namespace Luban.Job.Cfg.Cache
         public void AddCachedRecordOutputData(DefTable table, List<Record> records, string dataType, string md5)
         {
             var curAss = table.Assembly;
-            if (curAss.TargetBranch == null && !curAss.NeedL10nTextTranslate)
+            if (curAss.TargetPatch == null && !curAss.NeedL10nTextTranslate)
             {
                 _tableCaches[(table.FullName, dataType)] = (table, records, md5);
                 s_logger.Debug("add output data cache. table:{} dataType:{} md5:{}", table.FullName, dataType, md5);

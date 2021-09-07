@@ -41,6 +41,6 @@ namespace Luban.Job.Cfg.RawDefs
 
         public List<string> InputFiles { get; set; } = new List<string>();
 
-        public Dictionary<string, List<string>> BranchInputFiles { get; set; } = new Dictionary<string, List<string>>();
+        public Dictionary<string, List<string>> PatchInputFiles { get; set; } = new Dictionary<string, List<string>>();
     }
 }

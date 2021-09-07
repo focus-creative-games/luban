@@ -46,12 +46,12 @@ namespace Luban.Job.Cfg
         public string TextValueFieldName { get; set; }
 
         [Option("output_l10n_not_translated_text_file", Required = false, HelpText = "the file save not translated l10n texts.")]
-        public string OutputNotConvertTextFile { get; set; }
+        public string OutputNotTranslatedTextFile { get; set; }
 
-        [Option("branch", Required = false, HelpText = "branch name")]
-        public string BranchName { get; set; }
+        [Option("patch", Required = false, HelpText = "patch name")]
+        public string PatchName { get; set; }
 
-        [Option("branch_input_data_dir", Required = false, HelpText = "branch input data root dir")]
-        public string BranchInputDataDir { get; set; }
+        [Option("patch_input_data_dir", Required = false, HelpText = "patch input data root dir")]
+        public string PatchInputDataDir { get; set; }
     }
 }

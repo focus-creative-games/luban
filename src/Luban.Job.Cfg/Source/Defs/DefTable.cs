@@ -19,7 +19,7 @@ namespace Luban.Job.Cfg.Defs
             Mode = b.Mode;
             InputFiles = b.InputFiles;
             Groups = b.Groups;
-            _branchInputFiles = b.BranchInputFiles;
+            _patchInputFiles = b.PatchInputFiles;
             Comment = b.Comment;
             Tags = DefUtil.ParseAttrs(b.Tags);
         }
@@ -37,7 +37,7 @@ namespace Luban.Job.Cfg.Defs
 
         public List<string> InputFiles { get; }
 
-        private readonly Dictionary<string, List<string>> _branchInputFiles;
+        private readonly Dictionary<string, List<string>> _patchInputFiles;
 
         public List<string> Groups { get; }
 
@@ -55,20 +55,20 @@ namespace Luban.Job.Cfg.Defs
 
         public string InnerName => "_" + this.Name;
 
-        public List<string> GetBranchInputFiles(string branchName)
+        public List<string> GetPatchInputFiles(string patchName)
         {
-            return _branchInputFiles.GetValueOrDefault(branchName);
+            return _patchInputFiles.GetValueOrDefault(patchName);
         }
 
         public override void Compile()
         {
             var ass = Assembly;
 
-            foreach (var branchName in _branchInputFiles.Keys)
+            foreach (var patchName in _patchInputFiles.Keys)
             {
-                if (ass.GetBranch(branchName) == null)
+                if (ass.GetPatch(patchName) == null)
                 {
-                    throw new Exception($"table:'{FullName}' branch_input branch:'{branchName}' 不存在");
+                    throw new Exception($"table:'{FullName}' patch_input patch:'{patchName}' 不存在");
                 }
             }
 

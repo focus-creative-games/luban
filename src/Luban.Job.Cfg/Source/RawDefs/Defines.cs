@@ -7,7 +7,7 @@ namespace Luban.Job.Cfg.RawDefs
     {
         public string TopModule { get; set; } = "";
 
-        public List<Branch> Branches { get; set; } = new List<Branch>();
+        public List<Patch> Patches { get; set; } = new List<Patch>();
 
         public List<Bean> Beans { get; set; } = new List<Bean>();
 
