@@ -21,7 +21,9 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         private bool IsOrientRow { get; set; } = true; //  以行为数据读取方向
 
-        public int TitleRows { get; private set; } = TITLE_DEFAULT_ROW_NUM; // 默认有三行是标题行. 第一行是字段名，第二行是中文描述，第三行是注释
+        public int HeaderRowCount { get; private set; } = TITLE_DEFAULT_ROW_NUM; // 默认有三行是标题行. 第一行是字段名，第二行是中文描述，第三行是注释
+
+        public int AttrRowCount { get; private set; }
 
         public string RawUrl { get; }
 
@@ -358,7 +360,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                         {
                             throw new Exception($"单元薄 title_rows 应该在 [{TITLE_MIN_ROW_NUM},{TITLE_MAX_ROW_NUM}] 范围内,默认是{TITLE_DEFAULT_ROW_NUM}");
                         }
-                        TitleRows = v;
+                        HeaderRowCount = v;
                         break;
                     }
                     default:
@@ -397,7 +399,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
             {
                 if (mergeCell.FromRow == depth + 1 && mergeCell.FromColumn >= fromColumn && mergeCell.ToColumn <= toColumn)
                 {
-                    string subTitleName = row[mergeCell.FromColumn].Value?.ToString().Trim();
+                    string subTitleName = row[mergeCell.FromColumn].Value?.ToString()?.Trim();
                     if (!string.IsNullOrWhiteSpace(subTitleName))
                     {
                         var newTitle = new Title() { Name = subTitleName, FromIndex = mergeCell.FromColumn, ToIndex = mergeCell.ToColumn };
@@ -459,7 +461,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
             {
                 ++rowIndex; // 第1行是 meta ，标题及数据行从第2行开始
                 // 重点优化横表的headerOnly模式， 此模式下只读前几行标题行，不读数据行
-                if (headerOnly && this.IsOrientRow && rowIndex >= 10)
+                if (headerOnly && this.IsOrientRow && rowIndex > this.HeaderRowCount)
                 {
                     break;
                 }
@@ -498,7 +500,8 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
             _rootTitle = new Title() { Root = true, Name = ROOT_TITLE_NAME, FromIndex = 1, ToIndex = rows.Select(r => r.Count).Max() - 1 };
 
-            int titleRowNum = 1;
+            int fieldRowCount = 1;
+            int attrRowCount = 1;
             if (reader.MergeCells != null)
             {
                 if (IsOrientRow)
@@ -507,7 +510,16 @@ namespace Luban.Job.Cfg.DataSources.Excel
                     {
                         if (mergeCell.FromRow == 1 && mergeCell.FromColumn == 0 && mergeCell.ToColumn == 0)
                         {
-                            titleRowNum = mergeCell.ToRow - mergeCell.FromRow + 1;
+                            fieldRowCount = mergeCell.ToRow - mergeCell.FromRow + 1;
+                            break;
+                        }
+                    }
+                    foreach (var mergeCell in reader.MergeCells)
+                    {
+                        if (mergeCell.FromRow == 1 + fieldRowCount && mergeCell.FromColumn == 0 && mergeCell.ToColumn == 0)
+                        {
+                            attrRowCount = mergeCell.ToRow - mergeCell.FromRow + 1;
+                            break;
                         }
                     }
                 }
@@ -521,7 +533,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                         if (mergeCell.FromRow == 1)
                         {
                             // 标题 行
-                            titleRowNum = Math.Max(titleRowNum, mergeCell.ToRow - mergeCell.FromRow + 1);
+                            fieldRowCount = Math.Max(fieldRowCount, mergeCell.ToRow - mergeCell.FromRow + 1);
                             var titleName = _rowColumns[0][mergeCell.FromColumn].Value?.ToString()?.Trim();
                             if (string.IsNullOrWhiteSpace(titleName))
                             {
@@ -529,9 +541,9 @@ namespace Luban.Job.Cfg.DataSources.Excel
                             }
 
                             var newTitle = new Title() { Name = titleName, FromIndex = mergeCell.FromColumn, ToIndex = mergeCell.ToColumn };
-                            if (titleRowNum > 1)
+                            if (fieldRowCount > 1)
                             {
-                                InitSubTitles(newTitle, rows, reader.MergeCells, titleRowNum, 1, mergeCell.FromColumn, mergeCell.ToColumn);
+                                InitSubTitles(newTitle, rows, reader.MergeCells, fieldRowCount, 1, mergeCell.FromColumn, mergeCell.ToColumn);
                             }
                             _rootTitle.AddSubTitle(newTitle);
                             //s_logger.Info("=== sheet:{sheet} title:{title}", Name, newTitle);
@@ -554,6 +566,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
                 }
             }
+            this.AttrRowCount = attrRowCount;
 
             //TODO 其实有bug. 未处理只占一列的 多级标题头
 
@@ -589,12 +602,12 @@ namespace Luban.Job.Cfg.DataSources.Excel
             if (headerOnly)
             {
                 // 删除字段名行，保留属性行开始的行
-                this._rowColumns.RemoveRange(0, Math.Min(titleRowNum, this._rowColumns.Count));
+                this._rowColumns.RemoveRange(0, Math.Min(fieldRowCount, this._rowColumns.Count));
             }
             else
             {
                 // 删除所有标题行，包含字段名行、属性行、标题、描述等等非有效数据行
-                this._rowColumns.RemoveRange(0, Math.Min(TitleRows, this._rowColumns.Count));
+                this._rowColumns.RemoveRange(0, Math.Min(HeaderRowCount, this._rowColumns.Count));
                 // 删除忽略的记录行
                 this._rowColumns.RemoveAll(row => DataUtil.IsIgnoreTag(GetRowTag(row)));
             }

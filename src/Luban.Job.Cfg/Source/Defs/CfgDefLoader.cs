@@ -311,7 +311,7 @@ namespace Luban.Job.Cfg.Defs
             _cfgTables.Add(p);
         }
 
-        private async Task<CfgBean> LoadTableRecordDefineFromFileAsync(Table table, string dataDir)
+        private async Task<CfgBean> LoadTableValueTypeDefineFromFileAsync(Table table, string dataDir)
         {
             var inputFileInfos = await DataLoaderUtil.CollectInputFilesAsync(this.Agent, table.InputFiles, dataDir);
             var file = inputFileInfos[0];
@@ -323,9 +323,13 @@ namespace Luban.Job.Cfg.Defs
 
             var rc = sheet.RowColumns;
             var attrRow = sheet.RowColumns[0];
-            var titleRow = sheet.RowColumns[1];
+            if (rc.Count < sheet.AttrRowCount + 1)
+            {
+                throw new Exception($"table:'{table.Name}' file:{file.OriginFile} 至少包含 属性行和标题行");
+            }
+            var titleRow = sheet.RowColumns[sheet.AttrRowCount];
             // 有可能没有注释行，此时使用标题行，这个是必须有的
-            var descRow = sheet.TitleRows >= 3 ? sheet.RowColumns[2] : titleRow;
+            var descRow = sheet.HeaderRowCount >= sheet.AttrRowCount + 2 ? sheet.RowColumns[sheet.AttrRowCount + 1] : titleRow;
             foreach (var f in sheet.RootFields)
             {
                 var cf = new CfgField() { Name = f.Name, Id = 0 };
@@ -428,12 +432,12 @@ namespace Luban.Job.Cfg.Defs
             return cb;
         }
 
-        private async Task LoadTableRecordDefinesFromFileAsync(string dataDir)
+        private async Task LoadTableValueTypeDefinesFromFileAsync(string dataDir)
         {
             var loadTasks = new List<Task<CfgBean>>();
             foreach (var table in this._cfgTables.Where(t => t.LoadDefineFromFile))
             {
-                loadTasks.Add(Task.Run(async () => await this.LoadTableRecordDefineFromFileAsync(table, dataDir)));
+                loadTasks.Add(Task.Run(async () => await this.LoadTableValueTypeDefineFromFileAsync(table, dataDir)));
             }
 
             foreach (var task in loadTasks)
@@ -723,7 +727,7 @@ namespace Luban.Job.Cfg.Defs
         public async Task LoadDefinesFromFileAsync(string dataDir)
         {
             await Task.WhenAll(LoadTableListFromFileAsync(dataDir), LoadEnumListFromFileAsync(dataDir), LoadBeanListFromFileAsync(dataDir));
-            await LoadTableRecordDefinesFromFileAsync(dataDir);
+            await LoadTableValueTypeDefinesFromFileAsync(dataDir);
         }
 
         private static readonly List<string> _fieldOptionalAttrs = new()
