@@ -5,7 +5,6 @@ namespace Luban.Job.Cfg
 {
     public class GenArgs : GenArgsBase
     {
-
         [Option("input_data_dir", Required = true, HelpText = "input data dir")]
         public string InputDataDir { get; set; }
 

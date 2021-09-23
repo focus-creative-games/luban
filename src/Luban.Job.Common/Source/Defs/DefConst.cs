@@ -36,7 +36,6 @@ namespace Luban.Job.Common.Defs
 
         public override void Compile()
         {
-            var FullName = this.FullName;
             HashSet<string> names = new HashSet<string>();
 
             foreach (var item in Items)

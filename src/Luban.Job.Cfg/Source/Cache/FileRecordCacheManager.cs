@@ -41,7 +41,6 @@ namespace Luban.Job.Cfg.Cache
 
         public bool TryGetCacheLoadedRecords(DefTable table, string md5, string originFile, string sheetName, out List<Record> cacheRecords)
         {
-            // TODO text localization check
             cacheRecords = null;
             if (!_caches.TryGetValue((table.FullName, md5, sheetName), out var r))
             {

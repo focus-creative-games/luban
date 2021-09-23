@@ -84,28 +84,28 @@ namespace Luban.Job.Cfg.Utils
                     }
                     return string.Join('\n', content);
                 }
-                case "data_erlang":
-                {
-                    var content = new StringBuilder();
-                    switch (table.Mode)
-                    {
-                        case ETableMode.ONE:
-                        {
-                            ErlangExport.Ins.ExportTableSingleton(table, records[0], content);
-                            break;
-                        }
-                        case ETableMode.MAP:
-                        {
-                            ErlangExport.Ins.ExportTableMap(table, records, content);
-                            break;
-                        }
-                        default:
-                        {
-                            throw new NotSupportedException();
-                        }
-                    }
-                    return content.ToString();
-                }
+                //case "data_erlang":
+                //{
+                //    var content = new StringBuilder();
+                //    switch (table.Mode)
+                //    {
+                //        case ETableMode.ONE:
+                //        {
+                //            ErlangExport.Ins.ExportTableSingleton(table, records[0], content);
+                //            break;
+                //        }
+                //        case ETableMode.MAP:
+                //        {
+                //            ErlangExport.Ins.ExportTableMap(table, records, content);
+                //            break;
+                //        }
+                //        default:
+                //        {
+                //            throw new NotSupportedException();
+                //        }
+                //    }
+                //    return content.ToString();
+                //}
                 default:
                 {
                     throw new ArgumentException($"not support datatype:{dataType}");

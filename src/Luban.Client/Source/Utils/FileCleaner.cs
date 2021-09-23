@@ -78,7 +78,7 @@ namespace Luban.Client.Common.Utils
 
             // 清除空目录
             var subDirs = new List<string>(Directory.GetDirectories(dir, "*", SearchOption.AllDirectories));
-            subDirs.Sort((a, b) => -String.Compare(a, b, StringComparison.Ordinal));
+            subDirs.Sort((a, b) => -string.Compare(a, b, StringComparison.Ordinal));
             foreach (var subDir in subDirs)
             {
                 string fullSubDirPath = Path.GetFullPath(subDir);

@@ -24,7 +24,7 @@ namespace Luban.Job.Proto
 
         class GenArgs : GenArgsBase
         {
-            [Option('g', "gen_type", Required = true, HelpText = "cs,lua,java,cpp,ts")]
+            [Option('g', "gen_type", Required = true, HelpText = "cs,lua,java,cpp,typescript")]
             public string GenType { get; set; }
 
             [Option('s', "service", Required = true, HelpText = "service")]
@@ -150,7 +150,7 @@ namespace Luban.Job.Proto
                         }));
                         break;
                     }
-                    case "ts":
+                    case "typescript":
                     {
                         var render = new TypescriptRender();
                         var brightRequirePath = args.TypescriptBrightRequirePath;
