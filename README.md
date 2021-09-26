@@ -17,17 +17,11 @@
 
 ## 介绍
 
-luban是[BrightDB](https://github.com/focus-creative-games/BrightDB)的附属项目，一个通用型对象生成与缓存工具, 在此基础上实现了一个功能**完备强大灵活易用**的**游戏配置解决方案**。
-
-luban基于 **meta定义 + 数据源** 的设计，实现了**完备的类型系统**，增强了excel格式，同时提供json、xml、lua、yaml等丰富的数据源支持。既可以处理常规的简单配置，也能完美处理**AI、技能、副本**等复杂配置，真正实现了统一数据定义、加载、检验、数据导出及代码生成的游戏配置工作流。比较好解决了中大型项目中策划难以实时检查复杂配置错误而与程序反复迭代编辑的问题，以及复杂的AI、技能等配置数据无法与excel配置统一，需要程序员单独处理的问题。
-
-**luban功能较为完善，支持游戏行业几乎所有主流的前后端语言和客户端引擎**。luban目前由专业团队维护，保持活跃的特性更新及功能优化，并有研发人员及时提供开发指导和跟进反馈。
-
-Luban适合有以下需求的开发者：
-- 希望找一个功能完备经受过上线项目检验的满足**中大型**游戏项目配置需求的游戏配置解决方案
-- 希望有较完善的工作流，有效提高策划与程序的开发效率
-- 希望针对项目需求方便地定制配置、消息等生成，满足更严苛的内存和性能的要求
-- 希望做其他自定义生成或者缓存
+luban是一个较完备成熟游戏配置数据处理的解决方案。目前已经存在很多导表工具如tabtoy、xls2json之类，它们功能简单直接，更多是作为一个excel文件转换工具存在，而不是一个完整的游戏配置工具，对于配置结构复杂的中大型游戏项目往往力不从心。相比它们，luban有以下核心优势：
+- 增强了excel格式。可以比较简洁地excel配置**任意复杂**的数据，像子结构、结构列表，以及更复杂的深层次的嵌套结构都能直接解析处理。
+- 完备的类型系统和多原始数据支持（xml、json、lua、yaml），可以轻松表达和解析**任意复杂**的数据。意味着传统excel导表工具无法处理的技能、行为树、副本等等复杂配置，luban也能够统一处理了，彻底将程序从复杂的配置解析中完全解放出来。
+- 完备的本地化支持。支持静态本地化（导出时text已经本地化）、动态本地化（运行时动态切换语言）、多地区数据（在主分支基础上，通过差分patch制作有细微区别的多地区配置）、时间本地化。
+- 强大的模板生成能力。可以通过模板自由定制生成的代码格式及导出的数据格式。
 
 ====**如果觉得不错，烦请点个star，你的支持会给予我们巨大动力 ^_^**====
 
@@ -47,7 +41,6 @@ Luban适合有以下需求的开发者：
   - 邮箱: taojingjian#gmail.com
   - Skypy群: https://join.skype.com/xr2nhdMKjac0
 
-
 -----
 
 ## 特性
@@ -57,8 +50,8 @@ Luban适合有以下需求的开发者：
 - 生成代码清晰易读、良好模块化。特地支持运行时原子性热更新配置。
 - 生成极快。支持常规的本地缓存增量生成模式，也支持云生成模式。MMORPG这样大型项目也能秒内生成。日常增量生成基本在300ms以内，项目后期极大节省了迭代时间。另外支持**watch监测模式**，数据目录变化立即重新生成。
 - 灵活的数据源定义。一个表可以来自多个文件或者一个文件内定义多个表或者一个目录下所有文件甚至来自云表格，以及以上的组合
-- 支持表与字段级别分组。可以选择性地导出客户端或者服务器所用的表及字段
-- 多种导出数据格式支持。支持binary、json、lua、xml、erlang 等导出数据格式
+- 支持表与字段级别分组。可以灵活定义分组，选择性地导出客户端或者服务器或编辑器所用的表及字段
+- 多种导出数据格式支持。支持binary、json、lua、xml 等导出数据格式
 - 强大灵活的定制能力
 	- 支持代码模板，可以用自定义模板定制生成的代码格式
 	- **支持数据模板**，可以用模板文件定制导出格式。意味着可以在不改动现有程序代码的情况下，把luban当作**配置处理前端**，生成自定义格式的数据与自己项目的配置加载代码配合工作。开发已久的项目或者已经上线的老项目，也能从luban强大的数据处理工作流中获益
@@ -105,210 +98,232 @@ Luban适合有以下需求的开发者：
 
 -----
 
-## luban工作流程Pipeline
+## 快速上手
 
-<br/>
-<br/>
+以创建一个道具表为例
 
-![pipeline](docs/images/pipeline.jpg)
+新建item.xlsx表
 
+![pipeline](docs/images/examples/a_1.jpg) 
 
-<br/>
-<br/>
+在__tables__.xlsx里添加一行
 
--------
-## benchmark 性能测试结果
+![pipeline](docs/images/examples/a_2.jpg)
 
-硬件：Intel(R) Core i7-10700 @ 2.9G 16核，32G 内存
+假设我们为unity客户端生成c#代码和json数据，命令如下:
 
-数据集：500个excel表，每个表有1000行的记录，记录较为复杂
+```bat
+; 请正确设置以下宏的值
+; set LUBAN_CLIENT= dotnet %LUBAN_CLIENTSERVER_DIR%/Luban.ClientServer.dll
+; set ROOT_DEFINE_FILE=%CONF_ROOT%/Defines/__root__.xml
+; set INPUT_DATA_DIR=%CONF_ROOT%/Datas
+; set OUTPUT_DATA_DIR=GameData
+; set OUTPUT_CODE_DIR=Assets/Gen
 
-测试结果：
+%LUBAN_CLIENT% -j cfg --^
+ -d %ROOT_DEFINE_FILE% ^
+ --input_data_dir %INPUT_DATA_DIR% ^
+ --output_code_dir %OUTPUT_CODE_DIR% ^
+ --output_data_dir %OUTPUT_DATA_DIR% ^
+ --gen_types code_cs_unity_json,data_json ^
+ -s all ^
+--export_test_data
+```
+最终在 %OUTPUT_CODE_DIR%目录下生成代码，在%OUTPUT_DATA_DIR%目录下生成数据。生成的数据文件中 item_tbitem.json文件内容如下 (只截取部分)
+```json
+[
+  {
+    "id": 10000,
+    "name": "发型",
+    "desc": "初始发型",
+    "price": 100,
+    "batch_useable": false
+  },
+  {
+    "id": 10001,
+    "name": "外套",
+    "desc": "初始外套",
+    "price": 100,
+    "batch_useable": false
+  },
+  {
+    "id": 10002,
+    "name": "上衣",
+    "desc": "初始上衣",
+    "price": 100,
+    "batch_useable": false
+  }
+]
+```
 
-| 格式 | 全量生成耗时 | 增量生成耗时 | 单个输出文件大小 | 输出文件总大小 |
-| ---- | --------| ------  | ----            | ------ |
-| bin  | 15.652 s| 797 ms  | 164 K            | 59.5 M |
-| json | 17.746 s| 796 ms  | 1.11 M           | 555 M   |
-| lua  | 17.323 s| 739 ms  | 433 K           | 212 M   |
-
-
-<br/>
-
------
-## 代码快速预览
-
-
-这儿只简略展示lua、c#、typescript、go语言在开发中的用法，更多语言以及更详细的使用范例和代码见[示例项目](https://github.com/focus-creative-games/luban_examples)。
-
-
-
-- C# 使用示例
-
-```C#
+加载及使用配置示例
+```c#
 // 一行代码可以加载所有配置。 cfg.Tables 包含所有表的一个实例字段。
-var tables = new cfg.Tables(file => return new ByteBuf(File.ReadAllBytes(gameConfDir + "/" + file)));
-// 访问一个单例表
-Console.WriteLine(tables.TbGlobal.Name);
-// 访问普通的 key-value 表
-Console.WriteLine(tables.TbItem.Get(12).X1);
-// 支持 operator []用法
-Console.WriteLine(tables.TbMail[1001].X2);
-```
+var tables = new cfg.Tables(file => new ByteBuf(File.ReadAllBytes($"{gameConfDir}/{file}.json")));
 
-- typescript 使用示例
-
-```typescript
-// 一行代码可以加载所有配置。 cfg.Tables 包含所有表的一个实例字段。
-let tables = new cfg.Tables(f => JsHelpers.LoadFromFile(gameConfDir, f))
-// 访问一个单例表
-console.log(tables.TbGlobal.name)
-// 访问普通的 key-value 表
-console.log(tables.TbItem.get(12).x1)
-```
-
-- go 使用示例
-```go
-// 一行代码可以加载所有配置。 cfg.Tables 包含所有表的一个实例字段。
-if tables , err := cfg.NewTables(loader) ; err != nil {
-	println(err.Error())
-	return
-}
-// 访问一个单例表
-println(tables.TbGlobal.Name)
-// 访问普通的 key-value 表
-println(tables.TbItem.Get(12).X1)
+// 获得道具配置并且打印
+cfg.Item item = tables.TbItem.Get(10001)
+Console.WriteLine("name:{0} desc:{1} price:{2}", item.Name, item.Desc, item.Price);
 
 ```
 
-- Lua 使用示例
+## 增强的excel格式
+luban支持在excel中解析任意复杂的数据结构，哪怕复杂如技能、行为树（但在实践中一般使用编辑器制作这些数据，以json格式保存，而不会在excel里填写）。下面从简单到复杂展示在luban中配置这些数据的方式。
 
-```Lua
--- 访问一个单例表
-print(require("TbGlobal").name)
--- 访问普通的 key-value 表
-print(require("TbItem")[12].x1)
-```
 
-------
+### 原生数据类型
 
-## 配置快速预览
+支持 bool,int,float,string,text,datetime,vector2,vector3,vector4 等等类型，它们的填写跟常规认知一致。
 
-**luban兼容传统的excel导表工具，可以在excel定义完整的数据表**。与常见的专注于excel的导表工具不同，luban推荐做法为定义与数据分离，使用单独的xml定义 **表和结构**，数据文件只包含数据。
+![pipeline](docs/images/examples/b_1.jpg)
 
-### 传统兼容横表
+### 原生数据列表
 
-<br/>
+array与list类型都能表示列表，它们区别在于array生成的代码为数组，而list生成代码为列表。例如"array,int"生成的c#代码类型为 int[]，而"list,int"生成的c#代码类型为 List&lt;int&gt;。
 
-![兼容横表](docs/images/examples/ex_01.png)
+下面演示了常见的int与string的列表类型的用法,float与int用法相似。对于这些包含多个元素的数据类型，可以在一个单元格里填写，然后使用sep来分割每个元素；也可以合并标题头的列，表示这个字段占了多个单元格，每个单元格里填一个元素。
 
-### 轻松表达传统导表工具难以支持的复杂配置
+由于list,int和list,float是最常见的列表类型，它们数据中也不包含分割符，所以默认对它们使用"sep=,|"，避免填写分割符的麻烦。像list,string由于本身可能包含分割符，所以必须手动指定不与内容冲突的分割符。
 
-<br/>
+![pipeline](docs/images/examples/b_20.jpg)
+### 嵌套子结构
+经常会碰到，某个字段是结构，尤其这个结构在很多配置里都会复用。
 
-![复杂表](docs/images/examples/ex_08.png)
-
-### 传统兼容纵表
-
-<br/>
-
-![兼容纵表](docs/images/examples/ex_02.png) 
-
-### excel中添加table声明
-<br/>
-
-![tables.xlsx](docs/images/examples/ex_06.png) 
-
-### 在excel中定义enum 类型
-
-<br/>
-
-![enums.xlsx](docs/images/examples/ex_05.png)
-
-### 在excel中定义bean 类型
-
-<br/>
-
-![enums.xlsx](docs/images/examples/ex_07.png)
-
-<br/>
-
-### 常规的原生数据 （虽然示例中这些表都在xml中定义，实际上它们可以完全只在excel定义）
-
-以下是一个包含所有常见简单原生数据的表。
+假设任务中包含一个 任务线索 字段
 
 ```xml
-<bean name="DemoPrimitiveTypesTable">
-	<var name="x1" type="bool"/>
-	<var name="x2" type="byte"/>
-	<var name="x3" type="short"/>
-	<var name="x4" type="int" />
-	<var name="x5" type="long" />
-	<var name="x6" type="float"/>
-	<var name="x7" type="double"/>
-	<var name="s1" type="string" />
-	<var name="s2" type="text"/> 本地化字符串,由key和text两个字段构成
-	<var name="v2" type="vector2"/>
-	<var name="v3" type="vector3"/>
-	<var name="v4" type="vector4"/>
-	<var name="t1" type="datetime"/>
+<bean name="QuestClue">
+	<var name="desc" type="string"/>
+	<var name="npc_id" type="int"/>
+	<var name="location" type="vector3"/>
 </bean>
-
-<table name="TbDemoPrimitive" index="x4" value="DemoPrimitiveTypesTable" input="demo_primitive.xlsx"/>
 ```
 
-![ex_2](docs/images/examples/ex_2.png)
+![pipeline](docs/images/examples/b_31.jpg)
 
+### 简单结构列表
+某个字段为结构列表的情形也很常见，比如说奖励信息列表包含多个奖励信息，每个奖励都有多个字段。
 
-- name="TbDemoPrimitive" 表示数据表名为TbDemoPrimitive，生成table的代码时使用这个类名。
-- value="DemoPrimitiveTypesTable" 表示数据表每行记录(即KV中的V)的类型为DemoPrimitiveTypesTable。
-- index="x4" 表示数据表以 <value>类型的x4字段为key。可不填，**默认为第一个字段**。
-- input="demo_primitive.xlsx" 表示数据表的数据文件为 demo_primitives.xlsx
-
-### 枚举
-
-定义枚举类，同时强制配置中必须填写枚举名或者别名，提高配置阅读性。
+假设礼包中包含一个道具信息列表字段。支持3种填写模式，具体选择由策划灵活决定。
+- 所有字段完全展开，每个单元格填一个元素。缺点是占用的列较多。如items1字段。
+- 每个结构占据一个单元格，使用sep分割结构子字段。如items2字段。
+- 整个列表占据一个单元格，使用sep分割列表及结构子字段。如items3字段。
 
 ```xml
-<enum name="DemoEnum">
-	<var name="RED" alias="红" value="1"/>
-	<var name="BLUE" alias="蓝" value="3"/>
-	<var name="GREEN" alias="绿" value="5"/>
-</enum>
+<bean name="Reward">
+	<var name="item_id" type="int"/>
+	<var name="count" type="int"/>
+	<var name="desc" type="string">
+</bean>
+```
 
-<bean name="DemoEnumTable">
+![pipeline](docs/images/examples/b_41.jpg)
+
+### 多行结构列表
+有时候列表结构的每个结构字段较多，如果水平展开则占据太多列，不方便编辑，如果拆表，无论程序还是策划都不方便。此时可以使用多行填写模式，只需要定义字段属性multi_rows=1。支持任意层次的多行结构列表（也即多行结构中的每个元素也可以是多行）
+
+假设每个任务包含多个阶段，有一个阶段列表字段。
+
+```xml
+<bean name="Stage">
 	<var name="id" type="int"/>
-	<var name="x2" type="DemoEnum"/>
+	<var name="name" type="string"/>
+	<var name="desc" type="string"/>
+	<var name="location" type="vector3"/>
+	<var name="reward_item_id" type="int"/>
+	<var name="reward_item_count" type="int"/>
 </bean>
-
-<table name="TbDemoEnum" value="DemoEnumTable" input="demo_enum.xlsx"/>
 ```
 
-![ex_12](docs/images/examples/ex_12.png)
+![pipeline](docs/images/examples/b_51.jpg)
 
-### 自定义结构 bean 
+
+### 单例表
+有一些配置全局只有一份，比如 公会模块的开启等级，背包初始大小，背包上限。此时使用单例表来配置这些数据比较合适。
+
+![pipeline](docs/images/examples/b_61.jpg)
+
+### 纵表
+
+大多数表都是横表，即一行一个记录。有些表，比如单例表，如果纵着填，一行一个字段，会比较舒服。meta行添加 orientation=c 则使用纵表模式来填写内容。 上面的单例表，以纵表模式填如下。
+
+![pipeline](docs/images/examples/b_62.jpg)
+
+### 引用检查
+游戏配置中经常要填写诸如道具id之类的外键数据，这些数据必须是合法的id值。编辑数据过程中容易失误填了非法id或者因为配置变更导致指向的记录已经被删除了。luban支持生成时检查id的合法性，如果有误，则打出警告（不中止生成，因为开发中临时存在未修正的配置是常见现象， 不希望阻断开发工作流程）。
+
+只要字段定义中添加 ref="表全名" 即可。不只是表顶层字段，列表及嵌套结构的子字段也支持完整的引用检查。
 
 ```xml
-<bean name="IntRange">
-	<var name="min" type="int"/>
-	<var name="max" type="int"/>
+<bean name="Reward">
+	<var name="item_id" type="int" ref="item.TbItem"/>
+	<var name="count" type="int"/>
+	<var name="desc" type="string">
 </bean>
-
-<bean name="DemoBeanTable">
-	<var name="id" type="int"/>
-	<var name="range" type="IntRange"/>
-</bean>
-
-<table name="TbDemoBean" value="DemoBeanTable" input="demo_bean.xlsx"/>
 ```
 
-![ex_22](docs/images/examples/ex_22.png)
+![pipeline](docs/images/examples/b_71.jpg)
 
-### 多态结构 bean
-支持OOP的类型的继承体系，方便表达多类型的数据，经常用于技能、AI等模块。
+
+### 资源检查
+配置中经常要填写资源路径，比如道具icon的资源，这些数据都是string类型，非常容易填写出错，导致运行时无法正常显示。luban支持unity与ue4资源的合法性检查以及通用型文件路径检查。不只是表顶层字段，列表及嵌套结构的子字段也支持完整的引用检查。
+
+对于这些字段添加属性 path=unity或者path=ue或path=normal;xxxx。
+
+![pipeline](docs/images/examples/b_81.jpg)
+
+### 分组导出
+
+在大多数项目中，导出给前后端的数据并非完全相同。有些表可能仅仅前端或者后端需要，有些字段也可能仅仅前端或者后端需要。 luban同时支持两种级别的分组：
+#### 表级别分组
+
+定义方式为在table中定义group属性，如果未定义 group,则默认导出给所有分组，如果定义group，则只导出给指定分组，可以多个，以逗号","分隔。
+
+例如: TbDemoGroup_C表只给客户端使用, TbDemoGroup_S只能服务器使用, TbDemoGroup_E只给editor使用。
+定义如下:
+
+![group_table](docs/images/examples/group_02.png)
+
+#### 字段级别分组
+
+定义方式为给var指定group属性，未指定则默认导出给所有分组。可以为多个，以逗号","分隔。相比于大多数导表工具只支持**表顶级字段**的分组导出，luban支持任意bean字段粒度级别的分组导出。
+
+例如, TbDemoGroup表中 id,x1,x4 字段前后端都需要; x3 只有后端需要;x2 字段只有前端需要。x5是bean类型，它导出给前后端，但它的子字段也可以被分组过滤， x5.y1, x2.y4前后端都会导出，x5.x3只导出给后端,x5.x2只导出给前端。
+定义如下:
+
+![group_var](docs/images/examples/group_01.png)
+
+### 字段默认值
+我们希望excel中单元格留空时，该字段取指定值，而不是默认的false,0之类。通过定义字段的default=xxx属性来指定默认值。
+
+如示例，id=2的记录，x1与x2皆为空，x1=0,x2=-1。
+
+![pipeline](docs/images/examples/d_60.jpg)
+
+### 数据标签
+
+开发期有时候希望临时注释掉一些记录，另外开发期经常会制作一些仅供开发使用的配置，比如测试道具，比如自动化测试使用的配置，在正式上线时不导出这些数据。 luban支持数据标签及数据注释及测试数据过滤导出，导出正式配置时不需要手动将测试数据删掉。
+
+![pipeline](docs/images/examples/c_11.jpg)
+
+## 高级特性
+### 层级标题头 (hierarchy title)
+在多行数据或者深层次嵌套的数据中，如果数据字段较多，填写时不易区分子元素。luban提供层级标题实现深层次的子字段对应。以上面的多行数据列表为例。
+
+![pipeline](docs/images/examples/d_30.jpg)
+
+### 可空数据类型
+配置数据中经常有空值的语义需求，实际项目中往往混杂地使用0或-1表达空值，既不自然清晰也不统一。luban借鉴了c#中的可空变量的概念，特地提供可空数据支持。所有原生数据类型，以及enum、bean、和多态bean类型都有相应的可空数据类型。定义方式为 <类型名>?，与c#里的Nullable类型定义方式相同。例如 bool?,int?,long?,double?, EColor?, DemoType?
+
+![pipeline](docs/images/examples/d_10.jpg)
+
+### 类型继承(inheritance)
+支持OOP的类型继承体系，方便表达多类型的数据，常用于技能、AI等模块。类型继承是luban类型系统的灵魂，如果没有类型继承，不可能简洁地表达任意复杂数据结构，因而也不可能定义并且从配置中读取复杂的配置数据。
+
+实践中像技能和AI之类的数据，一般用编辑器制作，使用json之类的格式保存，而不是在excel中编辑。
 
 ```xml
 <bean name="Shape">
-	<var name="id" type="int"/>
 	<bean name="Circle">
 		<var name="radius" type="float"/>
 	</bean>
@@ -318,7 +333,8 @@ print(require("TbItem")[12].x1)
 	</bean>
 	<bean name="Curve">
 		<bean name="Line" alias="直线">
-			<var name="direction" type="vector2"/>
+			<var name="param_a" type="float"/>
+			<var name="param_b" type="float"/>
 		</bean>
 		<bean name="Parabola" alias="抛物线">
 			<var name="param_a" type="float"/>
@@ -327,376 +343,58 @@ print(require("TbItem")[12].x1)
 	</bean>
 </bean>
 
-<bean name="ShapeTable">
-	<var name="id" type="int"/>
-	<var name="shape" type="Shape"/>
-</bean>
-
-<table name="TbDemoShape" value="DemoShapeTable" input="demo_shape.xlsx"/>
 ```
 
-![ex_32](docs/images/examples/ex_32.png)
+![pipeline](docs/images/examples/d_50.jpg)
 
-### 可空数据类型
-配置数据中经常有空值的语义需求，实际项目中往往混杂地使用0或-1表达空值，既不自然清晰也不统一。luban借鉴了c#中的可空变量的概念，特地提供可空数据支持。所有原生数据类型，以及enum、bean、和多态bean类型都有相应的可空数据类型。定义方式为 <类型名>?，与c#里的Nullable类型定义方式相同。例如 bool?,int?,long?,double?, EColor?, DemoType?
-
-```xml
-	<bean name="DemoType1">
-		<var name="x1" type="int"/>
-	</bean>
-	<bean name="DemoDynamic"> 多态数据结构
-		<var name="x1" type="int"/>
-		
-		<bean name="DemoD2" alias="测试别名">
-			<var name="x2" type="int"/>
-		</bean>
-		
-		<bean name="DemoD3">
-			<var name="x3" type="int"/>
-		</bean>
-	</bean>
-	<bean name="TestNull">
-		<var name="id" type="int"/>
-		<var name="x1" type="int?"/>
-		<var name="x2" type="DemoEnum?"/>
-		<var name="x3" type="DemoType1?"/>
-		<var name="x4" type="DemoDynamic?"/>
-	</bean>
-	<table name="TbTestNull" value="TestNull" input="test/test_null.xlsx"/>
-```
-
-![ex_42](docs/images/examples/ex_42.png)
-
-
-### 简单原生数据列表类型
-一般来说，既可以在一个单元格内以 逗号","分隔填写，也可以每个单元格填写一个数据。注意！空单元格会被忽略。
-
-```xml
-<bean name="CollectionTable">
-	<var name="id" type="int"/>
-	<var name="items" type="list,int"/>
-	<var name="coefs" type="list,int"/>
-</bean>
-
-<table name="TbSimpleCollection" value="CollectionTable" input="collection.xlsx">
-```
-
-![ex_52](docs/images/examples/ex_52.png)
-
-### 结构列表
-对于结构列表类型，有多种填写。策划根据具体情况，选择最合适的填法。
-
-1. 全展开。
-	```xml
-	<bean name="Item">
-		<var name="id" type="int"/>
-		<var name="name" type="string"/>
-		<var name="num" type="int"/>
-	</bean>
-
-	<bean name="CollectionTable2">
-		<var name="id" type="int"/>
-		<var name="items" type="list,Item"/>
-	</bean>
-
-	<table name="TbBeanCollection" value="CollectionTable2" input="collection2.xlsx">
-	```
-
-	![ex_61](docs/images/examples/ex_61.png)
-
-1. 每个Item在一个单元格内
-
-	```xml
-	<bean name="Item" sep=",">
-		<var name="id" type="int"/>
-		<var name="name" type="string"/>
-		<var name="num" type="int"/>
-	</bean>
-
-	<bean name="CollectionTable2">
-		<var name="id" type="int"/>
-		<var name="items" type="list,Item"/>
-	</bean>
-
-	<table name="TbBeanCollection" value="CollectionTable2" input="collection2.xlsx">
-	```
-
-	![ex_62](docs/images/examples/ex_62.png)
-
-1. 所有数据都在一个单元格内
-	```xml
-	<bean name="Item" sep=",">
-		<var name="id" type="int"/>
-		<var name="name" type="string"/>
-		<var name="num" type="int"/>
-	</bean>
-
-	<bean name="CollectionTable2">
-		<var name="id" type="int"/>
-		<var name="items" type="list,Item" sep="|"/>
-	</bean>
-
-	<table name="TbBeanCollection" value="CollectionTable2" input="collection2.xlsx">
-	```
-
-	![ex_63](docs/images/examples/ex_63.png)
-
-### 多态结构列表
-
-```xml
-<bean name="CollectionTable3">
-	<var name="id" type="int"/>
-	<var name="shapes" type="list,Shape" sep=","/>
-</bean>
-
-<table name="TbBeanCollection3" value="CollectionTable3" input="collection3.xlsx">
-```
-
-![ex_71](docs/images/examples/ex_71.png)
-
-### 多行记录
-
-经常会碰到一些记录中包含一个list:bean类型的结构列表。 如果强行要求一行配置，阅读性与可维护性较差，如果拆表，对策划和程序都不友好。 我们支持在对这种类型的数据多行方式配置，只需要在该多行字段后加属性 multi_rows="1"。
-示例如下：
-
-英雄升级表中的**levels**字段为一个列表。我们标记它为multi_rows，在多行填写。
-
-
-定义：
-
-![multi_define](docs/images/examples/multi_01.png)
-
-数据:
-
-![multi_data](docs/images/examples/multi_02.png)
-
-
-### 单例表
-
-单例即代码模式中单例的含义，用于配置全局只有一份的数据。
-
-```xml
-<bean name="SingletonTable">
-	<var name="init_gold_num" type="int"/>
-	<var name="guild_module_open_level" type="int"/>
-</bean>
-
-<table name="TbSingleton" value="SingletonTable" mode="one" input="examples.xlsx"/>
-```
-
-luban支持横表与纵表，默认为横表。对于单例表，纵表填写更舒服一些，因此我们在excel的B1单元格填上 row:0 表示它是纵表。
-
-![ex_a1](docs/images/examples/ex_a1.png)
-
-### 数据约束校验
-
-支持 key引用检查、path资源检查、range范围检查 这几种约束检查。
-
-- 引用检查
-	
-	对于 int、long、string等简单数据类型，可以检查数据是否是某个表的合法id，这在游戏配置中非常普遍。例如下面的TbBonus表，要求item_id必须是合法的道具id，那么通过ref="item.TbItem"来显式约束，如果填了非法整数值，生成过程中会打印警告。发现引用错误不会中止生成，仍然导出数据，因为实际项目开发过程中，由于数据频繁改动而临时性产生一些不合法数据非常常见，这些出错的数据可能不会影响大部分的测试，如果中止生成，会导致不相关的开发同学经常性被阻塞了开发流程。
-
-	有时候不想对值为0或者空的字符串作检查，可以通过ref="<表全名>?"的方式来表示忽略检查默认值数据，例如ref="item.TbItem?"。	如果是int?之类的可空数据类型，不需要 ref="<表名>?" 也会自动忽略null数据，但0值仍然会被检查而发出警告。
-
-	```xml
-	<module name="item">
-		<bean name="Item">
-			<var name="id" type="int">
-			<var name="num" type="int">
-		</bean>
-
-		<table name="TbItem" value="Item" input="item/item.xlsx">
-
-		<bean name="Bonus1">
-			<var name="id" type="int">
-			<var name="item_id" type="int" ref="item.TbItem">
-			<var name="num" type="int">
-		</bean>
-		<table name="TbBonus" value="Bonus1" input="item/bonus.xlsx">
-
-		<bean name="Bonus2">
-			<var name="id" type="int">
-			<var name="item_id" type="int?" ref="item.TbItem">
-			<var name="num" type="int">
-		</bean>
-		<table name="TbBonus2" value="Bonus2" input="item/bonus2.xlsx">
-	</module>
-	```
-
-	![ex_e1](docs/images/examples/ex_e1.png)
-	
-	![ex_e2](docs/images/examples/ex_e2.png)
-
-	![ex_e3](docs/images/examples/ex_e3.png)
-
-- path 资源检查
-
-	用于检查策划填写的资源路径是否合法，防止运行时出现资源查找不到的错误。目标已经针对Unity和UE4实现专门的资源检查机制。 具体请看 [完整手册](docs/manual.md)
-
-	例如 在unity项目的装备表中的 icon字段必须为有效资源，，在icon字段中添加定义 path="unity"
-
-	定义:
-
-	![path_define](docs/images/examples/path_01.png)
-
-	数据:
-
-	![path_data](docs/images/examples/path_02.png)
-
-- range 检查
-
-	用于检查策划填写的数据是否在合法的范围内，支持[x,y],[x,],(x,y),(x,) 等等开闭区间写法。具体请看 [完整手册](docs/manual.md)
-
-	示例： 英雄的站位坐标必须在 [1,5]的范围内，则为 position字段添加 range="[1,5]" 属性
-
-	定义:
-
-	![range_define](docs/images/examples/range_01.png)
-
-	数据:
-	
-	![range_data](docs/images/examples/range_02.png)
-
-
-### 分组导出
-
-在大多数项目中，导出给前后端的数据并非完全相同。有些表可能仅仅前端或者后端需要，有些字段也可能仅仅前端或者后端需要。 
-
-luban同时支持两种级别的分组：
-- 表级别分组
-
-	定义方式为在table中定义group属性，如果未定义 group,则默认导出给所有分组，如果定义group，则只导出给指定分组，可以多个，以逗号","分隔。
-
-	&lt; table name="xxx" group="&lt;group1&gt;,&lt;group2&gt;..." &gt;
-
-	例如: TbDemoGroup_C表只给客户端使用, TbDemoGroup_S只能服务器使用, TbDemoGroup_E只给editor使用。
-	定义如下:
-
-	![group_table](docs/images/examples/group_02.png)
-
-- 字段级别分组
-
-	定义方式为给var指定group属性，未指定则默认导出给所有分组。可以为多个，以逗号","分隔。相比于大多数导表工具只支持**表顶级字段**的分组导出，luban支持任意bean字段粒度级别的分组导出。
-
-	&lt;var name="xxx" group="&lt;group1&gt;,&lt;group2&gt; ..." /&gt;
-	
-	例如, TbDemoGroup表中 id,x1,x4 字段前后端都需要; x3 只有后端需要;x2 字段只有前端需要。x5是bean类型，它导出给前后端，但它的子字段也可以被分组过滤， x5.y1, x2.y4前后端都会导出，x5.x3只导出给后端,x5.x2只导出给前端。
-	定义如下:
-
-	![group_var](docs/images/examples/group_01.png)
-
-
-### 标签数据过滤
-
-根据数据标签选择性导出符合要求的数据。适于一些情形例如：研发期制作了一些测试数据，我们希望正式上线时不导出这些数据，但不希望手动在excel表中删除那些记录，因为这些测试数据内网测试时仍然需要。一种比较优雅的办法是标记这些数据为TEST(或者测试，或者其他标签)，导出时忽略带有些标签的数据。
-
-示例: 102149001和102149002是测试物品，希望正式发布时不包含，只要在命令行选项中关闭 --export-test 即可不导出这些测试数据。
-
-![tag](docs/images/examples/tag_01.png)
-
-## excel 列 默认值
-
-该特性只对excel格式文件有效。当单元格为空时，该字段使用默认值。
-
-```xml
-<bean name="DemoDefault">
-  <var name="id" type="int"/>
-  <var name="x" type="int" default="10">
-</bean>
-
-<table name="TbDemoDefault" value="DemoDefault" input="default.xlsx"/>
-
-```
-
-![default](docs/images/adv/def_50.png)
 
 ### 常量别名
 
 游戏里经常会出现一些常用的类似枚举的值，比如说 升级丹的 id,在很多地方都要填，如果直接它的道具 id,既不直观，也容易出错。 Luban 支持常量替换。对于需要常量替换的字段，添加 convert=”枚举类”。 如果填写的值是 枚举名或者别名，则替换为 相应的整数。否则 按照整数解析。
 
-定义
+``` xml
+<enum name="EFunctionItemId">
+	<var name="SHENG_JI_DAN" alias="升级丹" value="11220304"/>
+	<var name="JIN_JIE_DAN" alias="进阶丹" value="11220506"/>
+</enum>
+```
 
-  ``` xml
-  <enum name="EFunctionItemId">
-    <var name="SHENG_JI_DAN" alias="升级丹" value="11220304"/>
-    <var name="JIN_JIE_DAN" alias="进阶丹" value="11220506"/>
-  </enum>
-  <bean name="Item">
-    <var name="cost_item_on_use" type="int" convert="EFunctionItemId"/>
-  </bean>
-  ```
+![pipeline](docs/images/examples/d_20.jpg)
 
-配置:
 
-![如图](docs/images/adv/def_41.png)
+导出时，升级丹会被替换为11220304。
 
 ### 多数据源
-
-- 一个数据表来自两个excel文件
-
-	通过 excel文件1,excel文件2... 的方式指定数据表的数据来自多个文件，不同文件以逗号","分隔。当数据源为excel文件，并且没有用@来指定某个单元表时，该excel文件的中的所有单元表都会被读入。例如TbItem表的数据来自item目录下的item1.xlsx和item2.xlsx。
+支持表数据来自excel文件；来自excel某个单元薄；来自json、xml、yaml文件；来自目录下所有文件。以及以上几种的组合。
+#### 来自某个excel文件
+```xml
+<table name="TbItem" value="Item" input="item/item1.xlsx">
+```
+#### 来自某个excel单元薄
+```xml
+<table name="TbItem" value="Item" input="table1@item/item1.xlsx">
+```
+####
+#### 一个数据表来自两个excel文件
+通过 excel文件1,excel文件2... 的方式指定数据表的数据来自多个文件，不同文件以逗号","分隔。当数据源为excel文件，并且没有用@来指定某个单元表时，该excel文件的中的所有单元表都会被读入。例如TbItem表的数据来自item目录下的item1.xlsx和item2.xlsx。
 	
-	```xml
-		<bean name="Item">
-			<var name="id" type="int">
-			<var name="num" type="int">
-		</bean>
+```xml
+<table name="TbItem" value="Item" input="item/item1.xlsx,item/item2.xlsx">
+```
 
-		<table name="TbItem" value="Item" input="item/item1.xlsx,item/item2.xlsx">
-	```
+#### 两个数据表来自同一个excel文件的不同单元表
+通过 <单元表名>@excel文件的方式指定数据来自excel文件的某个单元表，可以指定多个单元表，通过逗号","分隔。示例中TbItem占了table1、table3两个单元表；TbEquip占了table2、table4两个单元表。同一个数据表占据的单元表不必连续。示例中故意让TbItem和TbEquip占了不相邻的两个单元表。
 
-	![ex_c1](docs/images/examples/ex_c1.png)
+```xml
+<table name="TbItem" value="Item" input="table1@examples.xlsx,table3@examples.xlsx">
+<table name="TbEquip" value="Equip" input="table2@examples.xlsx,table4@examples.xlsx">
+```
 
-	![ex_c2](docs/images/examples/ex_c2.png)
-
-	![ex_c3](docs/images/examples/ex_c3.png)
-
-	![ex_c4](docs/images/examples/ex_c4.png)
-
-- 两个数据表来自同一个excel文件的不同单元表
-	
-	通过 <单元表名>@excel文件的方式指定数据来自excel文件的某个单元表，可以指定多个单元表，通过逗号","分隔。示例中TbItem占了table1、table3两个单元表；TbEquip占了table2、table4两个单元表。同一个数据表占据的单元表不必连续。示例中故意让TbItem和TbEquip占了不相邻的两个单元表。
-	```xml
-	<bean name="Item">
-		<var name="id" type="int">
-		<var name="num" type="int">
-	</bean>
-
-	<table name="TbItem" value="Item" input="table1@examples.xlsx,table3@examples.xlsx">
-
-	<bean name="Equip">
-		<var name="id" type="int">
-		<var name="count" type="int">
-	</bean>
-
-	<table name="TbEquip" value="Equip" input="table2@examples.xlsx,table4@examples.xlsx">
-	```
-	![ex_b1](docs/images/examples/ex_b1.png)
-
-	![ex_b2](docs/images/examples/ex_b2.png)
-
-	![ex_b3](docs/images/examples/ex_b3.png)
-
-	![ex_b4](docs/images/examples/ex_b4.png)
-
-
-- 一个数据表的数据来自**目录**下的所有文件
-	
-	当以目录为数据源时，会遍历整个目录树中所有文件，除了文件名以 ",.~" （字符 逗号或点号或波浪号)开头的文件外，读入每个文件中的数据。如果是excel族的数据，会从每个文件中读取多个记录，如果是xml、lua、json族的数据，每个文件当作一个记录读入。 可以有指定多个目录同时为数据源，以逗号","分隔。
-	```xml
-	<bean name="Item">
-		<var name="id" type="int">
-		<var name="num" type="int">
-	</bean>
-
-	<table name="TbItem" value="Item" input="item.xlsx">
-
-	```
-	![ex_d1](docs/images/examples/ex_d1.png)
-
-	![ex_c1](docs/images/examples/ex_c1.png)
-
-	![ex_c3](docs/images/examples/ex_c3.png)
+#### 一个数据表的数据来自**目录**下的所有文件
+当以目录为数据源时，会遍历整个目录树中所有文件，除了文件名以 ",.~"（字符逗号或点号或波浪号）开头的文件外，读入每个文件中的数据。如果是excel族的数据，会从每个文件中读取多个记录，如果是xml、lua、json族的数据，每个文件当作一个记录读入。 可以有指定多个目录同时为数据源，以逗号","分隔。
+```xml
+<table name="TbSkill" value="Skill" input="skill_datas">
+```
 
 ### json 数据源
 在一个大型复杂项目里，有些表的数据是以json形式保存，比如技能、AI、剧情等等。常规的导表工具只能处理excel，像xml、json之类的数据一般是程序员自己处理，最终导致游戏内有几套配置加载方案，而且前后端以及
@@ -709,16 +407,10 @@ luban通过 **定义 + 数据源** 的方式统一所有配置。json数据源�
 <bean name="DemoType2" >
 	<var name="x4" type="int" convert="DemoEnum"/>
 	<var name="x1" type="bool"/>
-	<var name="x2" type="byte"/>
-	<var name="x3" type="short" ref="test.TbFullTypes"/>
-	<var name="x5" type="long" convert="DemoEnum"/>
 	<var name="x5" type="long" convert="DemoEnum"/>
 	<var name="x6" type="float"/>
 	<var name="x7" type="double"/>
-	<var name="x8_0" type="fshort"/>
-	<var name="x8" type="fint"/>
-	<var name="x9" type="flong"/>
-	<var name="x10" type="string" path="normal;*.txt"/>
+	<var name="x10" type="string"/>
 	<var name="x12" type="DemoType1"/>
 	<var name="x13" type="DemoEnum"/>
 	<var name="x14" type="DemoDynamic" sep=","/>多态数据结构
@@ -728,11 +420,6 @@ luban通过 **定义 + 数据源** 的方式统一所有配置。json数据源�
 	<var name="t1" type="datetime"/>
 	<var name="k1" type="array,int"/> 使用;来分隔
 	<var name="k2" type="list,int"/>
-	<var name="k3" type="linkedlist,int"/>
-	<var name="k4" type="arraylist,int"/>
-	<var name="k5" type="set,int"/>
-	<var name="k6" type="treeset,int"/>
-	<var name="k7" type="hashset,int"/>
 	<var name="k8" type="map,int,int"/>
 	<var name="k9" type="list,DemoE2" sep="," index="y1"/>
 	<var name="k15" type="array,DemoDynamic" sep=","/> 
@@ -741,11 +428,7 @@ luban通过 **定义 + 数据源** 的方式统一所有配置。json数据源�
 <table name="TbDataFromJson" value="DemoType2" input="test/json_datas"/>
 ```
 
-以目录为数据源，递归遍历整个目录树，**按文件排序后**依次将每个json数据当作一个记录读入。
-
-![ex_81](docs/images/examples/ex_81.png)
-
-其中 1.json 文件内容如下
+递归遍历test/json_datas整个目录树，**按文件名排序后**依次将每个json数据当作一个记录读入。其中1.json文件内容如下
 
 ```json
  {
@@ -756,9 +439,6 @@ luban通过 **定义 + 数据源** 的方式统一所有配置。json数据源�
 	"x5":11223344,
 	"x6":1.2,
 	"x7":1.23432,
-	"x8_0":12312,
-	"x8":112233,
-	"x9":223344,
 	"x10":"hq",
 	"x12": { "x1":10},
 	"x13":"B",
@@ -769,10 +449,6 @@ luban通过 **定义 + 数据源** 的方式统一所有配置。json数据源�
 	"t1":"1970-01-01 00:00:00",
 	"k1":[1,2],
 	"k2":[2,3],
-	"k3":[1,3],
-	"k4":[1,5],
-	"k5":[1,6],
-	"k6":[1,7],
 	"k7":[2,3],
 	"k8":[[2,2],[4,10]],
 	"k9":[{"y1":1, "y2":true},{"y1":2, "y2":false}],
@@ -781,15 +457,10 @@ luban通过 **定义 + 数据源** 的方式统一所有配置。json数据源�
 ```
 
 ### xml 数据源
-定义
 
 ```xml
-
 <table name="TbDataFromXml" value="DemoType2" input="test/xml_datas"/> 
- 	
 ```
-
-以目录为数据源，递归遍历整个目录树，将每个xml数据当作一个记录读入。
 
 其中 1.xml 文件内容如下
 ```xml
@@ -801,9 +472,6 @@ luban通过 **定义 + 数据源** 的方式统一所有配置。json数据源�
 	<x5>112233445566</x5>
 	<x6>1.3</x6>
 	<x7>1112232.43123</x7>
-	<x8>112233</x8>
-	<x8_0>123</x8_0>
-	<x9>112334</x9>
 	<x10>yf</x10>
 	<x12>		<x1>1</x1>	</x12>
 	<x13>C</x13>
@@ -814,11 +482,6 @@ luban通过 **定义 + 数据源** 的方式统一所有配置。json数据源�
 	<t1>1970-01-01 00:00:00</t1>
 	<k1>    <item>1</item>	<item>2</item>	</k1>
 	<k2>	<item>1</item>	<item>2</item>	</k2>
-	<k3>	<item>1</item>	<item>2</item>	</k3>
-	<k4>	<item>1</item>	<item>2</item>	</k4>
-	<k5>	<item>1</item>	<item>2</item>	</k5>
-	<k6>	<item>1</item>	<item>2</item>	</k6>
-	<k7>	<item>1</item>	<item>3</item>	</k7>
 	<k8>
 		<item> <key>2</key><value>10</value></item>
 		<item> <key>3</key><value>30</value></item>
@@ -834,15 +497,10 @@ luban通过 **定义 + 数据源** 的方式统一所有配置。json数据源�
 ```
 ### lua 数据源
 
-定义
-
 ```xml
 <table name="TbDataFromLua" value="DemoType2" input="test/lua_datas"/> 
 ```
-以目录为数据源，递归遍历整个目录树，将每个lua数据当作一个记录读入。
-
 其中 1.lua 文件内容如下
-
 ```lua
 return 
 {
@@ -853,9 +511,6 @@ return
 	x5 = 112233445566,
 	x6 = 1.3,
 	x7 = 1122,
-	x8 = 12,
-	x8_0 = 13,
-	x9 = 123,
 	x10 = "yf",
 	x12 = {x1=1},
 	x13 = "D",
@@ -866,11 +521,6 @@ return
 	t1 = "1970-01-01 00:00:00",
 	k1 = {1,2},
 	k2 = {2,3},
-	k3 = {3,4},
-	k4 = {1,2},
-	k5 = {1,3},
-	k6 = {1,2},
-	k7 = {1,8},
 	k8 = {[2]=10,[3]=12},
 	k9 = {{y1=1,y2=true}, {y1=10,y2=false}},
 	k15 = {{ __type__="DemoD2", x1 = 1, x2=3}},
@@ -878,16 +528,10 @@ return
 ```
 
 ### yaml 数据源
-定义
 
 ```xml
-
 <table name="TbDataFromYaml" value="DemoType2" input="test/yaml_datas"/> 
- 	
 ```
-
-以目录为数据源，递归遍历整个目录树，将每个yml数据当作一个记录读入。
-
 其中 1.yml 文件内容如下
 ```yaml
 ---
@@ -898,9 +542,6 @@ x4: 40
 x5: 11223344
 x6: 1.2
 x7: 1.23432
-x8_0: 12312
-x8: 112233
-x9: 223344
 x10: hq
 x12:
   x1: 10
@@ -948,11 +589,64 @@ k15:
 
 ```
 
-### 自定义导出数据格式
+### binary,json,lua 数据源
+支持binary,json,lua三种导出数据类型。不同的导出类型只影响导出的数据大小和生成的代码和加载数据的性能，不影响结构定义以及最终加载到内存占用。
 
-支持使用scriban模板文件定制导出数据格式。
+不同的导出数据类型对程序和策划是透明的，切换不影响数据编辑方式和业务代码中使用配置的方式。
 
-lua数据模板 定义
+### 代码模板
+
+使用scriban模板文件定制导出数据格式。例如生成cs语言bin数据格式的cfg.Tables类的模板如下。
+
+```
+using Bright.Serialization;
+
+{{
+    name = x.name
+    namespace = x.namespace
+    tables = x.tables
+
+}}
+namespace {{namespace}}
+{
+   
+public sealed class {{name}}
+{
+    {{~for table in tables ~}}
+{{~if table.comment != '' ~}}
+    /// <summary>
+    /// {{table.comment}}
+    /// </summary>
+{{~end~}}
+    public {{table.full_name}} {{table.name}} {get; }
+    {{~end~}}
+
+    public {{name}}(System.Func<string, ByteBuf> loader)
+    {
+        var tables = new System.Collections.Generic.Dictionary<string, object>();
+        {{~for table in tables ~}}
+        {{table.name}} = new {{table.full_name}}(loader("{{table.output_data_file}}")); 
+        tables.Add("{{table.full_name}}", {{table.name}});
+        {{~end~}}
+
+        {{~for table in tables ~}}
+        {{table.name}}.Resolve(tables); 
+        {{~end~}}
+    }
+
+    public void TranslateText(System.Func<string, string, string> translator)
+    {
+        {{~for table in tables ~}}
+        {{table.name}}.TranslateText(translator); 
+        {{~end~}}
+    }
+}
+
+}
+```
+
+### 数据模板
+使用scriban模板文件定制导出数据格式。例如自定义的lua数据模板如下：
 
 ```
 // {{table.name}}
@@ -1008,6 +702,73 @@ lua数据模板 定义
 
 ```
 
+## 本地化
+
+### 本地化字符串
+
+单独提供了text类型来支持文本的本地化。 text类型由两个字段构成, key和value。 考虑到大多数项目是优先做了主地区配置后，再进行本地化，因此luban特地支持在配置中原地填写text的key和主地区文本值。制作其他地区配置时，通过指定本地化映射表的方式，再将该text转换为目标语言的文本值。
+
+![pipeline](docs/images/examples/c_21.jpg)
+
+主语言导出数据为 (只截取了部分数据)
+
+```json
+[
+  {
+    "id": 11,
+    "text": {
+      "key": "/demo/1",
+      "text": "测试1"
+    }
+  },
+  {
+    "id": 12,
+    "text": {
+      "key": "/demo/2",
+      "text": "测试2"
+    }
+  },
+  {
+    "id": 13,
+    "text": {
+      "key": "/demo/3",
+      "text": "测试3"
+    }
+  }
+]
+```
+
+制作本地化映射表 
+
+![pipeline](docs/images/examples/c_22.jpg)
+
+映射到英语后的导出数据（只截取了部分数据）为
+```json
+[
+  {
+    "id": 11,
+    "text": {
+      "key": "/demo/1",
+      "text": "test1"
+    }
+  },
+  {
+    "id": 12,
+    "text": {
+      "key": "/demo/2",
+      "text": "test2"
+    }
+  },
+  {
+    "id": 13,
+    "text": {
+      "key": "/demo/3",
+      "text": "test3"
+    }
+  }
+]
+```
+
 -----
 
 ## 路线图
@@ -1033,8 +794,6 @@ lua数据模板 定义
 ## 有用的链接
 
 - [.NET Core source index](https://source.dot.net)
-
-
 
 ## License
 
