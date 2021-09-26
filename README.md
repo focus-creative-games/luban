@@ -17,11 +17,13 @@
 
 ## 介绍
 
-目前已经存在很多导表工具如tabtoy、xls2json之类，它们功能简单直接，更多是作为一个excel文件转换工具存在，而不是一个完整的游戏配置工具，对于配置结构复杂的中大型游戏项目往往力不从心。luban擅长高效处理**大型复杂的配置结构**，是一个面向MMORPG这类大中型游戏项目的配置数据解决方案，相较于常规的excel导表工具有以下核心优势：
+目前已经存在很多导表工具（如tabtoy、xls2json），它们功能多为excel文件到其他格式的转换工具及简单代码生成器，勉强满足中小类型项目的需求。
+在中大型游戏项目中，基本都会有技能、行为树之类的复杂功能。这些功能有非常复杂的数据结构，往往使用自定义编辑器制作，并以json、xml等文件格式保存。就算常规的excel表，也经常出现复杂的数据结构需求。这些简单工具面对此类需求要么无法支持，要么就强迫策划和程序使用拆表等奇技淫巧，严重影响开发效率。
+
+luban相较于常规的excel导表工具有以下核心优势：
 - 增强了excel格式。可以比较简洁地excel配置**任意复杂**的数据，像子结构、结构列表，以及更复杂的深层次的嵌套结构都能直接解析处理。
 - 完备的类型系统和多原始数据支持（xml、json、lua、yaml），可以轻松表达和解析**任意复杂**的数据。意味着传统excel导表工具无法处理的技能、行为树、副本等等复杂配置，luban也能够统一处理了，彻底将程序从复杂的配置解析中完全解放出来。
 - 完善的工作流支持。如id的外键引用检查;资源合法性检查;灵活的数据源定义（拆表或者多表合一）;灵活的分组导出机制；多种本地化支持;生成极快（日常迭代300ms以内）等等。
-- 强大灵活的模板生成能力。可以通过模板自由定制生成的代码格式及导出的数据格式。
 
 ====**如果觉得不错，烦请点个star，你的支持会给予我们巨大动力 ^_^**====
 
@@ -37,11 +39,9 @@
 - **====>强烈推荐查看：示例项目** ([github](https://github.com/focus-creative-games/luban_examples)) ([gitee](https://gitee.com/focus-creative-games/luban_examples)) **<====**
 
 - 支持与联系
-  - QQ群: 692890842 （Luban开发交流群） [点击链接加入](https://qm.qq.com/cgi-bin/qm/qr?k=4bMoe11knBW7Tcs1sqMafZE1I4zpT4sh&jump_from=webapi)。 有使用方面的疑问请及时加QQ群询问，随时有人帮助解决。
+  - QQ群: 692890842 （Luban开发交流群）。有使用方面的疑问请及时加QQ群询问，随时有人帮助解决。
   - 邮箱: taojingjian#gmail.com
   - Skypy群: https://join.skype.com/xr2nhdMKjac0
-
------
 
 ## 特性
 - 支持excel族、json、xml、lua、yaml 多种数据格式，基本统一了游戏常见的配置数据
@@ -603,7 +603,7 @@ k15:
 
 ```
 
-### binary,json,lua 数据源
+### binary,json,lua 导出数据格式
 支持binary,json,lua三种导出数据类型。不同的导出类型只影响导出的数据大小和生成的代码和加载数据的性能，不影响结构定义以及最终加载到内存占用。
 
 不同的导出数据类型对程序和策划是透明的，切换不影响数据编辑方式和业务代码中使用配置的方式。
@@ -619,7 +619,6 @@ using Bright.Serialization;
     name = x.name
     namespace = x.namespace
     tables = x.tables
-
 }}
 namespace {{namespace}}
 {
@@ -664,7 +663,6 @@ public sealed class {{name}}
 
 ```
 // {{table.name}}
-
 {{for d in datas}}
 	// {{d.impl_type.full_name}}
 	{{~i = 0~}}
@@ -672,7 +670,7 @@ public sealed class {{name}}
 		{{~if f ~}}
 		// {{d.impl_type.hierarchy_export_fields[i].name}} = {{f.value}}
 		{{~end~}}
-		{{i = i + 1}}
+		{{~i = i + 1~}}
 	{{~end~}}
 {{end}}
 ```
@@ -681,44 +679,28 @@ public sealed class {{name}}
 
 ```
 // TbItem
-
-
 	// item.Item
 		// id = 1
-		
 		// name = 钻石
-		
 		// major_type = 1
-		
 		// minor_type = 101
-		
 		// max_pile_num = 9999999
-		
 		// quality = 0
-		
 		// icon = /Game/UI/UIText/UI_TestIcon_3.UI_TestIcon_3
 		
-
 	// item.Item
 		// id = 2
-		
 		// name = 金币
-		
 		// major_type = 1
-		
 		// minor_type = 102
-		
 		// max_pile_num = 9999999
-		
 		// quality = 0
-		
 		// icon = /Game/UI/UIText/UI_TestIcon_1.UI_TestIcon_1
-
 ```
 
 ## 本地化
 
-### 本地化字符串
+### 静态本地化
 
 单独提供了text类型来支持文本的本地化。 text类型由两个字段构成, key和value。 考虑到大多数项目是优先做了主地区配置后，再进行本地化，因此luban特地支持在配置中原地填写text的key和主地区文本值。制作其他地区配置时，通过指定本地化映射表的方式，再将该text转换为目标语言的文本值。
 
@@ -783,6 +765,29 @@ public sealed class {{name}}
 ]
 ```
 
+### 动态本地化
+运行时动态切换语言到目标语言。
+
+生成的cfg.Tables包含TranslateText函数， 以c#为例。只需要提供一个 (string key, string origin_value) -> (string target_value) 的转换器，
+就能自动将所有配置表中的text类型字段替换为目标语言的文本。程序不需要根据id去本地化映射表里查询，简化了使用。
+
+```c#
+public void TranslateText(System.Func<string, string, string> translator)
+{
+	TbItem.TranslateText(translator);
+	...
+}
+```
+
+### 多分支 数据
+支持 main + patches的数据模式。在主版本数据基础上，提供一个补丁数据，合并处理后生成最终目标数据。适合制作海外有细节配置不同的多地区配置，不需要
+复制出主版本数据，接着在上面修改出最终数据。极大优化了制作本地化配置的工作流。
+
+
+### 时间本地化
+datetime类型数据在指定了本地化时区后，会根据目标时区，生成相应时刻的UTC时间，方便程序使用
+
+###
 -----
 
 ## 路线图
