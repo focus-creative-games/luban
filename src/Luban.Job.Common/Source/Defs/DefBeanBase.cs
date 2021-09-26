@@ -1,4 +1,5 @@
 using Luban.Job.Common.RawDefs;
+using Luban.Job.Common.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +41,8 @@ namespace Luban.Job.Common.Defs
 
         public string JavaMethodModifier => ParentDefType != null ? "override" : (IsAbstractType ? "virtual" : "");
 
+        public string TsClassModifier => IsAbstractType ? "abstract" : "";
+
         public DefBeanBase(Bean b)
         {
             Name = b.Name;
@@ -47,6 +50,8 @@ namespace Luban.Job.Common.Defs
             Parent = b.Parent;
             Id = b.TypeId;
             IsValueType = b.IsValueType;
+            Comment = b.Comment;
+            Tags = DefUtil.ParseAttrs(b.Tags);
             foreach (var field in b.Fields)
             {
                 Fields.Add(CreateField(field, 0));
@@ -122,7 +127,7 @@ namespace Luban.Job.Common.Defs
             {
                 if ((ParentDefType = (DefBeanBase)AssemblyBase.GetDefType(Namespace, Parent)) == null)
                 {
-                    throw new Exception($"bean:{FullName} parent:{Parent} not exist");
+                    throw new Exception($"bean:'{FullName}' parent:'{Parent}' not exist");
                 }
                 if (ParentDefType.Children == null)
                 {
@@ -149,11 +154,11 @@ namespace Luban.Job.Common.Defs
             {
                 if (c.Id <= 0)
                 {
-                    throw new Exception($"bean:{FullName} is child of dynamic type. beanid:{Id} can't less then 0!");
+                    throw new Exception($"bean:'{FullName}' is child of dynamic type. beanid:{Id} can't less then 0!");
                 }
                 if (!ids.Add(c.Id))
                 {
-                    throw new Exception($"bean:{c.FullName} beanid:{c.Id} duplicate!");
+                    throw new Exception($"bean:'{c.FullName}' beanid:{c.Id} duplicate!");
                 }
             }
             DefFieldBase.CompileFields(this, HierarchyFields, IsSerializeCompatible);

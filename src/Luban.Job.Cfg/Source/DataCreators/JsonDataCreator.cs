@@ -16,7 +16,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TBool type, JsonElement x, DefAssembly ass)
         {
-            return new DBool(x.GetBoolean());
+            return DBool.ValueOf(x.GetBoolean());
         }
 
         public DType Accept(TByte type, JsonElement x, DefAssembly ass)
@@ -36,7 +36,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TInt type, JsonElement x, DefAssembly ass)
         {
-            return new DInt(x.GetInt32());
+            return DInt.ValueOf(x.GetInt32());
         }
 
         public DType Accept(TFint type, JsonElement x, DefAssembly ass)
@@ -46,7 +46,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TLong type, JsonElement x, DefAssembly ass)
         {
-            return new DLong(x.GetInt64());
+            return DLong.ValueOf(x.GetInt64());
         }
 
         public DType Accept(TFlong type, JsonElement x, DefAssembly ass)
@@ -56,7 +56,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TFloat type, JsonElement x, DefAssembly ass)
         {
-            return new DFloat(x.GetSingle());
+            return DFloat.ValueOf(x.GetSingle());
         }
 
         public DType Accept(TDouble type, JsonElement x, DefAssembly ass)
@@ -71,7 +71,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TString type, JsonElement x, DefAssembly ass)
         {
-            return new DString(x.GetString());
+            return DString.ValueOf(x.GetString());
         }
 
         public DType Accept(TBytes type, JsonElement x, DefAssembly ass)
@@ -113,7 +113,7 @@ namespace Luban.Job.Cfg.DataCreators
             {
                 if (!x.TryGetProperty(DefBean.TYPE_NAME_KEY, out var typeNameProp))
                 {
-                    throw new Exception($"结构:{bean.FullName} 是多态类型，必须用 {DefBean.TYPE_NAME_KEY} 字段指定 子类名");
+                    throw new Exception($"结构:'{bean.FullName}' 是多态类型，必须用 '{DefBean.TYPE_NAME_KEY}' 字段指定 子类名");
                 }
                 string subType = typeNameProp.GetString();
                 var fullName = TypeUtil.MakeFullName(bean.Namespace, subType);
@@ -122,7 +122,7 @@ namespace Luban.Job.Cfg.DataCreators
                 //{
                 //    throw new Exception($"type:{fullName} 是抽象类. 不能创建实例");
                 //}
-                implBean = defType ?? throw new Exception($"type:{fullName} 不是合法类型");
+                implBean = defType ?? throw new Exception($"type:'{fullName}' 不是合法类型");
             }
             else
             {
@@ -130,40 +130,47 @@ namespace Luban.Job.Cfg.DataCreators
             }
 
             var fields = new List<DType>();
-            foreach (var field in implBean.HierarchyFields)
+            foreach (DefField f in implBean.HierarchyFields)
             {
-                if (x.TryGetProperty(field.Name, out var ele))
+                if (x.TryGetProperty(f.Name, out var ele))
                 {
                     if (ele.ValueKind == JsonValueKind.Null || ele.ValueKind == JsonValueKind.Undefined)
                     {
-                        if (field.CType.IsNullable)
+                        if (f.CType.IsNullable)
                         {
                             fields.Add(null);
                         }
                         else
                         {
-                            throw new Exception($"结构:{implBean.FullName} 字段:{field.Name} 不能 null or undefined ");
+                            throw new Exception($"结构:'{implBean.FullName}' 字段:'{f.Name}' 不能 null or undefined ");
                         }
                     }
                     else
                     {
                         try
                         {
-                            fields.Add(field.CType.Apply(this, ele, ass));
+                            fields.Add(f.CType.Apply(this, ele, ass));
+                        }
+                        catch (DataCreateException dce)
+                        {
+                            dce.Push(bean, f);
+                            throw;
                         }
                         catch (Exception e)
                         {
-                            throw new Exception($"结构:{implBean.FullName} 字段:{field.Name} 读取失败 => {e.Message}", e);
+                            var dce = new DataCreateException(e, "");
+                            dce.Push(bean, f);
+                            throw dce;
                         }
                     }
                 }
-                else if (field.CType.IsNullable)
+                else if (f.CType.IsNullable)
                 {
                     fields.Add(null);
                 }
                 else
                 {
-                    throw new Exception($"结构:{implBean.FullName} 字段:{field.Name} 缺失");
+                    throw new Exception($"结构:'{implBean.FullName}' 字段:'{f.Name}' 缺失");
                 }
             }
             return new DBean(bean, implBean, fields);

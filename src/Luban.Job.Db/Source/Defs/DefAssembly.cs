@@ -19,17 +19,18 @@ namespace Luban.Job.Db.Defs
         {
             if (!name2DbTables.TryAdd(table.FullName, table))
             {
-                throw new Exception($"table:{table.FullName} duplicated");
+                throw new Exception($"table:'{table.FullName}' duplicated");
             }
             if (!id2DbTables.TryAdd(table.TableUId, table))
             {
-                throw new Exception($"table:{table.FullName} 与 table:{id2DbTables[table.TableUId].FullName} id:{table.TableUId} duplicated");
+                throw new Exception($"table:'{table.FullName}' 与 table:'{id2DbTables[table.TableUId].FullName}' id:{table.TableUId} duplicated");
             }
         }
 
 
         public void Load(Defines defines, RemoteAgent agent)
         {
+            this.SupportNullable = false;
             this.Agent = agent;
             TopModule = defines.TopModule;
 

@@ -1,3 +1,4 @@
+using Luban.Job.Common.Defs;
 using Luban.Job.Common.Types;
 
 namespace Luban.Job.Common.TypeVisitors
@@ -103,16 +104,28 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TVector2 type)
         {
+            if (DefAssemblyBase.IsUseUnityVectors)
+            {
+                return "UnityEngine.Vector2";
+            }
             return "System.Numerics.Vector2";
         }
 
         public string Accept(TVector3 type)
         {
+            if (DefAssemblyBase.IsUseUnityVectors)
+            {
+                return "UnityEngine.Vector3";
+            }
             return "System.Numerics.Vector3";
         }
 
         public string Accept(TVector4 type)
         {
+            if (DefAssemblyBase.IsUseUnityVectors)
+            {
+                return "UnityEngine.Vector4";
+            }
             return "System.Numerics.Vector4";
         }
 

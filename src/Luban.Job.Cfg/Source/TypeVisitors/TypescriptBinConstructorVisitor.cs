@@ -1,5 +1,4 @@
 using Luban.Job.Common.Types;
-using Luban.Job.Common.TypeVisitors;
 
 namespace Luban.Job.Common.TypeVisitors
 {
@@ -11,7 +10,7 @@ namespace Luban.Job.Common.TypeVisitors
         {
             if (type.IsNullable)
             {
-                return $"if({byteBufName}.ReadBool()) {{ {type.Apply(TypescriptBinUnderingConstructorVisitor.Ins, byteBufName, fieldName)} }} else {{ {fieldName} = null }}";
+                return $"if({byteBufName}.ReadBool()) {{ {type.Apply(TypescriptBinUnderingConstructorVisitor.Ins, byteBufName, fieldName)} }} else {{ {fieldName} = undefined }}";
             }
             else
             {

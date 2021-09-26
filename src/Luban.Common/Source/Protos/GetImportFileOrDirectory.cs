@@ -9,6 +9,8 @@ namespace Luban.Common.Protos
     {
         public string FileOrDirName { get; set; }
 
+        public List<string> InclusiveSuffixs { get; set; } = new List<string>();
+
         public override int GetTypeId()
         {
             return 0;
@@ -17,10 +19,12 @@ namespace Luban.Common.Protos
         public override void Serialize(ByteBuf os)
         {
             os.WriteString(FileOrDirName);
+            Bright.Common.SerializationUtil.Serialize(os, InclusiveSuffixs);
         }
         public override void Deserialize(ByteBuf os)
         {
             FileOrDirName = os.ReadString();
+            Bright.Common.SerializationUtil.Deserialize(os, InclusiveSuffixs);
         }
     }
 

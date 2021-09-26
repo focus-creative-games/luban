@@ -11,7 +11,7 @@ namespace Luban.Job.Cfg.TypeVisitors
         {
             if (type.IsNullable)
             {
-                return $"if({jsonFieldName} != null) {{ {type.Apply(TypescriptJsonUnderingConstructorVisitor.Ins, jsonFieldName, fieldName)} }} else {{ {fieldName} = null }}";
+                return $"if({jsonFieldName} != undefined) {{ {type.Apply(TypescriptJsonUnderingConstructorVisitor.Ins, jsonFieldName, fieldName)} }} else {{ {fieldName} = undefined }}";
             }
             else
             {

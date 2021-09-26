@@ -31,7 +31,7 @@ namespace Luban.Job.Db.Defs
 
         public string InternalTableType => "_" + Name;
 
-        public string BaseTableType => $"Bright.Transaction.TxnTable<{KeyTType.Apply(DbCsDefineTypeVisitor.Ins)},{ValueTType.Apply(DbCsDefineTypeVisitor.Ins)}>";
+        public string BaseTableType => $"Bright.Transaction.{(KeyTType is TLong ? "Long" : "String")}TxnTable<{ValueTType.Apply(DbCsDefineTypeVisitor.Ins)}>";
 
         public override void Compile()
         {
@@ -42,6 +42,11 @@ namespace Luban.Job.Db.Defs
             if ((KeyTType = ass.CreateType(Namespace, KeyType)) == null)
             {
                 throw new Exception($"table:{FullName} key:{KeyType} 类型不合法");
+            }
+
+            if (!(KeyTType is TLong) && !(KeyTType is TString))
+            {
+                throw new Exception($"table:{FullName} key:{KeyTType} 不支持。只支持long与string类型");
             }
 
             if ((ValueTType = (TBean)ass.CreateType(Namespace, ValueType)) == null)

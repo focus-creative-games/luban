@@ -5,6 +5,10 @@ namespace Luban.Job.Cfg.Datas
 {
     public class DVector2 : DType<Vector2>
     {
+        public static DVector2 Default { get; } = new DVector2(default);
+
+        public override string TypeName => "vector2";
+
         public DVector2(Vector2 x) : base(x)
         {
         }

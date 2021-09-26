@@ -1,9 +1,4 @@
 ﻿using Luban.Job.Common.Types;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Luban.Job.Common.TypeVisitors
 {
@@ -14,6 +9,11 @@ namespace Luban.Job.Common.TypeVisitors
         public override string DoAccept(TType type, string bufName, string fieldName)
         {
             return $"{type.Apply(LuaSerializeMethodNameVisitor.Ins)}({bufName}, {fieldName})";
+        }
+
+        public override string Accept(TText type, string bufName, string fieldName)
+        {
+            return $"readString({bufName}); {fieldName} = readString({bufName})";
         }
 
         public override string Accept(TArray type, string bufName, string fieldName)

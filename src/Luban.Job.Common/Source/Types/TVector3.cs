@@ -1,15 +1,28 @@
 using Luban.Job.Common.TypeVisitors;
 using System;
+using System.Collections.Generic;
 
 namespace Luban.Job.Common.Types
 {
     public class TVector3 : TType
     {
-        public static TVector3 Ins { get; } = new TVector3(false);
+        private static TVector3 Ins { get; } = new TVector3(false, null);
 
-        public static TVector3 NullableIns { get; } = new TVector3(true);
+        private static TVector3 NullableIns { get; } = new TVector3(true, null);
 
-        public TVector3(bool isNullable) : base(isNullable)
+        public static TVector3 Create(bool isNullable, Dictionary<string, string> tags)
+        {
+            if (tags == null)
+            {
+                return isNullable ? NullableIns : Ins;
+            }
+            else
+            {
+                return new TVector3(isNullable, tags);
+            }
+        }
+
+        private TVector3(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)
         {
         }
 
@@ -23,7 +36,7 @@ namespace Luban.Job.Common.Types
             visitor.Accept(this, x);
         }
 
-        public override void Apply<T1, T2>(ITypeActionVisitor<T1, T2> visitor, T1 x, T2 y)
+        public override void Apply<T1, T3>(ITypeActionVisitor<T1, T3> visitor, T1 x, T3 y)
         {
             visitor.Accept(this, x, y);
         }
@@ -38,7 +51,7 @@ namespace Luban.Job.Common.Types
             return visitor.Accept(this, x);
         }
 
-        public override TR Apply<T1, T2, TR>(ITypeFuncVisitor<T1, T2, TR> visitor, T1 x, T2 y)
+        public override TR Apply<T1, T3, TR>(ITypeFuncVisitor<T1, T3, TR> visitor, T1 x, T3 y)
         {
             return visitor.Accept(this, x, y);
         }

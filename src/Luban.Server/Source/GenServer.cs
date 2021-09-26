@@ -33,15 +33,18 @@ namespace Luban.Server
 
         private readonly Dictionary<string, IJobController> _jobs = new Dictionary<string, IJobController>();
 
-        public void Start(int port, Dictionary<int, ProtocolCreator> factories)
+        private bool _localServer;
+
+        public void Start(bool localhost, int port, Dictionary<int, ProtocolCreator> factories)
         {
+            _localServer = localhost;
             _handlers.Add(GetOutputFile.ID, (s, p) => OnGetOutputFile(s, (GetOutputFile)p));
             _handlers.Add(GenJob.ID, (s, p) => OnGenJob(s, (GenJob)p));
 
             var worker = new EventLoopGroup(4, 16);
             var server = new TcpServerBootstrap
             {
-                LocalAddress = new IPEndPoint(IPAddress.Any, port),
+                LocalAddress = new IPEndPoint(localhost ? IPAddress.Loopback : IPAddress.Any, port),
 
                 ChildrenEventLoopGroup = worker,
                 EventLoop = worker.ChooseEventLoop(),
@@ -58,7 +61,7 @@ namespace Luban.Server
 
         public void RegisterJob(string jobType, IJobController jobController)
         {
-            s_logger.Info("register job. name:{name} class:{class}", jobType, jobController.GetType().FullName);
+            s_logger.Debug("register job. name:{name} class:{class}", jobType, jobController.GetType().FullName);
             _jobs.Add(jobType, jobController);
         }
 
@@ -102,7 +105,7 @@ namespace Luban.Server
 
             if (_jobs.TryGetValue(rpc.Arg.JobType, out var jobController))
             {
-                _ = jobController.GenAsync(new RemoteAgent(session, rpc.Arg.Verbose), rpc);
+                _ = jobController.GenAsync(_localServer ? new LocalAgent(session) : new RemoteAgent(session), rpc);
             }
             else
             {

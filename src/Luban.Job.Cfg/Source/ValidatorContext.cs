@@ -3,7 +3,6 @@ using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Cfg.RawDefs;
-using Luban.Job.Cfg.Utils;
 using Luban.Job.Cfg.Validators;
 using System;
 using System.Collections.Generic;
@@ -87,7 +86,10 @@ namespace Luban.Job.Cfg
                         {
                             CurrentVisitor = visitor;
                             visitor.ValidateTable(t, records);
-                            ValidateText(t, records);
+                            if (this.Assembly.NeedL10nTextTranslate)
+                            {
+                                ValidateText(t, records);
+                            }
                         }
                         finally
                         {
@@ -177,7 +179,7 @@ namespace Luban.Job.Cfg
             var tableDataInfo = Assembly.GetTableDataInfo(table);
 
             List<Record> mainRecords = tableDataInfo.MainRecords;
-            List<Record> branchRecords = tableDataInfo.BranchRecords;
+            List<Record> patchRecords = tableDataInfo.PatchRecords;
 
             // 这么大费周张是为了保证被覆盖的id仍然保持原来的顺序，而不是出现在最后
             int index = 0;
@@ -185,9 +187,9 @@ namespace Luban.Job.Cfg
             {
                 r.Index = index++;
             }
-            if (branchRecords != null)
+            if (patchRecords != null)
             {
-                foreach (var r in branchRecords)
+                foreach (var r in patchRecords)
                 {
                     r.Index = index++;
                 }
@@ -203,13 +205,13 @@ namespace Luban.Job.Cfg
                     {
                         throw new Exception($"配置表 {table.FullName} 是单值表 mode=one,但主文件数据个数:{mainRecords.Count} != 1");
                     }
-                    if (branchRecords != null && branchRecords.Count != 1)
+                    if (patchRecords != null && patchRecords.Count != 1)
                     {
-                        throw new Exception($"配置表 {table.FullName} 是单值表 mode=one,但分支文件数据个数:{branchRecords.Count} != 1");
+                        throw new Exception($"配置表 {table.FullName} 是单值表 mode=one,但分支文件数据个数:{patchRecords.Count} != 1");
                     }
-                    if (branchRecords != null)
+                    if (patchRecords != null)
                     {
-                        mainRecords[0] = branchRecords[0];
+                        mainRecords[0] = patchRecords[0];
                     }
                     break;
                 }
@@ -220,23 +222,23 @@ namespace Luban.Job.Cfg
                         DType key = r.Data.Fields[table.IndexFieldIdIndex];
                         if (!mainRecordMap.TryAdd(key, r))
                         {
-                            throw new Exception($@"配置表 {table.FullName} 主文件 主键字段:{table.Index} 主键值:{key} 重复.
+                            throw new Exception($@"配置表 '{table.FullName}' 主文件 主键字段:'{table.Index}' 主键值:'{key}' 重复.
         记录1 来自文件:{r.Source}
         记录2 来自文件:{mainRecordMap[key].Source}
 ");
                         }
                     }
-                    if (branchRecords != null)
+                    if (patchRecords != null)
                     {
-                        var branchRecordMap = new Dictionary<DType, Record>();
-                        foreach (Record r in branchRecords)
+                        var patchRecordMap = new Dictionary<DType, Record>();
+                        foreach (Record r in patchRecords)
                         {
                             DType key = r.Data.Fields[table.IndexFieldIdIndex];
-                            if (!branchRecordMap.TryAdd(key, r))
+                            if (!patchRecordMap.TryAdd(key, r))
                             {
-                                throw new Exception($@"配置表 {table.FullName} 分支文件 主键字段:{table.Index} 主键值:{key} 重复.
+                                throw new Exception($@"配置表 '{table.FullName}' 分支文件 主键字段:'{table.Index}' 主键值:'{key}' 重复.
         记录1 来自文件:{r.Source}
-        记录2 来自文件:{branchRecordMap[key].Source}
+        记录2 来自文件:{patchRecordMap[key].Source}
 ");
                             }
                             if (mainRecordMap.TryGetValue(key, out var old))

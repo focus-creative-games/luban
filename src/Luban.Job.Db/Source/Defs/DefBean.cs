@@ -1,9 +1,7 @@
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.RawDefs;
-using Luban.Job.Db.TypeVisitors;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Luban.Job.Db.Defs
 {
@@ -34,11 +32,11 @@ namespace Luban.Job.Db.Defs
             {
                 if (c.Id == 0)
                 {
-                    throw new Exception($"bean:{FullName} is child of dynamic type. beanid:{Id} can't be 0!");
+                    throw new Exception($"bean:'{FullName}' is child of dynamic type. beanid:{Id} can't be 0!");
                 }
                 if (!ids.Add(c.Id))
                 {
-                    throw new Exception($"bean:{c.FullName} beanid:{c.Id} duplicate!");
+                    throw new Exception($"bean:'{c.FullName}' beanid:{c.Id} duplicate!");
                 }
             }
 

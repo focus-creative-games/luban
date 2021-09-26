@@ -74,12 +74,19 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TText type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.readString();";
+            return $"{bufName}.readString(); {fieldName} = {bufName}.readString();";
         }
 
         public string Accept(TBean type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {type.Bean.FullNameWithTopModule}.deserialize{type.Bean.Name}({bufName});";
+            if (type.IsDynamic)
+            {
+                return $"{fieldName} = {type.Bean.FullNameWithTopModule}.deserialize{type.Bean.Name}({bufName});";
+            }
+            else
+            {
+                return $"{fieldName} = new {type.Bean.FullNameWithTopModule}({bufName});";
+            }
         }
 
         public string Accept(TArray type, string bufName, string fieldName)

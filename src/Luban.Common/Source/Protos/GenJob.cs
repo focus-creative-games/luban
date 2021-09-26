@@ -70,6 +70,8 @@ namespace Luban.Common.Protos
 
         public List<FileInfo> ScatteredFiles { get; set; } = new List<FileInfo>();
 
+        public string StackTrace { get; set; }
+
         public override int GetTypeId()
         {
             return 0;
@@ -81,6 +83,7 @@ namespace Luban.Common.Protos
             os.WriteString(ErrMsg);
             Bright.Common.SerializationUtil.Serialize(os, FileGroups);
             Bright.Common.SerializationUtil.Serialize(os, ScatteredFiles);
+            os.WriteString(StackTrace);
         }
         public override void Deserialize(ByteBuf os)
         {
@@ -88,6 +91,7 @@ namespace Luban.Common.Protos
             ErrMsg = os.ReadString();
             Bright.Common.SerializationUtil.Deserialize(os, FileGroups);
             Bright.Common.SerializationUtil.Deserialize(os, ScatteredFiles);
+            StackTrace = os.ReadString();
         }
     }
 

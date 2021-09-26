@@ -1,15 +1,27 @@
 using Luban.Job.Common.TypeVisitors;
+using System.Collections.Generic;
 
 namespace Luban.Job.Common.Types
 {
     public class TBool : TType
     {
+        private static TBool Ins { get; } = new TBool(false, null);
 
-        public static TBool Ins { get; } = new TBool(false);
+        private static TBool NullableIns { get; } = new TBool(true, null);
 
-        public static TBool NullableIns { get; } = new TBool(true);
+        public static TBool Create(bool isNullable, Dictionary<string, string> tags)
+        {
+            if (tags == null)
+            {
+                return isNullable ? NullableIns : Ins;
+            }
+            else
+            {
+                return new TBool(isNullable, tags);
+            }
+        }
 
-        public TBool(bool isNullable) : base(isNullable)
+        private TBool(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)
         {
         }
 

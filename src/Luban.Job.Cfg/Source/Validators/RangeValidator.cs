@@ -1,6 +1,5 @@
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.Defs;
-using Luban.Job.Cfg.Utils;
 using System;
 
 namespace Luban.Job.Cfg.Validators

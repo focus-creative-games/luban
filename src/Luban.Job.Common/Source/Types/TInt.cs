@@ -1,14 +1,27 @@
 using Luban.Job.Common.TypeVisitors;
+using System.Collections.Generic;
 
 namespace Luban.Job.Common.Types
 {
     public class TInt : TType
     {
-        public static TInt Ins { get; } = new TInt(false);
+        private static TInt Ins { get; } = new TInt(false, null);
 
-        public static TInt NullableIns { get; } = new TInt(true);
+        private static TInt NullableIns { get; } = new TInt(true, null);
 
-        public TInt(bool isNullable) : base(isNullable)
+        public static TInt Create(bool isNullable, Dictionary<string, string> tags)
+        {
+            if (tags == null)
+            {
+                return isNullable ? NullableIns : Ins;
+            }
+            else
+            {
+                return new TInt(isNullable, tags);
+            }
+        }
+
+        private TInt(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)
         {
         }
 

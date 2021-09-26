@@ -1,5 +1,4 @@
 using Luban.Job.Common.Types;
-using Luban.Job.Common.TypeVisitors;
 
 namespace Luban.Job.Common.TypeVisitors
 {
@@ -7,85 +6,75 @@ namespace Luban.Job.Common.TypeVisitors
     {
         public string Accept(TBool type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadBool();";
+            return $"{fieldName} = {bufName}.ReadBool()";
         }
 
         public string Accept(TByte type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadByte();";
+            return $"{fieldName} = {bufName}.ReadByte()";
         }
 
         public string Accept(TShort type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadShort();";
+            return $"{fieldName} = {bufName}.ReadShort()";
         }
 
         public string Accept(TFshort type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadFshort();";
+            return $"{fieldName} = {bufName}.ReadFshort()";
         }
 
         public string Accept(TInt type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadInt();";
+            return $"{fieldName} = {bufName}.ReadInt()";
         }
 
         public string Accept(TFint type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadFint();";
+            return $"{fieldName} = {bufName}.ReadFint()";
         }
 
         public string Accept(TLong type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.{(type.IsBigInt ? "ReadLong" : "ReadLongAsNumber")}();";
+            return $"{fieldName} = {bufName}.{(type.IsBigInt ? "ReadLong" : "ReadLongAsNumber")}()";
         }
 
         public string Accept(TFlong type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadFlong();";
+            return $"{fieldName} = {bufName}.ReadFlong()";
         }
 
         public string Accept(TFloat type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadFloat();";
+            return $"{fieldName} = {bufName}.ReadFloat()";
         }
 
         public string Accept(TDouble type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadDouble();";
+            return $"{fieldName} = {bufName}.ReadDouble()";
         }
 
         public string Accept(TEnum type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadInt();";
+            return $"{fieldName} = {bufName}.ReadInt()";
         }
 
         public string Accept(TString type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadString();";
+            return $"{fieldName} = {bufName}.ReadString()";
         }
 
         public string Accept(TBytes type, string bufName, string fieldName)
         {
-            return $"{fieldName} = new Uint8Array({bufName}.ReadArrayBuffer());";
+            return $"{fieldName} = new Uint8Array({bufName}.ReadArrayBuffer())";
         }
 
         public string Accept(TText type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadString();";
+            return $" {bufName}.ReadString(); {fieldName} = {bufName}.ReadString()";
         }
 
         public abstract string Accept(TBean type, string bufVarName, string fieldName);
-        //{
-        //    if (type.Bean.IsAbstractType)
-        //    {
-        //        return $"{fieldName} = {type.Bean.FullName}.deserialize({bufVarName});";
-        //    }
-        //    else
-        //    {
-        //        return $"{fieldName} = new {type.Bean.FullName}({bufVarName});";
-        //    }
-        //}
 
         private string GetNewArray(TArray arrayType, string size)
         {
@@ -123,43 +112,42 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TArray type, string bufVarName, string fieldName)
         {
-            return $"{{ let n = Math.min({bufVarName}.ReadSize(), {bufVarName}.Size); {fieldName} = {GetNewArray(type, "n")}; for(let i = 0 ; i < n ; i++) {{ let _e :{type.ElementType.Apply(TypescriptDefineTypeName.Ins)};{type.ElementType.Apply(this, bufVarName, "_e")}; { (IsRawArrayElementType(type.ElementType) ? $"{fieldName}[i] = _e" : $"{fieldName}.push(_e)") } }} }}";
+            return $"{{ let n = Math.min({bufVarName}.ReadSize(), {bufVarName}.Size); {fieldName} = {GetNewArray(type, "n")}; for(let i = 0 ; i < n ; i++) {{ let _e :{type.ElementType.Apply(TypescriptDefineTypeNameVisitor.Ins)};{type.ElementType.Apply(this, bufVarName, "_e")}; { (IsRawArrayElementType(type.ElementType) ? $"{fieldName}[i] = _e" : $"{fieldName}.push(_e)") } }} }}";
         }
 
-        public string Accept(TList type, string bufVarName, string fieldName)
+        public virtual string Accept(TList type, string bufVarName, string fieldName)
         {
-            return $"{{ {fieldName} = []; for(let i = 0, n = {bufVarName}.ReadSize() ; i < n ; i++) {{ let _e :{type.ElementType.Apply(TypescriptDefineTypeName.Ins)};{type.ElementType.Apply(this, bufVarName, "_e")}; {fieldName}.push(_e) }} }}";
+            return $"{{ {fieldName} = []; for(let i = 0, n = {bufVarName}.ReadSize() ; i < n ; i++) {{ let _e :{type.ElementType.Apply(TypescriptDefineTypeNameVisitor.Ins)}; {type.ElementType.Apply(this, bufVarName, "_e")}; {fieldName}.push(_e) }} }}";
         }
 
-        public string Accept(TSet type, string bufVarName, string fieldName)
+        public virtual string Accept(TSet type, string bufVarName, string fieldName)
         {
-            return $"{{ {fieldName} = new {type.Apply(TypescriptDefineTypeName.Ins)}(); for(let i = 0, n = {bufVarName}.ReadSize() ; i < n ; i++) {{ let _e:{type.ElementType.Apply(TypescriptDefineTypeName.Ins)};{type.ElementType.Apply(this, bufVarName, "_e")} {fieldName}.add(_e);}}}}";
+            return $"{{ {fieldName} = new {type.Apply(TypescriptDefineTypeNameVisitor.Ins)}(); for(let i = 0, n = {bufVarName}.ReadSize() ; i < n ; i++) {{ let _e:{type.ElementType.Apply(TypescriptDefineTypeNameVisitor.Ins)};{type.ElementType.Apply(this, bufVarName, "_e")}; {fieldName}.add(_e);}}}}";
         }
 
-        public string Accept(TMap type, string bufVarName, string fieldName)
+        public virtual string Accept(TMap type, string bufVarName, string fieldName)
         {
-            return $"{{ {fieldName} = new {type.Apply(TypescriptDefineTypeName.Ins)}(); for(let i = 0, n = {bufVarName}.ReadSize() ; i < n ; i++) {{ let _k:{type.KeyType.Apply(TypescriptDefineTypeName.Ins)};  {type.KeyType.Apply(this, bufVarName, "_k")};  let _v:{type.ValueType.Apply(TypescriptDefineTypeName.Ins)};  {type.ValueType.Apply(this, bufVarName, "_v")}     {fieldName}.set(_k, _v);  }} }}";
-
+            return $"{{ {fieldName} = new {type.Apply(TypescriptDefineTypeNameVisitor.Ins)}(); for(let i = 0, n = {bufVarName}.ReadSize() ; i < n ; i++) {{ let _k:{type.KeyType.Apply(TypescriptDefineTypeNameVisitor.Ins)}; {type.KeyType.Apply(this, bufVarName, "_k")}; let _v:{type.ValueType.Apply(TypescriptDefineTypeNameVisitor.Ins)}; {type.ValueType.Apply(this, bufVarName, "_v")}; {fieldName}.set(_k, _v);  }} }}";
         }
 
         public string Accept(TVector2 type, string bufVarName, string fieldName)
         {
-            return $"{fieldName} = Vector2.from({bufVarName})";
+            return $"{fieldName} = Vector2.deserializeFrom({bufVarName})";
         }
 
         public string Accept(TVector3 type, string bufVarName, string fieldName)
         {
-            return $"{fieldName} = Vector3.from({bufVarName})";
+            return $"{fieldName} = Vector3.deserializeFrom({bufVarName})";
         }
 
         public string Accept(TVector4 type, string bufVarName, string fieldName)
         {
-            return $"{fieldName} = Vector4.from({bufVarName})";
+            return $"{fieldName} = Vector4.deserializeFrom({bufVarName})";
         }
 
         public string Accept(TDateTime type, string bufVarName, string fieldName)
         {
-            return $"{fieldName} = {bufVarName}.ReadInt();";
+            return $"{fieldName} = {bufVarName}.ReadInt()";
         }
     }
 }

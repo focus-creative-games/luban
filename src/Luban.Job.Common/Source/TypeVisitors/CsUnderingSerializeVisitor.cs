@@ -1,5 +1,5 @@
+using Luban.Job.Common.Defs;
 using Luban.Job.Common.Types;
-using Luban.Job.Common.TypeVisitors;
 
 namespace Luban.Job.Common.TypeVisitors
 {
@@ -102,19 +102,22 @@ namespace Luban.Job.Common.TypeVisitors
             return $"{{ {bufName}.WriteSize({fieldName}.Count); foreach((var _k, var _v) in {fieldName}) {{ {type.KeyType.Apply(this, bufName, "_k")} {type.ValueType.Apply(this, bufName, "_v")} }} }}";
         }
 
+
+        public static string VectorName => (DefAssemblyBase.IsUseUnityVectors ? "UnityVector" : "Vector");
+
         public string Accept(TVector2 type, string bufName, string fieldName)
         {
-            return $"{bufName}.WriteVector2({fieldName});";
+            return $"{bufName}.Write{VectorName}2({fieldName});";
         }
 
         public string Accept(TVector3 type, string bufName, string fieldName)
         {
-            return $"{bufName}.WriteVector3({fieldName});";
+            return $"{bufName}.Write{VectorName}3({fieldName});";
         }
 
         public string Accept(TVector4 type, string bufName, string fieldName)
         {
-            return $"{bufName}.WriteVector4({fieldName});";
+            return $"{bufName}.Write{VectorName}4({fieldName});";
         }
 
         public string Accept(TDateTime type, string bufName, string fieldName)

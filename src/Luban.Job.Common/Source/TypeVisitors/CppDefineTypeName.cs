@@ -8,13 +8,12 @@ namespace Luban.Job.Common.TypeVisitors
 
         public override string DoAccept(TType type)
         {
-            //return type.IsNullable ? $"std::optional<{type.Apply(CppUnderingDefineTypeName.Ins)}>" : type.Apply(CppUnderingDefineTypeName.Ins);
-            return type.Apply(CppUnderingDefineTypeName.Ins);
+            return type.IsNullable ? $"::bright::SharedPtr<{type.Apply(CppSharedPtrUnderingDefineTypeName.Ins)}>" : type.Apply(CppSharedPtrUnderingDefineTypeName.Ins);
         }
 
         public override string Accept(TBean type)
         {
-            return type.Apply(CppUnderingDefineTypeName.Ins);
+            return type.Apply(CppSharedPtrUnderingDefineTypeName.Ins);
         }
     }
 }

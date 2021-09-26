@@ -1,5 +1,4 @@
 using Luban.Job.Common.Types;
-using Luban.Job.Common.TypeVisitors;
 
 namespace Luban.Job.Common.TypeVisitors
 {
@@ -11,11 +10,11 @@ namespace Luban.Job.Common.TypeVisitors
         {
             if (type.Bean.IsAbstractType)
             {
-                return $"{fieldName} = {type.Bean.FullName}.deserializeFrom({bufVarName});";
+                return $"{fieldName} = {type.Bean.FullName}.deserializeFrom({bufVarName})";
             }
             else
             {
-                return $"{fieldName} = new {type.Bean.FullName}(); {fieldName}.deserialize({bufVarName});";
+                return $"{fieldName} = new {type.Bean.FullName}(); {fieldName}.deserialize({bufVarName})";
             }
         }
     }

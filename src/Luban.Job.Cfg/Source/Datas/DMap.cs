@@ -10,6 +10,8 @@ namespace Luban.Job.Cfg.Datas
         public TMap Type { get; }
         public Dictionary<DType, DType> Datas { get; }
 
+        public override string TypeName => "map";
+
         public DMap(TMap type, Dictionary<DType, DType> datas)
         {
             this.Type = type;

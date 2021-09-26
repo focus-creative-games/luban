@@ -1,6 +1,7 @@
 ﻿using CommandLine;
 using Luban.Common.Protos;
 using Luban.Common.Utils;
+using Luban.Job.Common;
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.Utils;
 using Luban.Job.Db.Defs;
@@ -11,7 +12,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using FileInfo = Luban.Common.Protos.FileInfo;
 
@@ -19,20 +19,14 @@ namespace Luban.Job.Db
 {
     public class JobController : IJobController
     {
-        class GenArgs
+        class GenArgs : GenArgsBase
         {
-            [Option('d', "define_file", Required = true, HelpText = "define file")]
-            public string DefineFile { get; set; }
-
-            [Option('c', "output_code_dir", Required = true, HelpText = "output code directory")]
-            public string OutputCodeDir { get; set; }
-
-            [Option('g', "gen_type", Required = true, HelpText = "cs . current only support cs")]
+            [Option('g', "gen_type", Required = true, HelpText = "cs,typescript ")]
             public string GenType { get; set; }
         }
 
 
-        private bool TryParseArg(List<string> args, out GenArgs result, out string errMsg)
+        private bool TryParseArg(List<string> args, out GenArgs options, out string errMsg)
         {
             var helpWriter = new StringWriter();
             var parser = new Parser(ps =>
@@ -43,12 +37,20 @@ namespace Luban.Job.Db
             if (parseResult.Tag == ParserResultType.NotParsed)
             {
                 errMsg = helpWriter.ToString();
-                result = null;
+                options = null;
                 return false;
             }
 
-            result = (parseResult as Parsed<GenArgs>).Value;
+            options = (parseResult as Parsed<GenArgs>).Value;
             errMsg = null;
+            if (!options.ValidateOutouptCodeDir(ref errMsg))
+            {
+                return false;
+            }
+            if (options.GenType.Contains("typescript") && !options.ValidateTypescriptRequire(options.GenType, ref errMsg))
+            {
+                return false;
+            }
             return true;
         }
 
@@ -92,14 +94,14 @@ namespace Luban.Job.Db
 
                 var tasks = new List<Task>();
                 var genCodeFiles = new ConcurrentBag<FileInfo>();
-
+                var genScatteredFiles = new ConcurrentBag<FileInfo>();
 
                 var genType = args.GenType;
                 switch (genType)
                 {
                     case "cs":
                     {
-                        var render = new SyncCsRender();
+                        var render = new AsyncCsRender();
                         foreach (var c in ass.Types.Values)
                         {
                             tasks.Add(Task.Run(() =>
@@ -119,6 +121,76 @@ namespace Luban.Job.Db
                                 ass.Types.Values.Where(t => t is DefTable).Select(t => (DefTable)t).ToList()),
                                 Common.ELanguage.CS);
                             var file = RenderFileUtil.GetDefTypePath(name, Common.ELanguage.CS);
+                            var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
+                            genCodeFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
+                        }));
+                        break;
+                    }
+                    case "typescript":
+                    {
+                        var render = new TypescriptRender();
+                        var brightRequirePath = args.TypescriptBrightRequirePath;
+                        var brightPackageName = args.TypescriptBrightPackageName;
+                        tasks.Add(Task.Run(() =>
+                        {
+                            var fileContent = new List<string>();
+
+                            fileContent.Add(TypescriptStringTemplate.GetByteBufImports(brightRequirePath, brightPackageName));
+
+                            fileContent.Add(TypescriptStringTemplate.GetSerializeImports(brightRequirePath, brightPackageName));
+                            fileContent.Add(TypescriptStringTemplate.GetProtocolImports(brightRequirePath, brightPackageName));
+                            fileContent.Add(TypescriptStringTemplate.GetVectorImports(brightRequirePath, brightPackageName));
+
+                            if (!string.IsNullOrEmpty(brightRequirePath))
+                            {
+                                fileContent.Add($"import {{FieldLogger, FieldLoggerGeneric1, FieldLoggerGeneric2}} from '{brightRequirePath}/transaction/FieldLogger'");
+                                fileContent.Add($"import TxnBeanBase from '{brightRequirePath}/transaction/TxnBeanBase'");
+                                fileContent.Add($"import {{TxnTable, TxnTableGeneric}} from '{brightRequirePath}/transaction/TxnTable'");
+                                fileContent.Add($"import TransactionContext from '{brightRequirePath}/transaction/TransactionContext'");
+                                fileContent.Add($"import {{FieldTag}} from '{brightRequirePath}/serialization/FieldTag'");
+                                fileContent.Add($"import TKey from '{brightRequirePath}/storage/TKey'");
+                                fileContent.Add($"import PList from '{brightRequirePath}/transaction/collections/PList'");
+                                fileContent.Add($"import PList1 from '{brightRequirePath}/transaction/collections/PList1'");
+                                fileContent.Add($"import PList2 from '{brightRequirePath}/transaction/collections/PList2'");
+                                fileContent.Add($"import PSet from '{brightRequirePath}/transaction/collections/PSet'");
+                                fileContent.Add($"import PMap from '{brightRequirePath}/transaction/collections/PMap'");
+                                fileContent.Add($"import PMap1 from '{brightRequirePath}/transaction/collections/PMap1'");
+                                fileContent.Add($"import PMap2 from '{brightRequirePath}/transaction/collections/PMap2'");
+                                fileContent.Add($"import SerializeFactory from '{brightRequirePath}/serialization/SerializeFactory'");
+                            }
+                            else
+                            {
+                                fileContent.Add($"import {{FieldLogger, FieldLoggerGeneric1, FieldLoggerGeneric2}} from '{brightPackageName}'");
+                                fileContent.Add($"import {{TxnBeanBase}} from '{brightPackageName}'");
+                                fileContent.Add($"import {{TxnTable, TxnTableGeneric}} from '{brightPackageName}'");
+                                fileContent.Add($"import {{TransactionContext}} from '{brightPackageName}'");
+                                fileContent.Add($"import {{FieldTag}} from '{brightPackageName}'");
+                                fileContent.Add($"import {{TKey}} from '{brightPackageName}'");
+                                fileContent.Add($"import {{PList}} from '{brightPackageName}'");
+                                fileContent.Add($"import {{PList1}} from '{brightPackageName}'");
+                                fileContent.Add($"import {{PList2}} from '{brightPackageName}'");
+                                fileContent.Add($"import {{PSet}} from '{brightPackageName}'");
+                                fileContent.Add($"import {{PMap}} from '{brightPackageName}'");
+                                fileContent.Add($"import {{PMap1}} from '{brightPackageName}'");
+                                fileContent.Add($"import {{PMap2}} from '{brightPackageName}'");
+                                fileContent.Add($"import {{SerializeFactory}} from '{brightPackageName}'");
+                            }
+
+                            fileContent.Add($"export namespace {ass.TopModule} {{");
+
+
+                            foreach (var type in exportTypes)
+                            {
+                                fileContent.Add(render.RenderAny(type));
+                            }
+
+                            var tables = ass.Types.Values.Where(t => t is DefTable).Select(t => (DefTable)t).ToList();
+                            fileContent.Add(render.RenderTables("Tables", ass.TopModule, tables));
+
+                            fileContent.Add("}"); // end of topmodule
+
+                            var content = FileHeaderUtil.ConcatAutoGenerationHeader(string.Join('\n', fileContent), ELanguage.TYPESCRIPT);
+                            var file = "Types.ts";
                             var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
                             genCodeFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                         }));

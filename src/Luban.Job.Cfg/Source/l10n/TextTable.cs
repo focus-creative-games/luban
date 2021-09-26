@@ -1,15 +1,10 @@
 ﻿using Luban.Job.Cfg.Datas;
-using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Cfg.RawDefs;
 using Luban.Job.Cfg.Utils;
 using Luban.Job.Common.Types;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Luban.Job.Cfg.l10n
 {
@@ -53,7 +48,7 @@ namespace Luban.Job.Cfg.l10n
             defTextRowType.PreCompile();
             defTextRowType.Compile();
             defTextRowType.PostCompile();
-            _textRowType = new TBean(defTextRowType, false);
+            _textRowType = TBean.Create(false, defTextRowType);
         }
 
         public void AddText(string key, string text)

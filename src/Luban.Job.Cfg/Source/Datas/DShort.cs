@@ -4,6 +4,10 @@ namespace Luban.Job.Cfg.Datas
 {
     public class DShort : DType<short>
     {
+        public static DShort Default { get; } = new DShort(0);
+
+        public override string TypeName => "short";
+
         public DShort(short x) : base(x)
         {
         }

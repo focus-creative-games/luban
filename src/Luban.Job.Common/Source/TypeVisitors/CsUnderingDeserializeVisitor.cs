@@ -1,5 +1,5 @@
+using Luban.Job.Common.Defs;
 using Luban.Job.Common.Types;
-using Luban.Job.Common.TypeVisitors;
 
 namespace Luban.Job.Common.TypeVisitors
 {
@@ -74,7 +74,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TText type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadString();";
+            return $"{fieldName}{TText.L10N_FIELD_SUFFIX} = {bufName}.ReadString(); {fieldName} = {bufName}.ReadString();";
         }
 
         public string Accept(TBean type, string bufName, string fieldName)
@@ -103,19 +103,21 @@ namespace Luban.Job.Common.TypeVisitors
 
         }
 
+        public static string VectorName => (DefAssemblyBase.IsUseUnityVectors ? "UnityVector" : "Vector");
+
         public string Accept(TVector2 type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadVector2();";
+            return $"{fieldName} = {bufName}.Read{VectorName}2();";
         }
 
         public string Accept(TVector3 type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadVector3();";
+            return $"{fieldName} = {bufName}.Read{VectorName}3();";
         }
 
         public string Accept(TVector4 type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadVector4();";
+            return $"{fieldName} = {bufName}.Read{VectorName}4();";
         }
 
         public string Accept(TDateTime type, string bufName, string fieldName)

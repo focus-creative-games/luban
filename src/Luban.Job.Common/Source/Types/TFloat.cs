@@ -1,14 +1,27 @@
 using Luban.Job.Common.TypeVisitors;
+using System.Collections.Generic;
 
 namespace Luban.Job.Common.Types
 {
     public class TFloat : TType
     {
-        public static TFloat Ins { get; } = new TFloat(false);
+        public static TFloat Ins { get; } = new TFloat(false, null);
 
-        public static TFloat NullableIns { get; } = new TFloat(true);
+        private static TFloat NullableIns { get; } = new TFloat(true, null);
 
-        public TFloat(bool isNullable) : base(isNullable)
+        public static TFloat Create(bool isNullable, Dictionary<string, string> tags)
+        {
+            if (tags == null)
+            {
+                return isNullable ? NullableIns : Ins;
+            }
+            else
+            {
+                return new TFloat(isNullable, tags);
+            }
+        }
+
+        private TFloat(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)
         {
         }
 

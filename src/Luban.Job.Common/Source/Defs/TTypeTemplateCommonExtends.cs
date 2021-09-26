@@ -125,12 +125,12 @@ namespace Luban.Job.Common.Defs
 
         public static string TsDefineType(TType type)
         {
-            return type.Apply(TypescriptDefineTypeName.Ins);
+            return type.Apply(TypescriptDefineTypeNameVisitor.Ins);
         }
 
         public static string TsToString(string filedName, TType type)
         {
-            return $"{filedName}";
+            return filedName;
         }
 
         public static string TsCtorDefaultValue(TType type)
@@ -161,6 +161,16 @@ namespace Luban.Job.Common.Defs
         public static string PyConstValue(TType type, string value)
         {
             return type.Apply(LuaConstValueVisitor.Ins, value);
+        }
+
+        public static bool HasTag(dynamic obj, string attrName)
+        {
+            return obj.HasTag(attrName);
+        }
+
+        public static string GetTag(dynamic obj, string attrName)
+        {
+            return obj.GetTag(attrName);
         }
     }
 }

@@ -1,8 +1,10 @@
 using ExcelDataReader;
 using Luban.Job.Cfg.DataCreators;
 using Luban.Job.Cfg.Datas;
-using Luban.Job.Cfg.TypeVisitors;
+using Luban.Job.Cfg.Defs;
+using Luban.Job.Cfg.Utils;
 using Luban.Job.Common.Types;
+using Luban.Job.Common.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +15,15 @@ namespace Luban.Job.Cfg.DataSources.Excel
     {
         private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private bool OrientRow { get; set; } = true; //  以行为数据读取方向
+        private const int TITLE_MIN_ROW_NUM = 2;
+        private const int TITLE_MAX_ROW_NUM = 10;
+        private const int TITLE_DEFAULT_ROW_NUM = 3;
 
-        private int TitleRows { get; set; } = 3; // 默认有三行是标题行. 第一行是字段名，第二行是中文描述，第三行是注释
+        private bool IsOrientRow { get; set; } = true; //  以行为数据读取方向
+
+        public int HeaderRowCount { get; private set; } = TITLE_DEFAULT_ROW_NUM; // 默认有三行是标题行. 第一行是字段名，第二行是中文描述，第三行是注释
+
+        public int AttrRowCount { get; private set; }
 
         public string RawUrl { get; }
 
@@ -25,8 +33,14 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         private Title _rootTitle;
 
+        public List<Title> RootFields => _rootTitle.SubTitleList;
+
+        public List<List<Cell>> RowColumns => _rowColumns;
+
         public class Title
         {
+            public bool Root { get; set; }
+
             public int FromIndex { get; set; }
 
             public int ToIndex { get; set; }
@@ -94,6 +108,64 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         public class NamedRow
         {
+            public static IEnumerable<NamedRow> CreateMultiRowNamedRow(List<List<Cell>> rows, Title title, TBean bean)
+            {
+                if (!((DefBean)bean.Bean).IsMultiRow)
+                {
+                    foreach (var row in rows)
+                    {
+                        if (Sheet.IsBlankRow(row, title.FromIndex, title.ToIndex))
+                        {
+                            continue;
+                        }
+                        yield return new NamedRow(title, row);
+                    }
+                }
+                else
+                {
+                    List<DefField> notMultiRowFields = bean.Bean.HierarchyFields.Select(f => (DefField)f).Where(f => !f.IsMultiRow && f.IsRowOrient).ToList();
+                    List<List<Cell>> recordRows = null;
+                    foreach (var row in rows)
+                    {
+                        // 忽略全空的行
+                        if (Sheet.IsBlankRow(row, title.FromIndex, title.ToIndex))
+                        {
+                            continue;
+                        }
+                        // 如果非多行数据全空，或者跟记录第一行完全相同说明该行属于多行数据
+                        if (notMultiRowFields.All(f =>
+                        {
+                            var fieldTitle = title.SubTitles[f.Name];
+                            return Sheet.IsBlankRow(row, fieldTitle.FromIndex, fieldTitle.ToIndex);
+                        }) || (title.Root && recordRows != null && notMultiRowFields.All(f =>
+                        {
+                            var fieldTitle = title.SubTitles[f.Name];
+                            return Sheet.IsSameRow(row, recordRows[0], fieldTitle.FromIndex, fieldTitle.ToIndex);
+                        })))
+                        {
+                            if (recordRows == null)
+                            {
+                                recordRows = new List<List<Cell>>();
+                            }
+                            recordRows.Add(row);
+                        }
+                        else
+                        {
+                            if (recordRows != null)
+                            {
+                                yield return new NamedRow(title, recordRows);
+                            }
+                            recordRows = new List<List<Cell>>();
+                            recordRows.Add(row);
+                        }
+                    }
+                    if (recordRows != null)
+                    {
+                        yield return new NamedRow(title, recordRows);
+                    }
+                }
+            }
+
             public Title SelfTitle { get; }
 
             public List<List<Cell>> Rows { get; }
@@ -137,7 +209,11 @@ namespace Luban.Job.Cfg.DataSources.Excel
             {
                 if (Titles.TryGetValue(name, out var title))
                 {
-                    CheckEmptySinceSecondRow(name, title.FromIndex, title.ToIndex);
+                    // 只有顶级root支持才允许非multi_rows字段与第一行相同时，判定为同个记录
+                    if (!this.SelfTitle.Root)
+                    {
+                        CheckEmptySinceSecondRow(name, title.FromIndex, title.ToIndex);
+                    }
                     var es = new ExcelStream(Rows[0], title.FromIndex, title.ToIndex, sep, namedMode);
                     return es;
                 }
@@ -149,18 +225,11 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
             public NamedRow GetSubTitleNamedRow(string name)
             {
-                Title title = this.Titles[name];
-                CheckEmptySinceSecondRow(name, title.FromIndex, title.ToIndex);
-                return new NamedRow(title, this.Rows[0]);
-            }
-
-            public NamedRow GetSubTitleNamedRowOfMultiRows(string name)
-            {
                 Title title = Titles[name];
                 return new NamedRow(title, this.Rows);
             }
 
-            public IEnumerable<NamedRow> GenerateSubNameRows()
+            public IEnumerable<NamedRow> GenerateSubNameRows(TBean bean)
             {
                 foreach (var row in Rows)
                 {
@@ -172,17 +241,31 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 }
             }
 
-            public IEnumerable<ExcelStream> GetColumnOfMultiRows(string name, string sep)
+            public IEnumerable<ExcelStream> GetColumnOfMultiRows(string name, string sep, bool isRowOrient)
             {
                 if (Titles.TryGetValue(name, out var title))
                 {
-                    foreach (var row in Rows)
+                    if (isRowOrient)
                     {
-                        if (IsBlankRow(row, title.FromIndex, title.ToIndex))
+                        foreach (var row in Rows)
                         {
-                            continue;
+                            if (IsBlankRow(row, title.FromIndex, title.ToIndex))
+                            {
+                                continue;
+                            }
+                            yield return new ExcelStream(row, title.FromIndex, title.ToIndex, sep, false);
                         }
-                        yield return new ExcelStream(row, title.FromIndex, title.ToIndex, sep, false);
+                    }
+                    else
+                    {
+                        for (int i = title.FromIndex; i <= title.ToIndex; i++)
+                        {
+                            if (!IsBlankColumn(Rows, i))
+                            {
+                                var cells = Rows.Where(r => r.Count > i).Select(r => r[i]).Where(v => !(v.Value == null || (v.Value is string s && string.IsNullOrEmpty(s)))).ToList();
+                                yield return new ExcelStream(cells, 0, cells.Count - 1, sep, false);
+                            }
+                        }
                     }
                 }
                 else
@@ -192,13 +275,20 @@ namespace Luban.Job.Cfg.DataSources.Excel
             }
 
 
-            public ExcelStream GetMultiRowStream(string name, string sep)
+            public ExcelStream GetMultiRowStream(string name, string sep, bool isRowOrient)
             {
                 if (Titles.TryGetValue(name, out var title))
                 {
-                    var totalCells = Rows.SelectMany(r => r.GetRange(title.FromIndex, title.ToIndex - title.FromIndex + 1))
-                        .Where(c => c.Value != null && !(c.Value is string s && string.IsNullOrWhiteSpace(s))).ToList();
-                    return new ExcelStream(totalCells, 0, totalCells.Count - 1, sep, false);
+                    if (isRowOrient)
+                    {
+                        var totalCells = Rows.SelectMany(r => r.GetRange(title.FromIndex, title.ToIndex - title.FromIndex + 1))
+                            .Where(c => c.Value != null && !(c.Value is string s && string.IsNullOrWhiteSpace(s))).ToList();
+                        return new ExcelStream(totalCells, 0, totalCells.Count - 1, sep, false);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"bean类型多行数据不支持纵向填写");
+                    }
                 }
                 else
                 {
@@ -213,7 +303,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
             this.Name = name;
         }
 
-        public bool Load(IExcelDataReader reader)
+        public bool Load(IExcelDataReader reader, bool headerOnly)
         {
             //s_logger.Info("read sheet:{sheet}", reader.Name);
             if (!ParseMeta(reader))
@@ -221,7 +311,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 return false;
             }
 
-            LoadRemainRows(reader);
+            LoadRemainRows(reader, headerOnly);
 
             return true;
         }
@@ -246,54 +336,43 @@ namespace Luban.Job.Cfg.DataSources.Excel
                     continue;
                 }
 
-                var ss = attr.Split(':');
+                var ss = attr.Split(':', '=');
                 if (ss.Length != 2)
                 {
                     throw new Exception($"单元薄 meta 定义出错. attribute:{attr}");
                 }
                 string key = ss[0].ToLower();
-                string value = ss[1];
+                string value = ss[1].ToLower();
                 switch (key)
                 {
-                    case "row":
+                    case "orientation":
                     {
-                        if (int.TryParse(value, out var v1))
-                        {
-                            OrientRow = v1 != 0;
-                        }
-                        else if (bool.TryParse(value, out var v2))
-                        {
-                            OrientRow = v2;
-                        }
-                        else
-                        {
-                            throw new Exception($"单元薄 meta 定义 row:{value} 属性值只能为true或false或0或1");
-                        }
+                        IsOrientRow = DefUtil.ParseOrientation(value);
                         break;
                     }
                     case "title_rows":
                     {
                         if (!int.TryParse(value, out var v))
                         {
-                            throw new Exception($"单元薄 meta 定义 title_rows:{value} 属性值只能为整数[1,10]");
+                            throw new Exception($"单元薄 meta 定义 title_rows:{value} 属性值只能为整数[{TITLE_MIN_ROW_NUM},{TITLE_MAX_ROW_NUM}]");
                         }
-                        if (v < 1 || v > 10)
+                        if (v < TITLE_MIN_ROW_NUM || v > TITLE_MAX_ROW_NUM)
                         {
-                            throw new Exception($"单元薄 title_rows 应该在 [1,10] 范围内,默认是3");
+                            throw new Exception($"单元薄 title_rows 应该在 [{TITLE_MIN_ROW_NUM},{TITLE_MAX_ROW_NUM}] 范围内,默认是{TITLE_DEFAULT_ROW_NUM}");
                         }
-                        TitleRows = v;
+                        HeaderRowCount = v;
                         break;
                     }
                     default:
                     {
-                        throw new Exception($"非法单元薄 meta 属性定义 {attr}");
+                        throw new Exception($"非法单元薄 meta 属性定义 {attr}, 合法属性有: orientation=r|row|c|column,title_rows=<number>");
                     }
                 }
             }
             return true;
         }
 
-        private string GetRowTag(List<Cell> row)
+        private static string GetRowTag(List<Cell> row)
         {
             if (row.Count == 0)
             {
@@ -320,7 +399,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
             {
                 if (mergeCell.FromRow == depth + 1 && mergeCell.FromColumn >= fromColumn && mergeCell.ToColumn <= toColumn)
                 {
-                    string subTitleName = row[mergeCell.FromColumn].Value?.ToString().Trim();
+                    string subTitleName = row[mergeCell.FromColumn].Value?.ToString()?.Trim();
                     if (!string.IsNullOrWhiteSpace(subTitleName))
                     {
                         var newTitle = new Title() { Name = subTitleName, FromIndex = mergeCell.FromColumn, ToIndex = mergeCell.ToColumn };
@@ -367,8 +446,9 @@ namespace Luban.Job.Cfg.DataSources.Excel
             }
         }
 
+        const string ROOT_TITLE_NAME = "__<root>__";
 
-        private void LoadRemainRows(IExcelDataReader reader)
+        private void LoadRemainRows(IExcelDataReader reader, bool headerOnly)
         {
             // TODO 优化性能
             // 几个思路
@@ -379,7 +459,12 @@ namespace Luban.Job.Cfg.DataSources.Excel
             int rowIndex = 0;
             while (reader.Read())
             {
-                ++rowIndex; // 第一行是 meta ，跳过
+                ++rowIndex; // 第1行是 meta ，标题及数据行从第2行开始
+                // 重点优化横表的headerOnly模式， 此模式下只读前几行标题行，不读数据行
+                if (headerOnly && this.IsOrientRow && rowIndex > this.HeaderRowCount)
+                {
+                    break;
+                }
                 var row = new List<Cell>();
                 for (int i = 0, n = reader.FieldCount; i < n; i++)
                 {
@@ -388,7 +473,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 rows.Add(row);
             }
 
-            if (OrientRow)
+            if (IsOrientRow)
             {
                 this._rowColumns = rows;
             }
@@ -402,7 +487,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                     var row = new List<Cell>();
                     for (int j = 0; j < rows.Count; j++)
                     {
-                        row.Add(i < rows[i].Count ? rows[j][i] : new Cell(j + 1, i, null));
+                        row.Add(i < rows[j].Count ? rows[j][i] : new Cell(j + 1, i, null));
                     }
                     this._rowColumns.Add(row);
                 }
@@ -413,18 +498,28 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 throw new Exception($"没有定义字段名行");
             }
 
-            _rootTitle = new Title() { Name = "_root_", FromIndex = 1, ToIndex = rows.Select(r => r.Count).Max() - 1 };
+            _rootTitle = new Title() { Root = true, Name = ROOT_TITLE_NAME, FromIndex = 1, ToIndex = rows.Select(r => r.Count).Max() - 1 };
 
-            int titleRowNum = 1;
+            int fieldRowCount = 1;
+            int attrRowCount = 1;
             if (reader.MergeCells != null)
             {
-                if (OrientRow)
+                if (IsOrientRow)
                 {
                     foreach (var mergeCell in reader.MergeCells)
                     {
                         if (mergeCell.FromRow == 1 && mergeCell.FromColumn == 0 && mergeCell.ToColumn == 0)
                         {
-                            titleRowNum = mergeCell.ToRow - mergeCell.FromRow + 1;
+                            fieldRowCount = mergeCell.ToRow - mergeCell.FromRow + 1;
+                            break;
+                        }
+                    }
+                    foreach (var mergeCell in reader.MergeCells)
+                    {
+                        if (mergeCell.FromRow == 1 + fieldRowCount && mergeCell.FromColumn == 0 && mergeCell.ToColumn == 0)
+                        {
+                            attrRowCount = mergeCell.ToRow - mergeCell.FromRow + 1;
+                            break;
                         }
                     }
                 }
@@ -432,13 +527,13 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
                 foreach (var mergeCell in reader.MergeCells)
                 {
-                    if (OrientRow)
+                    if (IsOrientRow)
                     {
                         //if (mergeCell.FromRow <= 1 && mergeCell.ToRow >= 1)
                         if (mergeCell.FromRow == 1)
                         {
                             // 标题 行
-                            titleRowNum = Math.Max(titleRowNum, mergeCell.ToRow - mergeCell.FromRow + 1);
+                            fieldRowCount = Math.Max(fieldRowCount, mergeCell.ToRow - mergeCell.FromRow + 1);
                             var titleName = _rowColumns[0][mergeCell.FromColumn].Value?.ToString()?.Trim();
                             if (string.IsNullOrWhiteSpace(titleName))
                             {
@@ -446,9 +541,9 @@ namespace Luban.Job.Cfg.DataSources.Excel
                             }
 
                             var newTitle = new Title() { Name = titleName, FromIndex = mergeCell.FromColumn, ToIndex = mergeCell.ToColumn };
-                            if (titleRowNum > 1)
+                            if (fieldRowCount > 1)
                             {
-                                InitSubTitles(newTitle, rows, reader.MergeCells, titleRowNum, 1, mergeCell.FromColumn, mergeCell.ToColumn);
+                                InitSubTitles(newTitle, rows, reader.MergeCells, fieldRowCount, 1, mergeCell.FromColumn, mergeCell.ToColumn);
                             }
                             _rootTitle.AddSubTitle(newTitle);
                             //s_logger.Info("=== sheet:{sheet} title:{title}", Name, newTitle);
@@ -471,10 +566,11 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
                 }
             }
+            this.AttrRowCount = attrRowCount;
 
             //TODO 其实有bug. 未处理只占一列的 多级标题头
 
-            // 有一些列不是MergeCell,所以还需要额外处理
+            // 上面的代码处理完Merge列,接下来处理非Merge的列
             var titleRow = _rowColumns[0];
             for (int i = 0; i < titleRow.Count; i++)
             {
@@ -502,27 +598,30 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 throw new Exception($"没有定义任何有效 列");
             }
             _rootTitle.SortSubTitles();
-            //foreach (var title in _rootTitle.SubTitleList)
-            //{
-            //    // s_logger.Info("============ sheet:{sheet} title:{title}", Name, title);
-            //}
 
-            // 删除标题行
-            this._rowColumns.RemoveRange(0, Math.Min(TitleRows + titleRowNum - 1, this._rowColumns.Count));
+            if (headerOnly)
+            {
+                // 删除字段名行，保留属性行开始的行
+                this._rowColumns.RemoveRange(0, Math.Min(fieldRowCount, this._rowColumns.Count));
+            }
+            else
+            {
+                // 删除所有标题行，包含字段名行、属性行、标题、描述等等非有效数据行
+                this._rowColumns.RemoveRange(0, Math.Min(HeaderRowCount, this._rowColumns.Count));
+                // 删除忽略的记录行
+                this._rowColumns.RemoveAll(row => DataUtil.IsIgnoreTag(GetRowTag(row)));
+            }
 
-            // 删除忽略的记录行
-            this._rowColumns.RemoveAll(row => AbstractDataSource.IsIgnoreTag(GetRowTag(row)));
         }
 
-
-        public static bool IsBlankRow(List<Cell> row)
+        private static bool IsBlankRow(List<Cell> row)
         {
             // 第一列被策划用于表示是否注释掉此行
             // 忽略此列是否空白
             return row.GetRange(1, row.Count - 1).All(c => c.Value == null || (c.Value is string s && string.IsNullOrWhiteSpace(s)));
         }
 
-        public static bool IsBlankRow(List<Cell> row, int fromIndex, int toIndex)
+        private static bool IsBlankRow(List<Cell> row, int fromIndex, int toIndex)
         {
             for (int i = Math.Max(1, fromIndex), n = Math.Min(toIndex, row.Count - 1); i <= n; i++)
             {
@@ -535,94 +634,65 @@ namespace Luban.Job.Cfg.DataSources.Excel
             return true;
         }
 
-        private List<Cell> GetNextRecordRow()
+        private static bool IsSameRow(List<Cell> row1, List<Cell> row2, int fromIndex, int toIndex)
         {
-            while (curReadIndex < _rowColumns.Count)
+            if (row2.Count < toIndex - 1)
             {
-                var row = _rowColumns[curReadIndex++];
-                if (IsBlankRow(row))
-                {
-                    continue;
-                }
-
-                return row;
+                return false;
             }
-            return null;
-        }
-
-        private bool HasNotMainKey(List<Cell> row)
-        {
-            return string.IsNullOrWhiteSpace(row[1].Value?.ToString());
-        }
-
-        private List<List<Cell>> GetNextRecordRows()
-        {
-            List<List<Cell>> rows = null;
-            while (curReadIndex < _rowColumns.Count)
+            for (int i = Math.Max(1, fromIndex), n = Math.Min(toIndex, row1.Count - 1); i <= n; i++)
             {
-                var row = _rowColumns[curReadIndex++];
-                if (IsBlankRow(row))
+                var v1 = row1[i].Value;
+                var v2 = row2[i].Value;
+                if (v1 != v2)
                 {
-                    continue;
-                }
-
-                if (rows == null)
-                {
-                    rows = new List<List<Cell>>() { row };
-                }
-                else
-                {
-                    if (HasNotMainKey(row))
+                    if (v1 == null)
                     {
-                        rows.Add(row);
+                        if (!(v2 is string s && string.IsNullOrWhiteSpace(s)))
+                        {
+                            return false;
+                        }
+                    }
+                    else if (v2 == null)
+                    {
+                        if (!(v1 is string s && string.IsNullOrWhiteSpace(s)))
+                        {
+                            return false;
+                        }
                     }
                     else
                     {
-                        --curReadIndex;
-                        return rows;
+                        return v1.ToString() == v2.ToString();
                     }
                 }
             }
-            return rows;
+            return true;
         }
 
-
-
-        public List<Record> ReadMulti(TBean type, bool enableMultiRowRecord)
+        private static bool IsBlankColumn(List<List<Cell>> rows, int column)
         {
-            var datas = new List<Record>();
-
-            for (Record data; (data = ReadOne(type, enableMultiRowRecord)) != null;)
+            foreach (List<Cell> row in rows)
             {
-                datas.Add(data);
+                if (column >= row.Count)
+                {
+                    continue;
+                }
+                var v = row[column].Value;
+                if (v != null && !(v is string s && string.IsNullOrEmpty(s)))
+                {
+                    return false;
+                }
             }
-            return datas;
+            return true;
         }
 
-        private int curReadIndex = 0;
-        public Record ReadOne(TBean type, bool enableMultiRowRecord)
+        public IEnumerable<Record> ReadMulti(TBean type)
         {
-            if (!enableMultiRowRecord)
+            foreach (var recordNamedRow in NamedRow.CreateMultiRowNamedRow(this._rowColumns, this._rootTitle, type))
             {
-                List<Cell> row = GetNextRecordRow();
-                if (row == null)
-                {
-                    return null;
-                }
-                bool isTest = AbstractDataSource.IsTestTag(GetRowTag(row));
-                var data = (DBean)ExcelNamedRowDataCreator.Ins.ReadExcel(new NamedRow(_rootTitle, row), type);
-                return new Record(data, RawUrl, isTest);
-            }
-            else
-            {
-                List<List<Cell>> rows = GetNextRecordRows();
-                if (rows == null)
-                {
-                    return null;
-                }
-                bool isTest = AbstractDataSource.IsTestTag(GetRowTag(rows[0]));
-                var data = (DBean)ExcelNamedRowDataCreator.Ins.ReadExcel(new NamedRow(_rootTitle, rows), type);
-                return new Record(data, RawUrl, isTest);
+                bool isTest = DataUtil.IsTestTag(GetRowTag(recordNamedRow.Rows[0]));
+                var data = (DBean)ExcelNamedRowDataCreator.Ins.ReadExcel(recordNamedRow, type);
+                yield return new Record(data, RawUrl, isTest);
             }
         }
     }

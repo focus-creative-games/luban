@@ -22,9 +22,9 @@ namespace Luban.Job.Db.Defs
             return type.Apply(ImmutableTypeName.Ins);
         }
 
-        public static string DbCsInitField(string fieldName, string logType, TType type)
+        public static string DbCsInitField(string fieldName, TType type)
         {
-            return type.Apply(DbCsInitFieldVisitor.Ins, fieldName, logType);
+            return type.Apply(DbCsInitFieldVisitor.Ins, fieldName);
         }
 
         public static bool HasSetter(TType type)
@@ -77,6 +77,55 @@ namespace Luban.Job.Db.Defs
         {
             //return type.Apply(DbWriteBlob.Ins, bufName, valueName);
             return DbCsCompatibleSerialize(bufName, fieldName, type);
+        }
+
+        public static string DbTsDefineType(TType type)
+        {
+            return type.Apply(DbTypescriptDefineTypeNameVisitor.Ins);
+        }
+
+        public static string DbTsInitField(string fieldName, string logType, TType type)
+        {
+            return type.Apply(DbTypescriptInitFieldVisitor.Ins, fieldName, logType);
+        }
+
+        public static string TsWriteBlob(string bufName, string fieldName, TType type)
+        {
+            return DbTsCompatibleSerialize(bufName, fieldName, type);
+        }
+
+        public static string DbTsCompatibleSerialize(string bufName, string fieldName, TType type)
+        {
+            if (type.Apply(CompatibleSerializeNeedEmbedVisitor.Ins))
+            {
+                return @$"{{let _state_ = {bufName}.BeginWriteSegment();{type.Apply(DbTypescriptCompatibleSerializeVisitor.Ins, bufName, fieldName)}; _buf.EndWriteSegment(_state_)}}";
+            }
+            else
+            {
+                return type.Apply(DbTypescriptCompatibleSerializeVisitor.Ins, bufName, fieldName);
+            }
+        }
+
+        public static string DbTsCompatibleDeserialize(string bufName, string fieldName, TType type)
+        {
+            if (type.Apply(CompatibleSerializeNeedEmbedVisitor.Ins))
+            {
+                return $@"{{ let _state_ = {bufName}.EnterSegment(); {type.Apply(DbTypescriptCompatibleDeserializeVisitor.Ins, bufName, fieldName)} {bufName}.LeaveSegment(_state_); }}";
+            }
+            else
+            {
+                return type.Apply(DbTypescriptCompatibleDeserializeVisitor.Ins, bufName, fieldName);
+            }
+        }
+
+        public static string DbTsCompatibleSerializeWithoutSegment(string bufName, string fieldName, TType type)
+        {
+            return type.Apply(DbTypescriptCompatibleSerializeVisitor.Ins, bufName, fieldName);
+        }
+
+        public static string DbTsCompatibleDeserializeWithoutSegment(string bufName, string fieldName, TType type)
+        {
+            return type.Apply(DbTypescriptCompatibleDeserializeVisitor.Ins, bufName, fieldName);
         }
     }
 }

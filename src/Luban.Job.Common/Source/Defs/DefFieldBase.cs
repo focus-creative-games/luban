@@ -1,6 +1,7 @@
 using Luban.Common.Utils;
 using Luban.Job.Common.RawDefs;
 using Luban.Job.Common.Types;
+using Luban.Job.Common.Utils;
 using System;
 using System.Collections.Generic;
 
@@ -57,6 +58,10 @@ namespace Luban.Job.Common.Defs
 
         public string PyStyleName => Name;
 
+        public string GoStyleName => CsStyleName;
+
+        //public string GoStyleAssignName => CType.IsNullable ? "*" + CsStyleName : CsStyleName;
+
         public string Type { get; }
 
         public TType CType { get; protected set; }
@@ -65,12 +70,31 @@ namespace Luban.Job.Common.Defs
 
         public string UpperCaseName => Name.ToUpper();
 
+        public string Comment { get; }
+
+        public Dictionary<string, string> Tags { get; }
+
+        public bool IgnoreNameValidation { get; set; }
+
+        public bool HasTag(string attrName)
+        {
+            return Tags != null && Tags.ContainsKey(attrName);
+        }
+
+        public string GetTag(string attrName)
+        {
+            return Tags != null && Tags.TryGetValue(attrName, out var value) ? value : null;
+        }
+
         public DefFieldBase(DefTypeBase host, Field f, int idOffset)
         {
             HostType = host;
             Id = f.Id + idOffset;
             Name = f.Name;
             Type = f.Type;
+            Comment = f.Comment;
+            Tags = DefUtil.ParseAttrs(f.Tags);
+            IgnoreNameValidation = f.IgnoreNameValidation;
         }
 
         public virtual void Compile()
@@ -78,16 +102,20 @@ namespace Luban.Job.Common.Defs
 
             if (Id < 0 || Id > 256)
             {
-                throw new Exception($"结构:{HostType.FullName} 字段:{Name} id:{Id} 超出范围");
+                throw new Exception($"type:'{HostType.FullName}' field:'{Name}' id:{Id} 超出范围");
             }
-            if (!TypeUtil.IsValidName(Name))
+            if (!IgnoreNameValidation && !TypeUtil.IsValidName(Name))
             {
-                throw new Exception($"filed name:{Name} is reserved");
+                throw new Exception($"type:'{HostType.FullName}' filed name:'{Name}' is reserved");
             }
 
-            if ((CType = AssemblyBase.CreateType(HostType.Namespace, Type)) == null)
+            try
             {
-                throw new Exception($"type:{HostType.FullName} filed:{Name} type:{Type} is invalid");
+                CType = AssemblyBase.CreateType(HostType.Namespace, Type);
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"type:'{HostType.FullName}' filed:'{Name}' type:'{Type}' is invalid", e);
             }
 
             //if (IsNullable && (CType.IsCollection || (CType is TBean)))
@@ -101,7 +129,7 @@ namespace Luban.Job.Common.Defs
                 {
                     if (t.ElementType is TBean e && !e.IsDynamic && e.Bean.HierarchyFields.Count == 0)
                     {
-                        throw new Exception($"container element type can't be empty bean");
+                        throw new Exception($"container element type:'{e.Bean.FullName}' can't be empty bean");
                     }
                     break;
                 }
@@ -109,7 +137,7 @@ namespace Luban.Job.Common.Defs
                 {
                     if (t.ElementType is TBean e && !e.IsDynamic && e.Bean.HierarchyFields.Count == 0)
                     {
-                        throw new Exception($"container element type can't be empty bean");
+                        throw new Exception($"container element type:'{e.Bean.FullName}' can't be empty bean");
                     }
                     break;
                 }
@@ -130,11 +158,11 @@ namespace Luban.Job.Common.Defs
                 {
                     if (f.Id == 0)
                     {
-                        throw new Exception($"type:{hostType.FullName} field:{f.Name} id can't be 0");
+                        throw new Exception($"type:'{hostType.FullName}' field:'{f.Name}' id can't be 0");
                     }
                     if (!ids.Add(f.Id))
                     {
-                        throw new Exception($"type:{hostType.FullName} field:{f.Name} id:{f.Id} duplicate");
+                        throw new Exception($"type:'{hostType.FullName}' field:'{f.Name}' id:{f.Id} duplicate");
                     }
                 }
             }
@@ -145,15 +173,15 @@ namespace Luban.Job.Common.Defs
                 var fname = f.Name;
                 if (fname.Length == 0)
                 {
-                    throw new Exception($"type:{hostType.FullName} field id:{f.Id} name can't be empty");
+                    throw new Exception($"type:'{hostType.FullName}' field id:{f.Id} name can't be empty");
                 }
                 if (!names.Add(fname))
                 {
-                    throw new Exception($"type:{hostType.FullName} field:{fname} duplicate");
+                    throw new Exception($"type:'{hostType.FullName}' 'field:{fname}' duplicate");
                 }
                 if (TypeUtil.ToCsStyleName(fname) == hostType.Name)
                 {
-                    throw new Exception($"type:{hostType.FullName} 字段:{fname} 生成的c#字段名与类型名相同，会引起编译错误");
+                    throw new Exception($"type:'{hostType.FullName}' field:'{fname}' 生成的c#字段名与类型名相同，会引起编译错误");
                 }
             }
 

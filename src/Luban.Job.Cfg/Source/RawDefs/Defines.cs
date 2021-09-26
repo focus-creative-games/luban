@@ -1,4 +1,3 @@
-using Luban.Job.Cfg.RawDefs;
 using Luban.Job.Common.RawDefs;
 using System.Collections.Generic;
 
@@ -8,7 +7,7 @@ namespace Luban.Job.Cfg.RawDefs
     {
         public string TopModule { get; set; } = "";
 
-        public List<Branch> Branches { get; set; } = new List<Branch>();
+        public List<Patch> Patches { get; set; } = new List<Patch>();
 
         public List<Bean> Beans { get; set; } = new List<Bean>();
 

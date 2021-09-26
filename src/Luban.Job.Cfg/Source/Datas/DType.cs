@@ -1,6 +1,5 @@
 
 using Luban.Job.Cfg.DataVisitors;
-using System.Text;
 
 namespace Luban.Job.Cfg.Datas
 {
@@ -14,11 +13,11 @@ namespace Luban.Job.Cfg.Datas
 
         public abstract TR Apply<T, TR>(IDataFuncVisitor<T, TR> visitor, T x);
 
+        public abstract string TypeName { get; }
+
         public override string ToString()
         {
-            var s = new StringBuilder();
-            this.Apply(ToStringVisitor.Ins, s);
-            return s.ToString();
+            return this.Apply(ToStringVisitor.Ins);
         }
     }
 

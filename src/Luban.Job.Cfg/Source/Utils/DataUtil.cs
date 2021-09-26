@@ -51,7 +51,7 @@ namespace Luban.Job.Cfg.Utils
         //    return new DDateTime(TimeZoneInfo.ConvertTimeToUtc(dateTime, timeZoneInfo));
         //}
         private static readonly string[] dateTimeFormats = new string[] {
-                    "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm", "yyyy-MM-dd HH", "yyyy-MM-dd",
+                    "yyyy-M-d HH:mm:ss", "yyyy-M-d HH:mm", "yyyy-M-d HH", "yyyy-M-d",
                     //"yyyy/MM/dd HH:mm:ss", "yyyy/MM/dd HH:mm", "yyyy/MM/dd HH", "yyyy/MM/dd",
                 };
         public static DDateTime CreateDateTime(string x)
@@ -78,6 +78,16 @@ namespace Luban.Job.Cfg.Utils
             }
         }
 
+        public static string EscapeString(string s)
+        {
+            return s.Replace("\\", "\\\\");
+        }
+
+        public static string EscapeStringWithQuote(string s)
+        {
+            return "\"" + s.Replace("\\", "\\\\") + "\"";
+        }
+
         public static (string Key, string Text) ExtractText(string rawKeyAndText)
         {
             string[] keyAndText = rawKeyAndText.Split('|');
@@ -96,8 +106,28 @@ namespace Luban.Job.Cfg.Utils
             }
             if (key == "" && text != "")
             {
-                throw new Exception($"text  key为空, 但text:{text}不为空");
+                throw new Exception($"text  key为空, 但text:'{text}'不为空");
             }
+        }
+
+
+        public static bool IsIgnoreTag(string tagName)
+        {
+            return !string.IsNullOrEmpty(tagName) &&
+                (
+                   tagName.Equals("false", System.StringComparison.OrdinalIgnoreCase)
+                || tagName.Equals("no", System.StringComparison.OrdinalIgnoreCase)
+                || tagName.Equals("##", System.StringComparison.Ordinal)
+                //|| tagName.Equals("否", System.StringComparison.Ordinal)
+                );
+        }
+
+        public static bool IsTestTag(string tagName)
+        {
+            return !string.IsNullOrEmpty(tagName) &&
+                (tagName.Equals("test", System.StringComparison.OrdinalIgnoreCase)
+                || tagName.Equals("测试", System.StringComparison.Ordinal)
+                );
         }
 
         //public static string Data2String(DType data)

@@ -1,13 +1,20 @@
 using Luban.Job.Common.TypeVisitors;
 using System;
+using System.Collections.Generic;
 
 namespace Luban.Job.Common.Types
 {
     public class TArray : TType
     {
+
+        public static TArray Create(bool isNullable, Dictionary<string, string> tags, TType elementType)
+        {
+            return new TArray(isNullable, tags, elementType);
+        }
+
         public TType ElementType { get; }
 
-        public TArray(TType elementType) : base(false)
+        private TArray(bool isNullable, Dictionary<string, string> tags, TType elementType) : base(isNullable, tags)
         {
             ElementType = elementType;
         }

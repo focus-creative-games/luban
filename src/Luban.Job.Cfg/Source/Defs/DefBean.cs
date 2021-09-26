@@ -20,7 +20,7 @@ namespace Luban.Job.Cfg.Defs
 
         public bool IsMultiRow { get; set; }
 
-        public String Sep { get; }
+        public string Sep { get; }
 
         public List<DefField> HierarchyExportFields { get; private set; }
 
@@ -31,14 +31,35 @@ namespace Luban.Job.Cfg.Defs
             return DeepCompareTypeDefine.Ins.Compare(this, b, new Dictionary<DefTypeBase, bool>(), new HashSet<DefTypeBase>());
         }
 
-        public string GoImport
+        public string GoBinImport
         {
             get
             {
                 var imports = new HashSet<string>();
+                if (IsAbstractType)
+                {
+                    imports.Add("errors");
+                }
                 foreach (var f in Fields)
                 {
-                    f.CType.Apply(CollectGoImport.Ins, imports);
+                    f.CType.Apply(TypeVisitors.GoBinImport.Ins, imports);
+                }
+                return string.Join('\n', imports.Select(im => $"import \"{im}\""));
+            }
+        }
+
+        public string GoJsonImport
+        {
+            get
+            {
+                var imports = new HashSet<string>();
+                if (IsAbstractType)
+                {
+                    imports.Add("errors");
+                }
+                foreach (var f in Fields)
+                {
+                    f.CType.Apply(TypeVisitors.GoJsonImport.Ins, imports);
                 }
                 return string.Join('\n', imports.Select(im => $"import \"{im}\""));
             }
@@ -164,7 +185,7 @@ namespace Luban.Job.Cfg.Defs
             {
                 if ((ParentDefType = (DefBean)AssemblyBase.GetDefType(Namespace, Parent)) == null)
                 {
-                    throw new Exception($"bean:{FullName} parent:{Parent} not exist");
+                    throw new Exception($"bean:'{FullName}' parent:'{Parent}' not exist");
                 }
                 if (ParentDefType.Children == null)
                 {
@@ -189,7 +210,7 @@ namespace Luban.Job.Cfg.Defs
             HierarchyNotAbstractChildren = cs;
             if (Id != 0)
             {
-                throw new Exception($"bean:{FullName} beanid:{Id} should be 0!");
+                throw new Exception($"bean:'{FullName}' beanid:{Id} should be 0!");
             }
             else
             {
@@ -201,7 +222,7 @@ namespace Luban.Job.Cfg.Defs
             {
                 if (!string.IsNullOrWhiteSpace(c.Alias) && !nameOrAliasName.Add(c.Alias))
                 {
-                    throw new Exception($"bean:{FullName} alias:{c.Alias} 重复");
+                    throw new Exception($"bean:'{FullName}' alias:{c.Alias} 重复");
                 }
             }
             DefField.CompileFields(this, HierarchyFields, false);

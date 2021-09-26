@@ -1,8 +1,8 @@
 using Luban.Job.Cfg.RawDefs;
 using Luban.Job.Common.Types;
+using Luban.Job.Common.Utils;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Luban.Job.Cfg.Defs
 {
@@ -19,7 +19,9 @@ namespace Luban.Job.Cfg.Defs
             Mode = b.Mode;
             InputFiles = b.InputFiles;
             Groups = b.Groups;
-            _branchInputFiles = b.BranchInputFiles;
+            _patchInputFiles = b.PatchInputFiles;
+            Comment = b.Comment;
+            Tags = DefUtil.ParseAttrs(b.Tags);
         }
 
 
@@ -35,7 +37,7 @@ namespace Luban.Job.Cfg.Defs
 
         public List<string> InputFiles { get; }
 
-        private readonly Dictionary<string, List<string>> _branchInputFiles;
+        private readonly Dictionary<string, List<string>> _patchInputFiles;
 
         public List<string> Groups { get; }
 
@@ -49,30 +51,30 @@ namespace Luban.Job.Cfg.Defs
 
         public bool NeedExport => Assembly.NeedExport(this.Groups);
 
-        public string OutputDataFile => $"{FullName}.bin";
+        public string OutputDataFile => FullName.Replace('.', '_').ToLower();
 
-        public string JsonOutputDataFile => $"{FullName}.json";
+        public string InnerName => "_" + this.Name;
 
-        public List<string> GetBranchInputFiles(string branchName)
+        public List<string> GetPatchInputFiles(string patchName)
         {
-            return _branchInputFiles.GetValueOrDefault(branchName);
+            return _patchInputFiles.GetValueOrDefault(patchName);
         }
 
         public override void Compile()
         {
             var ass = Assembly;
 
-            foreach (var branchName in _branchInputFiles.Keys)
+            foreach (var patchName in _patchInputFiles.Keys)
             {
-                if (ass.GetBranch(branchName) == null)
+                if (ass.GetPatch(patchName) == null)
                 {
-                    throw new Exception($"table:{FullName} branch_input branch:{branchName} 不存在");
+                    throw new Exception($"table:'{FullName}' patch_input patch:'{patchName}' 不存在");
                 }
             }
 
             if ((ValueTType = (TBean)ass.CreateType(Namespace, ValueType)) == null)
             {
-                throw new Exception($"table:{FullName} 的 value类型:{ValueType} 不存在");
+                throw new Exception($"table:'{FullName}' 的 value类型:'{ValueType}' 不存在");
             }
 
             switch (Mode)
@@ -93,12 +95,12 @@ namespace Luban.Job.Cfg.Defs
                         }
                         else
                         {
-                            throw new Exception($"table:{FullName} index:{Index} 字段不存在");
+                            throw new Exception($"table:'{FullName}' index:'{Index}' 字段不存在");
                         }
                     }
                     else if (ValueTType.Bean.HierarchyFields.Count == 0)
                     {
-                        throw new Exception($"table:{FullName} 必须定义至少一个字段");
+                        throw new Exception($"table:'{FullName}' 必须定义至少一个字段");
                     }
                     else
                     {
@@ -109,7 +111,7 @@ namespace Luban.Job.Cfg.Defs
                     KeyTType = IndexField.CType;
                     break;
                 }
-                default: throw new Exception($"unknown mode:{Mode}");
+                default: throw new Exception($"unknown mode:'{Mode}'");
             }
         }
     }

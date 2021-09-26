@@ -11,17 +11,12 @@ namespace Luban.Job.Cfg.TypeVisitors
         {
             if (type.IsNullable)
             {
-                return $"{{ bool _read_succ_; if(!{bufName}.readBool(_read_succ_)){{return false;}}  if(_read_succ_) {{ {type.Apply(CppUnderingDeserializeVisitor.Ins, bufName, fieldName)} }} else {{ {fieldName} = {{}}; }} }}";
+                return $"{{ bool _has_value_; if(!{bufName}.readBool(_has_value_)){{return false;}}  if(_has_value_) {{ {fieldName}.reset({(type.IsBean ? "" : $"new {type.Apply(CppRawUnderingDefineTypeName.Ins)}()")}); {type.Apply(CppUnderingDeserializeVisitor.Ins, bufName, $"{(type.IsBean ? "" : "*")}{fieldName}")} }} else {{ {fieldName}.reset(); }} }}";
             }
             else
             {
                 return type.Apply(CppUnderingDeserializeVisitor.Ins, bufName, fieldName);
             }
-        }
-
-        public override string Accept(TBean type, string bufName, string fieldName)
-        {
-            return type.Apply(CppUnderingDeserializeVisitor.Ins, bufName, fieldName);
         }
     }
 }

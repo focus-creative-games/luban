@@ -16,6 +16,11 @@ namespace Luban.Job.Common.TypeVisitors
             return type.Apply(CsUnderingDefineTypeName.Ins);
         }
 
+        public override string Accept(TText type)
+        {
+            return type.Apply(CsUnderingDefineTypeName.Ins);
+        }
+
         public override string Accept(TBean type)
         {
             return type.Apply(CsUnderingDefineTypeName.Ins);

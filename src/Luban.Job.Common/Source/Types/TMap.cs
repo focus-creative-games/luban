@@ -1,10 +1,16 @@
 using Luban.Job.Common.TypeVisitors;
 using System;
+using System.Collections.Generic;
 
 namespace Luban.Job.Common.Types
 {
     public class TMap : TType
     {
+        public static TMap Create(bool isNullable, Dictionary<string, string> tags, TType keyType, TType valueType, bool isOrderedMap)
+        {
+            return new TMap(isNullable, tags, keyType, valueType, isOrderedMap);
+        }
+
         public bool IsMap => true;
 
         public TType KeyType { get; }
@@ -13,7 +19,7 @@ namespace Luban.Job.Common.Types
 
         public bool IsOrderedMap { get; }
 
-        public TMap(TType keyType, TType valueType, bool isOrderedMap) : base(false)
+        private TMap(bool isNullable, Dictionary<string, string> tags, TType keyType, TType valueType, bool isOrderedMap) : base(isNullable, tags)
         {
             KeyType = keyType;
             ValueType = valueType;

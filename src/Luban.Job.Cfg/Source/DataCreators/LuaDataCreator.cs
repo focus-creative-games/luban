@@ -17,7 +17,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TBool type, object x, DefAssembly ass)
         {
-            return new DBool((bool)x);
+            return DBool.ValueOf((bool)x);
         }
 
         public DType Accept(TByte type, object x, DefAssembly ass)
@@ -37,7 +37,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TInt type, object x, DefAssembly ass)
         {
-            return new DInt((int)x);
+            return DInt.ValueOf((int)x);
         }
 
         public DType Accept(TFint type, object x, DefAssembly ass)
@@ -83,7 +83,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TLong type, object x, DefAssembly ass)
         {
-            return new DLong(ToLong(x));
+            return DLong.ValueOf(ToLong(x));
         }
 
         public DType Accept(TFlong type, object x, DefAssembly ass)
@@ -93,7 +93,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TFloat type, object x, DefAssembly ass)
         {
-            return new DFloat(ToFloat(x));
+            return DFloat.ValueOf(ToFloat(x));
         }
 
         public DType Accept(TDouble type, object x, DefAssembly ass)
@@ -110,7 +110,7 @@ namespace Luban.Job.Cfg.DataCreators
         {
             if (x is string s)
             {
-                return new DString(s);
+                return DString.ValueOf(s);
             }
             else
             {
@@ -172,29 +172,36 @@ namespace Luban.Job.Cfg.DataCreators
             }
 
             var fields = new List<DType>();
-            foreach (var field in implBean.HierarchyFields)
+            foreach (DefField f in implBean.HierarchyFields)
             {
-                var ele = table[field.Name];
+                var ele = table[f.Name];
 
                 if (ele != null)
                 {
                     try
                     {
                         // Console.WriteLine("field:{0} type:{1} value:{2}", field.Name, ele.GetType(), ele);
-                        fields.Add(field.CType.Apply(this, ele, ass));
+                        fields.Add(f.CType.Apply(this, ele, ass));
+                    }
+                    catch (DataCreateException dce)
+                    {
+                        dce.Push(implBean, f);
+                        throw;
                     }
                     catch (Exception e)
                     {
-                        throw new Exception($"结构:{implBean.FullName} 字段:{field.Name} 读取失败 => {e.Message}", e);
+                        var dce = new DataCreateException(e, "");
+                        dce.Push(bean, f);
+                        throw dce;
                     }
                 }
-                else if (field.CType.IsNullable)
+                else if (f.CType.IsNullable)
                 {
                     fields.Add(null);
                 }
                 else
                 {
-                    throw new Exception($"结构:{implBean.FullName} 字段:{field.Name} 缺失");
+                    throw new Exception($"结构:{implBean.FullName} 字段:{f.Name} 缺失");
                 }
             }
             return new DBean(bean, implBean, fields);

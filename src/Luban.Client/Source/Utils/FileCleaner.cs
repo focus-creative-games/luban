@@ -1,7 +1,7 @@
+using Luban.Common.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Luban.Common.Utils;
 
 namespace Luban.Client.Common.Utils
 {
@@ -69,7 +69,7 @@ namespace Luban.Client.Common.Utils
                 {
                     s_logger.Trace("remain file:{file}", file);
                 }
-                else if(!_ignoreFileExtensions.Contains(FileUtil.GetFileExtension(file)))
+                else if (!_ignoreFileExtensions.Contains(FileUtil.GetFileExtension(file)))
                 {
                     s_logger.Info("[remove] file: {file}", file);
                     File.Delete(file);
@@ -78,7 +78,7 @@ namespace Luban.Client.Common.Utils
 
             // 清除空目录
             var subDirs = new List<string>(Directory.GetDirectories(dir, "*", SearchOption.AllDirectories));
-            subDirs.Sort((a, b) => -String.Compare(a, b, StringComparison.Ordinal));
+            subDirs.Sort((a, b) => -string.Compare(a, b, StringComparison.Ordinal));
             foreach (var subDir in subDirs)
             {
                 string fullSubDirPath = Path.GetFullPath(subDir);

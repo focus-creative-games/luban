@@ -1,4 +1,5 @@
 using Luban.Job.Common.TypeVisitors;
+using System.Collections.Generic;
 
 namespace Luban.Job.Common.Types
 {
@@ -6,9 +7,22 @@ namespace Luban.Job.Common.Types
     {
         public bool IsNullable { get; }
 
-        protected TType(bool isNullable)
+        public Dictionary<string, string> Tags { get; }
+
+        protected TType(bool isNullable, Dictionary<string, string> tags)
         {
             IsNullable = isNullable;
+            Tags = tags;
+        }
+
+        public bool HasTag(string attrName)
+        {
+            return Tags != null && Tags.ContainsKey(attrName);
+        }
+
+        public string GetTag(string attrName)
+        {
+            return Tags != null && Tags.TryGetValue(attrName, out var value) ? value : null;
         }
 
         public abstract bool TryParseFrom(string s);

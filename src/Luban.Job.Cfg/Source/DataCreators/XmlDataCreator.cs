@@ -17,7 +17,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TBool type, XElement x, DefAssembly ass)
         {
-            return new DBool(bool.Parse(x.Value.Trim().ToLower()));
+            return DBool.ValueOf(bool.Parse(x.Value.Trim().ToLower()));
         }
 
         public DType Accept(TByte type, XElement x, DefAssembly ass)
@@ -37,7 +37,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TInt type, XElement x, DefAssembly ass)
         {
-            return new DInt(int.Parse(x.Value.Trim()));
+            return DInt.ValueOf(int.Parse(x.Value.Trim()));
         }
 
         public DType Accept(TFint type, XElement x, DefAssembly ass)
@@ -47,7 +47,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TLong type, XElement x, DefAssembly ass)
         {
-            return new DLong(long.Parse(x.Value.Trim()));
+            return DLong.ValueOf(long.Parse(x.Value.Trim()));
         }
 
         public DType Accept(TFlong type, XElement x, DefAssembly ass)
@@ -57,7 +57,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TFloat type, XElement x, DefAssembly ass)
         {
-            return new DFloat(float.Parse(x.Value.Trim()));
+            return DFloat.ValueOf(float.Parse(x.Value.Trim()));
         }
 
         public DType Accept(TDouble type, XElement x, DefAssembly ass)
@@ -72,12 +72,12 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TString type, XElement x, DefAssembly ass)
         {
-            return new DString(x.Value);
+            return DString.ValueOf(x.Value);
         }
 
         public DType Accept(TBytes type, XElement x, DefAssembly ass)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public DType Accept(TText type, XElement x, DefAssembly ass)
@@ -98,7 +98,7 @@ namespace Luban.Job.Cfg.DataCreators
                 string subType = x.Attribute(DefBean.TYPE_NAME_KEY)?.Value;
                 if (string.IsNullOrWhiteSpace(subType))
                 {
-                    throw new Exception($"bean:{bean.FullName}是多态，需要指定{DefBean.TYPE_NAME_KEY}属性.\n xml:{x}");
+                    throw new Exception($"bean:'{bean.FullName}'是多态，需要指定{DefBean.TYPE_NAME_KEY}属性.\n xml:{x}");
                 }
                 var fullName = TypeUtil.MakeFullName(bean.Namespace, subType);
                 var defType = (DefBean)bean.GetNotAbstractChildType(subType);
@@ -106,7 +106,7 @@ namespace Luban.Job.Cfg.DataCreators
                 //{
                 //    throw new Exception($"type:{fullName} 是抽象类. 不能创建实例");
                 //}
-                implBean = defType ?? throw new Exception($"type:{fullName} 不是合法类型");
+                implBean = defType ?? throw new Exception($"type:'{fullName}' 不是合法类型");
             }
             else
             {
@@ -114,26 +114,33 @@ namespace Luban.Job.Cfg.DataCreators
             }
 
             var fields = new List<DType>();
-            foreach (var field in implBean.HierarchyFields)
+            foreach (DefField f in implBean.HierarchyFields)
             {
-                var feles = x.Elements(field.Name);
+                var feles = x.Elements(f.Name);
                 XElement fele = feles.FirstOrDefault();
                 if (fele == null)
                 {
-                    if (field.CType.IsNullable)
+                    if (f.CType.IsNullable)
                     {
                         fields.Add(null);
                         continue;
                     }
-                    throw new Exception($"字段:{field.Name} 缺失");
+                    throw new Exception($"字段:{f.Name} 缺失");
                 }
                 try
                 {
-                    fields.Add(field.CType.Apply(this, fele, ass));
+                    fields.Add(f.CType.Apply(this, fele, ass));
+                }
+                catch (DataCreateException dce)
+                {
+                    dce.Push(implBean, f);
+                    throw;
                 }
                 catch (Exception e)
                 {
-                    throw new Exception($"结构:{implBean.FullName} 字段:{field.Name} 读取失败 => {e.Message}", e);
+                    var dce = new DataCreateException(e, "");
+                    dce.Push(bean, f);
+                    throw dce;
                 }
 
             }

@@ -20,7 +20,7 @@ namespace Luban.Job.Db.TypeVisitors
 
         public override string Accept(TSet type)
         {
-            return $"Bright.Transaction.Collections.PSet1<{type.ElementType.Apply(this)}>";
+            return $"Bright.Transaction.Collections.PSet<{type.ElementType.Apply(this)}>";
         }
 
         public override string Accept(TMap type)

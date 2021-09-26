@@ -4,6 +4,10 @@ namespace Luban.Job.Cfg.Datas
 {
     public class DDouble : DType<double>
     {
+        public static DDouble Default { get; } = new DDouble(0);
+
+        public override string TypeName => "double";
+
         public DDouble(double x) : base(x)
         {
         }

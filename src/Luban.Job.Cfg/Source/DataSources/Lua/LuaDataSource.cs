@@ -1,7 +1,7 @@
 using Luban.Job.Cfg.DataCreators;
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.Defs;
-using Luban.Job.Cfg.TypeVisitors;
+using Luban.Job.Cfg.Utils;
 using Luban.Job.Common.Types;
 using Neo.IronLua;
 using System.Collections.Generic;
@@ -48,12 +48,12 @@ namespace Luban.Job.Cfg.DataSources.Lua
         protected Record ReadRecord(LuaTable table, TBean type)
         {
             string tagName = table.GetValue(TAG_KEY)?.ToString();
-            if (IsIgnoreTag(tagName))
+            if (DataUtil.IsIgnoreTag(tagName))
             {
                 return null;
             }
             var data = (DBean)type.Apply(LuaDataCreator.Ins, table, (DefAssembly)type.Bean.AssemblyBase);
-            var isTest = IsTestTag(tagName);
+            var isTest = DataUtil.IsTestTag(tagName);
             return new Record(data, RawUrl, isTest);
         }
     }

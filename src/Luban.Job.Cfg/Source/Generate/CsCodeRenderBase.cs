@@ -3,8 +3,13 @@ using Luban.Job.Common.Utils;
 
 namespace Luban.Job.Cfg.Generate
 {
-    public abstract class CsCodeRenderBase : CodeRenderBase
+    abstract class CsCodeRenderBase : CodeRenderBase
     {
+        public override void Render(GenContext ctx)
+        {
+            GenerateCodeScatter(ctx);
+        }
+
         public override string Render(DefConst c)
         {
             return RenderUtil.RenderCsConstClass(c);

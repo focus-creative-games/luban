@@ -1,15 +1,21 @@
 using Luban.Job.Common.TypeVisitors;
 using System;
+using System.Collections.Generic;
 
 namespace Luban.Job.Common.Types
 {
     public class TSet : TType
     {
+        public static TSet Create(bool isNullable, Dictionary<string, string> tags, TType elementType, bool isOrdered)
+        {
+            return new TSet(isNullable, tags, elementType, isOrdered);
+        }
+
         public TType ElementType { get; }
 
         public bool IsOrderSet { get; }
 
-        public TSet(TType elementType, bool isOrderSet) : base(false)
+        private TSet(bool isNullable, Dictionary<string, string> tags, TType elementType, bool isOrderSet) : base(isNullable, tags)
         {
             ElementType = elementType;
             IsOrderSet = isOrderSet;

@@ -10,6 +10,7 @@ using Luban.Common.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -100,6 +101,7 @@ namespace Luban.Client.Common.Net
         {
             long t1 = TimeUtil.NowMillis;
             var file = rpc.Arg.FileOrDirName;
+            var suffixes = rpc.Arg.InclusiveSuffixs;
             var re = new GetImportFileOrDirectoryRes()
             {
                 SubFiles = new List<Luban.Common.Protos.FileInfo>(),
@@ -113,7 +115,7 @@ namespace Luban.Client.Common.Net
                     re.IsFile = false;
                     foreach (var subFile in Directory.GetFiles(file, "*", SearchOption.AllDirectories))
                     {
-                        if (FileUtil.IsValidInputFile(subFile))
+                        if (FileUtil.IsValidInputFile(subFile) && (suffixes.Count == 0 || suffixes.Any(s => subFile.EndsWith(s))))
                         {
                             var md5 = await CacheMetaManager.Ins.GetOrUpdateFileMd5Async(subFile);
                             re.SubFiles.Add(new Luban.Common.Protos.FileInfo() { FilePath = FileUtil.Standardize(subFile), MD5 = md5 });

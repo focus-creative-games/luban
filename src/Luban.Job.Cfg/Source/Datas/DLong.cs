@@ -4,7 +4,30 @@ namespace Luban.Job.Cfg.Datas
 {
     public class DLong : DType<long>
     {
-        public DLong(long x) : base(x)
+        public static DLong Default { get; } = new DLong(0);
+        private const int POOL_SIZE = 128;
+        private static readonly DLong[] s_pool = new DLong[POOL_SIZE];
+
+        static DLong()
+        {
+            for (int i = 0; i < POOL_SIZE; i++)
+            {
+                s_pool[i] = new DLong(i);
+            }
+        }
+
+        public static DLong ValueOf(long x)
+        {
+            if (x >= 0 && x < POOL_SIZE)
+            {
+                return s_pool[x];
+            }
+            return new DLong(x);
+        }
+
+        public override string TypeName => "long";
+
+        private DLong(long x) : base(x)
         {
         }
 

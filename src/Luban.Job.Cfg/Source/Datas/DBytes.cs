@@ -4,6 +4,9 @@ namespace Luban.Job.Cfg.Datas
 {
     public class DBytes : DType<byte[]>
     {
+
+        public override string TypeName => "bytes";
+
         public DBytes(byte[] x) : base(x)
         {
         }

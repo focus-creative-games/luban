@@ -1,8 +1,7 @@
-using Luban.Job.Common.Utils;
-using Luban.Job.Common.Types;
-using System;
-using Luban.Job.Proto.RawDefs;
 using Luban.Common.Utils;
+using Luban.Job.Common.Types;
+using Luban.Job.Proto.RawDefs;
+using System;
 
 namespace Luban.Job.Proto.Defs
 {
@@ -16,6 +15,7 @@ namespace Luban.Job.Proto.Defs
             Id = r.Id;
             ArgType = r.ArgType;
             ResType = r.ResType;
+            Comment = r.Comment;
         }
 
         public string ArgType { get; set; }
@@ -38,12 +38,12 @@ namespace Luban.Job.Proto.Defs
 
             if ((TArgType = Assembly.CreateType(Namespace, ArgType)) == null)
             {
-                throw new Exception($"rpc name:{FullName} arg:{ArgType} is invalid");
+                throw new Exception($"rpc name:'{FullName}' arg:{ArgType} is invalid");
             }
 
             if ((TResType = Assembly.CreateType(Namespace, ResType)) == null)
             {
-                throw new Exception($"rpc name:{FullName} res:{ResType} is invalid");
+                throw new Exception($"rpc name:'{FullName}' res:{ResType} is invalid");
             }
         }
     }

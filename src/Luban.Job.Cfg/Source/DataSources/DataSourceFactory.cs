@@ -1,3 +1,4 @@
+using Luban.Job.Cfg.DataCreators;
 using System;
 using System.IO;
 
@@ -5,6 +6,18 @@ namespace Luban.Job.Cfg.DataSources
 {
     static class DataSourceFactory
     {
+        public static readonly string[] validDataSourceSuffixes = new string[]
+        {
+            ".xlsx",
+            ".xls",
+            ".csv",
+            ".xml",
+            ".lua",
+            ".json",
+            ".yml",
+            ".bin",
+        };
+
         public static AbstractDataSource Create(string url, string sheetName, Stream stream, bool exportTestData)
         {
             try
@@ -19,15 +32,20 @@ namespace Luban.Job.Cfg.DataSources
                     case "xml": source = new Xml.XmlDataSource(); break;
                     case "lua": source = new Lua.LuaDataSource(); break;
                     case "json": source = new Json.JsonDataSource(); break;
-                    case "b": source = new Binary.BinaryDataSource(); break;
+                    case "bin": source = new Binary.BinaryDataSource(); break;
+                    case "yml": source = new Yaml.YamlDataSource(); break;
                     default: throw new Exception($"不支持的文件类型:{url}");
                 }
                 source.Load(url, sheetName, stream, exportTestData);
                 return source;
             }
+            catch (DataCreateException)
+            {
+                throw;
+            }
             catch (Exception e)
             {
-                throw new Exception($"文件{url} 加载失败 ==> {e.Message}", e);
+                throw new Exception($"文件{url} 加载失败", e);
             }
         }
     }

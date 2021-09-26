@@ -198,7 +198,7 @@ namespace Luban.Job.Cfg.DataVisitors
                                     DType indexValue = ((DBean)value).Fields[indexOfIndexField];
                                     if (!indexSet.Add(indexValue))
                                     {
-                                        throw new Exception($"{TypeUtil.MakeFullName(_path)} index:{indexValue} 重复");
+                                        throw new Exception($"'{TypeUtil.MakeFullName(_path)}' index:'{indexValue}' 重复");
                                     }
                                     _path.Pop();
                                 }

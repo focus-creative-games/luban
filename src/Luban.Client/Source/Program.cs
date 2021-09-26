@@ -5,7 +5,6 @@ using Luban.Common.Protos;
 using Luban.Common.Utils;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,6 +25,8 @@ namespace Luban.Client
 
             public bool Verbose { get; set; }
 
+            public string LogLevel { get; set; } = "INFO";
+
             public string CacheMetaInfoFile { get; set; } = ".cache.meta";
 
             public string[] WatchDir { get; set; }
@@ -45,8 +46,9 @@ e.g.
 Options:
   -h, --host  <host>            Required. host ip
   -p  --port  <port>            port. default 8899
-  -j  --job   <job>             Required. job type.  avaliable value: cfg
+  -j  --job   <job>             required. job type.  avaliable value: cfg
   -v  --verbose                 verbose print
+  -l  --loglevel <level>        log level. default INFO. avaliable value: TRACE,DEBUG,INFO,WARN,ERROR,FATAL,OFF
   -c  --cachemetafile <file>    cache meta file name. default is '.cache.meta'
   -w  --watch  <dir>            watch data change and regenerate.
   -h  --help            show usage
@@ -67,8 +69,16 @@ Options:
                         case "-h":
                         case "--host":
                         {
-
-                            ops.Host = args[++i];
+                            // 打个补丁。好多人忘了设置 LUBAN_SERVER_IP 环境变量，导致启动时出问题
+                            if (args[i + 1].StartsWith("-"))
+                            {
+                                Console.WriteLine("[WARN] --host (or -h) <LUBAN_SERVER_IP> argument is missing, use 127.0.0.1 as default. do you forget to set LUBAN_SERVER_IP env variable?");
+                                ops.Host = "127.0.0.1";
+                            }
+                            else
+                            {
+                                ops.Host = args[++i];
+                            }
                             break;
                         }
                         case "-p":
@@ -87,6 +97,12 @@ Options:
                         case "--verbose":
                         {
                             ops.Verbose = true;
+                            break;
+                        }
+                        case "-l":
+                        case "--loglevel":
+                        {
+                            ops.LogLevel = args[++i];
                             break;
                         }
                         case "-c":
@@ -132,6 +148,9 @@ Options:
 
         static void Main(string[] args)
         {
+            ConsoleWindow.EnableQuickEditMode(false);
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
             var profile = new ProfileTimer();
 
             profile.StartPhase("all");
@@ -146,7 +165,7 @@ Options:
             CommandLineOptions options = parseResult.Item2;
 
             profile.StartPhase("init logger");
-            LogUtil.InitSimpleNLogConfigure(NLog.LogLevel.Info);
+            Luban.Common.Utils.LogUtil.InitSimpleNLogConfigure(NLog.LogLevel.FromString(options.LogLevel));
             s_logger = NLog.LogManager.GetCurrentClassLogger();
             profile.EndPhaseAndLog();
 
@@ -185,9 +204,18 @@ Options:
                 conn.Wait();
                 profile.EndPhaseAndLog();
 
-                profile.StartPhase("gen job");
-                exitCode = SubmitGenJob(options);
-                profile.EndPhaseAndLog();
+                if (GenClient.Ins.Session.Channel.IsOpen)
+                {
+                    profile.StartPhase("gen job");
+                    exitCode = SubmitGenJob(options);
+                    profile.EndPhaseAndLog();
+                }
+                else
+                {
+                    s_logger.Error("connect fail");
+                    exitCode = 2;
+                }
+
                 profile.EndPhaseAndLog();
             }
             catch (Exception e)
@@ -234,6 +262,10 @@ Options:
                 else
                 {
                     s_logger.Error("GenJob fail. err:{err} msg:{msg}", res.ErrCode, res.ErrMsg);
+                    if (!string.IsNullOrEmpty(res.StackTrace))
+                    {
+                        s_logger.Debug("StackTrace: {}", res.StackTrace);
+                    }
                 }
 
                 return 1;

@@ -1,11 +1,6 @@
-﻿using CommandLine;
-using ExcelDataReader;
-using System;
+﻿using ExcelDataReader;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Excel2TextDiff
 {
@@ -29,26 +24,24 @@ namespace Excel2TextDiff
 
         private void LoadRows(IExcelDataReader reader, List<string> lines)
         {
-            int rowIndex = 0;
+            var row = new List<string>();
             while (reader.Read())
             {
-                ++rowIndex; // 第一行是 meta ，跳过
-                var row = new List<string>();
+                row.Clear();
                 for (int i = 0, n = reader.FieldCount; i < n; i++)
                 {
                     object cell = reader.GetValue(i);
                     row.Add(cell != null ? cell.ToString() : "");
                 }
+                // 只保留到最后一个非空白单元格
                 int lastNotEmptyIndex = row.FindLastIndex(s => !string.IsNullOrEmpty(s));
                 if (lastNotEmptyIndex >= 0)
                 {
-                    row = row.GetRange(0, lastNotEmptyIndex + 1);
-                    lines.Add(string.Join(',', row));
+                    lines.Add(string.Join(',', row.GetRange(0, lastNotEmptyIndex + 1)));
                 }
                 else
                 {
                     // 忽略空白行，没必要diff这个
-                    row.Clear();
                 }
             }
         }

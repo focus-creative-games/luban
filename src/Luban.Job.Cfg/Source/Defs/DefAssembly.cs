@@ -15,7 +15,7 @@ namespace Luban.Job.Cfg.Defs
     {
         public List<Record> MainRecords { get; }
 
-        public List<Record> BranchRecords { get; }
+        public List<Record> PatchRecords { get; }
 
         public List<Record> FinalRecords { get; set; }
 
@@ -34,10 +34,10 @@ namespace Luban.Job.Cfg.Defs
 
         public Dictionary<DType, Record> FinalRecordMap { get; set; }
 
-        public TableDataInfo(List<Record> mainRecords, List<Record> branchRecords)
+        public TableDataInfo(List<Record> mainRecords, List<Record> patchRecords)
         {
             MainRecords = mainRecords;
-            BranchRecords = branchRecords;
+            PatchRecords = patchRecords;
         }
     }
 
@@ -45,18 +45,20 @@ namespace Luban.Job.Cfg.Defs
     {
         private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
+        public new static DefAssembly LocalAssebmly { get => (DefAssembly)DefAssemblyBase.LocalAssebmly; set => DefAssemblyBase.LocalAssebmly = value; }
+
         public Service CfgTargetService { get; private set; }
 
-        private readonly string _branchName;
+        private readonly string _patchName;
         private readonly bool _exportTestData;
 
-        public Branch TargetBranch { get; private set; }
+        public Patch TargetPatch { get; private set; }
 
         public TimeZoneInfo TimeZone { get; }
 
-        public DefAssembly(string branchName, TimeZoneInfo timezone, bool exportTestData, RemoteAgent agent)
+        public DefAssembly(string patchName, TimeZoneInfo timezone, bool exportTestData, RemoteAgent agent)
         {
-            this._branchName = branchName;
+            this._patchName = patchName;
             this.TimeZone = timezone;
             this._exportTestData = exportTestData;
             this.Agent = agent;
@@ -71,7 +73,7 @@ namespace Luban.Job.Cfg.Defs
             return groups.Any(g => CfgTargetService.Groups.Contains(g));
         }
 
-        private readonly List<Branch> _branches = new List<Branch>();
+        private readonly List<Patch> _patches = new List<Patch>();
 
         private readonly List<Service> _cfgServices = new List<Service>();
 
@@ -85,22 +87,24 @@ namespace Luban.Job.Cfg.Defs
 
         public NotConvertTextSet NotConvertTextSet { get; private set; }
 
+        public bool NeedL10nTextTranslate => ExportTextTable != null;
+
         public void InitL10n(string textValueFieldName)
         {
             ExportTextTable = new TextTable(this, textValueFieldName);
             NotConvertTextSet = new NotConvertTextSet();
         }
 
-        public Branch GetBranch(string name)
+        public Patch GetPatch(string name)
         {
-            return _branches.Find(b => b.Name == name);
+            return _patches.Find(b => b.Name == name);
         }
 
         public void AddCfgTable(DefTable table)
         {
             if (!CfgTables.TryAdd(table.FullName, table))
             {
-                throw new Exception($"table:{table.FullName} duplicated");
+                throw new Exception($"table:'{table.FullName}' duplicated");
             }
         }
 
@@ -109,9 +113,9 @@ namespace Luban.Job.Cfg.Defs
             return CfgTables.TryGetValue(name, out var t) ? t : null;
         }
 
-        public void AddDataTable(DefTable table, List<Record> mainRecords, List<Record> branchRecords)
+        public void AddDataTable(DefTable table, List<Record> mainRecords, List<Record> patchRecords)
         {
-            _recordsByTables[table.FullName] = new TableDataInfo(mainRecords, branchRecords);
+            _recordsByTables[table.FullName] = new TableDataInfo(mainRecords, patchRecords);
         }
 
         public List<Record> GetTableAllDataList(DefTable table)
@@ -143,11 +147,11 @@ namespace Luban.Job.Cfg.Defs
             {
                 if (!this.Types.ContainsKey(refType))
                 {
-                    throw new Exception($"service:{targetService.Name} ref:{refType} 类型不存在");
+                    throw new Exception($"service:'{targetService.Name}' ref:'{refType}' 类型不存在");
                 }
                 if (!refTypes.TryAdd(refType, this.Types[refType]))
                 {
-                    throw new Exception($"service:{targetService.Name} ref:{refType} 重复引用");
+                    throw new Exception($"service:'{targetService.Name}' ref:'{refType}' 重复引用");
                 }
             }
             foreach ((var fullTypeName, var type) in this.Types)
@@ -180,16 +184,16 @@ namespace Luban.Job.Cfg.Defs
                 throw new ArgumentException($"service:{outputService} not exists");
             }
 
-            if (!string.IsNullOrWhiteSpace(_branchName))
+            if (!string.IsNullOrWhiteSpace(_patchName))
             {
-                TargetBranch = defines.Branches.Find(b => b.Name == _branchName);
-                if (TargetBranch == null)
+                TargetPatch = defines.Patches.Find(b => b.Name == _patchName);
+                if (TargetPatch == null)
                 {
-                    throw new Exception($"branch {_branchName} not in valid branch set");
+                    throw new Exception($"patch '{_patchName}' not in valid patch set");
                 }
             }
 
-            this._branches.AddRange(defines.Branches);
+            this._patches.AddRange(defines.Patches);
 
             foreach (var c in defines.Consts)
             {
@@ -269,6 +273,11 @@ namespace Luban.Job.Cfg.Defs
 
             // 递归 设置DefBean及DefField 的 IsMultiRow
 
+            MarkMultiRows();
+        }
+
+        public void MarkMultiRows()
+        {
             var multiRowBeans = new HashSet<DefBean>();
             for (bool anyMark = true; anyMark;)
             {

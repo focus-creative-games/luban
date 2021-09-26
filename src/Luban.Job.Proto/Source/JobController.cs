@@ -6,7 +6,6 @@ using Luban.Job.Common.Defs;
 using Luban.Job.Common.Utils;
 using Luban.Job.Proto.Defs;
 using Luban.Job.Proto.Generate;
-using Luban.Job.Proto.RawDefs;
 using Luban.Server.Common;
 using System;
 using System.Collections.Concurrent;
@@ -23,15 +22,9 @@ namespace Luban.Job.Proto
     {
         private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
-        class GenArgs
+        class GenArgs : GenArgsBase
         {
-            [Option('d', "define_file", Required = true, HelpText = "define file")]
-            public string DefineFile { get; set; }
-
-            [Option('c', "output_code_dir", Required = true, HelpText = "output code directory")]
-            public string OutputCodeDir { get; set; }
-
-            [Option('g', "gen_type", Required = true, HelpText = "cs,lua,java,cpp,ts")]
+            [Option('g', "gen_type", Required = true, HelpText = "cs,lua,java,cpp,typescript")]
             public string GenType { get; set; }
 
             [Option('s', "service", Required = true, HelpText = "service")]
@@ -39,7 +32,7 @@ namespace Luban.Job.Proto
         }
 
 
-        private bool TryParseArg(List<string> args, out GenArgs result, out string errMsg)
+        private bool TryParseArg(List<string> args, out GenArgs options, out string errMsg)
         {
             var helpWriter = new StringWriter();
             var parser = new Parser(ps =>
@@ -50,12 +43,21 @@ namespace Luban.Job.Proto
             if (parseResult.Tag == ParserResultType.NotParsed)
             {
                 errMsg = helpWriter.ToString();
-                result = null;
+                options = null;
                 return false;
             }
 
-            result = (parseResult as Parsed<GenArgs>).Value;
+            options = (parseResult as Parsed<GenArgs>).Value;
             errMsg = null;
+
+            if (!options.ValidateOutouptCodeDir(ref errMsg))
+            {
+                return false;
+            }
+            if (options.GenType.Contains("typescript") && !options.ValidateTypescriptRequire(options.GenType, ref errMsg))
+            {
+                return false;
+            }
             return true;
         }
 
@@ -90,9 +92,11 @@ namespace Luban.Job.Proto
 
                 var rawDefines = loader.BuildDefines();
 
-                var ass = new DefAssembly();
+                var ass = new DefAssembly() { UseUnityVectors = args.UseUnityVectors };
 
                 ass.Load(rawDefines, agent);
+
+                DefAssemblyBase.LocalAssebmly = ass;
 
                 var targetService = args.Service;
 
@@ -146,113 +150,37 @@ namespace Luban.Job.Proto
                         }));
                         break;
                     }
-                    case "ts":
+                    case "typescript":
                     {
                         var render = new TypescriptRender();
+                        var brightRequirePath = args.TypescriptBrightRequirePath;
+                        var brightPackageName = args.TypescriptBrightPackageName;
 
                         tasks.Add(Task.Run(() =>
                         {
-                            var fileContent = new List<string>
-                                {
-                                    @$"
-import {{Bright}} from 'csharp'
+                            var fileContent = new List<string>();
+                            if (args.UsePuertsByteBuf)
+                            {
+                                fileContent.Add(TypescriptStringTemplate.PuertsByteBufImports);
+                            }
+                            else
+                            {
+                                fileContent.Add(TypescriptStringTemplate.GetByteBufImports(brightRequirePath, brightPackageName));
+                            }
+                            if (args.EmbedBrightTypes)
+                            {
+                                fileContent.Add(StringTemplateUtil.GetTemplateString("config/typescript_bin/vectors"));
+                                fileContent.Add(TypescriptStringTemplate.SerializeTypes);
+                                fileContent.Add(TypescriptStringTemplate.ProtoTypes);
+                            }
+                            else
+                            {
+                                fileContent.Add(TypescriptStringTemplate.GetSerializeImports(brightRequirePath, brightPackageName));
+                                fileContent.Add(TypescriptStringTemplate.GetProtocolImports(brightRequirePath, brightPackageName));
+                                fileContent.Add(TypescriptStringTemplate.GetVectorImports(brightRequirePath, brightPackageName));
+                            }
 
-export namespace {ass.TopModule} {{
-",
-
-                                    @"
-export interface ISerializable {
-    serialize(_buf_: Bright.Serialization.ByteBuf): void
-    deserialize(_buf_: Bright.Serialization.ByteBuf): void
-}
-
-export abstract class BeanBase implements ISerializable {
-    abstract getTypeId(): number
-    abstract serialize(_buf_: Bright.Serialization.ByteBuf): void
-    abstract deserialize(_buf_: Bright.Serialization.ByteBuf): void
-}
-
-export abstract class Protocol implements ISerializable {
-    abstract getTypeId(): number
-    abstract serialize(_buf_: Bright.Serialization.ByteBuf): void
-    abstract deserialize(_buf_: Bright.Serialization.ByteBuf): void
-}
-
-export class Vector2 {
-        x: number
-        y: number
-        constructor(x: number, y: number) {
-            this.x = x
-            this.y = y
-        }
-
-        to(_buf_: Bright.Serialization.ByteBuf) {
-            _buf_.WriteFloat(this.x)
-            _buf_.WriteFloat(this.y)
-        }
-
-        static from(_buf_: Bright.Serialization.ByteBuf): Vector2 {
-            let x = _buf_.ReadFloat()
-            let y = _buf_.ReadFloat()
-            return new Vector2(x, y)
-        }
-    }
-
-
-    export class Vector3 {
-        x: number
-        y: number
-        z: number
-        constructor(x: number, y: number, z: number) {
-            this.x = x
-            this.y = y
-            this.z = z
-        }
-
-        to(_buf_: Bright.Serialization.ByteBuf) {
-            _buf_.WriteFloat(this.x)
-            _buf_.WriteFloat(this.y)
-            _buf_.WriteFloat(this.z)
-        }
-
-        static from(_buf_: Bright.Serialization.ByteBuf): Vector3 {
-            let x = _buf_.ReadFloat()
-            let y = _buf_.ReadFloat()
-            let z = _buf_.ReadFloat()
-            return new Vector3(x, y, z)
-        }
-    }
-
-    export class Vector4 {
-        x: number
-        y: number
-        z: number
-        w: number
-        constructor(x: number, y: number, z: number, w: number) {
-            this.x = x
-            this.y = y
-            this.z = z
-            this.w = w
-        }
-
-        to(_buf_: Bright.Serialization.ByteBuf) {
-            _buf_.WriteFloat(this.x)
-            _buf_.WriteFloat(this.y)
-            _buf_.WriteFloat(this.z)
-            _buf_.WriteFloat(this.w)
-        }
-
-        static from(_buf_: Bright.Serialization.ByteBuf): Vector4 {
-            let x = _buf_.ReadFloat()
-            let y = _buf_.ReadFloat()
-            let z = _buf_.ReadFloat()
-            let w = _buf_.ReadFloat()
-            return new Vector4(x, y, z, w)
-        }
-    }
-
-"
-                                };
+                            fileContent.Add(@$"export namespace {ass.TopModule} {{");
 
                             foreach (var type in exportTypes)
                             {
@@ -286,8 +214,12 @@ export class Vector2 {
             catch (Exception e)
             {
                 res.ErrCode = Luban.Common.EErrorCode.JOB_EXCEPTION;
-                res.ErrMsg = $"{e.Message} \n {e.StackTrace}";
+                res.ErrMsg = ExceptionUtil.ExtractMessage(e);
+                res.StackTrace = e.StackTrace;
             }
+
+            DefAssemblyBase.LocalAssebmly = null;
+
             timer.EndPhaseAndLog();
 
             agent.Session.ReplyRpc<GenJob, GenJobArg, GenJobRes>(rpc, res);

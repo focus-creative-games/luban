@@ -30,6 +30,105 @@
 - 配置:  
   ![如图](images/adv/def_03.png)
 
+## byte,short,int,long,string
+
+  与 float 相似，不再赘述
+
+## string 类型
+填法与 float相似，但又特殊性。当string类型数据出现在**连续单元格**（比如多列bean占了多个单元格）或者用**sep分割**的数据中时，由于工具无法区别空白到底算空白字符串还是应该跳过，所以在连续多字段模式下，强制用""来表示空白字符串。
+
+下面示例中，s1是string，单独占一个列，可以用空白单元格表示空白字符串。 cs1和cs2要么是连续单元格模式，要么是sep分割产生的连续数据模式，表达空白字符串必须用""。
+
+可能会有疑问，如何恰好想表达 ""是怎么办呢？ 如果真遇到这种需求，再寻找解决方案吧。
+
+定义：
+
+```xml
+	<bean name="CompactString">
+		<var name="id" type="int"/>
+		<var name="s2" type="string"/>
+		<var name="s3" type="string"/>
+	</bean>
+	
+	<bean name="TestString">
+		<var name="id" type="int"/>
+		<var name="s1" type="string"/>
+		<var name="cs1" type="CompactString"/>
+		<var name="cs2" type="CompactString" sep=","/>
+	</bean>
+	
+	<table name="TbTestString" value="TestString" input="test/test_string.xlsx"/>
+```
+
+配置数据：
+
+![配置](images/examples/ex_string_01.png)
+
+
+## text 类型
+
+该类型数据包含两个字段, key和text， 其中 key 可以重复出现，但要求text完全相同，否则报错。这么设计是为了防止意外写重了key。**注意：不允许key为空而text不为空**
+
+如果想填空的本地化字符串， key和text完全留空即可，工具会特殊对待，不会加入 key集合。
+
+text的key和text字段都是string类型，因此在连续单元格或者sep产生的连续数据流模式中，同样要遵循用""来表达空白字符串的规则。
+
+定义：
+
+```xml
+	<bean name="L10NDemo">
+		<var name="id" type="int"/>
+		<var name="text" type="text"/>
+	</bean>
+	
+	<table name="TbL10NDemo" value="L10NDemo" input="l10n/Demo.xlsx"/>
+```
+
+配置数据:
+
+![数据](images/examples/ex_i10n_2.png)
+
+
+## datetime 类型
+
+- 时间是常用的数据类型。Luban 特地提供了支持。  
+  有两种形式，一种以纯字符串的方式填写。
+  - 以纯字符串方式填写
+      填写格式为 以下 4 种。
+    - yyyy-mm-dd hh:mm:ss 如 1999-08-08 01:30:29
+    - yyyy-mm-dd hh:mm 如 2000-08-07 07:40
+    - yyyy-mm-dd hh 如 2001-09-05 07
+    - yyyy-mm-dd 如 2003-04-05
+  - 以 excel内置的时间格式填写
+    
+- 为 Item 新增一个 失效时间字段 expire_time 。  
+- [定义](images/adv/def_38.png)  
+  ``` xml
+  <bean name="Item">
+    ...
+    <var name="expire_time" type="datetime"/>
+  </bean>
+  ```
+- 配置  
+  图中红框中第一个时间以 excel的时间格式填写
+  剩下第2，3，4个时间以 纯字符串形式填写
+
+  ![如图](images/adv/def_39.png)
+
+## 可空变量
+
+- 有时候会有一种变量，我们希望它 功能生效时填一个有效值，功能不生效里，用一个值来表示。 例如 int 类型，常常拿 0 或者-1 作无效值常量。 但有时候，0 或-1 也是有效值时，这种做法就不生效了。或者说 项目组内 有时候拿 0，有时候拿-1 作无效值标记，很不统一。我们借鉴 sql 及 c#,引入 可空值概念，用 null 表达空值。
+- 我们为 Item 添加 min_use_level 字段，类型为 int? 当填有效值时，使用时要检查等级，否则不检查。
+- [定义](images/adv/def_36.png)
+  ``` xml
+  <bean name="Item">
+    ...
+    <var name="min_use_level" type="int?"/>
+  </bean>
+  ```
+- 配置  
+  ![如图](images/adv/def_37.png)
+
 ## 列表类型 list,int
 
 - 我们新增一个字段， 宝箱的随机抽取道具列表 random_item_ids。
@@ -148,13 +247,13 @@
   ``` xml
   <module name="item">
    <bean name="ItemLevelAttr">
-    <var name="level", type="int">
-    <var name="desc", type="string">
-    <var name="attr", type="float">
+      <var name="level", type="int">
+      <var name="desc", type="string">
+      <var name="attr", type="float">
    </bean>
 
    <bean name="Item">
-    <var name="level_attrs" type="list,ItemLevelAttr" />
+      <var name="level_attrs" type="list,ItemLevelAttr" />
    </bean>
   </module>
   ```
@@ -170,20 +269,20 @@
   1. bean ItemLevelAttr 增加属性 sep=”,”  
      [定义](images/adv/def_21.png)
      ``` xml
-     <bean name="ItemLevelAttr" sep=",>
-      <var name="level" type="int"/>
-      <var name="desc" type="string"/>
-      <var name="attr" type="float"/>
+     <bean name="ItemLevelAttr" sep=",">
+        <var name="level" type="int"/>
+        <var name="desc" type="string"/>
+        <var name="attr" type="float"/>
      </bean>
      ```
      如果不想用逗号”,” ，想用;来分割单元格内的数据，只要将 sep=”;” 即可。
   2. 字段 level_attrs 增加属性 sep=”,”，即  
      [定义](images/adv/def_22.png)
      ``` xml
-     <bean name="ItemLevelAttr" sep=",>
-      <var name="level" type="int"/>
-      <var name="desc" type="string"/>
-      <var name="attr" type="float"/>
+     <bean name="ItemLevelAttr" sep=",">
+        <var name="level" type="int"/>
+        <var name="desc" type="string"/>
+        <var name="attr" type="float"/>
      </bean>
      <bean name="Item">
       <var name="level_attrs" type="list,ItemLevelAttr" sep=",">
@@ -194,10 +293,10 @@
      想用 | 来分割不同 ItemLevelAttr ,用 , 来分割每个记录的数据。只需要 字段 level_attrs 的 sep=”,|” 即可。  
      [定义](images/adv/def_24.png)
      ``` xml
-     <bean name="ItemLevelAttr" sep=",>
-      <var name="level" type="int"/>
-      <var name="desc" type="string"/>
-      <var name="attr" type="float"/>
+     <bean name="ItemLevelAttr" sep=",">
+        <var name="level" type="int"/>
+        <var name="desc" type="string"/>
+        <var name="attr" type="float"/>
      </bean>
      <bean name="Item">
       <var name="level_attrs" type="list,ItemLevelAttr" sep=",|">
@@ -270,7 +369,6 @@
   ```
 - 和 普通 非多行记录的区别在于 lines 字段多了一个 multi_rows=”1” 字段，表示这个字段要多行配置。
 - ![如图](images/adv/def_30.png)
-- 和普通不包括多行数据的 excel 表比，meta 行多了 multi_rows:1 这个属性。为了防止被误识别为多行，multi_rows 需要手动打开。
 
 ## 多级标题头
 
@@ -317,54 +415,38 @@
 - 定义不变，但 excel 的填法有区别，数据如下：
 - ![如图](images/adv/def_35.png)
 
-## 可空变量
 
-- 有时候会有一种变量，我们希望它 功能生效时填一个有效值，功能不生效里，用一个值来表示。 例如 int 类型，常常拿 0 或者-1 作无效值常量。 但有时候，0 或-1 也是有效值时，这种做法就不生效了。或者说 项目组内 有时候拿 0，有时候拿-1 作无效值标记，很不统一。我们借鉴 sql 及 c#,引入 可空值概念，用 null 表达空值。
-- 我们为 Item 添加 min_use_level 字段，类型为 int? 当填有效值时，使用时要检查等级，否则不检查。
-- [定义](images/adv/def_36.png)
-  ``` xml
-  <bean name="Item">
-    ...
-    <var name="min_use_level" type="int?"/>
-  </bean>
-  ```
-- 配置  
-  ![如图](images/adv/def_37.png)
+## 默认值
 
-## datetime 类型
+该特性只对excel格式文件有效。当单元格为空时，该字段使用默认值。
 
-- 时间是常用的数据类型。Luban 特地提供了支持。  
-  填写格式为 以下 4 种。
-  - yyyy-mm-dd hh:mm:ss 如 1999-08-08 01:30:29
-  - yyyy-mm-dd hh:mm 如 2000-08-07 07:40
-  - yyyy-mm-dd hh 如 2001-09-05 07
-  - yyyy-mm-dd 如 2003-04-05
-- 为 Item 新增一个 失效时间字段 expire_time 。  
-- [定义](images/adv/def_38.png)  
-  ``` xml
-  <bean name="Item">
-    ...
-    <var name="expire_time" type="datetime"/>
-  </bean>
-  ```
-- 配置    
-  ![如图](images/adv/def_39.png)
+```xml
+<bean name="DemoDefault">
+  <var name="id" type="int"/>
+  <var name="x" type="int" default="10">
+</bean>
+
+<table name="TbDemoDefault" value="DemoDefault" input="default.xlsx"/>
+
+```
+
+![default](images/adv/def_50.png)
 
 ## convert 常量替换
 
-- 游戏里经常会出现一些常用的类似枚举的值，比如说 升级丹的 id,在很多地方都要填，如果直接它的道具 id,既不直观，也容易出错。 Luban 支持常量替换。
-- 对于需要常量替换的字段，添加 convert=”枚举类”。 如果填写的值是 枚举名或者别名，则替换为 相应的整数。否则 按照整数解析。
-- [定义](images/adv/def_40.png)  
+游戏里经常会出现一些常用的类似枚举的值，比如说 升级丹的 id,在很多地方都要填，如果直接它的道具 id,既不直观，也容易出错。 Luban 支持常量替换。对于需要常量替换的字段，添加 convert=”枚举类”。 如果填写的值是 枚举名或者别名，则替换为 相应的整数。否则 按照整数解析。
+
+定义
   ``` xml
   <enum name="EFunctionItemId">
     <var name="SHENG_JI_DAN" alias="升级丹" value="11220304"/>
     <var name="JIN_JIE_DAN" alias="进阶丹" value="11220506"/>
   </enum>
   <bean name="Item">
-    ...
     <var name="cost_item_on_use" type="int" convert="EFunctionItemId"/>
   </bean>
   ```
-- 配置:  
+
+配置: 
+
   ![如图](images/adv/def_41.png)
-- 添加了 convert 的字段，既可以填 convert 指向的枚举类里的一个合法枚举名，也可以是其他整数。

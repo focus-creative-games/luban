@@ -120,7 +120,7 @@ namespace Luban.Job.Cfg.DataVisitors
 
         public bool Accept(DDateTime type)
         {
-            throw new NotSupportedException();
+            return false;
         }
     }
 }

@@ -1,10 +1,9 @@
-using Luban.Job.Common.Utils;
+using Luban.Common.Utils;
 using Luban.Job.Common.Defs;
+using Luban.Job.Db.RawDefs;
+using Luban.Server.Common;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using Luban.Server.Common;
-using Luban.Common.Utils;
-using Luban.Job.Db.RawDefs;
 
 namespace Luban.Job.Db.Defs
 {
@@ -33,12 +32,12 @@ namespace Luban.Job.Db.Defs
 
 
 
-        private readonly List<string> _tableOptionalAttrs = new List<string> { "memory" };
+        private readonly List<string> _tableOptionalAttrs = new List<string> { "memory", "comment" };
         private readonly List<string> _tableRequireAttrs = new List<string> { "name", "id", "key", "value" };
 
-        private void AddTable(XElement e)
+        private void AddTable(string defineFile, XElement e)
         {
-            ValidAttrKeys(e, _tableOptionalAttrs, _tableRequireAttrs);
+            ValidAttrKeys(defineFile, e, _tableOptionalAttrs, _tableRequireAttrs);
             var p = new Table()
             {
                 Id = XmlUtil.GetRequiredIntAttribute(e, "id"),
@@ -47,6 +46,7 @@ namespace Luban.Job.Db.Defs
                 KeyType = XmlUtil.GetRequiredAttribute(e, "key"),
                 ValueType = XmlUtil.GetRequiredAttribute(e, "value"),
                 IsPersistent = !XmlUtil.GetOptionBoolAttribute(e, "memory"),
+                Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
             };
 
             s_logger.Trace("add Db:{@Db}", p);

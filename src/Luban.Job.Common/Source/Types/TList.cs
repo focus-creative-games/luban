@@ -1,15 +1,21 @@
 using Luban.Job.Common.TypeVisitors;
 using System;
+using System.Collections.Generic;
 
 namespace Luban.Job.Common.Types
 {
     public class TList : TType
     {
+        public static TList Create(bool isNullable, Dictionary<string, string> tags, TType elementType, bool isArrayList)
+        {
+            return new TList(isNullable, tags, elementType, isArrayList);
+        }
+
         public TType ElementType { get; }
 
         public bool IsArrayList { get; }
 
-        public TList(TType elementType, bool isArrayList) : base(false)
+        private TList(bool isNullable, Dictionary<string, string> tags, TType elementType, bool isArrayList) : base(isNullable, tags)
         {
             ElementType = elementType;
             IsArrayList = isArrayList;

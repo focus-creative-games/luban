@@ -41,11 +41,9 @@ namespace Luban.Job.Common.Defs
         public bool IsBeanFieldMustDefineId { get; protected set; }
 
         private readonly Dictionary<string, Action<XElement>> _rootDefineHandlers = new Dictionary<string, Action<XElement>>();
-        private readonly Dictionary<string, Action<XElement>> _moduleDefineHandlers = new Dictionary<string, Action<XElement>>();
+        private readonly Dictionary<string, Action<string, XElement>> _moduleDefineHandlers = new();
 
         protected readonly Stack<string> _namespaceStack = new Stack<string>();
-        protected readonly Stack<string> _importFileStack = new Stack<string>();
-        protected readonly Stack<XElement> _defineStack = new Stack<XElement>();
 
         protected string TopModule { get; private set; }
 
@@ -65,6 +63,7 @@ namespace Luban.Job.Common.Defs
             _moduleDefineHandlers.Add("bean", AddBean);
         }
 
+        public string RootXml => _rootXml;
         private string _rootXml;
 
         public async Task LoadAsync(string rootXml)
@@ -99,16 +98,12 @@ namespace Luban.Job.Common.Defs
             _rootDefineHandlers.Add(name, handler);
         }
 
-        protected void RegisterModuleDefineHandler(string name, Action<XElement> handler)
+        protected void RegisterModuleDefineHandler(string name, Action<string, XElement> handler)
         {
             _moduleDefineHandlers.Add(name, handler);
         }
 
-        protected string CurNamespace => _namespaceStack.Peek();
-
-        protected string CurImportFile => _importFileStack.Peek();
-
-        protected XElement CurDefine => _defineStack.Peek();
+        protected string CurNamespace => _namespaceStack.Count > 0 ? _namespaceStack.Peek() : "";
 
         #region root handler
 
@@ -124,14 +119,12 @@ namespace Luban.Job.Common.Defs
             var xmlFullPath = FileUtil.Combine(RootDir, xmlFile);
             s_logger.Trace("import {file} {full_path}", xmlFile, xmlFullPath);
 
-            var fileOrDirContent = await Agent.GetFileOrDirectoryAsync(xmlFullPath);
+            var fileOrDirContent = await Agent.GetFileOrDirectoryAsync(xmlFullPath, ".xml");
 
             if (fileOrDirContent.IsFile)
             {
                 s_logger.Trace("== file:{file}", xmlFullPath);
-                _importFileStack.Push(xmlFullPath);
-                AddModule(XmlUtil.Open(xmlFullPath, await Agent.GetFromCacheOrReadAllBytesAsync(xmlFullPath, fileOrDirContent.Md5)));
-                _importFileStack.Pop();
+                AddModule(xmlFullPath, XmlUtil.Open(xmlFullPath, await Agent.GetFromCacheOrReadAllBytesAsync(xmlFullPath, fileOrDirContent.Md5)));
             }
             else
             {
@@ -147,9 +140,7 @@ namespace Luban.Job.Common.Defs
                         continue;
                     }
                     string subFullPath = subFileName;
-                    _importFileStack.Push(subFullPath);
-                    AddModule(XmlUtil.Open(subFullPath, await Agent.GetFromCacheOrReadAllBytesAsync(subFullPath, subFile.MD5)));
-                    _importFileStack.Pop();
+                    AddModule(subFullPath, XmlUtil.Open(subFullPath, await Agent.GetFromCacheOrReadAllBytesAsync(subFullPath, subFile.MD5)));
                 }
             }
         }
@@ -159,7 +150,7 @@ namespace Luban.Job.Common.Defs
 
         #region module handler
 
-        private void AddModule(XElement me)
+        private void AddModule(string defineFile, XElement me)
         {
             var name = XmlUtil.GetOptionalAttribute(me, "name");
             //if (string.IsNullOrEmpty(name))
@@ -177,58 +168,58 @@ namespace Luban.Job.Common.Defs
                 {
                     if (tagName != "module")
                     {
-                        _defineStack.Push(e);
-                        handler(e);
-                        _defineStack.Pop();
+                        handler(defineFile, e);
                     }
                     else
                     {
-                        handler(e);
+                        handler(defineFile, e);
                     }
                 }
                 else
                 {
-                    throw new LoadDefException($"定义文件:{CurImportFile} module:{CurNamespace} 不支持 tag:{tagName}");
+                    throw new LoadDefException($"定义文件:{defineFile} module:{CurNamespace} 不支持 tag:{tagName}");
                 }
             }
             _namespaceStack.Pop();
         }
 
         private static readonly List<string> _fieldRequireAttrs = new List<string> { "name", "type", };
-        private static readonly List<string> _fieldOptionalAttrs = new List<string> { "id", };
+        private static readonly List<string> _fieldOptionalAttrs = new List<string> { "id", "comment", "tags" };
 
-        protected virtual Field CreateField(XElement e)
+        protected virtual Field CreateField(string defineFile, XElement e)
         {
-            ValidAttrKeys(e, _fieldOptionalAttrs, _fieldRequireAttrs);
+            ValidAttrKeys(defineFile, e, _fieldOptionalAttrs, _fieldRequireAttrs);
             var f = new Field()
             {
                 Id = XmlUtil.GetOptionIntAttribute(e, "id"),
                 Name = XmlUtil.GetRequiredAttribute(e, "name"),
                 Type = CreateType(e, "type"),
+                Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
+                Tags = XmlUtil.GetOptionalAttribute(e, "tags"),
             };
             return f;
         }
 
-        protected void AddBean(XElement e)
+        protected void AddBean(string defineFile, XElement e)
         {
-            AddBean(e, "");
+            AddBean(defineFile, e, "");
         }
 
-        private static readonly List<string> _beanOptinsAttrs1 = new List<string> { "compatible", "value_type" };
+        private static readonly List<string> _beanOptinsAttrs1 = new List<string> { "compatible", "value_type", "comment", "tags" };
         private static readonly List<string> _beanRequireAttrs1 = new List<string> { "id", "name" };
 
-        private static readonly List<string> _beanOptinsAttrs2 = new List<string> { "id", "compatible", "value_type" };
+        private static readonly List<string> _beanOptinsAttrs2 = new List<string> { "id", "compatible", "value_type", "comment", "tags" };
         private static readonly List<string> _beanRequireAttrs2 = new List<string> { "name" };
 
-        protected virtual void AddBean(XElement e, string parent)
+        protected virtual void AddBean(string defineFile, XElement e, string parent)
         {
             if (IsBeanFieldMustDefineId)
             {
-                ValidAttrKeys(e, _beanOptinsAttrs1, _beanRequireAttrs1);
+                ValidAttrKeys(defineFile, e, _beanOptinsAttrs1, _beanRequireAttrs1);
             }
             else
             {
-                ValidAttrKeys(e, _beanOptinsAttrs2, _beanRequireAttrs2);
+                ValidAttrKeys(defineFile, e, _beanOptinsAttrs2, _beanRequireAttrs2);
             }
             var b = new Bean()
             {
@@ -238,6 +229,8 @@ namespace Luban.Job.Common.Defs
                 TypeId = XmlUtil.GetOptionIntAttribute(e, "id"),
                 IsSerializeCompatible = XmlUtil.GetOptionBoolAttribute(e, "compatible", IsBeanDefaultCompatible),
                 IsValueType = XmlUtil.GetOptionBoolAttribute(e, "value_type"),
+                Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
+                Tags = XmlUtil.GetOptionalAttribute(e, "tags"),
             };
             var childBeans = new List<XElement>();
 
@@ -250,9 +243,9 @@ namespace Luban.Job.Common.Defs
                     {
                         if (defineAnyChildBean)
                         {
-                            throw new LoadDefException($"定义文件:{CurImportFile} 类型:{b.FullName} 的多态子bean必须在所有成员字段 <var> 之前定义");
+                            throw new LoadDefException($"定义文件:{defineFile} 类型:{b.FullName} 的多态子bean必须在所有成员字段 <var> 之前定义");
                         }
-                        b.Fields.Add(CreateField(fe)); ;
+                        b.Fields.Add(CreateField(defineFile, fe)); ;
                         break;
                     }
                     case "bean":
@@ -263,7 +256,7 @@ namespace Luban.Job.Common.Defs
                     }
                     default:
                     {
-                        throw new LoadDefException($"定义文件:{CurImportFile} 类型:{b.FullName} 不支持 tag:{fe.Name}");
+                        throw new LoadDefException($"定义文件:{defineFile} 类型:{b.FullName} 不支持 tag:{fe.Name}");
                     }
                 }
             }
@@ -273,7 +266,7 @@ namespace Luban.Job.Common.Defs
             var fullname = b.FullName;
             foreach (var cb in childBeans)
             {
-                AddBean(cb, fullname);
+                AddBean(defineFile, cb, fullname);
             }
         }
 
@@ -282,75 +275,85 @@ namespace Luban.Job.Common.Defs
             return XmlUtil.GetRequiredAttribute(e, key);
         }
 
-        protected void ValidAttrKeys(XElement e, List<string> optionKeys, List<string> requireKeys)
+        protected void ValidAttrKeys(string defineFile, XElement e, List<string> optionKeys, List<string> requireKeys)
         {
             foreach (var k in e.Attributes())
             {
                 var name = k.Name.LocalName;
                 if (!requireKeys.Contains(name) && (optionKeys != null && !optionKeys.Contains(name)))
                 {
-                    throw new LoadDefException($"定义文件:{CurImportFile} module:{CurNamespace} 定义:{e} 包含未知属性 attr:{name}");
+                    throw new LoadDefException($"定义文件:{defineFile} module:{CurNamespace} 定义:{e} 包含未知属性 attr:{name}");
                 }
             }
             foreach (var k in requireKeys)
             {
                 if (e.Attribute(k) == null)
                 {
-                    throw new LoadDefException($"定义文件:{CurImportFile} module:{CurNamespace} 定义:{e} 缺失属性 attr:{k}");
+                    throw new LoadDefException($"定义文件:{defineFile} module:{CurNamespace} 定义:{e} 缺失属性 attr:{k}");
                 }
             }
         }
 
 
         private static readonly List<string> _constRequiredAttrs = new List<string> { "name" };
-        private static readonly List<string> _constOptionalItemAttrs = new List<string> { "value" };
-        private static readonly List<string> _constItemRequiredAttrs = new List<string> { "name", "type" };
+        private static readonly List<string> _constOptionalAttrs = new List<string> { "comment" };
 
-        protected void AddConst(XElement e)
+        private static readonly List<string> _constItemRequiredAttrs = new List<string> { "name", "type" };
+        private static readonly List<string> _constItemOptionalAttrs = new List<string> { "value", "comment" };
+
+        protected void AddConst(string defineFile, XElement e)
         {
-            ValidAttrKeys(e, null, _constRequiredAttrs);
+            ValidAttrKeys(defineFile, e, _constOptionalAttrs, _constRequiredAttrs);
             var c = new Const()
             {
                 Name = XmlUtil.GetRequiredAttribute(e, "name"),
                 Namespace = CurNamespace,
+                Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
             };
             foreach (XElement item in e.Elements())
             {
-                ValidAttrKeys(item, _constOptionalItemAttrs, _constItemRequiredAttrs);
+                ValidAttrKeys(defineFile, item, _constItemOptionalAttrs, _constItemRequiredAttrs);
                 c.Items.Add(new ConstItem()
                 {
                     Name = XmlUtil.GetRequiredAttribute(item, "name"),
                     Type = CreateType(item, "type"),
                     Value = XmlUtil.GetRequiredAttribute(item, "value"),
+                    Comment = XmlUtil.GetOptionalAttribute(item, "comment"),
                 });
             }
             s_logger.Trace("add const {@const}", c);
             _consts.Add(c);
         }
 
-        private static readonly List<string> _enumOptionalAttrs = new List<string> { "flags" };
+        private static readonly List<string> _enumOptionalAttrs = new List<string> { "flags", "comment", "tags" };
         private static readonly List<string> _enumRequiredAttrs = new List<string> { "name" };
-        private static readonly List<string> _enumOptionalItemAttrs = new List<string> { "value", "alias" };
+
+
+        private static readonly List<string> _enumItemOptionalAttrs = new List<string> { "value", "alias", "comment", "tags" };
         private static readonly List<string> _enumItemRequiredAttrs = new List<string> { "name" };
 
-        protected void AddEnum(XElement e)
+        protected void AddEnum(string defineFile, XElement e)
         {
-            ValidAttrKeys(e, _enumOptionalAttrs, _enumRequiredAttrs);
+            ValidAttrKeys(defineFile, e, _enumOptionalAttrs, _enumRequiredAttrs);
             var en = new PEnum()
             {
                 Name = XmlUtil.GetRequiredAttribute(e, "name"),
                 Namespace = CurNamespace,
+                Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
                 IsFlags = XmlUtil.GetOptionBoolAttribute(e, "flags"),
+                Tags = XmlUtil.GetOptionalAttribute(e, "tags"),
             };
 
             foreach (XElement item in e.Elements())
             {
-                ValidAttrKeys(item, _enumOptionalItemAttrs, _enumItemRequiredAttrs);
+                ValidAttrKeys(defineFile, item, _enumItemOptionalAttrs, _enumItemRequiredAttrs);
                 en.Items.Add(new EnumItem()
                 {
                     Name = XmlUtil.GetRequiredAttribute(item, "name"),
                     Alias = XmlUtil.GetOptionalAttribute(item, "alias"),
                     Value = XmlUtil.GetOptionalAttribute(item, "value"),
+                    Comment = XmlUtil.GetOptionalAttribute(item, "comment"),
+                    Tags = XmlUtil.GetOptionalAttribute(item, "tags"),
                 });
             }
             s_logger.Trace("add enum:{@enum}", en);

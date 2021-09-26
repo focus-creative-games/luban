@@ -13,5 +13,7 @@ namespace Luban.Job.Db.RawDefs
         public string ValueType { get; set; }
 
         public bool IsPersistent { get; set; }
+
+        public string Comment { get; set; }
     }
 }

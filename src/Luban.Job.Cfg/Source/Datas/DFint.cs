@@ -4,6 +4,10 @@ namespace Luban.Job.Cfg.Datas
 {
     public class DFint : DType<int>
     {
+        public static DFint Default { get; } = new DFint(0);
+
+        public override string TypeName => "fint";
+
         public DFint(int x) : base(x)
         {
         }

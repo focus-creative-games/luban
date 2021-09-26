@@ -11,6 +11,11 @@ namespace Luban.Job.Common.TypeVisitors
             return $"{type.Apply(LuaDeserializeMethodNameVisitor.Ins)}({x})";
         }
 
+        public override string Accept(TText type, string bufName)
+        {
+            return $"readString({bufName}) and readString({bufName})";
+        }
+
         public override string Accept(TArray type, string x)
         {
             return $"readArray({x}, {type.ElementType.Apply(LuaDeserializeMethodNameVisitor.Ins)})";
