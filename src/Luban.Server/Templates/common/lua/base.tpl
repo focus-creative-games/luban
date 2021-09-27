@@ -1,5 +1,4 @@
 {{
-    consts = x.consts
     enums = x.enums
     beans = x.beans
     tables = x.tables

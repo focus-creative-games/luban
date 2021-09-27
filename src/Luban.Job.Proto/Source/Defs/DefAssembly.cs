@@ -33,11 +33,6 @@ namespace Luban.Job.Proto.Defs
             this.Agent = agent;
             TopModule = defines.TopModule;
 
-            foreach (var c in defines.Consts)
-            {
-                AddType(new DefConst(c));
-            }
-
             foreach (var e in defines.Enums)
             {
                 AddType(new DefEnum(e));

@@ -22,11 +22,6 @@ namespace Luban.Job.Cfg.Generate
             GenerateCodeMonolithic(ctx, "Types.py", lines, PreContent, null);
         }
 
-        public override string Render(DefConst c)
-        {
-            return RenderUtil.RenderPythonConstClass(c);
-        }
-
         public override string Render(DefEnum e)
         {
             return RenderUtil.RenderPythonEnumClass(e);

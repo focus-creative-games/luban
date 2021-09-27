@@ -7,8 +7,6 @@ namespace Luban.Job.Common.Generate
     {
         string RenderAny(DefTypeBase o);
 
-        string Render(DefConst c);
-
         string Render(DefEnum c);
 
         string RenderService(string name, string module, List<T> tables);

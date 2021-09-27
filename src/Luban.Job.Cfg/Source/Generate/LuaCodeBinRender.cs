@@ -12,14 +12,13 @@ namespace Luban.Job.Cfg.Generate
     {
         public override string RenderAll(List<DefTypeBase> types)
         {
-            var consts = types.Where(t => t is DefConst).ToList();
             var enums = types.Where(t => t is DefEnum).ToList();
             var beans = types.Where(t => t is DefBean).ToList();
             var tables = types.Where(t => t is DefTable).ToList();
             var template = StringTemplateUtil.GetOrAddTemplate("common/lua/base_all", fn =>
             Template.Parse(StringTemplateUtil.GetTemplateString("common/lua/base")
             + StringTemplateUtil.GetTemplateString("config/lua_bin/all")));
-            return template.RenderCode(new { Consts = consts, Enums = enums, Beans = beans, Tables = tables });
+            return template.RenderCode(new { Enums = enums, Beans = beans, Tables = tables });
         }
     }
 }

@@ -261,11 +261,6 @@ bool {{type.ue_fname}}FromString(const FString& s, {{type.ue_fname}}& value)
             return result;
         }
 
-        public override string Render(DefConst c)
-        {
-            throw new NotImplementedException();
-        }
-
         public override string Render(DefTable c)
         {
             throw new NotImplementedException();

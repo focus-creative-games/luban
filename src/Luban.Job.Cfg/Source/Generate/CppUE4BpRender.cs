@@ -101,11 +101,6 @@ public:
             return result;
         }
 
-        public override string Render(DefConst c)
-        {
-            throw new NotImplementedException();
-        }
-
         public override string Render(DefTable c)
         {
             throw new NotImplementedException();

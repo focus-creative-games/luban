@@ -46,14 +46,6 @@ namespace {ctx.TopModule}
 
                 foreach (var type in ctx.ExportTypes)
                 {
-                    if (type is DefConst c)
-                    {
-                        headerFileContent.Add(Render(c));
-                    }
-                }
-
-                foreach (var type in ctx.ExportTypes)
-                {
                     if (type is DefBean e)
                     {
                         headerFileContent.Add(RenderForwardDefine(e));
@@ -101,11 +93,6 @@ namespace {ctx.TopModule}
                     ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
                 }));
             }
-        }
-
-        public override string Render(DefConst c)
-        {
-            return RenderUtil.RenderCppConstClass(c);
         }
 
         public override string Render(DefEnum c)

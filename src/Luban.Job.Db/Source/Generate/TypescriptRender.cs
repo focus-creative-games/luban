@@ -12,17 +12,11 @@ namespace Luban.Job.Db.Generate
         {
             switch (o)
             {
-                case DefConst c: return Render(c);
                 case DefEnum e: return Render(e);
                 case DefBean b: return Render(b);
                 case DefTable r: return Render(r);
                 default: throw new Exception($"unknown render type:{o}");
             }
-        }
-
-        private string Render(DefConst c)
-        {
-            return RenderUtil.RenderTypescriptConstClass(c);
         }
 
         private string Render(DefEnum e)

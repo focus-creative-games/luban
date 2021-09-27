@@ -10,11 +10,6 @@ namespace Luban.Job.Cfg.Generate
             GenerateCodeScatter(ctx);
         }
 
-        public override string Render(DefConst c)
-        {
-            return RenderUtil.RenderCsConstClass(c);
-        }
-
         public override string Render(DefEnum e)
         {
             return RenderUtil.RenderCsEnumClass(e);

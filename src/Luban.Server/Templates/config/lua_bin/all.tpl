@@ -1,13 +1,3 @@
-local consts =
-{
-    {{~ for c in consts ~}}
-    ---@class {{c.full_name}}
-    {{~ for item in c.items ~}}
-     ---@field public {{item.name}} {{item.type}}
-    {{~end~}}
-    ['{{c.full_name}}'] = {  {{ for item in c.items }} {{item.name}}={{lua_const_value item.ctype item.value}}, {{end}} };
-    {{~end~}}
-}
 
 local enums =
 {
@@ -129,7 +119,7 @@ local function InitTypes(methods)
     {{~end~}}
 {{~end~}}
     }
-    return { consts = consts, enums = enums, beans = beans, tables = tables }
+    return { enums = enums, beans = beans, tables = tables }
     end
 
 return { InitTypes = InitTypes }

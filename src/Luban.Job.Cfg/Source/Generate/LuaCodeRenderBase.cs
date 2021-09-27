@@ -17,11 +17,6 @@ namespace Luban.Job.Cfg.Generate
             ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
         }
 
-        public override string Render(DefConst c)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public override string Render(DefEnum e)
         {
             throw new System.NotImplementedException();

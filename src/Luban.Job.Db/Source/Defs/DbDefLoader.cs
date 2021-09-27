@@ -23,14 +23,11 @@ namespace Luban.Job.Db.Defs
             return new Defines()
             {
                 TopModule = TopModule,
-                Consts = _consts,
                 Enums = _enums,
                 Beans = _beans,
                 DbTables = _tables,
             };
         }
-
-
 
         private readonly List<string> _tableOptionalAttrs = new List<string> { "memory", "comment" };
         private readonly List<string> _tableRequireAttrs = new List<string> { "name", "id", "key", "value" };

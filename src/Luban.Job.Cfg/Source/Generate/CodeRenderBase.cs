@@ -13,7 +13,6 @@ namespace Luban.Job.Cfg.Generate
         public abstract void Render(GenContext ctx);
 
 
-        public abstract string Render(DefConst c);
         public abstract string Render(DefEnum c);
         public abstract string Render(DefBean b);
         public abstract string Render(DefTable c);
@@ -23,7 +22,6 @@ namespace Luban.Job.Cfg.Generate
         {
             switch (o)
             {
-                case DefConst c: return Render(c);
                 case DefEnum e: return Render(e);
                 case DefBean b: return Render(b);
                 case DefTable r: return Render(r);

@@ -62,11 +62,6 @@ namespace Luban.Job.Cfg.Generate
             GenerateCodeMonolithic(ctx, "Types.ts", lines, preContent, postContent);
         }
 
-        public override string Render(DefConst c)
-        {
-            return RenderUtil.RenderTypescriptConstClass(c);
-        }
-
         public override string Render(DefEnum e)
         {
             return RenderUtil.RenderTypescriptEnumClass(e);

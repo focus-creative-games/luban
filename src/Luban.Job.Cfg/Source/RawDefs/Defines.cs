@@ -11,8 +11,6 @@ namespace Luban.Job.Cfg.RawDefs
 
         public List<Bean> Beans { get; set; } = new List<Bean>();
 
-        public List<Const> Consts { get; set; } = new List<Const>();
-
         public List<PEnum> Enums { get; set; } = new List<PEnum>();
 
         public List<Table> Tables { get; set; } = new List<Table>();

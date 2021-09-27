@@ -13,11 +13,6 @@ namespace Luban.Job.Cfg.Generate
 
         }
 
-        public override string Render(DefConst c)
-        {
-            return "// const";
-        }
-
         public override string Render(DefEnum e)
         {
             return "// enum";

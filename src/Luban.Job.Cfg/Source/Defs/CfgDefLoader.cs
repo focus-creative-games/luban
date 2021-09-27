@@ -55,7 +55,6 @@ namespace Luban.Job.Cfg.Defs
             {
                 TopModule = TopModule,
                 Patches = _patches,
-                Consts = this._consts,
                 Enums = _enums,
                 Beans = _beans,
                 Tables = _cfgTables,

@@ -27,7 +27,6 @@ namespace Luban.Job.Proto.Defs
             return new Defines()
             {
                 TopModule = TopModule,
-                Consts = _consts,
                 Enums = _enums,
                 Beans = _beans,
                 Protos = _protos,

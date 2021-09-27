@@ -28,11 +28,6 @@ namespace Luban.Job.Cfg.Generate
             }, null);
         }
 
-        public override string Render(DefConst c)
-        {
-            return RenderUtil.RenderRustConstClass(c);
-        }
-
         public override string Render(DefEnum e)
         {
             return RenderUtil.RenderRustEnumClass(e);

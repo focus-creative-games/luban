@@ -156,7 +156,7 @@ namespace Luban.Job.Cfg.Defs
             }
             foreach ((var fullTypeName, var type) in this.Types)
             {
-                if (!refTypes.ContainsKey(fullTypeName) && (type is DefConst || type is DefEnum))
+                if (!refTypes.ContainsKey(fullTypeName) && (type is DefEnum))
                 {
                     refTypes.Add(fullTypeName, type);
                 }
@@ -194,11 +194,6 @@ namespace Luban.Job.Cfg.Defs
             }
 
             this._patches.AddRange(defines.Patches);
-
-            foreach (var c in defines.Consts)
-            {
-                AddType(new DefConst(c));
-            }
 
             foreach (var e in defines.Enums)
             {

@@ -47,7 +47,6 @@ namespace Luban.Job.Common.Defs
 
         protected string TopModule { get; private set; }
 
-        protected readonly List<Const> _consts = new List<Const>();
         protected readonly List<PEnum> _enums = new List<PEnum>();
         protected readonly List<Bean> _beans = new List<Bean>();
 
@@ -58,7 +57,6 @@ namespace Luban.Job.Common.Defs
             _rootDefineHandlers.Add("topmodule", SetTopModule);
 
             _moduleDefineHandlers.Add("module", AddModule);
-            _moduleDefineHandlers.Add("const", AddConst);
             _moduleDefineHandlers.Add("enum", AddEnum);
             _moduleDefineHandlers.Add("bean", AddBean);
         }
@@ -292,37 +290,6 @@ namespace Luban.Job.Common.Defs
                     throw new LoadDefException($"定义文件:{defineFile} module:{CurNamespace} 定义:{e} 缺失属性 attr:{k}");
                 }
             }
-        }
-
-
-        private static readonly List<string> _constRequiredAttrs = new List<string> { "name" };
-        private static readonly List<string> _constOptionalAttrs = new List<string> { "comment" };
-
-        private static readonly List<string> _constItemRequiredAttrs = new List<string> { "name", "type" };
-        private static readonly List<string> _constItemOptionalAttrs = new List<string> { "value", "comment" };
-
-        protected void AddConst(string defineFile, XElement e)
-        {
-            ValidAttrKeys(defineFile, e, _constOptionalAttrs, _constRequiredAttrs);
-            var c = new Const()
-            {
-                Name = XmlUtil.GetRequiredAttribute(e, "name"),
-                Namespace = CurNamespace,
-                Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
-            };
-            foreach (XElement item in e.Elements())
-            {
-                ValidAttrKeys(defineFile, item, _constItemOptionalAttrs, _constItemRequiredAttrs);
-                c.Items.Add(new ConstItem()
-                {
-                    Name = XmlUtil.GetRequiredAttribute(item, "name"),
-                    Type = CreateType(item, "type"),
-                    Value = XmlUtil.GetRequiredAttribute(item, "value"),
-                    Comment = XmlUtil.GetOptionalAttribute(item, "comment"),
-                });
-            }
-            s_logger.Trace("add const {@const}", c);
-            _consts.Add(c);
         }
 
         private static readonly List<string> _enumOptionalAttrs = new List<string> { "flags", "comment", "tags" };

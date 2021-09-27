@@ -11,14 +11,6 @@ namespace Luban.Job.Cfg.Generate
             GenerateCodeScatter(ctx);
         }
 
-        public override string Render(DefConst c)
-        {
-            string package = "cfg";
-            var template = StringTemplateUtil.GetTemplate("common/go/const");
-            var result = template.RenderCode(c, new Dictionary<string, object>() { ["package"] = package });
-            return result;
-        }
-
         public override string Render(DefEnum e)
         {
             string package = "cfg";
