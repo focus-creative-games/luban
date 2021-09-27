@@ -163,6 +163,23 @@ namespace Luban.Job.Common.Defs
             return type.Apply(LuaConstValueVisitor.Ins, value);
         }
 
+
+        public static string RustClassName(TBean type)
+        {
+            return type.Bean.RustFullName;
+        }
+
+        public static string RustDefineType(TType type)
+        {
+            return type.Apply(RustTypeNameVisitor.Ins);
+        }
+
+
+        public static string RustConstValue(TType type, string value)
+        {
+            return type.Apply(LuaConstValueVisitor.Ins, value);
+        }
+
         public static bool HasTag(dynamic obj, string attrName)
         {
             return obj.HasTag(attrName);

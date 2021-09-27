@@ -17,6 +17,7 @@ namespace Luban.Job.Common.Utils
                 case ELanguage.LUA: return fullName.Replace('.', '_') + ".lua";
                 case ELanguage.JS: return fullName + ".js";
                 case ELanguage.TYPESCRIPT: return fullName.Replace('.', '/') + ".ts";
+                case ELanguage.RUST: return fullName.Replace('.', '_') + ".rs";
                 default: throw new NotSupportedException();
             }
 
@@ -97,6 +98,7 @@ namespace Luban.Job.Common.Utils
             { "typescript", ELanguage.TYPESCRIPT },
             { "javascript", ELanguage.JS },
             { "erlang", ELanguage.ERLANG },
+            { "rust", ELanguage.RUST },
         };
 
         public static ELanguage GetLanguage(string genType)

@@ -217,6 +217,11 @@ namespace Luban.Job.Cfg.Utils
             }
         }
 
+        public static string RustJsonConstructor(string jsonFieldName, TType type)
+        {
+            return type.Apply(RustJsonConstructorVisitor.Ins, jsonFieldName);
+        }
+
         //public static string DeserializeTextKeyField(DefField field, string lan, string bufName)
         //{
         //    switch (lan)

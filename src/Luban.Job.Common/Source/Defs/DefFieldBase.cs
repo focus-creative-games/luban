@@ -60,6 +60,8 @@ namespace Luban.Job.Common.Defs
 
         public string GoStyleName => CsStyleName;
 
+        public string RustStyleName => Name != "type" ? Name : "r#" + Name;
+
         //public string GoStyleAssignName => CType.IsNullable ? "*" + CsStyleName : CsStyleName;
 
         public string Type { get; }

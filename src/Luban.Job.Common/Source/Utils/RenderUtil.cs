@@ -118,6 +118,26 @@ namespace Luban.Job.Common.Utils
         {
             var template = StringTemplateUtil.GetTemplate("common/typescript/enum");
             var result = template.Render(e);
+            return result;
+        }
+
+        public static string RenderRustConstClass(DefConst c)
+        {
+            var ctx = new TemplateContext();
+            var env = new TTypeTemplateCommonExtends
+            {
+                ["x"] = c
+            };
+            ctx.PushGlobal(env);
+            var template = StringTemplateUtil.GetTemplate("common/rust/const");
+            var result = template.Render(ctx);
+            return result;
+        }
+
+        public static string RenderRustEnumClass(DefEnum e)
+        {
+            var template = StringTemplateUtil.GetTemplate("common/rust/enum");
+            var result = template.Render(e);
 
             return result;
         }

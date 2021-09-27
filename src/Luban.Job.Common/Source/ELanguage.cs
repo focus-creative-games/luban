@@ -11,5 +11,6 @@ namespace Luban.Job.Common
         TYPESCRIPT,
         PYTHON,
         ERLANG,
+        RUST,
     }
 }

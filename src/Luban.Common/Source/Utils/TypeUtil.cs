@@ -121,6 +121,11 @@ namespace Luban.Common.Utils
             return module.Replace('.', '_') + "_" + name;
         }
 
+        public static string MakeRustFullName(string module, string name)
+        {
+            return MakeGoNamespace(module) + "_" + name;
+        }
+
         public static string MakeNamespace(string module, string subModule)
         {
             if (module.Length == 0)
