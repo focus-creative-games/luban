@@ -17,8 +17,8 @@
 
 ## 介绍
 
-目前存在的配置工具，它们功能多为excel文件到json之类格式的转换工具及简单代码生成器，勉强满足中小类型项目的需求。
-在中大型游戏项目中，基本都会有技能、行为树之类的复杂功能。这些功能有非常复杂的数据结构，往往使用自定义编辑器制作，并以json、xml等文件格式保存。就算常规的excel表，也经常出现复杂的数据结构需求。这些简单工具面对此类需求要么无法支持，要么就强迫策划和程序使用拆表等奇技淫巧，严重影响开发效率。
+目前主流的配置工具功能多为excel文件到json之类格式的转换工具及简单代码生成器，只能勉强满足中小类型项目的需求。
+在中大型游戏项目中，基本都会有技能、行为树之类的复杂功能。这些功能有非常复杂的数据结构，往往使用自定义编辑器制作，并以json、xml等文件格式保存。就算常规的excel表，也经常出现复杂的数据结构需求。这些简单工具面对此类需求要么无法支持，要么就强迫策划和程序使用拆表等奇技淫巧，严重影响设计和开发效率。
 
 luban相较于常规的excel导表工具有以下核心优势：
 - 增强了excel格式。可以比较简洁地excel配置**任意复杂**的数据，像子结构、结构列表，以及更复杂的深层次的嵌套结构都能直接解析处理。
@@ -96,75 +96,6 @@ luban相较于常规的excel导表工具有以下核心优势：
    - 其他家基于js的小程序平台
    - 其他所有支持lua的引擎和平台
    - 其他所有支持js的引擎和平台
-
-## 快速上手
-
-以创建一个道具表为例
-
-新建item.xlsx表
-
-![pipeline](docs/images/examples/a_1.jpg) 
-
-在__tables__.xlsx里添加一行
-
-![pipeline](docs/images/examples/a_2.jpg)
-
-假设我们为unity客户端生成c#代码和json数据，命令如下:
-
-```bat
-; 请正确设置以下宏的值
-; set LUBAN_CLIENT= dotnet %LUBAN_CLIENTSERVER_DIR%/Luban.ClientServer.dll
-; set ROOT_DEFINE_FILE=%CONF_ROOT%/Defines/__root__.xml
-; set INPUT_DATA_DIR=%CONF_ROOT%/Datas
-; set OUTPUT_DATA_DIR=GameData
-; set OUTPUT_CODE_DIR=Assets/Gen
-
-%LUBAN_CLIENT% -j cfg --^
- -d %ROOT_DEFINE_FILE% ^
- --input_data_dir %INPUT_DATA_DIR% ^
- --output_code_dir %OUTPUT_CODE_DIR% ^
- --output_data_dir %OUTPUT_DATA_DIR% ^
- --gen_types code_cs_unity_json,data_json ^
- -s all ^
---export_test_data
-```
-最终在 %OUTPUT_CODE_DIR%目录下生成代码，在%OUTPUT_DATA_DIR%目录下生成数据。生成的数据文件中 item_tbitem.json文件内容如下 (只截取部分)
-```json
-[
-  {
-    "id": 10000,
-    "name": "发型",
-    "desc": "初始发型",
-    "price": 100,
-    "batch_useable": false
-  },
-  {
-    "id": 10001,
-    "name": "外套",
-    "desc": "初始外套",
-    "price": 100,
-    "batch_useable": false
-  },
-  {
-    "id": 10002,
-    "name": "上衣",
-    "desc": "初始上衣",
-    "price": 100,
-    "batch_useable": false
-  }
-]
-```
-
-加载及使用配置示例
-```c#
-// 一行代码可以加载所有配置。 cfg.Tables 包含所有表的一个实例字段。
-var tables = new cfg.Tables(file => new ByteBuf(File.ReadAllBytes($"{gameConfDir}/{file}.json")));
-
-// 获得道具配置并且打印
-cfg.Item item = tables.TbItem.Get(10001)
-Console.WriteLine("name:{0} desc:{1} price:{2}", item.Name, item.Desc, item.Price);
-
-```
 
 ## 增强的excel格式
 luban支持在excel中解析任意复杂的数据结构，哪怕复杂如技能、行为树（但在实践中一般使用编辑器制作这些数据，以json格式保存，而不会在excel里填写）。下面从简单到复杂展示在luban中配置这些数据的方式。
@@ -286,32 +217,10 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 ![pipeline](docs/images/examples/b_81.jpg)
 
 ### 分组导出
+灵活的分组定义，不仅仅是client和server分组。支持以下分组粒度：
 
-在大多数项目中，导出给前后端的数据并非完全相同。有些表可能仅仅前端或者后端需要，有些字段也可能仅仅前端或者后端需要。 luban同时支持两种级别的分组：
-#### 表级别分组
-
-定义方式为在table中定义group属性，如果未定义 group,则默认导出给所有分组，如果定义group，则只导出给指定分组，可以多个，以逗号","分隔。
-
-例如: TbDemoGroup_C表只给客户端使用, TbDemoGroup_S只能服务器使用, TbDemoGroup_E只给editor使用。
-定义如下:
-
-![group_table](docs/images/examples/group_02.png)
-
-#### 字段级别分组
-
-定义方式为给var指定group属性，未指定则默认导出给所有分组。可以为多个，以逗号","分隔。相比于大多数导表工具只支持**表顶级字段**的分组导出，luban支持任意bean字段粒度级别的分组导出。
-
-例如, TbDemoGroup表中 id,x1,x4 字段前后端都需要; x3 只有后端需要;x2 字段只有前端需要。x5是bean类型，它导出给前后端，但它的子字段也可以被分组过滤， x5.y1, x2.y4前后端都会导出，x5.x3只导出给后端,x5.x2只导出给前端。
-定义如下:
-
-![group_var](docs/images/examples/group_01.png)
-
-### 字段默认值
-我们希望excel中单元格留空时，该字段取指定值，而不是默认的false,0之类。通过定义字段的default=xxx属性来指定默认值。
-
-如示例，id=2的记录，x1与x2皆为空，x1=0,x2=-1。
-
-![pipeline](docs/images/examples/d_60.jpg)
+- 表级别分组
+- 字段级别分组(任意bean字段粒度，而不仅限于顶层字段)
 
 ### 数据标签
 
@@ -360,6 +269,12 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 
 ![pipeline](docs/images/examples/d_50.jpg)
 
+### 字段默认值
+我们希望excel中单元格留空时，该字段取指定值，而不是默认的false,0之类。通过定义字段的default=xxx属性来指定默认值。
+
+如示例，id=2的记录，x1与x2皆为空，x1=0,x2=-1。
+
+![pipeline](docs/images/examples/d_60.jpg)
 
 ### 常量别名
 
@@ -377,417 +292,75 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 
 导出时，升级丹会被替换为11220304。
 
-### 多数据源
-支持表数据来自excel文件；来自excel某个单元薄；来自json、xml、yaml文件；来自目录下所有文件。以及以上几种的组合。
-#### 来自某个excel文件
-```xml
-<table name="TbItem" value="Item" input="item/item1.xlsx">
-```
-#### 来自某个excel单元薄
-```xml
-<table name="TbItem" value="Item" input="table1@item/item1.xlsx">
-```
-####
-#### 一个数据表来自两个excel文件
-通过 excel文件1,excel文件2... 的方式指定数据表的数据来自多个文件，不同文件以逗号","分隔。当数据源为excel文件，并且没有用@来指定某个单元表时，该excel文件的中的所有单元表都会被读入。例如TbItem表的数据来自item目录下的item1.xlsx和item2.xlsx。
-	
-```xml
-<table name="TbItem" value="Item" input="item/item1.xlsx,item/item2.xlsx">
-```
+### 灵活的配置文件组织形式
+支持以下几种组织形式，允许开发者根据情况灵活组织配置文件结构。例如可以一个表对应一个xlsx文件；可以多个表都放到同个xlsx文件；可以一个表对应多个xlsx文件；可以一个表对应一个目录。
 
-#### 两个数据表来自同一个excel文件的不同单元表
-通过 <单元表名>@excel文件的方式指定数据来自excel文件的某个单元表，可以指定多个单元表，通过逗号","分隔。示例中TbItem占了table1、table3两个单元表；TbEquip占了table2、table4两个单元表。同一个数据表占据的单元表不必连续。示例中故意让TbItem和TbEquip占了不相邻的两个单元表。
+- 来自某个excel文件的所有单元薄
+- 来自某个excel文件的指定单元薄
+- 来自json、xml、lua、yaml文件
+- 来自目录树下所有文件，每个文件对应一个记录
+- 以上的随意组合
 
-```xml
-<table name="TbItem" value="Item" input="table1@examples.xlsx,table3@examples.xlsx">
-<table name="TbEquip" value="Equip" input="table2@examples.xlsx,table4@examples.xlsx">
-```
+### 其他数据源
 
-#### 一个数据表的数据来自**目录**下的所有文件
-当以目录为数据源时，会遍历整个目录树中所有文件，除了文件名以 ",.~"（字符逗号或点号或波浪号）开头的文件外，读入每个文件中的数据。如果是excel族的数据，会从每个文件中读取多个记录，如果是xml、lua、json族的数据，每个文件当作一个记录读入。 可以有指定多个目录同时为数据源，以逗号","分隔。
-```xml
-<table name="TbSkill" value="Skill" input="skill_datas">
-```
+- [json](docs/data_json.md)
+- [lua](docs/data_lua.md)
+- [xml](docs/data_xml.md)
+- [yaml](docs/data_yaml.md)
 
-### json 数据源
-在一个大型复杂项目里，有些表的数据是以json形式保存，比如技能、AI、剧情等等。常规的导表工具只能处理excel，像xml、json之类的数据一般是程序员自己处理，最终导致游戏内有几套配置加载方案，而且前后端以及
-编辑器的开发者还得花费大量时间手写代码去处理这些数据，既麻烦又不容易定位错误。
+### 多种导出数据格式
+支持以下几种导出数据格式
+- binary
+- json
+- lua
+- erlang
+- 使用模板自定义生成数据格式(只支持文本型数据格式)
 
-luban通过 **定义 + 数据源** 的方式统一所有配置。json数据源用法与excel数据源基本相同，唯一区别在于
-输入的数据文件格式由xlsx变成json。实际项目中如果以json为数据格式，为了方便编辑器处理，一般一个记录占一个文件，所有记录统一放在一个目录下，因此数据源变成了目录。如下图中的input="test/json_datas"目录。
+binary格式加载最快，json加载速度其次，lua加载最慢。
 
-```xml
-<bean name="DemoType2" >
-	<var name="x4" type="int" convert="DemoEnum"/>
-	<var name="x1" type="bool"/>
-	<var name="x5" type="long" convert="DemoEnum"/>
-	<var name="x6" type="float"/>
-	<var name="x7" type="double"/>
-	<var name="x10" type="string"/>
-	<var name="x12" type="DemoType1"/>
-	<var name="x13" type="DemoEnum"/>
-	<var name="x14" type="DemoDynamic" sep=","/>多态数据结构
-	<var name="v2" type="vector2"/>
-	<var name="v3" type="vector3"/>
-	<var name="v4" type="vector4"/>
-	<var name="t1" type="datetime"/>
-	<var name="k1" type="array,int"/> 使用;来分隔
-	<var name="k2" type="list,int"/>
-	<var name="k8" type="map,int,int"/>
-	<var name="k9" type="list,DemoE2" sep="," index="y1"/>
-	<var name="k15" type="array,DemoDynamic" sep=","/> 
-</bean>
+binary格式占空间最小，lua其次，json最大。
 
-<table name="TbDataFromJson" value="DemoType2" input="test/json_datas"/>
-```
+不同的导出类型只影响导出的数据大小和加载数据的性能，不影响结构定义以及最终加载到内存占用。
 
-递归遍历test/json_datas整个目录树，**按文件名排序后**依次将每个json数据当作一个记录读入。其中1.json文件内容如下
+**不同的导出数据类型对程序和策划是透明的，切换不影响数据编辑方式和业务代码中使用配置的方式。**
 
-```json
- {
-	"x1":true,
-	"x2":3,
-	"x3":128,
-	"x4":1,
-	"x5":11223344,
-	"x6":1.2,
-	"x7":1.23432,
-	"x10":"hq",
-	"x12": { "x1":10},
-	"x13":"B",
-	"x14":{"__type__": "DemoD2", "x1":1, "x2":2},
-	"v2":{"x":1, "y":2},
-	"v3":{"x":1.1, "y":2.2, "z":3.4},
-	"v4":{"x":10.1, "y":11.2, "z":12.3, "w":13.4},
-	"t1":"1970-01-01 00:00:00",
-	"k1":[1,2],
-	"k2":[2,3],
-	"k7":[2,3],
-	"k8":[[2,2],[4,10]],
-	"k9":[{"y1":1, "y2":true},{"y1":2, "y2":false}],
-	"k15":[{"__type__": "DemoD2", "x1":1, "x2":2}]
- }
-```
+### 编辑器支持
 
-### xml 数据源
+支持生成c#(用于unity)和c++(用于UE4)的json配置加载与保存代码，方便制作编辑器的同学加载与保存符合luban配置格式的数据。
 
-```xml
-<table name="TbDataFromXml" value="DemoType2" input="test/xml_datas"/> 
-```
+### 自定义代码和数据模板
 
-其中 1.xml 文件内容如下
-```xml
- <data>
-	<x1>true</x1>
-	<x2>4</x2>
-	<x3>128</x3>
-	<x4>1</x4>
-	<x5>112233445566</x5>
-	<x6>1.3</x6>
-	<x7>1112232.43123</x7>
-	<x10>yf</x10>
-	<x12>		<x1>1</x1>	</x12>
-	<x13>C</x13>
-	<x14 __type__="DemoD2">		<x1>1</x1>		<x2>2</x2>	</x14>
-	<v2>1,2</v2>
-	<v3>1.2,2.3,3.4</v3>
-	<v4>1.2,2.2,3.2,4.3</v4>
-	<t1>1970-01-01 00:00:00</t1>
-	<k1>    <item>1</item>	<item>2</item>	</k1>
-	<k2>	<item>1</item>	<item>2</item>	</k2>
-	<k8>
-		<item> <key>2</key><value>10</value></item>
-		<item> <key>3</key><value>30</value></item>
-	</k8>
-	<k9>
-		<item>	<y1>1</y1>	<y2>true</y2>	</item>
-		<item>	<y1>2</y1>	<y2>false</y2>	</item>
-	</k9>
-	<k15>
-		<item __type__="DemoD2">	<x1>1</x1>	<x2>2</x2>	</item>
-	</k15>
-</data>
-```
-### lua 数据源
+[自定义模板](docs/render_template.md)
 
-```xml
-<table name="TbDataFromLua" value="DemoType2" input="test/lua_datas"/> 
-```
-其中 1.lua 文件内容如下
-```lua
-return 
-{
-	x1 = false,
-	x2 = 2,
-	x3 = 128,
-	x4 = 1122,
-	x5 = 112233445566,
-	x6 = 1.3,
-	x7 = 1122,
-	x10 = "yf",
-	x12 = {x1=1},
-	x13 = "D",
-	x14 = { __type__="DemoD2", x1 = 1, x2=3},
-	v2 = {x= 1,y = 2},
-	v3 = {x=0.1, y= 0.2,z=0.3},
-	v4 = {x=1,y=2,z=3.5,w=4},
-	t1 = "1970-01-01 00:00:00",
-	k1 = {1,2},
-	k2 = {2,3},
-	k8 = {[2]=10,[3]=12},
-	k9 = {{y1=1,y2=true}, {y1=10,y2=false}},
-	k15 = {{ __type__="DemoD2", x1 = 1, x2=3}},
-}
-```
-
-### yaml 数据源
-
-```xml
-<table name="TbDataFromYaml" value="DemoType2" input="test/yaml_datas"/> 
-```
-其中 1.yml 文件内容如下
-```yaml
----
-x1: true
-x2: 3
-x3: 128
-x4: 40
-x5: 11223344
-x6: 1.2
-x7: 1.23432
-x10: hq
-x12:
-  x1: 10
-x13: B
-x14:
-  __type__: DemoD2
-  x1: 1
-  x2: 2
-s1:
-  key: "/key32"
-  text: aabbcc22
-v2:
-  x: 1
-  y: 2
-v3:
-  x: 1.1
-  y: 2.2
-  z: 3.4
-v4:
-  x: 10.1
-  y: 11.2
-  z: 12.3
-  w: 13.4
-t1: '1970-01-01 00:00:00'
-k1:
-- 1
-- 2
-k2:
-- 2
-- 3
-k8:
-- - 2
-  - 2
-- - 4
-  - 10
-k9:
-- y1: 1
-  y2: true
-- y1: 2
-  y2: false
-k15:
-- __type__: DemoD2
-  x1: 1
-  x2: 2
-
-```
-
-### binary,json,lua 导出数据格式
-支持binary,json,lua三种导出数据类型。不同的导出类型只影响导出的数据大小和生成的代码和加载数据的性能，不影响结构定义以及最终加载到内存占用。
-
-不同的导出数据类型对程序和策划是透明的，切换不影响数据编辑方式和业务代码中使用配置的方式。
-
-### 代码模板
-
-使用scriban模板文件定制导出数据格式。例如生成cs语言bin数据格式的cfg.Tables类的模板如下。
-
-```
-using Bright.Serialization;
-
-{{
-    name = x.name
-    namespace = x.namespace
-    tables = x.tables
-}}
-namespace {{namespace}}
-{
-   
-public sealed class {{name}}
-{
-    {{~for table in tables ~}}
-{{~if table.comment != '' ~}}
-    /// <summary>
-    /// {{table.comment}}
-    /// </summary>
-{{~end~}}
-    public {{table.full_name}} {{table.name}} {get; }
-    {{~end~}}
-
-    public {{name}}(System.Func<string, ByteBuf> loader)
-    {
-        var tables = new System.Collections.Generic.Dictionary<string, object>();
-        {{~for table in tables ~}}
-        {{table.name}} = new {{table.full_name}}(loader("{{table.output_data_file}}")); 
-        tables.Add("{{table.full_name}}", {{table.name}});
-        {{~end~}}
-
-        {{~for table in tables ~}}
-        {{table.name}}.Resolve(tables); 
-        {{~end~}}
-    }
-
-    public void TranslateText(System.Func<string, string, string> translator)
-    {
-        {{~for table in tables ~}}
-        {{table.name}}.TranslateText(translator); 
-        {{~end~}}
-    }
-}
-
-}
-```
-
-### 数据模板
-使用scriban模板文件定制导出数据格式。例如自定义的lua数据模板如下：
-
-```
-// {{table.name}}
-{{for d in datas}}
-	// {{d.impl_type.full_name}}
-	{{~i = 0~}}
-	{{~for f in d.fields~}}
-		{{~if f ~}}
-		// {{d.impl_type.hierarchy_export_fields[i].name}} = {{f.value}}
-		{{~end~}}
-		{{~i = i + 1~}}
-	{{~end~}}
-{{end}}
-```
-
-输出数据
-
-```
-// TbItem
-	// item.Item
-		// id = 1
-		// name = 钻石
-		// major_type = 1
-		// minor_type = 101
-		// max_pile_num = 9999999
-		// quality = 0
-		// icon = /Game/UI/UIText/UI_TestIcon_3.UI_TestIcon_3
-		
-	// item.Item
-		// id = 2
-		// name = 金币
-		// major_type = 1
-		// minor_type = 102
-		// max_pile_num = 9999999
-		// quality = 0
-		// icon = /Game/UI/UIText/UI_TestIcon_1.UI_TestIcon_1
-```
-
-## 本地化
-
-### 静态本地化
-
-单独提供了text类型来支持文本的本地化。 text类型由两个字段构成, key和value。 考虑到大多数项目是优先做了主地区配置后，再进行本地化，因此luban特地支持在配置中原地填写text的key和主地区文本值。制作其他地区配置时，通过指定本地化映射表的方式，再将该text转换为目标语言的文本值。
-
-![pipeline](docs/images/examples/c_21.jpg)
-
-主语言导出数据为 (只截取了部分数据)
-
-```json
-[
-  {
-    "id": 11,
-    "text": {
-      "key": "/demo/1",
-      "text": "测试1"
-    }
-  },
-  {
-    "id": 12,
-    "text": {
-      "key": "/demo/2",
-      "text": "测试2"
-    }
-  },
-  {
-    "id": 13,
-    "text": {
-      "key": "/demo/3",
-      "text": "测试3"
-    }
-  }
-]
-```
-
-制作本地化映射表 
-
-![pipeline](docs/images/examples/c_22.jpg)
-
-映射到英语后的导出数据（只截取了部分数据）为
-```json
-[
-  {
-    "id": 11,
-    "text": {
-      "key": "/demo/1",
-      "text": "test1"
-    }
-  },
-  {
-    "id": 12,
-    "text": {
-      "key": "/demo/2",
-      "text": "test2"
-    }
-  },
-  {
-    "id": 13,
-    "text": {
-      "key": "/demo/3",
-      "text": "test3"
-    }
-  }
-]
-```
-
-### 动态本地化
-运行时动态切换语言到目标语言。
-
-生成的cfg.Tables包含TranslateText函数， 以c#为例。只需要提供一个 (string key, string origin_value) -> (string target_value) 的转换器，
-就能自动将所有配置表中的text类型字段替换为目标语言的文本。程序不需要根据id去本地化映射表里查询，简化了使用。
-
-```c#
-public void TranslateText(System.Func<string, string, string> translator)
-{
-	TbItem.TranslateText(translator);
-	...
-}
-```
-
-### 多分支 数据
-支持 main + patches的数据模式。在主版本数据基础上，提供一个补丁数据，合并处理后生成最终目标数据。适合制作海外有细节配置不同的多地区配置，不需要
-复制出主版本数据，接着在上面修改出最终数据。极大优化了制作本地化配置的工作流。
+### 本地化
+支持以下几种本地化机制，详见[本地化](docs/l10n.md)
+- 静态本地化
+- 动态本地化
+- 多分支数据
+- 时间本地化
+- [TODO] 任意粒度的数据本地化（不仅仅是text及记录级别）
 
 
-### 时间本地化
-datetime类型数据在指定了本地化时区后，会根据目标时区，生成相应时刻的UTC时间，方便程序使用
+## 性能测试数据
 
-###
------
+硬件：
+
+	Intel(R) Core i7-10700 @ 2.9G 16核
+	32G 内存
+
+数据集
+
+	500个excel表
+	每个表有1000行比较大的记录
+	每个表文件大小 132k
+
+测试结果：
+
+| 格式 | 首次耗时 | 累积耗时 | 单个输出文件大小 | 输出文件总大小 |
+| ---- | --------| ------  | ----            | ------ |
+| bin  | 15.652 s| 797 ms  | 164 K            | 59.5 M |
+| json | 17.746 s| 796 ms  | 1.11 M           | 555 M   |
+| lua  | 17.323 s| 739 ms  | 433 K           | 212 M   |
 
 ## 路线图
 

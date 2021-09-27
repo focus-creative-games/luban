@@ -25,33 +25,63 @@
 	<var name="k15" type="array,DemoDynamic" sep=","/> 
 </bean>
 
-<table name="TbDataFromJson" value="DemoType2" input="test/json_datas"/>
+<table name="TbDataFromYaml" value="DemoType2" input="test/yaml_datas"/> 
 ```
 
-递归遍历test/json_datas整个目录树，**按文件名排序后**依次将每个json数据当作一个记录读入。其中1.json文件内容如下
+递归遍历test/yaml_datas整个目录树，**按文件名排序后**依次将每个yaml数据当作一个记录读入。其中1.yml文件内容如下
 
-```json
- {
-	"x1":true,
-	"x2":3,
-	"x3":128,
-	"x4":1,
-	"x5":11223344,
-	"x6":1.2,
-	"x7":1.23432,
-	"x10":"hq",
-	"x12": { "x1":10},
-	"x13":"B",
-	"x14":{"__type__": "DemoD2", "x1":1, "x2":2},
-	"v2":{"x":1, "y":2},
-	"v3":{"x":1.1, "y":2.2, "z":3.4},
-	"v4":{"x":10.1, "y":11.2, "z":12.3, "w":13.4},
-	"t1":"1970-01-01 00:00:00",
-	"k1":[1,2],
-	"k2":[2,3],
-	"k7":[2,3],
-	"k8":[[2,2],[4,10]],
-	"k9":[{"y1":1, "y2":true},{"y1":2, "y2":false}],
-	"k15":[{"__type__": "DemoD2", "x1":1, "x2":2}]
- }
+```yaml
+---
+x1: true
+x2: 3
+x3: 128
+x4: 40
+x5: 11223344
+x6: 1.2
+x7: 1.23432
+x10: hq
+x12:
+  x1: 10
+x13: B
+x14:
+  __type__: DemoD2
+  x1: 1
+  x2: 2
+s1:
+  key: "/key32"
+  text: aabbcc22
+v2:
+  x: 1
+  y: 2
+v3:
+  x: 1.1
+  y: 2.2
+  z: 3.4
+v4:
+  x: 10.1
+  y: 11.2
+  z: 12.3
+  w: 13.4
+t1: '1970-01-01 00:00:00'
+k1:
+- 1
+- 2
+k2:
+- 2
+- 3
+k8:
+- - 2
+  - 2
+- - 4
+  - 10
+k9:
+- y1: 1
+  y2: true
+- y1: 2
+  y2: false
+k15:
+- __type__: DemoD2
+  x1: 1
+  x2: 2
+
 ```

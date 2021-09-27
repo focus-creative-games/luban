@@ -46,8 +46,27 @@ graph TD;
 * map 格式，即普通key-value表模式。 任何符合set 的value要求的类型都可以做key
 * bmap 格式，即双主键模式。 任何符合 set 的value要求的类型都可以作 key1和key
 
-### 如何自定义导出分组
-* 可以按照自定义需求选择性导出表及字段
+### 分组导出
+
+在大多数项目中，导出给前后端的数据并非完全相同。有些表可能仅仅前端或者后端需要，有些字段也可能仅仅前端或者后端需要。 luban同时支持两种级别的分组：
+#### 表级别分组
+
+定义方式为在table中定义group属性，如果未定义 group,则默认导出给所有分组，如果定义group，则只导出给指定分组，可以多个，以逗号","分隔。
+
+例如: TbDemoGroup_C表只给客户端使用, TbDemoGroup_S只能服务器使用, TbDemoGroup_E只给editor使用。
+定义如下:
+
+![group_table](docs/images/examples/group_02.png)
+
+#### 字段级别分组
+
+定义方式为给var指定group属性，未指定则默认导出给所有分组。可以为多个，以逗号","分隔。相比于大多数导表工具只支持**表顶级字段**的分组导出，luban支持任意bean字段粒度级别的分组导出。
+
+例如, TbDemoGroup表中 id,x1,x4 字段前后端都需要; x3 只有后端需要;x2 字段只有前端需要。x5是bean类型，它导出给前后端，但它的子字段也可以被分组过滤， x5.y1, x2.y4前后端都会导出，x5.x3只导出给后端,x5.x2只导出给前端。
+定义如下:
+
+![group_var](docs/images/examples/group_01.png)
+
 
 ### 生成极快
 * 大项目几十M配置数据也能1秒导出
@@ -75,6 +94,38 @@ graph TD;
 * 根据配置表定义生成相应的json文件的 load 及 save 代码(c#或者c++)，方便编辑器加载和导出。每个记录对应一个json文件。
 * 支持 unity 下用c# 开发编辑器
 * 支持 unreal 下用c++ 开发的编辑器 
+
+### 多数据源
+支持表数据来自excel文件；来自excel某个单元薄；来自json、xml、yaml文件；来自目录下所有文件。以及以上几种的组合。
+#### 来自某个excel文件
+```xml
+<table name="TbItem" value="Item" input="item/item1.xlsx">
+```
+#### 来自某个excel单元薄
+```xml
+<table name="TbItem" value="Item" input="table1@item/item1.xlsx">
+```
+####
+#### 一个数据表来自两个excel文件
+通过 excel文件1,excel文件2... 的方式指定数据表的数据来自多个文件，不同文件以逗号","分隔。当数据源为excel文件，并且没有用@来指定某个单元表时，该excel文件的中的所有单元表都会被读入。例如TbItem表的数据来自item目录下的item1.xlsx和item2.xlsx。
+	
+```xml
+<table name="TbItem" value="Item" input="item/item1.xlsx,item/item2.xlsx">
+```
+
+#### 两个数据表来自同一个excel文件的不同单元表
+通过 <单元表名>@excel文件的方式指定数据来自excel文件的某个单元表，可以指定多个单元表，通过逗号","分隔。示例中TbItem占了table1、table3两个单元表；TbEquip占了table2、table4两个单元表。同一个数据表占据的单元表不必连续。示例中故意让TbItem和TbEquip占了不相邻的两个单元表。
+
+```xml
+<table name="TbItem" value="Item" input="table1@examples.xlsx,table3@examples.xlsx">
+<table name="TbEquip" value="Equip" input="table2@examples.xlsx,table4@examples.xlsx">
+```
+
+#### 一个数据表的数据来自**目录**下的所有文件
+当以目录为数据源时，会遍历整个目录树中所有文件，除了文件名以 ",.~"（字符逗号或点号或波浪号）开头的文件外，读入每个文件中的数据。如果是excel族的数据，会从每个文件中读取多个记录，如果是xml、lua、json族的数据，每个文件当作一个记录读入。 可以有指定多个目录同时为数据源，以逗号","分隔。
+```xml
+<table name="TbSkill" value="Skill" input="skill_datas">
+```
 
 ### 支持多种导出数据格式
 * **导出格式与源数据解耦**。无论源数据是 excel、lua、xml、json 或者它们的混合, 最终都被以统一的格式导出，极大简化了生成代码的复杂性。
