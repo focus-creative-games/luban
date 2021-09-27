@@ -10,25 +10,11 @@ namespace Luban.Job.Common.TypeVisitors
         {
             if (type.IsNullable)
             {
-                if (type.IsBean)
-                {
-                    return $"std::option::Option<std::rc::Rc<{type.Apply(RustTypeUnderlyingNameVisitor.Ins)}>>";
-                }
-                else
-                {
-                    return $"std::option::Option<{type.Apply(RustTypeUnderlyingNameVisitor.Ins)}>";
-                }
+                return $"std::option::Option<{type.Apply(RustTypeUnderlyingNameVisitor.Ins)}>";
             }
             else
             {
-                if (type.IsBean)
-                {
-                    return $"std::rc::Rc<{type.Apply(RustTypeUnderlyingNameVisitor.Ins)}>";
-                }
-                else
-                {
-                    return type.Apply(RustTypeUnderlyingNameVisitor.Ins);
-                }
+                return type.Apply(RustTypeUnderlyingNameVisitor.Ins);
             }
         }
     }

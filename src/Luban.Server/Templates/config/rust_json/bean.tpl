@@ -11,6 +11,7 @@
  * {{x.comment}}
  */
 {{~end~}}
+{{~if !x.is_abstract_type~}}
 #[allow(non_camel_case_types)]
 pub struct {{name}} {
 {{~for field in hierarchy_export_fields~}}
@@ -20,12 +21,36 @@ pub {{field.rust_style_name}}: {{rust_define_type field.ctype}},
 
 impl {{name}} {
     #[allow(dead_code)]
-    pub fn new(__js: &json::JsonValue) -> Result<std::rc::Rc<{{name}}>, LoadError> {
+    pub fn new(__js: &json::JsonValue) -> Result<{{name}}, LoadError> {
         let __b = {{name}} {
 {{~for field in hierarchy_export_fields~}}
             {{field.rust_style_name}}: {{rust_json_constructor ('__js["' + field.name + '"]') field.ctype}},
 {{~end~}}
         };
-        Ok(std::rc::Rc::new(__b))
+        Ok(__b)
     }
 }
+{{~else~}}
+#[allow(non_camel_case_types)]
+pub enum {{name}} {
+{{~for child in x.hierarchy_not_abstract_children~}}
+  {{child.name}}(Box<{{child.rust_full_name}}>),
+{{~end~}}
+}
+
+impl {{name}} {
+    #[allow(dead_code)]
+    pub fn new(__js: &json::JsonValue) -> Result<{{name}}, LoadError> {
+        let __b = match __js["__type__"].as_str() {
+            Some(type_name) => match type_name {
+{{~for child in x.hierarchy_not_abstract_children~}}
+                "{{child.name}}" => {{name}}::{{child.name}}(Box::new({{child.rust_full_name + '::new(&__js)?'}})),
+{{~end~}}
+                _ => return Err(LoadError{})
+                },
+            None => return Err(LoadError{})
+        };
+        Ok(__b)
+    }
+}
+{{~end~}}
