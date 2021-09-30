@@ -53,7 +53,7 @@ impl {{name}}{
     #[allow(dead_code)]
     pub fn get_data_list(self:&{{name}}) -> &Vec<std::rc::Rc<{{rust_define_type value_type}}>> { &self.data_list }
     #[allow(dead_code)]
-    pub fn get(self:&{{name}}, key: {{rust_define_type key_type}}) -> std::option::Option<&std::rc::Rc<{{rust_define_type value_type}}>> { self.data_map.get(&key) }
+    pub fn get(self:&{{name}}, key: &{{rust_define_type key_type}}) -> std::option::Option<&std::rc::Rc<{{rust_define_type value_type}}>> { self.data_map.get(key) }
     {{~else~}}
         if !__js.is_array() || __js.len() != 1 {
             return Err(LoadError{});
