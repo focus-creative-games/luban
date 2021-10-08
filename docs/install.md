@@ -10,9 +10,9 @@
 
 ## 创建游戏配置
 
-1. 从示例项目拷贝[MiniDesignerConfigsTemplate](https://github.com/focus-creative-games/luban_examples/MiniDesignerConfigsTemplate) 到一个合适的目录，假设为 <YourConfigs>
+1. 从示例项目拷贝[MiniDesignerConfigsTemplate](https://github.com/focus-creative-games/luban_examples/MiniDesignerConfigsTemplate) 到一个合适的目录，假设为 **MyConfigs**
 2. 添加物品表 excel 文件
-    在 <YouConfigs>/Datas 目录下创建一个 “物品表.xlsx” 文件。  
+    在 MyConfigs/Datas 目录下创建一个 “物品表.xlsx” 文件。  
    
    ![如图](images/install/install_03.png) 
    
@@ -20,7 +20,7 @@
 
    ![配置](images/install/install_04.png)
 
-   - 第 1 行是 meta 行，包含关于excel文件的元描述，title_rows:4表示除了meta行外，有4行标题头。此值默认为3，可以根据需求调整。
+   - 第 1 行是 meta 行，包含关于excel文件的元描述，title_rows=4表示除了meta行外，有4行标题头。此值默认为3，可以根据需求调整。
      单元格 A1 必须是 ##。表示这是一个有效数据表。
    - 第 2 行是程序字段名行。
    - 第3行是属性行。格式为 type&属性1=值1&属性2=值2 ...
@@ -47,7 +47,7 @@
 2.  运行生成命令（可以参考示例项目的gen_code_json.bat）
 
 ```bat
-      dotnet <luban.clientserver.dll>
+      dotnet <Luban.ClientServer.dll>
       -j cfg ^
       -- ^
       --define_file <__root__.xml 定义文件的路径> ^
@@ -61,9 +61,9 @@
 
 其中 
 
-- <luban.clientserver.dll> 指向  Tools/Luban.ClientServer/Luban.ClientServer.dll
-- --define_file  参数为 <YourConfigs>/Defines/__root__.xml 的路径
-- --input_data_dir 参数为 <YourConfigs>/Datas 的路径
+- <Luban.ClientServer.dll> 指向  Tools/Luban.ClientServer/Luban.ClientServer.dll
+- --define_file  参数为 <MyConfigs>/Defines/\_\_root\_\_.xml 的路径
+- --input_data_dir 参数为 <MyConfigs>/Datas 的路径
 - --output_code_dir 参数为生成的代码文件存放的路径。 建议建议指向 unity的 Assets 目录下的某级子目录
 - --output_data_dir 参数为生成的数据文件的存放路径。
 
@@ -83,8 +83,7 @@
 只需一行代码既可完成所有配置表的加载工具
 
 ```c#
-    var tables = new cfg.Tables(file => new Bright.Serialization.ByteBuf(
-        System.IO.File.ReadAllBytes( <output_data_dir 指向的生成数据目录> + "/" + file)));
+var tables = new cfg.Tables(file => JSON.Parse(File.ReadAllText(gameConfDir + "/" + file + ".json")));
 ```
 
 4.  使用加载后的配置表
@@ -92,8 +91,8 @@
 cfg.Tables 里包含所有配置表的一个实例字段。加载完 cfg.Tables 后，只需要用 tables.<表名> 就能获得那个表实例，接着可以做各种操作。例如我们要获取id = 10000 的那个道具。代码如下
 
 ```c#
-    cfg.item.Item itemInfo = tables.TbItem.Get(10000);
-    Console.WriteLine("id:{0} name:{1} desc:{2}", itemInfo.Id, itemInfo.Name, itemInfo.Desc);
+cfg.item.Item itemInfo = tables.TbItem.Get(10000);
+Console.WriteLine("id:{0} name:{1} desc:{2}", itemInfo.Id, itemInfo.Name, itemInfo.Desc);
 ```
 
 

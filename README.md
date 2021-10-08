@@ -23,7 +23,7 @@
 luban相较于常规的excel导表工具有以下核心优势：
 - 增强了excel格式。可以比较简洁地excel配置**任意复杂**的数据，像子结构、结构列表，以及更复杂的深层次的嵌套结构都能直接解析处理。
 - 完备的类型系统和多原始数据支持（xml、json、lua、yaml），可以轻松表达和解析**任意复杂**的数据。意味着传统excel导表工具无法处理的技能、行为树、副本等等复杂配置，luban也能够统一处理了，彻底将程序从复杂的配置解析中完全解放出来。
-- 完善的工作流支持。如id的外键引用检查;资源合法性检查;灵活的数据源定义（拆表或者多表合一）;灵活的分组导出机制；多种本地化支持;生成极快（日常迭代300ms以内）。Excel2TextDiff工具方便diff查看excel文件的版本间差异。LubanAssistant Excel插件支持把json、lua、xml等文本格式的配置数据加载到excel中，批量编辑处理，最后再保存回原文件，较好地解决大型项目中多人合作数据编辑冲突合并的问题，较好解决在编辑器中制作的配置难以在excel中批量修改的问题。
+- 完善的工作流支持。如id的外键引用检查;资源合法性检查;灵活的数据源定义（拆表或者多表合一）;灵活的分组导出机制；多种本地化支持;生成极快（日常迭代300ms以内）；Excel2TextDiff工具方便diff查看excel文件的版本间差异；LubanAssistant Excel插件支持把json、lua、xml等文本格式的配置数据加载到excel中，批量编辑处理，最后再保存回原文件，较好地解决大型项目中多人合作数据编辑冲突合并的问题，较好解决在编辑器中制作的配置难以在excel中批量修改的问题。
 
 ====**如果觉得不错，烦请点个star，你的支持会给予我们巨大动力 ^_^**====
 
@@ -115,14 +115,9 @@ luban支持在excel中解析任意复杂的数据结构，哪怕复杂如技能�
 
 array与list类型都能表示列表，它们区别在于array生成的代码为数组，而list生成代码为列表。例如"array,int"生成的c#代码类型为 int[]，而"list,int"生成的c#代码类型为 List&lt;int&gt;。
 
-下面演示了常见的int与string的列表类型的用法,float与int用法相似。对于这些包含多个元素的数据类型，可以在一个单元格里填写，然后使用sep来分割每个元素；也可以合并标题头的列，表示这个字段占了多个单元格，每个单元格里填一个元素。
-
-由于list,int和list,float是最常见的列表类型，它们数据中也不包含分割符，所以默认对它们使用"sep=,|"，避免填写分割符的麻烦。像list,string由于本身可能包含分割符，所以必须手动指定不与内容冲突的分割符。
-
 ![pipeline](docs/images/examples/b_20.jpg)
 
 ### 枚举
-游戏往往有枚举的需求，策划填成整数，既不清晰，程序还得手写枚举定义，麻烦又容易不一致。luban支持枚举的定义，强迫策划填写枚举名或者别名，让数据更清楚。
 
 ```xml
 <enum name="ItemQuality">
@@ -168,7 +163,7 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 ![pipeline](docs/images/examples/b_41.jpg)
 
 ### 多行结构列表
-有时候列表结构的每个结构字段较多，如果水平展开则占据太多列，不方便编辑，如果拆表，无论程序还是策划都不方便。此时可以使用多行填写模式，只需要定义字段属性multi_rows=1。支持任意层次的多行结构列表（也即多行结构中的每个元素也可以是多行）
+有时候列表结构的每个结构字段较多，如果水平展开则占据太多列，不方便编辑，如果拆表，无论程序还是策划都不方便，此时可以使用多行模式。支持任意层次的多行结构列表（也即多行结构中的每个元素也可以是多行）
 
 假设每个任务包含多个阶段，有一个阶段列表字段。
 
@@ -198,7 +193,7 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 ![pipeline](docs/images/examples/b_62.jpg)
 
 ### 引用检查
-游戏配置中经常要填写诸如道具id之类的外键数据，这些数据必须是合法的id值。编辑数据过程中容易失误填了非法id或者因为配置变更导致指向的记录已经被删除了。luban支持生成时检查id的合法性，如果有误，则打出警告（不中止生成，因为开发中临时存在未修正的配置是常见现象， 不希望阻断开发工作流程）。
+游戏配置中经常要填写诸如道具id之类的外键数据，这些数据必须是合法的id值，luban支持生成时检查id的合法性，如果有误，则打出警告。
 
 只要字段定义中添加 ref="表全名" 即可。不只是表顶层字段，列表及嵌套结构的子字段也支持完整的引用检查。
 
@@ -353,6 +348,51 @@ binary格式占空间最小，lua其次，json最大。
 ### Luban Excel助手插件
 
 开发中。敬请期待
+
+
+
+## 代码预览
+
+这儿只简略展示c#、typescript、go语言在开发中的用法，更多语言以及更详细的使用范例和代码见[示例项目](https://github.com/focus-creative-games/luban_examples)。
+
+- C# 使用示例
+
+```C#
+// 一行代码可以加载所有配置。 cfg.Tables 包含所有表的一个实例字段。
+var tables = new cfg.Tables(file => return new ByteBuf(File.ReadAllBytes(gameConfDir + "/" + file + ".bin")));
+// 访问一个单例表
+Console.WriteLine(tables.TbGlobal.Name);
+// 访问普通的 key-value 表
+Console.WriteLine(tables.TbItem.Get(12).Name);
+// 支持 operator []用法
+Console.WriteLine(tables.TbMail[1001].Desc);
+```
+
+- typescript 使用示例
+
+```typescript
+// 一行代码可以加载所有配置。 cfg.Tables 包含所有表的一个实例字段。
+let tables = new cfg.Tables(f => JsHelpers.LoadFromFile(gameConfDir, f))
+// 访问一个单例表
+console.log(tables.TbGlobal.name)
+// 访问普通的 key-value 表
+console.log(tables.TbItem.get(12).Name)
+```
+
+- go 使用示例
+```go
+// 一行代码可以加载所有配置。 cfg.Tables 包含所有表的一个实例字段。
+if tables , err := cfg.NewTables(loader) ; err != nil {
+	println(err.Error())
+	return
+}
+// 访问一个单例表
+println(tables.TbGlobal.Name)
+// 访问普通的 key-value 表
+println(tables.TbItem.Get(12).Name)
+
+```
+
 
 ## 性能测试数据
 
