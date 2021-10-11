@@ -71,7 +71,7 @@ namespace Luban.Job.Cfg.Utils
         //   return CollectInputFilesAsync(agent, table.InputFiles, dataDir)
         //}
 
-        public static async Task GenerateLoadRecordFromFileTasksAsync(RemoteAgent agent, DefTable table, string dataDir, List<string> inputFiles2, bool exportTestData, List<Task<List<Record>>> tasks)
+        public static async Task GenerateLoadRecordFromFileTasksAsync(RemoteAgent agent, DefTable table, string dataDir, List<string> inputFiles2, List<Task<List<Record>>> tasks)
         {
             var inputFileInfos = await CollectInputFilesAsync(agent, inputFiles2, dataDir);
 
@@ -93,8 +93,7 @@ namespace Luban.Job.Cfg.Utils
                         file.OriginFile,
                         file.SheetName,
                         await agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5),
-                        RenderFileUtil.IsExcelFile(file.ActualFile),
-                        exportTestData);
+                        RenderFileUtil.IsExcelFile(file.ActualFile));
 
                     FileRecordCacheManager.Ins.AddCacheLoadedRecords(table, file.MD5, file.SheetName, res);
 
@@ -103,10 +102,10 @@ namespace Luban.Job.Cfg.Utils
             }
         }
 
-        public static async Task LoadTableAsync(RemoteAgent agent, DefTable table, string dataDir, string patchName, string patchDataDir, bool exportTestData)
+        public static async Task LoadTableAsync(RemoteAgent agent, DefTable table, string dataDir, string patchName, string patchDataDir)
         {
             var mainLoadTasks = new List<Task<List<Record>>>();
-            var mainGenerateTask = GenerateLoadRecordFromFileTasksAsync(agent, table, dataDir, table.InputFiles, exportTestData, mainLoadTasks);
+            var mainGenerateTask = GenerateLoadRecordFromFileTasksAsync(agent, table, dataDir, table.InputFiles, mainLoadTasks);
 
             var patchLoadTasks = new List<Task<List<Record>>>();
 
@@ -116,7 +115,7 @@ namespace Luban.Job.Cfg.Utils
                 var patchInputFiles = table.GetPatchInputFiles(patchName);
                 if (patchInputFiles != null)
                 {
-                    patchGenerateTask = GenerateLoadRecordFromFileTasksAsync(agent, table, patchDataDir, patchInputFiles, exportTestData, patchLoadTasks);
+                    patchGenerateTask = GenerateLoadRecordFromFileTasksAsync(agent, table, patchDataDir, patchInputFiles, patchLoadTasks);
                 }
             }
 
@@ -146,7 +145,7 @@ namespace Luban.Job.Cfg.Utils
             s_logger.Trace("table:{name} record num:{num}", table.FullName, mainRecords.Count);
         }
 
-        public static async Task LoadCfgDataAsync(RemoteAgent agent, DefAssembly ass, string dataDir, string patchName, string patchDataDir, bool exportTestData)
+        public static async Task LoadCfgDataAsync(RemoteAgent agent, DefAssembly ass, string dataDir, string patchName, string patchDataDir)
         {
             var ctx = agent;
             List<DefTable> exportTables = ass.Types.Values.Where(t => t is DefTable ct && ct.NeedExport).Select(t => (DefTable)t).ToList();
@@ -160,7 +159,7 @@ namespace Luban.Job.Cfg.Utils
                 genDataTasks.Add(Task.Run(async () =>
                 {
                     long beginTime = TimeUtil.NowMillis;
-                    await LoadTableAsync(agent, table, dataDir, patchName, patchDataDir, exportTestData);
+                    await LoadTableAsync(agent, table, dataDir, patchName, patchDataDir);
                     long endTime = TimeUtil.NowMillis;
                     if (endTime - beginTime > 100)
                     {
@@ -171,10 +170,10 @@ namespace Luban.Job.Cfg.Utils
             await Task.WhenAll(genDataTasks.ToArray());
         }
 
-        public static List<Record> LoadCfgRecords(TBean recordType, string originFile, string sheetName, byte[] content, bool multiRecord, bool exportTestData)
+        public static List<Record> LoadCfgRecords(TBean recordType, string originFile, string sheetName, byte[] content, bool multiRecord)
         {
             // (md5,sheet,multiRecord,exportTestData) -> (valuetype, List<(datas)>)
-            var dataSource = DataSourceFactory.Create(originFile, sheetName, new MemoryStream(content), exportTestData);
+            var dataSource = DataSourceFactory.Create(originFile, sheetName, new MemoryStream(content));
             try
             {
                 if (multiRecord)

@@ -32,11 +32,8 @@ namespace Luban.Job.Cfg
         [Option('s', "service", Required = true, HelpText = "service")]
         public string Service { get; set; }
 
-        [Option("export_test_data", Required = false, HelpText = "export test data")]
-        public bool ExportTestData { get; set; } = false;
-
-        [Option("export_tag_filter", Required = false, HelpText = "export tag filter")]
-        public string ExportTagFilter { get; set; } = "";
+        [Option("export_exclude_tags", Required = false, HelpText = "export exclude tags. default export all tags")]
+        public string ExportExcludeTags { get; set; } = "";
 
         [Option('t', "l10n_timezone", Required = false, HelpText = "timezone")]
         public string TimeZone { get; set; }

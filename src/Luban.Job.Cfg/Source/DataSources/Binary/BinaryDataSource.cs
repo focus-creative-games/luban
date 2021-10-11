@@ -8,7 +8,7 @@ namespace Luban.Job.Cfg.DataSources.Binary
 {
     class BinaryDataSource : AbstractDataSource
     {
-        public override void Load(string rawUrl, string sheetName, Stream stream, bool exportDebugData)
+        public override void Load(string rawUrl, string sheetName, Stream stream)
         {
             throw new NotImplementedException();
         }

@@ -18,7 +18,7 @@ namespace Luban.Job.Cfg.DataSources
             ".bin",
         };
 
-        public static AbstractDataSource Create(string url, string sheetName, Stream stream, bool exportTestData)
+        public static AbstractDataSource Create(string url, string sheetName, Stream stream)
         {
             try
             {
@@ -36,7 +36,7 @@ namespace Luban.Job.Cfg.DataSources
                     case "yml": source = new Yaml.YamlDataSource(); break;
                     default: throw new Exception($"不支持的文件类型:{url}");
                 }
-                source.Load(url, sheetName, stream, exportTestData);
+                source.Load(url, sheetName, stream);
                 return source;
             }
             catch (DataCreateException)

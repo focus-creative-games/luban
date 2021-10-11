@@ -19,19 +19,6 @@ namespace Luban.Job.Cfg.Defs
 
         public List<Record> FinalRecords { get; set; }
 
-        private List<Record> _notTestRecords;
-        public List<Record> NotTestRecords
-        {
-            get
-            {
-                if (_notTestRecords == null)
-                {
-                    _notTestRecords = FinalRecords.Where(r => !r.IsTest).ToList();
-                }
-                return _notTestRecords;
-            }
-        }
-
         public Dictionary<DType, Record> FinalRecordMap { get; set; }
 
         public TableDataInfo(List<Record> mainRecords, List<Record> patchRecords)
@@ -50,17 +37,17 @@ namespace Luban.Job.Cfg.Defs
         public Service CfgTargetService { get; private set; }
 
         private readonly string _patchName;
-        private readonly bool _exportTestData;
+        private readonly List<string> _excludeTags;
 
         public Patch TargetPatch { get; private set; }
 
         public TimeZoneInfo TimeZone { get; }
 
-        public DefAssembly(string patchName, TimeZoneInfo timezone, bool exportTestData, RemoteAgent agent)
+        public DefAssembly(string patchName, TimeZoneInfo timezone, List<string> excludeTags, RemoteAgent agent)
         {
             this._patchName = patchName;
             this.TimeZone = timezone;
-            this._exportTestData = exportTestData;
+            this._excludeTags = excludeTags;
             this.Agent = agent;
         }
 
@@ -126,7 +113,19 @@ namespace Luban.Job.Cfg.Defs
         public List<Record> GetTableExportDataList(DefTable table)
         {
             var tableDataInfo = _recordsByTables[table.FullName];
-            return _exportTestData ? tableDataInfo.FinalRecords : tableDataInfo.NotTestRecords;
+            if (_excludeTags.Count == 0)
+            {
+                return tableDataInfo.FinalRecords;
+            }
+            else
+            {
+                var finalRecords = tableDataInfo.FinalRecords.Where(r => r.IsNotFiltered(_excludeTags)).ToList();
+                if (table.IsOneValueTable && finalRecords.Count != 1)
+                {
+                    throw new Exception($"配置表 {table.FullName} 是单值表 mode=one,但数据个数:{finalRecords.Count} != 1");
+                }
+                return finalRecords;
+            }
         }
 
         public TableDataInfo GetTableDataInfo(DefTable table)

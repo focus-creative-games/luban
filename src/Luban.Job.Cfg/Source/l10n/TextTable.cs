@@ -66,7 +66,7 @@ namespace Luban.Job.Cfg.l10n
 
         public void LoadFromFile(string fileName, byte[] bytes)
         {
-            var records = DataLoaderUtil.LoadCfgRecords(_textRowType, fileName, null, bytes, true, false);
+            var records = DataLoaderUtil.LoadCfgRecords(_textRowType, fileName, null, bytes, true);
             foreach (var r in records)
             {
                 //s_logger.Info("== read text:{}", r.Data);

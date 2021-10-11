@@ -478,7 +478,7 @@ namespace Luban.Job.Cfg.Defs
                 }
             })
             {
-                AssemblyBase = new DefAssembly("", null, true, Agent),
+                AssemblyBase = new DefAssembly("", null, new List<string>(), Agent),
             };
             defTableRecordType.PreCompile();
             defTableRecordType.Compile();
@@ -489,7 +489,7 @@ namespace Luban.Job.Cfg.Defs
             {
                 var source = new ExcelDataSource();
                 var bytes = await this.Agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5);
-                var records = DataLoaderUtil.LoadCfgRecords(tableRecordType, file.OriginFile, null, bytes, true, false);
+                var records = DataLoaderUtil.LoadCfgRecords(tableRecordType, file.OriginFile, null, bytes, true);
                 foreach (var r in records)
                 {
                     DBean data = r.Data;
@@ -544,7 +544,7 @@ namespace Luban.Job.Cfg.Defs
                 }
             })
             {
-                AssemblyBase = new DefAssembly("", null, true, Agent),
+                AssemblyBase = new DefAssembly("", null, new List<string>(), Agent),
             };
             defTableRecordType.PreCompile();
             defTableRecordType.Compile();
@@ -555,7 +555,7 @@ namespace Luban.Job.Cfg.Defs
             {
                 var source = new ExcelDataSource();
                 var bytes = await this.Agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5);
-                var records = DataLoaderUtil.LoadCfgRecords(tableRecordType, file.OriginFile, null, bytes, true, false);
+                var records = DataLoaderUtil.LoadCfgRecords(tableRecordType, file.OriginFile, null, bytes, true);
 
                 PEnum curEnum = null;
                 foreach (var r in records)
@@ -599,7 +599,7 @@ namespace Luban.Job.Cfg.Defs
             var inputFileInfos = await DataLoaderUtil.CollectInputFilesAsync(this.Agent, this._importExcelBeanFiles, dataDir);
 
 
-            var ass = new DefAssembly("", null, true, Agent);
+            var ass = new DefAssembly("", null, new List<string>(), Agent);
 
             var defBeanFieldType = new DefBean(new CfgBean()
             {
@@ -669,7 +669,7 @@ namespace Luban.Job.Cfg.Defs
             {
                 var source = new ExcelDataSource();
                 var bytes = await this.Agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5);
-                var records = DataLoaderUtil.LoadCfgRecords(tableRecordType, file.OriginFile, null, bytes, true, false);
+                var records = DataLoaderUtil.LoadCfgRecords(tableRecordType, file.OriginFile, null, bytes, true);
 
                 foreach (var r in records)
                 {

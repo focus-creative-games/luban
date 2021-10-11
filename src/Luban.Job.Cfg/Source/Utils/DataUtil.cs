@@ -117,24 +117,9 @@ namespace Luban.Job.Cfg.Utils
         {
             return !string.IsNullOrEmpty(tagName) &&
                 (
-                   tagName.Equals("false", System.StringComparison.OrdinalIgnoreCase)
-                || tagName.Equals("no", System.StringComparison.OrdinalIgnoreCase)
+                tagName.Equals("no", System.StringComparison.OrdinalIgnoreCase)
                 || tagName.Equals("##", System.StringComparison.Ordinal)
-                //|| tagName.Equals("∑Ò", System.StringComparison.Ordinal)
                 );
-        }
-
-        private static bool IsTestTag(string tagName)
-        {
-            return !string.IsNullOrEmpty(tagName) &&
-                (tagName.Equals("test", System.StringComparison.OrdinalIgnoreCase)
-                || tagName.Equals("≤‚ ‘", System.StringComparison.Ordinal)
-                );
-        }
-
-        public static bool IsTestTag(List<string> tagNames)
-        {
-            return tagNames.Any(IsTestTag);
         }
 
         public static List<string> ParseTags(string rawTagStr)
@@ -143,7 +128,7 @@ namespace Luban.Job.Cfg.Utils
             {
                 return null;
             }
-            var tags = new List<string>(rawTagStr.Split(',').Select(t => t.Trim()).Where(t => !string.IsNullOrEmpty(t)));
+            var tags = new List<string>(rawTagStr.Split(',').Select(t => t.Trim().ToLower()).Where(t => !string.IsNullOrEmpty(t)));
             return tags.Count > 0 ? tags : null;
         }
 

@@ -140,7 +140,8 @@ namespace Luban.Job.Cfg
 
                 TimeZoneInfo timeZoneInfo = string.IsNullOrEmpty(args.TimeZone) ? null : TimeZoneInfo.FindSystemTimeZoneById(args.TimeZone);
 
-                var ass = new DefAssembly(args.PatchName, timeZoneInfo, args.ExportTestData, agent)
+                var excludeTags = args.ExportExcludeTags.Split(',').Select(t => t.Trim().ToLowerInvariant()).Where(t => !string.IsNullOrEmpty(t)).ToList();
+                var ass = new DefAssembly(args.PatchName, timeZoneInfo, excludeTags, agent)
                 {
                     UseUnityVectors = args.UseUnityVectors
                 };
@@ -166,7 +167,7 @@ namespace Luban.Job.Cfg
                         hasLoadCfgData = true;
                         var timer = new ProfileTimer();
                         timer.StartPhase("load config data");
-                        await DataLoaderUtil.LoadCfgDataAsync(agent, ass, args.InputDataDir, args.PatchName, args.PatchInputDataDir, args.ExportTestData);
+                        await DataLoaderUtil.LoadCfgDataAsync(agent, ass, args.InputDataDir, args.PatchName, args.PatchInputDataDir);
                         timer.EndPhaseAndLog();
 
                         if (needL10NTextConvert)

@@ -33,7 +33,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
             }
         }
 
-        public override void Load(string rawUrl, string sheetName, Stream stream, bool exportTestData)
+        public override void Load(string rawUrl, string sheetName, Stream stream)
         {
             s_logger.Trace("{filename} {sheet}", rawUrl, sheetName);
             RawUrl = rawUrl;

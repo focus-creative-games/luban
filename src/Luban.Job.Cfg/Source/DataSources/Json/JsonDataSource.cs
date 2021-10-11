@@ -14,7 +14,7 @@ namespace Luban.Job.Cfg.DataSources.Json
     {
         JsonElement _data;
 
-        public override void Load(string rawUrl, string sheetName, Stream stream, bool exportDebugData)
+        public override void Load(string rawUrl, string sheetName, Stream stream)
         {
             RawUrl = rawUrl;
             this._data = JsonDocument.Parse(stream).RootElement;

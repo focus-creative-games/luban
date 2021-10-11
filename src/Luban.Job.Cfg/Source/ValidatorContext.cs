@@ -201,17 +201,17 @@ namespace Luban.Job.Cfg
             {
                 case ETableMode.ONE:
                 {
-                    if (mainRecords.Count != 1)
-                    {
-                        throw new Exception($"配置表 {table.FullName} 是单值表 mode=one,但主文件数据个数:{mainRecords.Count} != 1");
-                    }
-                    if (patchRecords != null && patchRecords.Count != 1)
-                    {
-                        throw new Exception($"配置表 {table.FullName} 是单值表 mode=one,但分支文件数据个数:{patchRecords.Count} != 1");
-                    }
+                    //if (mainRecords.Count != 1)
+                    //{
+                    //    throw new Exception($"配置表 {table.FullName} 是单值表 mode=one,但主文件数据个数:{mainRecords.Count} != 1");
+                    //}
+                    //if (patchRecords != null && patchRecords.Count != 1)
+                    //{
+                    //    throw new Exception($"配置表 {table.FullName} 是单值表 mode=one,但分支文件数据个数:{patchRecords.Count} != 1");
+                    //}
                     if (patchRecords != null)
                     {
-                        mainRecords[0] = patchRecords[0];
+                        mainRecords = patchRecords;
                     }
                     break;
                 }
