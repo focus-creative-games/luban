@@ -1,3 +1,4 @@
+using Bright.Collections;
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.Types;

@@ -1,5 +1,4 @@
-﻿using Luban.Job.Cfg.Utils;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.Datas
 {

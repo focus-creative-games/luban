@@ -32,7 +32,7 @@ namespace Luban.Job.Common.Defs
     {
         private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
-        protected RemoteAgent Agent { get; }
+        protected IAgent Agent { get; }
 
         public string RootDir { get; private set; }
 
@@ -50,7 +50,7 @@ namespace Luban.Job.Common.Defs
         protected readonly List<PEnum> _enums = new List<PEnum>();
         protected readonly List<Bean> _beans = new List<Bean>();
 
-        protected CommonDefLoader(RemoteAgent agent)
+        protected CommonDefLoader(IAgent agent)
         {
             Agent = agent;
 

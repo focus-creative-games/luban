@@ -73,7 +73,7 @@ namespace Luban.Job.Cfg.Generate
                 postContent?.Invoke(fileContent);
 
                 var file = outputFile;
-                var md5 = CacheFileUtil.GenMd5AndAddCache(file, string.Join('\n', fileContent));
+                var md5 = CacheFileUtil.GenMd5AndAddCache(file, string.Join("\n", fileContent));
                 ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
             }));
         }

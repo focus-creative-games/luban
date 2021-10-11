@@ -12,7 +12,7 @@ namespace Luban.Job.Common.Defs
 
         public string TopModule => AssemblyBase.TopModule;
 
-        public RemoteAgent Agent => AssemblyBase.Agent;
+        public IAgent Agent => AssemblyBase.Agent;
 
         public string Name { get; set; }
 

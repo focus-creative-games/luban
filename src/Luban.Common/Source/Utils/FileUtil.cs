@@ -23,13 +23,21 @@ namespace Luban.Common.Utils
         public static string GetFileName(string path)
         {
             int index = path.Replace('\\', '/').LastIndexOf('/');
+#if !LUBAN_ASSISTANT
             return index >= 0 ? path[(index + 1)..] : path;
+#else
+            return index >= 0 ? path.Substring(index + 1, path.Length - index - 1) : path;
+#endif
         }
 
         public static string GetParent(string path)
         {
             int index = path.Replace('\\', '/').LastIndexOf('/');
+#if !LUBAN_ASSISTANT
             return index >= 0 ? path[..index] : ".";
+#else
+            return index >= 0 ? path.Substring(0, index) : ".";
+#endif
         }
 
         public static string GetFileNameWithoutExt(string file)
@@ -62,7 +70,11 @@ namespace Luban.Common.Utils
             }
             var f = new FileInfo(file);
             string fname = f.Name;
+#if !LUBAN_ASSISTANT
             return !fname.StartsWith('.') && !fname.StartsWith('_') && !fname.StartsWith('~');
+#else
+            return !fname.StartsWith(".") && !fname.StartsWith("_") && !fname.StartsWith("~");
+#endif
         }
 
         [ThreadStatic]
@@ -100,6 +112,45 @@ namespace Luban.Common.Utils
             return Standardize(Path.Combine(parent, sub));
         }
 
+        public static bool IsExcelFile(string fullName)
+        {
+            return fullName.EndsWith(".csv", StringComparison.Ordinal)
+                || fullName.EndsWith(".xls", StringComparison.Ordinal)
+                || fullName.EndsWith(".xlsx", StringComparison.Ordinal);
+        }
+
+        public static (string, string) SplitFileAndSheetName(string url)
+        {
+            int sheetSepIndex = url.IndexOf('@');
+            if (sheetSepIndex < 0)
+            {
+                return (url, null);
+            }
+            else
+            {
+                int lastPathSep = url.LastIndexOf('/', sheetSepIndex);
+#if !LUBAN_ASSISTANT
+                if (lastPathSep >= 0)
+                {
+                    return (url[0..(lastPathSep + 1)] + url[(sheetSepIndex + 1)..], url[(lastPathSep + 1)..sheetSepIndex]);
+                }
+                else
+                {
+                    return (url[(sheetSepIndex + 1)..], url[(lastPathSep + 1)..sheetSepIndex]);
+                }
+#else
+                if (lastPathSep >= 0)
+                {
+                    return (url.Substring(0, lastPathSep + 1) + url.Substring(sheetSepIndex + 1), url.Substring(lastPathSep + 1, sheetSepIndex - lastPathSep - 1));
+                }
+                else
+                {
+                    return (url.Substring(sheetSepIndex + 1), url.Substring(lastPathSep + 1, sheetSepIndex - lastPathSep - 1));
+                }
+#endif
+            }
+        }
+
         public static async Task SaveFileAsync(string relateDir, string filePath, byte[] content)
         {
             // 调用此接口时，已保证 文件必然是改变的，不用再检查对比文件
@@ -131,7 +182,12 @@ namespace Luban.Common.Utils
                 s_logger.Info("[new] {file}", outputPath);
             }
 
+
+#if !LUBAN_ASSISTANT
             await File.WriteAllBytesAsync(outputPath, content);
+#else
+            await Task.Run(() => File.WriteAllBytes(outputPath, content));
+#endif
         }
 
         public static async Task<byte[]> ReadAllBytesAsync(string file)

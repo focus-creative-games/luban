@@ -3,6 +3,7 @@ using Luban.Job.Common.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Bright.Collections;
 
 namespace Luban.Job.Common.Defs
 {
@@ -11,19 +12,19 @@ namespace Luban.Job.Common.Defs
     {
         public class Item
         {
-            public string Name { get; init; }
+            public string Name { get; set; }
 
             public string Value { get; set; }
 
-            public string Alias { get; init; }
+            public string Alias { get; set; }
 
             public string AliasOrName => string.IsNullOrWhiteSpace(Alias) ? Name : Alias;
 
             public int IntValue { get; set; }
 
-            public string Comment { get; init; }
+            public string Comment { get; set; }
 
-            public Dictionary<string, string> Tags { get; init; }
+            public Dictionary<string, string> Tags { get; set; }
 
             public bool HasTag(string attrName)
             {

@@ -32,7 +32,7 @@ namespace Luban.Job.Common.Defs
 
         public Dictionary<string, DefTypeBase> Types { get; } = new Dictionary<string, DefTypeBase>();
 
-        public RemoteAgent Agent { get; protected set; }
+        public IAgent Agent { get; protected set; }
 
         public string TopModule { get; protected set; }
 
@@ -117,7 +117,11 @@ namespace Luban.Job.Common.Defs
 
         public TType CreateType(string module, string type)
         {
+#if LUBAN_ASSISTANT
+            int sepIndex = type.IndexOf(',');
+#else
             int sepIndex = type.IndexOf(',', System.StringComparison.Ordinal);
+#endif
             if (sepIndex > 0)
             {
                 string containerType = type.Substring(0, sepIndex).Trim();
@@ -134,14 +138,22 @@ namespace Luban.Job.Common.Defs
             bool nullable;
             var (type, tags) = DefUtil.ParseType(rawType);
 
+#if !LUBAN_ASSISTANT
             if (type.EndsWith('?'))
+#else
+            if (type.EndsWith("?"))
+#endif
             {
                 if (!SupportNullable)
                 {
                     throw new Exception($"not support nullable type:'{module}.{type}'");
                 }
                 nullable = true;
+#if !LUBAN_ASSISTANT
                 type = type[0..^1];
+#else
+                type = type.Substring(0, type.Length - 1);
+#endif
             }
             else
             {

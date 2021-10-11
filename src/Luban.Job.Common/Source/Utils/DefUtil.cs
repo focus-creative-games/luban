@@ -21,7 +21,11 @@ namespace Luban.Job.Common.Utils
                 int sepIndex = pair.IndexOfAny(s_attrKeyValueSep);
                 if (sepIndex >= 0)
                 {
+#if !LUBAN_ASSISTANT
                     am.Add(pair[..sepIndex].Trim(), pair[(sepIndex + 1)..].Trim());
+#else
+                    am.Add(pair.Substring(0, sepIndex).Trim(), pair.Substring(sepIndex + 1).Trim());
+#endif
                 }
                 else
                 {
@@ -40,7 +44,11 @@ namespace Luban.Job.Common.Utils
             }
             else
             {
+#if !LUBAN_ASSISTANT
                 return (s[..sepIndex], ParseAttrs(s[(sepIndex + 1)..]));
+#else
+                return (s.Substring(0, sepIndex), ParseAttrs(s.Substring(sepIndex + 1)));
+#endif
             }
         }
 

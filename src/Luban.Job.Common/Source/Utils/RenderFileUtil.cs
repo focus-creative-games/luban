@@ -59,34 +59,6 @@ namespace Luban.Job.Common.Utils
             return fullName + ".bin";
         }
 
-        public static bool IsExcelFile(string fullName)
-        {
-            return fullName.EndsWith(".csv", StringComparison.Ordinal)
-                || fullName.EndsWith(".xls", StringComparison.Ordinal)
-                || fullName.EndsWith(".xlsx", StringComparison.Ordinal);
-        }
-
-        public static (string, string) SplitFileAndSheetName(string url)
-        {
-            int sheetSepIndex = url.IndexOf('@');
-            if (sheetSepIndex < 0)
-            {
-                return (url, null);
-            }
-            else
-            {
-                int lastPathSep = url.LastIndexOf('/', sheetSepIndex);
-                if (lastPathSep >= 0)
-                {
-                    return (url[0..(lastPathSep + 1)] + url[(sheetSepIndex + 1)..], url[(lastPathSep + 1)..sheetSepIndex]);
-                }
-                else
-                {
-                    return (url[(sheetSepIndex + 1)..], url[(lastPathSep + 1)..sheetSepIndex]);
-                }
-            }
-        }
-
         private readonly static Dictionary<string, ELanguage> s_name2Lans = new()
         {
             { "cs", ELanguage.CS },

@@ -126,7 +126,7 @@ namespace Luban.Server.Common
                         break;
                     }
 
-                    _caches.Remove(c.MD5, out var _);
+                    _caches.Remove(c.MD5);
                     TotalBytes -= c.Content.Length;
                     s_logger.Info("remove cache. file:{file} md5:{md5} size:{size}, total bytes:{bytes} after remove.", c.FileName, c.MD5, c.Content.Length, TotalBytes);
                 }

@@ -104,7 +104,9 @@ namespace Luban.Job.Cfg.TypeVisitors
                         || f1.NeedExport != f2.NeedExport
                         || f1.Index != f2.Index
                         || f1.Sep != f2.Sep
+#if !LUBAN_ASSISTANT
                         || f1.ResourceTag != f2.ResourceTag
+#endif
                         || f1.IsMultiRow != f2.IsMultiRow
                         || f1.CType.IsNullable != f2.CType.IsNullable
                         || f1.CType.GetType() != f2.CType.GetType()

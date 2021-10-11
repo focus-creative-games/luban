@@ -1,3 +1,4 @@
+using Bright.Collections;
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.l10n;
 using Luban.Job.Cfg.RawDefs;
@@ -43,7 +44,7 @@ namespace Luban.Job.Cfg.Defs
 
         public TimeZoneInfo TimeZone { get; }
 
-        public DefAssembly(string patchName, TimeZoneInfo timezone, List<string> excludeTags, RemoteAgent agent)
+        public DefAssembly(string patchName, TimeZoneInfo timezone, List<string> excludeTags, IAgent agent)
         {
             this._patchName = patchName;
             this.TimeZone = timezone;
@@ -153,11 +154,11 @@ namespace Luban.Job.Cfg.Defs
                     throw new Exception($"service:'{targetService.Name}' ref:'{refType}' 重复引用");
                 }
             }
-            foreach ((var fullTypeName, var type) in this.Types)
+            foreach (var e in this.Types)
             {
-                if (!refTypes.ContainsKey(fullTypeName) && (type is DefEnum))
+                if (!refTypes.ContainsKey(e.Key) && (e.Value is DefEnum))
                 {
-                    refTypes.Add(fullTypeName, type);
+                    refTypes.Add(e.Key, e.Value);
                 }
             }
 

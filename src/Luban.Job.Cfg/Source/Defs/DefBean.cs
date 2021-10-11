@@ -31,6 +31,7 @@ namespace Luban.Job.Cfg.Defs
             return DeepCompareTypeDefine.Ins.Compare(this, b, new Dictionary<DefTypeBase, bool>(), new HashSet<DefTypeBase>());
         }
 
+#if !LUBAN_ASSISTANT
         public string GoBinImport
         {
             get
@@ -129,6 +130,7 @@ namespace Luban.Job.Cfg.Defs
                 throw new NotImplementedException();
             }
         }
+#endif
 
         public DefBean(CfgBean b) : base(b)
         {

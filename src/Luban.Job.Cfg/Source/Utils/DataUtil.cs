@@ -58,7 +58,7 @@ namespace Luban.Job.Cfg.Utils
                 };
         public static DDateTime CreateDateTime(string x)
         {
-            DateTime dateTime = DateTime.ParseExact(x, dateTimeFormats, System.Globalization.CultureInfo.InvariantCulture);
+            DateTime dateTime = DateTime.ParseExact(x, dateTimeFormats, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None);
             return new DDateTime(dateTime);
         }
 

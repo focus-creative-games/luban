@@ -113,7 +113,7 @@ namespace Luban.Job.Cfg.Cache
             cacheList.Sort((a, b) => a.Value.LastAccessTime - b.Value.LastAccessTime);
             for (int i = 0; i < CACHE_FILE_HIGH_WATER_MARK - CACHE_FILE_LOW_WATER_MARK; i++)
             {
-                _caches.Remove(cacheList[i].Key, out _);
+                _caches.TryRemove(cacheList[i].Key, out _);
             }
             s_logger.Info("ShrinkCaches. after shrink, cache file num:{}", _caches.Count);
         }

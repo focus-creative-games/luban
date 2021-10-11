@@ -1,3 +1,4 @@
+using Bright.Collections;
 using ExcelDataReader;
 using Luban.Job.Cfg.DataCreators;
 using Luban.Job.Cfg.Datas;

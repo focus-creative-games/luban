@@ -317,11 +317,11 @@ namespace Luban.Job.Cfg.DataCreators
         public DType Accept(TMap type, Sheet.NamedRow x, bool multirow, bool nullable)
         {
             var map = new Dictionary<DType, DType>();
-            foreach (var (key, keyTitle) in x.Titles)
+            foreach (var e in x.Titles)
             {
-                if (TryCreateColumnStream(x, keyTitle, out var stream))
+                if (TryCreateColumnStream(x, e.Value, out var stream))
                 {
-                    var keyData = type.KeyType.Apply(StringDataCreator.Ins, key);
+                    var keyData = type.KeyType.Apply(StringDataCreator.Ins, e.Key);
                     var valueData = type.ValueType.Apply(ExcelDataCreator.Ins, null, stream, DefAssembly.LocalAssebmly);
                     map.Add(keyData, valueData);
                 }

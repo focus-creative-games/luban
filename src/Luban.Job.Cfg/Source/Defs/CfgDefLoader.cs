@@ -1,3 +1,4 @@
+using Bright.Collections;
 using Luban.Common.Utils;
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.DataSources.Excel;
@@ -36,7 +37,7 @@ namespace Luban.Job.Cfg.Defs
 
         private readonly List<string> _defaultGroups = new List<string>();
 
-        public CfgDefLoader(RemoteAgent agent) : base(agent)
+        public CfgDefLoader(IAgent agent) : base(agent)
         {
             RegisterRootDefineHandler("importexcel", AddImportExcel);
             RegisterRootDefineHandler("patch", AddPatch);
@@ -139,14 +140,22 @@ namespace Luban.Job.Cfg.Defs
         {
             if (!string.IsNullOrWhiteSpace(attr))
             {
+#if !LUBAN_ASSISTANT
                 foreach (var validatorStr in attr.Split('#', StringSplitOptions.RemoveEmptyEntries))
+#else
+                foreach (var validatorStr in attr.Split('#'))
+#endif
                 {
                     var sepIndex = validatorStr.IndexOf(':');
-                    if (sepIndex < 0)
+                    if (sepIndex <= 0)
                     {
                         throw new Exception($"定义文件:{defineFile} key:'{key}' attr:'{attr}' 不是合法的 validator 定义 (key1:value1#key2:value2 ...)");
                     }
+#if !LUBAN_ASSISTANT
                     result.Add(new Validator() { Type = validatorStr[..sepIndex], Rule = validatorStr[(sepIndex + 1)..] });
+#else
+                    result.Add(new Validator() { Type = validatorStr.Substring(0, sepIndex), Rule = validatorStr.Substring(sepIndex + 1, validatorStr.Length - sepIndex - 1) });
+#endif
                 }
             }
         }
@@ -356,7 +365,11 @@ namespace Luban.Job.Cfg.Defs
 
                 for (int i = 1; i < attrs.Length; i++)
                 {
+#if !LUBAN_ASSISTANT
                     var pair = attrs[i].Split('=', 2);
+#else
+                    var pair = attrs[i].Split(new char[] { '=' }, 2);
+#endif
                     if (pair.Length != 2)
                     {
                         throw new Exception($"table:'{table.Name}' file:{file.OriginFile} title:'{f.Name}' attr:'{attrs[i]}' is invalid!");

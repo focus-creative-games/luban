@@ -32,12 +32,12 @@ namespace Luban.Job.Cfg.Utils
             public string SheetName { get; set; }
         }
 
-        public static async Task<List<InputFileInfo>> CollectInputFilesAsync(RemoteAgent agent, IEnumerable<string> files, string dataDir)
+        public static async Task<List<InputFileInfo>> CollectInputFilesAsync(IAgent agent, IEnumerable<string> files, string dataDir)
         {
             var collectTasks = new List<Task<List<InputFileInfo>>>();
             foreach (var file in files)
             {
-                (var actualFile, var sheetName) = RenderFileUtil.SplitFileAndSheetName(FileUtil.Standardize(file));
+                (var actualFile, var sheetName) = FileUtil.SplitFileAndSheetName(FileUtil.Standardize(file));
                 var actualFullPath = FileUtil.Combine(dataDir, actualFile);
                 var originFullPath = FileUtil.Combine(dataDir, file);
                 //s_logger.Info("== get input file:{file} actualFile:{actual}", file, actualFile);
@@ -71,7 +71,7 @@ namespace Luban.Job.Cfg.Utils
         //   return CollectInputFilesAsync(agent, table.InputFiles, dataDir)
         //}
 
-        public static async Task GenerateLoadRecordFromFileTasksAsync(RemoteAgent agent, DefTable table, string dataDir, List<string> inputFiles2, List<Task<List<Record>>> tasks)
+        public static async Task GenerateLoadRecordFromFileTasksAsync(IAgent agent, DefTable table, string dataDir, List<string> inputFiles2, List<Task<List<Record>>> tasks)
         {
             var inputFileInfos = await CollectInputFilesAsync(agent, inputFiles2, dataDir);
 
@@ -93,7 +93,7 @@ namespace Luban.Job.Cfg.Utils
                         file.OriginFile,
                         file.SheetName,
                         await agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5),
-                        RenderFileUtil.IsExcelFile(file.ActualFile));
+                        FileUtil.IsExcelFile(file.ActualFile));
 
                     FileRecordCacheManager.Ins.AddCacheLoadedRecords(table, file.MD5, file.SheetName, res);
 
@@ -102,7 +102,7 @@ namespace Luban.Job.Cfg.Utils
             }
         }
 
-        public static async Task LoadTableAsync(RemoteAgent agent, DefTable table, string dataDir, string patchName, string patchDataDir)
+        public static async Task LoadTableAsync(IAgent agent, DefTable table, string dataDir, string patchName, string patchDataDir)
         {
             var mainLoadTasks = new List<Task<List<Record>>>();
             var mainGenerateTask = GenerateLoadRecordFromFileTasksAsync(agent, table, dataDir, table.InputFiles, mainLoadTasks);
@@ -145,7 +145,7 @@ namespace Luban.Job.Cfg.Utils
             s_logger.Trace("table:{name} record num:{num}", table.FullName, mainRecords.Count);
         }
 
-        public static async Task LoadCfgDataAsync(RemoteAgent agent, DefAssembly ass, string dataDir, string patchName, string patchDataDir)
+        public static async Task LoadCfgDataAsync(IAgent agent, DefAssembly ass, string dataDir, string patchName, string patchDataDir)
         {
             var ctx = agent;
             List<DefTable> exportTables = ass.Types.Values.Where(t => t is DefTable ct && ct.NeedExport).Select(t => (DefTable)t).ToList();
@@ -200,7 +200,7 @@ namespace Luban.Job.Cfg.Utils
             }
         }
 
-        public static async Task LoadTextTablesAsync(RemoteAgent agent, DefAssembly ass, string baseDir, string textTableFiles)
+        public static async Task LoadTextTablesAsync(IAgent agent, DefAssembly ass, string baseDir, string textTableFiles)
         {
             var tasks = new List<Task<byte[]>>();
             var files = textTableFiles.Split(',');
