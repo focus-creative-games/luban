@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using Excel = Microsoft.Office.Interop.Excel;
 using Office = Microsoft.Office.Core;
 using Microsoft.Office.Tools.Excel;
+using Microsoft.Office.Tools.Ribbon;
 
 namespace LubanAssistant
 {
@@ -19,6 +20,17 @@ namespace LubanAssistant
         {
         }
 
+        //protected override Microsoft.Office.Core.IRibbonExtensibility CreateRibbonExtensibilityObject()
+        //{
+        //    return new ToolTab();
+        //}
+
+
+        protected override IRibbonExtension[] CreateRibbonObjects()
+        {
+            return new IRibbonExtension[] { new AssistantTab() };
+        }
+
         #region VSTO 生成的代码
 
         /// <summary>
@@ -30,7 +42,7 @@ namespace LubanAssistant
             this.Startup += new System.EventHandler(ThisAddIn_Startup);
             this.Shutdown += new System.EventHandler(ThisAddIn_Shutdown);
         }
-        
+
         #endregion
     }
 }
