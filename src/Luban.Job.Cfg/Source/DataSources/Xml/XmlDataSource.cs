@@ -33,8 +33,8 @@ namespace Luban.Job.Cfg.DataSources.Xml
                 return null;
             }
             var data = (DBean)type.Apply(XmlDataCreator.Ins, _doc, (DefAssembly)type.Bean.AssemblyBase);
-            bool isTest = DataUtil.IsTestTag(tagName);
-            return new Record(data, RawUrl, isTest);
+            var tags = DataUtil.ParseTags(tagName);
+            return new Record(data, RawUrl, tags);
         }
     }
 }

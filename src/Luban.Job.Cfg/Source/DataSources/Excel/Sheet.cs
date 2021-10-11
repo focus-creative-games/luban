@@ -690,9 +690,9 @@ namespace Luban.Job.Cfg.DataSources.Excel
         {
             foreach (var recordNamedRow in NamedRow.CreateMultiRowNamedRow(this._rowColumns, this._rootTitle, type))
             {
-                bool isTest = DataUtil.IsTestTag(GetRowTag(recordNamedRow.Rows[0]));
+                var tags = DataUtil.ParseTags(GetRowTag(recordNamedRow.Rows[0]));
                 var data = (DBean)ExcelNamedRowDataCreator.Ins.ReadExcel(recordNamedRow, type);
-                yield return new Record(data, RawUrl, isTest);
+                yield return new Record(data, RawUrl, tags);
             }
         }
     }

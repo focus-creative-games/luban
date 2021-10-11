@@ -27,7 +27,7 @@ namespace Luban.Job.Cfg.DataSources.Json
 
         public override Record ReadOne(TBean type)
         {
-            bool isTest = false;
+            List<string> tags;
             if (_data.TryGetProperty(TAG_KEY, out var tagEle))
             {
                 var tagName = tagEle.GetString();
@@ -35,11 +35,15 @@ namespace Luban.Job.Cfg.DataSources.Json
                 {
                     return null;
                 }
-                isTest = DataUtil.IsTestTag(tagName);
+                tags = DataUtil.ParseTags(tagName);
+            }
+            else
+            {
+                tags = null;
             }
 
             var data = (DBean)type.Apply(JsonDataCreator.Ins, _data, (DefAssembly)type.Bean.AssemblyBase);
-            return new Record(data, RawUrl, isTest);
+            return new Record(data, RawUrl, tags);
         }
     }
 }

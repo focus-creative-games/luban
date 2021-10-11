@@ -58,8 +58,8 @@ namespace Luban.Job.Cfg.DataSources.Yaml
                 return null;
             }
             var data = (DBean)type.Apply(YamlDataCreator.Ins, _root, (DefAssembly)type.Bean.AssemblyBase);
-            bool isTest = DataUtil.IsTestTag(tagName);
-            return new Record(data, RawUrl, isTest);
+            var tags = DataUtil.ParseTags(tagName);
+            return new Record(data, RawUrl, tags);
         }
     }
 }

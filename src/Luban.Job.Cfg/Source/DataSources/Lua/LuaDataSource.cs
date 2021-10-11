@@ -53,8 +53,8 @@ namespace Luban.Job.Cfg.DataSources.Lua
                 return null;
             }
             var data = (DBean)type.Apply(LuaDataCreator.Ins, table, (DefAssembly)type.Bean.AssemblyBase);
-            var isTest = DataUtil.IsTestTag(tagName);
-            return new Record(data, RawUrl, isTest);
+            var tags = DataUtil.ParseTags(tagName);
+            return new Record(data, RawUrl, tags);
         }
     }
 }

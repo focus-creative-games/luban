@@ -1,7 +1,9 @@
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Common.Types;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Luban.Job.Cfg.Utils
 {
@@ -122,12 +124,27 @@ namespace Luban.Job.Cfg.Utils
                 );
         }
 
-        public static bool IsTestTag(string tagName)
+        private static bool IsTestTag(string tagName)
         {
             return !string.IsNullOrEmpty(tagName) &&
                 (tagName.Equals("test", System.StringComparison.OrdinalIgnoreCase)
                 || tagName.Equals("≤‚ ‘", System.StringComparison.Ordinal)
                 );
+        }
+
+        public static bool IsTestTag(List<string> tagNames)
+        {
+            return tagNames.Any(IsTestTag);
+        }
+
+        public static List<string> ParseTags(string rawTagStr)
+        {
+            if (string.IsNullOrWhiteSpace(rawTagStr))
+            {
+                return null;
+            }
+            var tags = new List<string>(rawTagStr.Split(',').Select(t => t.Trim()).Where(t => !string.IsNullOrEmpty(t)));
+            return tags.Count > 0 ? tags : null;
         }
 
         //public static string Data2String(DType data)

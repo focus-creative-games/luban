@@ -35,6 +35,9 @@ namespace Luban.Job.Cfg
         [Option("export_test_data", Required = false, HelpText = "export test data")]
         public bool ExportTestData { get; set; } = false;
 
+        [Option("export_tag_filter", Required = false, HelpText = "export tag filter")]
+        public string ExportTagFilter { get; set; } = "";
+
         [Option('t', "l10n_timezone", Required = false, HelpText = "timezone")]
         public string TimeZone { get; set; }
 
