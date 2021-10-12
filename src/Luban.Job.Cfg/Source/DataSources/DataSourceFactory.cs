@@ -22,7 +22,7 @@ namespace Luban.Job.Cfg.DataSources
         {
             try
             {
-#if !LUBAN_ASSISTANT
+#if !LUBAN_LITE
                 string ext = url.Contains('.') ? Path.GetExtension(url)?[1..] : url;
 #else
                 string ext = url.Contains(".") ? Path.GetExtension(url)?.Substring(1) : url;

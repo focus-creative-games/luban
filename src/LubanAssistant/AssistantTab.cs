@@ -119,7 +119,7 @@ namespace LubanAssistant
             {
                 try
                 {
-                    await LoadUtil.LoadDataToCurrentDoc(RootDefineFile, InputDataDir, tableName);
+                    await LoadUtil.LoadTableDataToCurrentWorkSheetAsync(RootDefineFile, InputDataDir, tableName);
                 }
                 catch (Exception e)
                 {
@@ -143,7 +143,7 @@ namespace LubanAssistant
 
         private bool HasNotsaveDataInCurrentWorksapce()
         {
-            return true;
+            return false;
         }
 
         private void BtnLoadDataClick(object sender, RibbonControlEventArgs e)

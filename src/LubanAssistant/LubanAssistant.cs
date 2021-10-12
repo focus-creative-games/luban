@@ -7,6 +7,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 using Office = Microsoft.Office.Core;
 using Microsoft.Office.Tools.Excel;
 using Microsoft.Office.Tools.Ribbon;
+using Luban.Common.Utils;
 
 namespace LubanAssistant
 {
@@ -14,6 +15,7 @@ namespace LubanAssistant
     {
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {
+            LogUtil.InitSimpleNLogConfigure(NLog.LogLevel.Info);
         }
 
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)

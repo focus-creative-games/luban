@@ -140,7 +140,7 @@ namespace Luban.Job.Cfg.Defs
         {
             if (!string.IsNullOrWhiteSpace(attr))
             {
-#if !LUBAN_ASSISTANT
+#if !LUBAN_LITE
                 foreach (var validatorStr in attr.Split('#', StringSplitOptions.RemoveEmptyEntries))
 #else
                 foreach (var validatorStr in attr.Split('#'))
@@ -151,7 +151,7 @@ namespace Luban.Job.Cfg.Defs
                     {
                         throw new Exception($"定义文件:{defineFile} key:'{key}' attr:'{attr}' 不是合法的 validator 定义 (key1:value1#key2:value2 ...)");
                     }
-#if !LUBAN_ASSISTANT
+#if !LUBAN_LITE
                     result.Add(new Validator() { Type = validatorStr[..sepIndex], Rule = validatorStr[(sepIndex + 1)..] });
 #else
                     result.Add(new Validator() { Type = validatorStr.Substring(0, sepIndex), Rule = validatorStr.Substring(sepIndex + 1, validatorStr.Length - sepIndex - 1) });
@@ -365,7 +365,7 @@ namespace Luban.Job.Cfg.Defs
 
                 for (int i = 1; i < attrs.Length; i++)
                 {
-#if !LUBAN_ASSISTANT
+#if !LUBAN_LITE
                     var pair = attrs[i].Split('=', 2);
 #else
                     var pair = attrs[i].Split(new char[] { '=' }, 2);

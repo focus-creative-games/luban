@@ -4,6 +4,7 @@ using Luban.Job.Cfg.DataCreators;
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.DataSources;
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Common.Defs;
 using Luban.Job.Common.Types;
 using Luban.Job.Common.Utils;
 using Luban.Server.Common;
@@ -18,7 +19,7 @@ namespace Luban.Job.Cfg.Utils
 {
     public static class DataLoaderUtil
     {
-        private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
+        //private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
         public class InputFileInfo
         {
@@ -95,7 +96,7 @@ namespace Luban.Job.Cfg.Utils
             }
         }
 
-        public static async Task LoadTableAsync(IAgent agent, DefTable table, string dataDir, string patchName, string patchDataDir)
+        public static async Task<TableDataInfo> LoadTableAsync(IAgent agent, DefTable table, string dataDir, string patchName, string patchDataDir)
         {
             var mainLoadTasks = new List<Task<List<Record>>>();
             var mainGenerateTask = GenerateLoadRecordFromFileTasksAsync(agent, table, dataDir, table.InputFiles, mainLoadTasks);
@@ -119,7 +120,7 @@ namespace Luban.Job.Cfg.Utils
             {
                 mainRecords.AddRange(await task);
             }
-            s_logger.Trace("== load main records. count:{count}", mainRecords.Count);
+            //s_logger.Trace("== load main records. count:{count}", mainRecords.Count);
 
             List<Record> patchRecords = null;
             if (patchGenerateTask != null)
@@ -130,12 +131,10 @@ namespace Luban.Job.Cfg.Utils
                 {
                     patchRecords.AddRange(await task);
                 }
-                s_logger.Trace("== load patch records. count:{count}", patchRecords.Count);
+                //s_logger.Trace("== load patch records. count:{count}", patchRecords.Count);
             }
 
-            table.Assembly.AddDataTable(table, mainRecords, patchRecords);
-
-            s_logger.Trace("table:{name} record num:{num}", table.FullName, mainRecords.Count);
+            return new TableDataInfo(table, mainRecords, patchRecords);
         }
 
         public static async Task LoadCfgDataAsync(IAgent agent, DefAssembly ass, string dataDir, string patchName, string patchDataDir)
@@ -193,31 +192,34 @@ namespace Luban.Job.Cfg.Utils
             }
         }
 
-#if !LUBAN_ASSISTANT
-        public static async Task LoadTextTablesAsync(IAgent agent, DefAssembly ass, string baseDir, string textTableFiles)
+        public static async Task<TableDataInfo> LoadTableDataAsync(string rootDefineFile, string inputDataDir, string tableName)
         {
-            var tasks = new List<Task<byte[]>>();
-            var files = textTableFiles.Split(',');
-            foreach (var file in await CollectInputFilesAsync(agent, files, baseDir))
-            {
-                tasks.Add(agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5));
-            }
+            IAgent agent = new LocalAgent();
+            var loader = new CfgDefLoader(agent);
+            await loader.LoadAsync(rootDefineFile);
+            await loader.LoadDefinesFromFileAsync(inputDataDir);
 
-            var textTable = ass.ExportTextTable;
-            for (int i = 0; i < tasks.Count; i++)
+            var rawDefines = loader.BuildDefines();
+
+            TimeZoneInfo timeZoneInfo = null;
+
+            var excludeTags = new List<string>();
+            var ass = new DefAssembly("", timeZoneInfo, excludeTags, agent);
+
+            ass.Load("all", rawDefines);
+
+            DefAssemblyBase.LocalAssebmly = ass;
+
+            var table = ass.GetCfgTable(tableName);
+
+            if (table == null)
             {
-                var bytes = await tasks[i];
-                try
-                {
-                    textTable.LoadFromFile(files[i], bytes);
-                }
-                catch (Exception e)
-                {
-                    throw new Exception($"load text table file:{files[i]} fail", e);
-                }
+                throw new Exception($"table:{tableName}不存在");
             }
+            var tableDataInfo = await LoadTableAsync(agent, table, inputDataDir, "", "");
+            //MessageBox.Show($"table:{table.FullName} input:{StringUtil.CollectionToString(table.InputFiles)} record num:{datas.Count}");
+            return tableDataInfo;
         }
-#endif
 
     }
 }

@@ -38,7 +38,7 @@ namespace Luban.Job.Common.Utils
                 throw new System.NotSupportedException();
             }
             var md5 = FileUtil.CalcMD5(bytes);
-#if !LUBAN_ASSISTANT
+#if !LUBAN_LITE
             CacheManager.Ins.AddCache(fileName, md5, bytes);
 #endif
             return md5;
@@ -47,7 +47,7 @@ namespace Luban.Job.Common.Utils
         public static string GenMd5AndAddCache(string fileName, byte[] bytes)
         {
             var md5 = FileUtil.CalcMD5(bytes);
-#if !LUBAN_ASSISTANT
+#if !LUBAN_LITE
             CacheManager.Ins.AddCache(fileName, md5, bytes);
 #endif
             return md5;

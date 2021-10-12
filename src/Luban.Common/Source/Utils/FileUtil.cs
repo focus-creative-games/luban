@@ -23,7 +23,7 @@ namespace Luban.Common.Utils
         public static string GetFileName(string path)
         {
             int index = path.Replace('\\', '/').LastIndexOf('/');
-#if !LUBAN_ASSISTANT
+#if !LUBAN_LITE
             return index >= 0 ? path[(index + 1)..] : path;
 #else
             return index >= 0 ? path.Substring(index + 1, path.Length - index - 1) : path;
@@ -33,7 +33,7 @@ namespace Luban.Common.Utils
         public static string GetParent(string path)
         {
             int index = path.Replace('\\', '/').LastIndexOf('/');
-#if !LUBAN_ASSISTANT
+#if !LUBAN_LITE
             return index >= 0 ? path[..index] : ".";
 #else
             return index >= 0 ? path.Substring(0, index) : ".";
@@ -70,7 +70,7 @@ namespace Luban.Common.Utils
             }
             var f = new FileInfo(file);
             string fname = f.Name;
-#if !LUBAN_ASSISTANT
+#if !LUBAN_LITE
             return !fname.StartsWith('.') && !fname.StartsWith('_') && !fname.StartsWith('~');
 #else
             return !fname.StartsWith(".") && !fname.StartsWith("_") && !fname.StartsWith("~");
@@ -129,7 +129,7 @@ namespace Luban.Common.Utils
             else
             {
                 int lastPathSep = url.LastIndexOf('/', sheetSepIndex);
-#if !LUBAN_ASSISTANT
+#if !LUBAN_LITE
                 if (lastPathSep >= 0)
                 {
                     return (url[0..(lastPathSep + 1)] + url[(sheetSepIndex + 1)..], url[(lastPathSep + 1)..sheetSepIndex]);
@@ -183,7 +183,7 @@ namespace Luban.Common.Utils
             }
 
 
-#if !LUBAN_ASSISTANT
+#if !LUBAN_LITE
             await File.WriteAllBytesAsync(outputPath, content);
 #else
             await Task.Run(() => File.WriteAllBytes(outputPath, content));

@@ -13,16 +13,19 @@ namespace Luban.Job.Cfg.Defs
 {
     public class TableDataInfo
     {
+        public DefTable Table { get; }
+
         public List<Record> MainRecords { get; }
 
         public List<Record> PatchRecords { get; }
 
-        public List<Record> FinalRecords { get; set; }
+        //public List<Record> FinalRecords { get; set; }
 
-        public Dictionary<DType, Record> FinalRecordMap { get; set; }
+        //public Dictionary<DType, Record> FinalRecordMap { get; set; }
 
-        public TableDataInfo(List<Record> mainRecords, List<Record> patchRecords)
+        public TableDataInfo(DefTable table, List<Record> mainRecords, List<Record> patchRecords)
         {
+            Table = table;
             MainRecords = mainRecords;
             PatchRecords = patchRecords;
         }
@@ -33,6 +36,8 @@ namespace Luban.Job.Cfg.Defs
         private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
         public new static DefAssembly LocalAssebmly { get => (DefAssembly)DefAssemblyBase.LocalAssebmly; set => DefAssemblyBase.LocalAssebmly = value; }
+
+        public Service CfgTargetService { get; private set; }
 
         private readonly string _patchName;
         private readonly List<string> _excludeTags;
@@ -51,7 +56,11 @@ namespace Luban.Job.Cfg.Defs
 
         public bool NeedExport(List<string> groups)
         {
-            return true;
+            if (groups.Count == 0)
+            {
+                return true;
+            }
+            return groups.Any(g => CfgTargetService.Groups.Contains(g));
         }
 
         private readonly List<Patch> _patches = new List<Patch>();
@@ -61,6 +70,7 @@ namespace Luban.Job.Cfg.Defs
         private readonly ConcurrentDictionary<string, TableDataInfo> _recordsByTables = new();
 
         public Dictionary<string, DefTable> CfgTables { get; } = new Dictionary<string, DefTable>();
+
 
         public Patch GetPatch(string name)
         {
@@ -82,30 +92,12 @@ namespace Luban.Job.Cfg.Defs
 
         public void AddDataTable(DefTable table, List<Record> mainRecords, List<Record> patchRecords)
         {
-            _recordsByTables[table.FullName] = new TableDataInfo(mainRecords, patchRecords);
+            _recordsByTables[table.FullName] = new TableDataInfo(table, mainRecords, patchRecords);
         }
 
         public List<Record> GetTableAllDataList(DefTable table)
         {
-            return _recordsByTables[table.FullName].FinalRecords;
-        }
-
-        public List<Record> GetTableExportDataList(DefTable table)
-        {
-            var tableDataInfo = _recordsByTables[table.FullName];
-            if (_excludeTags.Count == 0)
-            {
-                return tableDataInfo.FinalRecords;
-            }
-            else
-            {
-                var finalRecords = tableDataInfo.FinalRecords.Where(r => r.IsNotFiltered(_excludeTags)).ToList();
-                if (table.IsOneValueTable && finalRecords.Count != 1)
-                {
-                    throw new Exception($"配置表 {table.FullName} 是单值表 mode=one,但数据个数:{finalRecords.Count} != 1");
-                }
-                return finalRecords;
-            }
+            return _recordsByTables[table.FullName].MainRecords;
         }
 
         public TableDataInfo GetTableDataInfo(DefTable table)
@@ -118,11 +110,59 @@ namespace Luban.Job.Cfg.Defs
             return Types.Values.Where(t => t is DefTable ct && ct.NeedExport).Select(t => (DefTable)t).ToList();
         }
 
-        public void Load(Defines defines)
+        public List<DefTypeBase> GetExportTypes()
+        {
+            var refTypes = new Dictionary<string, DefTypeBase>();
+            var targetService = CfgTargetService;
+            foreach (var refType in targetService.Refs)
+            {
+                if (!this.Types.ContainsKey(refType))
+                {
+                    throw new Exception($"service:'{targetService.Name}' ref:'{refType}' 类型不存在");
+                }
+                if (!refTypes.TryAdd(refType, this.Types[refType]))
+                {
+                    throw new Exception($"service:'{targetService.Name}' ref:'{refType}' 重复引用");
+                }
+            }
+            foreach (var e in this.Types)
+            {
+                if (!refTypes.ContainsKey(e.Key) && (e.Value is DefEnum))
+                {
+                    refTypes.Add(e.Key, e.Value);
+                }
+            }
+
+            foreach (var table in GetExportTables())
+            {
+                refTypes[table.FullName] = table;
+                table.ValueTType.Apply(RefTypeVisitor.Ins, refTypes);
+            }
+
+            return refTypes.Values.ToList();
+        }
+
+        public void Load(string outputService, Defines defines)
         {
             SupportDatetimeType = true;
 
             TopModule = defines.TopModule;
+
+            CfgTargetService = defines.Services.Find(s => s.Name == outputService);
+
+            if (CfgTargetService == null)
+            {
+                throw new ArgumentException($"service:{outputService} not exists");
+            }
+
+            if (!string.IsNullOrWhiteSpace(_patchName))
+            {
+                TargetPatch = defines.Patches.Find(b => b.Name == _patchName);
+                if (TargetPatch == null)
+                {
+                    throw new Exception($"patch '{_patchName}' not in valid patch set");
+                }
+            }
 
             this._patches.AddRange(defines.Patches);
 

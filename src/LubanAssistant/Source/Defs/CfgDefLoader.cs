@@ -18,7 +18,7 @@ using System.Xml.Linq;
 
 namespace Luban.Job.Cfg.Defs
 {
-    class CfgDefLoader : CommonDefLoader
+    public class CfgDefLoader : CommonDefLoader
     {
         private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -140,7 +140,7 @@ namespace Luban.Job.Cfg.Defs
         {
             if (!string.IsNullOrWhiteSpace(attr))
             {
-#if !LUBAN_ASSISTANT
+#if !LUBAN_LITE
                 foreach (var validatorStr in attr.Split('#', StringSplitOptions.RemoveEmptyEntries))
 #else
                 foreach (var validatorStr in attr.Split('#'))
@@ -151,7 +151,7 @@ namespace Luban.Job.Cfg.Defs
                     {
                         throw new Exception($"定义文件:{defineFile} key:'{key}' attr:'{attr}' 不是合法的 validator 定义 (key1:value1#key2:value2 ...)");
                     }
-#if !LUBAN_ASSISTANT
+#if !LUBAN_LITE
                     result.Add(new Validator() { Type = validatorStr[..sepIndex], Rule = validatorStr[(sepIndex + 1)..] });
 #else
                     result.Add(new Validator() { Type = validatorStr.Substring(0, sepIndex), Rule = validatorStr.Substring(sepIndex + 1, validatorStr.Length - sepIndex - 1) });
@@ -319,6 +319,428 @@ namespace Luban.Job.Cfg.Defs
             _cfgTables.Add(p);
         }
 
+        private async Task<CfgBean> LoadTableValueTypeDefineFromFileAsync(Table table, string dataDir)
+        {
+            var inputFileInfos = await DataLoaderUtil.CollectInputFilesAsync(this.Agent, table.InputFiles, dataDir);
+            var file = inputFileInfos[0];
+            var source = new ExcelDataSource();
+            var stream = new MemoryStream(await this.Agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5));
+            var sheet = source.LoadFirstSheet(file.OriginFile, file.SheetName, stream);
+
+            var cb = new CfgBean() { Namespace = table.Namespace, Name = table.ValueType, };
+
+            var rc = sheet.RowColumns;
+            var attrRow = sheet.RowColumns[0];
+            if (rc.Count < sheet.AttrRowCount + 1)
+            {
+                throw new Exception($"table:'{table.Name}' file:{file.OriginFile} 至少包含 属性行和标题行");
+            }
+            var titleRow = sheet.RowColumns[sheet.AttrRowCount];
+            // 有可能没有注释行，此时使用标题行，这个是必须有的
+            var descRow = sheet.HeaderRowCount >= sheet.AttrRowCount + 2 ? sheet.RowColumns[sheet.AttrRowCount + 1] : titleRow;
+            foreach (var f in sheet.RootFields)
+            {
+                var cf = new CfgField() { Name = f.Name, Id = 0 };
+
+                string[] attrs = (attrRow[f.FromIndex].Value?.ToString() ?? "").Trim().Split('&').Select(s => s.Trim()).ToArray();
+
+                if (attrs.Length == 0 || string.IsNullOrWhiteSpace(attrs[0]))
+                {
+                    throw new Exception($"table:'{table.Name}' file:{file.OriginFile} title:'{f.Name}' type missing!");
+                }
+
+                // 优先取desc行，如果为空,则取title行
+
+                cf.Comment = descRow[f.FromIndex].Value?.ToString();
+                if (string.IsNullOrWhiteSpace(cf.Comment))
+                {
+                    cf.Comment = titleRow[f.FromIndex].Value?.ToString();
+                }
+                if (string.IsNullOrWhiteSpace(cf.Comment))
+                {
+                    cf.Comment = "";
+                }
+
+                cf.Type = attrs[0];
+
+                for (int i = 1; i < attrs.Length; i++)
+                {
+#if !LUBAN_LITE
+                    var pair = attrs[i].Split('=', 2);
+#else
+                    var pair = attrs[i].Split(new char[] { '=' }, 2);
+#endif
+                    if (pair.Length != 2)
+                    {
+                        throw new Exception($"table:'{table.Name}' file:{file.OriginFile} title:'{f.Name}' attr:'{attrs[i]}' is invalid!");
+                    }
+                    var attrName = pair[0].Trim();
+                    var attrValue = pair[1].Trim();
+                    switch (attrName)
+                    {
+                        case "index":
+                        {
+                            cf.Index = attrValue;
+                            break;
+                        }
+                        case "sep":
+                        {
+                            cf.Sep = attrValue;
+                            break;
+                        }
+                        case "ref":
+                        case "path":
+                        case "range":
+                        {
+                            var validator = new Validator() { Type = attrName, Rule = attrValue };
+                            cf.Validators.Add(validator);
+                            cf.ValueValidators.Add(validator);
+                            break;
+                        }
+                        case "multi_rows":
+                        {
+                            cf.IsMultiRow = attrValue == "1" || attrValue.Equals("true", StringComparison.OrdinalIgnoreCase);
+                            break;
+                        }
+                        case "group":
+                        {
+                            cf.Groups = attrValue.Split(',').Select(s => s.Trim()).Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
+                            break;
+                        }
+                        case "comment":
+                        {
+                            cf.Comment = attrValue;
+                            break;
+                        }
+                        case "convert":
+                        {
+                            cf.Converter = attrValue;
+                            break;
+                        }
+                        case "default":
+                        {
+                            cf.DefaultValue = attrValue;
+                            break;
+                        }
+                        case "tags":
+                        {
+                            cf.Tags = attrValue;
+                            break;
+                        }
+                        case "orientation":
+                        {
+                            cf.IsRowOrient = DefUtil.ParseOrientation(attrValue);
+                            break;
+                        }
+                        default:
+                        {
+                            throw new Exception($"table:'{table.Name}' file:{file.OriginFile} title:'{f.Name}' attr:'{attrs[i]}' is invalid!");
+                        }
+                    }
+                }
+
+                cb.Fields.Add(cf);
+            }
+            return cb;
+        }
+
+        private async Task LoadTableValueTypeDefinesFromFileAsync(string dataDir)
+        {
+            var loadTasks = new List<Task<CfgBean>>();
+            foreach (var table in this._cfgTables.Where(t => t.LoadDefineFromFile))
+            {
+                loadTasks.Add(Task.Run(async () => await this.LoadTableValueTypeDefineFromFileAsync(table, dataDir)));
+            }
+
+            foreach (var task in loadTasks)
+            {
+                this._beans.Add(await task);
+            }
+        }
+
+        private async Task LoadTableListFromFileAsync(string dataDir)
+        {
+            if (this._importExcelTableFiles.Count == 0)
+            {
+                return;
+            }
+            var inputFileInfos = await DataLoaderUtil.CollectInputFilesAsync(this.Agent, this._importExcelTableFiles, dataDir);
+
+            var defTableRecordType = new DefBean(new CfgBean()
+            {
+                Namespace = "__intern__",
+                Name = "__TableRecord__",
+                Parent = "",
+                Alias = "",
+                IsValueType = false,
+                Sep = "",
+                TypeId = 0,
+                IsSerializeCompatible = false,
+                Fields = new List<Field>
+                {
+                    new CfgField() { Name = "full_name", Type = "string" },
+                    new CfgField() { Name = "value_type", Type = "string" },
+                    new CfgField() { Name = "index", Type = "string" },
+                    new CfgField() { Name = "mode", Type = "string" },
+                    new CfgField() { Name = "group", Type = "string" },
+                    new CfgField() { Name = "comment", Type = "string" },
+                    new CfgField() { Name = "define_from_excel", Type = "bool" },
+                    new CfgField() { Name = "input", Type = "string" },
+                    new CfgField() { Name = "patch_input", Type = "string" },
+                    new CfgField() { Name = "tags", Type = "string" },
+                }
+            })
+            {
+                AssemblyBase = new DefAssembly("", null, new List<string>(), Agent),
+            };
+            defTableRecordType.PreCompile();
+            defTableRecordType.Compile();
+            defTableRecordType.PostCompile();
+            var tableRecordType = TBean.Create(false, defTableRecordType);
+
+            foreach (var file in inputFileInfos)
+            {
+                var source = new ExcelDataSource();
+                var bytes = await this.Agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5);
+                var records = DataLoaderUtil.LoadCfgRecords(tableRecordType, file.OriginFile, null, bytes, true);
+                foreach (var r in records)
+                {
+                    DBean data = r.Data;
+                    //s_logger.Info("== read text:{}", r.Data);
+                    string fullName = (data.GetField("full_name") as DString).Value.Trim();
+                    string name = TypeUtil.GetName(fullName);
+                    if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(name))
+                    {
+                        throw new Exception($"file:{file.ActualFile} 定义了一个空的table类名");
+                    }
+                    string module = TypeUtil.GetNamespace(fullName);
+                    string valueType = (data.GetField("value_type") as DString).Value.Trim();
+                    string index = (data.GetField("index") as DString).Value.Trim();
+                    string mode = (data.GetField("mode") as DString).Value.Trim();
+                    string group = (data.GetField("group") as DString).Value.Trim();
+                    string comment = (data.GetField("comment") as DString).Value.Trim();
+                    bool isDefineFromExcel = (data.GetField("define_from_excel") as DBool).Value;
+                    string inputFile = (data.GetField("input") as DString).Value.Trim();
+                    string patchInput = (data.GetField("patch_input") as DString).Value.Trim();
+                    string tags = (data.GetField("tags") as DString).Value.Trim();
+                    AddTable(file.OriginFile, name, module, valueType, index, mode, group, comment, isDefineFromExcel, inputFile, patchInput, tags);
+                };
+            }
+        }
+
+        private async Task LoadEnumListFromFileAsync(string dataDir)
+        {
+            if (this._importExcelEnumFiles.Count == 0)
+            {
+                return;
+            }
+            var inputFileInfos = await DataLoaderUtil.CollectInputFilesAsync(this.Agent, this._importExcelEnumFiles, dataDir);
+
+            var defTableRecordType = new DefBean(new CfgBean()
+            {
+                Namespace = "__intern__",
+                Name = "__EnumInfo__",
+                Parent = "",
+                Alias = "",
+                IsValueType = false,
+                Sep = "",
+                TypeId = 0,
+                IsSerializeCompatible = false,
+                Fields = new List<Field>
+                {
+                    new CfgField() { Name = "full_name", Type = "string" },
+                    new CfgField() { Name = "item", Type = "string" },
+                    new CfgField() { Name = "alias", Type = "string" },
+                    new CfgField() { Name = "value", Type = "int" },
+                    new CfgField() { Name = "comment", Type = "string" },
+                    new CfgField() { Name = "tags", Type = "string" },
+                }
+            })
+            {
+                AssemblyBase = new DefAssembly("", null, new List<string>(), Agent),
+            };
+            defTableRecordType.PreCompile();
+            defTableRecordType.Compile();
+            defTableRecordType.PostCompile();
+            var tableRecordType = TBean.Create(false, defTableRecordType);
+
+            foreach (var file in inputFileInfos)
+            {
+                var source = new ExcelDataSource();
+                var bytes = await this.Agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5);
+                var records = DataLoaderUtil.LoadCfgRecords(tableRecordType, file.OriginFile, null, bytes, true);
+
+                PEnum curEnum = null;
+                foreach (var r in records)
+                {
+                    DBean data = r.Data;
+                    //s_logger.Info("== read text:{}", r.Data);
+                    string fullName = (data.GetField("full_name") as DString).Value.Trim();
+                    string name = TypeUtil.GetName(fullName);
+                    if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(name))
+                    {
+                        throw new Exception($"file:{file.ActualFile} 定义了一个空的enum类名");
+                    }
+                    string module = TypeUtil.GetNamespace(fullName);
+
+                    if (curEnum == null || curEnum.Name != name || curEnum.Namespace != module)
+                    {
+                        curEnum = new PEnum() { Name = name, Namespace = module, IsFlags = false, Comment = "", IsUniqueItemId = true };
+                        this._enums.Add(curEnum);
+                    }
+
+                    string item = (data.GetField("item") as DString).Value.Trim();
+                    if (string.IsNullOrWhiteSpace(item))
+                    {
+                        throw new Exception($"file:{file.ActualFile} module:'{module}' name:'{name}' 定义了一个空枚举项");
+                    }
+                    string alias = (data.GetField("alias") as DString).Value.Trim();
+                    string value = (data.GetField("value") as DInt).Value.ToString();
+                    string comment = (data.GetField("comment") as DString).Value.Trim();
+                    string tags = (data.GetField("tags") as DString).Value.Trim();
+                    curEnum.Items.Add(new EnumItem() { Name = item, Alias = alias, Value = value, Comment = comment, Tags = tags });
+                };
+            }
+        }
+
+        private async Task LoadBeanListFromFileAsync(string dataDir)
+        {
+            if (this._importExcelBeanFiles.Count == 0)
+            {
+                return;
+            }
+            var inputFileInfos = await DataLoaderUtil.CollectInputFilesAsync(this.Agent, this._importExcelBeanFiles, dataDir);
+
+
+            var ass = new DefAssembly("", null, new List<string>(), Agent);
+
+            var defBeanFieldType = new DefBean(new CfgBean()
+            {
+                Namespace = "__intern__",
+                Name = "__FieldInfo__",
+                Parent = "",
+                Alias = "",
+                IsValueType = false,
+                Sep = "",
+                TypeId = 0,
+                IsSerializeCompatible = false,
+                Fields = new List<Field>
+                {
+                    new CfgField() { Name = "name", Type = "string" },
+                    new CfgField() { Name = "type", Type = "string" },
+                    new CfgField() { Name = "sep", Type = "string" },
+                    new CfgField() { Name = "is_multi_rows", Type = "bool" },
+                    new CfgField() { Name = "index", Type = "string" },
+                    new CfgField() { Name = "group", Type = "string" },
+                    new CfgField() { Name = "ref", Type = "string", IgnoreNameValidation = true },
+                    new CfgField() { Name = "path", Type = "string" },
+                    new CfgField() { Name = "comment", Type = "string" },
+                    new CfgField() { Name = "tags", Type = "string" },
+                    new CfgField() { Name = "orientation", Type = "string" },
+                }
+            })
+            {
+                AssemblyBase = ass,
+            };
+
+            defBeanFieldType.PreCompile();
+            defBeanFieldType.Compile();
+            defBeanFieldType.PostCompile();
+
+            ass.AddType(defBeanFieldType);
+
+            var defTableRecordType = new DefBean(new CfgBean()
+            {
+                Namespace = "__intern__",
+                Name = "__BeanInfo__",
+                Parent = "",
+                Alias = "",
+                IsValueType = false,
+                Sep = "",
+                TypeId = 0,
+                IsSerializeCompatible = false,
+                Fields = new List<Field>
+                {
+                    new CfgField() { Name = "full_name", Type = "string" },
+                    new CfgField() { Name = "sep", Type = "string" },
+                    new CfgField() { Name = "comment", Type = "string" },
+                    new CfgField() { Name = "tags", Type = "string" },
+                    new CfgField() { Name = "fields", Type = "list,__FieldInfo__", IsMultiRow = true },
+                }
+            })
+            {
+                AssemblyBase = ass,
+            };
+            ass.AddType(defTableRecordType);
+            defTableRecordType.PreCompile();
+            defTableRecordType.Compile();
+            defTableRecordType.PostCompile();
+            ass.MarkMultiRows();
+            var tableRecordType = TBean.Create(false, defTableRecordType);
+
+            foreach (var file in inputFileInfos)
+            {
+                var source = new ExcelDataSource();
+                var bytes = await this.Agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5);
+                var records = DataLoaderUtil.LoadCfgRecords(tableRecordType, file.OriginFile, null, bytes, true);
+
+                foreach (var r in records)
+                {
+                    DBean data = r.Data;
+                    //s_logger.Info("== read text:{}", r.Data);
+                    string fullName = (data.GetField("full_name") as DString).Value.Trim();
+                    string name = TypeUtil.GetName(fullName);
+                    if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(name))
+                    {
+                        throw new Exception($"file:{file.ActualFile} 定义了一个空bean类名");
+                    }
+                    string module = TypeUtil.GetNamespace(fullName);
+
+
+                    string sep = (data.GetField("sep") as DString).Value.Trim();
+                    string comment = (data.GetField("comment") as DString).Value.Trim();
+                    string tags = (data.GetField("tags") as DString).Value.Trim();
+                    DList fields = data.GetField("fields") as DList;
+                    var curBean = new CfgBean()
+                    {
+                        Name = name,
+                        Namespace = module,
+                        Sep = sep,
+                        Comment = comment,
+                        Tags = tags,
+                        Parent = "",
+                        Fields = fields.Datas.Select(d => (DBean)d).Select(b => this.CreateField(
+                            file.ActualFile,
+                            (b.GetField("name") as DString).Value.Trim(),
+                            (b.GetField("type") as DString).Value.Trim(),
+                            (b.GetField("index") as DString).Value.Trim(),
+                            (b.GetField("sep") as DString).Value.Trim(),
+                            (b.GetField("is_multi_rows") as DBool).Value,
+                            (b.GetField("group") as DString).Value,
+                            "",
+                            "",
+                            (b.GetField("comment") as DString).Value.Trim(),
+                            (b.GetField("ref") as DString).Value.Trim(),
+                            (b.GetField("path") as DString).Value.Trim(),
+                            "",
+                            "",
+                            "",
+                            "",
+                            (b.GetField("tags") as DString).Value.Trim(),
+                            false,
+                            DefUtil.ParseOrientation((b.GetField("orientation") as DString).Value)
+                            )).ToList(),
+                    };
+                    this._beans.Add(curBean);
+                };
+            }
+        }
+
+        public async Task LoadDefinesFromFileAsync(string dataDir)
+        {
+            await Task.WhenAll(LoadTableListFromFileAsync(dataDir), LoadEnumListFromFileAsync(dataDir), LoadBeanListFromFileAsync(dataDir));
+            await LoadTableValueTypeDefinesFromFileAsync(dataDir);
+        }
 
         private static readonly List<string> _fieldOptionalAttrs = new()
         {

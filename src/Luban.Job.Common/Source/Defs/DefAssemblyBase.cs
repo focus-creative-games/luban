@@ -117,7 +117,7 @@ namespace Luban.Job.Common.Defs
 
         public TType CreateType(string module, string type)
         {
-#if LUBAN_ASSISTANT
+#if LUBAN_LITE
             int sepIndex = type.IndexOf(',');
 #else
             int sepIndex = type.IndexOf(',', System.StringComparison.Ordinal);
@@ -138,7 +138,7 @@ namespace Luban.Job.Common.Defs
             bool nullable;
             var (type, tags) = DefUtil.ParseType(rawType);
 
-#if !LUBAN_ASSISTANT
+#if !LUBAN_LITE
             if (type.EndsWith('?'))
 #else
             if (type.EndsWith("?"))
@@ -149,7 +149,7 @@ namespace Luban.Job.Common.Defs
                     throw new Exception($"not support nullable type:'{module}.{type}'");
                 }
                 nullable = true;
-#if !LUBAN_ASSISTANT
+#if !LUBAN_LITE
                 type = type[0..^1];
 #else
                 type = type.Substring(0, type.Length - 1);

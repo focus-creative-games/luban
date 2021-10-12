@@ -16,7 +16,7 @@ namespace Luban.Job.Cfg.Validators
 
         public static string GetActualTableName(string table)
         {
-#if !LUBAN_ASSISTANT
+#if !LUBAN_LITE
             return table.EndsWith("?") ? table[0..^1] : table;
 #else
             return table.EndsWith("?") ? table.Substring(0, table.Length - 1) : table;
@@ -44,7 +44,7 @@ namespace Luban.Job.Cfg.Validators
                 if (table.EndsWith("?"))
                 {
                     zeroAble = true;
-#if !LUBAN_ASSISTANT
+#if !LUBAN_LITE
                     actualTable = table[0..^1];
 #else
                     actualTable = table.Substring(0, table.Length - 1);
@@ -72,7 +72,7 @@ namespace Luban.Job.Cfg.Validators
                 string actualTable;
                 if (table.EndsWith("?"))
                 {
-#if !LUBAN_ASSISTANT
+#if !LUBAN_LITE
                     actualTable = table[0..^1];
 #else
                     actualTable = table.Substring(0, table.Length - 1);
@@ -97,7 +97,7 @@ namespace Luban.Job.Cfg.Validators
 
             foreach (var table in Tables)
             {
-#if !LUBAN_ASSISTANT
+#if !LUBAN_LITE
                 string actualTable = table.EndsWith("?") ? table[0..^1] : table;
 #else
                 string actualTable = table.EndsWith("?") ? table.Substring(0, table.Length - 1) : table;
