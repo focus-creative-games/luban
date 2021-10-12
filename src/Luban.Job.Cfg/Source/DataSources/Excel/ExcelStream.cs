@@ -14,7 +14,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
     class ExcelStream
     {
 
-        private readonly List<Sheet.Cell> _datas;
+        private readonly List<Cell> _datas;
         private readonly int _toIndex;
         private int _curIndex;
 
@@ -24,7 +24,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
         /// </summary>
         public bool NamedMode { get; set; }
 
-        public ExcelStream(List<Sheet.Cell> datas, int fromIndex, int toIndex, string sep, bool namedMode)
+        public ExcelStream(List<Cell> datas, int fromIndex, int toIndex, string sep, bool namedMode)
         {
             NamedMode = namedMode;
             if (string.IsNullOrWhiteSpace(sep))
@@ -35,14 +35,14 @@ namespace Luban.Job.Cfg.DataSources.Excel
             }
             else
             {
-                this._datas = new List<Sheet.Cell>();
+                this._datas = new List<Cell>();
                 for (int i = fromIndex; i <= toIndex; i++)
                 {
                     var cell = datas[i];
                     object d = cell.Value;
                     if (d is string s)
                     {
-                        this._datas.AddRange(DataUtil.SplitStringByAnySepChar(s, sep).Select(x => new Sheet.Cell(cell.Row, cell.Column, x)));
+                        this._datas.AddRange(DataUtil.SplitStringByAnySepChar(s, sep).Select(x => new Cell(cell.Row, cell.Column, x)));
                     }
                     else
                     {
@@ -54,24 +54,24 @@ namespace Luban.Job.Cfg.DataSources.Excel
             }
         }
 
-        public ExcelStream(Sheet.Cell cell, string sep, bool namedMode)
+        public ExcelStream(Cell cell, string sep, bool namedMode)
         {
             NamedMode = namedMode;
             if (string.IsNullOrWhiteSpace(sep))
             {
-                this._datas = new List<Sheet.Cell> { cell };
+                this._datas = new List<Cell> { cell };
                 this._toIndex = 0;
                 this._curIndex = 0;
             }
             else
             {
-                this._datas = new List<Sheet.Cell>();
+                this._datas = new List<Cell>();
                 object d = cell.Value;
                 if (!IsSkip(d))
                 {
                     if (d is string s)
                     {
-                        this._datas.AddRange(DataUtil.SplitStringByAnySepChar(s, sep).Where(x => !IsSkip(x)).Select(x => new Sheet.Cell(cell.Row, cell.Column, x)));
+                        this._datas.AddRange(DataUtil.SplitStringByAnySepChar(s, sep).Where(x => !IsSkip(x)).Select(x => new Cell(cell.Row, cell.Column, x)));
                     }
                     else
                     {
@@ -144,7 +144,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
         //    return nullable ? Read() : ReadSkipNull();
         //}
 
-        public Sheet.Cell ReadCell()
+        public Cell ReadCell()
         {
             while (_curIndex <= _toIndex)
             {

@@ -290,7 +290,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         private bool TryCreateColumnStream(Sheet.NamedRow x, Sheet.Title title, out ExcelStream stream)
         {
-            var cells = new List<Sheet.Cell>();
+            var cells = new List<Cell>();
             for (int i = title.FromIndex; i <= title.ToIndex; i++)
             {
                 foreach (var row in x.Rows)

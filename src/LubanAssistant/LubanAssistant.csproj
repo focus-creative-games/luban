@@ -241,14 +241,32 @@
     <Compile Include="..\Luban.Job.Cfg\Source\DataCreators\JsonDataCreator.cs">
       <Link>Source\DataCreators\JsonDataCreator.cs</Link>
     </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\DataCreators\LuaDataCreator.cs">
+      <Link>Source\DataCreators\LuaDataCreator.cs</Link>
+    </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\DataCreators\MultiRowExcelDataCreator.cs">
       <Link>Source\DataCreators\MultiRowExcelDataCreator.cs</Link>
     </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\DataCreators\StringDataCreator.cs">
       <Link>Source\DataCreators\StringDataCreator.cs</Link>
     </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\DataCreators\XmlDataCreator.cs">
+      <Link>Source\DataCreators\XmlDataCreator.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\DataCreators\YamlDataCreator.cs">
+      <Link>Source\DataCreators\YamlDataCreator.cs</Link>
+    </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\DataSources\AbstractDataSource.cs">
       <Link>Source\DataSources\AbstractDataSource.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\DataSources\Binary\BinaryDataSource.cs">
+      <Link>Source\DataSources\Binary\BinaryDataSource.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\DataSources\DataSourceFactory.cs">
+      <Link>Source\DataSources\DataSourceFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\DataSources\Excel\Cell.cs">
+      <Link>Source\DataSources\Excel\Cell.cs</Link>
     </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\DataSources\Excel\ExcelDataSource.cs">
       <Link>Source\DataSources\Excel\ExcelDataSource.cs</Link>
@@ -261,6 +279,15 @@
     </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\DataSources\Json\JsonDataSource.cs">
       <Link>Source\DataSources\Json\JsonDataSource.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\DataSources\Lua\LuaDataSource.cs">
+      <Link>Source\DataSources\Lua\LuaDataSource.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\DataSources\Xml\XmlDataSource.cs">
+      <Link>Source\DataSources\Xml\XmlDataSource.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\DataSources\Yaml\YamlDataSource.cs">
+      <Link>Source\DataSources\Yaml\YamlDataSource.cs</Link>
     </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\Datas\DArray.cs">
       <Link>Source\Datas\DArray.cs</Link>
@@ -538,8 +565,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Source\AtomicLong.cs" />
-    <Compile Include="Source\CacheFileUtil.cs" />
+    <Compile Include="Source\Utils\AtomicLong.cs" />
+    <Compile Include="Source\Utils\CacheFileUtil.cs" />
     <Compile Include="Source\Collections\CollectionExtension.cs" />
     <Compile Include="Source\Collections\CollectionUtil.cs" />
     <Compile Include="Source\Common\HashUtil.cs" />
@@ -548,17 +575,16 @@
     <Compile Include="Source\Common\StringUtil.cs" />
     <Compile Include="Source\Common\TimeUtil.cs" />
     <Compile Include="Source\Common\ValueUtil.cs" />
-    <Compile Include="Source\DataSources\DataSourceFactory.cs" />
     <Compile Include="Source\Datas\DText.cs" />
     <Compile Include="Source\Datas\DType.cs" />
     <Compile Include="Source\Defs\CfgDefLoader.cs" />
     <Compile Include="Source\Defs\DefAssembly.cs" />
     <Compile Include="Source\Defs\DefField.cs" />
     <Compile Include="Source\Defs\DefTypeBase.cs" />
-    <Compile Include="Source\FileInfo.cs" />
-    <Compile Include="Source\GetImportFileOrDirectory.cs" />
+    <Compile Include="Source\Protos\FileInfo.cs" />
+    <Compile Include="Source\Protos\GetImportFileOrDirectory.cs" />
     <Compile Include="Source\LocalAgent.cs" />
-    <Compile Include="Source\QueryFilesExists.cs" />
+    <Compile Include="Source\Protos\QueryFilesExists.cs" />
     <Compile Include="Source\Serialization\BeanBase.cs" />
     <Compile Include="Source\Serialization\ByteBuf.cs" />
     <Compile Include="Source\Serialization\EUnmarshalError.cs" />
@@ -567,20 +593,18 @@
     <Compile Include="Source\Serialization\ITypeId.cs" />
     <Compile Include="Source\Serialization\SerializationException.cs" />
     <Compile Include="Source\Utils\DataLoaderUtil.cs" />
-    <Compile Include="ThisAddIn.cs">
+    <Compile Include="LubanAssistant.cs">
       <SubType>Code</SubType>
     </Compile>
-    <None Include="ThisAddIn.Designer.xml">
-      <DependentUpon>ThisAddIn.cs</DependentUpon>
+    <None Include="LubanAssistant.Designer.xml">
+      <DependentUpon>LubanAssistant.cs</DependentUpon>
     </None>
-    <Compile Include="ThisAddIn.Designer.cs">
-      <DependentUpon>ThisAddIn.Designer.xml</DependentUpon>
+    <Compile Include="LubanAssistant.Designer.cs">
+      <DependentUpon>LubanAssistant.Designer.xml</DependentUpon>
     </Compile>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="TypeVisitors\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
@@ -604,7 +628,7 @@
       <FlavorProperties GUID="{BAA0C2D2-18E2-41B9-852F-F413020CAA33}">
         <ProjectProperties HostName="Excel" HostPackage="{29A7B9D7-A7F1-4328-8EF0-6B2D1A56B2C1}" OfficeVersion="15.0" VstxVersion="4.0" ApplicationType="Excel" Language="cs" TemplatesPath="" DebugInfoExeName="#Software\Microsoft\Office\16.0\Excel\InstallRoot\Path#excel.exe" DebugInfoCommandLine="/x" AddItemTemplatesGuid="{51063C3A-E220-4D12-8922-BDA915ACD783}" />
         <Host Name="Excel" GeneratedCodeNamespace="LubanAssistant" IconIndex="0">
-          <HostItem Name="ThisAddIn" Code="ThisAddIn.cs" CanonicalName="AddIn" CanActivate="false" IconIndex="1" Blueprint="ThisAddIn.Designer.xml" GeneratedCode="ThisAddIn.Designer.cs" />
+          <HostItem Name="ThisAddIn" Code="LubanAssistant.cs" CanonicalName="AddIn" CanActivate="false" IconIndex="1" Blueprint="LubanAssistant.Designer.xml" GeneratedCode="LubanAssistant.Designer.cs" />
         </Host>
       </FlavorProperties>
     </VisualStudio>

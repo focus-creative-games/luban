@@ -91,7 +91,7 @@ namespace Luban.Job.Common.Defs
             return null;
         }
 
-        internal DefFieldBase GetField(string index)
+        public DefFieldBase GetField(string index)
         {
             return HierarchyFields.Where(f => f.Name == index).FirstOrDefault();
         }

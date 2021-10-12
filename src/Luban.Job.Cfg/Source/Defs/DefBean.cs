@@ -144,7 +144,7 @@ namespace Luban.Job.Cfg.Defs
             return new DefField(this, (CfgField)f, idOffset);
         }
 
-        internal DefField GetField(string index)
+        public new DefField GetField(string index)
         {
             return (DefField)HierarchyFields.Where(f => f.Name == index).FirstOrDefault();
         }

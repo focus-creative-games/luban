@@ -150,9 +150,6 @@ namespace Luban.Job.Cfg
 
                 DefAssemblyBase.LocalAssebmly = ass;
 
-                var targetService = ass.CfgTargetService;
-
-
                 List<DefTable> exportTables = ass.GetExportTables();
                 List<DefTypeBase> exportTypes = ass.GetExportTypes();
 

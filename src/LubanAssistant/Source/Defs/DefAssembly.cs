@@ -156,29 +156,11 @@ namespace Luban.Job.Cfg.Defs
             return refTypes.Values.ToList();
         }
 
-        public void Load(string outputService, Defines defines)
+        public void Load(Defines defines)
         {
             SupportDatetimeType = true;
 
             TopModule = defines.TopModule;
-
-            CfgTargetService = defines.Services.Find(s => s.Name == outputService);
-
-            if (CfgTargetService == null)
-            {
-                throw new ArgumentException($"service:{outputService} not exists");
-            }
-
-            if (!string.IsNullOrWhiteSpace(_patchName))
-            {
-                TargetPatch = defines.Patches.Find(b => b.Name == _patchName);
-                if (TargetPatch == null)
-                {
-                    throw new Exception($"patch '{_patchName}' not in valid patch set");
-                }
-            }
-
-            this._patches.AddRange(defines.Patches);
 
             foreach (var e in defines.Enums)
             {

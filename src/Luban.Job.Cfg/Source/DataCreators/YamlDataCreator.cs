@@ -1,4 +1,5 @@
-﻿using Luban.Common.Utils;
+﻿using Bright.Collections;
+using Luban.Common.Utils;
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Cfg.Utils;

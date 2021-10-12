@@ -10,7 +10,7 @@ using Microsoft.Office.Tools.Ribbon;
 
 namespace LubanAssistant
 {
-    public partial class ThisAddIn
+    public partial class LubanAssistant
     {
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {

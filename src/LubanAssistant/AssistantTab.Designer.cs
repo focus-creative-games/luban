@@ -37,13 +37,14 @@ namespace LubanAssistant
         {
             this.tab1 = this.Factory.CreateRibbonTab();
             this.group3 = this.Factory.CreateRibbonGroup();
-            this.SetRootFile = this.Factory.CreateRibbonButton();
             this.group1 = this.Factory.CreateRibbonGroup();
-            this.load = this.Factory.CreateRibbonButton();
             this.group2 = this.Factory.CreateRibbonGroup();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.SetRootFile = this.Factory.CreateRibbonButton();
+            this.load = this.Factory.CreateRibbonButton();
             this.saveAll = this.Factory.CreateRibbonButton();
             this.saveSelected = this.Factory.CreateRibbonButton();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.reloadData = this.Factory.CreateRibbonButton();
             this.tab1.SuspendLayout();
             this.group3.SuspendLayout();
             this.group1.SuspendLayout();
@@ -64,6 +65,22 @@ namespace LubanAssistant
             this.group3.Items.Add(this.SetRootFile);
             this.group3.Name = "group3";
             // 
+            // group1
+            // 
+            this.group1.Items.Add(this.load);
+            this.group1.Items.Add(this.reloadData);
+            this.group1.Name = "group1";
+            // 
+            // group2
+            // 
+            this.group2.Items.Add(this.saveAll);
+            this.group2.Items.Add(this.saveSelected);
+            this.group2.Name = "group2";
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
             // SetRootFile
             // 
             this.SetRootFile.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
@@ -72,11 +89,6 @@ namespace LubanAssistant
             this.SetRootFile.ShowImage = true;
             this.SetRootFile.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.BtnChooseRootFileClick);
             // 
-            // group1
-            // 
-            this.group1.Items.Add(this.load);
-            this.group1.Name = "group1";
-            // 
             // load
             // 
             this.load.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
@@ -84,12 +96,6 @@ namespace LubanAssistant
             this.load.Name = "load";
             this.load.ShowImage = true;
             this.load.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.BtnLoadClick);
-            // 
-            // group2
-            // 
-            this.group2.Items.Add(this.saveAll);
-            this.group2.Items.Add(this.saveSelected);
-            this.group2.Name = "group2";
             // 
             // saveAll
             // 
@@ -107,9 +113,12 @@ namespace LubanAssistant
             this.saveSelected.ShowImage = true;
             this.saveSelected.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.BtnSaveSelectedClick);
             // 
-            // openFileDialog1
+            // reloadData
             // 
-            this.openFileDialog1.FileName = "openFileDialog1";
+            this.reloadData.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.reloadData.Label = "重新加载";
+            this.reloadData.Name = "reloadData";
+            this.reloadData.ShowImage = true;
             // 
             // AssistantTab
             // 
@@ -140,6 +149,7 @@ namespace LubanAssistant
         internal Microsoft.Office.Tools.Ribbon.RibbonButton SetRootFile;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton saveSelected;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton reloadData;
     }
 
     partial class ThisRibbonCollection

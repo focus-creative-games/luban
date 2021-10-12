@@ -1,9 +1,15 @@
-﻿using Microsoft.Office.Tools.Ribbon;
+﻿using Luban.Job.Cfg.Defs;
+using Luban.Job.Cfg.Utils;
+using Luban.Job.Common.Defs;
+using Luban.Server.Common;
+using Microsoft.Office.Tools.Ribbon;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace LubanAssistant
@@ -20,21 +26,15 @@ namespace LubanAssistant
             }
         }
 
+        public string DataDir { get; set; }
+
         private void AssistantTab_Load(object sender, RibbonUIEventArgs e)
         {
         }
 
-        private bool CheckChooseRootDefineFile()
+        private bool HasSetRootDefineFile()
         {
-            if (string.IsNullOrWhiteSpace(RootDefineFile) || !File.Exists(RootDefineFile))
-            {
-                if (TryChooseRootDefineFile(out var rootDefineFile))
-                {
-                    RootDefineFile = rootDefineFile;
-                    return true;
-                }
-            }
-            return false;
+            return !string.IsNullOrWhiteSpace(RootDefineFile) && File.Exists(RootDefineFile);
         }
 
         private bool TryChooseRootDefineFile(out string rootDefineFile)
@@ -42,7 +42,7 @@ namespace LubanAssistant
             var dialog = new OpenFileDialog();
             dialog.DefaultExt = "xml";
             dialog.Filter = "root file (*.xml)|*.xml";
-            dialog.Title = "Choose Root Xml File";
+            dialog.Title = "Select Root Xml File";
             dialog.CheckFileExists = true;
             if (dialog.ShowDialog() == DialogResult.OK)
             {
@@ -50,6 +50,30 @@ namespace LubanAssistant
                 return true;
             }
             rootDefineFile = null;
+            return false;
+        }
+
+        private bool TryChooseInputDataDir(out string inputDataDir)
+        {
+            var dialog = new FolderBrowserDialog();
+            dialog.Description = "Select Data Dir";
+            dialog.RootFolder = Environment.SpecialFolder.MyComputer;
+            if (dialog.ShowDialog() == DialogResult.OK && Directory.Exists(dialog.SelectedPath))
+            {
+                inputDataDir = dialog.SelectedPath;
+                return true;
+            }
+            inputDataDir = null;
+            //var dialog = new OpenFileDialog();
+            //dialog.Title = "Select Data Dir";
+            //dialog.CheckFileExists = false;
+            //dialog.CheckPathExists = true;
+            //if (dialog.ShowDialog() == DialogResult.OK)
+            //{
+            //    inputDataDir = dialog.FileName;
+            //    return true;
+            //}
+            //inputDataDir = null;
             return false;
         }
 
@@ -63,9 +87,84 @@ namespace LubanAssistant
 
         private void BtnLoadClick(object sender, RibbonControlEventArgs e)
         {
-            if (CheckChooseRootDefineFile())
+            if (!HasSetRootDefineFile())
             {
-                MessageBox.Show("load");
+                MessageBox.Show("请先设置Root定义文件");
+                return;
+            }
+            if (TryChooseInputDataDir(out var dataDir))
+            {
+                DataDir = dataDir;
+                if (PromptIgnoreNotSaveData())
+                {
+                    LoadDataToCurrentDoc();
+                }
+            }
+        }
+
+        private bool TryGetTableName(out string tableName)
+        {
+            tableName = "test.TbExcelFromJson";
+            return true;
+        }
+
+        private async Task LoadDataToCurrentDoc()
+        {
+            MessageBox.Show($"从目录:{DataDir} 加载数据");
+            if (!TryGetTableName(out var tableName))
+            {
+                MessageBox.Show($"meta行未指定table名");
+                return;
+            }
+
+            string inputDataDir = DataDir;
+
+            IAgent agent = new LocalAgent();
+            var loader = new CfgDefLoader(agent);
+            await loader.LoadAsync(RootDefineFile);
+
+            var rawDefines = loader.BuildDefines();
+
+            TimeZoneInfo timeZoneInfo = null;
+
+            var excludeTags = new List<string>();
+            var ass = new DefAssembly("", timeZoneInfo, excludeTags, agent);
+
+            ass.Load(rawDefines);
+
+            DefAssemblyBase.LocalAssebmly = ass;
+
+            var table = ass.GetCfgTable(tableName);
+            await DataLoaderUtil.LoadTableAsync(agent, table, inputDataDir, "", "");
+        }
+
+        private bool PromptIgnoreNotSaveData()
+        {
+            if (HasNotsaveDataInCurrentWorksapce())
+            {
+                if (MessageBox.Show("有未保存的数据，确定要覆盖吗？", "警告", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private bool HasNotsaveDataInCurrentWorksapce()
+        {
+            return true;
+        }
+
+        private void BtnReloadClick(object sender, RibbonControlEventArgs e)
+        {
+            if (!Directory.Exists(DataDir))
+            {
+                MessageBox.Show("未设置加载目录");
+                return;
+            }
+            if (PromptIgnoreNotSaveData())
+            {
+                LoadDataToCurrentDoc();
             }
         }
 

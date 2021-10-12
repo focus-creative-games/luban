@@ -34,5 +34,17 @@ namespace LubanAssistant.Properties {
                 this["rootDefineFile"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string dataDir {
+            get {
+                return ((string)(this["dataDir"]));
+            }
+            set {
+                this["dataDir"] = value;
+            }
+        }
     }
 }
