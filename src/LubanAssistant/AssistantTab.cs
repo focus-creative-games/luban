@@ -26,7 +26,15 @@ namespace LubanAssistant
             }
         }
 
-        public string DataDir { get; set; }
+        public string InputDataDir
+        {
+            get => Properties.Settings.Default.dataDir;
+            set
+            {
+                Properties.Settings.Default.dataDir = value;
+                Properties.Settings.Default.Save();
+            }
+        }
 
         private void AssistantTab_Load(object sender, RibbonUIEventArgs e)
         {
@@ -85,20 +93,11 @@ namespace LubanAssistant
             }
         }
 
-        private void BtnLoadClick(object sender, RibbonControlEventArgs e)
+        private void BtnChooseDataDirClick(object sender, RibbonControlEventArgs e)
         {
-            if (!HasSetRootDefineFile())
-            {
-                MessageBox.Show("请先设置Root定义文件");
-                return;
-            }
             if (TryChooseInputDataDir(out var dataDir))
             {
-                DataDir = dataDir;
-                if (PromptIgnoreNotSaveData())
-                {
-                    LoadDataToCurrentDoc();
-                }
+                InputDataDir = dataDir;
             }
         }
 
@@ -108,34 +107,26 @@ namespace LubanAssistant
             return true;
         }
 
-        private async Task LoadDataToCurrentDoc()
+        private void LoadDataToCurrentDoc()
         {
-            MessageBox.Show($"从目录:{DataDir} 加载数据");
             if (!TryGetTableName(out var tableName))
             {
                 MessageBox.Show($"meta行未指定table名");
                 return;
             }
 
-            string inputDataDir = DataDir;
+            Task.Run(async () =>
+            {
+                try
+                {
+                    await LoadUtil.LoadDataToCurrentDoc(RootDefineFile, InputDataDir, tableName);
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.StackTrace, e.Message);
+                }
+            });
 
-            IAgent agent = new LocalAgent();
-            var loader = new CfgDefLoader(agent);
-            await loader.LoadAsync(RootDefineFile);
-
-            var rawDefines = loader.BuildDefines();
-
-            TimeZoneInfo timeZoneInfo = null;
-
-            var excludeTags = new List<string>();
-            var ass = new DefAssembly("", timeZoneInfo, excludeTags, agent);
-
-            ass.Load(rawDefines);
-
-            DefAssemblyBase.LocalAssebmly = ass;
-
-            var table = ass.GetCfgTable(tableName);
-            await DataLoaderUtil.LoadTableAsync(agent, table, inputDataDir, "", "");
         }
 
         private bool PromptIgnoreNotSaveData()
@@ -155,9 +146,14 @@ namespace LubanAssistant
             return true;
         }
 
-        private void BtnReloadClick(object sender, RibbonControlEventArgs e)
+        private void BtnLoadDataClick(object sender, RibbonControlEventArgs e)
         {
-            if (!Directory.Exists(DataDir))
+            if (!HasSetRootDefineFile())
+            {
+                MessageBox.Show("未设置root定义文件");
+                return;
+            }
+            if (!Directory.Exists(InputDataDir))
             {
                 MessageBox.Show("未设置加载目录");
                 return;

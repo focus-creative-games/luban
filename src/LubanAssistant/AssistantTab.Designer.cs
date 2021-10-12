@@ -37,14 +37,14 @@ namespace LubanAssistant
         {
             this.tab1 = this.Factory.CreateRibbonTab();
             this.group3 = this.Factory.CreateRibbonGroup();
-            this.group1 = this.Factory.CreateRibbonGroup();
-            this.group2 = this.Factory.CreateRibbonGroup();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.SetRootFile = this.Factory.CreateRibbonButton();
             this.load = this.Factory.CreateRibbonButton();
+            this.group1 = this.Factory.CreateRibbonGroup();
+            this.reloadData = this.Factory.CreateRibbonButton();
+            this.group2 = this.Factory.CreateRibbonGroup();
             this.saveAll = this.Factory.CreateRibbonButton();
             this.saveSelected = this.Factory.CreateRibbonButton();
-            this.reloadData = this.Factory.CreateRibbonButton();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.tab1.SuspendLayout();
             this.group3.SuspendLayout();
             this.group1.SuspendLayout();
@@ -63,23 +63,8 @@ namespace LubanAssistant
             // group3
             // 
             this.group3.Items.Add(this.SetRootFile);
+            this.group3.Items.Add(this.load);
             this.group3.Name = "group3";
-            // 
-            // group1
-            // 
-            this.group1.Items.Add(this.load);
-            this.group1.Items.Add(this.reloadData);
-            this.group1.Name = "group1";
-            // 
-            // group2
-            // 
-            this.group2.Items.Add(this.saveAll);
-            this.group2.Items.Add(this.saveSelected);
-            this.group2.Name = "group2";
-            // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.FileName = "openFileDialog1";
             // 
             // SetRootFile
             // 
@@ -92,10 +77,30 @@ namespace LubanAssistant
             // load
             // 
             this.load.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
-            this.load.Label = "加载数据表";
+            this.load.Label = "设置配置根目录";
             this.load.Name = "load";
+            this.load.ScreenTip = "--input_data_dir 中指定的根目录，而不是当前配置表的input属性指定目录";
             this.load.ShowImage = true;
-            this.load.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.BtnLoadClick);
+            this.load.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.BtnChooseDataDirClick);
+            // 
+            // group1
+            // 
+            this.group1.Items.Add(this.reloadData);
+            this.group1.Name = "group1";
+            // 
+            // reloadData
+            // 
+            this.reloadData.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.reloadData.Label = "加载数据";
+            this.reloadData.Name = "reloadData";
+            this.reloadData.ShowImage = true;
+            this.reloadData.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.BtnLoadDataClick);
+            // 
+            // group2
+            // 
+            this.group2.Items.Add(this.saveAll);
+            this.group2.Items.Add(this.saveSelected);
+            this.group2.Name = "group2";
             // 
             // saveAll
             // 
@@ -113,12 +118,9 @@ namespace LubanAssistant
             this.saveSelected.ShowImage = true;
             this.saveSelected.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.BtnSaveSelectedClick);
             // 
-            // reloadData
+            // openFileDialog1
             // 
-            this.reloadData.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
-            this.reloadData.Label = "重新加载";
-            this.reloadData.Name = "reloadData";
-            this.reloadData.ShowImage = true;
+            this.openFileDialog1.FileName = "openFileDialog1";
             // 
             // AssistantTab
             // 

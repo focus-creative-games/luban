@@ -34,8 +34,6 @@ namespace Luban.Job.Cfg.Defs
 
         public new static DefAssembly LocalAssebmly { get => (DefAssembly)DefAssemblyBase.LocalAssebmly; set => DefAssemblyBase.LocalAssebmly = value; }
 
-        public Service CfgTargetService { get; private set; }
-
         private readonly string _patchName;
         private readonly List<string> _excludeTags;
 
@@ -53,11 +51,7 @@ namespace Luban.Job.Cfg.Defs
 
         public bool NeedExport(List<string> groups)
         {
-            if (groups.Count == 0)
-            {
-                return true;
-            }
-            return groups.Any(g => CfgTargetService.Groups.Contains(g));
+            return true;
         }
 
         private readonly List<Patch> _patches = new List<Patch>();
@@ -124,43 +118,13 @@ namespace Luban.Job.Cfg.Defs
             return Types.Values.Where(t => t is DefTable ct && ct.NeedExport).Select(t => (DefTable)t).ToList();
         }
 
-        public List<DefTypeBase> GetExportTypes()
-        {
-            var refTypes = new Dictionary<string, DefTypeBase>();
-            var targetService = CfgTargetService;
-            foreach (var refType in targetService.Refs)
-            {
-                if (!this.Types.ContainsKey(refType))
-                {
-                    throw new Exception($"service:'{targetService.Name}' ref:'{refType}' 类型不存在");
-                }
-                if (!refTypes.TryAdd(refType, this.Types[refType]))
-                {
-                    throw new Exception($"service:'{targetService.Name}' ref:'{refType}' 重复引用");
-                }
-            }
-            foreach (var e in this.Types)
-            {
-                if (!refTypes.ContainsKey(e.Key) && (e.Value is DefEnum))
-                {
-                    refTypes.Add(e.Key, e.Value);
-                }
-            }
-
-            foreach (var table in GetExportTables())
-            {
-                refTypes[table.FullName] = table;
-                table.ValueTType.Apply(RefTypeVisitor.Ins, refTypes);
-            }
-
-            return refTypes.Values.ToList();
-        }
-
         public void Load(Defines defines)
         {
             SupportDatetimeType = true;
 
             TopModule = defines.TopModule;
+
+            this._patches.AddRange(defines.Patches);
 
             foreach (var e in defines.Enums)
             {

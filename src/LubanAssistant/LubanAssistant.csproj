@@ -538,6 +538,7 @@
     <Compile Include="AssistantTab.Designer.cs">
       <DependentUpon>AssistantTab.cs</DependentUpon>
     </Compile>
+    <Compile Include="LoadUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
