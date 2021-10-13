@@ -1,8 +1,10 @@
 ﻿using Bright.Common;
+using Bright.Time;
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Cfg.Utils;
 using Luban.Job.Common.Defs;
 using Luban.Server.Common;
+using Microsoft.Office.Interop.Excel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,9 +21,6 @@ namespace LubanAssistant
             var tableDataInfo = await DataLoaderUtil.LoadTableDataAsync(rootDefineFile, inputDataDir, tableName);
 
             Console.WriteLine("load record num:{0}", tableDataInfo.MainRecords.Count);
-
-            Microsoft.Office.Interop.Excel.Worksheet cur = Globals.LubanAssistant.Application.ActiveSheet;
-            Console.WriteLine("== active sheet name:{0}", cur.Name);
         }
     }
 }

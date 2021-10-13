@@ -62,6 +62,11 @@ namespace Luban.Job.Cfg.Utils
             return new DDateTime(dateTime);
         }
 
+        public static string FormatDateTime(DateTime datetime)
+        {
+            return datetime.ToString("yyyy-M-d HH:mm:ss");
+        }
+
         public static byte[] StreamToBytes(Stream stream)
         {
             byte[] bytes = new byte[stream.Length];

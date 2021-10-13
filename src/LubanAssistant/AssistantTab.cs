@@ -2,6 +2,7 @@
 using Luban.Job.Cfg.Utils;
 using Luban.Job.Common.Defs;
 using Luban.Server.Common;
+using Microsoft.Office.Interop.Excel;
 using Microsoft.Office.Tools.Ribbon;
 using System;
 using System.Collections.Concurrent;
@@ -101,15 +102,27 @@ namespace LubanAssistant
             }
         }
 
+
+
         private bool TryGetTableName(out string tableName)
         {
-            tableName = "test.TbExcelFromJson";
-            return true;
+            Worksheet cur = Globals.LubanAssistant.Application.ActiveSheet;
+            var metaAttrs = ExcelUtil.ParseMetaAttrs(cur);
+            if (metaAttrs.TryGetValue("table", out tableName))
+            {
+                return true;
+            }
+            tableName = null;
+            return false;
         }
 
         private void LoadDataToCurrentDoc()
         {
-            if (!TryGetTableName(out var tableName))
+
+            Worksheet sheet = Globals.LubanAssistant.Application.ActiveSheet;
+
+            var metaAttrs = ExcelUtil.ParseMetaAttrs(sheet);
+            if (!metaAttrs.TryGetValue("table", out var tableName))
             {
                 MessageBox.Show($"meta行未指定table名");
                 return;
@@ -119,7 +132,9 @@ namespace LubanAssistant
             {
                 try
                 {
-                    await LoadUtil.LoadTableDataToCurrentWorkSheetAsync(RootDefineFile, InputDataDir, tableName);
+                    var tableDataInfo = await DataLoaderUtil.LoadTableDataAsync(RootDefineFile, InputDataDir, tableName);
+                    var title = ExcelUtil.ParseTitles(sheet);
+                    ExcelUtil.FillRecords(sheet, metaAttrs, title, tableDataInfo);
                 }
                 catch (Exception e)
                 {

@@ -270,6 +270,9 @@
     <Compile Include="..\Luban.Job.Cfg\Source\DataSources\Excel\Sheet.cs">
       <Link>Source\DataSources\Excel\Sheet.cs</Link>
     </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\DataSources\Excel\Title.cs">
+      <Link>Source\DataSources\Excel\Title.cs</Link>
+    </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\DataSources\Json\JsonDataSource.cs">
       <Link>Source\DataSources\Json\JsonDataSource.cs</Link>
     </Compile>
@@ -531,10 +534,13 @@
     <Compile Include="AssistantTab.Designer.cs">
       <DependentUpon>AssistantTab.cs</DependentUpon>
     </Compile>
+    <Compile Include="ExcelUtil.cs" />
+    <Compile Include="FillSheetVisitor.cs" />
     <Compile Include="LoadUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ToExcelStringVisitor.cs" />
     <EmbeddedResource Include="AssistantTab.resx">
       <DependentUpon>AssistantTab.cs</DependentUpon>
     </EmbeddedResource>
@@ -559,6 +565,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Source\DataSources\Excel\TitleInfo.cs" />
     <Compile Include="Source\Utils\AtomicLong.cs" />
     <Compile Include="Source\Utils\CacheFileUtil.cs" />
     <Compile Include="Source\Collections\CollectionExtension.cs" />

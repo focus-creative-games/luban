@@ -109,7 +109,7 @@ namespace Luban.Job.Cfg.DataCreators
             foreach (DefField f in bean.HierarchyFields)
             {
                 string fname = f.Name;
-                Sheet.Title title = row.GetTitle(fname);
+                Title title = row.GetTitle(fname);
                 if (title == null)
                 {
                     throw new Exception($"bean:'{bean.FullName}' 缺失 列:'{fname}'，请检查是否写错或者遗漏");
@@ -288,7 +288,7 @@ namespace Luban.Job.Cfg.DataCreators
         }
 
 
-        private bool TryCreateColumnStream(Sheet.NamedRow x, Sheet.Title title, out ExcelStream stream)
+        private bool TryCreateColumnStream(Sheet.NamedRow x, Title title, out ExcelStream stream)
         {
             var cells = new List<Cell>();
             for (int i = title.FromIndex; i <= title.ToIndex; i++)
