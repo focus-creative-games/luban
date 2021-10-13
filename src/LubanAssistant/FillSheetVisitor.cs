@@ -105,12 +105,12 @@ namespace LubanAssistant
 
         public int Accept(DText type, Title x)
         {
-            if (x.FromIndex == x.ToIndex)
-            {
-                throw new Exception($"title:{x.Name}为text类型，至少要占两列");
-            }
-            (_cells[_startRowIndex, x.FromIndex] as Range).Value = type.Key;
-            (_cells[_startRowIndex, x.FromIndex + 1] as Range).Value = type.RawValue;
+            //if (x.FromIndex == x.ToIndex)
+            //{
+            //    throw new Exception($"title:{x.Name}为text类型，至少要占两列");
+            //}
+            (_cells[_startRowIndex, x.FromIndex] as Range).Value = type.Apply(ToExcelStringVisitor.Ins, x.Sep);
+            //(_cells[_startRowIndex, x.FromIndex + 1] as Range).Value = type.RawValue;
             return 1;
         }
 

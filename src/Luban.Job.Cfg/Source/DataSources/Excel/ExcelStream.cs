@@ -175,7 +175,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
         }
 
 
-        private const string END_OF_LIST = "}";
+        public const string END_OF_LIST = "}";
 
 
         private bool IsSkip(object x)

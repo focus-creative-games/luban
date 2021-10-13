@@ -192,7 +192,7 @@ namespace Luban.Job.Cfg.Utils
             }
         }
 
-        public static async Task<TableDataInfo> LoadTableDataAsync(string rootDefineFile, string inputDataDir, string tableName)
+        public static async Task<DefAssembly> LoadDefAssemblyAsync(string rootDefineFile, string inputDataDir)
         {
             IAgent agent = new LocalAgent();
             var loader = new CfgDefLoader(agent);
@@ -209,6 +209,12 @@ namespace Luban.Job.Cfg.Utils
             ass.Load("all", rawDefines);
 
             DefAssemblyBase.LocalAssebmly = ass;
+            return ass;
+        }
+
+        public static async Task<DefTable> LoadTableDefAsync(string rootDefineFile, string inputDataDir, string tableName)
+        {
+            DefAssembly ass = await LoadDefAssemblyAsync(rootDefineFile, inputDataDir);
 
             var table = ass.GetCfgTable(tableName);
 
@@ -216,7 +222,13 @@ namespace Luban.Job.Cfg.Utils
             {
                 throw new Exception($"table:{tableName}不存在");
             }
-            var tableDataInfo = await LoadTableAsync(agent, table, inputDataDir, "", "");
+            return table;
+        }
+
+        public static async Task<TableDataInfo> LoadTableDataAsync(string rootDefineFile, string inputDataDir, string tableName)
+        {
+            var table = await LoadTableDefAsync(rootDefineFile, inputDataDir, tableName);
+            var tableDataInfo = await LoadTableAsync(table.Assembly.Agent, table, inputDataDir, "", "");
             //MessageBox.Show($"table:{table.FullName} input:{StringUtil.CollectionToString(table.InputFiles)} record num:{datas.Count}");
             return tableDataInfo;
         }

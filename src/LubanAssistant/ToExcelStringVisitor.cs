@@ -1,4 +1,5 @@
 ﻿using Luban.Job.Cfg.Datas;
+using Luban.Job.Cfg.DataSources.Excel;
 using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Cfg.Utils;
@@ -105,6 +106,18 @@ namespace LubanAssistant
                     continue;
                 }
                 sb.Add(field.Apply(this, sep));
+                // 对于数目不定的数据类型，需要加分割符
+                switch (field)
+                {
+                    case DArray:
+                    case DList:
+                    case DSet:
+                    case DMap:
+                    {
+                        sb.Add(ExcelStream.END_OF_LIST);
+                        break;
+                    }
+                }
             }
             return string.Join(sep, sb);
         }

@@ -360,6 +360,12 @@
     <Compile Include="..\Luban.Job.Cfg\Source\DataVisitors\IDataFuncVisitor.cs">
       <Link>Source\DataVisitors\IDataFuncVisitor.cs</Link>
     </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\DataVisitors\ToLiteralVisitorBase.cs">
+      <Link>Source\DataVisitors\ToLiteralVisitorBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\DataVisitors\ToStringVisitor.cs">
+      <Link>Source\DataVisitors\ToStringVisitor.cs</Link>
+    </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\Defs\CfgDefTypeBase.cs">
       <Link>Source\Defs\CfgDefTypeBase.cs</Link>
     </Compile>
@@ -540,6 +546,8 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SheetDataCreator.cs" />
+    <Compile Include="Source\DataExporters\RawJsonExportor.cs" />
     <Compile Include="ToExcelStringVisitor.cs" />
     <EmbeddedResource Include="AssistantTab.resx">
       <DependentUpon>AssistantTab.cs</DependentUpon>

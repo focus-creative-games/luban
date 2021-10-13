@@ -1,11 +1,16 @@
-﻿using Luban.Job.Cfg.Datas;
+﻿using Luban.Job.Cfg.DataExporters;
+using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.DataSources.Excel;
+using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Cfg.Utils;
 using Microsoft.Office.Interop.Excel;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace LubanAssistant
@@ -154,6 +159,55 @@ namespace LubanAssistant
                 var fillVisitor = new FillSheetVisitor(sheet, nextRowIndex);
                 //FillRecord(sheet, ref nextRowIndex, title.RootTitle, rec);
                 nextRowIndex += rec.Data.Apply(fillVisitor, title.RootTitle);
+            }
+        }
+
+        public static List<Record> LoadRecordsInRange(DefTable table, Worksheet sheet, Title title, Range toSaveRecordRows)
+        {
+            var recs = new List<Record>();
+            foreach (Range row in toSaveRecordRows)
+            {
+                bool allEmpty = true;
+                for (int i = title.FromIndex; i <= title.ToIndex; i++)
+                {
+                    if (!string.IsNullOrEmpty((row.Cells[1, i] as Range).Value?.ToString()))
+                    {
+                        allEmpty = false;
+                        break;
+                    }
+                }
+                if (allEmpty)
+                {
+                    continue;
+                }
+                string tags = (row.Cells[1, 1] as Range).Value?.ToString();
+                recs.Add(new Record(
+                    (DBean)table.ValueTType.Apply(new SheetDataCreator(sheet, row.Row, table.Assembly), title, null),
+                    "",
+                    DataUtil.ParseTags(tags)));
+            }
+            return recs;
+        }
+
+        public static void SaveRecords(string inputDataDir, DefTable table, List<Record> records)
+        {
+            var recordOutputDir = Path.Combine(inputDataDir, table.InputFiles[0]);
+            string index = table.IndexField.Name;
+            foreach (var r in records)
+            {
+                var ss = new MemoryStream();
+                var jsonWriter = new Utf8JsonWriter(ss, new JsonWriterOptions()
+                {
+                    Indented = true,
+                    SkipValidation = false,
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(System.Text.Unicode.UnicodeRanges.All),
+                });
+                RawJsonExportor.Ins.Accept(r.Data, jsonWriter);
+
+                jsonWriter.Flush();
+                var key = r.Data.GetField(index);
+                var fileName = $"{key.Apply(ToStringVisitor.Ins)}.json";
+                File.WriteAllBytes(Path.Combine(recordOutputDir, fileName), DataUtil.StreamToBytes(ss));
             }
         }
 

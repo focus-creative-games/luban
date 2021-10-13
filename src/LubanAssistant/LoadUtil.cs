@@ -16,11 +16,6 @@ namespace LubanAssistant
 {
     static class LoadUtil
     {
-        public static async Task LoadTableDataToCurrentWorkSheetAsync(string rootDefineFile, string inputDataDir, string tableName)
-        {
-            var tableDataInfo = await DataLoaderUtil.LoadTableDataAsync(rootDefineFile, inputDataDir, tableName);
 
-            Console.WriteLine("load record num:{0}", tableDataInfo.MainRecords.Count);
-        }
     }
 }

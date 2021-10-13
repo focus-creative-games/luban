@@ -14,11 +14,13 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         public string Name { get; set; }
 
-        public string Sep { get; set; } = "|";
+        public string Sep { get; set; }
 
         public Dictionary<string, Title> SubTitles { get; set; } = new Dictionary<string, Title>();
 
         public List<Title> SubTitleList { get; set; } = new List<Title>();
+
+        public bool HasSubTitle => SubTitleList.Count > 0;
 
         public void AddSubTitle(Title title)
         {
