@@ -18,7 +18,19 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         private System.Text.Encoding DetectCsvEncoding(Stream fs)
         {
-            return System.Text.Encoding.Default;
+            Ude.CharsetDetector cdet = new Ude.CharsetDetector();
+            cdet.Feed(fs);
+            cdet.DataEnd();
+            fs.Seek(0, SeekOrigin.Begin);
+            if (cdet.Charset != null)
+            {
+                s_logger.Debug("Charset: {}, confidence: {}", cdet.Charset, cdet.Confidence);
+                return System.Text.Encoding.GetEncoding(cdet.Charset) ?? System.Text.Encoding.Default;
+            }
+            else
+            {
+                return System.Text.Encoding.Default;
+            }
         }
 
         public override void Load(string rawUrl, string sheetName, Stream stream)

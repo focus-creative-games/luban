@@ -151,7 +151,7 @@ namespace Luban.Job.Cfg.DataCreators
                             }
                             else
                             {
-                                list.Add(f.CType.Apply(ExcelDataCreator.Ins, null, row.GetMultiRowStream(f.Name, sep, f.IsRowOrient), (DefAssembly)bean.AssemblyBase));
+                                list.Add(f.CType.Apply(ExcelDataCreator.Ins, f, row.GetMultiRowStream(f.Name, sep, f.IsRowOrient), (DefAssembly)bean.AssemblyBase));
                             }
                         }
                         catch (DataCreateException dce)

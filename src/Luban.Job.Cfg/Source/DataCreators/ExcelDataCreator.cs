@@ -333,7 +333,7 @@ namespace Luban.Job.Cfg.DataCreators
             {
                 return null;
             }
-            if (CheckIsDefault(type.IsNullable, d) && field?.DefalutDtypeValue != null)
+            if (CheckIsDefault(x.NamedMode, d) && field?.DefalutDtypeValue != null)
             {
                 return field?.DefalutDtypeValue;
             }
@@ -346,7 +346,12 @@ namespace Luban.Job.Cfg.DataCreators
             {
                 throw new InvalidExcelDataException("excel string类型在标题头对应模式下必须正好占据一个单元格");
             }
-            var s = ParseString(x.Read(x.NamedMode));
+            var d = x.Read(x.NamedMode);
+            if (CheckIsDefault(x.NamedMode, d) && field?.DefalutDtypeValue != null)
+            {
+                return field.DefalutDtypeValue;
+            }
+            var s = ParseString(d);
             if (s == null)
             {
                 if (type.IsNullable)

@@ -99,7 +99,7 @@ luban相较于常规的excel导表工具有以下核心优势：
    - 其他所有支持js的引擎和平台
 - 扩展工具
 	- Excel2TextDiff。将excel转成文本后再diff，清晰对比excel版本之间内容变化。
-	- **[开发中，马上...]LubanAssistant**，Luban的Excel插件。支持把json、lua、xml等文本格式的配置数据加载到excel中，批量编辑处理，最后再保存回原文件，较好地解决大型项目中多人合作数据编辑冲突合并的问题，较好解决在编辑器中制作的配置难以在excel中批量修改的问题。
+	- **LubanAssistant**，Luban的Excel插件。支持把json、lua、xml等文本格式的配置数据加载到excel中，批量编辑处理，最后再保存回原文件，较好地解决大型项目中多人合作数据编辑冲突合并的问题，较好解决在编辑器中制作的配置难以在excel中批量修改的问题。
 
 
 ## 增强的excel格式
