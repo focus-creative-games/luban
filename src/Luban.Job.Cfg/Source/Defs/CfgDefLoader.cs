@@ -126,40 +126,6 @@ namespace Luban.Job.Cfg.Defs
             _cfgGroups.Add(new Group() { Names = groupNames });
         }
 
-        private void FillValueValidator(CfgField f, string attrValue, string validatorName)
-        {
-            if (!string.IsNullOrWhiteSpace(attrValue))
-            {
-                var validator = new Validator() { Type = validatorName, Rule = attrValue };
-                f.Validators.Add(validator);
-                f.ValueValidators.Add(validator);
-            }
-        }
-
-        private void FillValidators(string defineFile, string key, string attr, List<Validator> result)
-        {
-            if (!string.IsNullOrWhiteSpace(attr))
-            {
-#if !LUBAN_LITE
-                foreach (var validatorStr in attr.Split('#', StringSplitOptions.RemoveEmptyEntries))
-#else
-                foreach (var validatorStr in attr.Split('#'))
-#endif
-                {
-                    var sepIndex = validatorStr.IndexOf(':');
-                    if (sepIndex <= 0)
-                    {
-                        throw new Exception($"定义文件:{defineFile} key:'{key}' attr:'{attr}' 不是合法的 validator 定义 (key1:value1#key2:value2 ...)");
-                    }
-#if !LUBAN_LITE
-                    result.Add(new Validator() { Type = validatorStr[..sepIndex], Rule = validatorStr[(sepIndex + 1)..] });
-#else
-                    result.Add(new Validator() { Type = validatorStr.Substring(0, sepIndex), Rule = validatorStr.Substring(sepIndex + 1, validatorStr.Length - sepIndex - 1) });
-#endif
-                }
-            }
-        }
-
         private readonly List<string> _serviceAttrs = new List<string> { "name", "manager", "group" };
 
         private void AddService(XElement e)
@@ -325,36 +291,36 @@ namespace Luban.Job.Cfg.Defs
             var file = inputFileInfos[0];
             var source = new ExcelDataSource();
             var stream = new MemoryStream(await this.Agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5));
-            var sheet = source.LoadFirstSheet(file.OriginFile, file.SheetName, stream);
+            var tableDefInfo = source.LoadTableDefInfo(file.OriginFile, file.SheetName, stream);
 
             var cb = new CfgBean() { Namespace = table.Namespace, Name = table.ValueType, };
 
-            var rc = sheet.RowColumns;
-            var attrRow = sheet.RowColumns[0];
-            if (rc.Count < sheet.AttrRowCount + 1)
+            //var rc = sheet.RowColumns;
+            //var attrRow = sheet.RowColumns[0];
+            //if (rc.Count < sheet.AttrRowCount + 1)
+            //{
+            //    throw new Exception($"table:'{table.Name}' file:{file.OriginFile} 至少包含 属性行和标题行");
+            //}
+            //var titleRow = sheet.RowColumns[sheet.AttrRowCount];
+            //// 有可能没有注释行，此时使用标题行，这个是必须有的
+            //var descRow = sheet.HeaderRowCount >= sheet.AttrRowCount + 2 ? sheet.RowColumns[sheet.AttrRowCount + 1] : titleRow;
+            foreach (var (name, f) in tableDefInfo.FieldInfos)
             {
-                throw new Exception($"table:'{table.Name}' file:{file.OriginFile} 至少包含 属性行和标题行");
-            }
-            var titleRow = sheet.RowColumns[sheet.AttrRowCount];
-            // 有可能没有注释行，此时使用标题行，这个是必须有的
-            var descRow = sheet.HeaderRowCount >= sheet.AttrRowCount + 2 ? sheet.RowColumns[sheet.AttrRowCount + 1] : titleRow;
-            foreach (var f in sheet.RootFields)
-            {
-                var cf = new CfgField() { Name = f.Name, Id = 0 };
+                var cf = new CfgField() { Name = name, Id = 0 };
 
-                string[] attrs = (attrRow[f.FromIndex].Value?.ToString() ?? "").Trim().Split('&').Select(s => s.Trim()).ToArray();
+                string[] attrs = f.Type.Trim().Split('&').Select(s => s.Trim()).ToArray();
 
                 if (attrs.Length == 0 || string.IsNullOrWhiteSpace(attrs[0]))
                 {
-                    throw new Exception($"table:'{table.Name}' file:{file.OriginFile} title:'{f.Name}' type missing!");
+                    throw new Exception($"table:'{table.Name}' file:{file.OriginFile} title:'{name}' type missing!");
                 }
 
                 // 优先取desc行，如果为空,则取title行
 
-                cf.Comment = descRow[f.FromIndex].Value?.ToString();
+                cf.Comment = f.BriefDesc;
                 if (string.IsNullOrWhiteSpace(cf.Comment))
                 {
-                    cf.Comment = titleRow[f.FromIndex].Value?.ToString();
+                    cf.Comment = f.DetailDesc;
                 }
                 if (string.IsNullOrWhiteSpace(cf.Comment))
                 {
@@ -372,7 +338,7 @@ namespace Luban.Job.Cfg.Defs
 #endif
                     if (pair.Length != 2)
                     {
-                        throw new Exception($"table:'{table.Name}' file:{file.OriginFile} title:'{f.Name}' attr:'{attrs[i]}' is invalid!");
+                        throw new Exception($"table:'{table.Name}' file:{file.OriginFile} title:'{name}' attr:'{attrs[i]}' is invalid!");
                     }
                     var attrName = pair[0].Trim();
                     var attrValue = pair[1].Trim();
@@ -383,23 +349,13 @@ namespace Luban.Job.Cfg.Defs
                             cf.Index = attrValue;
                             break;
                         }
-                        case "sep":
-                        {
-                            cf.Sep = attrValue;
-                            break;
-                        }
                         case "ref":
                         case "path":
                         case "range":
                         {
-                            var validator = new Validator() { Type = attrName, Rule = attrValue };
-                            cf.Validators.Add(validator);
-                            cf.ValueValidators.Add(validator);
-                            break;
-                        }
-                        case "multi_rows":
-                        {
-                            cf.IsMultiRow = attrValue == "1" || attrValue.Equals("true", StringComparison.OrdinalIgnoreCase);
+                            //var validator = new Validator() { Type = attrName, Rule = attrValue };
+                            //cf.Validators.Add(validator);
+                            //cf.ValueValidators.Add(validator);
                             break;
                         }
                         case "group":
@@ -412,29 +368,14 @@ namespace Luban.Job.Cfg.Defs
                             cf.Comment = attrValue;
                             break;
                         }
-                        case "convert":
-                        {
-                            cf.Converter = attrValue;
-                            break;
-                        }
-                        case "default":
-                        {
-                            cf.DefaultValue = attrValue;
-                            break;
-                        }
                         case "tags":
                         {
                             cf.Tags = attrValue;
                             break;
                         }
-                        case "orientation":
-                        {
-                            cf.IsRowOrient = DefUtil.ParseOrientation(attrValue);
-                            break;
-                        }
                         default:
                         {
-                            throw new Exception($"table:'{table.Name}' file:{file.OriginFile} title:'{f.Name}' attr:'{attrs[i]}' is invalid!");
+                            throw new Exception($"table:'{table.Name}' file:{file.OriginFile} title:'{name}' attr:'{attrs[i]}' is invalid!");
                         }
                     }
                 }
@@ -665,7 +606,7 @@ namespace Luban.Job.Cfg.Defs
                     new CfgField() { Name = "sep", Type = "string" },
                     new CfgField() { Name = "comment", Type = "string" },
                     new CfgField() { Name = "tags", Type = "string" },
-                    new CfgField() { Name = "fields", Type = "list,__FieldInfo__", IsMultiRow = true },
+                    new CfgField() { Name = "fields", Type = "list,__FieldInfo__" },
                 }
             })
             {
@@ -714,21 +655,10 @@ namespace Luban.Job.Cfg.Defs
                             (b.GetField("name") as DString).Value.Trim(),
                             (b.GetField("type") as DString).Value.Trim(),
                             (b.GetField("index") as DString).Value.Trim(),
-                            (b.GetField("sep") as DString).Value.Trim(),
-                            (b.GetField("is_multi_rows") as DBool).Value,
                             (b.GetField("group") as DString).Value,
-                            "",
-                            "",
                             (b.GetField("comment") as DString).Value.Trim(),
-                            (b.GetField("ref") as DString).Value.Trim(),
-                            (b.GetField("path") as DString).Value.Trim(),
-                            "",
-                            "",
-                            "",
-                            "",
                             (b.GetField("tags") as DString).Value.Trim(),
-                            false,
-                            DefUtil.ParseOrientation((b.GetField("orientation") as DString).Value)
+                            false
                             )).ToList(),
                     };
                     this._beans.Add(curBean);
@@ -771,41 +701,25 @@ namespace Luban.Job.Cfg.Defs
             return CreateField(defineFile, XmlUtil.GetRequiredAttribute(e, "name"),
                 XmlUtil.GetRequiredAttribute(e, "type"),
                 XmlUtil.GetOptionalAttribute(e, "index"),
-                 XmlUtil.GetOptionalAttribute(e, "sep"),
-                 XmlUtil.GetOptionBoolAttribute(e, "multi_rows"),
                  XmlUtil.GetOptionalAttribute(e, "group"),
-                 XmlUtil.GetOptionalAttribute(e, "res"),
-                 XmlUtil.GetOptionalAttribute(e, "convert"),
                  XmlUtil.GetOptionalAttribute(e, "comment"),
-                 XmlUtil.GetOptionalAttribute(e, "ref"),
-                 XmlUtil.GetOptionalAttribute(e, "path"),
-                 XmlUtil.GetOptionalAttribute(e, "range"),
-                 XmlUtil.GetOptionalAttribute(e, "key_validator"),
-                 XmlUtil.GetOptionalAttribute(e, "value_validator"),
-                 XmlUtil.GetOptionalAttribute(e, "validator"),
                  XmlUtil.GetOptionalAttribute(e, "tags"),
-                 false,
-                 DefUtil.ParseOrientation(XmlUtil.GetOptionalAttribute(e, "orientation"))
+                 false
                 );
         }
 
-        private Field CreateField(string defileFile, string name, string type, string index, string sep, bool isMultiRow, string group, string resource, string converter,
-            string comment, string refs, string path, string range, string keyValidator, string valueValidator, string validator, string tags,
-            bool ignoreNameValidation, bool isRowOrient)
+        private Field CreateField(string defileFile, string name, string type, string index, string group,
+            string comment, string tags,
+            bool ignoreNameValidation)
         {
             var f = new CfgField()
             {
                 Name = name,
                 Index = index,
-                Sep = sep,
-                IsMultiRow = isMultiRow,
                 Groups = CreateGroups(group),
-                Resource = resource,
-                Converter = converter,
                 Comment = comment,
                 Tags = tags,
                 IgnoreNameValidation = ignoreNameValidation,
-                IsRowOrient = isRowOrient,
             };
 
             // 字段与table的默认组不一样。
@@ -822,13 +736,13 @@ namespace Luban.Job.Cfg.Defs
             f.Type = type;
 
 
-            FillValueValidator(f, refs, "ref");
-            FillValueValidator(f, path, "path"); // (ue4|unity|normal|regex);xxx;xxx
-            FillValueValidator(f, range, "range");
+            //FillValueValidator(f, refs, "ref");
+            //FillValueValidator(f, path, "path"); // (ue4|unity|normal|regex);xxx;xxx
+            //FillValueValidator(f, range, "range");
 
-            FillValidators(defileFile, "key_validator", keyValidator, f.KeyValidators);
-            FillValidators(defileFile, "value_validator", valueValidator, f.ValueValidators);
-            FillValidators(defileFile, "validator", validator, f.Validators);
+            //FillValidators(defileFile, "key_validator", keyValidator, f.KeyValidators);
+            //FillValidators(defileFile, "value_validator", valueValidator, f.ValueValidators);
+            //FillValidators(defileFile, "validator", validator, f.Validators);
             return f;
         }
 

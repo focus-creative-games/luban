@@ -21,7 +21,7 @@ namespace Luban.Job.Cfg.Utils
 
         public static DType CreateVector(TVector2 type, string x)
         {
-            var values = DataUtil.SplitVectorString(x);
+            var values = SplitVectorString(x);
 
             return new DVector2(new System.Numerics.Vector2(float.Parse(values[0]), float.Parse(values[1])));
 
@@ -29,7 +29,7 @@ namespace Luban.Job.Cfg.Utils
 
         public static DType CreateVector(TVector3 type, string x)
         {
-            var values = DataUtil.SplitVectorString(x);
+            var values = SplitVectorString(x);
 
             return new DVector3(new System.Numerics.Vector3(float.Parse(values[0]), float.Parse(values[1]), float.Parse(values[2])));
 
@@ -37,7 +37,7 @@ namespace Luban.Job.Cfg.Utils
 
         public static DType CreateVector(TVector4 type, string x)
         {
-            var values = DataUtil.SplitVectorString(x);
+            var values = SplitVectorString(x);
             return new DVector4(new System.Numerics.Vector4(float.Parse(values[0]), float.Parse(values[1]), float.Parse(values[2]), float.Parse(values[3])));
         }
 

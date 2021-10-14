@@ -6,9 +6,14 @@ namespace Luban.Job.Cfg.Datas
     {
         public static DDouble Default { get; } = new DDouble(0);
 
+        public static DDouble ValueOf(double x)
+        {
+            return x == 0 ? Default : new DDouble(x);
+        }
+
         public override string TypeName => "double";
 
-        public DDouble(double x) : base(x)
+        private DDouble(double x) : base(x)
         {
         }
 

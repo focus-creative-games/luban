@@ -6,9 +6,14 @@ namespace Luban.Job.Cfg.Datas
     {
         public static DFlong Default { get; } = new DFlong(0);
 
+        public static DFlong ValueOf(long x)
+        {
+            return x == 0 ? Default : new DFlong(x);
+        }
+
         public override string TypeName => "flong";
 
-        public DFlong(long x) : base(x)
+        private DFlong(long x) : base(x)
         {
         }
 

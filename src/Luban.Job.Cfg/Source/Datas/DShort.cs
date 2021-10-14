@@ -6,9 +6,14 @@ namespace Luban.Job.Cfg.Datas
     {
         public static DShort Default { get; } = new DShort(0);
 
+        public static DShort ValueOf(short x)
+        {
+            return x == 0 ? Default : new DShort(x);
+        }
+
         public override string TypeName => "short";
 
-        public DShort(short x) : base(x)
+        private DShort(short x) : base(x)
         {
         }
 

@@ -33,17 +33,17 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TByte type, YamlNode x, DefAssembly y)
         {
-            return new DByte(byte.Parse(GetLowerTextValue(x)));
+            return DByte.ValueOf(byte.Parse(GetLowerTextValue(x)));
         }
 
         public DType Accept(TShort type, YamlNode x, DefAssembly y)
         {
-            return new DShort(short.Parse(GetLowerTextValue(x)));
+            return DShort.ValueOf(short.Parse(GetLowerTextValue(x)));
         }
 
         public DType Accept(TFshort type, YamlNode x, DefAssembly y)
         {
-            return new DFshort(short.Parse(GetLowerTextValue(x)));
+            return DFshort.ValueOf(short.Parse(GetLowerTextValue(x)));
         }
 
         public DType Accept(TInt type, YamlNode x, DefAssembly y)
@@ -53,7 +53,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TFint type, YamlNode x, DefAssembly y)
         {
-            return new DFint(int.Parse(GetLowerTextValue(x)));
+            return DFint.ValueOf(int.Parse(GetLowerTextValue(x)));
         }
 
         public DType Accept(TLong type, YamlNode x, DefAssembly y)
@@ -63,7 +63,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TFlong type, YamlNode x, DefAssembly y)
         {
-            return new DFlong(long.Parse(GetLowerTextValue(x)));
+            return DFlong.ValueOf(long.Parse(GetLowerTextValue(x)));
         }
 
         public DType Accept(TFloat type, YamlNode x, DefAssembly y)
@@ -73,7 +73,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TDouble type, YamlNode x, DefAssembly y)
         {
-            return new DDouble(double.Parse(GetLowerTextValue(x)));
+            return DDouble.ValueOf(double.Parse(GetLowerTextValue(x)));
         }
 
         public DType Accept(TEnum type, YamlNode x, DefAssembly y)

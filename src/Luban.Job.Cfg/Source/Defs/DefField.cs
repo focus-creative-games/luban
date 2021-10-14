@@ -109,23 +109,6 @@ namespace Luban.Job.Cfg.Defs
             }
         }
 
-        public string Sep { get; set; }
-
-        // 如果没有指定sep
-        // 如果是bean,且指定了sep，则使用此值
-        // 如果是vectorN,使用 ,
-        public string ActualSep => string.IsNullOrWhiteSpace(Sep) ? (CType is TBean bean ? ((DefBean)bean.Bean).Sep : "") : Sep;
-
-        public List<IValidator> KeyValidators { get; } = new List<IValidator>();
-
-        public List<IValidator> ValueValidators { get; } = new List<IValidator>();
-
-        public List<IValidator> Validators { get; } = new List<IValidator>();
-
-        public string ResourceTag { get; }
-
-        public bool IsResource => !string.IsNullOrEmpty(ResourceTag);
-
         public string CsRefVarName => $"{CsStyleName}_Ref";
 
         public string JavaRefVarName => $"{JavaStyleName}_Ref";
@@ -150,49 +133,36 @@ namespace Luban.Job.Cfg.Defs
 
         public bool HasRecursiveText => HasRecursiveRef;
 
-        public string DefaultValue { get; }
-
-        public DType DefalutDtypeValue { get; private set; }
-
-        public bool IsRowOrient { get; }
 
         public DefField(DefTypeBase host, CfgField f, int idOffset) : base(host, f, idOffset)
         {
             Index = f.Index;
-            Sep = f.Sep;
-            this.IsMultiRow = this.RawIsMultiRow = f.IsMultiRow;
-            ResourceTag = f.Resource;
-            this.Validators.AddRange(f.Validators.Select(v => ValidatorFactory.Create(v)));
-            this.KeyValidators.AddRange(f.KeyValidators.Select(v => ValidatorFactory.Create(v)));
-            this.ValueValidators.AddRange(f.ValueValidators.Select(v => ValidatorFactory.Create(v)));
             this.Groups = f.Groups;
             this.RawDefine = f;
-            this.DefaultValue = f.DefaultValue;
-            this.IsRowOrient = f.IsRowOrient;
         }
 
         public override void Compile()
         {
             base.Compile();
-            foreach (var v in this.Validators)
-            {
-                v.Compile(this);
-            }
+            //foreach (var v in this.Validators)
+            //{
+            //    v.Compile(this);
+            //}
 
-            foreach (var v in this.KeyValidators)
-            {
-                v.Compile(this);
-            }
+            //foreach (var v in this.KeyValidators)
+            //{
+            //    v.Compile(this);
+            //}
 
-            foreach (var v in this.ValueValidators)
-            {
-                v.Compile(this);
-            }
+            //foreach (var v in this.ValueValidators)
+            //{
+            //    v.Compile(this);
+            //}
 
-            if (!string.IsNullOrWhiteSpace(this.DefaultValue))
-            {
-                this.DefalutDtypeValue = CType.Apply(StringDataCreator.Ins, this.DefaultValue);
-            }
+            //if (!string.IsNullOrWhiteSpace(this.DefaultValue))
+            //{
+            //    this.DefalutDtypeValue = CType.Apply(StringDataCreator.Ins, this.DefaultValue);
+            //}
 
             switch (CType)
             {
@@ -247,10 +217,6 @@ namespace Luban.Job.Cfg.Defs
                 throw new Exception($"只有容器类型才支持 multi_line 属性");
             }
 
-            if (string.IsNullOrEmpty(Sep) && CType is TBean bean)
-            {
-                Sep = bean.GetBeanAs<DefBean>().Sep;
-            }
             if (!string.IsNullOrEmpty(Index))
             {
                 if ((CType is TArray tarray) && (tarray.ElementType is TBean b))
@@ -273,35 +239,35 @@ namespace Luban.Job.Cfg.Defs
                 }
             }
 
-            if (!CType.IsCollection && !(CType.IsBean))
-            {
-                this.Ref = (RefValidator)this.Validators.FirstOrDefault(v => v is RefValidator);
-            }
+            //if (!CType.IsCollection && !(CType.IsBean))
+            //{
+            //    this.Ref = (RefValidator)this.Validators.FirstOrDefault(v => v is RefValidator);
+            //}
 
-            if (!string.IsNullOrEmpty(this.RawDefine.Converter))
-            {
-                this.Remapper = AssemblyBase.GetDefTType(HostType.Namespace, this.RawDefine.Converter, this.IsNullable) as TEnum;
-                if (this.Remapper == null)
-                {
-                    throw new Exception($"type:'{HostType.FullName}' field:'{Name}' converter:'{this.RawDefine.Converter}' not exists");
-                }
-            }
+            //if (!string.IsNullOrEmpty(this.RawDefine.Converter))
+            //{
+            //    this.Remapper = AssemblyBase.GetDefTType(HostType.Namespace, this.RawDefine.Converter, this.IsNullable) as TEnum;
+            //    if (this.Remapper == null)
+            //    {
+            //        throw new Exception($"type:'{HostType.FullName}' field:'{Name}' converter:'{this.RawDefine.Converter}' not exists");
+            //    }
+            //}
 
-            // 检查所引用的表是否导出了
-            if (NeedExport)
-            {
-                var allValidators = new List<IValidator>(this.Validators);
-                allValidators.AddRange(this.KeyValidators);
-                allValidators.AddRange(this.ValueValidators);
+            //// 检查所引用的表是否导出了
+            //if (NeedExport)
+            //{
+            //    var allValidators = new List<IValidator>(this.Validators);
+            //    allValidators.AddRange(this.KeyValidators);
+            //    allValidators.AddRange(this.ValueValidators);
 
-                foreach (var val in allValidators)
-                {
-                    if (val is RefValidator refValidator && !Assembly.GetCfgTable(refValidator.FirstTable).NeedExport)
-                    {
-                        throw new Exception($"type:'{HostType.FullName}' field:'{Name}' ref 引用的表:'{refValidator.FirstTable}' 没有导出");
-                    }
-                }
-            }
+            //    foreach (var val in allValidators)
+            //    {
+            //        if (val is RefValidator refValidator && !Assembly.GetCfgTable(refValidator.FirstTable).NeedExport)
+            //        {
+            //            throw new Exception($"type:'{HostType.FullName}' field:'{Name}' ref 引用的表:'{refValidator.FirstTable}' 没有导出");
+            //        }
+            //    }
+            //}
         }
 
         public override void PostCompile()
@@ -310,49 +276,49 @@ namespace Luban.Job.Cfg.Defs
 
             // 检查 字段类型 与 所引用的表的key是否一致
 
-            foreach (var val in KeyValidators)
-            {
-                if (val is RefValidator refValidator)
-                {
-                    var cfgTable = Assembly.GetCfgTable(refValidator.FirstTable);
-                    if (CType is TMap mapType)
-                    {
-                        if (mapType.KeyType.GetType() != cfgTable.KeyTType.GetType())
-                        {
-                            throw new Exception($"type:'{HostType.FullName}' field:'{Name}' key类型:'{mapType.KeyType.GetType()}' 与 被引用的表:'{cfgTable.FullName}' key类型:'{cfgTable.KeyTType.GetType()}' 不一致");
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception($"type:'{HostType.FullName}' field:'{Name}' 不是 map类型. 不能指定 key_validator 引用");
-                    }
-                }
-            }
+            //foreach (var val in KeyValidators)
+            //{
+            //    if (val is RefValidator refValidator)
+            //    {
+            //        var cfgTable = Assembly.GetCfgTable(refValidator.FirstTable);
+            //        if (CType is TMap mapType)
+            //        {
+            //            if (mapType.KeyType.GetType() != cfgTable.KeyTType.GetType())
+            //            {
+            //                throw new Exception($"type:'{HostType.FullName}' field:'{Name}' key类型:'{mapType.KeyType.GetType()}' 与 被引用的表:'{cfgTable.FullName}' key类型:'{cfgTable.KeyTType.GetType()}' 不一致");
+            //            }
+            //        }
+            //        else
+            //        {
+            //            throw new Exception($"type:'{HostType.FullName}' field:'{Name}' 不是 map类型. 不能指定 key_validator 引用");
+            //        }
+            //    }
+            //}
 
-            var remainValidators = new List<IValidator>(this.Validators);
-            remainValidators.AddRange(this.ValueValidators);
-            foreach (var val in remainValidators)
-            {
-                if (val is RefValidator refValidator)
-                {
-                    var cfgTable = Assembly.GetCfgTable(refValidator.FirstTable);
-                    TType valueType;
-                    switch (CType)
-                    {
-                        case TArray ta: valueType = ta.ElementType; break;
-                        case TList tl: valueType = tl.ElementType; break;
-                        case TSet ts: valueType = ts.ElementType; break;
-                        case TMap tm: valueType = tm.ValueType; break;
-                        default: valueType = CType; break;
-                    }
+            //var remainValidators = new List<IValidator>(this.Validators);
+            //remainValidators.AddRange(this.ValueValidators);
+            //foreach (var val in remainValidators)
+            //{
+            //    if (val is RefValidator refValidator)
+            //    {
+            //        var cfgTable = Assembly.GetCfgTable(refValidator.FirstTable);
+            //        TType valueType;
+            //        switch (CType)
+            //        {
+            //            case TArray ta: valueType = ta.ElementType; break;
+            //            case TList tl: valueType = tl.ElementType; break;
+            //            case TSet ts: valueType = ts.ElementType; break;
+            //            case TMap tm: valueType = tm.ValueType; break;
+            //            default: valueType = CType; break;
+            //        }
 
-                    if (valueType.GetType() != cfgTable.KeyTType.GetType())
-                    {
-                        throw new Exception($"type:'{HostType.FullName}' field:'{Name}' 类型:'{valueType.GetType()}' 与 被引用的表:'{cfgTable.FullName}' key类型:'{cfgTable.KeyTType.GetType()}' 不一致");
-                    }
+            //        if (valueType.GetType() != cfgTable.KeyTType.GetType())
+            //        {
+            //            throw new Exception($"type:'{HostType.FullName}' field:'{Name}' 类型:'{valueType.GetType()}' 与 被引用的表:'{cfgTable.FullName}' key类型:'{cfgTable.KeyTType.GetType()}' 不一致");
+            //        }
 
-                }
-            }
+            //    }
+            //}
         }
     }
 }

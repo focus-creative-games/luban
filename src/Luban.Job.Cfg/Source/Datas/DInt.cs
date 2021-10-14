@@ -15,6 +15,8 @@ namespace Luban.Job.Cfg.Datas
             }
         }
 
+        public static DInt Default => s_pool[0];
+
         public static DInt ValueOf(int x)
         {
             if (x >= 0 && x < POOL_SIZE)

@@ -18,15 +18,8 @@ namespace Luban.Job.Cfg.DataSources.Excel
         private readonly int _toIndex;
         private int _curIndex;
 
-
-        /// <summary>
-        /// NamedMode下 string可以用空白表达空字符串，而不必用null或""
-        /// </summary>
-        public bool NamedMode { get; set; }
-
-        public ExcelStream(List<Cell> datas, int fromIndex, int toIndex, string sep, bool namedMode)
+        public ExcelStream(List<Cell> datas, int fromIndex, int toIndex, string sep)
         {
-            NamedMode = namedMode;
             if (string.IsNullOrWhiteSpace(sep))
             {
                 this._datas = datas;
@@ -54,9 +47,8 @@ namespace Luban.Job.Cfg.DataSources.Excel
             }
         }
 
-        public ExcelStream(Cell cell, string sep, bool namedMode)
+        public ExcelStream(Cell cell, string sep)
         {
-            NamedMode = namedMode;
             if (string.IsNullOrWhiteSpace(sep))
             {
                 this._datas = new List<Cell> { cell };

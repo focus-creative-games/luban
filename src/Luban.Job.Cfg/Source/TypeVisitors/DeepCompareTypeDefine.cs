@@ -55,23 +55,23 @@ namespace Luban.Job.Cfg.TypeVisitors
                 return false;
             }
 
-            bool IsValidatorEquals(List<Validator> vs1, List<Validator> vs2)
-            {
-                if (vs1.Count != vs2.Count)
-                {
-                    return false;
-                }
-                for (int i = 0; i < vs1.Count; i++)
-                {
-                    var v1 = vs1[i];
-                    var v2 = vs2[i];
-                    if (v1.Type != v2.Type || v1.Rule != v2.Rule)
-                    {
-                        return false;
-                    }
-                }
-                return true;
-            }
+            //bool IsValidatorEquals(List<Validator> vs1, List<Validator> vs2)
+            //{
+            //    if (vs1.Count != vs2.Count)
+            //    {
+            //        return false;
+            //    }
+            //    for (int i = 0; i < vs1.Count; i++)
+            //    {
+            //        var v1 = vs1[i];
+            //        var v2 = vs2[i];
+            //        if (v1.Type != v2.Type || v1.Rule != v2.Rule)
+            //        {
+            //            return false;
+            //        }
+            //    }
+            //    return true;
+            //}
 
             if (ctx.TryGetValue(a, out var e))
             {
@@ -103,16 +103,16 @@ namespace Luban.Job.Cfg.TypeVisitors
                     if (f1.Name != f2.Name
                         || f1.NeedExport != f2.NeedExport
                         || f1.Index != f2.Index
-                        || f1.Sep != f2.Sep
-#if !LUBAN_LITE
-                        || f1.ResourceTag != f2.ResourceTag
-#endif
+                        //                        || f1.Sep != f2.Sep
+                        //#if !LUBAN_LITE
+                        //                        || f1.ResourceTag != f2.ResourceTag
+                        //#endif
                         || f1.IsMultiRow != f2.IsMultiRow
                         || f1.CType.IsNullable != f2.CType.IsNullable
                         || f1.CType.GetType() != f2.CType.GetType()
-                        || !IsValidatorEquals(f1.RawDefine.Validators, f2.RawDefine.Validators)
-                        || !IsValidatorEquals(f1.RawDefine.KeyValidators, f2.RawDefine.KeyValidators)
-                        || !IsValidatorEquals(f1.RawDefine.ValueValidators, f2.RawDefine.ValueValidators)
+                        //|| !IsValidatorEquals(f1.RawDefine.Validators, f2.RawDefine.Validators)
+                        //|| !IsValidatorEquals(f1.RawDefine.KeyValidators, f2.RawDefine.KeyValidators)
+                        //|| !IsValidatorEquals(f1.RawDefine.ValueValidators, f2.RawDefine.ValueValidators)
                         )
                     {
                         return setupNotEqual();

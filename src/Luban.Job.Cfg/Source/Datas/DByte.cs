@@ -6,9 +6,21 @@ namespace Luban.Job.Cfg.Datas
     {
         public static DByte Default { get; } = new DByte(0);
 
+        public static DByte ValueOf(byte x)
+        {
+            if (x == 0)
+            {
+                return Default;
+            }
+            else
+            {
+                return new DByte(x);
+            }
+        }
+
         public override string TypeName => "byte";
 
-        public DByte(byte x) : base(x)
+        private DByte(byte x) : base(x)
         {
         }
 

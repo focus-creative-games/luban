@@ -4,7 +4,7 @@ namespace Luban.Job.Cfg.Datas
 {
     public class DFloat : DType<float>
     {
-        private static DFloat Default { get; } = new DFloat(0);
+        public static DFloat Default { get; } = new DFloat(0);
 
         public override string TypeName => "float";
 

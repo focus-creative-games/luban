@@ -23,17 +23,17 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TByte type, object x, DefAssembly ass)
         {
-            return new DByte((byte)(int)x);
+            return DByte.ValueOf((byte)(int)x);
         }
 
         public DType Accept(TShort type, object x, DefAssembly ass)
         {
-            return new DShort((short)(int)x);
+            return DShort.ValueOf((short)(int)x);
         }
 
         public DType Accept(TFshort type, object x, DefAssembly ass)
         {
-            return new DFshort((short)(int)x);
+            return DFshort.ValueOf((short)(int)x);
         }
 
         public DType Accept(TInt type, object x, DefAssembly ass)
@@ -43,7 +43,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TFint type, object x, DefAssembly ass)
         {
-            return new DFint((int)x);
+            return DFint.ValueOf((int)x);
         }
 
         private long ToLong(object x)
@@ -89,7 +89,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TFlong type, object x, DefAssembly ass)
         {
-            return new DFlong(ToLong(x));
+            return DFlong.ValueOf(ToLong(x));
         }
 
         public DType Accept(TFloat type, object x, DefAssembly ass)
@@ -99,7 +99,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TDouble type, object x, DefAssembly ass)
         {
-            return new DDouble(ToDouble(x));
+            return DDouble.ValueOf(ToDouble(x));
         }
 
         public DType Accept(TEnum type, object x, DefAssembly ass)

@@ -68,10 +68,11 @@ namespace Luban.Job.Cfg.DataVisitors
 
         public void Accept(DString type, DefField x, List<ResourceInfo> y)
         {
-            if (!string.IsNullOrEmpty(type.Value))
-            {
-                y.Add(new ResourceInfo() { Resource = type.Value, Tag = x.ResourceTag });
-            }
+            //if (!string.IsNullOrEmpty(type.Value))
+            //{
+            //    y.Add(new ResourceInfo() { Resource = type.Value, Tag = x.ResourceTag });
+            //}
+            throw new NotSupportedException();
         }
 
         public void Accept(DBytes type, DefField x, List<ResourceInfo> y)
@@ -91,26 +92,28 @@ namespace Luban.Job.Cfg.DataVisitors
             {
                 return;
             }
-            int index = 0;
-            foreach (DType fieldData in type.Fields)
-            {
-                var fieldDef = (DefField)def.HierarchyFields[index++];
-                if (fieldDef.IsResource)
-                {
-                    fieldData.Apply(this, fieldDef, y);
-                }
-            }
+            //int index = 0;
+            //foreach (DType fieldData in type.Fields)
+            //{
+            //    var fieldDef = (DefField)def.HierarchyFields[index++];
+            //    if (fieldDef.IsResource)
+            //    {
+            //        fieldData.Apply(this, fieldDef, y);
+            //    }
+            //}
+            throw new NotSupportedException();
         }
 
         private void Accept(DefField def, List<DType> datas, TType elementType, List<ResourceInfo> ress)
         {
-            if (def.IsResource || (elementType is TBean))
-            {
-                foreach (var e in datas)
-                {
-                    e.Apply(this, def, ress);
-                }
-            }
+            //if (def.IsResource || (elementType is TBean))
+            //{
+            //    foreach (var e in datas)
+            //    {
+            //        e.Apply(this, def, ress);
+            //    }
+            //}
+            throw new NotSupportedException();
         }
 
         public void Accept(DArray type, DefField x, List<ResourceInfo> y)
@@ -130,13 +133,14 @@ namespace Luban.Job.Cfg.DataVisitors
 
         public void Accept(DMap type, DefField x, List<ResourceInfo> y)
         {
-            if (x.IsResource || (type.Type.ValueType is TBean))
-            {
-                foreach (var e in type.Datas.Values)
-                {
-                    e.Apply(this, x, y);
-                }
-            }
+            //if (x.IsResource || (type.Type.ValueType is TBean))
+            //{
+            //    foreach (var e in type.Datas.Values)
+            //    {
+            //        e.Apply(this, x, y);
+            //    }
+            //}
+            throw new NotSupportedException();
         }
 
         public void Accept(DVector2 type, DefField x, List<ResourceInfo> y)

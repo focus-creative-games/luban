@@ -25,7 +25,7 @@ namespace Luban.Job.Cfg.DataCreators
         {
             if (byte.TryParse(x, out var b))
             {
-                return new DByte(b);
+                return DByte.ValueOf(b);
             }
             else
             {
@@ -37,7 +37,7 @@ namespace Luban.Job.Cfg.DataCreators
         {
             if (short.TryParse(x, out var b))
             {
-                return new DShort(b);
+                return DShort.ValueOf(b);
             }
             else
             {
@@ -49,7 +49,7 @@ namespace Luban.Job.Cfg.DataCreators
         {
             if (short.TryParse(x, out var b))
             {
-                return new DFshort(b);
+                return DFshort.ValueOf(b);
             }
             else
             {
@@ -73,7 +73,7 @@ namespace Luban.Job.Cfg.DataCreators
         {
             if (int.TryParse(x, out var b))
             {
-                return new DFint(b);
+                return DFint.ValueOf(b);
             }
             else
             {
@@ -97,7 +97,7 @@ namespace Luban.Job.Cfg.DataCreators
         {
             if (long.TryParse(x, out var b))
             {
-                return new DFlong(b);
+                return DFlong.ValueOf(b);
             }
             else
             {
@@ -121,7 +121,7 @@ namespace Luban.Job.Cfg.DataCreators
         {
             if (double.TryParse(x, out var b))
             {
-                return new DDouble(b);
+                return DDouble.ValueOf(b);
             }
             else
             {

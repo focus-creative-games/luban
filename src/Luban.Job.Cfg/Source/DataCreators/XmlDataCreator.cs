@@ -23,17 +23,17 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TByte type, XElement x, DefAssembly ass)
         {
-            return new DByte(byte.Parse(x.Value.Trim()));
+            return DByte.ValueOf(byte.Parse(x.Value.Trim()));
         }
 
         public DType Accept(TShort type, XElement x, DefAssembly ass)
         {
-            return new DShort(short.Parse(x.Value.Trim()));
+            return DShort.ValueOf(short.Parse(x.Value.Trim()));
         }
 
         public DType Accept(TFshort type, XElement x, DefAssembly ass)
         {
-            return new DFshort(short.Parse(x.Value.Trim()));
+            return DFshort.ValueOf(short.Parse(x.Value.Trim()));
         }
 
         public DType Accept(TInt type, XElement x, DefAssembly ass)
@@ -43,7 +43,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TFint type, XElement x, DefAssembly ass)
         {
-            return new DFint(int.Parse(x.Value.Trim()));
+            return DFint.ValueOf(int.Parse(x.Value.Trim()));
         }
 
         public DType Accept(TLong type, XElement x, DefAssembly ass)
@@ -53,7 +53,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TFlong type, XElement x, DefAssembly ass)
         {
-            return new DFlong(long.Parse(x.Value.Trim()));
+            return DFlong.ValueOf(long.Parse(x.Value.Trim()));
         }
 
         public DType Accept(TFloat type, XElement x, DefAssembly ass)
@@ -63,7 +63,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TDouble type, XElement x, DefAssembly ass)
         {
-            return new DDouble(double.Parse(x.Value.Trim()));
+            return DDouble.ValueOf(double.Parse(x.Value.Trim()));
         }
 
         public DType Accept(TEnum type, XElement x, DefAssembly ass)
