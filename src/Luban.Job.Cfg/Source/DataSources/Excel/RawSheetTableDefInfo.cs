@@ -8,6 +8,10 @@ namespace Luban.Job.Cfg.DataSources.Excel
 {
     class FieldInfo
     {
+        public string Name { get; init; }
+
+        public Dictionary<string, string> Tags { get; init; }
+
         public string Type { get; init; }
 
         public string BriefDesc { get; init; }

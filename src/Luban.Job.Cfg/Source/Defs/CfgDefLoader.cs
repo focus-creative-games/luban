@@ -161,9 +161,6 @@ namespace Luban.Job.Cfg.Defs
             _cfgServices.Add(new Service() { Name = name, Manager = manager, Groups = groups, Refs = refs });
         }
 
-
-        private readonly Dictionary<string, Table> _name2CfgTable = new Dictionary<string, Table>();
-
         private static List<string> CreateGroups(string s)
         {
             return s.Split(',', ';').Select(x => x.Trim()).Where(x => !string.IsNullOrWhiteSpace(x)).ToList();

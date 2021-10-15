@@ -2,6 +2,7 @@
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.DataSources.Excel;
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Cfg.RawDefs;
 using Luban.Job.Cfg.TypeVisitors;
 using Luban.Job.Cfg.Utils;
 using Luban.Job.Common.Types;
@@ -223,28 +224,12 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TText type, Sheet sheet, TitleRow row)
         {
-            string key;
-            string text;
-            var sep = GetSep(type);
-            if (!string.IsNullOrWhiteSpace(sep))
+            if (row.Row.Count != 2)
             {
-                var keyText = row.Current.ToString().Split(sep);
-                if (keyText.Length != 2)
-                {
-                    throw new Exception($"'{row.Current}' 不是合法text值");
-                }
-                key = ParseString(keyText[0]);
-                text = ParseString(keyText[1]);
+                throw new Exception($"text 要求两个字段");
             }
-            else
-            {
-                if (row.Row.Count != 2)
-                {
-                    throw new Exception($"text 要求两个字段");
-                }
-                key = ParseString(row.Row[0].Value);
-                text = ParseString(row.Row[1].Value);
-            }
+            var key = ParseString(row.Row[0].Value);
+            var text = ParseString(row.Row[1].Value);
             DataUtil.ValidateText(key, text);
             return new DText(key, text);
         }
@@ -287,8 +272,6 @@ namespace Luban.Job.Cfg.DataCreators
             {
                 var s = row.AsStream(sep);
                 return type.Apply(ExcelStreamDataCreator.Ins, s);
-
-
             }
             else if (row.Rows != null)
             {
@@ -348,6 +331,8 @@ namespace Luban.Job.Cfg.DataCreators
             }
         }
 
+        const string SimpleContainerSep = ",;";
+
         public string GetSep(TType type)
         {
             if (type.Tags.TryGetValue("sep", out var s) && !string.IsNullOrWhiteSpace(s))
@@ -356,9 +341,10 @@ namespace Luban.Job.Cfg.DataCreators
             }
             switch (type)
             {
-                case TArray ta: return ta.ElementType.Apply(IsNotSepTypeVisitor.Ins) ? "," : "";
-                case TList ta: return ta.ElementType.Apply(IsNotSepTypeVisitor.Ins) ? "," : "";
-                case TSet ta: return ta.ElementType.Apply(IsNotSepTypeVisitor.Ins) ? "," : "";
+                case TBean tb: return (tb.Bean as DefBean).Sep;
+                case TArray ta: return ta.ElementType.Apply(IsNotSepTypeVisitor.Ins) ? SimpleContainerSep : "";
+                case TList ta: return ta.ElementType.Apply(IsNotSepTypeVisitor.Ins) ? SimpleContainerSep : "";
+                case TSet ta: return ta.ElementType.Apply(IsNotSepTypeVisitor.Ins) ? SimpleContainerSep : "";
                 default: return "";
             }
         }
