@@ -1,6 +1,7 @@
 using ExcelDataReader;
 using Luban.Job.Cfg.DataCreators;
 using Luban.Job.Cfg.Datas;
+using Luban.Job.Cfg.Utils;
 using Luban.Job.Common.Types;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
             {
                 var sheet = new Sheet(rawUrl, sheetName);
                 sheet.Load(rawSheet);
+                _sheets.Add(sheet);
             }
 
             if (_sheets.Count == 0)
@@ -36,7 +38,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         public RawSheetTableDefInfo LoadTableDefInfo(string rawUrl, string sheetName, Stream stream)
         {
-            return null;
+            return SheetLoadUtil.LoadSheetTableDefInfo(rawUrl, sheetName, stream);
         }
 
         public override List<Record> ReadMulti(TBean type)
@@ -48,8 +50,14 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 {
                     foreach (TitleRow row in sheet.GetRows())
                     {
+                        var tagRow = row.GetSubTitleNamedRow(TAG_KEY);
+                        string tagStr = tagRow?.Current?.ToString();
+                        if (DataUtil.IsIgnoreTag(tagStr))
+                        {
+                            continue;
+                        }
                         var data = (DBean)type.Apply(SheetDataCreator.Ins, sheet, row);
-                        datas.Add(new Record(data, sheet.RawUrl, row.Tags));
+                        datas.Add(new Record(data, sheet.RawUrl, DataUtil.ParseTags(tagStr)));
                     }
                 }
                 catch (DataCreateException dce)

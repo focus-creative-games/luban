@@ -18,13 +18,39 @@ namespace Luban.Job.Cfg.DataSources.Excel
         private readonly int _toIndex;
         private int _curIndex;
 
-        public ExcelStream(List<Cell> datas, int fromIndex, int toIndex, string sep)
+        private readonly string _overrideDefault;
+
+        public ExcelStream(List<Cell> datas, int fromIndex, int toIndex, string sep, string overrideDefault)
         {
+            _overrideDefault = overrideDefault;
             if (string.IsNullOrWhiteSpace(sep))
             {
-                this._datas = datas;
-                this._toIndex = toIndex;
-                this._curIndex = fromIndex;
+                if (string.IsNullOrEmpty(overrideDefault))
+                {
+                    this._datas = datas;
+                    this._toIndex = toIndex;
+                    this._curIndex = fromIndex;
+                }
+                else
+                {
+                    this._datas = new List<Cell>();
+                    for (int i = fromIndex; i <= toIndex; i++)
+                    {
+                        var cell = datas[i];
+                        object d = cell.Value;
+                        if (!IsSkip(d))
+                        {
+                            this._datas.Add(cell);
+                        }
+                        else
+                        {
+                            this._datas.Add(new Cell(cell.Row, cell.Column, _overrideDefault));
+                        }
+                    }
+                    this._curIndex = 0;
+                    this._toIndex = this._datas.Count - 1;
+                }
+
             }
             else
             {
@@ -33,13 +59,20 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 {
                     var cell = datas[i];
                     object d = cell.Value;
-                    if (d is string s)
+                    if (!IsSkip(d))
                     {
-                        this._datas.AddRange(DataUtil.SplitStringByAnySepChar(s, sep).Select(x => new Cell(cell.Row, cell.Column, x)));
+                        if (d is string s)
+                        {
+                            this._datas.AddRange(DataUtil.SplitStringByAnySepChar(s, sep).Select(x => new Cell(cell.Row, cell.Column, x)));
+                        }
+                        else
+                        {
+                            this._datas.Add(cell);
+                        }
                     }
-                    else
+                    else if (!string.IsNullOrEmpty(_overrideDefault))
                     {
-                        this._datas.Add(cell);
+                        this._datas.Add(new Cell(cell.Row, cell.Column, _overrideDefault));
                     }
                 }
                 this._curIndex = 0;

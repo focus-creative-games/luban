@@ -107,7 +107,6 @@ namespace Luban.Job.Cfg.TypeVisitors
                         //#if !LUBAN_LITE
                         //                        || f1.ResourceTag != f2.ResourceTag
                         //#endif
-                        || f1.IsMultiRow != f2.IsMultiRow
                         || f1.CType.IsNullable != f2.CType.IsNullable
                         || f1.CType.GetType() != f2.CType.GetType()
                         //|| !IsValidatorEquals(f1.RawDefine.Validators, f2.RawDefine.Validators)

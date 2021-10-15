@@ -16,29 +16,6 @@ namespace Luban.Job.Cfg.Defs
     {
         public DefAssembly Assembly => (DefAssembly)HostType.AssemblyBase;
 
-
-        public bool RawIsMultiRow { get; }
-
-        public bool IsMultiRow { get; private set; }
-
-        public bool ComputeIsMultiRow()
-        {
-            if (IsMultiRow)
-            {
-                return true;
-            }
-
-            switch (CType)
-            {
-                case TBean b: { return IsMultiRow = ((DefBean)b.Bean).IsMultiRow; }
-                case TList b: { return IsMultiRow = b.ElementType is TBean b2 && ((DefBean)b2.Bean).IsMultiRow; }
-                case TArray b: { return IsMultiRow = b.ElementType is TBean b2 && ((DefBean)b2.Bean).IsMultiRow; }
-                case TMap b: { return IsMultiRow = b.ValueType is TBean b2 && ((DefBean)b2.Bean).IsMultiRow; }
-                default: return false;
-            }
-        }
-
-
         public string Index { get; }
 
         public List<string> Groups { get; }
@@ -210,11 +187,6 @@ namespace Luban.Job.Cfg.Defs
                     }
                     break;
                 }
-            }
-
-            if (IsMultiRow && !CType.IsCollection && !CType.IsBean)
-            {
-                throw new Exception($"只有容器类型才支持 multi_line 属性");
             }
 
             if (!string.IsNullOrEmpty(Index))

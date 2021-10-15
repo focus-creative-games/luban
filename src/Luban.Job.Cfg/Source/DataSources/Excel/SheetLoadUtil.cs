@@ -108,7 +108,12 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         public static Title ParseTitle(List<List<Cell>> cells, CellRange[] mergeCells, bool orientRow, out int titleRowNum)
         {
-            var rootTitle = new Title() { Root = true, Name = "__root__", FromIndex = 0, ToIndex = cells.Select(r => r.Count).Max() - 1 };
+            var rootTitle = new Title() { 
+                Root = true, Name = "__root__",
+                Tags = new Dictionary<string, string>(),
+                FromIndex = 0,
+                ToIndex = cells.Select(r => r.Count).Max() - 1
+            };
 
             titleRowNum = GetTitleRowNum(mergeCells, orientRow);
 
@@ -150,52 +155,55 @@ namespace Luban.Job.Cfg.DataSources.Excel
         {
 
             var titleRow = cells[curDepth - 1];
-            foreach (var mergeCell in mergeCells)
+            if (mergeCells != null)
             {
-                Title subTitle = null;
-                if (orientRow)
+                foreach (var mergeCell in mergeCells)
                 {
-                    //if (mergeCell.FromRow <= 1 && mergeCell.ToRow >= 1)
-                    if (mergeCell.FromRow == curDepth)
+                    Title subTitle = null;
+                    if (orientRow)
                     {
-                        var nameAndAttrs = titleRow[mergeCell.FromColumn].Value?.ToString()?.Trim();
-                        if (IsIgnoreTitle(nameAndAttrs))
+                        //if (mergeCell.FromRow <= 1 && mergeCell.ToRow >= 1)
+                        if (mergeCell.FromRow == curDepth && mergeCell.FromColumn >= title.FromIndex && mergeCell.FromColumn <= title.ToIndex)
                         {
-                            continue;
+                            var nameAndAttrs = titleRow[mergeCell.FromColumn].Value?.ToString()?.Trim();
+                            if (IsIgnoreTitle(nameAndAttrs))
+                            {
+                                continue;
+                            }
+                            var (titleName, tags) = ParseNameAndMetaAttrs(nameAndAttrs);
+                            subTitle = new Title() { Name = titleName, Tags = tags, FromIndex = mergeCell.FromColumn, ToIndex = mergeCell.ToColumn };
+                            //s_logger.Info("=== sheet:{sheet} title:{title}", Name, newTitle);
                         }
-                        var (titleName, tags) = ParseNameAndMetaAttrs(nameAndAttrs);
-                        subTitle = new Title() { Name = titleName, Tags = tags, FromIndex = mergeCell.FromColumn, ToIndex = mergeCell.ToColumn };
-                        //s_logger.Info("=== sheet:{sheet} title:{title}", Name, newTitle);
                     }
-                }
-                else
-                {
-                    if (mergeCell.FromColumn == curDepth - 1)
+                    else
                     {
-                        // 标题 行
-                        var nameAndAttrs = titleRow[mergeCell.FromRow - 1].Value?.ToString()?.Trim();
-                        if (IsIgnoreTitle(nameAndAttrs))
+                        if (mergeCell.FromColumn == curDepth - 1 && mergeCell.FromRow - 1 >= title.FromIndex && mergeCell.FromRow - 1 <= title.ToIndex)
                         {
-                            continue;
+                            // 标题 行
+                            var nameAndAttrs = titleRow[mergeCell.FromRow - 1].Value?.ToString()?.Trim();
+                            if (IsIgnoreTitle(nameAndAttrs))
+                            {
+                                continue;
+                            }
+                            var (titleName, tags) = ParseNameAndMetaAttrs(nameAndAttrs);
+                            subTitle = new Title() { Name = titleName, Tags = tags, FromIndex = mergeCell.FromRow - 1, ToIndex = mergeCell.ToRow - 1 };
                         }
-                        var (titleName, tags) = ParseNameAndMetaAttrs(nameAndAttrs);
-                        subTitle = new Title() { Name = titleName, Tags = tags, FromIndex = mergeCell.FromRow - 1, ToIndex = mergeCell.ToRow - 1 };
                     }
-                }
-                if (subTitle == null)
-                {
-                    continue;
-                }
+                    if (subTitle == null)
+                    {
+                        continue;
+                    }
 
-                if (curDepth < maxDepth)
-                {
-                    ParseSubTitles(subTitle, cells, mergeCells, orientRow, curDepth + 1, maxDepth);
-                }
-                title.AddSubTitle(subTitle);
+                    if (curDepth < maxDepth)
+                    {
+                        ParseSubTitles(subTitle, cells, mergeCells, orientRow, curDepth + 1, maxDepth);
+                    }
+                    title.AddSubTitle(subTitle);
 
+                }
             }
 
-            for (int i = 0; i < titleRow.Count; i++)
+            for (int i = title.FromIndex; i <= title.ToIndex; i++)
             {
                 var nameAndAttrs = titleRow[i].Value?.ToString()?.Trim();
                 if (IsIgnoreTitle(nameAndAttrs))

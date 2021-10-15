@@ -8,7 +8,7 @@ namespace Luban.Job.Cfg.Datas
 
         public static DFshort ValueOf(short x)
         {
-            return x == 0 ? Default : new DFshort(0);
+            return x == 0 ? Default : new DFshort(x);
         }
 
         public override string TypeName => "fshort";

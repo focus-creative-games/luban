@@ -1,4 +1,6 @@
 using Luban.Job.Cfg.Datas;
+using Luban.Job.Cfg.Defs;
+using Luban.Job.Cfg.TypeVisitors;
 using Luban.Job.Common.Types;
 using System;
 using System.Collections.Generic;
@@ -137,6 +139,24 @@ namespace Luban.Job.Cfg.Utils
             return tags.Count > 0 ? tags : null;
         }
 
+        const string SimpleContainerSep = ",;";
+
+        public static string GetSep(TType type)
+        {
+
+            if (type.Tags != null && type.Tags.TryGetValue("sep", out var s) && !string.IsNullOrWhiteSpace(s))
+            {
+                return s;
+            }
+            switch (type)
+            {
+                case TBean tb: return (tb.Bean as DefBean).Sep;
+                case TArray ta: return ta.ElementType.Apply(IsNotSepTypeVisitor.Ins) ? SimpleContainerSep : "";
+                case TList ta: return ta.ElementType.Apply(IsNotSepTypeVisitor.Ins) ? SimpleContainerSep : "";
+                case TSet ta: return ta.ElementType.Apply(IsNotSepTypeVisitor.Ins) ? SimpleContainerSep : "";
+                default: return "";
+            }
+        }
         //public static string Data2String(DType data)
         //{
         //    var s = new StringBuilder();

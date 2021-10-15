@@ -30,12 +30,10 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         public void Load(RawSheet rawSheet)
         {
-            bool anyMultiRows = rawSheet.Title.SubTitleList.Any(t => t.SelfMultiRows);
-
             var cells = rawSheet.Cells;
             Title title = rawSheet.Title;
 
-            if (!anyMultiRows)
+            if (!title.HierarchyMultiRows)
             {
                 foreach (var row in cells)
                 {
@@ -86,14 +84,14 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 }
                 else
                 {
-                    if (title.SubTitleList.All(t => !t.SelfMultiRows && IsBlankRow(row, t.FromIndex, t.ToIndex)))
+                    if (title.SubTitleList.All(t => t.SelfMultiRows || IsBlankRow(row, t.FromIndex, t.ToIndex)))
                     {
                         oneRecordRows.Add(row);
                     }
                     else
                     {
                         yield return oneRecordRows;
-                        oneRecordRows = null;
+                        oneRecordRows = new List<List<Cell>>() { row };
                     }
                 }
             }
@@ -118,43 +116,45 @@ namespace Luban.Job.Cfg.DataSources.Excel
             }
             else
             {
-                if (title.SelfMultiRows)
+                var fields = new Dictionary<string, TitleRow>();
+                foreach (var subTitle in title.SubTitleList)
                 {
-                    var eles = new List<TitleRow>();
-                    foreach (var eleRow in SplitRows(title, rows))
+                    if (subTitle.SelfMultiRows)
                     {
-                        var fields = new Dictionary<string, TitleRow>();
-                        foreach (var subTitle in title.SubTitleList)
+                        var eles = new List<TitleRow>();
+                        if (subTitle.SubHierarchyMultiRows)
                         {
-                            if (subTitle.SelfMultiRows)
+                            foreach (var eleRows in SplitRows(subTitle, rows))
                             {
-                                fields.Add(subTitle.Name, ParseMultiLineTitleRow(title, eleRow));
+                                eles.Add(ParseMultiLineTitleRow(subTitle, eleRows));
                             }
-                            else
-                            {
-                                fields.Add(subTitle.Name, ParseOneLineTitleRow(title, eleRow[0]));
-                            }
-                        }
-                        eles.Add(new TitleRow(title, fields));
-                    }
-                    return new TitleRow(title, eles);
-                }
-                else
-                {
-                    var fields = new Dictionary<string, TitleRow>();
-                    foreach (var subTitle in title.SubTitleList)
-                    {
-                        if (subTitle.SelfMultiRows)
-                        {
-                            fields.Add(subTitle.Name, ParseMultiLineTitleRow(title, rows));
                         }
                         else
                         {
-                            fields.Add(subTitle.Name, ParseOneLineTitleRow(title, rows[0]));
+                            foreach (var eleRow in rows)
+                            {
+                                if (IsBlankRow(eleRow, subTitle.FromIndex, subTitle.ToIndex))
+                                {
+                                    continue;
+                                }
+                                eles.Add(ParseOneLineTitleRow(subTitle, eleRow));
+                            }
+                        }
+                        fields.Add(subTitle.Name, new TitleRow(subTitle, eles));
+                    }
+                    else
+                    {
+                        if (subTitle.SubHierarchyMultiRows)
+                        {
+                            fields.Add(subTitle.Name, ParseMultiLineTitleRow(subTitle, rows));
+                        }
+                        else
+                        {
+                            fields.Add(subTitle.Name, ParseOneLineTitleRow(subTitle, rows[0]));
                         }
                     }
-                    return new TitleRow(title, fields);
                 }
+                return new TitleRow(title, fields);
             }
         }
 
@@ -163,7 +163,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
             return Rows;
         }
 
-        private static bool IsBlankRow(List<Cell> row, int fromIndex, int toIndex)
+        public static bool IsBlankRow(List<Cell> row, int fromIndex, int toIndex)
         {
             for (int i = Math.Max(1, fromIndex), n = Math.Min(toIndex, row.Count - 1); i <= n; i++)
             {
@@ -171,41 +171,6 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 if (v != null && !(v is string s && string.IsNullOrEmpty(s)))
                 {
                     return false;
-                }
-            }
-            return true;
-        }
-
-        private static bool IsSameRow(List<Cell> row1, List<Cell> row2, int fromIndex, int toIndex)
-        {
-            if (row2.Count < toIndex - 1)
-            {
-                return false;
-            }
-            for (int i = Math.Max(1, fromIndex), n = Math.Min(toIndex, row1.Count - 1); i <= n; i++)
-            {
-                var v1 = row1[i].Value;
-                var v2 = row2[i].Value;
-                if (v1 != v2)
-                {
-                    if (v1 == null)
-                    {
-                        if (!(v2 is string s && string.IsNullOrWhiteSpace(s)))
-                        {
-                            return false;
-                        }
-                    }
-                    else if (v2 == null)
-                    {
-                        if (!(v1 is string s && string.IsNullOrWhiteSpace(s)))
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        return v1.ToString() == v2.ToString();
-                    }
                 }
             }
             return true;

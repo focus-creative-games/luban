@@ -277,6 +277,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TText type, ExcelStream x)
         {
+            x = SepIfNeed(type, x);
             string key = ParseString(x.Read());
             if (key == null)
             {
@@ -302,15 +303,15 @@ namespace Luban.Job.Cfg.DataCreators
             {
                 try
                 {
-                    string sep = f.Tags.TryGetValue("tag", out var s) ? s : null;
-                    if (string.IsNullOrWhiteSpace(sep))
-                    {
-                        list.Add(f.CType.Apply(this, stream));
-                    }
-                    else
-                    {
-                        list.Add(f.CType.Apply(this, new ExcelStream(stream.ReadCell(), sep)));
-                    }
+                    //string sep = f.Tags.TryGetValue("tag", out var s) ? s : null;
+                    //if (string.IsNullOrWhiteSpace(sep))
+                    //{
+                    list.Add(f.CType.Apply(this, stream));
+                    //}
+                    //else
+                    //{
+                    //    list.Add(f.CType.Apply(this, new ExcelStream(stream.ReadCell(), sep)));
+                    //}
                 }
                 catch (DataCreateException dce)
                 {
@@ -327,9 +328,23 @@ namespace Luban.Job.Cfg.DataCreators
             return list;
         }
 
+        public static ExcelStream SepIfNeed(TType type, ExcelStream stream)
+        {
+            string sep = DataUtil.GetSep(type);
+            if (!string.IsNullOrEmpty(sep))
+            {
+                return new ExcelStream(stream.ReadCell(), sep);
+            }
+            else
+            {
+                return stream;
+            }
+        }
+
         public DType Accept(TBean type, ExcelStream x)
         {
             var originBean = (DefBean)type.Bean;
+            x = SepIfNeed(type, x);
 
             if (originBean.IsAbstractType)
             {
@@ -372,46 +387,38 @@ namespace Luban.Job.Cfg.DataCreators
         // 因为貌似没意义？
         public List<DType> ReadList(TType type, ExcelStream stream)
         {
-            string sep = type is TBean bean ? ((DefBean)bean.Bean).Sep : null;
             var datas = new List<DType>();
             while (!stream.TryReadEOF())
             {
-                if (string.IsNullOrWhiteSpace(sep))
-                {
-                    datas.Add(type.Apply(this, stream));
-                }
-                else
-                {
-                    datas.Add(type.Apply(this, new ExcelStream(stream.ReadCell(), sep))); ;
-                }
+                datas.Add(type.Apply(this, stream));
             }
             return datas;
         }
 
         public DType Accept(TArray type, ExcelStream x)
         {
-            return new DArray(type, ReadList(type.ElementType, x));
+            return new DArray(type, ReadList(type.ElementType, SepIfNeed(type, x)));
         }
 
         public DType Accept(TList type, ExcelStream x)
         {
-            return new DList(type, ReadList(type.ElementType, x));
+            return new DList(type, ReadList(type.ElementType, SepIfNeed(type, x)));
         }
 
         public DType Accept(TSet type, ExcelStream x)
         {
-            return new DSet(type, ReadList(type.ElementType, x));
+            return new DSet(type, ReadList(type.ElementType, SepIfNeed(type, x)));
         }
 
         public DType Accept(TMap type, ExcelStream x)
         {
-            string sep = type.ValueType is TBean bean ? ((DefBean)bean.Bean).Sep : null;
+            x = SepIfNeed(type, x);
 
             var datas = new Dictionary<DType, DType>();
             while (!x.TryReadEOF())
             {
                 var key = type.KeyType.Apply(this, x);
-                var value = string.IsNullOrWhiteSpace(sep) ? type.ValueType.Apply(this, x) : type.ValueType.Apply(this, new ExcelStream(x.ReadCell(), sep));
+                var value = type.ValueType.Apply(this, x);
                 if (!datas.TryAdd(key, value))
                 {
                     throw new InvalidExcelDataException($"map 的 key:{key} 重复");

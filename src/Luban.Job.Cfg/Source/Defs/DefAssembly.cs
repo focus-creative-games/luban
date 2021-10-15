@@ -263,43 +263,6 @@ namespace Luban.Job.Cfg.Defs
                     throw;
                 }
             }
-
-            // 丑陋. 怎么写更好？
-
-            // 递归 设置DefBean及DefField 的 IsMultiRow
-
-            MarkMultiRows();
-        }
-
-        public void MarkMultiRows()
-        {
-            var multiRowBeans = new HashSet<DefBean>();
-            for (bool anyMark = true; anyMark;)
-            {
-                anyMark = false;
-                foreach (var type in this.Types.Values)
-                {
-                    if (type is DefBean beanType && !beanType.IsMultiRow)
-                    {
-                        bool isMultiRows;
-                        if (beanType.IsNotAbstractType)
-                        {
-                            isMultiRows = beanType.HierarchyFields.Any(f => ((DefField)f).ComputeIsMultiRow());
-                        }
-                        else
-                        {
-                            isMultiRows = beanType.HierarchyNotAbstractChildren.Any(c => ((DefBean)c).IsMultiRow);
-                        }
-                        if (isMultiRows)
-                        {
-                            beanType.IsMultiRow = true;
-                            //s_logger.Info("bean:{bean} is multi row", beanType.FullName);
-                            anyMark = true;
-                        }
-                    }
-                }
-
-            }
         }
     }
 }

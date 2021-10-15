@@ -25,9 +25,13 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         public string Sep { get; private set; }
 
+        public string Default { get; private set; }
+
         public bool SelfMultiRows { get; private set; }
 
         public bool HierarchyMultiRows { get; private set; }
+
+        public bool SubHierarchyMultiRows { get; private set; }
 
         public void AddSubTitle(Title title)
         {
@@ -55,6 +59,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
             SortSubTitles();
             Sep = Tags.TryGetValue("sep", out var v) && !string.IsNullOrWhiteSpace(v) ? v : null;
             SelfMultiRows = Tags.TryGetValue("multi_rows", out var v2) && (v2 == "1" || v2 == "true");
+            Default = Tags.TryGetValue("default", out var v3) ? v3 : null;
             if (SubTitleList.Count > 0)
             {
                 foreach (var sub in SubTitleList)
@@ -62,7 +67,8 @@ namespace Luban.Job.Cfg.DataSources.Excel
                     sub.Init();
                 }
             }
-            HierarchyMultiRows = SelfMultiRows || SubTitleList.Any(t => t.HierarchyMultiRows);
+            SubHierarchyMultiRows = SubTitleList.Any(t => t.HierarchyMultiRows); ;
+            HierarchyMultiRows = SelfMultiRows || SubHierarchyMultiRows;
         }
 
         public override string ToString()

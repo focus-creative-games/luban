@@ -566,15 +566,10 @@ namespace Luban.Job.Cfg.Defs
                 {
                     new CfgField() { Name = "name", Type = "string" },
                     new CfgField() { Name = "type", Type = "string" },
-                    new CfgField() { Name = "sep", Type = "string" },
-                    new CfgField() { Name = "is_multi_rows", Type = "bool" },
                     new CfgField() { Name = "index", Type = "string" },
                     new CfgField() { Name = "group", Type = "string" },
-                    new CfgField() { Name = "ref", Type = "string", IgnoreNameValidation = true },
-                    new CfgField() { Name = "path", Type = "string" },
                     new CfgField() { Name = "comment", Type = "string" },
                     new CfgField() { Name = "tags", Type = "string" },
-                    new CfgField() { Name = "orientation", Type = "string" },
                 }
             })
             {
@@ -613,7 +608,6 @@ namespace Luban.Job.Cfg.Defs
             defTableRecordType.PreCompile();
             defTableRecordType.Compile();
             defTableRecordType.PostCompile();
-            ass.MarkMultiRows();
             var tableRecordType = TBean.Create(false, defTableRecordType);
 
             foreach (var file in inputFileInfos)
@@ -672,21 +666,11 @@ namespace Luban.Job.Cfg.Defs
         private static readonly List<string> _fieldOptionalAttrs = new()
         {
             "index",
-            "sep",
-            "validator",
-            "key_validator",
-            "value_validator",
             "ref",
             "path",
-            "range",
-            "multi_rows",
             "group",
-            "res",
-            "convert",
             "comment",
             "tags",
-            "default",
-            "orientation",
         };
 
         private static readonly List<string> _fieldRequireAttrs = new List<string> { "name", "type" };
@@ -695,8 +679,20 @@ namespace Luban.Job.Cfg.Defs
         {
             ValidAttrKeys(defineFile, e, _fieldOptionalAttrs, _fieldRequireAttrs);
 
+            string refStr = XmlUtil.GetOptionalAttribute(e, "ref");
+            string typeStr = XmlUtil.GetRequiredAttribute(e, "type");
+            if (!string.IsNullOrWhiteSpace(refStr))
+            {
+                typeStr = typeStr + "&ref=" + refStr;
+            }
+            string pathStr = XmlUtil.GetOptionalAttribute(e, "path");
+            if (!string.IsNullOrWhiteSpace(pathStr))
+            {
+                typeStr = typeStr + "&path=" + pathStr;
+            }
+
             return CreateField(defineFile, XmlUtil.GetRequiredAttribute(e, "name"),
-                XmlUtil.GetRequiredAttribute(e, "type"),
+                typeStr,
                 XmlUtil.GetOptionalAttribute(e, "index"),
                  XmlUtil.GetOptionalAttribute(e, "group"),
                  XmlUtil.GetOptionalAttribute(e, "comment"),
