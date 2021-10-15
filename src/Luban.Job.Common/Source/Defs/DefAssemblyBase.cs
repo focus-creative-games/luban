@@ -217,13 +217,13 @@ namespace Luban.Job.Common.Defs
         {
             switch (containerType)
             {
-                case "array": return TArray.Create(false, null, CreateNotContainerType(module, elementType));
-                case "list": return TList.Create(false, null, CreateNotContainerType(module, elementType), true);
-                case "linkedlist": return TList.Create(false, null, CreateNotContainerType(module, elementType), false);
-                case "arraylist": return TList.Create(false, null, CreateNotContainerType(module, elementType), true);
-                case "set": return TSet.Create(false, null, CreateNotContainerType(module, elementType), false);
-                case "hashset": return TSet.Create(false, null, CreateNotContainerType(module, elementType), false);
-                case "treeset": return TSet.Create(false, null, CreateNotContainerType(module, elementType), true);
+                case "array": return TArray.Create(false, new Dictionary<string, string>(), CreateNotContainerType(module, elementType));
+                case "list": return TList.Create(false, new Dictionary<string, string>(), CreateNotContainerType(module, elementType), true);
+                case "linkedlist": return TList.Create(false, new Dictionary<string, string>(), CreateNotContainerType(module, elementType), false);
+                case "arraylist": return TList.Create(false, new Dictionary<string, string>(), CreateNotContainerType(module, elementType), true);
+                case "set": return TSet.Create(false, new Dictionary<string, string>(), CreateNotContainerType(module, elementType), false);
+                case "hashset": return TSet.Create(false, new Dictionary<string, string>(), CreateNotContainerType(module, elementType), false);
+                case "treeset": return TSet.Create(false, new Dictionary<string, string>(), CreateNotContainerType(module, elementType), true);
                 case "map": return CreateMapType(module, elementType, false);
                 case "treemap": return CreateMapType(module, elementType, true);
                 case "hashmap": return CreateMapType(module, elementType, false);

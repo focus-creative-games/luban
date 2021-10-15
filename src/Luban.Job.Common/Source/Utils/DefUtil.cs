@@ -11,11 +11,11 @@ namespace Luban.Job.Common.Utils
 
         public static Dictionary<string, string> ParseAttrs(string tags)
         {
+            var am = new Dictionary<string, string>();
             if (string.IsNullOrWhiteSpace(tags))
             {
-                return null;
+                return am;
             }
-            var am = new Dictionary<string, string>();
             foreach (var pair in tags.Split(s_attrSep))
             {
                 int sepIndex = pair.IndexOfAny(s_attrKeyValueSep);
@@ -40,7 +40,7 @@ namespace Luban.Job.Common.Utils
             int sepIndex = s.IndexOfAny(s_attrSep);
             if (sepIndex < 0)
             {
-                return (s, null);
+                return (s, new Dictionary<string, string>());
             }
             else
             {

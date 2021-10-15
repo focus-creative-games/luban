@@ -24,6 +24,10 @@ namespace Luban.Job.Cfg.Defs
 
         public RefValidator Ref { get; private set; }
 
+        public RefValidator KeyRef { get; private set; }
+
+        public RefValidator ValueRef { get; private set; }
+
         // 如果ref了多个表，不再生成 xxx_ref之类的字段，也不会resolve
         public bool GenRef => Ref != null && Ref.Tables.Count == 1;
 
@@ -121,25 +125,66 @@ namespace Luban.Job.Cfg.Defs
         public override void Compile()
         {
             base.Compile();
-            //foreach (var v in this.Validators)
-            //{
-            //    v.Compile(this);
-            //}
 
-            //foreach (var v in this.KeyValidators)
-            //{
-            //    v.Compile(this);
-            //}
-
-            //foreach (var v in this.ValueValidators)
-            //{
-            //    v.Compile(this);
-            //}
-
-            //if (!string.IsNullOrWhiteSpace(this.DefaultValue))
-            //{
-            //    this.DefalutDtypeValue = CType.Apply(StringDataCreator.Ins, this.DefaultValue);
-            //}
+            switch (this.CType)
+            {
+                case TArray ta:
+                {
+                    if (ta.ElementType.Tags.TryGetValue("ref", out string refStr))
+                    {
+                        this.ValueRef = (RefValidator)ValidatorFactory.Create("ref", refStr);
+                    }
+                    if (CType.Tags.TryGetValue("ref", out string refStr2))
+                    {
+                        this.ValueRef = (RefValidator)ValidatorFactory.Create("ref", refStr2);
+                    }
+                    break;
+                }
+                case TList ta:
+                {
+                    if (ta.ElementType.Tags.TryGetValue("ref", out string refStr))
+                    {
+                        this.ValueRef = (RefValidator)ValidatorFactory.Create("ref", refStr);
+                    }
+                    if (CType.Tags.TryGetValue("ref", out string refStr2))
+                    {
+                        this.ValueRef = (RefValidator)ValidatorFactory.Create("ref", refStr2);
+                    }
+                    break;
+                }
+                case TSet ta:
+                {
+                    if (ta.ElementType.Tags.TryGetValue("ref", out string refStr))
+                    {
+                        this.ValueRef = (RefValidator)ValidatorFactory.Create("ref", refStr);
+                    }
+                    if (CType.Tags.TryGetValue("ref", out string refStr2))
+                    {
+                        this.ValueRef = (RefValidator)ValidatorFactory.Create("ref", refStr2);
+                    }
+                    break;
+                }
+                case TMap ta:
+                {
+                    if (ta.KeyType.Tags.TryGetValue("ref", out string keyRefStr))
+                    {
+                        this.KeyRef = (RefValidator)ValidatorFactory.Create("ref", keyRefStr);
+                    }
+                    if (ta.ValueType.Tags.TryGetValue("ref", out string valueRefStr))
+                    {
+                        this.ValueRef = (RefValidator)ValidatorFactory.Create("ref", valueRefStr);
+                    }
+                    break;
+                }
+                default:
+                {
+                    if (CType.Tags.TryGetValue("ref", out string refStr2))
+                    {
+                        this.Ref = (RefValidator)ValidatorFactory.Create("ref", refStr2);
+                    }
+                    break;
+                }
+            }
 
             switch (CType)
             {
@@ -210,87 +255,72 @@ namespace Luban.Job.Cfg.Defs
                     throw new Exception($"type:'{HostType.FullName}' field:'{Name}' index:'{Index}'. only array:bean or list:bean support index");
                 }
             }
+        }
 
-            //if (!CType.IsCollection && !(CType.IsBean))
-            //{
-            //    this.Ref = (RefValidator)this.Validators.FirstOrDefault(v => v is RefValidator);
-            //}
-
-            //if (!string.IsNullOrEmpty(this.RawDefine.Converter))
-            //{
-            //    this.Remapper = AssemblyBase.GetDefTType(HostType.Namespace, this.RawDefine.Converter, this.IsNullable) as TEnum;
-            //    if (this.Remapper == null)
-            //    {
-            //        throw new Exception($"type:'{HostType.FullName}' field:'{Name}' converter:'{this.RawDefine.Converter}' not exists");
-            //    }
-            //}
-
-            //// 检查所引用的表是否导出了
-            //if (NeedExport)
-            //{
-            //    var allValidators = new List<IValidator>(this.Validators);
-            //    allValidators.AddRange(this.KeyValidators);
-            //    allValidators.AddRange(this.ValueValidators);
-
-            //    foreach (var val in allValidators)
-            //    {
-            //        if (val is RefValidator refValidator && !Assembly.GetCfgTable(refValidator.FirstTable).NeedExport)
-            //        {
-            //            throw new Exception($"type:'{HostType.FullName}' field:'{Name}' ref 引用的表:'{refValidator.FirstTable}' 没有导出");
-            //        }
-            //    }
-            //}
+        private void ValidateRef(RefValidator val, TType refVarType)
+        {
+            val.Compile(this);
+            foreach (var table in val.Tables)
+            {
+                var cfgTable = Assembly.GetCfgTable(RefValidator.GetActualTableName(table));
+                if (cfgTable == null)
+                {
+                    throw new Exception($"type:'{HostType.FullName}' field:'{Name}' ref 引用的表:'{table}' 不存在");
+                }
+                if (!cfgTable.NeedExport)
+                {
+                    throw new Exception($"type:'{HostType.FullName}' field:'{Name}' ref 引用的表:'{table}' 没有导出");
+                }
+                if (!cfgTable.IsMapTable)
+                {
+                    throw new Exception($"type:'{HostType.FullName}' field:'{Name}' ref 引用的表:'{table}'不是普通表，无法进行引用检查");
+                }
+                var keyType = cfgTable.KeyTType;
+                if (keyType.GetType() != refVarType.GetType())
+                {
+                    throw new Exception($"type:'{HostType.FullName}' field:'{Name}' 类型:'{refVarType}' 与 被引用的表:'{cfgTable.FullName}' key类型:'{keyType}' 不一致");
+                }
+            }
         }
 
         public override void PostCompile()
         {
             base.PostCompile();
 
-            // 检查 字段类型 与 所引用的表的key是否一致
-
-            //foreach (var val in KeyValidators)
-            //{
-            //    if (val is RefValidator refValidator)
-            //    {
-            //        var cfgTable = Assembly.GetCfgTable(refValidator.FirstTable);
-            //        if (CType is TMap mapType)
-            //        {
-            //            if (mapType.KeyType.GetType() != cfgTable.KeyTType.GetType())
-            //            {
-            //                throw new Exception($"type:'{HostType.FullName}' field:'{Name}' key类型:'{mapType.KeyType.GetType()}' 与 被引用的表:'{cfgTable.FullName}' key类型:'{cfgTable.KeyTType.GetType()}' 不一致");
-            //            }
-            //        }
-            //        else
-            //        {
-            //            throw new Exception($"type:'{HostType.FullName}' field:'{Name}' 不是 map类型. 不能指定 key_validator 引用");
-            //        }
-            //    }
-            //}
-
-            //var remainValidators = new List<IValidator>(this.Validators);
-            //remainValidators.AddRange(this.ValueValidators);
-            //foreach (var val in remainValidators)
-            //{
-            //    if (val is RefValidator refValidator)
-            //    {
-            //        var cfgTable = Assembly.GetCfgTable(refValidator.FirstTable);
-            //        TType valueType;
-            //        switch (CType)
-            //        {
-            //            case TArray ta: valueType = ta.ElementType; break;
-            //            case TList tl: valueType = tl.ElementType; break;
-            //            case TSet ts: valueType = ts.ElementType; break;
-            //            case TMap tm: valueType = tm.ValueType; break;
-            //            default: valueType = CType; break;
-            //        }
-
-            //        if (valueType.GetType() != cfgTable.KeyTType.GetType())
-            //        {
-            //            throw new Exception($"type:'{HostType.FullName}' field:'{Name}' 类型:'{valueType.GetType()}' 与 被引用的表:'{cfgTable.FullName}' key类型:'{cfgTable.KeyTType.GetType()}' 不一致");
-            //        }
-
-            //    }
-            //}
+            if (Ref != null)
+            {
+                ValidateRef(Ref, CType);
+            }
+            if (KeyRef != null)
+            {
+                ValidateRef(KeyRef, (CType as TMap).KeyType);
+            }
+            if (ValueRef != null)
+            {
+                switch (this.CType)
+                {
+                    case TArray ta:
+                    {
+                        ValidateRef(ValueRef, ta.ElementType);
+                        break;
+                    }
+                    case TList ta:
+                    {
+                        ValidateRef(ValueRef, ta.ElementType);
+                        break;
+                    }
+                    case TSet ta:
+                    {
+                        ValidateRef(ValueRef, ta.ElementType);
+                        break;
+                    }
+                    case TMap ta:
+                    {
+                        ValidateRef(ValueRef, ta.ValueType);
+                        break;
+                    }
+                }
+            }
         }
     }
 }
