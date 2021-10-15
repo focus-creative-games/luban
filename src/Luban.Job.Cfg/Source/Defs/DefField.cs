@@ -28,6 +28,12 @@ namespace Luban.Job.Cfg.Defs
 
         public RefValidator ValueRef { get; private set; }
 
+        public List<IValidator> Validators { get; } = new List<IValidator>();
+
+        public List<IValidator> KeyValidators { get; } = new List<IValidator>();
+
+        public List<IValidator> ValueValidators { get; } = new List<IValidator>();
+
         // 如果ref了多个表，不再生成 xxx_ref之类的字段，也不会resolve
         public bool GenRef => Ref != null && Ref.Tables.Count == 1;
 
@@ -289,14 +295,17 @@ namespace Luban.Job.Cfg.Defs
 
             if (Ref != null)
             {
+                Validators.Add(Ref);
                 ValidateRef(Ref, CType);
             }
             if (KeyRef != null)
             {
+                KeyValidators.Add(KeyRef);
                 ValidateRef(KeyRef, (CType as TMap).KeyType);
             }
             if (ValueRef != null)
             {
+                ValueValidators.Add(ValueRef);
                 switch (this.CType)
                 {
                     case TArray ta:
