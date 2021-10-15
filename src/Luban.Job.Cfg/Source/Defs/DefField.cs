@@ -138,11 +138,19 @@ namespace Luban.Job.Cfg.Defs
                 {
                     if (ta.ElementType.Tags.TryGetValue("ref", out string refStr))
                     {
-                        this.ValueRef = (RefValidator)ValidatorFactory.Create("ref", refStr);
+                        this.ValueValidators.Add(this.ValueRef = (RefValidator)ValidatorFactory.Create("ref", refStr));
                     }
                     if (CType.Tags.TryGetValue("ref", out string refStr2))
                     {
-                        this.ValueRef = (RefValidator)ValidatorFactory.Create("ref", refStr2);
+                        this.ValueValidators.Add(this.ValueRef = (RefValidator)ValidatorFactory.Create("ref", refStr2));
+                    }
+                    if (ta.ElementType.Tags.TryGetValue("path", out string PathStr))
+                    {
+                        this.ValueValidators.Add(ValidatorFactory.Create("path", PathStr));
+                    }
+                    if (CType.Tags.TryGetValue("path", out string pathStr2))
+                    {
+                        this.ValueValidators.Add(ValidatorFactory.Create("path", pathStr2));
                     }
                     break;
                 }
@@ -150,11 +158,19 @@ namespace Luban.Job.Cfg.Defs
                 {
                     if (ta.ElementType.Tags.TryGetValue("ref", out string refStr))
                     {
-                        this.ValueRef = (RefValidator)ValidatorFactory.Create("ref", refStr);
+                        this.ValueValidators.Add(this.ValueRef = (RefValidator)ValidatorFactory.Create("ref", refStr));
                     }
                     if (CType.Tags.TryGetValue("ref", out string refStr2))
                     {
-                        this.ValueRef = (RefValidator)ValidatorFactory.Create("ref", refStr2);
+                        this.ValueValidators.Add(this.ValueRef = (RefValidator)ValidatorFactory.Create("ref", refStr2));
+                    }
+                    if (ta.ElementType.Tags.TryGetValue("path", out string PathStr))
+                    {
+                        this.ValueValidators.Add(ValidatorFactory.Create("path", PathStr));
+                    }
+                    if (CType.Tags.TryGetValue("path", out string pathStr2))
+                    {
+                        this.ValueValidators.Add(ValidatorFactory.Create("path", pathStr2));
                     }
                     break;
                 }
@@ -162,11 +178,19 @@ namespace Luban.Job.Cfg.Defs
                 {
                     if (ta.ElementType.Tags.TryGetValue("ref", out string refStr))
                     {
-                        this.ValueRef = (RefValidator)ValidatorFactory.Create("ref", refStr);
+                        this.ValueValidators.Add(this.ValueRef = (RefValidator)ValidatorFactory.Create("ref", refStr));
                     }
                     if (CType.Tags.TryGetValue("ref", out string refStr2))
                     {
-                        this.ValueRef = (RefValidator)ValidatorFactory.Create("ref", refStr2);
+                        this.ValueValidators.Add(this.ValueRef = (RefValidator)ValidatorFactory.Create("ref", refStr2));
+                    }
+                    if (ta.ElementType.Tags.TryGetValue("path", out string PathStr))
+                    {
+                        this.ValueValidators.Add(ValidatorFactory.Create("path", PathStr));
+                    }
+                    if (CType.Tags.TryGetValue("path", out string pathStr2))
+                    {
+                        this.ValueValidators.Add(ValidatorFactory.Create("path", pathStr2));
                     }
                     break;
                 }
@@ -174,11 +198,19 @@ namespace Luban.Job.Cfg.Defs
                 {
                     if (ta.KeyType.Tags.TryGetValue("ref", out string keyRefStr))
                     {
-                        this.KeyRef = (RefValidator)ValidatorFactory.Create("ref", keyRefStr);
+                        this.KeyValidators.Add(this.KeyRef = (RefValidator)ValidatorFactory.Create("ref", keyRefStr));
                     }
                     if (ta.ValueType.Tags.TryGetValue("ref", out string valueRefStr))
                     {
-                        this.ValueRef = (RefValidator)ValidatorFactory.Create("ref", valueRefStr);
+                        this.ValueValidators.Add(this.ValueRef = (RefValidator)ValidatorFactory.Create("ref", valueRefStr));
+                    }
+                    if (ta.KeyType.Tags.TryGetValue("path", out string PathStr))
+                    {
+                        this.KeyValidators.Add(ValidatorFactory.Create("path", PathStr));
+                    }
+                    if (ta.ValueType.Tags.TryGetValue("path", out string pathStr2))
+                    {
+                        this.ValueValidators.Add(ValidatorFactory.Create("path", pathStr2));
                     }
                     break;
                 }
@@ -187,6 +219,10 @@ namespace Luban.Job.Cfg.Defs
                     if (CType.Tags.TryGetValue("ref", out string refStr2))
                     {
                         this.Ref = (RefValidator)ValidatorFactory.Create("ref", refStr2);
+                    }
+                    if (CType.Tags.TryGetValue("path", out string pathStr2))
+                    {
+                        this.Validators.Add(ValidatorFactory.Create("path", pathStr2));
                     }
                     break;
                 }
@@ -265,7 +301,6 @@ namespace Luban.Job.Cfg.Defs
 
         private void ValidateRef(RefValidator val, TType refVarType)
         {
-            val.Compile(this);
             foreach (var table in val.Tables)
             {
                 var cfgTable = Assembly.GetCfgTable(RefValidator.GetActualTableName(table));
@@ -293,19 +328,21 @@ namespace Luban.Job.Cfg.Defs
         {
             base.PostCompile();
 
+            foreach (var val in KeyValidators.Concat(ValueValidators).Concat(Validators))
+            {
+                val.Compile(this);
+            }
+
             if (Ref != null)
             {
-                Validators.Add(Ref);
                 ValidateRef(Ref, CType);
             }
             if (KeyRef != null)
             {
-                KeyValidators.Add(KeyRef);
                 ValidateRef(KeyRef, (CType as TMap).KeyType);
             }
             if (ValueRef != null)
             {
-                ValueValidators.Add(ValueRef);
                 switch (this.CType)
                 {
                     case TArray ta:
