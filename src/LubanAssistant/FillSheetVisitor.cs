@@ -26,75 +26,77 @@ namespace LubanAssistant
             _startRowIndex = startRowIndex;
         }
 
+        Range Current(Title title) => _cells[_startRowIndex, title.FromIndex + 1] as Range;
+
         public int Accept(DBool type, Title x)
         {
-            (_cells[_startRowIndex, x.FromIndex] as Range).Value = type.Value;
+            Current(x).Value = type.Value;
             return 1;
         }
 
         public int Accept(DByte type, Title x)
         {
-            (_cells[_startRowIndex, x.FromIndex] as Range).Value = type.Value;
+            Current(x).Value = type.Value;
             return 1;
         }
 
         public int Accept(DShort type, Title x)
         {
-            (_cells[_startRowIndex, x.FromIndex] as Range).Value = type.Value;
+            Current(x).Value = type.Value;
             return 1;
         }
 
         public int Accept(DFshort type, Title x)
         {
-            (_cells[_startRowIndex, x.FromIndex] as Range).Value = type.Value;
+            Current(x).Value = type.Value;
             return 1;
         }
 
         public int Accept(DInt type, Title x)
         {
-            (_cells[_startRowIndex, x.FromIndex] as Range).Value = type.Value;
+            Current(x).Value = type.Value;
             return 1;
         }
 
         public int Accept(DFint type, Title x)
         {
-            (_cells[_startRowIndex, x.FromIndex] as Range).Value = type.Value;
+            Current(x).Value = type.Value;
             return 1;
         }
 
         public int Accept(DLong type, Title x)
         {
-            (_cells[_startRowIndex, x.FromIndex] as Range).Value = type.Value;
+            Current(x).Value = type.Value;
             return 1;
         }
 
         public int Accept(DFlong type, Title x)
         {
-            (_cells[_startRowIndex, x.FromIndex] as Range).Value = type.Value;
+            Current(x).Value = type.Value;
             return 1;
         }
 
         public int Accept(DFloat type, Title x)
         {
-            (_cells[_startRowIndex, x.FromIndex] as Range).Value = type.Value;
+            Current(x).Value = type.Value;
             return 1;
         }
 
         public int Accept(DDouble type, Title x)
         {
-            (_cells[_startRowIndex, x.FromIndex] as Range).Value = type.Value;
+            Current(x).Value = type.Value;
             return 1;
         }
 
         public int Accept(DEnum type, Title x)
         {
-            (_cells[_startRowIndex, x.FromIndex] as Range).Value = type.StrValue;
+            Current(x).Value = type.StrValue;
             return 1;
         }
 
         public int Accept(DString type, Title x)
         {
-            (_cells[_startRowIndex, x.FromIndex] as Range).Value = type.Value;
+            Current(x).Value = type.Value;
             return 1;
         }
 
@@ -109,7 +111,7 @@ namespace LubanAssistant
             //{
             //    throw new Exception($"title:{x.Name}为text类型，至少要占两列");
             //}
-            (_cells[_startRowIndex, x.FromIndex] as Range).Value = type.Apply(ToExcelStringVisitor.Ins, x.Sep);
+            Current(x).Value = type.Apply(ToExcelStringVisitor.Ins, x.Sep);
             //(_cells[_startRowIndex, x.FromIndex + 1] as Range).Value = type.RawValue;
             return 1;
         }
@@ -126,11 +128,11 @@ namespace LubanAssistant
                     }
                     if (type.ImplType != null)
                     {
-                        (_cells[_startRowIndex, typeTitle.FromIndex] as Range).Value = type.ImplType.Name;
+                        Current(typeTitle).Value = type.ImplType.Name;
                     }
                     else
                     {
-                        (_cells[_startRowIndex, typeTitle.FromIndex] as Range).Value = DefBean.BEAN_NULL_STR;
+                        Current(typeTitle).Value = DefBean.BEAN_NULL_STR;
                     }
                 }
                 else
@@ -141,7 +143,7 @@ namespace LubanAssistant
                     }
                     else
                     {
-                        //(_cells[_startRowIndex, x.FromIndex] as Range).Value = "null";
+                        //Current(x).Value = "null";
                         throw new Exception($"title:{x.Name} 不支持 值为null的普通bean");
                     }
                 }
@@ -173,59 +175,59 @@ namespace LubanAssistant
             }
             else
             {
-                (_cells[_startRowIndex, x.FromIndex] as Range).Value = type.Apply(ToExcelStringVisitor.Ins, x.Sep);
+                Current(x).Value = type.Apply(ToExcelStringVisitor.Ins, x.Sep);
             }
             return 1;
         }
 
         public int Accept(DArray type, Title x)
         {
-            (_cells[_startRowIndex, x.FromIndex] as Range).Value = type.Apply(ToExcelStringVisitor.Ins, x.Sep);
+            Current(x).Value = type.Apply(ToExcelStringVisitor.Ins, x.Sep);
             return 1;
         }
 
         public int Accept(DList type, Title x)
         {
-            (_cells[_startRowIndex, x.FromIndex] as Range).Value = type.Apply(ToExcelStringVisitor.Ins, x.Sep);
+            Current(x).Value = type.Apply(ToExcelStringVisitor.Ins, x.Sep);
             return 1;
         }
 
         public int Accept(DSet type, Title x)
         {
-            (_cells[_startRowIndex, x.FromIndex] as Range).Value = type.Apply(ToExcelStringVisitor.Ins, x.Sep);
+            Current(x).Value = type.Apply(ToExcelStringVisitor.Ins, x.Sep);
             return 1;
         }
 
         public int Accept(DMap type, Title x)
         {
-            (_cells[_startRowIndex, x.FromIndex] as Range).Value = type.Apply(ToExcelStringVisitor.Ins, x.Sep);
+            Current(x).Value = type.Apply(ToExcelStringVisitor.Ins, x.Sep);
             return 1;
         }
 
         public int Accept(DVector2 type, Title x)
         {
             var v = type.Value;
-            (_cells[_startRowIndex, x.FromIndex] as Range).Value = $"{v.X},{v.Y}";
+            Current(x).Value = $"{v.X},{v.Y}";
             return 1;
         }
 
         public int Accept(DVector3 type, Title x)
         {
             var v = type.Value;
-            (_cells[_startRowIndex, x.FromIndex] as Range).Value = $"{v.X},{v.Y},{v.Z}";
+            Current(x).Value = $"{v.X},{v.Y},{v.Z}";
             return 1;
         }
 
         public int Accept(DVector4 type, Title x)
         {
             var v = type.Value;
-            (_cells[_startRowIndex, x.FromIndex] as Range).Value = $"{v.X},{v.Y},{v.Z},{v.W}";
+            Current(x).Value = $"{v.X},{v.Y},{v.Z},{v.W}";
             return 1;
         }
 
         public int Accept(DDateTime type, Title x)
         {
-            (_cells[_startRowIndex, x.FromIndex] as Range).Value = type.Time;
+            Current(x).Value = type.Time;
             return 1;
         }
     }

@@ -8,19 +8,19 @@ namespace Luban.Job.Cfg.DataSources.Excel
 {
     class FieldInfo
     {
-        public string Name { get; init; }
+        public string Name { get; set; }
 
-        public Dictionary<string, string> Tags { get; init; }
+        public Dictionary<string, string> Tags { get; set; }
 
-        public string Type { get; init; }
+        public string Type { get; set; }
 
-        public string BriefDesc { get; init; }
+        public string BriefDesc { get; set; }
 
-        public string DetailDesc { get; init; }
+        public string DetailDesc { get; set; }
     }
 
     class RawSheetTableDefInfo
     {
-        public Dictionary<string, FieldInfo> FieldInfos { get; init; }
+        public Dictionary<string, FieldInfo> FieldInfos { get; set; }
     }
 }

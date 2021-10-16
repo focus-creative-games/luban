@@ -36,6 +36,16 @@ namespace Luban.Job.Cfg.DataSources.Excel
             }
         }
 
+        public void Load(params RawSheet[] rawSheets)
+        {
+            foreach (RawSheet rawSheet in rawSheets)
+            {
+                var sheet = new Sheet("__intern__", rawSheet.TableName);
+                sheet.Load(rawSheet);
+                _sheets.Add(sheet);
+            }
+        }
+
         public RawSheetTableDefInfo LoadTableDefInfo(string rawUrl, string sheetName, Stream stream)
         {
             return SheetLoadUtil.LoadSheetTableDefInfo(rawUrl, sheetName, stream);

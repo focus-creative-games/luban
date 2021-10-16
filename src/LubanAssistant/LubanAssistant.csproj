@@ -229,11 +229,8 @@
     <Compile Include="..\Luban.Job.Cfg\Source\DataCreators\DataCreateException.cs">
       <Link>Source\DataCreators\DataCreateException.cs</Link>
     </Compile>
-    <Compile Include="..\Luban.Job.Cfg\Source\DataCreators\ExcelDataCreator.cs">
-      <Link>Source\DataCreators\ExcelDataCreator.cs</Link>
-    </Compile>
-    <Compile Include="..\Luban.Job.Cfg\Source\DataCreators\ExcelNamedRowDataCreator.cs">
-      <Link>Source\DataCreators\ExcelNamedRowDataCreator.cs</Link>
+    <Compile Include="..\Luban.Job.Cfg\Source\DataCreators\ExcelStreamDataCreator.cs">
+      <Link>Source\DataCreators\ExcelStreamDataCreator.cs</Link>
     </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\DataCreators\JsonDataCreator.cs">
       <Link>Source\DataCreators\JsonDataCreator.cs</Link>
@@ -243,6 +240,9 @@
     </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\DataCreators\MultiRowExcelDataCreator.cs">
       <Link>Source\DataCreators\MultiRowExcelDataCreator.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\DataCreators\SheetDataCreator.cs">
+      <Link>Source\DataCreators\SheetDataCreator.cs</Link>
     </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\DataCreators\StringDataCreator.cs">
       <Link>Source\DataCreators\StringDataCreator.cs</Link>
@@ -271,11 +271,23 @@
     <Compile Include="..\Luban.Job.Cfg\Source\DataSources\Excel\ExcelStream.cs">
       <Link>Source\DataSources\Excel\ExcelStream.cs</Link>
     </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\DataSources\Excel\RawSheet.cs">
+      <Link>Source\DataSources\Excel\RawSheet.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\DataSources\Excel\RawSheetTableDefInfo.cs">
+      <Link>Source\DataCreators\RawSheetTableDefInfo.cs</Link>
+    </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\DataSources\Excel\Sheet.cs">
       <Link>Source\DataSources\Excel\Sheet.cs</Link>
     </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\DataSources\Excel\SheetLoadUtil.cs">
+      <Link>Source\DataSources\Excel\SheetLoadUtil.cs</Link>
+    </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\DataSources\Excel\Title.cs">
       <Link>Source\DataSources\Excel\Title.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\DataSources\Excel\TitleRow.cs">
+      <Link>Source\DataSources\Excel\TitleRow.cs</Link>
     </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\DataSources\Json\JsonDataSource.cs">
       <Link>Source\DataSources\Json\JsonDataSource.cs</Link>
@@ -364,17 +376,32 @@
     <Compile Include="..\Luban.Job.Cfg\Source\DataVisitors\IDataFuncVisitor.cs">
       <Link>Source\DataVisitors\IDataFuncVisitor.cs</Link>
     </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\DataVisitors\IsDefaultValue.cs">
+      <Link>Source\DataVisitors\IsDefaultValue.cs</Link>
+    </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\DataVisitors\ToLiteralVisitorBase.cs">
       <Link>Source\DataVisitors\ToLiteralVisitorBase.cs</Link>
     </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\DataVisitors\ToStringVisitor.cs">
       <Link>Source\DataVisitors\ToStringVisitor.cs</Link>
     </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\DataVisitors\ValidatorVisitor.cs">
+      <Link>Source\DataVisitors\ValidatorVisitor.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\Defs\CfgDefLoader.cs">
+      <Link>Source\Defs\CfgDefLoader.cs</Link>
+    </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\Defs\CfgDefTypeBase.cs">
       <Link>Source\Defs\CfgDefTypeBase.cs</Link>
     </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\Defs\DefAssembly.cs">
+      <Link>Source\Defs\DefAssembly.cs</Link>
+    </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\Defs\DefBean.cs">
       <Link>Source\Defs\DefBean.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\Defs\DefField.cs">
+      <Link>Source\Defs\DefField.cs</Link>
     </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\Defs\DefTable.cs">
       <Link>Source\Defs\DefTable.cs</Link>
@@ -418,6 +445,24 @@
     <Compile Include="..\Luban.Job.Cfg\Source\Utils\DataUtil.cs">
       <Link>Source\Utils\DataUtil.cs</Link>
     </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\ValidatorContext.cs">
+      <Link>Source\ValidatorContext.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\Validators\IValidator.cs">
+      <Link>Source\Validators\IValidator.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\Validators\PathValidator.cs">
+      <Link>Source\Validators\PathValidator.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\Validators\RangeValidator.cs">
+      <Link>Source\Validators\RangeValidator.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\Validators\RefValidator.cs">
+      <Link>Source\Validators\RefValidator.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\Validators\ValidatorFactory.cs">
+      <Link>Source\Validators\ValidatorFactory.cs</Link>
+    </Compile>
     <Compile Include="..\Luban.Job.Common\Source\Defs\CommonDefLoader.cs">
       <Link>Source\Defs\CommonDefLoader.cs</Link>
     </Compile>
@@ -432,6 +477,9 @@
     </Compile>
     <Compile Include="..\Luban.Job.Common\Source\Defs\DefFieldBase.cs">
       <Link>Source\Defs\DefFieldBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Common\Source\Defs\DefTypeBase.cs">
+      <Link>Source\Defs\DefTypeBase.cs</Link>
     </Compile>
     <Compile Include="..\Luban.Job.Common\Source\ELanguage.cs">
       <Link>Source\ELanguage.cs</Link>
@@ -550,7 +598,6 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SheetDataCreator.cs" />
     <Compile Include="Source\DataExporters\RawJsonExportor.cs" />
     <Compile Include="ToExcelStringVisitor.cs" />
     <EmbeddedResource Include="AssistantTab.resx">
@@ -577,7 +624,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Source\DataSources\Excel\TitleInfo.cs" />
     <Compile Include="Source\Utils\AtomicLong.cs" />
     <Compile Include="Source\Utils\CacheFileUtil.cs" />
     <Compile Include="Source\Collections\CollectionExtension.cs" />
@@ -590,10 +636,6 @@
     <Compile Include="Source\Common\ValueUtil.cs" />
     <Compile Include="Source\Datas\DText.cs" />
     <Compile Include="Source\Datas\DType.cs" />
-    <Compile Include="Source\Defs\CfgDefLoader.cs" />
-    <Compile Include="Source\Defs\DefAssembly.cs" />
-    <Compile Include="Source\Defs\DefField.cs" />
-    <Compile Include="Source\Defs\DefTypeBase.cs" />
     <Compile Include="Source\Protos\FileInfo.cs" />
     <Compile Include="Source\Protos\GetImportFileOrDirectory.cs" />
     <Compile Include="Source\LocalAgent.cs" />

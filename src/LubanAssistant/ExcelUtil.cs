@@ -17,51 +17,81 @@ namespace LubanAssistant
 {
     static class ExcelUtil
     {
-        public static Dictionary<string, string> ParseMetaAttrs(Worksheet sheet)
+        public static RawSheet ParseRawSheet(Worksheet sheet, Range toSaveRecordRows)
         {
-            Range metaRow = sheet.Rows[1];
-            if (metaRow.Cells[1, 1].Text.ToString() != "##")
+            if (!ParseMetaAttrs(sheet, out var orientRow, out var titleRows, out var tableName))
             {
-                throw new Exception("A1 should be ##");
+                throw new Exception($"meta行不合法");
             }
-            var metaAttrs = new Dictionary<string, string>();
-            for (int i = 2, n = sheet.UsedRange.Columns.Count; i <= n; i++)
+
+            if (!orientRow)
             {
-                Range cell = metaRow.Cells[1, i];
-                string value = cell.Value?.ToString();
-                if (!string.IsNullOrWhiteSpace(value))
+                throw new Exception($"目前只支持行表");
+            }
+
+            Title title = ParseTitles(sheet);
+            var cells = new List<List<Cell>>();
+
+            foreach (Range row in toSaveRecordRows)
+            {
+                var rowCell = new List<Cell>();
+                for (int i = title.FromIndex; i <= title.ToIndex; i++)
                 {
-                    var attrs = value.Split('=');
-                    if (attrs.Length != 2)
-                    {
-                        throw new Exception($"invalid meta attr:{value}");
-                    }
-                    metaAttrs.Add(attrs[0], attrs[1]);
+                    rowCell.Add(new Cell(row.Row - 1, i, (row.Cells[1, i + 1] as Range).Value));
                 }
+                cells.Add(rowCell);
             }
-            return metaAttrs;
+            return new RawSheet() { Title = title, TitleRowCount = titleRows, TableName = tableName, Cells = cells };
         }
 
-        public static TitleInfo ParseTitles(Worksheet sheet)
+        public static RawSheet ParseRawSheetTitleOnly(Worksheet sheet)
         {
+            if (!ParseMetaAttrs(sheet, out var orientRow, out var titleRows, out var tableName))
+            {
+                throw new Exception($"meta行不合法");
+            }
 
+            if (!orientRow)
+            {
+                throw new Exception($"目前只支持行表");
+            }
+
+            Title title = ParseTitles(sheet);
+            var cells = new List<List<Cell>>();
+            return new RawSheet() { Title = title, TitleRowCount = titleRows, TableName = tableName, Cells = cells };
+        }
+
+        public static bool ParseMetaAttrs(Worksheet sheet, out bool orientRow, out int titleRows, out string tableName)
+        {
+            Range metaRow = sheet.Rows[1];
+
+            var cells = new List<string>();
+            for (int i = 1, n = sheet.UsedRange.Columns.Count; i <= n; i++)
+            {
+                cells.Add(((Range)metaRow.Cells[1, i]).Value?.ToString());
+            }
+            return SheetLoadUtil.TryParseMeta(cells, out orientRow, out titleRows, out tableName);
+        }
+
+        public static Title ParseTitles(Worksheet sheet)
+        {
             int titleRows = 1;
             Range c1 = sheet.Cells[2, 1];
             if (c1.MergeCells)
             {
                 titleRows = c1.MergeArea.Count;
             }
-
-
             var rootTile = new Title()
             {
-                FromIndex = 2,
-                ToIndex = sheet.UsedRange.Columns.Count,
+                FromIndex = 0,
+                ToIndex = sheet.UsedRange.Columns.Count - 1,
                 Name = "__root__",
                 Root = true,
+                Tags = new Dictionary<string, string>(),
             };
             ParseSubTitle(sheet, 2, titleRows + 1, rootTile);
-            return new TitleInfo(rootTile, titleRows);
+            rootTile.Init();
+            return rootTile;
         }
 
         private static void ParseSubTitle(Worksheet sheet, int rowIndex, int maxRowIndex, Title title)
@@ -69,51 +99,23 @@ namespace LubanAssistant
             Range row = sheet.Rows[rowIndex];
             for (int i = title.FromIndex; i <= title.ToIndex; i++)
             {
-                Range subTitleRange = row.Cells[1, i];
+                Range subTitleRange = row.Cells[1, i + 1];
                 string subTitleValue = subTitleRange.Value?.ToString();
                 if (string.IsNullOrWhiteSpace(subTitleValue))
                 {
                     continue;
                 }
 
-                var attrs = subTitleValue.Split('&');
-                string subTitleName = attrs[0];
-                string sep = "";
-                foreach (var attrPair in attrs.Skip(1))
-                {
-                    var pairs = attrPair.Split('=');
-                    if (pairs.Length != 2)
-                    {
-                        throw new Exception($"invalid title: {subTitleValue}");
-                    }
-                    switch (pairs[0])
-                    {
-                        case "sep":
-                        {
-                            sep = pairs[1];
-                            break;
-                        }
-                        default:
-                        {
-                            throw new Exception($"invalid title: {subTitleValue}");
-                        }
-                    }
-                }
+                var (subTitleName, tags) = SheetLoadUtil.ParseNameAndMetaAttrs(subTitleValue);
 
-                if (title.SubTitles.ContainsKey(subTitleName))
-                {
-                    throw new Exception($"title:{subTitleName} 重复");
-                }
+
                 var newSubTitle = new Title()
                 {
                     Name = subTitleName,
                     FromIndex = i,
-                    ToIndex = i,
+                    Tags = tags,
                 };
-                if (!string.IsNullOrWhiteSpace(sep))
-                {
-                    newSubTitle.Sep = sep;
-                }
+
                 if (subTitleRange.MergeCells)
                 {
                     newSubTitle.ToIndex = i + subTitleRange.MergeArea.Count - 1;
@@ -122,9 +124,8 @@ namespace LubanAssistant
                 {
                     newSubTitle.ToIndex = i;
                 }
-                title.SubTitles.Add(subTitleName, newSubTitle);
+                title.AddSubTitle(newSubTitle);
             }
-            title.SubTitleList.AddRange(title.SubTitles.Values);
             if (rowIndex < maxRowIndex)
             {
                 foreach (var subTitle in title.SubTitleList)
@@ -134,17 +135,8 @@ namespace LubanAssistant
             }
         }
 
-        public static void FillRecords(Worksheet sheet, Dictionary<string, string> metaAttrs, TitleInfo title, TableDataInfo tableDataInfo)
+        public static void FillRecords(Worksheet sheet, int titleRowNum, Title title, TableDataInfo tableDataInfo)
         {
-            int titleRowNum = 3;
-            if (metaAttrs.TryGetValue("title_rows", out var titleRowsStr) && !int.TryParse(titleRowsStr, out titleRowNum))
-            {
-                throw new Exception($"meta 属性 title_rows 不合法");
-            }
-            if (titleRowNum < title.RowNum)
-            {
-                throw new Exception($"meta 属性title_rows不能比字段名行的行数小");
-            }
             int usedRowNum = sheet.UsedRange.Rows.Count;
             if (usedRowNum > titleRowNum + 1)
             {
@@ -158,35 +150,17 @@ namespace LubanAssistant
             {
                 var fillVisitor = new FillSheetVisitor(sheet, nextRowIndex);
                 //FillRecord(sheet, ref nextRowIndex, title.RootTitle, rec);
-                nextRowIndex += rec.Data.Apply(fillVisitor, title.RootTitle);
+                nextRowIndex += rec.Data.Apply(fillVisitor, title);
             }
         }
 
         public static List<Record> LoadRecordsInRange(DefTable table, Worksheet sheet, Title title, Range toSaveRecordRows)
         {
-            var recs = new List<Record>();
-            foreach (Range row in toSaveRecordRows)
-            {
-                bool allEmpty = true;
-                for (int i = title.FromIndex; i <= title.ToIndex; i++)
-                {
-                    if (!string.IsNullOrEmpty((row.Cells[1, i] as Range).Value?.ToString()))
-                    {
-                        allEmpty = false;
-                        break;
-                    }
-                }
-                if (allEmpty)
-                {
-                    continue;
-                }
-                string tags = (row.Cells[1, 1] as Range).Value?.ToString();
-                recs.Add(new Record(
-                    (DBean)table.ValueTType.Apply(new SheetDataCreator(sheet, row.Row, table.Assembly), title, null),
-                    "",
-                    DataUtil.ParseTags(tags)));
-            }
-            return recs;
+            RawSheet rawSheet = ParseRawSheet(sheet, toSaveRecordRows);
+            var excelSource = new ExcelDataSource();
+            excelSource.Load(rawSheet);
+
+            return excelSource.ReadMulti(table.ValueTType);
         }
 
         public static void SaveRecords(string inputDataDir, DefTable table, List<Record> records)

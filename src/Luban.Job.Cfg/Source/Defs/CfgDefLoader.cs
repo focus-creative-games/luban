@@ -301,8 +301,15 @@ namespace Luban.Job.Cfg.Defs
             //var titleRow = sheet.RowColumns[sheet.AttrRowCount];
             //// 有可能没有注释行，此时使用标题行，这个是必须有的
             //var descRow = sheet.HeaderRowCount >= sheet.AttrRowCount + 2 ? sheet.RowColumns[sheet.AttrRowCount + 1] : titleRow;
+#if !LUBAN_LITE
             foreach (var (name, f) in tableDefInfo.FieldInfos)
             {
+#else
+            foreach (var e in tableDefInfo.FieldInfos)
+            {
+                var name = e.Key;
+                var f = e.Value;
+#endif
                 var cf = new CfgField() { Name = name, Id = 0 };
 
                 string[] attrs = f.Type.Trim().Split('&').Select(s => s.Trim()).ToArray();

@@ -224,19 +224,27 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TText type, Sheet sheet, TitleRow row)
         {
-            if (row.CellCount != 2)
+            if (string.IsNullOrEmpty(row.SelfTitle.Sep))
             {
-                throw new Exception($"text 要求两个字段");
+                if (row.CellCount != 2)
+                {
+                    throw new Exception($"text 要求两个字段");
+                }
+                int startIndex = row.SelfTitle.FromIndex;
+                var key = ParseString(row.Row[startIndex].Value);
+                var text = ParseString(row.Row[startIndex + 1].Value);
+                if (type.IsNullable && key == null && text == null)
+                {
+                    return null;
+                }
+                DataUtil.ValidateText(key, text);
+                return new DText(key, text);
             }
-            int startIndex = row.SelfTitle.FromIndex;
-            var key = ParseString(row.Row[startIndex].Value);
-            var text = ParseString(row.Row[startIndex + 1].Value);
-            if (type.IsNullable && key == null && text == null)
+            else
             {
-                return null;
+                var s = row.AsStream("");
+                return type.Apply(ExcelStreamDataCreator.Ins, s);
             }
-            DataUtil.ValidateText(key, text);
-            return new DText(key, text);
         }
 
         private List<DType> CreateBeanFields(DefBean bean, Sheet sheet, TitleRow row)

@@ -67,14 +67,14 @@ namespace Luban.Job.Cfg.DataSources.Excel
             bool orientRow;
             int titleRowNum;
 
-            if (!TryParseMeta(reader, out orientRow, out titleRowNum, out var _))
+            if (!TryParseMeta(reader, out orientRow, out titleRowNum, out var tableName))
             {
                 return null;
             }
             var cells = ParseRawSheetContent(reader, orientRow);
             var title = ParseTitle(cells, reader.MergeCells, orientRow, out _);
             cells.RemoveRange(0, Math.Min(titleRowNum, cells.Count));
-            return new RawSheet() { Title = title, Cells = cells };
+            return new RawSheet() { Title = title, TitleRowCount = titleRowNum, TableName = tableName, Cells = cells };
         }
 
         private static int GetTitleRowNum(CellRange[] mergeCells, bool orientRow)
@@ -108,8 +108,10 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         public static Title ParseTitle(List<List<Cell>> cells, CellRange[] mergeCells, bool orientRow, out int titleRowNum)
         {
-            var rootTitle = new Title() { 
-                Root = true, Name = "__root__",
+            var rootTitle = new Title()
+            {
+                Root = true,
+                Name = "__root__",
                 Tags = new Dictionary<string, string>(),
                 FromIndex = 0,
                 ToIndex = cells.Select(r => r.Count).Max() - 1
@@ -130,10 +132,14 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         private static bool IsIgnoreTitle(string title)
         {
+#if !LUBAN_LITE
             return string.IsNullOrEmpty(title) || title.StartsWith('#');
+#else
+            return string.IsNullOrEmpty(title) || title.StartsWith("#");
+#endif
         }
 
-        private static (string Name, Dictionary<string, string> Tags) ParseNameAndMetaAttrs(string nameAndAttrs)
+        public static (string Name, Dictionary<string, string> Tags) ParseNameAndMetaAttrs(string nameAndAttrs)
         {
             var attrs = nameAndAttrs.Split('&');
 
@@ -227,24 +233,20 @@ namespace Luban.Job.Cfg.DataSources.Excel
             }
         }
 
-        public static bool TryParseMeta(IExcelDataReader reader, out bool orientRow, out int titleRows, out string tableName)
+        public static bool TryParseMeta(List<string> cells, out bool orientRow, out int titleRows, out string tableName)
         {
             orientRow = true;
             titleRows = TITLE_DEFAULT_ROW_NUM;
             tableName = "";
-            if (!reader.Read() || reader.FieldCount == 0)
-            {
-                return false;
-            }
+
             // meta 行 必须以 ##为第一个单元格内容,紧接着 key:value 形式 表达meta属性
-            if (reader.GetString(0) != "##")
+            if (cells.Count == 0 || cells[0] != "##")
             {
                 return false;
             }
 
-            for (int i = 1, n = reader.FieldCount; i < n; i++)
+            foreach (var attr in cells.Skip(1))
             {
-                var attr = reader.GetString(i)?.Trim();
                 if (string.IsNullOrWhiteSpace(attr))
                 {
                     continue;
@@ -255,8 +257,8 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 {
                     throw new Exception($"单元薄 meta 定义出错. attribute:{attr}");
                 }
-                string key = ss[0].Trim().ToLower();
-                string value = ss[1].Trim().ToLower();
+                string key = ss[0].Trim();
+                string value = ss[1].Trim();
                 switch (key)
                 {
                     case "orientation":
@@ -289,6 +291,23 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 }
             }
             return true;
+        }
+
+        public static bool TryParseMeta(IExcelDataReader reader, out bool orientRow, out int titleRows, out string tableName)
+        {
+            if (!reader.Read() || reader.FieldCount == 0)
+            {
+                orientRow = true;
+                titleRows = TITLE_DEFAULT_ROW_NUM;
+                tableName = "";
+                return false;
+            }
+            var cells = new List<string>();
+            for (int i = 0, n = reader.FieldCount; i < n; i++)
+            {
+                cells.Add(reader.GetString(i)?.Trim());
+            }
+            return TryParseMeta(cells, out orientRow, out titleRows, out tableName);
         }
 
         private static List<List<Cell>> ParseRawSheetContent(IExcelDataReader reader, bool orientRow, int? maxParseRow = null)

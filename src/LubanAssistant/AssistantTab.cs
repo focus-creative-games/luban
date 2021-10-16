@@ -98,11 +98,10 @@ namespace LubanAssistant
 
         private void LoadDataToCurrentDoc()
         {
-
             Worksheet sheet = Globals.LubanAssistant.Application.ActiveSheet;
 
-            var metaAttrs = ExcelUtil.ParseMetaAttrs(sheet);
-            if (!metaAttrs.TryGetValue("table", out var tableName))
+            var rawSheet = ExcelUtil.ParseRawSheetTitleOnly(sheet);
+            if (string.IsNullOrWhiteSpace(rawSheet.TableName))
             {
                 MessageBox.Show($"meta行未指定table名");
                 return;
@@ -112,9 +111,9 @@ namespace LubanAssistant
             {
                 try
                 {
-                    var tableDataInfo = LastLoadTableData = await DataLoaderUtil.LoadTableDataAsync(RootDefineFile, InputDataDir, tableName);
+                    var tableDataInfo = LastLoadTableData = await DataLoaderUtil.LoadTableDataAsync(RootDefineFile, InputDataDir, rawSheet.TableName);
                     var title = ExcelUtil.ParseTitles(sheet);
-                    ExcelUtil.FillRecords(sheet, metaAttrs, title, tableDataInfo);
+                    ExcelUtil.FillRecords(sheet, rawSheet.TitleRowCount, title, tableDataInfo);
                 }
                 catch (Exception e)
                 {
@@ -159,12 +158,13 @@ namespace LubanAssistant
             }
         }
 
-        private void SaveRecords(Action<Worksheet, Dictionary<string, string>, TableDataInfo, DefTable, TitleInfo> saveTask)
+        private void SaveRecords(Action<Worksheet, int, TableDataInfo, DefTable, Title> saveTask)
         {
             Worksheet sheet = Globals.LubanAssistant.Application.ActiveSheet;
 
-            var metaAttrs = ExcelUtil.ParseMetaAttrs(sheet);
-            if (!metaAttrs.TryGetValue("table", out var tableName))
+            var rawSheet = ExcelUtil.ParseRawSheetTitleOnly(sheet);
+            string tableName = rawSheet.TableName;
+            if (string.IsNullOrWhiteSpace(tableName))
             {
                 MessageBox.Show($"meta行未指定table名");
                 return;
@@ -181,7 +181,7 @@ namespace LubanAssistant
 
                     var tableDef = await DataLoaderUtil.LoadTableDefAsync(RootDefineFile, InputDataDir, tableName);
                     var title = ExcelUtil.ParseTitles(sheet);
-                    saveTask(sheet, metaAttrs, LastLoadTableData, tableDef, title);
+                    saveTask(sheet, rawSheet.TitleRowCount, LastLoadTableData, tableDef, title);
                 }
                 catch (Exception e)
                 {
@@ -192,13 +192,13 @@ namespace LubanAssistant
 
         private void BtnSaveAllClick(object sender, RibbonControlEventArgs e)
         {
-            SaveRecords((Worksheet sheet, Dictionary<string, string> metaAttrs, TableDataInfo tableDataInfo, DefTable defTable, TitleInfo title) =>
+            SaveRecords((Worksheet sheet, int titleRowNum, TableDataInfo tableDataInfo, DefTable defTable, Title title) =>
             {
                 int usedRowNum = sheet.UsedRange.Rows.Count;
-                int firstDataRowNum = int.Parse(metaAttrs["title_rows"]) + 2;
+                int firstDataRowNum = titleRowNum + 2;
                 if (firstDataRowNum <= usedRowNum)
                 {
-                    var newRecords = ExcelUtil.LoadRecordsInRange(defTable, sheet, title.RootTitle, (sheet.Range[$"A{firstDataRowNum}:A{usedRowNum}"]).EntireRow);
+                    var newRecords = ExcelUtil.LoadRecordsInRange(defTable, sheet, title, (sheet.Range[$"A{firstDataRowNum}:A{usedRowNum}"]).EntireRow);
                     ExcelUtil.SaveRecords(InputDataDir, defTable, newRecords);
                     CleanRemovedRecordFiles(LastLoadTableData, newRecords);
                 }
@@ -241,12 +241,12 @@ namespace LubanAssistant
                 MessageBox.Show("没有选中的行");
                 return;
             }
-            SaveRecords((Worksheet sheet, Dictionary<string, string> metaAttrs, TableDataInfo tableDataInfo, DefTable defTable, TitleInfo title) =>
+            SaveRecords((Worksheet sheet, int titleRowNum, TableDataInfo tableDataInfo, DefTable defTable, Title title) =>
             {
                 int usedRowNum = sheet.UsedRange.Rows.Count;
-                if (title.RowNum + 1 < usedRowNum)
+                if (titleRowNum + 1 < usedRowNum)
                 {
-                    var newRecords = ExcelUtil.LoadRecordsInRange(defTable, sheet, title.RootTitle, selectRange.EntireRow);
+                    var newRecords = ExcelUtil.LoadRecordsInRange(defTable, sheet, title, selectRange.EntireRow);
                     ExcelUtil.SaveRecords(InputDataDir, defTable, newRecords);
                 }
                 else

@@ -82,14 +82,22 @@ namespace Luban.Job.Cfg.Validators
                 case '(': _includeMinBound = false; break;
                 default: ThrowError(); break;
             }
+#if !LUBAN_LITE
             switch (_str[^1])
+#else
+            switch (_str[_str.Length - 1])
+#endif
             {
                 case ']': _includeMaxBound = true; break;
                 case ')': _includeMaxBound = false; break;
                 default: ThrowError(); break;
             }
 
+#if !LUBAN_LITE
             var pars = _str[1..^1].Split(',');
+#else
+            var pars = _str.Substring(1, _str.Length - 1).Split(',');
+#endif
             if (pars.Length != 2)
             {
                 ThrowError();

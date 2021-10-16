@@ -42,6 +42,7 @@ namespace Luban.Job.Cfg.Defs
             || (CType is TList tl && tl.ElementType.IsBean)
             || (CType is TMap tm && tm.ValueType.IsBean);
 
+#if !LUBAN_LITE
         public string CsRefTypeName
         {
             get
@@ -95,6 +96,7 @@ namespace Luban.Job.Cfg.Defs
                 return $"{TsRefVarName} : {table.ValueTType.Apply(TypescriptDefineTypeNameVisitor.Ins)}{(IsNullable ? "" : " = undefined!")}";
             }
         }
+#endif
 
         public string CsRefVarName => $"{CsStyleName}_Ref";
 

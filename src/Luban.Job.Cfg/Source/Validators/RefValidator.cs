@@ -60,11 +60,13 @@ namespace Luban.Job.Cfg.Validators
                     return;
                 }
                 DefTable ct = assembly.GetCfgTable(actualTable);
+#if !LUBAN_LITE
                 var recordMap = assembly.GetTableDataInfo(ct).FinalRecordMap;
                 if (/*recordMap != null &&*/ recordMap.ContainsKey(key))
                 {
                     return;
                 }
+#endif
             }
 
             foreach (var table in Tables)

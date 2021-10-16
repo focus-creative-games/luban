@@ -1,6 +1,8 @@
 using Bright.Collections;
 using Luban.Job.Cfg.Datas;
+#if !LUBAN_LITE
 using Luban.Job.Cfg.l10n;
+#endif
 using Luban.Job.Cfg.RawDefs;
 using Luban.Job.Cfg.TypeVisitors;
 using Luban.Job.Common.Defs;
@@ -14,6 +16,8 @@ namespace Luban.Job.Cfg.Defs
 {
     public class TableDataInfo
     {
+        public DefTable Table { get; }
+
         public List<Record> MainRecords { get; }
 
         public List<Record> PatchRecords { get; }
@@ -22,8 +26,9 @@ namespace Luban.Job.Cfg.Defs
 
         public Dictionary<DType, Record> FinalRecordMap { get; set; }
 
-        public TableDataInfo(List<Record> mainRecords, List<Record> patchRecords)
+        public TableDataInfo(DefTable table, List<Record> mainRecords, List<Record> patchRecords)
         {
+            Table = table;
             MainRecords = mainRecords;
             PatchRecords = patchRecords;
         }
@@ -69,6 +74,7 @@ namespace Luban.Job.Cfg.Defs
 
         public Dictionary<string, DefTable> CfgTables { get; } = new Dictionary<string, DefTable>();
 
+#if !LUBAN_LITE
         public RawTextTable RawTextTable { get; } = new RawTextTable();
 
         public TextTable ExportTextTable { get; private set; }
@@ -82,6 +88,8 @@ namespace Luban.Job.Cfg.Defs
             ExportTextTable = new TextTable(this, textValueFieldName);
             NotConvertTextSet = new NotConvertTextSet();
         }
+
+#endif
 
         public Patch GetPatch(string name)
         {
@@ -103,7 +111,7 @@ namespace Luban.Job.Cfg.Defs
 
         public void AddDataTable(DefTable table, List<Record> mainRecords, List<Record> patchRecords)
         {
-            _recordsByTables[table.FullName] = new TableDataInfo(mainRecords, patchRecords);
+            _recordsByTables[table.FullName] = new TableDataInfo(table, mainRecords, patchRecords);
         }
 
         public List<Record> GetTableAllDataList(DefTable table)
