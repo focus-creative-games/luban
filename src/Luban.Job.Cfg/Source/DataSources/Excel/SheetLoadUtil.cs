@@ -145,6 +145,12 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
             string titleName = attrs[0];
             var tags = new Dictionary<string, string>();
+            // *  开头的表示是多行
+            if (titleName.StartsWith('*'))
+            {
+                titleName = titleName.Substring(1);
+                tags.Add("multi_rows", "1");
+            }
             foreach (var attrPair in attrs.Skip(1))
             {
                 var pairs = attrPair.Split('=');

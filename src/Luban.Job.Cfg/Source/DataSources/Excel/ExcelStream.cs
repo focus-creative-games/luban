@@ -108,6 +108,58 @@ namespace Luban.Job.Cfg.DataSources.Excel
             }
         }
 
+        public ExcelStream(List<List<Cell>> rows, int fromIndex, int toIndex, string sep, string overrideDefault)
+        {
+            _overrideDefault = overrideDefault;
+            this._datas = new List<Cell>();
+            if (string.IsNullOrWhiteSpace(sep))
+            {
+                if (string.IsNullOrEmpty(overrideDefault))
+                {
+                    foreach (var row in rows)
+                    {
+                        for (int i = fromIndex; i <= toIndex; i++)
+                        {
+                            this._datas.Add(row[i]);
+                        }
+                    }
+                }
+                else
+                {
+                    throw new NotSupportedException("concated multi rows don't support 'default' ");
+                }
+
+            }
+            else
+            {
+                foreach (var row in rows)
+                {
+                    for (int i = fromIndex; i <= toIndex; i++)
+                    {
+                        var cell = row[i];
+                        object d = cell.Value;
+                        if (!IsSkip(d))
+                        {
+                            if (d is string s)
+                            {
+                                this._datas.AddRange(DataUtil.SplitStringByAnySepChar(s, sep).Select(x => new Cell(cell.Row, cell.Column, x)));
+                            }
+                            else
+                            {
+                                this._datas.Add(cell);
+                            }
+                        }
+                        else if (!string.IsNullOrEmpty(_overrideDefault))
+                        {
+                            this._datas.Add(new Cell(cell.Row, cell.Column, _overrideDefault));
+                        }
+                    }
+                }
+            }
+            this._curIndex = 0;
+            this._toIndex = this._datas.Count - 1;
+        }
+
         public string First => _datas[_curIndex].Value?.ToString();
 
         public string LastReadDataInfo => _datas[Math.Min(LastReadIndex, _datas.Count - 1)].ToString();

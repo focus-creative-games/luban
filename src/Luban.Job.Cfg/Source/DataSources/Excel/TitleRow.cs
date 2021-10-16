@@ -118,24 +118,19 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         public IEnumerable<ExcelStream> AsMultiRowStream(string sep)
         {
-            //if (Titles.TryGetValue(name, out var title))
-            //{
-            //    if (isRowOrient)
-            //    {
-            //        var totalCells = Rows.SelectMany(r => r.GetRange(title.FromIndex, title.ToIndex - title.FromIndex + 1))
-            //            .Where(c => c.Value != null && !(c.Value is string s && string.IsNullOrWhiteSpace(s))).ToList();
-            //        return new ExcelStream(totalCells, 0, totalCells.Count - 1, sep, false);
-            //    }
-            //    else
-            //    {
-            //        throw new NotSupportedException($"bean类型多行数据不支持纵向填写");
-            //    }
-            //}
-            //else
-            //{
-            //    throw new Exception($"单元薄 缺失 列:{name}，请检查是否写错或者遗漏");
-            //}
             throw new NotSupportedException();
+        }
+
+        public ExcelStream AsMultiRowConcatStream(string sep)
+        {
+            sep = string.IsNullOrEmpty(sep) ? SelfTitle.Sep : sep;
+            return new ExcelStream(Rows, SelfTitle.FromIndex, SelfTitle.ToIndex, sep, SelfTitle.Default);
+        }
+
+        public ExcelStream AsMultiRowConcatElements(string sep)
+        {
+            sep = string.IsNullOrEmpty(sep) ? SelfTitle.Sep : sep;
+            return new ExcelStream(Elements.Select(e => e.Row).ToList(), SelfTitle.FromIndex, SelfTitle.ToIndex, sep, SelfTitle.Default);
         }
     }
 }

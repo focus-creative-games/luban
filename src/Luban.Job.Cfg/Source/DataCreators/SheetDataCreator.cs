@@ -289,9 +289,8 @@ namespace Luban.Job.Cfg.DataCreators
             }
             else if (row.Rows != null)
             {
-                throw new NotSupportedException();
-                //var s = row.AsMultiRowStream(sep);
-                //return new DArray(type, ReadList(type.ElementType, s));
+                var s = row.AsMultiRowConcatStream(sep);
+                return type.Apply(ExcelStreamDataCreator.Ins, s);
             }
             else if (row.Fields != null)
             {
@@ -332,21 +331,17 @@ namespace Luban.Job.Cfg.DataCreators
 
                     return new DBean(originBean, originBean, CreateBeanFields(originBean, sheet, row));
                 }
-
-
             }
             else if (row.Elements != null)
             {
-                throw new NotSupportedException();
+                var s = row.AsMultiRowConcatElements(sep);
+                return type.Apply(ExcelStreamDataCreator.Ins, s);
             }
             else
             {
                 throw new Exception();
             }
         }
-
-
-
 
         public List<DType> ReadList(TType type, ExcelStream stream)
         {
