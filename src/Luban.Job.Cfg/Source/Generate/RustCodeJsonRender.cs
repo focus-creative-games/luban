@@ -20,7 +20,7 @@ namespace Luban.Job.Cfg.Generate
             ctx.Lan = RenderFileUtil.GetLanguage(genType);
 
             var lines = new List<string>();
-            GenerateCodeMonolithic(ctx, "mod.rs", lines, ls =>
+            GenerateCodeMonolithic(ctx, RenderFileUtil.GetFileOrDefault(ctx.GenArgs.OutputCodeMonolithicFile, "mod.rs"), lines, ls =>
             {
                 var template = StringTemplateUtil.GetTemplate("config/rust_json/mod_header");
                 var result = template.RenderCode(ctx.ExportTypes);

@@ -107,7 +107,7 @@ namespace Luban.Job.Common.Defs
 
         private void SetTopModule(XElement e)
         {
-            this.TopModule = XmlUtil.GetRequiredAttribute(e, "name");
+            this.TopModule = XmlUtil.GetOptionalAttribute(e, "name");
         }
 
         private async Task AddImportAsync(string xmlFile)

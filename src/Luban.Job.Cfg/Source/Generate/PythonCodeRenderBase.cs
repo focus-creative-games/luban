@@ -19,7 +19,7 @@ namespace Luban.Job.Cfg.Generate
                 fileContent.Add(PythonStringTemplates.PythonVectorTypes);
             }
 
-            GenerateCodeMonolithic(ctx, "Types.py", lines, PreContent, null);
+            GenerateCodeMonolithic(ctx, RenderFileUtil.GetFileOrDefault(ctx.GenArgs.OutputCodeMonolithicFile, "Types.py"), lines, PreContent, null);
         }
 
         public override string Render(DefEnum e)

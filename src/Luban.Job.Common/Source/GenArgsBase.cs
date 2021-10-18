@@ -10,6 +10,9 @@ namespace Luban.Job.Common
         [Option('c', "output_code_dir", Required = false, HelpText = "output code directory")]
         public string OutputCodeDir { get; set; }
 
+        [Option("output_code_monolithic_file", Required = false, HelpText = "output monolithic code file. only effect when lan=rust,python,typescript,lua")]
+        public string OutputCodeMonolithicFile { get; set; }
+
         [Option("typescript_bright_require_path", Required = false, HelpText = "bright require path in typescript")]
         public string TypescriptBrightRequirePath { get; set; }
 

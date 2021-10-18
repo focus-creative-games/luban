@@ -23,6 +23,7 @@ namespace Luban.Job.Cfg.Defs
             _patchInputFiles = b.PatchInputFiles;
             Comment = b.Comment;
             Tags = DefUtil.ParseAttrs(b.Tags);
+            _outputFile = b.OutputFile;
         }
 
 
@@ -40,6 +41,8 @@ namespace Luban.Job.Cfg.Defs
 
         private readonly Dictionary<string, List<string>> _patchInputFiles;
 
+        private readonly string _outputFile;
+
         public List<string> Groups { get; }
 
         public TType KeyTType { get; private set; }
@@ -52,7 +55,7 @@ namespace Luban.Job.Cfg.Defs
 
         public bool NeedExport => Assembly.NeedExport(this.Groups);
 
-        public string OutputDataFile => FullName.Replace('.', '_').ToLower();
+        public string OutputDataFile => string.IsNullOrWhiteSpace(_outputFile) ? FullName.Replace('.', '_').ToLower() : _outputFile;
 
         public string InnerName => "_" + this.Name;
 

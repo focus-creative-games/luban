@@ -113,5 +113,10 @@ namespace Luban.Job.Common.Utils
         {
             return $"{fileName}.{(string.IsNullOrEmpty(fileExtension) ? GetOutputFileSuffix(genType) : fileExtension)}";
         }
+
+        public static string GetFileOrDefault(string preferFile, string candidateFile)
+        {
+            return string.IsNullOrWhiteSpace(preferFile) ? candidateFile : preferFile;
+        }
     }
 }
