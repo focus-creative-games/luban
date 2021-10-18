@@ -5,5 +5,5 @@ mono: none
 dotnet: 5.0
 script:
  - cd src
- - dotnet restore
- - dotnet build
+ - dotnet restore Luban.sln
+ - dotnet build Luban.sln
