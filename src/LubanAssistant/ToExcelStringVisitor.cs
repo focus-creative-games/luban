@@ -2,6 +2,7 @@
 using Luban.Job.Cfg.DataSources.Excel;
 using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Cfg.TypeVisitors;
 using Luban.Job.Cfg.Utils;
 using System;
 using System.Collections.Generic;
@@ -124,16 +125,28 @@ namespace LubanAssistant
 
         public string Accept(DArray type, string sep)
         {
+            if (string.IsNullOrEmpty(sep) && type.Type.ElementType.Apply(IsNotSepTypeVisitor.Ins))
+            {
+                sep = ",";
+            }
             return string.Join(sep, type.Datas.Select(d => d.Apply(this, sep)));
         }
 
         public string Accept(DList type, string sep)
         {
+            if (string.IsNullOrEmpty(sep) && type.Type.ElementType.Apply(IsNotSepTypeVisitor.Ins))
+            {
+                sep = ",";
+            }
             return string.Join(sep, type.Datas.Select(d => d.Apply(this, sep)));
         }
 
         public string Accept(DSet type, string sep)
         {
+            if (string.IsNullOrEmpty(sep) && type.Type.ElementType.Apply(IsNotSepTypeVisitor.Ins))
+            {
+                sep = ",";
+            }
             return string.Join(sep, type.Datas.Select(d => d.Apply(this, sep)));
         }
 

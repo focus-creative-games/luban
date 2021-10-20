@@ -17,7 +17,7 @@ namespace LubanAssistant
 
         private readonly Range _cells;
 
-        private readonly int _startRowIndex;
+        private int _startRowIndex;
 
         public FillSheetVisitor(Worksheet sheet, int startRowIndex)
         {
@@ -118,6 +118,7 @@ namespace LubanAssistant
 
         public int Accept(DBean type, Title x)
         {
+
             if (x.SubTitleList.Count > 0)
             {
                 if (type.Type.IsAbstractType)
@@ -147,6 +148,7 @@ namespace LubanAssistant
                         throw new Exception($"title:{x.Name} 不支持 值为null的普通bean");
                     }
                 }
+                int rowCount = 1;
                 if (type.ImplType != null)
                 {
                     int index = 0;
@@ -162,7 +164,7 @@ namespace LubanAssistant
                         {
                             //if (fieldTitle.SubTitleList.Count > 0)
                             //{
-                            data.Apply(this, fieldTitle);
+                            rowCount = Math.Max(rowCount, data.Apply(this, fieldTitle));
                             //}
                             //else
                             //{
@@ -172,24 +174,67 @@ namespace LubanAssistant
                         }
                     }
                 }
+                return rowCount;
             }
             else
             {
                 Current(x).Value = type.Apply(ToExcelStringVisitor.Ins, x.Sep);
+                return 1;
             }
-            return 1;
         }
 
         public int Accept(DArray type, Title x)
         {
-            Current(x).Value = type.Apply(ToExcelStringVisitor.Ins, x.Sep);
-            return 1;
+            if (x.SelfMultiRows)
+            {
+                int oldStartRow = _startRowIndex;
+                int totalRow = 0;
+                try
+                {
+                    foreach (var ele in type.Datas)
+                    {
+                        totalRow += ele.Apply(this, x);
+                        _startRowIndex = oldStartRow + totalRow;
+                    }
+                    return totalRow;
+                }
+                finally
+                {
+                    _startRowIndex = oldStartRow;
+                }
+            }
+            else
+            {
+                Current(x).Value = type.Apply(ToExcelStringVisitor.Ins, x.Sep);
+                return 1;
+            }
         }
 
         public int Accept(DList type, Title x)
         {
-            Current(x).Value = type.Apply(ToExcelStringVisitor.Ins, x.Sep);
-            return 1;
+            if (x.SelfMultiRows)
+            {
+                int oldStartRow = _startRowIndex;
+                int totalRow = 0;
+                try
+                {
+                    foreach (var ele in type.Datas)
+                    {
+                        totalRow += ele.Apply(this, x);
+                        _startRowIndex = oldStartRow + totalRow;
+                    }
+                    return totalRow;
+                }
+                finally
+                {
+                    _startRowIndex = oldStartRow;
+                }
+            }
+            else
+            {
+                Current(x).Value = type.Apply(ToExcelStringVisitor.Ins, x.Sep);
+                return 1;
+            }
         }
 
         public int Accept(DSet type, Title x)

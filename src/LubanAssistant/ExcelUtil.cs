@@ -140,7 +140,8 @@ namespace LubanAssistant
             int usedRowNum = sheet.UsedRange.Rows.Count;
             if (usedRowNum > titleRowNum + 1)
             {
-                Range allDataRange = sheet.Range[$"A{titleRowNum + 2},A{usedRowNum}"].EntireRow;
+                //Range allDataRange = sheet.Range[sheet.Cells[titleRowNum + 1, 1], sheet.Cells[$"A{titleRowNum + 2},A{usedRowNum}"].EntireRow;
+                Range allDataRange = sheet.Range[sheet.Cells[titleRowNum + 2, 1], sheet.Cells[usedRowNum, sheet.UsedRange.Columns.Count]];
                 allDataRange.ClearContents();
             }
 
@@ -149,7 +150,6 @@ namespace LubanAssistant
             foreach (var rec in tableDataInfo.MainRecords)
             {
                 var fillVisitor = new FillSheetVisitor(sheet, nextRowIndex);
-                //FillRecord(sheet, ref nextRowIndex, title.RootTitle, rec);
                 nextRowIndex += rec.Data.Apply(fillVisitor, title);
             }
         }

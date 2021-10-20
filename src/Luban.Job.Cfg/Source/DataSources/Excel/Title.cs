@@ -25,6 +25,11 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         public string Sep { get; private set; }
 
+        public string SepOr(string sep)
+        {
+            return string.IsNullOrEmpty(Sep) ? sep : Sep;
+        }
+
         public string Default { get; private set; }
 
         public bool SelfMultiRows { get; private set; }
