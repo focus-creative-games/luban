@@ -109,15 +109,57 @@ luban支持在excel中解析任意复杂的数据结构，哪怕复杂如技能�
 
 支持 bool,int,float,string,text,datetime,vector2,vector3,vector4 等等类型，它们的填写跟常规认知一致。
 
-![pipeline](docs/images/examples/b_1.jpg)
+
+| x1 | x3 | x4 | x5 | x6  | x7   | s1   | s2&sep=#  | v2    | v3   | v4     | t1 |
+| -  |  -  | -  | -  | -   | -    | -    | -         | -     | -    | -      | -  |
+|bool|short|int|long|float|double|string|text       |vector2|vector3|vector4|datetime|
+|desc1|id|desc4|desc5|desc6|desc7|desc1|desc2   |desc2|desc3|desc4|desc1|
+|false|  10| 100| 1000| 1.23| 1.2345|hello |key1#world1|1,2|1,2,3|1,2,3,4|1999-10-10 11:12:13|
+|true |  20| 200| 1000| 1.23| 1.2345|world |key2#world2|1,2|1,2,3|1,2,3,4|1999-10-12 11:12:13|
+
 
 ### 原生数据列表
 
 array与list类型都能表示列表，它们区别在于array生成的代码为数组，而list生成代码为列表。例如"array,int"生成的c#代码类型为 int[]，而"list,int"生成的c#代码类型为 List&lt;int&gt;。
 
-![pipeline](docs/images/examples/b_20.jpg)
+<table border="1">
+<tr align="center">
+  <td>id</td>
+  <td>arr1</td>
+  <td colspan="4">arr2</td>
+  <td>arr3</td>
+  <td colspan="3">arr4</td>
+</tr>
+<tr align="center">
+  <td>id</id>
+  <td>desc1</td>
+  <td colspan="4">desc2</td>
+  <td>desc3&sep=|</td>
+  <td colspan="3">desc4</td>
+</tr>
+
+<tr align="center">
+<td>1</td>
+<td>1,2,3</td>
+<td>1</td><td>2</td><td></td><td></td>
+<td>xx|yy</td>
+<td>xxx</td><td>zzz</td><td></td>
+</tr>
+
+<tr align="center">
+<td>2</td>
+<td>2,4</td>
+<td>3</td><td>4</td><td>5</td><td>6</td>
+<td>aaaa|bbbb|cccc</td>
+<td>aaa</td><td>bbb</td><td>ccc</td>
+</tr>
+
+</table>
+
+
 
 ### 枚举
+以枚举名或者别名的方式填写枚举值。
 
 ```xml
 <enum name="ItemQuality">
@@ -127,22 +169,46 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 </enum>
 ```
 
-![pipeline](docs/images/examples/a_10.jpg)
+| id| quality| quality2 |
+| - | - | - |
+| 1| 白 | RED |
+| 2| GREEN | 红 |
+| 3| RED | WHITE |
+
+
 
 ### 嵌套子结构
 经常会碰到，某个字段是结构，尤其这个结构在很多配置里都会复用。
 
-假设任务中包含一个 任务线索 字段
+假设任务中包含一个 奖励信息 字段
 
 ```xml
-<bean name="QuestClue">
-	<var name="desc" type="string"/>
-	<var name="npc_id" type="int"/>
-	<var name="location" type="vector3"/>
+<bean name="Reward">
+	<var name="item_id" type="int"/>
+	<var name="count" type="int"/>
+	<var name="desc" type="string">
 </bean>
 ```
 
-![pipeline](docs/images/examples/b_31.jpg)
+<table border="1">
+<tr align="center">
+<td>id</td>
+<td colspan="3">reward</td>
+</tr>
+<tr align="center">
+<td>id</td>
+<td colspan="3">Reward</td>
+</tr>
+<tr align="center">
+<td>1</td>
+<td>item1</td><td>1</td><td>desc1</td>
+</tr>
+<tr align="center">
+<td>2</td>
+<td>item2</td><td>100</td><td>desc2</td>
+</tr>
+</table>
+
 
 ### 简单结构列表
 某个字段为结构列表的情形也很常见，比如说奖励信息列表包含多个奖励信息，每个奖励都有多个字段。
@@ -160,7 +226,35 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 </bean>
 ```
 
-![pipeline](docs/images/examples/b_41.jpg)
+<table border="1">
+<tr align="center">
+<td>id</td>
+<td colspan="6">rewards1</td>
+<td colspan="3">rewards2&sep=,</td>
+<td>rewards3&sep=,|</td>
+</tr>
+<tr align="center">
+<td>id</td>
+<td colspan="6">list,Reward</td>
+<td colspan="3">list,Reward</td>
+<td>list,Reward</td>
+</tr>
+<tr align="center">
+<td>1</td>
+<td>item1</td><td>1</td><td>desc1</td><td>item2</td><td>2</td><td>desc2</td>
+<td>item1,1,desc1</td><td>item2,2,desc2</td><td>item3,3,desc3</td>
+<td>item1,1,desc1|item2,2,desc2</td>
+</tr>
+
+<tr align="center">
+<td>2</td>
+<td>item1</td><td>1</td><td>desc1</td><td></td><td></td><td></td>
+<td>item1,1,desc1</td><td>item2,2,desc2</td><td></td>
+<td>item1,1,desc1|item2,2,desc2|item3,1,desc3</td>
+</tr>
+
+</table>
+
 
 ### 多行结构列表
 有时候列表结构的每个结构字段较多，如果水平展开则占据太多列，不方便编辑，如果拆表，无论程序还是策划都不方便，此时可以使用多行模式。支持任意层次的多行结构列表（也即多行结构中的每个元素也可以是多行）， name&multi_rows=1或者  *name 都可以表达一个多行解析的字段。
@@ -178,19 +272,81 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 </bean>
 ```
 
-![pipeline](docs/images/examples/b_51.jpg)
+<table border="1">
+<tr align="center">
+<td>id</td>
+<td>name</td>
+<td colspan="6">*stage2</td>
+</tr>
+<tr align="center">
+<td>int</td>
+<td>string</td>
+<td colspan="6">list,Stage</td>
+</tr>
+<tr align="center">
+<td>id</td>
+<td>desc</td>
+<td colspan="6">stage info</td>
+</tr>
+<tr align="center">
+<td>1</td>
+<td>task1</td>
+<td>1</td><td>stage1</td><td>stage desc1</td><td>1,2,3</td><td>1001</td><td>1</td>
+</tr>
+<tr align="center">
+<td/><td/><td>2</td><td>stage2</td><td>stage desc2</td><td>1,2,3</td><td>1001</td><td>1</td>
+</tr>
+<tr align="center">
+<td/><td/><td>3</td><td>stage3</td><td>stage desc3</td><td>1,2,3</td><td>1002</td><td>1</td>
+</tr>
+<tr align="center">
+<td>2</td>
+<td>task2</td>
+<td>1</td><td>stage1</td><td>stage desc1</td><td>1,2,3</td><td>1001</td><td>1</td>
+</tr>
+<tr align="center">
+<td/><td/><td>2</td><td>stage2</td><td>stage desc2</td><td>1,2,3</td><td>1002</td><td>1</td>
+</tr>
+</table>
+
 
 
 ### 单例表
 有一些配置全局只有一份，比如 公会模块的开启等级，背包初始大小，背包上限。此时使用单例表来配置这些数据比较合适。
 
-![pipeline](docs/images/examples/b_61.jpg)
+| guld_open_level | bag_init_capacity | bag_max_capacity | newbie_tasks |
+| - | - | - | - |
+|int | int | int | list,int|
+|desc1 | desc 2 | desc 3 | desc 4 |
+|10 | 100| 500| 10001,10002 |
+
+
 
 ### 纵表
 
 大多数表都是横表，即一行一个记录。有些表，比如单例表，如果纵着填，一行一个字段，会比较舒服。meta行添加 orientation=c 则使用纵表模式来填写内容。 上面的单例表，以纵表模式填如下。
 
-![pipeline](docs/images/examples/b_62.jpg)
+
+<table border="1">
+<tr align="center">
+<td>##</td>
+<td>orientation=c</td>
+<td></td>
+<td></td>
+</tr>
+<tr align="center">
+<td>guild_open_level</td><td>int</td><td>desc1</td><td>10</td>
+</tr>
+<tr align="center">
+<td>bag_init_capacity</td><td>int</td><td>desc2</td><td>100</td>
+</tr>
+<tr align="center">
+<td>bag_max_capacity</td><td>int</td><td>desc3</td><td>500</td>
+</tr>
+<tr align="center">
+<td>newbie_tasks</td><td>1ist,int</td><td>desc4</td><td>10001,10002</td>
+</tr>
+</table>
 
 ### 引用检查
 游戏配置中经常要填写诸如道具id之类的外键数据，这些数据必须是合法的id值，luban支持生成时检查id的合法性，如果有误，则打出警告。
@@ -205,7 +361,44 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 </bean>
 ```
 
-![pipeline](docs/images/examples/b_71.jpg)
+<table border="1" >
+<tr align="center">
+  <td>id</td>
+  <td >item_id</td>
+  <td>items</td>
+  <td colspan="3">reward</td>
+  <td colspan="3">rewards&sep=,</td>
+</tr>
+<tr align="center">
+  <td>int</td>
+  <td>int</td>
+  <td>int&ref=item.TbItem</td>
+  <td colspan="3">list,int&ref=item.TbItem</td>
+  <td colspan="3">reward</td>
+</tr>
+<tr align="center">
+  <td>id</td>
+  <td>desc1</td>
+  <td>desc2</td>
+  <td colspan="3">desc3</td>
+  <td colspan="3">desc4</td>
+</tr>
+<tr align="center">
+  <td>1</td>
+  <td>1001</td>
+  <td>1001,1002</td>
+  <td>1001</td><td>10</td><td>item1</td>
+  <td>1001,10,item1</td><td>1002,2,item2</td><td/>
+</tr>
+<tr align="center">
+  <td>2</td>
+  <td>1002</td>
+  <td>1003,1004,1005</td>
+  <td>1002</td><td>10</td><td>item2</td>
+  <td>1004,10,item4</td><td>1005,2,item5</td><td>1010,1,item10</td>
+</tr>
+</table>
+
 
 
 ### 资源检查
@@ -213,7 +406,13 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 
 对于这些字段添加属性 path=unity或者path=ue或path=normal;xxxx。
 
-![pipeline](docs/images/examples/b_81.jpg)
+| id | icon |
+| - | - |
+| int | string&path=unity|
+|id | icon desc |
+| 1| Assets/UI/item1.jpg|
+|2| Assets/UI/item2.jpg|
+
 
 ### 分组导出
 灵活的分组定义，不仅仅是client和server分组。支持以下分组粒度：
@@ -225,18 +424,93 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 
 开发期经常会制作一些仅供开发使用的配置，比如测试道具，比如自动化测试使用的配置，希望在正式发布时不导出这些数据。 
 
-![pipeline](docs/images/examples/c_11.jpg)
+|\_\_tag\_\_  | id | name | desc |
+| - | - | - | - |
+| | int | string | string |
+| | id | desc1| desc2|
+| | 1 | item1 | 永远导出 |
+|##| 2 | item2 | 永远不导出 |
+|no|3| item3| 永远不导出 |
+|test| 4 | item4 | --export_exclude_tags test 时导出 |
+|TEST| 5 | item5 | --export_exclude_tags test 时导出 |
+|dev |6 | item6 | --export_exclude_tags dev 时导出 |
+| | 7|item7| 永远导出 |
+
 
 ## 高级特性
 ### 层级标题头 (hierarchy title)
 在多行数据或者深层次嵌套的数据中，如果数据字段较多，填写时不易区分子元素。luban提供层级标题实现深层次的子字段对应。以上面的多行数据列表为例。
 
-![pipeline](docs/images/examples/d_30.jpg)
+<table border="1">
+
+<tr align="center">
+  <td rowspan="2"></td>
+  <td>id</td>
+  <td>name</td>
+  <td colspan="6">stages</td>
+</tr>
+<tr align="center">
+  <td></td>
+  <td/>
+  <td>id</td>
+  <td>name</td>
+  <td>desc</td>
+  <td>location</td>
+  <td>item_id</td>
+  <td>num</td>
+</tr>
+<tr align="center">
+  <td/>
+  <td>int</td>
+  <td>string</td>
+  <td colspan="6">list,Stage</td>
+</tr>
+<tr align="center">
+  <td/>
+  <td>id</td>
+  <td>desc1</td>
+  <td>desc1</td>
+  <td>desc2</td>
+  <td>desc3</td>
+  <td>desc4</td>
+  <td>desc5</td>
+  <td>desc6</td>
+</tr>
+
+<tr align="center">
+<td/>
+<td>1</td>
+<td>task1</td>
+<td>1</td><td>stage1</td><td>stage desc1</td><td>1,2,3</td><td>1001</td><td>1</td>
+</tr>
+<tr align="center">
+<td/><td/><td/><td>2</td><td>stage2</td><td>stage desc2</td><td>1,2,3</td><td>1001</td><td>1</td>
+</tr>
+<tr align="center">
+<td/><td/><td/><td>3</td><td>stage3</td><td>stage desc3</td><td>1,2,3</td><td>1002</td><td>1</td>
+</tr>
+<tr align="center">
+<td/><td>2</td>
+<td>task2</td>
+<td>1</td><td>stage1</td><td>stage desc1</td><td>1,2,3</td><td>1001</td><td>1</td>
+</tr>
+<tr align="center">
+<td/><td/><td/><td>2</td><td>stage2</td><td>stage desc2</td><td>1,2,3</td><td>1002</td><td>1</td>
+</tr>
+
+</table>
 
 ### 可空数据类型
 配置数据中经常有空值的语义需求，实际项目中往往混杂地使用0或-1表达空值，既不自然清晰也不统一。luban借鉴了c#中的可空变量的概念，特地提供可空数据支持。所有原生数据类型，以及enum、bean、和多态bean类型都有相应的可空数据类型。定义方式为 <类型名>?，与c#里的Nullable类型定义方式相同。例如 bool?,int?,long?,double?, EColor?, DemoType?
 
-![pipeline](docs/images/examples/d_10.jpg)
+|id|x1|x2|x3|x4|x5|
+|-|-|-|-|-|-|
+|int|bool?|int?|float?|datetime?|QualityType?|
+|id|desc1|desc2|desc3|desc4|desc5|
+|1|true|1|1.2|1999-09-09 10:10:10| RED|
+|2|null|null|null|null|null|
+|3| |||||
+
 
 ### 类型继承(inheritance)
 支持OOP的类型继承体系，方便表达多类型的数据，常用于技能、AI等模块。类型继承是luban类型系统的灵魂，如果没有类型继承，不可能简洁地表达任意复杂数据结构，因而也不可能定义并且从配置中读取复杂的配置数据。
@@ -265,19 +539,53 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 </bean>
 
 ```
+<table border="1">
+<tr align="center">
+  <td>id</td>
+  <td colspan="4">shapes&sep=,</td>
+</tr>
+<tr align="center">
+  <td>int</td>
+  <td colspan="4">list,Shape</td>
+</tr>
+<tr align="center">
+  <td>id</td>
+  <td colspan="4"> shape desc</td>
+</tr>
+<tr align="center">
+  <td>1</td>
+  <td>Circle,10</td>
+  <td>Rectangle,100,200</td>
+  <td/>
+  <td/>
+</tr>
+<tr align="center">
+  <td>2</td>
+  <td>Circle,20</td>
+  <td>Rectangle,100,200</td>
+  <td>Line,5,8</td>
+  <td>Parabola,15,30</td>
+</tr>
+</table>
 
-![pipeline](docs/images/examples/d_50.jpg)
 
 ### 字段默认值
 我们希望excel中单元格留空时，该字段取指定值，而不是默认的false,0之类。通过定义字段的default=xxx属性来指定默认值。
 
 如示例，id=2的记录，x1与x2皆为空，x1=0,x2=-1。
 
-![pipeline](docs/images/examples/d_60.jpg)
+|id | x1 | x2&default=-1|
+| - | - | - |
+| int | int | int |
+|id|desc1|desc2|
+|1 | 10 |20|
+|2| | |
+|3| | 30|
+
 
 ### 常量别名
 
-游戏里经常会出现一些常用的类似枚举的值，比如说 升级丹的 id,在很多地方都要填，如果直接它的道具 id,既不直观，也容易出错。 Luban 支持常量替换。对于需要常量替换的字段，添加 convert=”枚举类”。 如果填写的值是 枚举名或者别名，则替换为 相应的整数。否则 按照整数解析。
+游戏里经常会出现一些常用的类似枚举的值，比如说 升级丹的 id,在很多地方都要填，如果直接它的道具 id,既不直观，也容易出错。 Luban 支持常量替换。如示例，导出时SHENG_JI_DAN会被替换为11220304。
 
 ``` xml
 <enum name="EFunctionItemId">
@@ -286,10 +594,13 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 </enum>
 ```
 
-![pipeline](docs/images/examples/d_20.jpg)
-
-
-导出时，升级丹会被替换为11220304。
+|id| item_id |
+| - | - |
+|int| int&convert=EFunctionItemId|
+|id| desc|
+|1 | SHENG_JI_DAN|
+|2| 进阶丹|
+|3| 1001|
 
 ### 灵活的配置文件组织形式
 支持以下几种组织形式，允许开发者根据情况灵活组织配置文件结构。例如可以一个表对应一个xlsx文件；可以多个表都放到同个xlsx文件；可以一个表对应多个xlsx文件；可以一个表对应一个目录。
