@@ -18,7 +18,7 @@
 ## 介绍
 
 
-在中大型游戏项目中，就算常规的excel表也经常出现复杂的数据结构需求，常规的导表工具面对此类需求要么无法支持，要么就强迫策划和程序使用拆表等奇技淫巧，严重影响设计和开发效率。另外有复杂GamePlay的游戏，基本都会有技能、行为树、关卡之类的复杂功能，这些功能有非常复杂的数据结构，往往使用自定义编辑器制作，并以json、xml等文件格式保存，以excel为中心的导表工具无法处理这些数据，导致程序往往不得不手动解析它们，浪费了很多时间。
+在中大型游戏项目中，excel配置表时常出现较复杂的数据结构，常规的导表工具面对此类需求要么无法支持，要么就强迫策划和程序使用拆表等奇技淫巧，严重影响设计和开发效率。另外具有复杂GamePlay的游戏中，技能、行为树、关卡之类的功能有非常复杂的数据结构，往往使用自定义编辑器制作，并以json、xml等文件格式保存，以excel为中心的导表工具无法处理这些数据，给策划和程序的工作流带来麻烦。
 
 luban相较于常规的excel导表工具有以下核心优势：
 - 增强了excel格式。可以比较简洁地excel配置**任意复杂**的数据，像子结构、结构列表，以及更复杂的深层次的嵌套结构都能直接解析处理。
@@ -36,13 +36,12 @@ luban相较于常规的excel导表工具有以下核心优势：
 - [Excel 配置数据简介](docs/data_excel.md)
 - [client&server安装与使用说明](docs/luban_install_manual.md)
 - [文档目录](docs/catalog.md)
-- [[TODO] 完整手册](docs/manual.md)
-- **====>强烈推荐查看：示例项目** ([github](https://github.com/focus-creative-games/luban_examples)) ([gitee](https://gitee.com/focus-creative-games/luban_examples)) **<====**
+- [完整手册](docs/manual.md)
+- **示例项目** ([github](https://github.com/focus-creative-games/luban_examples)) ([gitee](https://gitee.com/focus-creative-games/luban_examples))
 
 - 支持与联系
   - QQ群: 692890842 （Luban开发交流群）。有使用方面的疑问请及时加QQ群询问，随时有人帮助解决。
   - 邮箱: taojingjian#gmail.com
-  - Skypy群: https://join.skype.com/xr2nhdMKjac0
 
 ## 特性
 - 支持excel族、json、xml、lua、yaml 多种数据格式，基本统一了游戏常见的配置数据
@@ -164,7 +163,7 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 ![pipeline](docs/images/examples/b_41.jpg)
 
 ### 多行结构列表
-有时候列表结构的每个结构字段较多，如果水平展开则占据太多列，不方便编辑，如果拆表，无论程序还是策划都不方便，此时可以使用多行模式。支持任意层次的多行结构列表（也即多行结构中的每个元素也可以是多行）
+有时候列表结构的每个结构字段较多，如果水平展开则占据太多列，不方便编辑，如果拆表，无论程序还是策划都不方便，此时可以使用多行模式。支持任意层次的多行结构列表（也即多行结构中的每个元素也可以是多行）， name&multi_rows=1或者  *name 都可以表达一个多行解析的字段。
 
 假设每个任务包含多个阶段，有一个阶段列表字段。
 
@@ -487,7 +486,7 @@ println(tables.TbItem.Get(12).Name)
 
 测试结果：
 
-| 格式 | 首次耗时 | 累积耗时 | 单个输出文件大小 | 输出文件总大小 |
+| 格式 | 完整生成耗时 | 增量生成耗时 | 单个输出文件大小 | 输出文件总大小 |
 | ---- | --------| ------  | ----            | ------ |
 | bin  | 15.652 s| 797 ms  | 164 K            | 59.5 M |
 | json | 17.746 s| 796 ms  | 1.11 M           | 555 M   |

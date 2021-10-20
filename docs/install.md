@@ -55,7 +55,6 @@
       --output_code_dir <生成的代码文件的路径> ^
       --output_data_dir <导出的数据文件的路径> ^
       --service all ^
-      --export_test_data ^
       --gen_types "code_cs_json,data_json"
  ```
 
