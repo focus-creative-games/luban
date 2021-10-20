@@ -127,14 +127,21 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
   <td>id</td>
   <td>arr1</td>
   <td colspan="4">arr2</td>
-  <td>arr3</td>
+  <td>arr3&sep=|</td>
   <td colspan="3">arr4</td>
+</tr>
+<tr align="center">
+  <td>int</id>
+  <td>array,int</td>
+  <td colspan="4">list,int</td>
+  <td>list,string</td>
+  <td colspan="3">list,string</td>
 </tr>
 <tr align="center">
   <td>id</id>
   <td>desc1</td>
   <td colspan="4">desc2</td>
-  <td>desc3&sep=|</td>
+  <td>desc3</td>
   <td colspan="3">desc4</td>
 </tr>
 
@@ -171,6 +178,7 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 
 | id| quality| quality2 |
 | - | - | - |
+|int|ItemQuality|ItemQuality|
 | 1| 白 | RED |
 | 2| GREEN | 红 |
 | 3| RED | WHITE |
@@ -196,8 +204,12 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 <td colspan="3">reward</td>
 </tr>
 <tr align="center">
-<td>id</td>
+<td>int</td>
 <td colspan="3">Reward</td>
+</tr>
+<tr align="center">
+<td>id</td>
+<td>item id</td><td>count</td><td>desc</td>
 </tr>
 <tr align="center">
 <td>1</td>
@@ -234,10 +246,16 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 <td>rewards3&sep=,|</td>
 </tr>
 <tr align="center">
-<td>id</td>
+<td>int</td>
 <td colspan="6">list,Reward</td>
 <td colspan="3">list,Reward</td>
 <td>list,Reward</td>
+</tr>
+<tr align="center">
+<td>id</td>
+<td colspan="6">reward list desc1</td>
+<td colspan="3">reward list desc2</td>
+<td>reward list desc3</td>
 </tr>
 <tr align="center">
 <td>1</td>
@@ -331,7 +349,7 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 <tr align="center">
 <td>##</td>
 <td>orientation=c</td>
-<td></td>
+<td>title_rows=3</td>
 <td></td>
 </tr>
 <tr align="center">
@@ -344,7 +362,7 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 <td>bag_max_capacity</td><td>int</td><td>desc3</td><td>500</td>
 </tr>
 <tr align="center">
-<td>newbie_tasks</td><td>1ist,int</td><td>desc4</td><td>10001,10002</td>
+<td>newbie_tasks</td><td>list,int</td><td>desc4</td><td>10001,10002</td>
 </tr>
 </table>
 
@@ -424,16 +442,15 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 
 开发期经常会制作一些仅供开发使用的配置，比如测试道具，比如自动化测试使用的配置，希望在正式发布时不导出这些数据。 
 
-|\_\_tag\_\_  | id | name | desc |
+|\_\_tag\_\_  | id | name |  |
 | - | - | - | - |
-| | int | string | string |
-| | id | desc1| desc2|
+| | int | string |  |
+| 导出标记 | id | desc1| 注释 |
 | | 1 | item1 | 永远导出 |
 |##| 2 | item2 | 永远不导出 |
-|no|3| item3| 永远不导出 |
-|test| 4 | item4 | --export_exclude_tags test 时导出 |
-|TEST| 5 | item5 | --export_exclude_tags test 时导出 |
-|dev |6 | item6 | --export_exclude_tags dev 时导出 |
+|test| 4 | item4 | --export_exclude_tags test 时不导出 |
+|TEST| 5 | item5 | --export_exclude_tags test 时不导出 |
+|dev |6 | item6 | --export_exclude_tags dev 时不导出 |
 | | 7|item7| 永远导出 |
 
 
