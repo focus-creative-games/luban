@@ -284,12 +284,12 @@ namespace Luban.Job.Cfg.DataCreators
 
             if (row.Row != null)
             {
-                var s = row.AsStream(sep);
+                var s = row.AsStream("");
                 return type.Apply(ExcelStreamDataCreator.Ins, s);
             }
             else if (row.Rows != null)
             {
-                var s = row.AsMultiRowConcatStream(sep);
+                var s = row.AsMultiRowConcatStream("");
                 return type.Apply(ExcelStreamDataCreator.Ins, s);
             }
             else if (row.Fields != null)

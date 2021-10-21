@@ -420,13 +420,17 @@ namespace Luban.Job.Cfg.DataSources.Excel
             var fields = new Dictionary<string, FieldInfo>();
             foreach (var subTitle in title.SubTitleList)
             {
+                if (subTitle.Name.StartsWith("__"))
+                {
+                    continue;
+                }
                 fields.Add(subTitle.Name, new FieldInfo()
                 {
                     Name = subTitle.Name,
                     Tags = title.Tags,
-                    Type = typeRow != null ? typeRow[subTitle.FromIndex].Value?.ToString() : "",
-                    BriefDesc = briefDescRow != null ? briefDescRow[subTitle.FromIndex].Value?.ToString() : "",
-                    DetailDesc = destailDescRow != null ? destailDescRow[subTitle.FromIndex].Value?.ToString() : "",
+                    Type = typeRow?[subTitle.FromIndex].Value?.ToString() ?? "",
+                    BriefDesc = briefDescRow?[subTitle.FromIndex].Value?.ToString() ?? "",
+                    DetailDesc = destailDescRow?[subTitle.FromIndex].Value?.ToString() ?? "",
                 });
             }
 
