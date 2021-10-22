@@ -56,7 +56,7 @@ namespace Luban.Job.Cfg.DataVisitors
             return type.Value.ToString();
         }
 
-        public string Accept(DEnum type)
+        public virtual string Accept(DEnum type)
         {
             return type.Value.ToString();
         }
@@ -89,7 +89,7 @@ namespace Luban.Job.Cfg.DataVisitors
 
         public abstract string Accept(DVector4 type);
 
-        public string Accept(DDateTime type)
+        public virtual string Accept(DDateTime type)
         {
             var ass = DefAssembly.LocalAssebmly as DefAssembly;
             return type.GetUnixTime(ass.TimeZone).ToString();

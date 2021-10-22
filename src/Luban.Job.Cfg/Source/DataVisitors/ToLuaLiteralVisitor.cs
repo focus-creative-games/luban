@@ -45,7 +45,7 @@ namespace Luban.Job.Cfg.DataVisitors
         }
 
 
-        protected void Append(List<DType> datas, StringBuilder x)
+        private void Append(List<DType> datas, StringBuilder x)
         {
             x.Append('{');
             foreach (var e in datas)

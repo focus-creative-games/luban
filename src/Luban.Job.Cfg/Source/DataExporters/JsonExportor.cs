@@ -71,7 +71,7 @@ namespace Luban.Job.Cfg.DataExporters
             x.WriteNumberValue(type.Value);
         }
 
-        public void Accept(DEnum type, Utf8JsonWriter x)
+        public virtual void Accept(DEnum type, Utf8JsonWriter x)
         {
             x.WriteNumberValue(type.Value);
         }
@@ -86,7 +86,7 @@ namespace Luban.Job.Cfg.DataExporters
             throw new NotImplementedException();
         }
 
-        public void Accept(DText type, Utf8JsonWriter x)
+        public virtual void Accept(DText type, Utf8JsonWriter x)
         {
             x.WriteStartObject();
             x.WritePropertyName(DText.KEY_NAME);
@@ -97,7 +97,7 @@ namespace Luban.Job.Cfg.DataExporters
             x.WriteEndObject();
         }
 
-        public void Accept(DBean type, Utf8JsonWriter x)
+        public virtual void Accept(DBean type, Utf8JsonWriter x)
         {
             x.WriteStartObject();
 
@@ -193,7 +193,7 @@ namespace Luban.Job.Cfg.DataExporters
             x.WriteEndObject();
         }
 
-        public void Accept(DDateTime type, Utf8JsonWriter x)
+        public virtual void Accept(DDateTime type, Utf8JsonWriter x)
         {
             x.WriteNumberValue(type.GetUnixTime(DefAssembly.LocalAssebmly.TimeZone));
         }

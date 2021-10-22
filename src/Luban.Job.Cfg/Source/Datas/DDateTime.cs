@@ -1,4 +1,5 @@
 using Luban.Job.Cfg.DataVisitors;
+using Luban.Job.Cfg.Utils;
 using System;
 
 namespace Luban.Job.Cfg.Datas
@@ -28,6 +29,11 @@ namespace Luban.Job.Cfg.Datas
         public override int GetHashCode()
         {
             return _localTime.GetHashCode();
+        }
+
+        public string ToFormatString()
+        {
+            return DataUtil.FormatDateTime(Time);
         }
 
         public int GetUnixTime(TimeZoneInfo asTimeZone)
