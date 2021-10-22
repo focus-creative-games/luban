@@ -45,7 +45,7 @@ namespace Luban.Job.Cfg.Utils
                     var ss = new MemoryStream();
                     var jsonWriter = new Utf8JsonWriter(ss, new JsonWriterOptions()
                     {
-                        Indented = true,
+                        Indented = !table.Assembly.OutputCompactJson,
                         SkipValidation = false,
                         Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(System.Text.Unicode.UnicodeRanges.All),
                     });

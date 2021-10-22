@@ -143,7 +143,8 @@ namespace Luban.Job.Cfg
                 var excludeTags = args.ExportExcludeTags.Split(',').Select(t => t.Trim().ToLowerInvariant()).Where(t => !string.IsNullOrEmpty(t)).ToList();
                 var ass = new DefAssembly(args.PatchName, timeZoneInfo, excludeTags, agent)
                 {
-                    UseUnityVectors = args.UseUnityVectors
+                    UseUnityVectors = args.UseUnityVectors,
+                    OutputCompactJson = args.OutputCompactJson,
                 };
 
                 ass.Load(args.Service, rawDefines);

@@ -29,6 +29,9 @@ namespace Luban.Job.Cfg
         [Option("data_file_extension", Required = false, HelpText = "data file name extension. default choose by gen_type")]
         public string DataFileExtension { get; set; }
 
+        [Option("output_compact_json", Required = false, HelpText = "output compact json data. drop blank characters. ")]
+        public bool OutputCompactJson { get; set; }
+
         [Option('s', "service", Required = true, HelpText = "service")]
         public string Service { get; set; }
 

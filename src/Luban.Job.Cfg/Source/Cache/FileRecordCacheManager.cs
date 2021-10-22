@@ -73,6 +73,7 @@ namespace Luban.Job.Cfg.Cache
         }
 
         private readonly ConcurrentDictionary<(string TableFullName, string DataType), (DefTable Table, List<Record> Records, string Md5)> _tableCaches = new();
+
         public bool TryGetRecordOutputData(DefTable table, List<Record> records, string dataType, out string md5)
         {
             if (_tableCaches.TryGetValue((table.FullName, dataType), out var cacheInfo))
@@ -82,6 +83,7 @@ namespace Luban.Job.Cfg.Cache
                 if (cacheAss.TimeZone == curAss.TimeZone
                     && cacheAss.TargetPatch == null && curAss.TargetPatch == null
                     && !cacheAss.NeedL10nTextTranslate && !curAss.NeedL10nTextTranslate
+                    && cacheAss.OutputCompactJson == curAss.OutputCompactJson
                     && records.Count == cacheInfo.Records.Count && records.SequenceEqual(cacheInfo.Records))
                 {
                     md5 = cacheInfo.Md5;
