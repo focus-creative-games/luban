@@ -20,6 +20,16 @@ namespace Luban.Job.Cfg.Datas
             this._localTime = (int)new DateTimeOffset(time).ToUnixTimeSeconds();
         }
 
+        public override bool Equals(object obj)
+        {
+            return obj is DDateTime d && Time == d.Time;
+        }
+
+        public override int GetHashCode()
+        {
+            return _localTime.GetHashCode();
+        }
+
         public int GetUnixTime(TimeZoneInfo asTimeZone)
         {
             if (asTimeZone == null || asTimeZone == TimeZoneInfo.Local)

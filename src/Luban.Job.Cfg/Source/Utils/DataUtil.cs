@@ -157,6 +157,23 @@ namespace Luban.Job.Cfg.Utils
                 default: return "";
             }
         }
+
+        public static bool IsCollectionEqual(List<DType> a, List<DType> b)
+        {
+            if (a.Count == b.Count)
+            {
+                for (int i = 0, n = a.Count; i < n; i++)
+                {
+                    if (!object.Equals(a[i], b[i]))
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+
         //public static string Data2String(DType data)
         //{
         //    var s = new StringBuilder();

@@ -1,7 +1,9 @@
 using Luban.Job.Cfg.DataVisitors;
+using Luban.Job.Cfg.Utils;
 using Luban.Job.Common.Types;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Luban.Job.Cfg.Datas
 {
@@ -25,6 +27,16 @@ namespace Luban.Job.Cfg.Datas
                     throw new Exception($"set 的 value:{key} 重复");
                 }
             }
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is DMap d && Datas.Count == d.Datas.Count && Datas.All(e => d.Datas.TryGetValue(e.Key, out var v) && object.Equals(e.Value, v));
+        }
+
+        public override int GetHashCode()
+        {
+            throw new System.NotSupportedException();
         }
 
         public override void Apply<T>(IDataActionVisitor<T> visitor, T x)

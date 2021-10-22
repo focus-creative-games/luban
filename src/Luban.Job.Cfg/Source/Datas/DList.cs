@@ -1,4 +1,5 @@
 using Luban.Job.Cfg.DataVisitors;
+using Luban.Job.Cfg.Utils;
 using Luban.Job.Common.Types;
 using System.Collections.Generic;
 
@@ -15,6 +16,17 @@ namespace Luban.Job.Cfg.Datas
         {
             this.Type = type;
             this.Datas = datas;
+        }
+
+
+        public override bool Equals(object obj)
+        {
+            return obj is DList d && DataUtil.IsCollectionEqual(Datas, d.Datas);
+        }
+
+        public override int GetHashCode()
+        {
+            throw new System.NotSupportedException();
         }
 
         public override void Apply<T>(IDataActionVisitor<T> visitor, T x)

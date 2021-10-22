@@ -1,9 +1,11 @@
-﻿using Luban.Job.Cfg.DataExporters;
+﻿using Luban.Common.Utils;
+using Luban.Job.Cfg.DataExporters;
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.DataSources.Excel;
 using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Cfg.Utils;
+using Luban.Job.Common.Types;
 using Microsoft.Office.Interop.Excel;
 using System;
 using System.Collections.Generic;
@@ -150,9 +152,28 @@ namespace LubanAssistant
 
             //int nextRowIndex = titleRowNum + 2;
 
+            // 对于 int和long类型记录，按值排序
+            var records = tableDataInfo.MainRecords;
+            DefField keyField = tableDataInfo.Table.IndexField;
+            if (keyField != null && (keyField.CType is TInt || keyField.CType is TLong))
+            {
+                string keyFieldName = keyField.Name;
+                records.Sort((a, b) =>
+                {
+                    DType keya = a.Data.GetField(keyFieldName);
+                    DType keyb = b.Data.GetField(keyFieldName);
+                    switch (keya)
+                    {
+                        case DInt ai: return ai.Value.CompareTo((keyb as DInt).Value);
+                        case DLong al: return al.Value.CompareTo((keyb as DLong).Value);
+                        default: throw new NotSupportedException();
+                    }
+                });
+            }
+
             int totalRowCount = 0;
             var dataRangeArray = new List<object[]>();
-            foreach (var rec in tableDataInfo.MainRecords)
+            foreach (var rec in records)
             {
                 var fillVisitor = new FillSheetVisitor(dataRangeArray, title.ToIndex + 1, totalRowCount);
                 totalRowCount += rec.Data.Apply(fillVisitor, title);
@@ -168,7 +189,7 @@ namespace LubanAssistant
                 }
             }
 
-            Range recordFillRange = sheet.Range[sheet.Cells[titleRowNum + 2, 1], sheet.Cells[titleRowNum + dataRangeArray.Count, title.ToIndex + 1]];
+            Range recordFillRange = sheet.Range[sheet.Cells[titleRowNum + 2, 1], sheet.Cells[titleRowNum + 1 + dataRangeArray.Count, title.ToIndex + 1]];
             recordFillRange.Value = resultDataRangeArray;
         }
 
@@ -181,26 +202,45 @@ namespace LubanAssistant
             return excelSource.ReadMulti(table.ValueTType);
         }
 
-        public static void SaveRecords(string inputDataDir, DefTable table, List<Record> records)
+        public static async Task SaveRecordsAsync(string inputDataDir, DefTable table, List<Record> records)
         {
             var recordOutputDir = Path.Combine(inputDataDir, table.InputFiles[0]);
             string index = table.IndexField.Name;
+
+            var saveRecordTasks = new List<Task>();
+
             foreach (var r in records)
             {
-                var ss = new MemoryStream();
-                var jsonWriter = new Utf8JsonWriter(ss, new JsonWriterOptions()
+                saveRecordTasks.Add(Task.Run(async () =>
                 {
-                    Indented = true,
-                    SkipValidation = false,
-                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(System.Text.Unicode.UnicodeRanges.All),
-                });
-                RawJsonExportor.Ins.Accept(r.Data, jsonWriter);
+                    var ss = new MemoryStream();
+                    var jsonWriter = new Utf8JsonWriter(ss, new JsonWriterOptions()
+                    {
+                        Indented = true,
+                        SkipValidation = false,
+                        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(System.Text.Unicode.UnicodeRanges.All),
+                    });
+                    RawJsonExportor.Ins.Accept(r.Data, jsonWriter);
 
-                jsonWriter.Flush();
-                var key = r.Data.GetField(index);
-                var fileName = $"{key.Apply(ToStringVisitor.Ins)}.json";
-                File.WriteAllBytes(Path.Combine(recordOutputDir, fileName), DataUtil.StreamToBytes(ss));
+                    jsonWriter.Flush();
+                    byte[] resultBytes = DataUtil.StreamToBytes(ss);
+                    var key = r.Data.GetField(index);
+                    var fileName = $"{key.Apply(ToStringVisitor.Ins)}.json";
+
+                    // 只有文件内容改变才重新加载
+                    string fileFullPath = Path.Combine(recordOutputDir, fileName);
+                    if (File.Exists(fileFullPath))
+                    {
+                        var oldBytes = await FileUtil.ReadAllBytesAsync(fileFullPath);
+                        if (System.Collections.StructuralComparisons.StructuralEqualityComparer.Equals(resultBytes, oldBytes))
+                        {
+                            return;
+                        }
+                    }
+                    await FileUtil.SaveFileAsync(recordOutputDir, fileName, resultBytes);
+                }));
             }
+            await Task.WhenAll(saveRecordTasks);
         }
 
         //public static void FillRecord(Worksheet sheet, ref int nextRowIndex, Title title, Record record)

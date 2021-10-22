@@ -17,6 +17,16 @@ namespace Luban.Job.Cfg.Datas
         {
         }
 
+        public override bool Equals(object obj)
+        {
+            return obj is DFshort d && Value == d.Value;
+        }
+
+        public override int GetHashCode()
+        {
+            return Value.GetHashCode();
+        }
+
         public override void Apply<T>(IDataActionVisitor<T> visitor, T x)
         {
             visitor.Accept(this, x);
@@ -35,16 +45,6 @@ namespace Luban.Job.Cfg.Datas
         public override TR Apply<T, TR>(IDataFuncVisitor<T, TR> visitor, T x)
         {
             return visitor.Accept(this, x);
-        }
-
-        public override bool Equals(object obj)
-        {
-            return obj is DFshort o && o.Value == this.Value;
-        }
-
-        public override int GetHashCode()
-        {
-            return Value.GetHashCode();
         }
     }
 }

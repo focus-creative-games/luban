@@ -11,6 +11,16 @@ namespace Luban.Job.Cfg.Datas
         {
         }
 
+        public override bool Equals(object obj)
+        {
+            return obj is DBytes d && System.Collections.StructuralComparisons.StructuralEqualityComparer.Equals(Value, d.Value);
+        }
+
+        public override int GetHashCode()
+        {
+            throw new System.NotSupportedException();
+        }
+
         public override void Apply<T>(IDataActionVisitor<T> visitor, T x)
         {
             visitor.Accept(this, x);

@@ -114,6 +114,7 @@ namespace LubanAssistant
                     var tableDataInfo = LastLoadTableData = await DataLoaderUtil.LoadTableDataAsync(RootDefineFile, InputDataDir, rawSheet.TableName);
                     var title = ExcelUtil.ParseTitles(sheet);
                     ExcelUtil.FillRecords(sheet, rawSheet.TitleRowCount, title, tableDataInfo);
+                    MessageBox.Show("加载成功");
                 }
                 catch (Exception e)
                 {
@@ -158,7 +159,7 @@ namespace LubanAssistant
             }
         }
 
-        private void SaveRecords(Action<Worksheet, int, TableDataInfo, DefTable, Title> saveTask)
+        private void SaveRecords(Func<Worksheet, int, TableDataInfo, DefTable, Title, Task> saveTask)
         {
             Worksheet sheet = Globals.LubanAssistant.Application.ActiveSheet;
 
@@ -181,7 +182,7 @@ namespace LubanAssistant
 
                     var tableDef = await DataLoaderUtil.LoadTableDefAsync(RootDefineFile, InputDataDir, tableName);
                     var title = ExcelUtil.ParseTitles(sheet);
-                    saveTask(sheet, rawSheet.TitleRowCount, LastLoadTableData, tableDef, title);
+                    await saveTask(sheet, rawSheet.TitleRowCount, LastLoadTableData, tableDef, title);
                 }
                 catch (Exception e)
                 {
@@ -192,21 +193,31 @@ namespace LubanAssistant
 
         private void BtnSaveAllClick(object sender, RibbonControlEventArgs e)
         {
-            SaveRecords((Worksheet sheet, int titleRowNum, TableDataInfo tableDataInfo, DefTable defTable, Title title) =>
+            SaveRecords(async (Worksheet sheet, int titleRowNum, TableDataInfo tableDataInfo, DefTable defTable, Title title) =>
             {
                 int usedRowNum = sheet.UsedRange.Rows.Count;
                 int firstDataRowNum = titleRowNum + 2;
                 if (firstDataRowNum <= usedRowNum)
                 {
                     var newRecords = ExcelUtil.LoadRecordsInRange(defTable, sheet, title, (sheet.Range[$"A{firstDataRowNum}:A{usedRowNum}"]).EntireRow);
-                    ExcelUtil.SaveRecords(InputDataDir, defTable, newRecords);
+                    await ExcelUtil.SaveRecordsAsync(InputDataDir, defTable, GetModifyRecords(LastLoadTableData, newRecords));
                     CleanRemovedRecordFiles(LastLoadTableData, newRecords);
+                    MessageBox.Show("保存成功");
                 }
                 else
                 {
                     MessageBox.Show("没有可保存的数据");
                 }
             });
+        }
+
+        private List<Record> GetModifyRecords(TableDataInfo lastTableDataInfo, List<Record> newRecords)
+        {
+            string index = lastTableDataInfo.Table.IndexField.Name;
+            var oldRecordDic = lastTableDataInfo.MainRecords.ToDictionary(r => r.Data.GetField(index));
+            var newRecordDic = newRecords.ToDictionary(r => r.Data.GetField(index));
+
+            return newRecordDic.Where(e => !oldRecordDic.TryGetValue(e.Key, out var r) || !object.Equals(e.Value.Data, r.Data)).Select(e => e.Value).ToList();
         }
 
         private void CleanRemovedRecordFiles(TableDataInfo lastTableDataInfo, List<Record> newRecords)
@@ -241,13 +252,14 @@ namespace LubanAssistant
                 MessageBox.Show("没有选中的行");
                 return;
             }
-            SaveRecords((Worksheet sheet, int titleRowNum, TableDataInfo tableDataInfo, DefTable defTable, Title title) =>
+            SaveRecords(async (Worksheet sheet, int titleRowNum, TableDataInfo tableDataInfo, DefTable defTable, Title title) =>
             {
                 int usedRowNum = sheet.UsedRange.Rows.Count;
                 if (titleRowNum + 1 < usedRowNum)
                 {
                     var newRecords = ExcelUtil.LoadRecordsInRange(defTable, sheet, title, selectRange.EntireRow);
-                    ExcelUtil.SaveRecords(InputDataDir, defTable, newRecords);
+                    await ExcelUtil.SaveRecordsAsync(InputDataDir, defTable, GetModifyRecords(LastLoadTableData, newRecords));
+                    MessageBox.Show("保存成功");
                 }
                 else
                 {

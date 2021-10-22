@@ -1,5 +1,6 @@
 using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Cfg.Utils;
 using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.Datas
@@ -19,6 +20,16 @@ namespace Luban.Job.Cfg.Datas
             this.Type = defType;
             this.ImplType = implType;
             this.Fields = fields;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is DBean d && string.Equals(ImplType?.FullName, d.ImplType?.FullName) && DataUtil.IsCollectionEqual(Fields, d.Fields);
+        }
+
+        public override int GetHashCode()
+        {
+            throw new System.NotSupportedException();
         }
 
         public DType GetField(string fieldName)

@@ -260,21 +260,21 @@ namespace LubanAssistant
         public int Accept(DVector2 type, Title x)
         {
             var v = type.Value;
-            SetTitleValue(x, $"{v.X},{v.Y}");
+            SetTitleValue(x, $"{v.X}, {v.Y}");
             return 1;
         }
 
         public int Accept(DVector3 type, Title x)
         {
             var v = type.Value;
-            SetTitleValue(x, $"{v.X},{v.Y},{v.Z}");
+            SetTitleValue(x, $"{v.X}, {v.Y}, {v.Z}");
             return 1;
         }
 
         public int Accept(DVector4 type, Title x)
         {
             var v = type.Value;
-            SetTitleValue(x, $"{v.X},{v.Y},{v.Z},{v.W}");
+            SetTitleValue(x, $"{v.X}, {v.Y}, {v.Z}, {v.W}");
             return 1;
         }
 

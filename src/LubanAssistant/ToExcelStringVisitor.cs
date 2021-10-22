@@ -127,7 +127,7 @@ namespace LubanAssistant
         {
             if (string.IsNullOrEmpty(sep) && type.Type.ElementType.Apply(IsNotSepTypeVisitor.Ins))
             {
-                sep = ",";
+                sep = ";";
             }
             return string.Join(sep, type.Datas.Select(d => d.Apply(this, sep)));
         }

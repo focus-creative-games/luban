@@ -24,5 +24,10 @@ namespace Luban.Job.Cfg.Datas
         {
             Value = value;
         }
+
+        public override int GetHashCode()
+        {
+            return Value.GetHashCode();
+        }
     }
 }
