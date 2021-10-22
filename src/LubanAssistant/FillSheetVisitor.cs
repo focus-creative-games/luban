@@ -13,90 +13,98 @@ namespace LubanAssistant
 {
     class FillSheetVisitor : IDataFuncVisitor<Title, int>
     {
-        private readonly Worksheet _sheet;
 
-        private readonly Range _cells;
+        private readonly List<object[]> _cells;
 
+        private readonly int _columnSize;
         private int _startRowIndex;
 
-        public FillSheetVisitor(Worksheet sheet, int startRowIndex)
+        public FillSheetVisitor(List<object[]> cells, int columnSize, int startRowIndex)
         {
-            _sheet = sheet;
-            _cells = sheet.Cells;
+            _cells = cells;
+            _columnSize = columnSize;
             _startRowIndex = startRowIndex;
         }
 
-        Range Current(Title title) => _cells[_startRowIndex, title.FromIndex + 1] as Range;
+        void SetTitleValue(Title title, object value)
+        {
+            while (_cells.Count <= _startRowIndex)
+            {
+                var row = new object[_columnSize];
+                _cells.Add(row);
+            }
+            _cells[_startRowIndex][title.FromIndex] = value;
+        }
 
         public int Accept(DBool type, Title x)
         {
-            Current(x).Value = type.Value;
+            SetTitleValue(x, type.Value);
             return 1;
         }
 
         public int Accept(DByte type, Title x)
         {
-            Current(x).Value = type.Value;
+            SetTitleValue(x, type.Value);
             return 1;
         }
 
         public int Accept(DShort type, Title x)
         {
-            Current(x).Value = type.Value;
+            SetTitleValue(x, type.Value);
             return 1;
         }
 
         public int Accept(DFshort type, Title x)
         {
-            Current(x).Value = type.Value;
+            SetTitleValue(x, type.Value);
             return 1;
         }
 
         public int Accept(DInt type, Title x)
         {
-            Current(x).Value = type.Value;
+            SetTitleValue(x, type.Value);
             return 1;
         }
 
         public int Accept(DFint type, Title x)
         {
-            Current(x).Value = type.Value;
+            SetTitleValue(x, type.Value);
             return 1;
         }
 
         public int Accept(DLong type, Title x)
         {
-            Current(x).Value = type.Value;
+            SetTitleValue(x, type.Value);
             return 1;
         }
 
         public int Accept(DFlong type, Title x)
         {
-            Current(x).Value = type.Value;
+            SetTitleValue(x, type.Value);
             return 1;
         }
 
         public int Accept(DFloat type, Title x)
         {
-            Current(x).Value = type.Value;
+            SetTitleValue(x, type.Value);
             return 1;
         }
 
         public int Accept(DDouble type, Title x)
         {
-            Current(x).Value = type.Value;
+            SetTitleValue(x, type.Value);
             return 1;
         }
 
         public int Accept(DEnum type, Title x)
         {
-            Current(x).Value = type.StrValue;
+            SetTitleValue(x, type.StrValue);
             return 1;
         }
 
         public int Accept(DString type, Title x)
         {
-            Current(x).Value = type.Value;
+            SetTitleValue(x, type.Value);
             return 1;
         }
 
@@ -111,7 +119,7 @@ namespace LubanAssistant
             //{
             //    throw new Exception($"title:{x.Name}为text类型，至少要占两列");
             //}
-            Current(x).Value = type.Apply(ToExcelStringVisitor.Ins, x.Sep);
+            SetTitleValue(x, type.Apply(ToExcelStringVisitor.Ins, x.Sep));
             //(_cells[_startRowIndex, x.FromIndex + 1] as Range).Value = type.RawValue;
             return 1;
         }
@@ -129,11 +137,11 @@ namespace LubanAssistant
                     }
                     if (type.ImplType != null)
                     {
-                        Current(typeTitle).Value = type.ImplType.Name;
+                        SetTitleValue(typeTitle, type.ImplType.Name);
                     }
                     else
                     {
-                        Current(typeTitle).Value = DefBean.BEAN_NULL_STR;
+                        SetTitleValue(typeTitle, DefBean.BEAN_NULL_STR);
                     }
                 }
                 else
@@ -178,7 +186,7 @@ namespace LubanAssistant
             }
             else
             {
-                Current(x).Value = type.Apply(ToExcelStringVisitor.Ins, x.Sep);
+                SetTitleValue(x, type.Apply(ToExcelStringVisitor.Ins, x.Sep));
                 return 1;
             }
         }
@@ -205,7 +213,7 @@ namespace LubanAssistant
             }
             else
             {
-                Current(x).Value = type.Apply(ToExcelStringVisitor.Ins, x.Sep);
+                SetTitleValue(x, type.Apply(ToExcelStringVisitor.Ins, x.Sep));
                 return 1;
             }
         }
@@ -232,47 +240,47 @@ namespace LubanAssistant
             }
             else
             {
-                Current(x).Value = type.Apply(ToExcelStringVisitor.Ins, x.Sep);
+                SetTitleValue(x, type.Apply(ToExcelStringVisitor.Ins, x.Sep));
                 return 1;
             }
         }
 
         public int Accept(DSet type, Title x)
         {
-            Current(x).Value = type.Apply(ToExcelStringVisitor.Ins, x.Sep);
+            SetTitleValue(x, type.Apply(ToExcelStringVisitor.Ins, x.Sep));
             return 1;
         }
 
         public int Accept(DMap type, Title x)
         {
-            Current(x).Value = type.Apply(ToExcelStringVisitor.Ins, x.Sep);
+            SetTitleValue(x, type.Apply(ToExcelStringVisitor.Ins, x.Sep));
             return 1;
         }
 
         public int Accept(DVector2 type, Title x)
         {
             var v = type.Value;
-            Current(x).Value = $"{v.X},{v.Y}";
+            SetTitleValue(x, $"{v.X},{v.Y}");
             return 1;
         }
 
         public int Accept(DVector3 type, Title x)
         {
             var v = type.Value;
-            Current(x).Value = $"{v.X},{v.Y},{v.Z}";
+            SetTitleValue(x, $"{v.X},{v.Y},{v.Z}");
             return 1;
         }
 
         public int Accept(DVector4 type, Title x)
         {
             var v = type.Value;
-            Current(x).Value = $"{v.X},{v.Y},{v.Z},{v.W}";
+            SetTitleValue(x, $"{v.X},{v.Y},{v.Z},{v.W}");
             return 1;
         }
 
         public int Accept(DDateTime type, Title x)
         {
-            Current(x).Value = type.Time;
+            SetTitleValue(x, type.Time);
             return 1;
         }
     }

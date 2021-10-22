@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace LubanAssistant
 {
@@ -32,12 +33,14 @@ namespace LubanAssistant
             Title title = ParseTitles(sheet);
             var cells = new List<List<Cell>>();
 
-            foreach (Range row in toSaveRecordRows)
+            var rangeAsArray = (object[,])toSaveRecordRows.Value;
+            int lowBound0 = rangeAsArray.GetLowerBound(0);
+            for (int r = lowBound0, n = r + rangeAsArray.GetLength(0); r < n; r++)
             {
                 var rowCell = new List<Cell>();
                 for (int i = title.FromIndex; i <= title.ToIndex; i++)
                 {
-                    rowCell.Add(new Cell(row.Row - 1, i, (row.Cells[1, i + 1] as Range).Value));
+                    rowCell.Add(new Cell(r - 1, i, rangeAsArray[r, i + 1]));
                 }
                 cells.Add(rowCell);
             }
@@ -90,6 +93,7 @@ namespace LubanAssistant
                 Tags = new Dictionary<string, string>(),
             };
             ParseSubTitle(sheet, 2, titleRows + 1, rootTile);
+            rootTile.ToIndex = rootTile.SubTitleList.Max(t => t.ToIndex);
             rootTile.Init();
             return rootTile;
         }
@@ -140,18 +144,32 @@ namespace LubanAssistant
             int usedRowNum = sheet.UsedRange.Rows.Count;
             if (usedRowNum > titleRowNum + 1)
             {
-                //Range allDataRange = sheet.Range[sheet.Cells[titleRowNum + 1, 1], sheet.Cells[$"A{titleRowNum + 2},A{usedRowNum}"].EntireRow;
                 Range allDataRange = sheet.Range[sheet.Cells[titleRowNum + 2, 1], sheet.Cells[usedRowNum, sheet.UsedRange.Columns.Count]];
                 allDataRange.ClearContents();
             }
 
-            int nextRowIndex = titleRowNum + 2;
+            //int nextRowIndex = titleRowNum + 2;
 
+            int totalRowCount = 0;
+            var dataRangeArray = new List<object[]>();
             foreach (var rec in tableDataInfo.MainRecords)
             {
-                var fillVisitor = new FillSheetVisitor(sheet, nextRowIndex);
-                nextRowIndex += rec.Data.Apply(fillVisitor, title);
+                var fillVisitor = new FillSheetVisitor(dataRangeArray, title.ToIndex + 1, totalRowCount);
+                totalRowCount += rec.Data.Apply(fillVisitor, title);
             }
+
+            object[,] resultDataRangeArray = new object[dataRangeArray.Count, title.ToIndex + 1];
+            for (int i = 0; i < dataRangeArray.Count; i++)
+            {
+                object[] row = dataRangeArray[i];
+                for (int j = 0; j < row.Length; j++)
+                {
+                    resultDataRangeArray[i, j] = row[j];
+                }
+            }
+
+            Range recordFillRange = sheet.Range[sheet.Cells[titleRowNum + 2, 1], sheet.Cells[titleRowNum + dataRangeArray.Count, title.ToIndex + 1]];
+            recordFillRange.Value = resultDataRangeArray;
         }
 
         public static List<Record> LoadRecordsInRange(DefTable table, Worksheet sheet, Title title, Range toSaveRecordRows)
