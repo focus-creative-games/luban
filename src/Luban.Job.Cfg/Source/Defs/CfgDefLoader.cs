@@ -293,16 +293,6 @@ namespace Luban.Job.Cfg.Defs
             var tableDefInfo = source.LoadTableDefInfo(file.OriginFile, file.SheetName, stream);
 
             var cb = new CfgBean() { Namespace = table.Namespace, Name = table.ValueType, };
-
-            //var rc = sheet.RowColumns;
-            //var attrRow = sheet.RowColumns[0];
-            //if (rc.Count < sheet.AttrRowCount + 1)
-            //{
-            //    throw new Exception($"table:'{table.Name}' file:{file.OriginFile} 至少包含 属性行和标题行");
-            //}
-            //var titleRow = sheet.RowColumns[sheet.AttrRowCount];
-            //// 有可能没有注释行，此时使用标题行，这个是必须有的
-            //var descRow = sheet.HeaderRowCount >= sheet.AttrRowCount + 2 ? sheet.RowColumns[sheet.AttrRowCount + 1] : titleRow;
 #if !LUBAN_LITE
             foreach (var (name, f) in tableDefInfo.FieldInfos)
             {
@@ -359,6 +349,7 @@ namespace Luban.Job.Cfg.Defs
                         case "path":
                         case "range":
                         {
+                            cf.Type = cf.Type + "&" + attrs[i];
                             //var validator = new Validator() { Type = attrName, Rule = attrValue };
                             //cf.Validators.Add(validator);
                             //cf.ValueValidators.Add(validator);

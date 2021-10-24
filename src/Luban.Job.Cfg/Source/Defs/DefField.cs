@@ -220,7 +220,8 @@ namespace Luban.Job.Cfg.Defs
                 {
                     if (CType.Tags.TryGetValue("ref", out string refStr2))
                     {
-                        this.Ref = (RefValidator)ValidatorFactory.Create("ref", refStr2);
+                        this.Validators.Add( this.Ref = (RefValidator)ValidatorFactory.Create("ref", refStr2));
+
                     }
                     if (CType.Tags.TryGetValue("path", out string pathStr2))
                     {
