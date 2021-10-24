@@ -29,6 +29,14 @@ namespace Luban.Job.Cfg.DataCreators
             return o == null || (o is string s && s.Length == 0);
         }
 
+        private void ThrowIfNonEmpty(TitleRow row)
+        {
+            if (row.SelfTitle.NonEmpty)
+            {
+                throw new Exception($"字段不允许为空");
+            }
+        }
+
         public DType Accept(TBool type, Sheet sheet, TitleRow row)
         {
             object x = row.Current;
@@ -38,6 +46,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
             if (CheckDefault(x))
             {
+                ThrowIfNonEmpty(row);
                 return DBool.ValueOf(false);
             }
             if (x is bool v)
@@ -70,6 +79,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
             if (CheckDefault(x))
             {
+                ThrowIfNonEmpty(row);
                 return DShort.Default;
             }
             return DShort.ValueOf(short.Parse(x.ToString()));
@@ -98,6 +108,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
             if (CheckDefault(x))
             {
+                ThrowIfNonEmpty(row);
                 return DInt.Default;
             }
             return DInt.ValueOf(int.Parse(x.ToString()));
@@ -112,6 +123,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
             if (CheckDefault(x))
             {
+                ThrowIfNonEmpty(row);
                 return DFint.Default;
             }
             return DFint.ValueOf(int.Parse(x.ToString()));
@@ -126,6 +138,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
             if (CheckDefault(x))
             {
+                ThrowIfNonEmpty(row);
                 return DLong.Default;
             }
             return DLong.ValueOf(long.Parse(x.ToString()));
@@ -140,6 +153,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
             if (CheckDefault(x))
             {
+                ThrowIfNonEmpty(row);
                 return DFlong.Default;
             }
             return DFlong.ValueOf(long.Parse(x.ToString()));
@@ -154,6 +168,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
             if (CheckDefault(x))
             {
+                ThrowIfNonEmpty(row);
                 return DFloat.Default;
             }
             return DFloat.ValueOf(float.Parse(x.ToString()));
@@ -168,6 +183,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
             if (CheckDefault(x))
             {
+                ThrowIfNonEmpty(row);
                 return DDouble.Default;
             }
             return DDouble.ValueOf(double.Parse(x.ToString()));
@@ -202,7 +218,12 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TString type, Sheet sheet, TitleRow row)
         {
-            var s = ParseString(row.Current);
+            object x = row.Current;
+            if (CheckDefault(x))
+            {
+                ThrowIfNonEmpty(row);
+            }
+            var s = ParseString(x);
             if (s == null)
             {
                 if (type.IsNullable)
@@ -270,7 +291,7 @@ namespace Luban.Job.Cfg.DataCreators
                 }
                 catch (Exception e)
                 {
-                    var dce = new DataCreateException(e, $"列：{fname}");
+                    var dce = new DataCreateException(e, $"字段：{fname}");
                     dce.Push(bean, f);
                     throw dce;
                 }
@@ -524,6 +545,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
             if (CheckDefault(d))
             {
+                ThrowIfNonEmpty(row);
                 return DVector2.Default;
             }
             return DataUtil.CreateVector(type, d.ToString());
@@ -538,6 +560,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
             if (CheckDefault(d))
             {
+                ThrowIfNonEmpty(row);
                 return DVector3.Default;
             }
             return DataUtil.CreateVector(type, d.ToString());
@@ -552,6 +575,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
             if (CheckDefault(d))
             {
+                ThrowIfNonEmpty(row);
                 return DVector4.Default;
             }
             return DataUtil.CreateVector(type, d.ToString());

@@ -30,6 +30,8 @@ namespace Luban.Job.Cfg.DataSources.Excel
             return string.IsNullOrEmpty(Sep) ? sep : Sep;
         }
 
+        public bool NonEmpty { get; private set; }
+
         public string Default { get; private set; }
 
         public bool SelfMultiRows { get; private set; }
@@ -63,10 +65,16 @@ namespace Luban.Job.Cfg.DataSources.Excel
         {
             SortSubTitles();
             Sep = Tags.TryGetValue("sep", out var v) && !string.IsNullOrWhiteSpace(v) ? v : null;
+            NonEmpty = Tags.TryGetValue("non_empty", out var ne) && ne == "1";
             SelfMultiRows = Tags.TryGetValue("multi_rows", out var v2) && (v2 == "1" || v2 == "true");
             Default = Tags.TryGetValue("default", out var v3) ? v3 : null;
             if (SubTitleList.Count > 0)
             {
+                if (Root)
+                {
+                    // 第一个字段一般为key，为了避免失误将空单元格当作key=0的数据，默认非空
+                    SubTitleList[0].Tags.TryAdd("non_empty", "1");
+                }
                 foreach (var sub in SubTitleList)
                 {
                     sub.Init();
