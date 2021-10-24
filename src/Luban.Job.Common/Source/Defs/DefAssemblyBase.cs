@@ -73,29 +73,29 @@ namespace Luban.Job.Common.Defs
             }
         }
 
-        private readonly Dictionary<(DefTypeBase, bool), TType> cacheDefTTypes = new Dictionary<(DefTypeBase, bool), TType>();
+        private readonly Dictionary<(DefTypeBase, bool), TType> _cacheDefTTypes = new Dictionary<(DefTypeBase, bool), TType>();
 
         protected TType GetOrCreateTEnum(DefEnum defType, bool nullable)
         {
-            if (cacheDefTTypes.TryGetValue((defType, nullable), out var t))
+            if (_cacheDefTTypes.TryGetValue((defType, nullable), out var t))
             {
                 return t;
             }
             else
             {
-                return cacheDefTTypes[(defType, nullable)] = TEnum.Create(nullable, defType);
+                return _cacheDefTTypes[(defType, nullable)] = TEnum.Create(nullable, defType);
             }
         }
 
         protected TType GetOrCreateTBean(DefTypeBase defType, bool nullable)
         {
-            if (cacheDefTTypes.TryGetValue((defType, nullable), out var t))
+            if (_cacheDefTTypes.TryGetValue((defType, nullable), out var t))
             {
                 return t;
             }
             else
             {
-                return cacheDefTTypes[(defType, nullable)] = TBean.Create(nullable, (DefBeanBase)defType);
+                return _cacheDefTTypes[(defType, nullable)] = TBean.Create(nullable, (DefBeanBase)defType);
             }
         }
 
@@ -137,6 +137,18 @@ namespace Luban.Job.Common.Defs
         protected TType CreateNotContainerType(string module, string rawType)
         {
             bool nullable;
+            // 去掉 rawType 两侧的匹配的 ()
+            while (rawType.Length > 0 && rawType[0] == '(')
+            {
+                if (rawType[rawType.Length - 1] == ')')
+                {
+                    rawType = rawType.Substring(1, rawType.Length - 2);
+                }
+                else
+                {
+                    throw new Exception($"type:{rawType} brace not match");
+                }
+            }
             var (type, tags) = DefUtil.ParseType(rawType);
 
 #if !LUBAN_LITE

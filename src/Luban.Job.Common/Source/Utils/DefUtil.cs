@@ -44,11 +44,25 @@ namespace Luban.Job.Common.Utils
             }
             else
             {
-#if !LUBAN_LITE
-                return (s[..sepIndex], ParseAttrs(s[(sepIndex + 1)..]));
-#else
-                return (s.Substring(0, sepIndex), ParseAttrs(s.Substring(sepIndex + 1)));
-#endif
+                int braceDepth = 0;
+                for (int i = 0; i < s.Length; i++)
+                {
+                    var c = s[i];
+                    if (c == '(')
+                    {
+                        ++braceDepth;
+                    }
+                    else if (c == ')')
+                    {
+                        --braceDepth;
+                    }
+
+                    if (braceDepth == 0 && (c == '#' || c == '&' || c == '|'))
+                    {
+                        return (s.Substring(0, i), ParseAttrs(s.Substring(i + 1)));
+                    }
+                }
+                return (s, new Dictionary<string, string>());
             }
         }
 
