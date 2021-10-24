@@ -16,7 +16,7 @@ namespace Luban.Job.Cfg.Defs
     {
         public DefAssembly Assembly => (DefAssembly)HostType.AssemblyBase;
 
-        public string Index { get; }
+        public string Index { get; private set; }
 
         public List<string> Groups { get; }
 
@@ -125,7 +125,6 @@ namespace Luban.Job.Cfg.Defs
 
         public DefField(DefTypeBase host, CfgField f, int idOffset) : base(host, f, idOffset)
         {
-            Index = f.Index;
             this.Groups = f.Groups;
             this.RawDefine = f;
         }
@@ -220,7 +219,7 @@ namespace Luban.Job.Cfg.Defs
                 {
                     if (CType.Tags.TryGetValue("ref", out string refStr2))
                     {
-                        this.Validators.Add( this.Ref = (RefValidator)ValidatorFactory.Create("ref", refStr2));
+                        this.Validators.Add(this.Ref = (RefValidator)ValidatorFactory.Create("ref", refStr2));
 
                     }
                     if (CType.Tags.TryGetValue("path", out string pathStr2))
@@ -276,28 +275,6 @@ namespace Luban.Job.Cfg.Defs
                         throw new Exception($"bean:{HostType.FullName} field:{Name} container value type can't text");
                     }
                     break;
-                }
-            }
-
-            if (!string.IsNullOrEmpty(Index))
-            {
-                if ((CType is TArray tarray) && (tarray.ElementType is TBean b))
-                {
-                    if ((IndexField = b.GetBeanAs<DefBean>().GetField(Index)) == null)
-                    {
-                        throw new Exception($"type:'{HostType.FullName}' field:'{Name}' index:'{Index}'. index not exist");
-                    }
-                }
-                else if ((CType is TList tlist) && (tlist.ElementType is TBean tb))
-                {
-                    if ((IndexField = tb.GetBeanAs<DefBean>().GetField(Index)) == null)
-                    {
-                        throw new Exception($"type:'{HostType.FullName}' field:'{Name}' index:'{Index}'. index not exist");
-                    }
-                }
-                else
-                {
-                    throw new Exception($"type:'{HostType.FullName}' field:'{Name}' index:'{Index}'. only array:bean or list:bean support index");
                 }
             }
         }
@@ -368,6 +345,30 @@ namespace Luban.Job.Cfg.Defs
                         ValidateRef(ValueRef, ta.ValueType);
                         break;
                     }
+                }
+            }
+
+            Index = CType.GetTag("index");
+
+            if (!string.IsNullOrEmpty(Index))
+            {
+                if ((CType is TArray tarray) && (tarray.ElementType is TBean b))
+                {
+                    if ((IndexField = b.GetBeanAs<DefBean>().GetField(Index)) == null)
+                    {
+                        throw new Exception($"type:'{HostType.FullName}' field:'{Name}' index:'{Index}'. index not exist");
+                    }
+                }
+                else if ((CType is TList tlist) && (tlist.ElementType is TBean tb))
+                {
+                    if ((IndexField = tb.GetBeanAs<DefBean>().GetField(Index)) == null)
+                    {
+                        throw new Exception($"type:'{HostType.FullName}' field:'{Name}' index:'{Index}'. index not exist");
+                    }
+                }
+                else
+                {
+                    throw new Exception($"type:'{HostType.FullName}' field:'{Name}' index:'{Index}'. only array:bean or list:bean support index");
                 }
             }
         }

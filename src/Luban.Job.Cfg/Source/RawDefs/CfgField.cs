@@ -5,8 +5,6 @@ namespace Luban.Job.Cfg.RawDefs
 {
     public class CfgField : Field
     {
-        public string Index { get; set; }
-
         public List<string> Groups { get; set; } = new List<string>();
     }
 }

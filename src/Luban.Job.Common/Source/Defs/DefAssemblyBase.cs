@@ -124,8 +124,9 @@ namespace Luban.Job.Common.Defs
 #endif
             if (sepIndex > 0)
             {
-                string containerType = type.Substring(0, sepIndex).Trim();
-                return CreateContainerType(module, containerType, type.Substring(sepIndex + 1, type.Length - sepIndex - 1).Trim());
+                var (containerAndElementType, tags) = DefUtil.ParseType(type);
+                string containerType = containerAndElementType.Substring(0, sepIndex).Trim();
+                return CreateContainerType(module, containerType, tags, containerAndElementType.Substring(sepIndex + 1, containerAndElementType.Length - sepIndex - 1).Trim());
             }
             else
             {
@@ -203,30 +204,30 @@ namespace Luban.Job.Common.Defs
             }
         }
 
-        protected TMap CreateMapType(string module, string keyValueType, bool isTreeMap)
+        protected TMap CreateMapType(string module, Dictionary<string, string> tags, string keyValueType, bool isTreeMap)
         {
             string[] elementTypes = keyValueType.Split(',').Select(s => s.Trim()).ToArray();
             if (elementTypes.Length != 2)
             {
                 throw new ArgumentException($"invalid map element type:'{keyValueType}'");
             }
-            return TMap.Create(false, null, CreateNotContainerType(module, elementTypes[0]), CreateNotContainerType(module, elementTypes[1]), isTreeMap);
+            return TMap.Create(false, tags, CreateNotContainerType(module, elementTypes[0]), CreateNotContainerType(module, elementTypes[1]), isTreeMap);
         }
 
-        protected TType CreateContainerType(string module, string containerType, string elementType)
+        protected TType CreateContainerType(string module, string containerType, Dictionary<string, string> containerTags, string elementType)
         {
             switch (containerType)
             {
-                case "array": return TArray.Create(false, new Dictionary<string, string>(), CreateNotContainerType(module, elementType));
-                case "list": return TList.Create(false, new Dictionary<string, string>(), CreateNotContainerType(module, elementType), true);
-                case "linkedlist": return TList.Create(false, new Dictionary<string, string>(), CreateNotContainerType(module, elementType), false);
-                case "arraylist": return TList.Create(false, new Dictionary<string, string>(), CreateNotContainerType(module, elementType), true);
-                case "set": return TSet.Create(false, new Dictionary<string, string>(), CreateNotContainerType(module, elementType), false);
-                case "hashset": return TSet.Create(false, new Dictionary<string, string>(), CreateNotContainerType(module, elementType), false);
-                case "treeset": return TSet.Create(false, new Dictionary<string, string>(), CreateNotContainerType(module, elementType), true);
-                case "map": return CreateMapType(module, elementType, false);
-                case "treemap": return CreateMapType(module, elementType, true);
-                case "hashmap": return CreateMapType(module, elementType, false);
+                case "array": return TArray.Create(false, containerTags, CreateNotContainerType(module, elementType));
+                case "list": return TList.Create(false, containerTags, CreateNotContainerType(module, elementType), true);
+                case "linkedlist": return TList.Create(false, containerTags, CreateNotContainerType(module, elementType), false);
+                case "arraylist": return TList.Create(false, containerTags, CreateNotContainerType(module, elementType), true);
+                case "set": return TSet.Create(false, containerTags, CreateNotContainerType(module, elementType), false);
+                case "hashset": return TSet.Create(false, containerTags, CreateNotContainerType(module, elementType), false);
+                case "treeset": return TSet.Create(false, containerTags, CreateNotContainerType(module, elementType), true);
+                case "map": return CreateMapType(module, containerTags, elementType, false);
+                case "treemap": return CreateMapType(module, containerTags, elementType, true);
+                case "hashmap": return CreateMapType(module, containerTags, elementType, false);
                 default:
                 {
                     throw new ArgumentException($"invalid container type. module:'{module}' container:'{containerType}' element:'{elementType}'");

@@ -85,13 +85,6 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         public override Record ReadOne(TBean type)
         {
-            //var datas = ReadMulti(type);
-            //switch (datas.Count)
-            //{
-            //    case 1: return datas[0];
-            //    case 0: throw new Exception($"单例表不能为空，必须包含且只包含1个记录");
-            //    default: throw new Exception($"单例表必须恰好包含1个记录. 但当前记录数为:{datas.Count}");
-            //}
             throw new Exception($"excel不支持单例读取模式");
         }
     }

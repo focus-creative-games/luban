@@ -341,18 +341,11 @@ namespace Luban.Job.Cfg.Defs
                     switch (attrName)
                     {
                         case "index":
-                        {
-                            cf.Index = attrValue;
-                            break;
-                        }
                         case "ref":
                         case "path":
                         case "range":
                         {
                             cf.Type = cf.Type + "&" + attrs[i];
-                            //var validator = new Validator() { Type = attrName, Rule = attrValue };
-                            //cf.Validators.Add(validator);
-                            //cf.ValueValidators.Add(validator);
                             break;
                         }
                         case "group":
@@ -568,7 +561,6 @@ namespace Luban.Job.Cfg.Defs
                 {
                     new CfgField() { Name = "name", Type = "string" },
                     new CfgField() { Name = "type", Type = "string" },
-                    new CfgField() { Name = "index", Type = "string" },
                     new CfgField() { Name = "group", Type = "string" },
                     new CfgField() { Name = "comment", Type = "string" },
                     new CfgField() { Name = "tags", Type = "string" },
@@ -647,7 +639,6 @@ namespace Luban.Job.Cfg.Defs
                             file.ActualFile,
                             (b.GetField("name") as DString).Value.Trim(),
                             (b.GetField("type") as DString).Value.Trim(),
-                            (b.GetField("index") as DString).Value.Trim(),
                             (b.GetField("group") as DString).Value,
                             (b.GetField("comment") as DString).Value.Trim(),
                             (b.GetField("tags") as DString).Value.Trim(),
@@ -667,7 +658,6 @@ namespace Luban.Job.Cfg.Defs
 
         private static readonly List<string> _fieldOptionalAttrs = new()
         {
-            "index",
             "ref",
             "path",
             "group",
@@ -695,7 +685,6 @@ namespace Luban.Job.Cfg.Defs
 
             return CreateField(defineFile, XmlUtil.GetRequiredAttribute(e, "name"),
                 typeStr,
-                XmlUtil.GetOptionalAttribute(e, "index"),
                  XmlUtil.GetOptionalAttribute(e, "group"),
                  XmlUtil.GetOptionalAttribute(e, "comment"),
                  XmlUtil.GetOptionalAttribute(e, "tags"),
@@ -703,14 +692,13 @@ namespace Luban.Job.Cfg.Defs
                 );
         }
 
-        private Field CreateField(string defileFile, string name, string type, string index, string group,
+        private Field CreateField(string defileFile, string name, string type, string group,
             string comment, string tags,
             bool ignoreNameValidation)
         {
             var f = new CfgField()
             {
                 Name = name,
-                Index = index,
                 Groups = CreateGroups(group),
                 Comment = comment,
                 Tags = tags,
