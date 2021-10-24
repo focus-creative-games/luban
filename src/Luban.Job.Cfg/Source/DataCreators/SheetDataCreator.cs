@@ -382,7 +382,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
             else if (row.Fields != null)
             {
-                throw new NotSupportedException();
+                throw new Exception($"array 不支持 子字段. 忘记将字段设为多行模式?  {row.SelfTitle.Name} => *{row.SelfTitle.Name}");
             }
             else if (row.Elements != null)
             {
@@ -410,7 +410,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
             else if (row.Fields != null)
             {
-                throw new NotSupportedException();
+                throw new Exception($"list 不支持 子字段. 忘记将字段设为多行模式?  {row.SelfTitle.Name} => *{row.SelfTitle.Name}");
             }
             else if (row.Elements != null)
             {
@@ -438,7 +438,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
             else if (row.Fields != null)
             {
-                throw new NotSupportedException();
+                throw new Exception($"set 不支持 子字段");
             }
             else if (row.Elements != null)
             {
