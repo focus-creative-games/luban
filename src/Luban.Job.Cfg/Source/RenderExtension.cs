@@ -29,6 +29,7 @@ namespace Luban.Job.Cfg
         public static string RenderData(this Template template, DefTable table, List<DBean> exportDatas, Dictionary<string, object> extraModels = null)
         {
             var ctx = new TemplateContext();
+
             var env = new DTypeTemplateExtends
             {
                 ["table"] = table,

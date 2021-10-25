@@ -43,7 +43,7 @@ namespace Luban.ClientServer
             Console.WriteLine("ERRORS:");
             Console.WriteLine("\t" + err);
             Console.WriteLine(@"
-Luban.Client <Options>...  [-- [job options]]
+Luban.ClientServer <Options>...  [-- [job options]]
 e.g.
     Luban.ClientServer -j cfg --  --name abc
 

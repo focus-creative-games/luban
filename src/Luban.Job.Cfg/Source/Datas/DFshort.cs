@@ -27,6 +27,15 @@ namespace Luban.Job.Cfg.Datas
             return Value.GetHashCode();
         }
 
+        public override int CompareTo(DType other)
+        {
+            if (other is DFshort d)
+            {
+                return this.Value.CompareTo(d.Value);
+            }
+            throw new System.NotSupportedException();
+        }
+
         public override void Apply<T>(IDataActionVisitor<T> visitor, T x)
         {
             visitor.Accept(this, x);

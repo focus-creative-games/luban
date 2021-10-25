@@ -1,6 +1,7 @@
 ﻿using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Defs;
+using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.Utils
 {
@@ -65,6 +66,23 @@ namespace Luban.Job.Cfg.Utils
         public static string ToErlangLiteral(DType type)
         {
             return type.Apply(ToErlangLiteralVisitor.Ins);
+        }
+
+        public static List<DBean> SortDataList(List<DBean> datas, string indexName, bool asce)
+        {
+            var sortedDatas = new List<DBean>(datas);
+            if (sortedDatas.Count > 1)
+            {
+                if (asce)
+                {
+                    sortedDatas.Sort((a, b) => a.GetField(indexName).CompareTo(b.GetField(indexName)));
+                }
+                else
+                {
+                    sortedDatas.Sort((a, b) => -a.GetField(indexName).CompareTo(b.GetField(indexName)));
+                }
+            }
+            return sortedDatas;
         }
     }
 }

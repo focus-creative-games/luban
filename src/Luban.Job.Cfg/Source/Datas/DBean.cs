@@ -32,6 +32,11 @@ namespace Luban.Job.Cfg.Datas
             throw new System.NotSupportedException();
         }
 
+        public override int CompareTo(DType other)
+        {
+            throw new System.NotSupportedException();
+        }
+
         public DType GetField(string fieldName)
         {
             if (ImplType.TryGetField(fieldName, out var _, out var findex))

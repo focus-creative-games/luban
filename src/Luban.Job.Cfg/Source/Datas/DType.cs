@@ -3,7 +3,7 @@ using Luban.Job.Cfg.DataVisitors;
 
 namespace Luban.Job.Cfg.Datas
 {
-    public abstract class DType
+    public abstract class DType : System.IComparable<DType>
     {
         public abstract void Apply<T>(IDataActionVisitor<T> visitor, T x);
 
@@ -18,6 +18,11 @@ namespace Luban.Job.Cfg.Datas
         public override string ToString()
         {
             return this.Apply(ToStringVisitor.Ins);
+        }
+
+        public virtual int CompareTo(DType other)
+        {
+            throw new System.NotSupportedException();
         }
     }
 

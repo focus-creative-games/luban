@@ -31,6 +31,15 @@ namespace Luban.Job.Cfg.Datas
             return _localTime.GetHashCode();
         }
 
+        public override int CompareTo(DType other)
+        {
+            if (other is DDateTime d)
+            {
+                return this._localTime.CompareTo(d._localTime);
+            }
+            throw new System.NotSupportedException();
+        }
+
         public string ToFormatString()
         {
             return DataUtil.FormatDateTime(Time);

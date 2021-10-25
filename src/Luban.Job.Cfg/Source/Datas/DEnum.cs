@@ -56,5 +56,14 @@ namespace Luban.Job.Cfg.Datas
         {
             return Value.GetHashCode();
         }
+
+        public override int CompareTo(DType other)
+        {
+            if (other is DEnum d)
+            {
+                return this.Value.CompareTo(d.Value);
+            }
+            throw new System.NotSupportedException();
+        }
     }
 }

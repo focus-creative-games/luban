@@ -28,6 +28,11 @@ namespace Luban.Job.Cfg.Datas
             throw new System.NotSupportedException();
         }
 
+        public override int CompareTo(DType other)
+        {
+            throw new System.NotSupportedException();
+        }
+
         public override void Apply<T>(IDataActionVisitor<T> visitor, T x)
         {
             visitor.Accept(this, x);
