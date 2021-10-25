@@ -214,6 +214,10 @@ namespace Luban.Job.Cfg.DataCreators
             {
                 return null;
             }
+            if (d == null)
+            {
+                throw new InvalidExcelDataException($"枚举值不能为空");
+            }
             return new DEnum(type, d.ToString().Trim());
         }
 

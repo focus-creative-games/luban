@@ -25,7 +25,7 @@ namespace Luban.Job.Common.Defs
                 ELanguage curLan = AssemblyBase.CurrentLanguage;
                 switch (AssemblyBase.NamingConventionBeanMember)
                 {
-                    case NamingConvention.Origin: cn = Name; break;
+                    case NamingConvention.None: cn = Name; break;
                     case NamingConvention.CameraCase: cn = TypeUtil.ToCamelCase(Name); break;
                     case NamingConvention.PascalCase: cn = TypeUtil.ToPascalCase(Name); break;
                     case NamingConvention.UnderScores: cn = TypeUtil.ToUnderScores(Name); break;

@@ -10,7 +10,7 @@ namespace Luban.Job.Common
     {
         Invalid,
         LanguangeRecommend,
-        Origin,
+        None,
         CameraCase,
         PascalCase,
         UnderScores,

@@ -196,6 +196,10 @@ namespace Luban.Job.Cfg.DataCreators
             {
                 return null;
             }
+            if (x == null)
+            {
+                throw new InvalidExcelDataException($"枚举值不能为空");
+            }
             return new DEnum(type, x.ToString());
         }
 
@@ -291,7 +295,7 @@ namespace Luban.Job.Cfg.DataCreators
                 }
                 catch (Exception e)
                 {
-                    var dce = new DataCreateException(e, $"字段：{fname}");
+                    var dce = new DataCreateException(e, $"字段：{fname} 位置:{field.Location}");
                     dce.Push(bean, f);
                     throw dce;
                 }

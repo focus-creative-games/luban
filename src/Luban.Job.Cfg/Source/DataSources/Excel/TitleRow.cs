@@ -38,6 +38,30 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         public List<TitleRow> Elements { get; }
 
+        public string Location
+        {
+            get
+            {
+                if (Row != null)
+                {
+                    return Row[SelfTitle.FromIndex].ToString();
+                }
+                if (Rows != null)
+                {
+                    return Rows[0][SelfTitle.FromIndex].ToString();
+                }
+                if (Fields != null)
+                {
+                    return Fields[SelfTitle.SubTitleList[0].Name].Location;
+                }
+                if (Elements != null)
+                {
+                    return Elements.Count > 0 ? Elements[0].Location : "无法定位";
+                }
+                return "无法定位";
+            }
+        }
+
         public ExcelStream AsStream(string sep)
         {
             if (string.IsNullOrEmpty(SelfTitle.Sep))
