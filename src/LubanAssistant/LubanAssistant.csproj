@@ -255,14 +255,14 @@
     <Compile Include="..\Luban.Job.Cfg\Source\DataCreators\ExcelStreamDataCreator.cs">
       <Link>Source\DataCreators\ExcelStreamDataCreator.cs</Link>
     </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\DataCreators\InvalidExcelDataException.cs">
+      <Link>Source\DataCreators\InvalidExcelDataException.cs</Link>
+    </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\DataCreators\JsonDataCreator.cs">
       <Link>Source\DataCreators\JsonDataCreator.cs</Link>
     </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\DataCreators\LuaDataCreator.cs">
       <Link>Source\DataCreators\LuaDataCreator.cs</Link>
-    </Compile>
-    <Compile Include="..\Luban.Job.Cfg\Source\DataCreators\MultiRowExcelDataCreator.cs">
-      <Link>Source\DataCreators\MultiRowExcelDataCreator.cs</Link>
     </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\DataCreators\SheetDataCreator.cs">
       <Link>Source\DataCreators\SheetDataCreator.cs</Link>
@@ -381,6 +381,12 @@
     <Compile Include="..\Luban.Job.Cfg\Source\Datas\DString.cs">
       <Link>Source\Datas\DString.cs</Link>
     </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\Datas\DText.cs">
+      <Link>Source\Datas\DText.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\Datas\DType.cs">
+      <Link>Source\Datas\DType.cs</Link>
+    </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\Datas\DVector2.cs">
       <Link>Source\Datas\DVector2.cs</Link>
     </Compile>
@@ -468,6 +474,9 @@
     <Compile Include="..\Luban.Job.Cfg\Source\Utils\DataUtil.cs">
       <Link>Source\Utils\DataUtil.cs</Link>
     </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\Utils\ValidatorUtil.cs">
+      <Link>Source\Utils\ValidatorUtil.cs</Link>
+    </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\ValidatorContext.cs">
       <Link>Source\ValidatorContext.cs</Link>
     </Compile>
@@ -485,6 +494,9 @@
     </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\Validators\ValidatorFactory.cs">
       <Link>Source\Validators\ValidatorFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Common\Source\AccessConvention.cs">
+      <Link>Source\AccessConvention.cs</Link>
     </Compile>
     <Compile Include="..\Luban.Job.Common\Source\Defs\CommonDefLoader.cs">
       <Link>Source\Defs\CommonDefLoader.cs</Link>
@@ -504,8 +516,14 @@
     <Compile Include="..\Luban.Job.Common\Source\Defs\DefTypeBase.cs">
       <Link>Source\Defs\DefTypeBase.cs</Link>
     </Compile>
+    <Compile Include="..\Luban.Job.Common\Source\Defs\IProcessor.cs">
+      <Link>Source\Defs\IProcessor.cs</Link>
+    </Compile>
     <Compile Include="..\Luban.Job.Common\Source\ELanguage.cs">
       <Link>Source\ELanguage.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Common\Source\NamingConvention.cs">
+      <Link>Source\NamingConvention.cs</Link>
     </Compile>
     <Compile Include="..\Luban.Job.Common\Source\RawDefs\Bean.cs">
       <Link>Source\RawDefs\Bean.cs</Link>
@@ -636,9 +654,6 @@
     </Compile>
     <None Include="app.config" />
     <None Include="focus_creative_games.pfx" />
-    <None Include="LubanAssistant_1_TemporaryKey.pfx" />
-    <None Include="LubanAssistant_2_TemporaryKey.pfx" />
-    <None Include="LubanAssistant_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -659,8 +674,6 @@
     <Compile Include="Source\Common\StringUtil.cs" />
     <Compile Include="Source\Common\TimeUtil.cs" />
     <Compile Include="Source\Common\ValueUtil.cs" />
-    <Compile Include="Source\Datas\DText.cs" />
-    <Compile Include="Source\Datas\DType.cs" />
     <Compile Include="Source\Protos\FileInfo.cs" />
     <Compile Include="Source\Protos\GetImportFileOrDirectory.cs" />
     <Compile Include="Source\LocalAgent.cs" />

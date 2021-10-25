@@ -101,7 +101,7 @@ namespace Luban.Job.Cfg.Validators
 #if !LUBAN_LITE
             var pars = _str[1..^1].Split(',');
 #else
-            var pars = _str.Substring(1, _str.Length - 1).Split(',');
+            var pars = _str.Substring(1, _str.Length - 2).Split(',');
 #endif
             if (pars.Length != 2)
             {

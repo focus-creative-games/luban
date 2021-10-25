@@ -1,5 +1,7 @@
 using Luban.Job.Cfg.DataVisitors;
+#if !LUBAN_LITE
 using Luban.Job.Cfg.l10n;
+#endif
 
 namespace Luban.Job.Cfg.Datas
 {
@@ -22,6 +24,7 @@ namespace Luban.Job.Cfg.Datas
             _rawValue = x;
         }
 
+#if !LUBAN_LITE
         public string GetText(TextTable stringTable, NotConvertTextSet notConvertKeys)
         {
             if (stringTable != null)
@@ -37,6 +40,7 @@ namespace Luban.Job.Cfg.Datas
             }
             return _rawValue;
         }
+#endif
 
         public override void Apply<T>(IDataActionVisitor<T> visitor, T x)
         {

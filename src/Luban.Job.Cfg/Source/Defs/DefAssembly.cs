@@ -49,7 +49,7 @@ namespace Luban.Job.Cfg.Defs
 
         public TimeZoneInfo TimeZone { get; }
 
-        public bool OutputCompactJson { get; init; }
+        public bool OutputCompactJson { get; set; }
 
         public DefAssembly(string patchName, TimeZoneInfo timezone, List<string> excludeTags, IAgent agent)
         {

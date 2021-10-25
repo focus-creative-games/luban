@@ -25,13 +25,15 @@ namespace Luban.Job.Cfg.Utils
 
         private static void CreateValidatorsForArrayLike(TType containerType, TType elementType)
         {
-            if (containerType.Tags.Remove("ref", out var refStr))
+            if (containerType.Tags.TryGetValue("ref", out var refStr))
             {
-                elementType.Tags.TryAdd("ref", refStr);
+                elementType.Tags.Add("ref", refStr);
+                containerType.Tags.Remove("ref");
             }
-            if (containerType.Tags.Remove("path", out var pathStr))
+            if (containerType.Tags.TryGetValue("path", out var pathStr))
             {
-                elementType.Tags.TryAdd("path", pathStr);
+                elementType.Tags.Add("path", pathStr);
+                containerType.Tags.Remove("path");
             }
 
             CreateValidatorsForType(elementType);
