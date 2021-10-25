@@ -35,6 +35,29 @@ namespace Luban.Job.Common.Utils
             return am;
         }
 
+        public static int IndexOfIncludeBrace(string s, char sep)
+        {
+            int braceDepth = 0;
+            for (int i = 0; i < s.Length; i++)
+            {
+                var c = s[i];
+                if (c == '(' || c == '[' || c == '{')
+                {
+                    ++braceDepth;
+                }
+                else if (c == ')' || c == ')' || c == '}')
+                {
+                    --braceDepth;
+                }
+
+                if (braceDepth == 0 && (c == sep))
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
         public static (string, Dictionary<string, string>) ParseType(string s)
         {
             int sepIndex = s.IndexOfAny(s_attrSep);
@@ -48,11 +71,11 @@ namespace Luban.Job.Common.Utils
                 for (int i = 0; i < s.Length; i++)
                 {
                     var c = s[i];
-                    if (c == '(')
+                    if (c == '(' || c == '[' || c == '{')
                     {
                         ++braceDepth;
                     }
-                    else if (c == ')')
+                    else if (c == ')' || c == ')' || c == '}')
                     {
                         --braceDepth;
                     }

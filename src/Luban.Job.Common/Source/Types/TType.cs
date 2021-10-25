@@ -1,3 +1,4 @@
+using Luban.Job.Common.Defs;
 using Luban.Job.Common.TypeVisitors;
 using System.Collections.Generic;
 
@@ -8,6 +9,8 @@ namespace Luban.Job.Common.Types
         public bool IsNullable { get; }
 
         public Dictionary<string, string> Tags { get; }
+
+        public List<IProcessor> Processors { get; } = new List<IProcessor>();
 
         protected TType(bool isNullable, Dictionary<string, string> tags)
         {

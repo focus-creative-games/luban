@@ -11,7 +11,7 @@ namespace Luban.Job.Common.Types
 
         public static TBool Create(bool isNullable, Dictionary<string, string> tags)
         {
-            if (tags == null)
+            if (tags == null || tags.Count == 0)
             {
                 return isNullable ? NullableIns : Ins;
             }

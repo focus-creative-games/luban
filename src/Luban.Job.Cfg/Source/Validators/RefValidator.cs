@@ -1,8 +1,10 @@
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Common.Types;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Luban.Job.Cfg.Validators
 {
@@ -28,10 +30,10 @@ namespace Luban.Job.Cfg.Validators
             this.Tables = new List<string>(tables);
         }
 
-        public void Validate(ValidatorContext ctx, DType key, bool nullable)
+        public void Validate(ValidatorContext ctx, TType type, DType key)
         {
             // 对于可空字段，跳过检查
-            if (nullable && key == null)
+            if (type.IsNullable && key == null)
             {
                 return;
             }

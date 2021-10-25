@@ -1,12 +1,14 @@
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Common.Defs;
+using Luban.Job.Common.Types;
 
 namespace Luban.Job.Cfg.Validators
 {
-    public interface IValidator
+    public interface IValidator : IProcessor
     {
         void Compile(DefField def);
 
-        void Validate(ValidatorContext ctx, DType data, bool nullable);
+        void Validate(ValidatorContext ctx, TType type, DType data);
     }
 }

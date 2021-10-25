@@ -64,13 +64,6 @@ namespace Luban.Job.Cfg.Utils
             return allFiles;
         }
 
-        //private async Task<List<InputFileInfo>> CollectInputFilesAsync(RemoteAgent agent, DefTable table, string dataDir)
-        //{
-        //    var collectTasks = new List<Task<List<InputFileInfo>>>();
-        //    foreach (var file in table.InputFiles)
-        //   return CollectInputFilesAsync(agent, table.InputFiles, dataDir)
-        //}
-
         public static async Task GenerateLoadRecordFromFileTasksAsync(IAgent agent, DefTable table, string dataDir, List<string> inputFiles2, List<Task<List<Record>>> tasks)
         {
             var inputFileInfos = await CollectInputFilesAsync(agent, inputFiles2, dataDir);

@@ -61,53 +61,6 @@ namespace Luban.Job.Common.Defs
             }
         }
 
-        //private string _lanStyleName;
-        //public string CsStyleName
-        //{
-        //    get
-        //    {
-        //        if (_lanStyleName == null)
-        //        {
-        //            _lanStyleName = TypeUtil.ToCsStyleName(Name);
-        //        }
-        //        return _lanStyleName;
-        //    }
-        //}
-
-        //public string JavaStyleName
-        //{
-        //    get
-        //    {
-        //        if (_lanStyleName == null)
-        //        {
-        //            _lanStyleName = TypeUtil.ToJavaStyleName(Name);
-        //        }
-        //        return _lanStyleName;
-        //    }
-        //}
-
-        //public string CppStyleName => JavaStyleName;
-
-        //public string TsStyleName
-        //{
-        //    get
-        //    {
-        //        if (_lanStyleName == null)
-        //        {
-        //            _lanStyleName = TypeUtil.ToJavaStyleName(Name);
-        //        }
-        //        return _lanStyleName;
-        //    }
-        //}
-
-        //public string PyStyleName => Name;
-
-        //public string GoStyleName => CsStyleName;
-
-        //public string RustStyleName => Name != "type" ? Name : "r#" + Name;
-
-        //public string GoStyleAssignName => CType.IsNullable ? "*" + CsStyleName : CsStyleName;
-
         public string Type { get; }
 
         public TType CType { get; protected set; }

@@ -70,49 +70,14 @@ namespace Luban.Job.Cfg.Defs
         {
             get
             {
-                //var imports = new HashSet<CfgDefTypeBase>();
-                //if (ParentDefType != null)
-                //{
-                //    imports.Add(ParentDefType);
-                //}
-                //foreach (var f in Fields)
-                //{
-                //    f.CType.Apply(CollectEditorCppHeaderIncludeVisitor.Ins, imports);
-                //}
-                //imports.Remove(this);
-                //return string.Join('\n', imports.Select(im => $"#include \"{im.UeBpHeaderFileName}\""));
                 throw new NotImplementedException();
             }
         }
-
-        //public string UeForwards
-        //{
-        //    get
-        //    {
-        //        var imports = new HashSet<IDefType>();
-        //        foreach (var f in Fields)
-        //        {
-        //            f.CType.Apply(CollectUeCppForwardDefineVisitor.Ins, imports);
-        //        }
-        //        return string.Join('\n', imports.Select(im => $"{im.CppNamespaceBegin} class {im.UeBpName}; {im.CppNamespaceEnd}"));
-        //    }
-        //}
 
         public string EditorCppIncludes
         {
             get
             {
-                //var imports = new HashSet<CfgDefTypeBase>();
-                //if (ParentDefType != null)
-                //{
-                //    imports.Add(ParentDefType);
-                //}
-                //foreach (var f in Fields)
-                //{
-                //    f.CType.Apply(CollectEditorCppHeaderIncludeVisitor.Ins, imports);
-                //}
-                //imports.Remove(this);
-                //return string.Join('\n', imports.Select(im => $"#include \"{im.UeEditorHeaderFileName}\""));
                 throw new NotImplementedException();
             }
         }
@@ -126,7 +91,6 @@ namespace Luban.Job.Cfg.Defs
                 {
                     f.CType.Apply(CollectEditorCppForwardDefineVisitor.Ins, imports);
                 }
-                //return string.Join('\n', imports.Select(im => $"{im.CppNamespaceBegin} struct {im.UeFname}; {im.CppNamespaceEnd}"));
                 throw new NotImplementedException();
             }
         }

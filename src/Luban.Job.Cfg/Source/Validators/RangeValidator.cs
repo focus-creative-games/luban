@@ -1,5 +1,6 @@
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Common.Types;
 using System;
 
 namespace Luban.Job.Cfg.Validators
@@ -143,7 +144,7 @@ namespace Luban.Job.Cfg.Validators
 
         public string Source => ValidatorContext.CurrentVisitor.CurrentValidateRecord.Source;
 
-        public void Validate(ValidatorContext ctx, DType data, bool nullable)
+        public void Validate(ValidatorContext ctx, TType type, DType data)
         {
             var assembly = ctx.Assembly;
             void LogError()
@@ -151,7 +152,7 @@ namespace Luban.Job.Cfg.Validators
                 assembly.Agent.Error("记录 {0}:{1} (来自文件:{2}) 不在范围:{3}内", ValidatorContext.CurrentRecordPath, data, Source, _str);
             }
 
-            if (nullable && data == null)
+            if (type.IsNullable && data == null)
             {
                 return;
             }

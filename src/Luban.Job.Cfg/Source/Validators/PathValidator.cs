@@ -1,5 +1,6 @@
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Common.Types;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -162,11 +163,11 @@ namespace Luban.Job.Cfg.Validators
             this.RawPattern = pathPattern;
         }
 
-        public void Validate(ValidatorContext ctx, DType data, bool nullable)
+        public void Validate(ValidatorContext ctx, TType type, DType data)
         {
             var assembly = ctx.Assembly;
 
-            if (nullable && data == null)
+            if (type.IsNullable && data == null)
             {
                 return;
             }

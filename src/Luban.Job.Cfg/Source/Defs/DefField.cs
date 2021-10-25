@@ -24,15 +24,15 @@ namespace Luban.Job.Cfg.Defs
 
         public RefValidator Ref { get; private set; }
 
-        public RefValidator KeyRef { get; private set; }
+        //public RefValidator KeyRef { get; private set; }
 
-        public RefValidator ValueRef { get; private set; }
+        //public RefValidator ValueRef { get; private set; }
 
-        public List<IValidator> Validators { get; } = new List<IValidator>();
+        //public List<IValidator> Validators { get; } = new List<IValidator>();
 
-        public List<IValidator> KeyValidators { get; } = new List<IValidator>();
+        //public List<IValidator> KeyValidators { get; } = new List<IValidator>();
 
-        public List<IValidator> ValueValidators { get; } = new List<IValidator>();
+        //public List<IValidator> ValueValidators { get; } = new List<IValidator>();
 
         // 如果ref了多个表，不再生成 xxx_ref之类的字段，也不会resolve
         public bool GenRef => Ref != null && Ref.Tables.Count == 1;
@@ -126,102 +126,71 @@ namespace Luban.Job.Cfg.Defs
             this.RawDefine = f;
         }
 
+
+        private void CompileValidatorsForType(TType type)
+        {
+            foreach (var valName in ValidatorFactory.ValidatorNames)
+            {
+                if (type.Tags != null && type.Tags.TryGetValue(valName, out var valValue))
+                {
+                    type.Processors.Add(ValidatorFactory.Create(valName, valValue));
+                }
+            }
+        }
+
+        private void CompileValidatorsForArrayLink(TType elementType)
+        {
+            CompileValidatorsForType(elementType);
+
+            var valueRef = this.CType.Processors.Find(v => v is RefValidator);
+            if (valueRef != null)
+            {
+                this.CType.Processors.Remove(valueRef);
+                elementType.Processors.Add(valueRef);
+            }
+            var valuePath = this.CType.Processors.Find(v => v is PathValidator);
+            if (valuePath != null)
+            {
+                this.CType.Processors.Remove(valuePath);
+                elementType.Processors.Add(valuePath);
+            }
+        }
+
         public override void Compile()
         {
             base.Compile();
+
+            CompileValidatorsForType(CType);
 
             switch (this.CType)
             {
                 case TArray ta:
                 {
-                    if (ta.ElementType.Tags.TryGetValue("ref", out string refStr))
-                    {
-                        this.ValueValidators.Add(this.ValueRef = (RefValidator)ValidatorFactory.Create("ref", refStr));
-                    }
-                    if (CType.Tags.TryGetValue("ref", out string refStr2))
-                    {
-                        this.ValueValidators.Add(this.ValueRef = (RefValidator)ValidatorFactory.Create("ref", refStr2));
-                    }
-                    if (ta.ElementType.Tags.TryGetValue("path", out string PathStr))
-                    {
-                        this.ValueValidators.Add(ValidatorFactory.Create("path", PathStr));
-                    }
-                    if (CType.Tags.TryGetValue("path", out string pathStr2))
-                    {
-                        this.ValueValidators.Add(ValidatorFactory.Create("path", pathStr2));
-                    }
+                    CompileValidatorsForArrayLink(ta.ElementType);
                     break;
                 }
                 case TList ta:
                 {
-                    if (ta.ElementType.Tags.TryGetValue("ref", out string refStr))
-                    {
-                        this.ValueValidators.Add(this.ValueRef = (RefValidator)ValidatorFactory.Create("ref", refStr));
-                    }
-                    if (CType.Tags.TryGetValue("ref", out string refStr2))
-                    {
-                        this.ValueValidators.Add(this.ValueRef = (RefValidator)ValidatorFactory.Create("ref", refStr2));
-                    }
-                    if (ta.ElementType.Tags.TryGetValue("path", out string PathStr))
-                    {
-                        this.ValueValidators.Add(ValidatorFactory.Create("path", PathStr));
-                    }
-                    if (CType.Tags.TryGetValue("path", out string pathStr2))
-                    {
-                        this.ValueValidators.Add(ValidatorFactory.Create("path", pathStr2));
-                    }
+                    CompileValidatorsForArrayLink(ta.ElementType);
                     break;
                 }
                 case TSet ta:
                 {
-                    if (ta.ElementType.Tags.TryGetValue("ref", out string refStr))
-                    {
-                        this.ValueValidators.Add(this.ValueRef = (RefValidator)ValidatorFactory.Create("ref", refStr));
-                    }
-                    if (CType.Tags.TryGetValue("ref", out string refStr2))
-                    {
-                        this.ValueValidators.Add(this.ValueRef = (RefValidator)ValidatorFactory.Create("ref", refStr2));
-                    }
-                    if (ta.ElementType.Tags.TryGetValue("path", out string PathStr))
-                    {
-                        this.ValueValidators.Add(ValidatorFactory.Create("path", PathStr));
-                    }
-                    if (CType.Tags.TryGetValue("path", out string pathStr2))
-                    {
-                        this.ValueValidators.Add(ValidatorFactory.Create("path", pathStr2));
-                    }
+                    CompileValidatorsForArrayLink(ta.ElementType);
                     break;
                 }
                 case TMap ta:
                 {
-                    if (ta.KeyType.Tags.TryGetValue("ref", out string keyRefStr))
-                    {
-                        this.KeyValidators.Add(this.KeyRef = (RefValidator)ValidatorFactory.Create("ref", keyRefStr));
-                    }
-                    if (ta.ValueType.Tags.TryGetValue("ref", out string valueRefStr))
-                    {
-                        this.ValueValidators.Add(this.ValueRef = (RefValidator)ValidatorFactory.Create("ref", valueRefStr));
-                    }
-                    if (ta.KeyType.Tags.TryGetValue("path", out string PathStr))
-                    {
-                        this.KeyValidators.Add(ValidatorFactory.Create("path", PathStr));
-                    }
-                    if (ta.ValueType.Tags.TryGetValue("path", out string pathStr2))
-                    {
-                        this.ValueValidators.Add(ValidatorFactory.Create("path", pathStr2));
-                    }
+                    CompileValidatorsForType(ta.KeyType);
+                    CompileValidatorsForType(ta.ValueType);
                     break;
                 }
                 default:
                 {
-                    if (CType.Tags.TryGetValue("ref", out string refStr2))
+                    var selfRef = this.CType.Processors.Find(v => v is RefValidator);
+                    if (selfRef != null)
                     {
-                        this.Validators.Add(this.Ref = (RefValidator)ValidatorFactory.Create("ref", refStr2));
-
-                    }
-                    if (CType.Tags.TryGetValue("path", out string pathStr2))
-                    {
-                        this.Validators.Add(ValidatorFactory.Create("path", pathStr2));
+                        this.Ref = (RefValidator)selfRef;
                     }
                     break;
                 }
@@ -301,47 +270,50 @@ namespace Luban.Job.Cfg.Defs
             }
         }
 
+        private void CompileValidator(TType type)
+        {
+            foreach (var p in CType.Processors)
+            {
+                if (p is IValidator val)
+                {
+                    val.Compile(this);
+                    if (val is RefValidator refVal)
+                    {
+                        ValidateRef(refVal, type);
+                    }
+                }
+            }
+        }
+
         public override void PostCompile()
         {
             base.PostCompile();
 
-            foreach (var val in KeyValidators.Concat(ValueValidators).Concat(Validators))
-            {
-                val.Compile(this);
-            }
+            CompileValidator(CType);
 
-            if (Ref != null)
+
+            switch (this.CType)
             {
-                ValidateRef(Ref, CType);
-            }
-            if (KeyRef != null)
-            {
-                ValidateRef(KeyRef, (CType as TMap).KeyType);
-            }
-            if (ValueRef != null)
-            {
-                switch (this.CType)
+                case TArray ta:
                 {
-                    case TArray ta:
-                    {
-                        ValidateRef(ValueRef, ta.ElementType);
-                        break;
-                    }
-                    case TList ta:
-                    {
-                        ValidateRef(ValueRef, ta.ElementType);
-                        break;
-                    }
-                    case TSet ta:
-                    {
-                        ValidateRef(ValueRef, ta.ElementType);
-                        break;
-                    }
-                    case TMap ta:
-                    {
-                        ValidateRef(ValueRef, ta.ValueType);
-                        break;
-                    }
+                    CompileValidator(ta.ElementType);
+                    break;
+                }
+                case TList ta:
+                {
+                    CompileValidator(ta.ElementType);
+                    break;
+                }
+                case TSet ta:
+                {
+                    CompileValidator(ta.ElementType);
+                    break;
+                }
+                case TMap ta:
+                {
+                    CompileValidator(ta.KeyType);
+                    CompileValidator(ta.ValueType);
+                    break;
                 }
             }
 

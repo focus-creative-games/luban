@@ -1,13 +1,15 @@
 using Luban.Common.Utils;
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Cfg.Validators;
 using Luban.Job.Common.Types;
+using Luban.Job.Common.TypeVisitors;
 using System;
 using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.DataVisitors
 {
-    public class ValidatorVisitor : IDataActionVisitor<DefAssembly>
+    public class ValidatorVisitor : ITypeActionVisitor<DType>
     {
         private readonly Stack<object> _path = new Stack<object>();
 
@@ -24,7 +26,6 @@ namespace Luban.Job.Cfg.DataVisitors
 
         public void ValidateTable(DefTable table, List<Record> records)
         {
-            DefAssembly ass = table.Assembly;
             var keyIndex = table.IndexFieldIdIndex;
 
             foreach (Record r in records)
@@ -37,285 +38,212 @@ namespace Luban.Job.Cfg.DataVisitors
                 {
                     _path.Push(data.Fields[keyIndex]);
                 }
-                Accept(data, ass);
+                if (table.ValueTType.Processors.Count > 0)
+                {
+                    foreach (var p in table.ValueTType.Processors)
+                    {
+                        if (p is IValidator v)
+                        {
+                            v.Validate(Ctx, table.ValueTType, data);
+                        }
+                    }
+                }
+                table.ValueTType.Apply(this, data);
             }
         }
 
-        public void Accept(DBool type, DefAssembly x)
+        private void AcceptListLike(TType elementType, List<DType> eles)
         {
-            throw new NotImplementedException();
-        }
-
-        public void Accept(DByte type, DefAssembly x)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Accept(DShort type, DefAssembly x)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Accept(DFshort type, DefAssembly x)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Accept(DInt type, DefAssembly x)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Accept(DFint type, DefAssembly x)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Accept(DLong type, DefAssembly x)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Accept(DFlong type, DefAssembly x)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Accept(DFloat type, DefAssembly x)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Accept(DDouble type, DefAssembly x)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Accept(DEnum type, DefAssembly x)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Accept(DString type, DefAssembly x)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Accept(DBytes type, DefAssembly x)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Accept(DText type, DefAssembly x)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Accept(DBean record, DefAssembly assembly)
-        {
-            if (record == null)
+            if (elementType.Processors.Count > 0)
             {
-                return;
+                int index = 0;
+                foreach (var value in eles)
+                {
+                    _path.Push(index++);
+                    foreach (var v in elementType.Processors)
+                    {
+                        if (v is IValidator eleVal)
+                        {
+                            eleVal.Validate(Ctx, elementType, value);
+                            if (value != null)
+                            {
+                                elementType.Apply(this, value);
+                            }
+                        }
+                    }
+                    _path.Pop();
+                }
             }
-            var defFields = record.ImplType.HierarchyFields;
+        }
+
+        public void Accept(TBool type, DType x)
+        {
+
+        }
+
+        public void Accept(TByte type, DType x)
+        {
+
+        }
+
+        public void Accept(TShort type, DType x)
+        {
+
+        }
+
+        public void Accept(TFshort type, DType x)
+        {
+
+        }
+
+        public void Accept(TInt type, DType x)
+        {
+
+        }
+
+        public void Accept(TFint type, DType x)
+        {
+
+        }
+
+        public void Accept(TLong type, DType x)
+        {
+
+        }
+
+        public void Accept(TFlong type, DType x)
+        {
+
+        }
+
+        public void Accept(TFloat type, DType x)
+        {
+
+        }
+
+        public void Accept(TDouble type, DType x)
+        {
+
+        }
+
+        public void Accept(TEnum type, DType x)
+        {
+
+        }
+
+        public void Accept(TString type, DType x)
+        {
+
+        }
+
+        public void Accept(TBytes type, DType x)
+        {
+
+        }
+
+        public void Accept(TText type, DType x)
+        {
+
+        }
+
+        public void Accept(TBean type, DType x)
+        {
+            var beanData = (DBean)x;
+            var defFields = ((DefBean)type.Bean.AssemblyBase.GetDefType(beanData.ImplType.FullName)).HierarchyFields;// beanData.ImplType.HierarchyFields;
             int i = 0;
-            foreach (var fieldValue in record.Fields)
+            foreach (var fieldValue in beanData.Fields)
             {
                 var defField = (DefField)defFields[i++];
                 _path.Push(defField.Name);
-                switch (defField.CType)
+
+                var fieldType = defField.CType;
+
+                if (fieldType.Processors.Count > 0)
                 {
-                    case TArray a:
+                    foreach (var p in fieldType.Processors)
                     {
-                        if (defField.ValueValidators.Count > 0)
+                        if (p is IValidator val)
                         {
-                            var arr = (DArray)fieldValue;
-                            int index = 0;
-                            foreach (var value in arr.Datas)
-                            {
-                                _path.Push(index++);
-                                foreach (var v in defField.ValueValidators)
-                                {
-                                    v.Validate(Ctx, value, defField.IsNullable);
-                                }
-                                _path.Pop();
-                            }
-
+                            val.Validate(Ctx, fieldType, fieldValue);
                         }
-                        if (a.ElementType is TBean)
-                        {
-                            var arr = (DArray)fieldValue;
-                            int index = 0;
-                            foreach (var value in arr.Datas)
-                            {
-                                _path.Push(index++);
-                                Accept((DBean)value, assembly);
-                                _path.Pop();
-                            }
-
-                        }
-                        break;
-                    }
-                    case TList b:
-                    {
-                        if (defField.ValueValidators.Count > 0)
-                        {
-                            var arr = (DList)fieldValue;
-                            int index = 0;
-                            foreach (var value in arr.Datas)
-                            {
-                                _path.Push(index++);
-                                foreach (var v in defField.ValueValidators)
-                                {
-                                    v.Validate(Ctx, value, false);
-                                }
-                                _path.Pop();
-                            }
-
-                        }
-                        if (b.ElementType is TBean tb)
-                        {
-                            var arr = (DList)fieldValue;
-                            int index = 0;
-                            foreach (var value in arr.Datas)
-                            {
-                                _path.Push(index++);
-                                Accept((DBean)value, assembly);
-                                _path.Pop();
-                            }
-
-
-                            if (defField.IndexField != null)
-                            {
-                                var indexSet = new HashSet<DType>();
-                                if (!tb.GetBeanAs<DefBean>().TryGetField(defField.Index, out var _, out var indexOfIndexField))
-                                {
-                                    throw new Exception("impossible");
-                                }
-                                foreach (var value in arr.Datas)
-                                {
-                                    _path.Push(index++);
-                                    DType indexValue = ((DBean)value).Fields[indexOfIndexField];
-                                    if (!indexSet.Add(indexValue))
-                                    {
-                                        throw new Exception($"'{TypeUtil.MakeFullName(_path)}' index:'{indexValue}' 重复");
-                                    }
-                                    _path.Pop();
-                                }
-                            }
-                        }
-                        break;
-                    }
-                    case TSet c:
-                    {
-                        if (defField.ValueValidators.Count > 0)
-                        {
-                            var arr = (DSet)fieldValue;
-                            foreach (var value in arr.Datas)
-                            {
-                                foreach (var v in defField.ValueValidators)
-                                {
-                                    v.Validate(Ctx, value, false);
-                                }
-                            }
-
-                        }
-                        break;
-                    }
-
-                    case TMap m:
-                    {
-                        DMap map = (DMap)fieldValue;
-                        if (defField.KeyValidators.Count > 0)
-                        {
-                            foreach (var key in map.Datas.Keys)
-                            {
-                                _path.Push(key);
-                                foreach (var v in defField.KeyValidators)
-                                {
-                                    v.Validate(Ctx, key, false);
-                                }
-                                _path.Pop();
-                            }
-                        }
-                        if (defField.ValueValidators.Count > 0)
-                        {
-                            foreach (var value in map.Datas.Values)
-                            {
-                                _path.Push(value);
-                                foreach (var v in defField.ValueValidators)
-                                {
-                                    v.Validate(Ctx, value, false);
-                                }
-
-                                if (value is DBean dv)
-                                {
-                                    Accept(dv, assembly);
-                                }
-                                _path.Pop();
-                            }
-                        }
-                        break;
-                    }
-                    case TBean n:
-                    {
-                        Accept((DBean)fieldValue, assembly);
-                        break;
-                    }
-                    default:
-                    {
-                        if (defField.Validators.Count > 0)
-                        {
-                            foreach (var v in defField.Validators)
-                            {
-                                v.Validate(Ctx, fieldValue, defField.IsNullable);
-                            }
-                        }
-                        break;
                     }
                 }
-                _path.Pop();
+                if (fieldValue != null)
+                {
+                    fieldType.Apply(this, fieldValue);
+                }
             }
         }
 
-        public void Accept(DArray type, DefAssembly x)
+        public void Accept(TArray type, DType x)
         {
-            throw new NotImplementedException();
+            AcceptListLike(type.ElementType, ((DArray)x).Datas);
         }
 
-        public void Accept(DList type, DefAssembly x)
+        public void Accept(TList type, DType x)
         {
-            throw new NotImplementedException();
+            AcceptListLike(type.ElementType, ((DList)x).Datas);
         }
 
-        public void Accept(DSet type, DefAssembly x)
+        public void Accept(TSet type, DType x)
         {
-            throw new NotImplementedException();
+            AcceptListLike(type.ElementType, ((DSet)x).Datas);
         }
 
-        public void Accept(DMap type, DefAssembly x)
+        public void Accept(TMap type, DType x)
         {
-            throw new NotImplementedException();
+            var keyType = type.KeyType;
+            var valueType = type.ValueType;
+            if (keyType.Processors.Count > 0 || valueType.Processors.Count > 0)
+            {
+                foreach (var e in ((DMap)x).Datas)
+                {
+                    _path.Push(e.Key);
+                    if (keyType.Processors.Count > 0)
+                    {
+                        foreach (var v in keyType.Processors)
+                        {
+                            if (v is IValidator eleVal)
+                            {
+                                eleVal.Validate(Ctx, keyType, e.Key);
+                                keyType.Apply(this, e.Key);
+                            }
+                        }
+                    }
+                    if (valueType.Processors.Count > 0)
+                    {
+                        foreach (var v in valueType.Processors)
+                        {
+                            if (v is IValidator eleVal)
+                            {
+                                eleVal.Validate(Ctx, valueType, e.Value);
+                                valueType.Apply(this, e.Value);
+                            }
+                        }
+                    }
+                    _path.Pop();
+                }
+            }
         }
 
-        public void Accept(DVector2 type, DefAssembly x)
+        public void Accept(TVector2 type, DType x)
         {
-            throw new NotImplementedException();
+
         }
 
-        public void Accept(DVector3 type, DefAssembly x)
+        public void Accept(TVector3 type, DType x)
         {
-            throw new NotImplementedException();
+
         }
 
-        public void Accept(DVector4 type, DefAssembly x)
+        public void Accept(TVector4 type, DType x)
         {
-            throw new NotImplementedException();
+
         }
 
-        public void Accept(DDateTime type, DefAssembly x)
+        public void Accept(TDateTime type, DType x)
         {
-            throw new NotImplementedException();
+
         }
     }
 }

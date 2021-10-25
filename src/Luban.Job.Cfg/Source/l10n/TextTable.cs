@@ -38,7 +38,6 @@ namespace Luban.Job.Cfg.l10n
                 Fields = new List<Common.RawDefs.Field>
                 {
                     new CfgField() { Name = "key", Type = "string" },
-                    //new Common.RawDefs.Field() { Id = 1, Name = "origin_text", Type = "string" },
                     new CfgField() { Name = textValueFieldName, Type = "string" },
                 }
             })

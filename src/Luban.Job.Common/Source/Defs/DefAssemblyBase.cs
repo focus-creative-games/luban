@@ -129,11 +129,7 @@ namespace Luban.Job.Common.Defs
 
         public TType CreateType(string module, string type)
         {
-#if LUBAN_LITE
-            int sepIndex = type.IndexOf(',');
-#else
-            int sepIndex = type.IndexOf(',', System.StringComparison.Ordinal);
-#endif
+            int sepIndex = DefUtil.IndexOfIncludeBrace(type, ',');
             if (sepIndex > 0)
             {
                 var (containerAndElementType, tags) = DefUtil.ParseType(type);
