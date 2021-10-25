@@ -21,11 +21,11 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
     public {{name}}(ByteBuf _buf) {{if parent_def_type}} : base(_buf) {{end}}
     {
         {{~ for field in export_fields ~}}
-        {{cs_deserialize '_buf' field.cs_style_name field.ctype}}
+        {{cs_deserialize '_buf' field.convention_name field.ctype}}
         {{~if field.index_field~}}
-        foreach(var _v in {{field.cs_style_name}})
+        foreach(var _v in {{field.convention_name}})
         { 
-            {{field.cs_style_name}}_Index.Add(_v.{{field.index_field.cs_style_name}}, _v);
+            {{field.convention_name}}_Index.Add(_v.{{field.index_field.convention_name}}, _v);
         }
         {{~end~}}
         {{~end~}}
@@ -52,9 +52,9 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
     /// {{field.comment}}
     /// </summary>
 {{~end~}}
-    public {{cs_define_type field.ctype}} {{field.cs_style_name}} { get; private set; }
+    public {{cs_define_type field.ctype}} {{field.convention_name}} { get; private set; }
     {{~if field.index_field~}} 
-    public readonly Dictionary<{{cs_define_type field.index_field.ctype}}, {{cs_define_type field.ctype.element_type}}> {{field.cs_style_name}}_Index = new Dictionary<{{cs_define_type field.index_field.ctype}}, {{cs_define_type field.ctype.element_type}}>();
+    public readonly Dictionary<{{cs_define_type field.index_field.ctype}}, {{cs_define_type field.ctype.element_type}}> {{field.convention_name}}_Index = new Dictionary<{{cs_define_type field.index_field.ctype}}, {{cs_define_type field.ctype.element_type}}>();
     {{~end~}}
     {{~if field.gen_ref~}}
     public {{field.cs_ref_validator_define}}
@@ -101,7 +101,7 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
     {
         return "{{full_name}}{ "
     {{~for field in hierarchy_export_fields ~}}
-        + "{{field.cs_style_name}}:" + {{cs_to_string field.cs_style_name field.ctype}} + ","
+        + "{{field.convention_name}}:" + {{cs_to_string field.convention_name field.ctype}} + ","
     {{~end~}}
         + "}";
     }

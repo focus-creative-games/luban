@@ -98,6 +98,10 @@ namespace Luban.Job.Cfg
                 {
                     return false;
                 }
+                if (!options.ValidateConvention(ref errMsg))
+                {
+                    return false;
+                }
 
                 return true;
             }
@@ -145,6 +149,10 @@ namespace Luban.Job.Cfg
                 {
                     UseUnityVectors = args.UseUnityVectors,
                     OutputCompactJson = args.OutputCompactJson,
+                    NamingConventionModule = args.NamingConventionModule,
+                    NamingConventionType = args.NamingConventionType,
+                    NamingConventionBeanMember = args.NamingConventionBeanMember,
+                    NamingConventionEnumMember = args.NamingConventionEnumMember,
                 };
 
                 ass.Load(args.Service, rawDefines);

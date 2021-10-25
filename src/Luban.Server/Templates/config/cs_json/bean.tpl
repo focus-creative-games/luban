@@ -23,9 +23,9 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{parent}
     public {{name}}(JsonElement _json) {{if parent_def_type}} : base(_json) {{end}}
     {
         {{~ for field in export_fields ~}}
-        {{cs_json_deserialize '_json' field.cs_style_name field.name field.ctype}}
+        {{cs_json_deserialize '_json' field.convention_name field.name field.ctype}}
         {{~if field.index_field~}}
-        foreach(var _v in {{field.cs_style_name}}) { {{field.cs_style_name}}_Index.Add(_v.{{field.index_field.cs_style_name}}, _v); }
+        foreach(var _v in {{field.convention_name}}) { {{field.convention_name}}_Index.Add(_v.{{field.index_field.convention_name}}, _v); }
         {{~end~}}
         {{~end~}}
     }
@@ -33,9 +33,9 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{parent}
     public {{name}}({{~for field in hierarchy_export_fields }}{{cs_define_type field.ctype}} {{field.name}}{{if !for.last}},{{end}} {{end}}) {{if parent_def_type}} : base({{- for field in parent_def_type.hierarchy_export_fields }}{{field.name}}{{if !for.last}},{{end}}{{end}}) {{end}}
     {
         {{~ for field in export_fields ~}}
-        this.{{field.cs_style_name}} = {{field.name}};
+        this.{{field.convention_name}} = {{field.name}};
         {{~if field.index_field~}}
-        foreach(var _v in {{field.cs_style_name}}) { {{field.cs_style_name}}_Index.Add(_v.{{field.index_field.cs_style_name}}, _v); }
+        foreach(var _v in {{field.convention_name}}) { {{field.convention_name}}_Index.Add(_v.{{field.index_field.convention_name}}, _v); }
         {{~end~}}
         {{~end~}}
     }
@@ -61,9 +61,9 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{parent}
     /// {{field.comment}}
     /// </summary>
 {{~end~}}
-    public {{cs_define_type field.ctype}} {{field.cs_style_name}} { get; private set; }
+    public {{cs_define_type field.ctype}} {{field.convention_name}} { get; private set; }
     {{~if field.index_field~}} 
-    public readonly Dictionary<{{cs_define_type field.index_field.ctype}}, {{cs_define_type field.ctype.element_type}}> {{field.cs_style_name}}_Index = new Dictionary<{{cs_define_type field.index_field.ctype}}, {{cs_define_type field.ctype.element_type}}>();
+    public readonly Dictionary<{{cs_define_type field.index_field.ctype}}, {{cs_define_type field.ctype.element_type}}> {{field.convention_name}}_Index = new Dictionary<{{cs_define_type field.index_field.ctype}}, {{cs_define_type field.ctype.element_type}}>();
     {{~end~}}
     {{~if field.gen_ref~}}
     public {{field.cs_ref_validator_define}}
@@ -110,7 +110,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{parent}
     {
         return "{{full_name}}{ "
     {{~ for field in hierarchy_export_fields ~}}
-        + "{{field.cs_style_name}}:" + {{cs_to_string field.cs_style_name field.ctype}} + ","
+        + "{{field.convention_name}}:" + {{cs_to_string field.convention_name field.ctype}} + ","
     {{~end~}}
         + "}";
     }

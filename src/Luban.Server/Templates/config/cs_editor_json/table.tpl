@@ -6,7 +6,7 @@ namespace {{namespace}}
 public sealed class {{name}} : Bright.Net.Protocol
 {
     {{~for field in fields ~}}
-     public {{field.ctype.cs_define_type}} {{field.cs_style_name}};
+     public {{field.ctype.cs_define_type}} {{field.convention_name}};
     {{~end~}}
     public {{name}}()
     {
@@ -54,7 +54,7 @@ public sealed class {{name}} : Bright.Net.Protocol
     {
         return "{{full_name}}{ "
     {{~for field in fields ~}}
-        + "{{field.cs_style_name}}:" + {{field.proto_cs_to_string}} + ","
+        + "{{field.convention_name}}:" + {{field.proto_cs_to_string}} + ","
     {{~end~}}
         + "}";
     }

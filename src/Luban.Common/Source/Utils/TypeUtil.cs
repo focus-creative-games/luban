@@ -208,6 +208,28 @@ namespace Luban.Common.Utils
             return char.ToUpper(s[0]) + s.Substring(1);
         }
 
+        public static string ToCamelCase(string name)
+        {
+            var words = name.Split('_').Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
+            var s = new StringBuilder();
+            s.Append(words[0]);
+            for (int i = 1; i < words.Length; i++)
+            {
+                s.Append(UpperCaseFirstChar(words[i]));
+            }
+            return s.ToString();
+        }
+
+        public static string ToPascalCase(string name)
+        {
+            return string.Join("", name.Split('_').Where(s => !string.IsNullOrWhiteSpace(s)).Select(c => UpperCaseFirstChar(c)));
+        }
+
+        public static string ToUnderScores(string name)
+        {
+            return name;
+        }
+
         public static string ToCsStyleName(string orginName)
         {
             return string.Join("", orginName.Split('_').Where(s => !string.IsNullOrWhiteSpace(s)).Select(c => UpperCaseFirstChar(c)));
@@ -226,6 +248,17 @@ namespace Luban.Common.Utils
         }
 
         public static string ToJavaGetterName(string orginName)
+        {
+            var words = orginName.Split('_').Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
+            var s = new StringBuilder("get");
+            foreach (var word in words)
+            {
+                s.Append(UpperCaseFirstChar(word));
+            }
+            return s.ToString();
+        }
+
+        public static string ToConventionGetterName(string orginName)
         {
             var words = orginName.Split('_').Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
             var s = new StringBuilder("get");

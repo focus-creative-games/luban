@@ -20,7 +20,7 @@ namespace {{x.namespace_with_top_module}}
 public interface {{readonly_name}} {{if parent_def_type}}: IReadOnly{{x.parent_def_type.name}} {{end}}
 {
     {{~ for field in fields~}}
-    {{db_cs_readonly_define_type field.ctype}} {{field.cs_style_name}} { get; }
+    {{db_cs_readonly_define_type field.ctype}} {{field.convention_name}} { get; }
     {{~end~}}
 }
 
@@ -68,7 +68,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
     /// {{field.comment}}
     /// </summary>
 {{~end~}}
-    public {{db_cs_define_type ctype}} {{field.cs_style_name}}
+    public {{db_cs_define_type ctype}} {{field.convention_name}}
     { 
         get
         {
@@ -109,7 +109,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
         /// {{field.comment}}
         /// </summary>
 {{~end~}}
-         public {{db_cs_define_type ctype}} {{field.cs_style_name}} => {{field.internal_name}};
+         public {{db_cs_define_type ctype}} {{field.convention_name}} => {{field.internal_name}};
         {{~end~}}
 
         {{~if ctype.bean || ctype.element_type ~}}
@@ -118,14 +118,14 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
         /// {{field.comment}}
         /// </summary>
 {{~end~}}
-        {{db_cs_readonly_define_type ctype}} {{readonly_name}}.{{field.cs_style_name}} => {{field.internal_name}};
+        {{db_cs_readonly_define_type ctype}} {{readonly_name}}.{{field.convention_name}} => {{field.internal_name}};
         {{~else if ctype.is_map~}}
 {{~if field.comment != '' ~}}
         /// <summary>
         /// {{field.comment}}
         /// </summary>
 {{~end~}}
-        {{db_cs_readonly_define_type ctype}} {{readonly_name}}.{{field.cs_style_name}} => new Bright.Transaction.Collections.PReadOnlyMap<{{db_cs_readonly_define_type ctype.key_type}}, {{db_cs_readonly_define_type ctype.value_type}}, {{db_cs_define_type ctype.value_type}}>({{field.internal_name}});
+        {{db_cs_readonly_define_type ctype}} {{readonly_name}}.{{field.convention_name}} => new Bright.Transaction.Collections.PReadOnlyMap<{{db_cs_readonly_define_type ctype.key_type}}, {{db_cs_readonly_define_type ctype.value_type}}, {{db_cs_define_type ctype.value_type}}>({{field.internal_name}});
         {{~end~}}
     {{~end~}}
 
@@ -193,7 +193,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
     {
         return "{{full_name}}{ "
     {{~ for field in hierarchy_fields~}}
-        + "{{field.cs_style_name}}:" + {{cs_to_string field.cs_style_name field.ctype}} + ","
+        + "{{field.convention_name}}:" + {{cs_to_string field.convention_name field.ctype}} + ","
     {{~end~}}
         + "}";
     }

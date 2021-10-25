@@ -20,10 +20,10 @@ public {{x.java_class_modifier}} class {{name}}{{if parent_def_type}} extends {{
         super(_buf);
         {{~end~}}
         {{~ for field in export_fields ~}}
-        {{java_deserialize '_buf' field.java_style_name field.ctype}}
+        {{java_deserialize '_buf' field.convention_name field.ctype}}
         {{~if field.index_field~}}
-        for({{java_box_define_type field.ctype.element_type}} _v : {{field.java_style_name}}) {
-            {{field.java_style_name}}_Index.put(_v.{{field.index_field.java_style_name}}, _v); 
+        for({{java_box_define_type field.ctype.element_type}} _v : {{field.convention_name}}) {
+            {{field.convention_name}}_Index.put(_v.{{field.index_field.convention_name}}, _v); 
         }
         {{~end~}}
         {{~end~}}
@@ -34,10 +34,10 @@ public {{x.java_class_modifier}} class {{name}}{{if parent_def_type}} extends {{
         super({{ for field in parent_def_type.hierarchy_export_fields }}{{field.name}}{{if !for.last}}, {{end}}{{end}});
         {{~end~}}
         {{~ for field in export_fields ~}}
-        this.{{field.java_style_name}} = {{field.name}};
+        this.{{field.convention_name}} = {{field.name}};
         {{~if field.index_field~}}
-        for({{java_box_define_type field.ctype.element_type}} _v : {{field.java_style_name}}) {
-            {{field.java_style_name}}_Index.put(_v.{{field.index_field.java_style_name}}, _v); 
+        for({{java_box_define_type field.ctype.element_type}} _v : {{field.convention_name}}) {
+            {{field.convention_name}}_Index.put(_v.{{field.index_field.convention_name}}, _v); 
         }
         {{~end~}}
         {{~end~}}
@@ -60,9 +60,9 @@ public {{x.java_class_modifier}} class {{name}}{{if parent_def_type}} extends {{
      * {{field.comment}}
      */
 {{~end~}}
-    public final {{java_define_type field.ctype}} {{field.java_style_name}};
+    public final {{java_define_type field.ctype}} {{field.convention_name}};
     {{~if field.index_field~}} 
-    public final java.util.HashMap<{{java_box_define_type field.index_field.ctype}}, {{java_box_define_type field.ctype.element_type}}> {{field.java_style_name}}_Index = new java.util.HashMap<>();
+    public final java.util.HashMap<{{java_box_define_type field.index_field.ctype}}, {{java_box_define_type field.ctype.element_type}}> {{field.convention_name}}_Index = new java.util.HashMap<>();
     {{~end~}}
     {{~if field.gen_ref~}}
     public {{field.java_ref_validator_define}}
@@ -98,7 +98,7 @@ public {{x.java_class_modifier}} class {{name}}{{if parent_def_type}} extends {{
     public String toString() {
         return "{{full_name}}{ "
     {{~for field in hierarchy_export_fields ~}}
-        + "{{field.java_style_name}}:" + {{java_to_string field.java_style_name field.ctype}} + ","
+        + "{{field.convention_name}}:" + {{java_to_string field.convention_name field.ctype}} + ","
     {{~end~}}
         + "}";
     }

@@ -17,50 +17,94 @@ namespace Luban.Job.Common.Defs
 
         public string Name { get; set; }
 
-        private string _lanStyleName;
-        public string CsStyleName
+        public string ConventionName
         {
             get
             {
-                if (_lanStyleName == null)
+                string cn;
+                ELanguage curLan = AssemblyBase.CurrentLanguage;
+                switch (AssemblyBase.NamingConventionBeanMember)
                 {
-                    _lanStyleName = TypeUtil.ToCsStyleName(Name);
+                    case NamingConvention.Origin: cn = Name; break;
+                    case NamingConvention.CameraCase: cn = TypeUtil.ToCamelCase(Name); break;
+                    case NamingConvention.PascalCase: cn = TypeUtil.ToPascalCase(Name); break;
+                    case NamingConvention.UnderScores: cn = TypeUtil.ToUnderScores(Name); break;
+                    case NamingConvention.Invalid: throw new Exception($"invalid NamingConvention");
+                    case NamingConvention.LanguangeRecommend:
+                    {
+                        switch (curLan)
+                        {
+                            case ELanguage.INVALID: throw new Exception($"not set current language. can't get recommend naming convention name");
+                            case ELanguage.CS: cn = TypeUtil.ToPascalCase(Name); break;
+                            case ELanguage.JAVA: cn = TypeUtil.ToCamelCase(Name); break;
+                            case ELanguage.GO: cn = TypeUtil.ToPascalCase(Name); break;
+                            case ELanguage.CPP: cn = TypeUtil.ToCamelCase(Name); break;
+                            case ELanguage.LUA: cn = TypeUtil.ToUnderScores(Name); break;
+                            case ELanguage.JS: cn = TypeUtil.ToCamelCase(Name); break;
+                            case ELanguage.TYPESCRIPT: cn = TypeUtil.ToCamelCase(Name); break;
+                            case ELanguage.PYTHON: cn = TypeUtil.ToUnderScores(Name); break;
+                            case ELanguage.RUST: cn = TypeUtil.ToUnderScores(Name); break;
+                            default: throw new Exception($"unknown language:{curLan}");
+                        }
+                        break;
+                    }
+                    default: throw new Exception($"unknown NamingConvention:{AssemblyBase.NamingConventionBeanMember}");
                 }
-                return _lanStyleName;
+                if (curLan == ELanguage.RUST)
+                {
+                    if (cn == "type")
+                    {
+                        cn = "r#type";
+                    }
+                }
+                return cn;
             }
         }
 
-        public string JavaStyleName
-        {
-            get
-            {
-                if (_lanStyleName == null)
-                {
-                    _lanStyleName = TypeUtil.ToJavaStyleName(Name);
-                }
-                return _lanStyleName;
-            }
-        }
+        //private string _lanStyleName;
+        //public string CsStyleName
+        //{
+        //    get
+        //    {
+        //        if (_lanStyleName == null)
+        //        {
+        //            _lanStyleName = TypeUtil.ToCsStyleName(Name);
+        //        }
+        //        return _lanStyleName;
+        //    }
+        //}
 
-        public string CppStyleName => JavaStyleName;
+        //public string JavaStyleName
+        //{
+        //    get
+        //    {
+        //        if (_lanStyleName == null)
+        //        {
+        //            _lanStyleName = TypeUtil.ToJavaStyleName(Name);
+        //        }
+        //        return _lanStyleName;
+        //    }
+        //}
 
-        public string TsStyleName
-        {
-            get
-            {
-                if (_lanStyleName == null)
-                {
-                    _lanStyleName = TypeUtil.ToJavaStyleName(Name);
-                }
-                return _lanStyleName;
-            }
-        }
+        //public string CppStyleName => JavaStyleName;
 
-        public string PyStyleName => Name;
+        //public string TsStyleName
+        //{
+        //    get
+        //    {
+        //        if (_lanStyleName == null)
+        //        {
+        //            _lanStyleName = TypeUtil.ToJavaStyleName(Name);
+        //        }
+        //        return _lanStyleName;
+        //    }
+        //}
 
-        public string GoStyleName => CsStyleName;
+        //public string PyStyleName => Name;
 
-        public string RustStyleName => Name != "type" ? Name : "r#" + Name;
+        //public string GoStyleName => CsStyleName;
+
+        //public string RustStyleName => Name != "type" ? Name : "r#" + Name;
 
         //public string GoStyleAssignName => CType.IsNullable ? "*" + CsStyleName : CsStyleName;
 

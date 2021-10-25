@@ -29,7 +29,7 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} {{if parent_def
         super(_buf_)
         {{~end~}}
         {{~ for field in export_fields ~}}
-        {{ts_bin_constructor ('this.' + field.ts_style_name) '_buf_' field.ctype}}
+        {{ts_bin_constructor ('this.' + field.convention_name) '_buf_' field.ctype}}
         {{~end~}}
     }
 
@@ -39,7 +39,7 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} {{if parent_def
      * {{field.comment}}
      */
 {{~end~}}
-    readonly {{field.ts_style_name}}: {{ts_define_type field.ctype}}
+    readonly {{field.convention_name}}: {{ts_define_type field.ctype}}
     {{~if field.gen_ref~}}
     {{field.ts_ref_validator_define}}
     {{~end~}}

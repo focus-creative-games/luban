@@ -37,11 +37,11 @@ impl {{name}}{
             let __v2 = std::rc::Rc::clone(&__v);
             t.data_list.push(__v);
 {{~if !value_type.bean.is_abstract_type~}}
-            t.data_map.insert(__v2.{{x.index_field.rust_style_name}}.clone(), __v2);
+            t.data_map.insert(__v2.{{x.index_field.convention_name}}.clone(), __v2);
 {{~else~}}
             match &*__v2 {
     {{~for child in value_type.bean.hierarchy_not_abstract_children~}}
-                {{rust_class_name value_type}}::{{child.name}}(__w__) => t.data_map.insert(__w__.{{x.index_field.rust_style_name}}.clone(), __v2),
+                {{rust_class_name value_type}}::{{child.name}}(__w__) => t.data_map.insert(__w__.{{x.index_field.convention_name}}.clone(), __v2),
     {{~end~}}
             };
 {{~end~}}

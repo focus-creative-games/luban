@@ -58,6 +58,10 @@ namespace Luban.Job.Proto
             {
                 return false;
             }
+            if (!options.ValidateConvention(ref errMsg))
+            {
+                return false;
+            }
             return true;
         }
 
@@ -92,7 +96,15 @@ namespace Luban.Job.Proto
 
                 var rawDefines = loader.BuildDefines();
 
-                var ass = new DefAssembly() { UseUnityVectors = args.UseUnityVectors };
+                var ass = new DefAssembly()
+                {
+                    UseUnityVectors = args.UseUnityVectors,
+
+                    NamingConventionModule = args.NamingConventionModule,
+                    NamingConventionType = args.NamingConventionType,
+                    NamingConventionBeanMember = args.NamingConventionBeanMember,
+                    NamingConventionEnumMember = args.NamingConventionEnumMember,
+                };
 
                 ass.Load(rawDefines, agent);
 
@@ -112,6 +124,7 @@ namespace Luban.Job.Proto
                 {
                     case "cs":
                     {
+                        ass.CurrentLanguage = ELanguage.CS;
                         var render = new CsRender();
                         foreach (var c in ass.Types.Values)
                         {
@@ -140,6 +153,7 @@ namespace Luban.Job.Proto
                     }
                     case "lua":
                     {
+                        ass.CurrentLanguage = ELanguage.LUA;
                         tasks.Add(Task.Run(() =>
                         {
                             var render = new LuaRender();
@@ -152,6 +166,7 @@ namespace Luban.Job.Proto
                     }
                     case "typescript":
                     {
+                        ass.CurrentLanguage = ELanguage.TYPESCRIPT;
                         var render = new TypescriptRender();
                         var brightRequirePath = args.TypescriptBrightRequirePath;
                         var brightPackageName = args.TypescriptBrightPackageName;

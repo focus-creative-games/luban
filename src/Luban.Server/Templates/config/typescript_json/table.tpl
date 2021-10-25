@@ -22,7 +22,7 @@ export class {{name}}{
             let _v: {{ts_define_type value_type}}
             {{ts_json_constructor '_v' '_json2_' value_type}}
             this._dataList.push(_v)
-            this._dataMap.set(_v.{{x.index_field.ts_style_name}}, _v)
+            this._dataMap.set(_v.{{x.index_field.convention_name}}, _v)
         }
     }
 
@@ -53,7 +53,7 @@ export class {{name}}{
      * {{field.comment}}
      */
 {{~end~}}
-     get  {{field.ts_style_name}}(): {{ts_define_type field.ctype}} { return this._data.{{field.ts_style_name}}; }
+     get  {{field.convention_name}}(): {{ts_define_type field.ctype}} { return this._data.{{field.convention_name}}; }
     {{~end~}}
 
     resolve(_tables: Map<string, any>) {

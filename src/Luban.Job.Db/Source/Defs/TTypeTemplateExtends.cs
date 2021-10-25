@@ -70,7 +70,7 @@ namespace Luban.Job.Db.Defs
 
         public static string CsInitFieldCtorValue(DefField field)
         {
-            return $"{field.CsStyleName} = default;";
+            return $"{field.ConventionName} = default;";
         }
 
         public static string CsWriteBlob(string bufName, string fieldName, TType type)

@@ -32,7 +32,7 @@ export {{if x.is_abstract_type}}abstract {{end}}class {{name}}{{if parent_def_ty
         {{~if !field.ctype.is_nullable~}}
         if (_json_.{{field.name}} === undefined) { throw new Error() }
         {{~end~}}
-        {{ts_json_constructor ('this.' + field.ts_style_name) ( '_json_.' + field.name) field.ctype}}
+        {{ts_json_constructor ('this.' + field.convention_name) ( '_json_.' + field.name) field.ctype}}
         {{~end~}}
     }
 
@@ -42,7 +42,7 @@ export {{if x.is_abstract_type}}abstract {{end}}class {{name}}{{if parent_def_ty
      * {{field.comment}}
      */
 {{~end~}}
-    readonly {{field.ts_style_name}}: {{ts_define_type field.ctype}}
+    readonly {{field.convention_name}}: {{ts_define_type field.ctype}}
     {{~if field.gen_ref~}}
     {{field.ts_ref_validator_define}}
     {{~end~}}

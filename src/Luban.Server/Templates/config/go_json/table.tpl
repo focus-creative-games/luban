@@ -28,12 +28,12 @@ func New{{go_full_name}}(_buf []map[string]interface{}) (*{{go_full_name}}, erro
 {{~if value_type.is_dynamic ~}}
     {{~for child in value_type.bean.hierarchy_not_abstract_children~}}
             if __v, __is := _v.(*{{child.go_full_name}}) ; __is {
-                dataMap[__v.{{index_field.cs_style_name}}] = _v
+                dataMap[__v.{{index_field.convention_name}}] = _v
                 continue
             }
     {{~end~}}
 {{~else~}}
-			dataMap[_v.{{index_field.cs_style_name}}] = _v
+			dataMap[_v.{{index_field.convention_name}}] = _v
 {{~end~}}
 		}
 	}

@@ -51,6 +51,10 @@ namespace Luban.Job.Db
             {
                 return false;
             }
+            if (!options.ValidateConvention(ref errMsg))
+            {
+                return false;
+            }
             return true;
         }
 
@@ -85,7 +89,13 @@ namespace Luban.Job.Db
 
                 var rawDefines = loader.BuildDefines();
 
-                var ass = new DefAssembly();
+                var ass = new DefAssembly()
+                {
+                    NamingConventionModule = args.NamingConventionModule,
+                    NamingConventionType = args.NamingConventionType,
+                    NamingConventionBeanMember = args.NamingConventionBeanMember,
+                    NamingConventionEnumMember = args.NamingConventionEnumMember,
+                };
 
                 ass.Load(rawDefines, agent);
 
@@ -101,6 +111,7 @@ namespace Luban.Job.Db
                 {
                     case "cs":
                     {
+                        ass.CurrentLanguage = ELanguage.CS;
                         var render = new AsyncCsRender();
                         foreach (var c in ass.Types.Values)
                         {
@@ -128,6 +139,7 @@ namespace Luban.Job.Db
                     }
                     case "typescript":
                     {
+                        ass.CurrentLanguage = ELanguage.TYPESCRIPT;
                         var render = new TypescriptRender();
                         var brightRequirePath = args.TypescriptBrightRequirePath;
                         var brightPackageName = args.TypescriptBrightPackageName;

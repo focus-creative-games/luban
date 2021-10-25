@@ -42,6 +42,18 @@ namespace Luban.Job.Common.Defs
 
         public bool UseUnityVectors { get; set; }
 
+        public NamingConvention NamingConventionModule { get; set; } = NamingConvention.LanguangeRecommend;
+
+        public NamingConvention NamingConventionType { get; set; } = NamingConvention.LanguangeRecommend;
+
+        public NamingConvention NamingConventionBeanMember { get; set; } = NamingConvention.LanguangeRecommend;
+
+        public NamingConvention NamingConventionEnumMember { get; set; } = NamingConvention.LanguangeRecommend;
+
+        public AccessConvention AccessConventionBeanMember { get; set; } = AccessConvention.LanguangeRecommend;
+
+        public ELanguage CurrentLanguage { get; set; } = ELanguage.INVALID;
+
         public void AddType(DefTypeBase type)
         {
             string fullName = type.FullName;

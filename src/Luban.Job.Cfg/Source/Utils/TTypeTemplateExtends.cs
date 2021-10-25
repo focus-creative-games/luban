@@ -11,17 +11,17 @@ namespace Luban.Job.Cfg.Utils
     {
         public static string CsDefineTextKeyField(DefField field)
         {
-            return $"string {field.GetTextKeyName(field.CsStyleName)}";
+            return $"string {field.GetTextKeyName(field.ConventionName)}";
         }
 
         public static string CsTranslateText(DefField field, string translatorName)
         {
-            return $"{field.CsStyleName} = {translatorName}({field.GetTextKeyName(field.CsStyleName)}, {field.CsStyleName});";
+            return $"{field.ConventionName} = {translatorName}({field.GetTextKeyName(field.ConventionName)}, {field.ConventionName});";
         }
 
         public static string CsRecursiveTranslateText(DefField field, string translatorName)
         {
-            return field.CType.Apply(CsRecursiveTranslateVisitor.Ins, field.CsStyleName, translatorName);
+            return field.CType.Apply(CsRecursiveTranslateVisitor.Ins, field.ConventionName, translatorName);
         }
 
         public static string CsJsonDeserialize(string bufName, string fieldName, string jsonFieldName, TType type)
@@ -50,13 +50,13 @@ namespace Luban.Job.Cfg.Utils
 
         public static string CsRecursiveResolve(DefField field, string tables)
         {
-            return field.CType.Apply(CsRecursiveResolveVisitor.Ins, field.CsStyleName, tables);
+            return field.CType.Apply(CsRecursiveResolveVisitor.Ins, field.ConventionName, tables);
         }
 
         public static string CsRefValidatorResolve(DefField field)
         {
-            var refVarName = field.CsRefVarName;
-            var name = field.CsStyleName;
+            var refVarName = field.RefVarName;
+            var name = field.ConventionName;
             var tableName = field.Ref.FirstTable;
             var table = field.Assembly.GetCfgTable(field.Ref.FirstTable);
             if (field.IsNullable)
@@ -88,13 +88,13 @@ namespace Luban.Job.Cfg.Utils
 
         public static string JavaRecursiveResolve(DefField field, string tables)
         {
-            return field.CType.Apply(JavaRecursiveResolveVisitor.Ins, field.JavaStyleName, tables);
+            return field.CType.Apply(JavaRecursiveResolveVisitor.Ins, field.ConventionName, tables);
         }
 
         public static string JavaRefValidatorResolve(DefField field)
         {
-            var refVarName = field.JavaRefVarName;
-            var name = field.JavaStyleName;
+            var refVarName = field.RefVarName;
+            var name = field.ConventionName;
             var tableName = field.Ref.FirstTable;
             var table = field.Assembly.GetCfgTable(field.Ref.FirstTable);
             if (field.IsNullable)
@@ -114,13 +114,13 @@ namespace Luban.Job.Cfg.Utils
 
         public static string CppRecursiveResolve(DefField field, string tables)
         {
-            return field.CType.Apply(CppRecursiveResolveVisitor.Ins, field.CsStyleName, tables);
+            return field.CType.Apply(CppRecursiveResolveVisitor.Ins, field.ConventionName, tables);
         }
 
         public static string CppRefValidatorResolve(DefField field)
         {
-            var refVarName = field.CppRefVarName;
-            var name = field.CsStyleName;
+            var refVarName = field.RefVarName;
+            var name = field.ConventionName;
             var tableName = field.Ref.FirstTable;
             var table = field.Assembly.GetCfgTable(field.Ref.FirstTable);
             if (field.IsNullable)
@@ -165,13 +165,13 @@ namespace Luban.Job.Cfg.Utils
 
         public static string TsRecursiveResolve(DefField field, string tables)
         {
-            return field.CType.Apply(TypescriptRecursiveResolveVisitor.Ins, "this." + field.CsStyleName, tables);
+            return field.CType.Apply(TypescriptRecursiveResolveVisitor.Ins, "this." + field.ConventionName, tables);
         }
 
         public static string TsRefValidatorResolve(DefField field)
         {
-            var refVarName = field.CsRefVarName;
-            var name = "this." + field.TsStyleName;
+            var refVarName = field.RefVarName;
+            var name = "this." + field.ConventionName;
             var tableName = field.Ref.FirstTable;
             var table = field.Assembly.GetCfgTable(field.Ref.FirstTable);
             if (field.IsNullable)
@@ -212,7 +212,7 @@ namespace Luban.Job.Cfg.Utils
         {
             switch (lan)
             {
-                case "cs": return $"string {field.CsStyleName}{TText.L10N_FIELD_SUFFIX};";
+                case "cs": return $"string {field.ConventionName}{TText.L10N_FIELD_SUFFIX};";
                 default: throw new NotSupportedException($"not support lan:{lan}");
             }
         }

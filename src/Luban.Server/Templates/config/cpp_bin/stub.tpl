@@ -17,11 +17,11 @@ namespace {{x.top_module}}
         {{~end~}}
 
         {{~ for field in type.export_fields ~}}
-        {{cpp_deserialize '_buf' field.cpp_style_name field.ctype}}
+        {{cpp_deserialize '_buf' field.convention_name field.ctype}}
         {{~if field.index_field ~}}
-        for(auto& _v : this->{{field.cpp_style_name}})
+        for(auto& _v : this->{{field.convention_name}})
         { 
-            {{field.cpp_style_name}}_Index.insert({_v->{{field.index_field.cpp_style_name}}, _v});
+            {{field.convention_name}}_Index.insert({_v->{{field.index_field.convention_name}}, _v});
         }
         {{~end~}}
         {{~end~}}

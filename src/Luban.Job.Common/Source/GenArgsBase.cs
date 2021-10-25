@@ -28,6 +28,31 @@ namespace Luban.Job.Common
         [Option("use_unity_vector", Required = false, HelpText = "use UnityEngine.Vector{2,3,4}")]
         public bool UseUnityVectors { get; set; }
 
+        [Option("naming_convention_module", Required = false, HelpText = "naming convention of module. can be language_recommend,origin,camelCase,PascalCase,under_scores")]
+        public string NamingConventionModuleStr { get; set; }
+
+        public NamingConvention NamingConventionModule { get; set; }
+
+        [Option("naming_convention_type", Required = false, HelpText = "naming convention of enum and bean. can be language_recommend,origin,camelCase,PascalCase,under_scores")]
+        public string NamingConventionTypeStr { get; set; }
+
+        public NamingConvention NamingConventionType { get; set; }
+
+        [Option("naming_convention_bean_member", Required = false, HelpText = "naming convention of bean member. can be language_recommend,origin,camelCase,PascalCase,under_scores")]
+        public string NamingConventionBeanMemberStr { get; set; }
+
+        public NamingConvention NamingConventionBeanMember { get; set; }
+
+        [Option("naming_convention_enum_member", Required = false, HelpText = "naming convention of enum member. can be language_recommend,origin,camelCase,PascalCase,under_scores")]
+        public string NamingConventionEnumMemberStr { get; set; }
+
+        public NamingConvention NamingConventionEnumMember { get; set; }
+
+        [Option("access_bean_member", Required = false, HelpText = "mode of bean field. can be  language_recommend,variable,getter_setter,property")]
+        public string AccessConventionBeanMemberStr { get; set; }
+
+        public AccessConvention AccessConventionBeanMember { get; set; }
+
         public bool ValidateOutouptCodeDir(ref string errMsg)
         {
             if (string.IsNullOrWhiteSpace(this.OutputCodeDir))
@@ -36,6 +61,36 @@ namespace Luban.Job.Common
                 return false;
             }
             return true;
+        }
+
+        public static bool TryParseNamingConvention(string nc, out NamingConvention result)
+        {
+            switch (nc)
+            {
+                case null:
+                case "":
+                case "language_recommend": result = NamingConvention.LanguangeRecommend; return true;
+                case "origin": result = NamingConvention.Origin; return true;
+                case "camelCase": result = NamingConvention.CameraCase; return true;
+                case "PascalCase": result = NamingConvention.PascalCase; return true;
+                case "under_scores": result = NamingConvention.UnderScores; return true;
+                default: result = NamingConvention.Invalid; return false;
+            }
+        }
+
+        public static bool TryParseAccessConvention(string fm, out AccessConvention ac)
+        {
+            //return string.IsNullOrEmpty(fm) || fm == "language_recommend" || fm == "variable" || fm == "getter_setter" || fm == "property";
+            switch (fm)
+            {
+                case null:
+                case "":
+                case "language_recommnd": ac = AccessConvention.LanguangeRecommend; return true;
+                case "variable": ac = AccessConvention.Variable; return true;
+                case "getter_setter": ac = AccessConvention.GetterSetter; return true;
+                case "property": ac = AccessConvention.Property; return true;
+                default: ac = AccessConvention.Invalid; return false;
+            }
         }
 
         public bool ValidateTypescriptRequire(string genType, ref string errMsg)
@@ -56,6 +111,41 @@ namespace Luban.Job.Common
                 errMsg = "while --embed_bright_types is false, should provide option --typescript_bright_require_path or --typescript_bright_package_name";
                 return false;
             }
+            return true;
+        }
+
+        public bool ValidateConvention(ref string errMsg)
+        {
+            if (!TryParseNamingConvention(NamingConventionModuleStr, out var m))
+            {
+                errMsg = "--naming_convention_module invalid! valid values: language_recommend,origin,camelCase,PascalCase,under_scores";
+                return false;
+            }
+            NamingConventionModule = m;
+            if (!TryParseNamingConvention(NamingConventionTypeStr, out var t))
+            {
+                errMsg = "--naming_convention_type invalid! valid values: language_recommend,origin,camelCase,PascalCase,under_scores";
+                return false;
+            }
+            NamingConventionType = t;
+            if (!TryParseNamingConvention(NamingConventionBeanMemberStr, out var bm))
+            {
+                errMsg = "--naming_convention_bean_member invalid! valid values: language_recommend,origin,camelCase,PascalCase,under_scores";
+                return false;
+            }
+            NamingConventionBeanMember = bm;
+            if (!TryParseNamingConvention(NamingConventionEnumMemberStr, out var em))
+            {
+                errMsg = "--naming_convention_enum_member invalid! valid values: language_recommend,origin,camelCase,PascalCase,under_scores";
+                return false;
+            }
+            NamingConventionEnumMember = em;
+            if (!TryParseAccessConvention(AccessConventionBeanMemberStr, out var acbm))
+            {
+                errMsg = "--access_bean_member invalid! valid values: language_recommend,variable,getter_setter,property";
+                return false;
+            }
+            AccessConventionBeanMember = acbm;
             return true;
         }
     }

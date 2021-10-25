@@ -2,6 +2,7 @@ namespace Luban.Job.Common
 {
     public enum ELanguage
     {
+        INVALID,
         CS,
         JAVA,
         GO,

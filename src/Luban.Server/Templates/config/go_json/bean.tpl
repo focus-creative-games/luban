@@ -15,7 +15,7 @@ type {{go_full_name}} struct {
     {{parent_def_type.go_full_name}}
     {{~end~}}
     {{~for field in export_fields ~}}
-    {{field.cs_style_name}} {{go_define_type field.ctype}}
+    {{field.convention_name}} {{go_define_type field.ctype}}
     {{~end~}}
 }
 
@@ -49,7 +49,7 @@ func New{{go_full_name}}_Body(_buf map[string]interface{}) (_v *{{go_full_name}}
     _v.{{parent_def_type.go_full_name}} = *_p
 {{~end~}}
     {{~for field in export_fields ~}}
-    {{go_deserialize_json_field field.ctype ("_v." + field.go_style_name) field.name '_buf'}}
+    {{go_deserialize_json_field field.ctype ("_v." + field.convention_name) field.name '_buf'}}
     {{~end~}}
     return
 }
@@ -62,7 +62,7 @@ func New{{go_full_name}}(_buf map[string]interface{}) (_v *{{go_full_name}}, err
     _v.{{parent_def_type.go_full_name}} = *_p
 {{~end~}}
     {{~for field in export_fields ~}}
-    {{go_deserialize_json_field field.ctype ("_v." + field.go_style_name) field.name '_buf'}}
+    {{go_deserialize_json_field field.ctype ("_v." + field.convention_name) field.name '_buf'}}
     {{~end~}}
     return
 }

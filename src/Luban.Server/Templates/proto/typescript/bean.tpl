@@ -48,13 +48,13 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} extends {{if pa
      * {{field.comment}}
      */
 {{~end~}}
-     {{field.ts_style_name}}{{if field.is_nullable}}?{{end}} : {{ts_define_type field.ctype}}
+     {{field.convention_name}}{{if field.is_nullable}}?{{end}} : {{ts_define_type field.ctype}}
     {{~end~}}
 
     constructor() {
         super()
     {{~ for field in fields ~}}
-        this.{{field.ts_style_name}} = {{ts_ctor_default_value field.ctype}}
+        this.{{field.convention_name}} = {{ts_ctor_default_value field.ctype}}
     {{~end~}}
     }
     
@@ -64,7 +64,7 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} extends {{if pa
         super.serialize(_buf_)
         {{~end~}}
         {{~ for field in fields ~}}
-        {{ts_bin_serialize ('this.' + field.ts_style_name) '_buf_' field.ctype}}
+        {{ts_bin_serialize ('this.' + field.convention_name) '_buf_' field.ctype}}
         {{~end~}}
     }
 
@@ -73,14 +73,14 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} extends {{if pa
         super.deserialize(_buf_)
         {{~end~}}
         {{~ for field in fields ~}}
-        {{ts_bin_deserialize ('this.' + field.ts_style_name) '_buf_' field.ctype}}
+        {{ts_bin_deserialize ('this.' + field.convention_name) '_buf_' field.ctype}}
         {{~end~}}
     }
 
     toString(): string {
         return '{{full_name}}{ '
     {{~ for field in hierarchy_fields ~}}
-            + '{{field.ts_style_name}}:' + this.{{field.ts_style_name}} + ','
+            + '{{field.convention_name}}:' + this.{{field.convention_name}} + ','
     {{~end~}}
         + '}'
     }

@@ -18,6 +18,7 @@ namespace Luban.Job.Cfg.Generate
             var args = ctx.GenArgs;
             ctx.Render = this;
             ctx.Lan = RenderFileUtil.GetLanguage(genType);
+            DefAssembly.LocalAssebmly.CurrentLanguage = ctx.Lan;
 
             var lines = new List<string>();
             GenerateCodeMonolithic(ctx, RenderFileUtil.GetFileOrDefault(ctx.GenArgs.OutputCodeMonolithicFile, "mod.rs"), lines, ls =>

@@ -17,7 +17,7 @@ namespace Luban.Job.Cfg.Generate
         {
             // 将所有 头文件定义 生成到一个文件
             // 按照 const,enum,bean,table, service 的顺序生成
-
+            DefAssembly.LocalAssebmly.CurrentLanguage = ELanguage.CPP;
             ctx.Tasks.Add(Task.Run(() =>
             {
                 var headerFileContent = new List<string>

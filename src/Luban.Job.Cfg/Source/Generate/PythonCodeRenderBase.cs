@@ -11,6 +11,7 @@ namespace Luban.Job.Cfg.Generate
         {
             ctx.Render = this;
             ctx.Lan = Common.ELanguage.PYTHON;
+            DefAssembly.LocalAssebmly.CurrentLanguage = ctx.Lan;
 
             var lines = new List<string>(10000);
             static void PreContent(List<string> fileContent)

@@ -15,7 +15,7 @@
 #[allow(non_camel_case_types)]
 pub struct {{name}} {
 {{~for field in hierarchy_export_fields~}}
-pub {{field.rust_style_name}}: {{rust_define_type field.ctype}},
+pub {{field.convention_name}}: {{rust_define_type field.ctype}},
 {{~end~}}
 }
 
@@ -24,7 +24,7 @@ impl {{name}} {
     pub fn new(__js: &json::JsonValue) -> Result<{{name}}, LoadError> {
         let __b = {{name}} {
 {{~for field in hierarchy_export_fields~}}
-            {{field.rust_style_name}}: {{rust_json_constructor ('__js["' + field.name + '"]') field.ctype}},
+            {{field.convention_name}}: {{rust_json_constructor ('__js["' + field.name + '"]') field.ctype}},
 {{~end~}}
         };
         Ok(__b)

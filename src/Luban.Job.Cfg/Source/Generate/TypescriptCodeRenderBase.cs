@@ -1,3 +1,4 @@
+using Luban.Job.Cfg.Defs;
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.Utils;
 using System;
@@ -13,6 +14,7 @@ namespace Luban.Job.Cfg.Generate
             var args = ctx.GenArgs;
             ctx.Render = this;
             ctx.Lan = RenderFileUtil.GetLanguage(genType);
+            DefAssembly.LocalAssebmly.CurrentLanguage = ctx.Lan;
 
             var lines = new List<string>(10000);
             Action<List<string>> preContent = (fileContent) =>

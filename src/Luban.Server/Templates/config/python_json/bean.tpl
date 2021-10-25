@@ -33,7 +33,7 @@ class {{name}} {{if parent_def_type}}({{parent_def_type.py_full_name}}){{else if
         {{parent_def_type.py_full_name}}.__init__(self, _json_)
         {{~end~}}
         {{~ for field in export_fields ~}}
-        {{py3_deserialize_field ('self.' + field.py_style_name) '_json_' field.name field.ctype}}
+        {{py3_deserialize_field ('self.' + field.convention_name) '_json_' field.name field.ctype}}
         {{~end~}}
         {{~if export_fields.empty?}}
         pass

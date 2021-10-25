@@ -31,7 +31,7 @@ public sealed class {{name}}
             {{cs_define_type value_type}} _v;
             {{cs_deserialize '_buf' '_v' value_type}}
             _dataList.Add(_v);
-            _dataMap.Add(_v.{{x.index_field.cs_style_name}}, _v);
+            _dataMap.Add(_v.{{x.index_field.convention_name}}, _v);
         }
     }
 
@@ -80,9 +80,9 @@ public sealed class {{name}}
     /// {{field.comment}}
     /// </summary>
 {{~end~}}
-     public {{cs_define_type field.ctype}} {{field.cs_style_name}} => _data.{{field.cs_style_name}};
+     public {{cs_define_type field.ctype}} {{field.convention_name}} => _data.{{field.convention_name}};
     {{~if field.ref~}}
-        public {{field.cs_ref_type_name}} {{field.cs_ref_var_name}} => _data.{{field.cs_ref_var_name}};
+        public {{field.cs_ref_type_name}} {{field.ref_var_name}} => _data.{{field.ref_var_name}};
     {{~end~}}
     {{~end~}}
 

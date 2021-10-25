@@ -34,6 +34,7 @@ namespace Luban.Job.Cfg.Generate
             string genType = ctx.GenType;
             ctx.Render = this;
             ctx.Lan = RenderFileUtil.GetLanguage(genType);
+            DefAssembly.LocalAssebmly.CurrentLanguage = ctx.Lan;
             foreach (var c in ctx.ExportTypes)
             {
                 ctx.Tasks.Add(Task.Run(() =>

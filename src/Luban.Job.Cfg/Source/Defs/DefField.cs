@@ -57,7 +57,7 @@ namespace Luban.Job.Cfg.Defs
             get
             {
                 var table = Assembly.GetCfgTable(Ref.FirstTable);
-                return $"{table.ValueTType.Apply(CsDefineTypeName.Ins)} {CsRefVarName} {{ get; private set; }}";
+                return $"{table.ValueTType.Apply(CsDefineTypeName.Ins)} {RefVarName} {{ get; private set; }}";
             }
         }
 
@@ -75,7 +75,7 @@ namespace Luban.Job.Cfg.Defs
             get
             {
                 var table = Assembly.GetCfgTable(Ref.FirstTable);
-                return $"{table.ValueTType.Apply(JavaDefineTypeName.Ins)} {JavaRefVarName};";
+                return $"{table.ValueTType.Apply(JavaDefineTypeName.Ins)} {RefVarName};";
             }
         }
 
@@ -84,7 +84,7 @@ namespace Luban.Job.Cfg.Defs
             get
             {
                 var table = Assembly.GetCfgTable(Ref.FirstTable);
-                return $"{table.ValueTType.Apply(CppDefineTypeName.Ins)} {CppRefVarName};";
+                return $"{table.ValueTType.Apply(CppDefineTypeName.Ins)} {RefVarName};";
             }
         }
 
@@ -93,22 +93,19 @@ namespace Luban.Job.Cfg.Defs
             get
             {
                 var table = Assembly.GetCfgTable(Ref.FirstTable);
-                return $"{TsRefVarName} : {table.ValueTType.Apply(TypescriptDefineTypeNameVisitor.Ins)}{(IsNullable ? "" : " = undefined!")}";
+                return $"{RefVarName} : {table.ValueTType.Apply(TypescriptDefineTypeNameVisitor.Ins)}{(IsNullable ? "" : " = undefined!")}";
             }
         }
 #endif
 
-        public string CsRefVarName => $"{CsStyleName}_Ref";
+        public string RefVarName => $"{ConventionName}_Ref";
 
-        public string JavaRefVarName => $"{JavaStyleName}_Ref";
 
-        public string CppRefVarName => $"{CsStyleName}_Ref";
+        public string ConventionGetterName => TypeUtil.ToJavaGetterName(Name);
 
-        public string TsRefVarName => $"{TsStyleName}_Ref";
+        //public string JavaGetterName => TypeUtil.ToJavaGetterName(Name);
 
-        public string JavaGetterName => TypeUtil.ToJavaGetterName(Name);
-
-        public string CppGetterName => JavaGetterName;
+        //public string CppGetterName => JavaGetterName;
 
         public bool NeedExport => Assembly.NeedExport(this.Groups);
 

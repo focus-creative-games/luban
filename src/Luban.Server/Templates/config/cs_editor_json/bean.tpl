@@ -43,7 +43,7 @@ public {{cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{parent}} 
     }
     {{~end~}}
     {{~for field in fields ~}}
-     public {{field.ctype.cs_define_type}} {{field.cs_style_name}};
+     public {{field.ctype.cs_define_type}} {{field.convention_name}};
     {{~end~}}
 
     {{~if !parent_def_type && is_abstract_type~}}
@@ -81,7 +81,7 @@ public {{cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{parent}} 
         {
             return "{{full_name}}{ "
         {{~for field in hierarchy_fields ~}}
-            + "{{field.cs_style_name}}:" + {{field.proto_cs_to_string}} + ","
+            + "{{field.convention_name}}:" + {{field.proto_cs_to_string}} + ","
         {{~end~}}
             + "}";
         }

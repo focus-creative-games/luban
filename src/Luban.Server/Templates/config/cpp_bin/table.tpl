@@ -30,7 +30,7 @@ class {{name}}
             {{cpp_define_type value_type}} _v;
             {{cpp_deserialize '_buf' '_v' value_type}}
             _dataList.push_back(_v);
-            _dataMap[_v->{{x.index_field.cpp_style_name}}] = _v;
+            _dataMap[_v->{{x.index_field.convention_name}}] = _v;
         }
         return true;
     }
@@ -85,7 +85,7 @@ class {{name}}
      * {{field.comment}}
      */
 {{~end~}}
-    {{cpp_define_type field.ctype}}& {{field.cpp_getter_name}}() const { return _data->{{field.cpp_style_name}}; }
+    {{cpp_define_type field.ctype}}& {{field.convention_getter_name}}() const { return _data->{{field.convention_name}}; }
     {{~end~}}
     {{~end~}}
 };
