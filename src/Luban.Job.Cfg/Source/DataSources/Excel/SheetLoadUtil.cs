@@ -421,7 +421,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
             var fields = new Dictionary<string, FieldInfo>();
             foreach (var subTitle in title.SubTitleList)
             {
-                if (subTitle.Name.StartsWith("__"))
+                if (!DefUtil.IsNormalFieldName(subTitle.Name))
                 {
                     continue;
                 }

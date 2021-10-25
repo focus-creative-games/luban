@@ -81,5 +81,10 @@ namespace Luban.Job.Common.Utils
                 }
             }
         }
+
+        public static bool IsNormalFieldName(string name)
+        {
+            return !name.StartsWith("__");
+        }
     }
 }

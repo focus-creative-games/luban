@@ -1,4 +1,5 @@
 ﻿using Bright.Collections;
+using Luban.Job.Common.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -72,8 +73,12 @@ namespace Luban.Job.Cfg.DataSources.Excel
             {
                 if (Root)
                 {
-                    // 第一个字段一般为key，为了避免失误将空单元格当作key=0的数据，默认非空
-                    SubTitleList[0].Tags.TryAdd("non_empty", "1");
+                    var firstField = SubTitleList.FirstOrDefault(f => DefUtil.IsNormalFieldName(f.Name));
+                    if (firstField != null)
+                    {
+                        // 第一个字段一般为key，为了避免失误将空单元格当作key=0的数据，默认非空
+                        firstField.Tags.TryAdd("non_empty", "1");
+                    }
                 }
                 foreach (var sub in SubTitleList)
                 {

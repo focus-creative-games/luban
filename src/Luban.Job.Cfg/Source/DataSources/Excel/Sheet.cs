@@ -69,6 +69,26 @@ namespace Luban.Job.Cfg.DataSources.Excel
             return new TitleRow(title, fields);
         }
 
+        private static bool IsMultiRowsExtendRow(List<Cell> row, Title title)
+        {
+            if (title.HasSubTitle)
+            {
+                foreach (var t in title.SubTitleList)
+                {
+                    if (!t.SelfMultiRows && !IsMultiRowsExtendRow(row, t))
+                    {
+                        return false;
+                    }
+                }
+                //return title.SubTitleList.All(t => t.SelfMultiRows || IsMultiRowsExtendRow(row, t));
+                return true;
+            }
+            else
+            {
+                return IsBlankRow(row, title.FromIndex, title.ToIndex);
+            }
+        }
+
         private IEnumerable<List<List<Cell>>> SplitRows(Title title, List<List<Cell>> rows)
         {
             List<List<Cell>> oneRecordRows = null;
@@ -84,7 +104,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 }
                 else
                 {
-                    if (title.SubTitleList.All(t => t.SelfMultiRows || IsBlankRow(row, t.FromIndex, t.ToIndex)))
+                    if (IsMultiRowsExtendRow(row, title))
                     {
                         oneRecordRows.Add(row);
                     }
