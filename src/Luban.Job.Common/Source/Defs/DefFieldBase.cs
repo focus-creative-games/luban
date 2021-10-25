@@ -145,7 +145,7 @@ namespace Luban.Job.Common.Defs
 
         public virtual void PostCompile()
         {
-            // 检查 字段类型 与 所引用的表的key是否一致
+            CType.Compile(this);
         }
 
         public static void CompileFields<T>(DefTypeBase hostType, List<T> fields, bool verifyId) where T : DefFieldBase

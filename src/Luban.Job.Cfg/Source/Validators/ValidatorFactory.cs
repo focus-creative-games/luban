@@ -1,4 +1,6 @@
+using Luban.Job.Cfg.Defs;
 using Luban.Job.Cfg.RawDefs;
+using Luban.Job.Common.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,22 +15,22 @@ namespace Luban.Job.Cfg.Validators
 
         public static List<string> ValidatorNames => s_validatorNames;
 
-        public static IValidator Create(string type, string rule)
+        public static IValidator Create(TType field, string type, string rule)
         {
             s_logger.Debug("== create validator {type}:{rule}", type, rule);
             switch (type)
             {
                 case RefValidator.NAME:
                 {
-                    return new RefValidator(rule.Split(',').ToList());
+                    return new RefValidator(field, rule.Split(',').ToList());
                 }
                 case PathValidator.NAME:
                 {
-                    return new PathValidator(rule);//.Split(',').ToList());
+                    return new PathValidator(field, rule);//.Split(',').ToList());
                 }
                 case RangeValidator.NAME:
                 {
-                    return new RangeValidator(rule);
+                    return new RangeValidator(field, rule);
                 }
                 default:
                     throw new NotSupportedException("unknown validator type:" + type);

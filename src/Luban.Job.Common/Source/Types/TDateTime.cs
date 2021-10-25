@@ -6,20 +6,9 @@ namespace Luban.Job.Common.Types
 {
     public class TDateTime : TType
     {
-        private static TDateTime Ins { get; } = new TDateTime(false, null);
-
-        private static TDateTime NullableIns { get; } = new TDateTime(true, null);
-
         public static TDateTime Create(bool isNullable, Dictionary<string, string> tags)
         {
-            if (tags == null)
-            {
-                return isNullable ? NullableIns : Ins;
-            }
-            else
-            {
-                return new TDateTime(isNullable, tags);
-            }
+            return new TDateTime(isNullable, tags);
         }
 
         private TDateTime(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)

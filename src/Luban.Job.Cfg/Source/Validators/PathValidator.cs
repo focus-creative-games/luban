@@ -1,5 +1,6 @@
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Common.Defs;
 using Luban.Job.Common.Types;
 using System;
 using System.Collections.Generic;
@@ -156,10 +157,13 @@ namespace Luban.Job.Cfg.Validators
 
         public string RawPattern { get; }
 
+        public TType Type { get; }
+
         internal IPathPattern PathPattern { get; private set; }
 
-        public PathValidator(string pathPattern)
+        public PathValidator(TType type, string pathPattern)
         {
+            Type = type;
             this.RawPattern = pathPattern;
         }
 
@@ -202,12 +206,12 @@ namespace Luban.Job.Cfg.Validators
             }
         }
 
-        private void ThrowCompileError(DefField def, string err)
+        private void ThrowCompileError(DefFieldBase def, string err)
         {
             throw new System.ArgumentException($"{((DefBean)(def.HostType)).FullName} 字段:{def.Name} {RawPattern} 定义不合法. {err}");
         }
 
-        public void Compile(DefField def)
+        public void Compile(DefFieldBase def)
         {
             string[] ss = RawPattern.Split(';');
             if (ss.Length < 1)

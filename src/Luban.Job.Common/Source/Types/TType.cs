@@ -15,7 +15,7 @@ namespace Luban.Job.Common.Types
         protected TType(bool isNullable, Dictionary<string, string> tags)
         {
             IsNullable = isNullable;
-            Tags = tags;
+            Tags = tags ?? new Dictionary<string, string>();
         }
 
         public bool HasTag(string attrName)
@@ -29,6 +29,14 @@ namespace Luban.Job.Common.Types
         }
 
         public abstract bool TryParseFrom(string s);
+
+        public virtual void Compile(DefFieldBase field)
+        {
+            foreach (var p in Processors)
+            {
+                p.Compile(field);
+            }
+        }
 
         public virtual bool IsCollection => false;
 

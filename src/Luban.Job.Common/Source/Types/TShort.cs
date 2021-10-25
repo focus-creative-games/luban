@@ -5,20 +5,9 @@ namespace Luban.Job.Common.Types
 {
     public class TShort : TType
     {
-        private static TShort Ins { get; } = new TShort(false, null);
-
-        private static TShort NullableIns { get; } = new TShort(true, null);
-
         public static TShort Create(bool isNullable, Dictionary<string, string> tags)
         {
-            if (tags == null)
-            {
-                return isNullable ? NullableIns : Ins;
-            }
-            else
-            {
-                return new TShort(isNullable, tags);
-            }
+            return new TShort(isNullable, tags);
         }
 
         private TShort(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)

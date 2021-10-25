@@ -5,20 +5,9 @@ namespace Luban.Job.Common.Types
 {
     public class TDouble : TType
     {
-        private static TDouble Ins { get; } = new TDouble(false, null);
-
-        private static TDouble NullableIns { get; } = new TDouble(true, null);
-
         public static TDouble Create(bool isNullable, Dictionary<string, string> tags)
         {
-            if (tags == null)
-            {
-                return isNullable ? NullableIns : Ins;
-            }
-            else
-            {
-                return new TDouble(isNullable, tags);
-            }
+            return new TDouble(isNullable, tags);
         }
 
         private TDouble(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)

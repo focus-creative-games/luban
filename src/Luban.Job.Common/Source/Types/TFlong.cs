@@ -5,20 +5,9 @@ namespace Luban.Job.Common.Types
 {
     public class TFlong : TType
     {
-        private static TFlong Ins { get; } = new TFlong(false, null);
-
-        private static TFlong NullableIns { get; } = new TFlong(true, null);
-
         public static TFlong Create(bool isNullable, Dictionary<string, string> tags)
         {
-            if (tags == null)
-            {
-                return isNullable ? NullableIns : Ins;
-            }
-            else
-            {
-                return new TFlong(isNullable, tags);
-            }
+            return new TFlong(isNullable, tags);
         }
 
         private TFlong(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)

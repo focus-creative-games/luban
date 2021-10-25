@@ -1,6 +1,7 @@
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Common.Defs;
 using Luban.Job.Common.Types;
 using System;
 using System.Collections.Generic;
@@ -10,11 +11,6 @@ namespace Luban.Job.Cfg.Validators
 {
     public class RefValidator : IValidator
     {
-        public const string NAME = "ref";
-
-        public List<string> Tables { get; }
-
-        public string FirstTable => GetActualTableName(Tables[0]);
 
         public static string GetActualTableName(string table)
         {
@@ -25,8 +21,17 @@ namespace Luban.Job.Cfg.Validators
 #endif
         }
 
-        public RefValidator(List<string> tables)
+        public const string NAME = "ref";
+
+        public List<string> Tables { get; }
+
+        public string FirstTable => GetActualTableName(Tables[0]);
+
+        public TType Type { get; }
+
+        public RefValidator(TType type, List<string> tables)
         {
+            Type = type;
             this.Tables = new List<string>(tables);
         }
 
@@ -92,13 +97,16 @@ namespace Luban.Job.Cfg.Validators
             }
         }
 
-        public void Compile(DefField def)
+        public void Compile(DefFieldBase def)
         {
+            string hostTypeName = def.HostType.FullName;
+            string fieldName = def.Name;
             if (Tables.Count == 0)
             {
-                throw new Exception($"结构:{ def.HostType.FullName } 字段: { def.Name}  ref 不能为空");
+                throw new Exception($"结构:{ hostTypeName } 字段: { fieldName}  ref 不能为空");
             }
 
+            var assembly = ((DefField)def).Assembly;
             foreach (var table in Tables)
             {
 #if !LUBAN_LITE
@@ -106,17 +114,25 @@ namespace Luban.Job.Cfg.Validators
 #else
                 string actualTable = table.EndsWith("?") ? table.Substring(0, table.Length - 1) : table;
 #endif
-                var ct = def.Assembly.GetCfgTable(actualTable);
+                var ct = assembly.GetCfgTable(actualTable);
                 if (ct == null)
                 {
-                    throw new Exception($"结构:{def.HostType.FullName} 字段:{def.Name} ref:{table} 不存在");
+                    throw new Exception($"结构:{hostTypeName} 字段:{fieldName} ref:{table} 不存在");
+                }
+                if (!ct.NeedExport)
+                {
+                    throw new Exception($"type:'{hostTypeName}' field:'{fieldName}' ref 引用的表:'{table}' 没有导出");
                 }
                 if (ct.IsOneValueTable)
                 {
-                    throw new Exception($"结构:{def.HostType.FullName} 字段:{def.Name} ref:{table} 是单值表，不能执行引用检查");
+                    throw new Exception($"结构:{hostTypeName} 字段:{fieldName} ref:{table} 是单值表，不能执行引用检查");
+                }
+                var keyType = ct.KeyTType;
+                if (keyType.GetType() != Type.GetType())
+                {
+                    throw new Exception($"type:'{hostTypeName}' field:'{fieldName}' 类型:'{Type.GetType()}' 与 被引用的表:'{ct.FullName}' key类型:'{keyType.GetType()}' 不一致");
                 }
             }
-
         }
     }
 }

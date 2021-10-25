@@ -1,5 +1,6 @@
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Common.Defs;
 using Luban.Job.Common.Types;
 using System;
 
@@ -10,6 +11,8 @@ namespace Luban.Job.Cfg.Validators
         public const string NAME = "range";
 
         public string Name => NAME;
+
+        public TType Type { get; }
 
         private readonly string _str;
 
@@ -23,8 +26,9 @@ namespace Luban.Job.Cfg.Validators
 
         private bool _includeMaxBound;
 
-        public RangeValidator(string strRange)
+        public RangeValidator(TType type, string strRange)
         {
+            Type = type;
             _str = strRange.Trim();
         }
 
@@ -66,7 +70,7 @@ namespace Luban.Job.Cfg.Validators
             }
         }
 
-        public void Compile(DefField def)
+        public void Compile(DefFieldBase def)
         {
             void ThrowError()
             {

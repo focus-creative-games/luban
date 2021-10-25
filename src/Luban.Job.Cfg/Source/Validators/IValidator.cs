@@ -7,8 +7,6 @@ namespace Luban.Job.Cfg.Validators
 {
     public interface IValidator : IProcessor
     {
-        void Compile(DefField def);
-
         void Validate(ValidatorContext ctx, TType type, DType data);
     }
 }

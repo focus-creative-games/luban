@@ -6,20 +6,9 @@ namespace Luban.Job.Common.Types
 {
     public class TVector3 : TType
     {
-        private static TVector3 Ins { get; } = new TVector3(false, null);
-
-        private static TVector3 NullableIns { get; } = new TVector3(true, null);
-
         public static TVector3 Create(bool isNullable, Dictionary<string, string> tags)
         {
-            if (tags == null)
-            {
-                return isNullable ? NullableIns : Ins;
-            }
-            else
-            {
-                return new TVector3(isNullable, tags);
-            }
+            return new TVector3(isNullable, tags);
         }
 
         private TVector3(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)

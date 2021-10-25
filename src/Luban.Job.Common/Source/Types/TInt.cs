@@ -5,20 +5,9 @@ namespace Luban.Job.Common.Types
 {
     public class TInt : TType
     {
-        private static TInt Ins { get; } = new TInt(false, null);
-
-        private static TInt NullableIns { get; } = new TInt(true, null);
-
         public static TInt Create(bool isNullable, Dictionary<string, string> tags)
         {
-            if (tags == null)
-            {
-                return isNullable ? NullableIns : Ins;
-            }
-            else
-            {
-                return new TInt(isNullable, tags);
-            }
+            return new TInt(isNullable, tags);
         }
 
         private TInt(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)

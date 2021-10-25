@@ -5,24 +5,9 @@ namespace Luban.Job.Common.Types
 {
     public class TLong : TType
     {
-        private static TLong Ins { get; } = new TLong(false, null, false);
-
-        private static TLong NullableIns { get; } = new TLong(true, null, false);
-
-        private static TLong BigIns { get; } = new TLong(false, null, true);
-
-        private static TLong NullableBigIns { get; } = new TLong(true, null, true);
-
         public static TLong Create(bool isNullable, Dictionary<string, string> tags, bool isBigInt)
         {
-            if (tags == null)
-            {
-                return isNullable ? NullableIns : Ins;
-            }
-            else
-            {
-                return new TLong(isNullable, tags, isBigInt);
-            }
+            return new TLong(isNullable, tags, isBigInt);
         }
 
         public bool IsBigInt { get; }

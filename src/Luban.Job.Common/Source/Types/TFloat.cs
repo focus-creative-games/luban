@@ -7,18 +7,9 @@ namespace Luban.Job.Common.Types
     {
         public static TFloat Ins { get; } = new TFloat(false, null);
 
-        private static TFloat NullableIns { get; } = new TFloat(true, null);
-
         public static TFloat Create(bool isNullable, Dictionary<string, string> tags)
         {
-            if (tags == null)
-            {
-                return isNullable ? NullableIns : Ins;
-            }
-            else
-            {
-                return new TFloat(isNullable, tags);
-            }
+            return new TFloat(isNullable, tags);
         }
 
         private TFloat(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)

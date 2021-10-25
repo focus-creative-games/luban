@@ -5,20 +5,9 @@ namespace Luban.Job.Common.Types
 {
     public class TString : TType
     {
-        private static TString Ins { get; } = new TString(false, null);
-
-        private static TString NullableIns { get; } = new TString(true, null);
-
         public static TString Create(bool isNullable, Dictionary<string, string> tags)
         {
-            if (tags == null)
-            {
-                return isNullable ? NullableIns : Ins;
-            }
-            else
-            {
-                return new TString(isNullable, tags);
-            }
+            return new TString(isNullable, tags);
         }
 
         private TString(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)

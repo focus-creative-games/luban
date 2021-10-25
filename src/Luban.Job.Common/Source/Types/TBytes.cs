@@ -6,18 +6,9 @@ namespace Luban.Job.Common.Types
 {
     public class TBytes : TType
     {
-        private static TBytes Ins { get; } = new TBytes(false, null);
-
         public static TBytes Create(bool isNullable, Dictionary<string, string> tags)
         {
-            if (tags == null)
-            {
-                return isNullable ? new TBytes(true, null) : Ins;
-            }
-            else
-            {
-                return new TBytes(isNullable, tags);
-            }
+            return new TBytes(isNullable, tags);
         }
 
         private TBytes(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)

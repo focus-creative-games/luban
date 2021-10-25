@@ -5,20 +5,9 @@ namespace Luban.Job.Common.Types
 {
     public class TByte : TType
     {
-        private static TByte Ins { get; } = new TByte(false, null);
-
-        private static TByte NullableIns { get; } = new TByte(true, null);
-
         public static TByte Create(bool isNullable, Dictionary<string, string> tags)
         {
-            if (tags == null)
-            {
-                return isNullable ? NullableIns : Ins;
-            }
-            else
-            {
-                return new TByte(isNullable, tags);
-            }
+            return new TByte(isNullable, tags);
         }
 
         private TByte(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)

@@ -1,3 +1,4 @@
+using Luban.Job.Common.Defs;
 using Luban.Job.Common.TypeVisitors;
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,6 @@ namespace Luban.Job.Common.Types
 {
     public class TArray : TType
     {
-
         public static TArray Create(bool isNullable, Dictionary<string, string> tags, TType elementType)
         {
             return new TArray(isNullable, tags, elementType);
@@ -26,6 +26,24 @@ namespace Luban.Job.Common.Types
 
         public override bool IsCollection => true;
 
+        public override void Compile(DefFieldBase field)
+        {
+            base.Compile(field);
+
+            foreach (var p in ElementType.Processors)
+            {
+                p.Compile(field);
+            }
+
+            if (ElementType is TBean e && !e.IsDynamic && e.Bean.HierarchyFields.Count == 0)
+            {
+                throw new Exception($"container element type:'{e.Bean.FullName}' can't be empty bean");
+            }
+            if (ElementType is TText)
+            {
+                throw new Exception($"bean:{field.HostType.FullName} field:{field.Name} container element type can't be text");
+            }
+        }
 
         public override void Apply<T>(ITypeActionVisitor<T> visitor, T x)
         {

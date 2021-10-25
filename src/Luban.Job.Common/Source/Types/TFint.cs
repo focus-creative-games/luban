@@ -5,20 +5,9 @@ namespace Luban.Job.Common.Types
 {
     public class TFint : TType
     {
-        private static TFint Ins { get; } = new TFint(false, null);
-
-        private static TFint NullableIns { get; } = new TFint(true, null);
-
         public static TFint Create(bool isNullable, Dictionary<string, string> tags)
         {
-            if (tags == null)
-            {
-                return isNullable ? NullableIns : Ins;
-            }
-            else
-            {
-                return new TFint(isNullable, tags);
-            }
+            return new TFint(isNullable, tags);
         }
 
         private TFint(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)

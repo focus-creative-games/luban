@@ -5,20 +5,9 @@ namespace Luban.Job.Common.Types
 {
     public class TBool : TType
     {
-        private static TBool Ins { get; } = new TBool(false, null);
-
-        private static TBool NullableIns { get; } = new TBool(true, null);
-
         public static TBool Create(bool isNullable, Dictionary<string, string> tags)
         {
-            if (tags == null || tags.Count == 0)
-            {
-                return isNullable ? NullableIns : Ins;
-            }
-            else
-            {
-                return new TBool(isNullable, tags);
-            }
+            return new TBool(isNullable, tags);
         }
 
         private TBool(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)

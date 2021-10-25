@@ -1,3 +1,4 @@
+using Luban.Job.Common.Defs;
 using Luban.Job.Common.TypeVisitors;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,30 @@ namespace Luban.Job.Common.Types
         }
 
         public override bool IsCollection => true;
+
+        public override void Compile(DefFieldBase field)
+        {
+            base.Compile(field);
+
+            foreach (var p in KeyType.Processors)
+            {
+                p.Compile(field);
+            }
+
+            foreach (var p in ValueType.Processors)
+            {
+                p.Compile(field);
+            }
+
+            if (KeyType is TText)
+            {
+                throw new Exception($"bean:{field.HostType.FullName} field:{field.Name} container key type can't be text");
+            }
+            if (ValueType is TText)
+            {
+                throw new Exception($"bean:{field.HostType.FullName} field:{field.Name} container value type can't be text");
+            }
+        }
 
         public override void Apply<T>(ITypeActionVisitor<T> visitor, T x)
         {
