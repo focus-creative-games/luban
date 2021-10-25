@@ -26,8 +26,6 @@ luban相较于常规的excel导表工具有以下核心优势：
 - 完善的工作流支持。如id的外键引用检查;资源合法性检查;灵活的数据源定义（拆表或者多表合一）;灵活的分组导出机制；多种本地化支持;生成极快（日常迭代300ms以内）；Excel2TextDiff工具方便diff查看excel文件的版本间差异；
 - **=== LubanAssistant Excel插件 ===**。支持把json、lua、xml等文本格式的配置数据加载到excel中，批量编辑处理，最后再保存回原文件，较好地解决大型项目中多人合作数据编辑冲突合并的问题，较好解决在编辑器中制作的配置难以在excel中批量修改的问题。
 
-====**如果觉得不错，烦请点个star，你的支持会给予我们巨大动力 ^_^**====
-
 ## 文档
 
 - [主页](https://focus-creative-games.github.io/luban/index.html)
@@ -35,6 +33,7 @@ luban相较于常规的excel导表工具有以下核心优势：
 - [快速上手](docs/install.md)
 - [Excel 配置数据简介](docs/data_excel.md)
 - [client&server安装与使用说明](docs/luban_install_manual.md)
+- [本地化](docs/l10n.md)
 - [文档目录](docs/catalog.md)
 - [完整手册](docs/manual.md)
 - **示例项目** ([github](https://github.com/focus-creative-games/luban_examples)) ([gitee](https://gitee.com/focus-creative-games/luban_examples))
