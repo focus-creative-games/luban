@@ -310,11 +310,19 @@ namespace Luban.Job.Cfg.DataCreators
             if (row.Row != null)
             {
                 var s = row.AsStream("");
+                if (type.IsNullable && s.TryReadEOF())
+                {
+                    return null;
+                }
                 return type.Apply(ExcelStreamDataCreator.Ins, s);
             }
             else if (row.Rows != null)
             {
                 var s = row.AsMultiRowConcatStream("");
+                if (type.IsNullable && s.TryReadEOF())
+                {
+                    return null;
+                }
                 return type.Apply(ExcelStreamDataCreator.Ins, s);
             }
             else if (row.Fields != null)
