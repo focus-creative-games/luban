@@ -77,7 +77,7 @@ namespace Luban.Job.Cfg.Utils
             return bytes;
         }
 
-        public static string UnEscapeString(string s)
+        public static string UnEscapeRawString(string s)
         {
             switch (s)
             {
@@ -89,13 +89,13 @@ namespace Luban.Job.Cfg.Utils
 
         public static string EscapeString(string s)
         {
-            return s.Replace("\\", "\\\\");
+            return s.Replace("\\", "\\\\").Replace("\"", "\\\"");
         }
 
-        public static string EscapeStringWithQuote(string s)
-        {
-            return "\"" + s.Replace("\\", "\\\\") + "\"";
-        }
+        //public static string EscapeStringWithQuote(string s)
+        //{
+        //    return "\"" + s.Replace("\\", "\\\\") + "\"";
+        //}
 
         public static (string Key, string Text) ExtractText(string rawKeyAndText)
         {

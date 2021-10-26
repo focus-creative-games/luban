@@ -10,9 +10,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LubanAssistant
+namespace Luban.Job.Cfg.DataConverts
 {
-    class ToExcelStringVisitor : IDataFuncVisitor<string, string>
+    public class ToExcelStringVisitor : IDataFuncVisitor<string, string>
     {
         public static ToExcelStringVisitor Ins { get; } = new();
 

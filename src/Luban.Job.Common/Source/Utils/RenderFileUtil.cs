@@ -95,6 +95,7 @@ namespace Luban.Job.Common.Utils
             { "yml", "yml" },
             { "erlang", "erl" },
             { "erl", "erl" },
+            { "xlsx", "xlsx" },
         };
 
         public static string GetOutputFileSuffix(string genType)

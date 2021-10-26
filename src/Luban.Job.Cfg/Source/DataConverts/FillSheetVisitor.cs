@@ -2,16 +2,15 @@
 using Luban.Job.Cfg.DataSources.Excel;
 using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Defs;
-using Microsoft.Office.Interop.Excel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LubanAssistant
+namespace Luban.Job.Cfg.DataConverts
 {
-    class FillSheetVisitor : IDataFuncVisitor<Title, int>
+    public class FillSheetVisitor : IDataFuncVisitor<Title, int>
     {
 
         private readonly List<object[]> _cells;

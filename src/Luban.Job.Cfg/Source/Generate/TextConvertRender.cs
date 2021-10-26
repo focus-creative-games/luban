@@ -8,7 +8,7 @@ namespace Luban.Job.Cfg.Generate
 {
     [Render("convert_json")]
     [Render("convert_lua")]
-    class ConvertRender : DataRenderBase
+    class TextConvertRender : DataRenderBase
     {
         public override void Render(GenContext ctx)
         {

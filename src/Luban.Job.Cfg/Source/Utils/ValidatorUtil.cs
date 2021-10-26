@@ -10,8 +10,6 @@ namespace Luban.Job.Cfg.Utils
 {
     static class ValidatorUtil
     {
-
-
         private static void CreateValidatorsForType(TType type)
         {
             foreach (var valName in ValidatorFactory.ValidatorNames)

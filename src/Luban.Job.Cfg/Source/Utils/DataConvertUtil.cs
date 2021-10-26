@@ -14,7 +14,7 @@ namespace Luban.Job.Cfg.Utils
 {
     static class DataConvertUtil
     {
-        public static object ToConvertRecord(DefTable table, Record record, string converType)
+        public static string ToConvertRecord(DefTable table, Record record, string converType)
         {
             switch (converType)
             {
@@ -38,28 +38,6 @@ namespace Luban.Job.Cfg.Utils
                 {
                     return new LuaConvertor().ExportRecord(table, record);
                 }
-                //case "data_erlang":
-                //{
-                //    var content = new StringBuilder();
-                //    switch (table.Mode)
-                //    {
-                //        case ETableMode.ONE:
-                //        {
-                //            ErlangExport.Ins.ExportTableSingleton(table, records[0], content);
-                //            break;
-                //        }
-                //        case ETableMode.MAP:
-                //        {
-                //            ErlangExport.Ins.ExportTableMap(table, records, content);
-                //            break;
-                //        }
-                //        default:
-                //        {
-                //            throw new NotSupportedException();
-                //        }
-                //    }
-                //    return content.ToString();
-                //}
                 default:
                 {
                     throw new ArgumentException($"not support datatype:{converType}");

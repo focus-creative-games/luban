@@ -115,7 +115,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
             else
             {
-                throw new Exception($"{x} 不是 double 类型数据");
+                throw new Exception($"{x} 不是 string 类型数据");
             }
         }
 

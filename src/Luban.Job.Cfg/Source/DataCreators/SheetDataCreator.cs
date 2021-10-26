@@ -212,7 +212,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
             else if (d is string s)
             {
-                return DataUtil.UnEscapeString(s);
+                return DataUtil.UnEscapeRawString(s);
             }
             else
             {

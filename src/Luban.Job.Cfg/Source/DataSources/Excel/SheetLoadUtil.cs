@@ -17,7 +17,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
         private const int TITLE_MAX_ROW_NUM = 10;
         private const int TITLE_DEFAULT_ROW_NUM = 3;
 
-        private static System.Text.Encoding DetectCsvEncoding(Stream fs)
+        public static System.Text.Encoding DetectCsvEncoding(Stream fs)
         {
             Ude.CharsetDetector cdet = new Ude.CharsetDetector();
             cdet.Feed(fs);

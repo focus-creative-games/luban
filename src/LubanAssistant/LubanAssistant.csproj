@@ -249,6 +249,12 @@
     <Compile Include="..\Luban.Common\Source\Utils\XmlUtil.cs">
       <Link>Source\Utils\XmlUtil.cs</Link>
     </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\DataConverts\FillSheetVisitor.cs">
+      <Link>Source\DataConverters\FillSheetVisitor.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\DataConverts\ToExcelStringVisitor.cs">
+      <Link>Source\DataConverters\ToExcelStringVisitor.cs</Link>
+    </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\DataCreators\DataCreateException.cs">
       <Link>Source\DataCreators\DataCreateException.cs</Link>
     </Compile>
@@ -634,12 +640,10 @@
       <DependentUpon>AssistantTab.cs</DependentUpon>
     </Compile>
     <Compile Include="ExcelUtil.cs" />
-    <Compile Include="FillSheetVisitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Source\DataExporters\RawJsonExportor.cs" />
-    <Compile Include="ToExcelStringVisitor.cs" />
     <EmbeddedResource Include="AssistantTab.resx">
       <DependentUpon>AssistantTab.cs</DependentUpon>
     </EmbeddedResource>
@@ -653,7 +657,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <None Include="app.config" />
-    <None Include="focus_creative_games.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
