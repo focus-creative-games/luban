@@ -172,6 +172,7 @@ namespace Luban.Job.Cfg.DataVisitors
                 {
                     fieldType.Apply(this, fieldValue);
                 }
+                _path.Pop();
             }
         }
 

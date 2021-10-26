@@ -132,9 +132,10 @@ namespace Luban.Job.Common.Defs
             int sepIndex = DefUtil.IndexOfIncludeBrace(type, ',');
             if (sepIndex > 0)
             {
-                var (containerAndElementType, tags) = DefUtil.ParseType(type);
-                string containerType = containerAndElementType.Substring(0, sepIndex).Trim();
-                return CreateContainerType(module, containerType, tags, containerAndElementType.Substring(sepIndex + 1, containerAndElementType.Length - sepIndex - 1).Trim());
+                string containerTypeAndTags = DefUtil.TrimBracePairs(type.Substring(0, sepIndex));
+                var elementTypeAndTags = type.Substring(sepIndex + 1);
+                var (containerType, containerTags) = DefUtil.ParseType(containerTypeAndTags);
+                return CreateContainerType(module, containerType, containerTags, elementTypeAndTags.Trim());
             }
             else
             {
@@ -146,17 +147,7 @@ namespace Luban.Job.Common.Defs
         {
             bool nullable;
             // 去掉 rawType 两侧的匹配的 ()
-            while (rawType.Length > 0 && rawType[0] == '(')
-            {
-                if (rawType[rawType.Length - 1] == ')')
-                {
-                    rawType = rawType.Substring(1, rawType.Length - 2);
-                }
-                else
-                {
-                    throw new Exception($"type:{rawType} brace not match");
-                }
-            }
+            rawType = DefUtil.TrimBracePairs(rawType);
             var (type, tags) = DefUtil.ParseType(rawType);
 
 #if !LUBAN_LITE
@@ -226,12 +217,14 @@ namespace Luban.Job.Common.Defs
 
         protected TMap CreateMapType(string module, Dictionary<string, string> tags, string keyValueType, bool isTreeMap)
         {
-            string[] elementTypes = keyValueType.Split(',').Select(s => s.Trim()).ToArray();
-            if (elementTypes.Length != 2)
+            int typeSepIndex = DefUtil.IndexOfIncludeBrace(keyValueType, ',');
+            if (typeSepIndex <= 0 || typeSepIndex >= keyValueType.Length - 1)
             {
                 throw new ArgumentException($"invalid map element type:'{keyValueType}'");
             }
-            return TMap.Create(false, tags, CreateNotContainerType(module, elementTypes[0]), CreateNotContainerType(module, elementTypes[1]), isTreeMap);
+            return TMap.Create(false, tags,
+                CreateNotContainerType(module, keyValueType.Substring(0, typeSepIndex).Trim()),
+                CreateNotContainerType(module, keyValueType.Substring(typeSepIndex + 1).Trim()), isTreeMap);
         }
 
         protected TType CreateContainerType(string module, string containerType, Dictionary<string, string> containerTags, string elementType)

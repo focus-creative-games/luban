@@ -58,6 +58,22 @@ namespace Luban.Job.Common.Utils
             return -1;
         }
 
+        public static string TrimBracePairs(string rawType)
+        {
+            while (rawType.Length > 0 && rawType[0] == '(')
+            {
+                if (rawType[rawType.Length - 1] == ')')
+                {
+                    rawType = rawType.Substring(1, rawType.Length - 2);
+                }
+                else
+                {
+                    throw new Exception($"type:{rawType} brace not match");
+                }
+            }
+            return rawType;
+        }
+
         public static (string, Dictionary<string, string>) ParseType(string s)
         {
             int sepIndex = s.IndexOfAny(s_attrSep);
