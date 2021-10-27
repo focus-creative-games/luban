@@ -14,8 +14,6 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         public string TableName { get; set; }
 
-        public int TitleRowCount { get; set; }
-
         public List<List<Cell>> Cells { get; set; }
     }
 }

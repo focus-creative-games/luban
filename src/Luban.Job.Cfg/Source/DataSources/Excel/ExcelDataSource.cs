@@ -58,10 +58,10 @@ namespace Luban.Job.Cfg.DataSources.Excel
             {
                 try
                 {
-                    foreach (TitleRow row in sheet.GetRows())
+                    foreach (var r in sheet.GetRows())
                     {
-                        var tagRow = row.GetSubTitleNamedRow(TAG_KEY);
-                        string tagStr = tagRow?.Current?.ToString();
+                        TitleRow row = r.Row;
+                        string tagStr = r.Tag;
                         if (DataUtil.IsIgnoreTag(tagStr))
                         {
                             continue;

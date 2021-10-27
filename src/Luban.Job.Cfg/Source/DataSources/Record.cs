@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Luban.Job.Cfg.Datas;
+using System.Collections.Generic;
 
-namespace Luban.Job.Cfg.Datas
+namespace Luban.Job.Cfg.DataSources
 {
     public class Record
     {

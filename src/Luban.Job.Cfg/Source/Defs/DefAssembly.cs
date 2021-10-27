@@ -1,5 +1,6 @@
 using Bright.Collections;
 using Luban.Job.Cfg.Datas;
+using Luban.Job.Cfg.DataSources;
 #if !LUBAN_LITE
 using Luban.Job.Cfg.l10n;
 #endif

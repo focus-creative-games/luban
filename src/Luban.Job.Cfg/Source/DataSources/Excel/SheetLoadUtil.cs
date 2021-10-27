@@ -13,10 +13,6 @@ namespace Luban.Job.Cfg.DataSources.Excel
     {
         private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private const int TITLE_MIN_ROW_NUM = 2;
-        private const int TITLE_MAX_ROW_NUM = 10;
-        private const int TITLE_DEFAULT_ROW_NUM = 3;
-
         public static System.Text.Encoding DetectCsvEncoding(Stream fs)
         {
             Ude.CharsetDetector cdet = new Ude.CharsetDetector();
@@ -65,48 +61,18 @@ namespace Luban.Job.Cfg.DataSources.Excel
         private static RawSheet ParseRawSheet(IExcelDataReader reader)
         {
             bool orientRow;
-            int titleRowNum;
 
-            if (!TryParseMeta(reader, out orientRow, out titleRowNum, out var tableName))
+            if (!TryParseMeta(reader, out orientRow, out var tableName))
             {
                 return null;
             }
-            var cells = ParseRawSheetContent(reader, orientRow);
-            var title = ParseTitle(cells, reader.MergeCells, orientRow, out _);
-            cells.RemoveRange(0, Math.Min(titleRowNum, cells.Count));
-            return new RawSheet() { Title = title, TitleRowCount = titleRowNum, TableName = tableName, Cells = cells };
+            var cells = ParseRawSheetContent(reader, orientRow, false);
+            var title = ParseTitle(cells, reader.MergeCells, orientRow);
+            cells.RemoveAll(c => c.Count == 0 || IsHeaderRow(c));
+            return new RawSheet() { Title = title, TableName = tableName, Cells = cells };
         }
 
-        private static int GetTitleRowNum(CellRange[] mergeCells, bool orientRow)
-        {
-            if (mergeCells == null)
-            {
-                return 1;
-            }
-            if (orientRow)
-            {
-                foreach (var mergeCell in mergeCells)
-                {
-                    if (mergeCell.FromRow == 1 && mergeCell.FromColumn == 0)
-                    {
-                        return mergeCell.ToRow - mergeCell.FromRow + 1;
-                    }
-                }
-            }
-            else
-            {
-                foreach (var mergeCell in mergeCells)
-                {
-                    if (mergeCell.FromColumn == 1 && mergeCell.FromRow == 0)
-                    {
-                        return mergeCell.ToColumn - mergeCell.FromColumn + 1;
-                    }
-                }
-            }
-            return 1;
-        }
-
-        public static Title ParseTitle(List<List<Cell>> cells, CellRange[] mergeCells, bool orientRow, out int titleRowNum)
+        public static Title ParseTitle(List<List<Cell>> cells, CellRange[] mergeCells, bool orientRow)
         {
             var rootTitle = new Title()
             {
@@ -117,9 +83,9 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 ToIndex = cells.Select(r => r.Count).Max() - 1
             };
 
-            titleRowNum = GetTitleRowNum(mergeCells, orientRow);
+            //titleRowNum = GetTitleRowNum(mergeCells, orientRow);
 
-            ParseSubTitles(rootTitle, cells, mergeCells, orientRow, 1, titleRowNum);
+            ParseSubTitles(rootTitle, cells, mergeCells, orientRow, 1);
 
             rootTitle.Init();
 
@@ -168,10 +134,10 @@ namespace Luban.Job.Cfg.DataSources.Excel
             return (titleName, tags);
         }
 
-        private static void ParseSubTitles(Title title, List<List<Cell>> cells, CellRange[] mergeCells, bool orientRow, int curDepth, int maxDepth)
+        private static void ParseSubTitles(Title title, List<List<Cell>> cells, CellRange[] mergeCells, bool orientRow, int curDepth)
         {
-
-            var titleRow = cells[curDepth - 1];
+            var rowIndex = curDepth - 1;
+            var titleRow = cells[rowIndex];
             if (mergeCells != null)
             {
                 foreach (var mergeCell in mergeCells)
@@ -180,7 +146,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                     if (orientRow)
                     {
                         //if (mergeCell.FromRow <= 1 && mergeCell.ToRow >= 1)
-                        if (mergeCell.FromRow == curDepth && mergeCell.FromColumn >= title.FromIndex && mergeCell.FromColumn <= title.ToIndex)
+                        if (mergeCell.FromRow == rowIndex && mergeCell.FromColumn >= title.FromIndex && mergeCell.FromColumn <= title.ToIndex)
                         {
                             var nameAndAttrs = titleRow[mergeCell.FromColumn].Value?.ToString()?.Trim();
                             if (IsIgnoreTitle(nameAndAttrs))
@@ -194,7 +160,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                     }
                     else
                     {
-                        if (mergeCell.FromColumn == curDepth - 1 && mergeCell.FromRow - 1 >= title.FromIndex && mergeCell.FromRow - 1 <= title.ToIndex)
+                        if (mergeCell.FromColumn == rowIndex && mergeCell.FromRow - 1 >= title.FromIndex && mergeCell.FromRow - 1 <= title.ToIndex)
                         {
                             // 标题 行
                             var nameAndAttrs = titleRow[mergeCell.FromRow - 1].Value?.ToString()?.Trim();
@@ -211,9 +177,9 @@ namespace Luban.Job.Cfg.DataSources.Excel
                         continue;
                     }
 
-                    if (curDepth < maxDepth)
+                    if (curDepth < cells.Count && IsSubFieldRow(cells[curDepth]))
                     {
-                        ParseSubTitles(subTitle, cells, mergeCells, orientRow, curDepth + 1, maxDepth);
+                        ParseSubTitles(subTitle, cells, mergeCells, orientRow, curDepth + 1);
                     }
                     title.AddSubTitle(subTitle);
 
@@ -229,9 +195,9 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 }
                 var (titleName, tags) = ParseNameAndMetaAttrs(nameAndAttrs);
 
-                if (title.SubTitles.TryGetValue(titleName, out var oldTitle))
+                if (title.SubTitles.TryGetValue(titleName, out var subTitle))
                 {
-                    if (oldTitle.FromIndex != i)
+                    if (subTitle.FromIndex != i)
                     {
                         throw new Exception($"列:{titleName} 重复");
                     }
@@ -240,54 +206,46 @@ namespace Luban.Job.Cfg.DataSources.Excel
                         continue;
                     }
                 }
-                title.AddSubTitle(new Title() { Name = titleName, Tags = tags, FromIndex = i, ToIndex = i });
+                subTitle = new Title() { Name = titleName, Tags = tags, FromIndex = i, ToIndex = i };
+                if (curDepth < cells.Count && IsSubFieldRow(cells[curDepth]))
+                {
+                    ParseSubTitles(subTitle, cells, mergeCells, orientRow, curDepth + 1);
+                }
+                title.AddSubTitle(subTitle);
             }
         }
 
-        public static bool TryParseMeta(List<string> cells, out bool orientRow, out int titleRows, out string tableName)
+        public static bool TryParseMeta(string metaStr, out bool orientRow, out string tableName)
         {
             orientRow = true;
-            titleRows = TITLE_DEFAULT_ROW_NUM;
             tableName = "";
 
             // meta 行 必须以 ##为第一个单元格内容,紧接着 key:value 形式 表达meta属性
-            if (cells.Count == 0 || cells[0] != "##")
+            if (!metaStr.StartsWith("##"))
             {
                 return false;
             }
 
-            foreach (var attr in cells.Skip(1))
+            foreach (var attr in metaStr.Substring(2).Split("&"))
             {
                 if (string.IsNullOrWhiteSpace(attr))
                 {
                     continue;
                 }
 
-                var ss = attr.Split('=');
-                if (ss.Length != 2)
-                {
-                    throw new Exception($"单元薄 meta 定义出错. attribute:{attr}");
-                }
-                string key = ss[0].Trim();
-                string value = ss[1].Trim();
+                var sepIndex = attr.IndexOf('=');
+                string key = sepIndex >= 0 ? attr.Substring(0, sepIndex) : attr;
+                string value = sepIndex >= 0 ? attr.Substring(sepIndex + 1) : "";
                 switch (key)
                 {
-                    case "orientation":
+                    case "row":
                     {
-                        orientRow = DefUtil.ParseOrientation(value);
+                        orientRow = true;
                         break;
                     }
-                    case "title_rows":
+                    case "column":
                     {
-                        if (!int.TryParse(value, out var v))
-                        {
-                            throw new Exception($"单元薄 meta 定义 title_rows:{value} 属性值只能为整数[{TITLE_MIN_ROW_NUM},{TITLE_MAX_ROW_NUM}]");
-                        }
-                        if (v < TITLE_MIN_ROW_NUM || v > TITLE_MAX_ROW_NUM)
-                        {
-                            throw new Exception($"单元薄 title_rows 应该在 [{TITLE_MIN_ROW_NUM},{TITLE_MAX_ROW_NUM}] 范围内,默认是{TITLE_DEFAULT_ROW_NUM}");
-                        }
-                        titleRows = v;
+                        orientRow = false;
                         break;
                     }
                     case "table":
@@ -297,31 +255,56 @@ namespace Luban.Job.Cfg.DataSources.Excel
                     }
                     default:
                     {
-                        throw new Exception($"非法单元薄 meta 属性定义 {attr}, 合法属性有: orientation=r|row|c|column,title_rows=<number>,table=<tableName>");
+                        throw new Exception($"非法单元薄 meta 属性定义 {attr}, 合法属性有: row,column,table=<tableName>");
                     }
                 }
             }
             return true;
         }
 
-        public static bool TryParseMeta(IExcelDataReader reader, out bool orientRow, out int titleRows, out string tableName)
+        public static bool TryParseMeta(IExcelDataReader reader, out bool orientRow, out string tableName)
         {
             if (!reader.Read() || reader.FieldCount == 0)
             {
                 orientRow = true;
-                titleRows = TITLE_DEFAULT_ROW_NUM;
                 tableName = "";
                 return false;
             }
-            var cells = new List<string>();
-            for (int i = 0, n = reader.FieldCount; i < n; i++)
-            {
-                cells.Add(reader.GetString(i)?.Trim());
-            }
-            return TryParseMeta(cells, out orientRow, out titleRows, out tableName);
+            string metaStr = reader.GetString(0)?.Trim();
+            return TryParseMeta(metaStr, out orientRow, out tableName);
         }
 
-        private static List<List<Cell>> ParseRawSheetContent(IExcelDataReader reader, bool orientRow, int? maxParseRow = null)
+        private static bool IsSubFieldRow(List<Cell> row)
+        {
+            if (row.Count == 0)
+            {
+                return false;
+            }
+            var s = row[0].Value?.ToString()?.Trim();
+            return s == "##field";
+        }
+
+        private static bool IsTypeRow(List<Cell> row)
+        {
+            if (row.Count == 0)
+            {
+                return false;
+            }
+            var s = row[0].Value?.ToString()?.Trim();
+            return s == "##type";
+        }
+
+        private static bool IsHeaderRow(List<Cell> row)
+        {
+            if (row.Count == 0)
+            {
+                return false;
+            }
+            var s = row[0].Value?.ToString()?.Trim();
+            return !string.IsNullOrEmpty(s) && s.StartsWith("##");
+        }
+
+        private static List<List<Cell>> ParseRawSheetContent(IExcelDataReader reader, bool orientRow, bool headerOnly)
         {
             // TODO 优化性能
             // 几个思路
@@ -330,7 +313,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
             // 3. 跳过null或者empty的单元格
             var originRows = new List<List<Cell>>();
             int rowIndex = 0;
-            while (reader.Read())
+            do
             {
                 ++rowIndex; // 第1行是 meta ，标题及数据行从第2行开始
                 var row = new List<Cell>();
@@ -339,11 +322,11 @@ namespace Luban.Job.Cfg.DataSources.Excel
                     row.Add(new Cell(rowIndex, i, reader.GetValue(i)));
                 }
                 originRows.Add(row);
-                if (orientRow && maxParseRow != null && originRows.Count > maxParseRow)
+                if (orientRow && headerOnly && !IsHeaderRow(row))
                 {
                     break;
                 }
-            }
+            } while (reader.Read());
 
             List<List<Cell>> finalRows;
 
@@ -401,22 +384,22 @@ namespace Luban.Job.Cfg.DataSources.Excel
         private static RawSheetTableDefInfo ParseSheetTableDefInfo(string rawUrl, IExcelDataReader reader)
         {
             bool orientRow;
-            int headerRowNum;
 
-            if (!TryParseMeta(reader, out orientRow, out headerRowNum, out var _))
+            if (!TryParseMeta(reader, out orientRow, out var _))
             {
                 return null;
             }
-            var cells = ParseRawSheetContent(reader, orientRow, headerRowNum);
-            var title = ParseTitle(cells, reader.MergeCells, orientRow, out int titleRowNum);
+            var cells = ParseRawSheetContent(reader, orientRow, true);
+            var title = ParseTitle(cells, reader.MergeCells, orientRow);
 
-            if (cells.Count <= titleRowNum)
+            int typeRowIndex = cells.FindIndex(row => IsTypeRow(row));
+
+            if (typeRowIndex < 0)
             {
                 throw new Exception($"缺失type行");
             }
-            List<Cell> typeRow = cells[titleRowNum];
-            List<Cell> briefDescRow = cells.Count > titleRowNum + 1 ? cells[titleRowNum + 1] : null;
-            List<Cell> destailDescRow = cells.Count > titleRowNum + 2 ? cells[titleRowNum + 2] : briefDescRow;
+            List<Cell> typeRow = cells[typeRowIndex];
+            List<Cell> descRow = cells.Count > typeRowIndex + 1 ? cells[typeRowIndex + 1] : null;
 
             var fields = new Dictionary<string, FieldInfo>();
             foreach (var subTitle in title.SubTitleList)
@@ -429,9 +412,8 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 {
                     Name = subTitle.Name,
                     Tags = title.Tags,
-                    Type = typeRow?[subTitle.FromIndex].Value?.ToString() ?? "",
-                    BriefDesc = briefDescRow?[subTitle.FromIndex].Value?.ToString() ?? "",
-                    DetailDesc = destailDescRow?[subTitle.FromIndex].Value?.ToString() ?? "",
+                    Type = typeRow[subTitle.FromIndex].Value?.ToString() ?? "",
+                    Desc = descRow?[subTitle.FromIndex].Value?.ToString() ?? "",
                 });
             }
 

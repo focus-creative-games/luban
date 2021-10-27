@@ -311,17 +311,7 @@ namespace Luban.Job.Cfg.Defs
                     throw new Exception($"table:'{table.Name}' file:{file.OriginFile} title:'{name}' type missing!");
                 }
 
-                // 优先取desc行，如果为空,则取title行
-
-                cf.Comment = f.BriefDesc;
-                if (string.IsNullOrWhiteSpace(cf.Comment))
-                {
-                    cf.Comment = f.DetailDesc;
-                }
-                if (string.IsNullOrWhiteSpace(cf.Comment))
-                {
-                    cf.Comment = "";
-                }
+                cf.Comment = f.Desc;
 
                 cf.Type = attrs[0];
 

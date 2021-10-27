@@ -14,9 +14,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         public string Type { get; set; }
 
-        public string BriefDesc { get; set; }
-
-        public string DetailDesc { get; set; }
+        public string Desc { get; set; }
     }
 
     class RawSheetTableDefInfo

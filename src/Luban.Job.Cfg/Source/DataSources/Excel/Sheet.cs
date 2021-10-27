@@ -20,12 +20,17 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         public string RawUrl { get; }
 
-        public List<TitleRow> Rows { get; } = new();
+        public List<(string Tag, TitleRow Row)> Rows { get; } = new();
 
         public Sheet(string rawUrl, string name)
         {
             this.RawUrl = rawUrl;
             this.Name = name;
+        }
+
+        private string GetRowTag(List<Cell> row)
+        {
+            return row.Count > 0 ? row[0].Value?.ToString() ?? "" : "";
         }
 
         public void Load(RawSheet rawSheet)
@@ -41,14 +46,14 @@ namespace Luban.Job.Cfg.DataSources.Excel
                     {
                         continue;
                     }
-                    Rows.Add(ParseOneLineTitleRow(title, row));
+                    Rows.Add((GetRowTag(row), ParseOneLineTitleRow(title, row)));
                 }
             }
             else
             {
                 foreach (var oneRecordRows in SplitRows(title, cells))
                 {
-                    Rows.Add(ParseMultiLineTitleRow(title, oneRecordRows));
+                    Rows.Add((GetRowTag(oneRecordRows[0]), ParseMultiLineTitleRow(title, oneRecordRows)));
                 }
             }
         }
@@ -178,7 +183,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
             }
         }
 
-        public IEnumerable<TitleRow> GetRows()
+        public IEnumerable<(string Tag, TitleRow Row)> GetRows()
         {
             return Rows;
         }

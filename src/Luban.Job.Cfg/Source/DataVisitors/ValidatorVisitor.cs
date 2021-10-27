@@ -1,5 +1,6 @@
 using Luban.Common.Utils;
 using Luban.Job.Cfg.Datas;
+using Luban.Job.Cfg.DataSources;
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Cfg.Validators;
 using Luban.Job.Common.Types;
