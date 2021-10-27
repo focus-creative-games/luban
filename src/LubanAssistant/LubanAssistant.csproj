@@ -282,6 +282,9 @@
     <Compile Include="..\Luban.Job.Cfg\Source\DataCreators\YamlDataCreator.cs">
       <Link>Source\DataCreators\YamlDataCreator.cs</Link>
     </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\DataExporters\RawJsonExportor.cs">
+      <Link>Source\DataExporters\RawJsonExportor.cs</Link>
+    </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\DataSources\AbstractDataSource.cs">
       <Link>Source\DataSources\AbstractDataSource.cs</Link>
     </Compile>
@@ -323,6 +326,9 @@
     </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\DataSources\Lua\LuaDataSource.cs">
       <Link>Source\DataSources\Lua\LuaDataSource.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\DataSources\Record.cs">
+      <Link>Source\DataSources\Record.cs</Link>
     </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\DataSources\Xml\XmlDataSource.cs">
       <Link>Source\DataSources\Xml\XmlDataSource.cs</Link>
@@ -401,9 +407,6 @@
     </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\Datas\DVector4.cs">
       <Link>Source\Datas\DVector4.cs</Link>
-    </Compile>
-    <Compile Include="..\Luban.Job.Cfg\Source\Datas\Record.cs">
-      <Link>Source\Datas\Record.cs</Link>
     </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\DataVisitors\IDataActionVisitor.cs">
       <Link>Source\DataVisitors\IDataActionVisitor.cs</Link>
@@ -643,7 +646,6 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Source\DataExporters\RawJsonExportor.cs" />
     <EmbeddedResource Include="AssistantTab.resx">
       <DependentUpon>AssistantTab.cs</DependentUpon>
     </EmbeddedResource>

@@ -226,7 +226,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 return false;
             }
 
-            foreach (var attr in metaStr.Substring(2).Split("&"))
+            foreach (var attr in metaStr.Substring(2).Split('&'))
             {
                 if (string.IsNullOrWhiteSpace(attr))
                 {

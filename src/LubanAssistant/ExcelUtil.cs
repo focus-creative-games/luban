@@ -2,6 +2,7 @@
 using Luban.Job.Cfg.DataConverts;
 using Luban.Job.Cfg.DataExporters;
 using Luban.Job.Cfg.Datas;
+using Luban.Job.Cfg.DataSources;
 using Luban.Job.Cfg.DataSources.Excel;
 using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Defs;
@@ -23,7 +24,7 @@ namespace LubanAssistant
     {
         public static RawSheet ParseRawSheet(Worksheet sheet, Range toSaveRecordRows)
         {
-            if (!ParseMetaAttrs(sheet, out var orientRow, out var titleRows, out var tableName))
+            if (!ParseMetaAttrs(sheet, out var orientRow, out var tableName))
             {
                 throw new Exception($"meta行不合法");
             }
@@ -47,12 +48,12 @@ namespace LubanAssistant
                 }
                 cells.Add(rowCell);
             }
-            return new RawSheet() { Title = title, TitleRowCount = titleRows, TableName = tableName, Cells = cells };
+            return new RawSheet() { Title = title, TableName = tableName, Cells = cells };
         }
 
         public static RawSheet ParseRawSheetTitleOnly(Worksheet sheet)
         {
-            if (!ParseMetaAttrs(sheet, out var orientRow, out var titleRows, out var tableName))
+            if (!ParseMetaAttrs(sheet, out var orientRow, out var tableName))
             {
                 throw new Exception($"meta行不合法");
             }
@@ -64,29 +65,17 @@ namespace LubanAssistant
 
             Title title = ParseTitles(sheet);
             var cells = new List<List<Cell>>();
-            return new RawSheet() { Title = title, TitleRowCount = titleRows, TableName = tableName, Cells = cells };
+            return new RawSheet() { Title = title, TableName = tableName, Cells = cells };
         }
 
-        public static bool ParseMetaAttrs(Worksheet sheet, out bool orientRow, out int titleRows, out string tableName)
+        public static bool ParseMetaAttrs(Worksheet sheet, out bool orientRow, out string tableName)
         {
-            Range metaRow = sheet.Rows[1];
-
-            var cells = new List<string>();
-            for (int i = 1, n = sheet.UsedRange.Columns.Count; i <= n; i++)
-            {
-                cells.Add(((Range)metaRow.Cells[1, i]).Value?.ToString());
-            }
-            return SheetLoadUtil.TryParseMeta(cells, out orientRow, out titleRows, out tableName);
+            string metaStr = ((Range)sheet.Cells[1, 1]).Value?.ToString();
+            return SheetLoadUtil.TryParseMeta(metaStr, out orientRow, out tableName);
         }
 
         public static Title ParseTitles(Worksheet sheet)
         {
-            int titleRows = 1;
-            Range c1 = sheet.Cells[2, 1];
-            if (c1.MergeCells)
-            {
-                titleRows = c1.MergeArea.Count;
-            }
             var rootTile = new Title()
             {
                 FromIndex = 0,
@@ -95,13 +84,31 @@ namespace LubanAssistant
                 Root = true,
                 Tags = new Dictionary<string, string>(),
             };
-            ParseSubTitle(sheet, 2, titleRows + 1, rootTile);
+            ParseSubTitle(sheet, 1, rootTile);
             rootTile.ToIndex = rootTile.SubTitleList.Max(t => t.ToIndex);
             rootTile.Init();
             return rootTile;
         }
 
-        private static void ParseSubTitle(Worksheet sheet, int rowIndex, int maxRowIndex, Title title)
+        private static bool IsSubFieldRow(Range cell)
+        {
+            var s = cell.Value?.ToString()?.Trim();
+            return s == "##field";
+        }
+
+        private static bool IsTypeRow(Range cell)
+        {
+            var s = cell.Value?.ToString()?.Trim();
+            return s == "##type";
+        }
+
+        private static bool IsHeaderRow(Range cell)
+        {
+            var s = cell.Value?.ToString()?.Trim();
+            return !string.IsNullOrEmpty(s) && s.StartsWith("##");
+        }
+
+        private static void ParseSubTitle(Worksheet sheet, int rowIndex, Title title)
         {
             Range row = sheet.Rows[rowIndex];
             for (int i = title.FromIndex; i <= title.ToIndex; i++)
@@ -133,21 +140,37 @@ namespace LubanAssistant
                 }
                 title.AddSubTitle(newSubTitle);
             }
-            if (rowIndex < maxRowIndex)
+            if (rowIndex < sheet.UsedRange.Rows.Count && IsSubFieldRow(sheet.Cells[rowIndex + 1, 1]))
             {
                 foreach (var subTitle in title.SubTitleList)
                 {
-                    ParseSubTitle(sheet, rowIndex + 1, maxRowIndex, subTitle);
+                    ParseSubTitle(sheet, rowIndex + 1, subTitle);
                 }
             }
         }
 
-        public static void FillRecords(Worksheet sheet, int titleRowNum, Title title, TableDataInfo tableDataInfo)
+        public static int GetTitleRowCount(Worksheet sheet)
+        {
+            int firstDataRowIndex = 1;
+            while (true)
+            {
+                string tagCellStr = ((Range)sheet.Cells[firstDataRowIndex, 1]).Value?.ToString();
+                if (string.IsNullOrEmpty(tagCellStr) || !tagCellStr.StartsWith("##"))
+                {
+                    break;
+                }
+                ++firstDataRowIndex;
+            }
+            return firstDataRowIndex - 1;
+        }
+
+        public static void FillRecords(Worksheet sheet, Title title, TableDataInfo tableDataInfo)
         {
             int usedRowNum = sheet.UsedRange.Rows.Count;
-            if (usedRowNum > titleRowNum + 1)
+            int firstDataRowIndex = GetTitleRowCount(sheet) + 1;
+            if (usedRowNum >= firstDataRowIndex)
             {
-                Range allDataRange = sheet.Range[sheet.Cells[titleRowNum + 2, 1], sheet.Cells[usedRowNum, sheet.UsedRange.Columns.Count]];
+                Range allDataRange = sheet.Range[sheet.Cells[firstDataRowIndex, 1], sheet.Cells[usedRowNum, sheet.UsedRange.Columns.Count]];
                 allDataRange.ClearContents();
             }
 
@@ -190,7 +213,7 @@ namespace LubanAssistant
                 }
             }
 
-            Range recordFillRange = sheet.Range[sheet.Cells[titleRowNum + 2, 1], sheet.Cells[titleRowNum + 1 + dataRangeArray.Count, title.ToIndex + 1]];
+            Range recordFillRange = sheet.Range[sheet.Cells[firstDataRowIndex, 1], sheet.Cells[firstDataRowIndex + dataRangeArray.Count - 1, title.ToIndex + 1]];
             recordFillRange.Value = resultDataRangeArray;
         }
 
