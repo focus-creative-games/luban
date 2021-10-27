@@ -139,7 +139,7 @@ namespace Luban.Job.Cfg.Utils
             return tags.Count > 0 ? tags : null;
         }
 
-        const string SimpleContainerSep = ",;";
+        public const string SimpleContainerSep = ",;";
 
         public static string GetSep(TType type)
         {
@@ -156,6 +156,17 @@ namespace Luban.Job.Cfg.Utils
                 case TSet ta: return ta.ElementType.Apply(IsNotSepTypeVisitor.Ins) ? SimpleContainerSep : "";
                 default: return "";
             }
+        }
+
+        public static string GetTypeSep(TType type)
+        {
+            if (type.Tags != null && type.Tags.TryGetValue("sep", out var s) && !string.IsNullOrWhiteSpace(s))
+            {
+                return s;
+            }
+
+            return type.Apply(IsNotSepTypeVisitor.Ins) ? SimpleContainerSep : "";
+
         }
 
         public static bool IsCollectionEqual(List<DType> a, List<DType> b)

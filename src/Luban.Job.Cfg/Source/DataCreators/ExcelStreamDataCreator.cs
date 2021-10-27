@@ -262,7 +262,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TText type, ExcelStream x)
         {
-            x = SepIfNeed(type, x);
+            //x = SepIfNeed(type, x);
             string key = ParseString(x.Read());
             if (key == null)
             {
@@ -313,23 +313,26 @@ namespace Luban.Job.Cfg.DataCreators
             return list;
         }
 
-        public static ExcelStream SepIfNeed(TType type, ExcelStream stream)
-        {
-            string sep = DataUtil.GetSep(type);
-            if (!string.IsNullOrEmpty(sep))
-            {
-                return new ExcelStream(stream.ReadCell(), sep);
-            }
-            else
-            {
-                return stream;
-            }
-        }
+        //public static ExcelStream SepIfNeed(TType type, ExcelStream stream)
+        //{
+        //    string sep = DataUtil.GetSep(type);
+        //    if (!string.IsNullOrEmpty(sep))
+        //    {
+        //        return new ExcelStream(stream.ReadCell(), sep);
+        //    }
+        //    else
+        //    {
+        //        return stream;
+        //    }
+        //}
 
         public DType Accept(TBean type, ExcelStream x)
         {
             var originBean = (DefBean)type.Bean;
-            x = SepIfNeed(type, x);
+            if (!string.IsNullOrEmpty(originBean.Sep))
+            {
+                x = new ExcelStream(x.ReadCell(), originBean.Sep);
+            }
 
             if (originBean.IsAbstractType)
             {
@@ -382,22 +385,22 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TArray type, ExcelStream x)
         {
-            return new DArray(type, ReadList(type.ElementType, SepIfNeed(type, x)));
+            return new DArray(type, ReadList(type.ElementType, x));
         }
 
         public DType Accept(TList type, ExcelStream x)
         {
-            return new DList(type, ReadList(type.ElementType, SepIfNeed(type, x)));
+            return new DList(type, ReadList(type.ElementType, x));
         }
 
         public DType Accept(TSet type, ExcelStream x)
         {
-            return new DSet(type, ReadList(type.ElementType, SepIfNeed(type, x)));
+            return new DSet(type, ReadList(type.ElementType, x));
         }
 
         public DType Accept(TMap type, ExcelStream x)
         {
-            x = SepIfNeed(type, x);
+            //x = SepIfNeed(type, x);
 
             var datas = new Dictionary<DType, DType>();
             while (!x.TryReadEOF())

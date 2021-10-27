@@ -305,7 +305,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TBean type, Sheet sheet, TitleRow row)
         {
-            string sep = DataUtil.GetSep(type);
+            //string sep = DataUtil.GetSep(type);
 
             if (row.Row != null)
             {
@@ -367,7 +367,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
             else if (row.Elements != null)
             {
-                var s = row.AsMultiRowConcatElements(sep);
+                var s = row.AsMultiRowConcatElements();
                 return type.Apply(ExcelStreamDataCreator.Ins, s);
             }
             else
@@ -401,16 +401,16 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TArray type, Sheet sheet, TitleRow row)
         {
-            string sep = DataUtil.GetSep(type);
+            //string sep = DataUtil.GetSep(type);
 
             if (row.Row != null)
             {
-                var s = row.AsStream(sep);
+                var s = row.AsStream(DataUtil.GetTypeSep(type.ElementType));
                 return new DArray(type, ReadList(type.ElementType, s));
             }
             else if (row.Rows != null)
             {
-                var s = row.AsMultiRowStream(sep);
+                var s = row.AsMultiRowStream(DataUtil.GetTypeSep(type.ElementType));
                 return new DArray(type, ReadList(type.ElementType, s));
             }
             else if (row.Fields != null)
@@ -429,16 +429,14 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TList type, Sheet sheet, TitleRow row)
         {
-            string sep = DataUtil.GetSep(type);
-
             if (row.Row != null)
             {
-                var s = row.AsStream(sep);
+                var s = row.AsStream(DataUtil.GetTypeSep(type.ElementType));
                 return new DList(type, ReadList(type.ElementType, s));
             }
             else if (row.Rows != null)
             {
-                var s = row.AsMultiRowStream(sep);
+                var s = row.AsMultiRowStream(DataUtil.GetTypeSep(type.ElementType));
                 return new DList(type, ReadList(type.ElementType, s));
             }
             else if (row.Fields != null)
@@ -457,16 +455,14 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TSet type, Sheet sheet, TitleRow row)
         {
-            string sep = DataUtil.GetSep(type);
-
             if (row.Row != null)
             {
-                var s = row.AsStream(sep);
+                var s = row.AsStream(DataUtil.GetTypeSep(type.ElementType));
                 return new DSet(type, ReadList(type.ElementType, s));
             }
             else if (row.Rows != null)
             {
-                var s = row.AsMultiRowStream(sep);
+                var s = row.AsMultiRowStream(DataUtil.GetTypeSep(type.ElementType));
                 return new DSet(type, ReadList(type.ElementType, s));
             }
             else if (row.Fields != null)

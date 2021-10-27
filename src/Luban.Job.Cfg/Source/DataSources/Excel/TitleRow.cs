@@ -151,10 +151,9 @@ namespace Luban.Job.Cfg.DataSources.Excel
             return new ExcelStream(Rows, SelfTitle.FromIndex, SelfTitle.ToIndex, sep, SelfTitle.Default);
         }
 
-        public ExcelStream AsMultiRowConcatElements(string sep)
+        public ExcelStream AsMultiRowConcatElements()
         {
-            sep = string.IsNullOrEmpty(sep) ? SelfTitle.Sep : sep;
-            return new ExcelStream(Elements.Select(e => e.Row).ToList(), SelfTitle.FromIndex, SelfTitle.ToIndex, sep, SelfTitle.Default);
+            return new ExcelStream(Elements.Select(e => e.Row).ToList(), SelfTitle.FromIndex, SelfTitle.ToIndex, SelfTitle.Sep, SelfTitle.Default);
         }
     }
 }
