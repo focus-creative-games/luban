@@ -108,12 +108,12 @@ luban支持在excel中解析任意复杂的数据结构，哪怕复杂如技能�
 支持 bool,int,float,string,text,datetime,vector2,vector3,vector4 等等类型，它们的填写跟常规认知一致。
 
 
-| x1 | x3 | x4 | x5 | x6  | x7   | s1   | s2&sep=#  | v2    | v3   | v4     | t1 |
-| -  |  -  | -  | -  | -   | -    | -    | -         | -     | -    | -      | -  |
-|bool|short|int|long|float|double|string|text       |vector2|vector3|vector4|datetime|
-|desc1|id|desc4|desc5|desc6|desc7|desc1|desc2   |desc2|desc3|desc4|desc1|
-|false|  10| 100| 1000| 1.23| 1.2345|hello |key1#world1|1,2|1,2,3|1,2,3,4|1999-10-10 11:12:13|
-|true |  20| 200| 1000| 1.23| 1.2345|world |key2#world2|1,2|1,2,3|1,2,3,4|1999-10-12 11:12:13|
+|##| x1 | x3 | x4 | x5 | x6  | x7   | s1   | s2&sep=#  | v2    | v3   | v4     | t1 |
+| -| -  |  -  | -  | -  | -   | -    | -    | -         | -     | -    | -      | -  |
+|##type|bool|short|int|long|float|double|string|text       |vector2|vector3|vector4|datetime|
+|##|desc1|id|desc4|desc5|desc6|desc7|desc1|desc2   |desc2|desc3|desc4|desc1|
+|| false|  10| 100| 1000| 1.23| 1.2345|hello |key1#world1|1,2|1,2,3|1,2,3,4|1999-10-10 11:12:13|
+|| true |  20| 200| 1000| 1.23| 1.2345|world |key2#world2|1,2|1,2,3|1,2,3,4|1999-10-12 11:12:13|
 
 
 ### 原生数据列表
@@ -122,6 +122,7 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 
 <table border="1">
 <tr align="center">
+  <td>##</td>
   <td>id</td>
   <td>arr1</td>
   <td colspan="4">arr2</td>
@@ -129,6 +130,7 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
   <td colspan="3">arr4</td>
 </tr>
 <tr align="center">
+  <td>##type</td>
   <td>int</id>
   <td>array,int</td>
   <td colspan="4">list,int</td>
@@ -136,6 +138,7 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
   <td colspan="3">list,string</td>
 </tr>
 <tr align="center">
+  <td>##</td>
   <td>id</id>
   <td>desc1</td>
   <td colspan="4">desc2</td>
@@ -144,6 +147,7 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 </tr>
 
 <tr align="center">
+<td/>
 <td>1</td>
 <td>1,2,3</td>
 <td>1</td><td>2</td><td></td><td></td>
@@ -152,6 +156,7 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 </tr>
 
 <tr align="center">
+<td/>
 <td>2</td>
 <td>2,4</td>
 <td>3</td><td>4</td><td>5</td><td>6</td>
@@ -174,12 +179,12 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 </enum>
 ```
 
-| id| quality| quality2 |
-| - | - | - |
-|int|ItemQuality|ItemQuality|
-| 1| 白 | RED |
-| 2| GREEN | 红 |
-| 3| RED | WHITE |
+| ##|id| quality| quality2 |
+| -| - | - | - |
+|##type|int|ItemQuality|ItemQuality|
+| | 1| 白 | RED |
+| | 2| GREEN | 红 |
+| | 3| RED | WHITE |
 
 
 
@@ -198,22 +203,27 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 
 <table border="1">
 <tr align="center">
+<td>##</td>
 <td>id</td>
 <td colspan="3">reward</td>
 </tr>
 <tr align="center">
+<td>##type</td>
 <td>int</td>
 <td colspan="3">Reward</td>
 </tr>
 <tr align="center">
+<td>##</td>
 <td>id</td>
 <td>item id</td><td>count</td><td>desc</td>
 </tr>
 <tr align="center">
+<td/>
 <td>1</td>
 <td>item1</td><td>1</td><td>desc1</td>
 </tr>
 <tr align="center">
+<td/>
 <td>2</td>
 <td>item2</td><td>100</td><td>desc2</td>
 </tr>
@@ -238,24 +248,28 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 
 <table border="1">
 <tr align="center">
+<td>##</td>
 <td>id</td>
 <td colspan="6">rewards1</td>
 <td colspan="3">rewards2&sep=,</td>
 <td>rewards3&sep=,|</td>
 </tr>
 <tr align="center">
+<td>##type</td>
 <td>int</td>
 <td colspan="6">list,Reward</td>
 <td colspan="3">list,Reward</td>
 <td>list,Reward</td>
 </tr>
 <tr align="center">
+<td>##</td>
 <td>id</td>
 <td colspan="6">reward list desc1</td>
 <td colspan="3">reward list desc2</td>
 <td>reward list desc3</td>
 </tr>
 <tr align="center">
+<td/>
 <td>1</td>
 <td>item1</td><td>1</td><td>desc1</td><td>item2</td><td>2</td><td>desc2</td>
 <td>item1,1,desc1</td><td>item2,2,desc2</td><td>item3,3,desc3</td>
@@ -263,6 +277,7 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 </tr>
 
 <tr align="center">
+<td/>
 <td>2</td>
 <td>item1</td><td>1</td><td>desc1</td><td></td><td></td><td></td>
 <td>item1,1,desc1</td><td>item2,2,desc2</td><td></td>
@@ -290,38 +305,44 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 
 <table border="1">
 <tr align="center">
+<td>##</td>
 <td>id</td>
 <td>name</td>
 <td colspan="6">*stage2</td>
 </tr>
 <tr align="center">
+<td>##type</td>
 <td>int</td>
 <td>string</td>
 <td colspan="6">list,Stage</td>
 </tr>
 <tr align="center">
+<td>##</td>
 <td>id</td>
 <td>desc</td>
 <td colspan="6">stage info</td>
 </tr>
 <tr align="center">
+<td/>
 <td>1</td>
 <td>task1</td>
 <td>1</td><td>stage1</td><td>stage desc1</td><td>1,2,3</td><td>1001</td><td>1</td>
 </tr>
 <tr align="center">
+<td/>
 <td/><td/><td>2</td><td>stage2</td><td>stage desc2</td><td>1,2,3</td><td>1001</td><td>1</td>
 </tr>
 <tr align="center">
-<td/><td/><td>3</td><td>stage3</td><td>stage desc3</td><td>1,2,3</td><td>1002</td><td>1</td>
+<td/><td/><td/><td>3</td><td>stage3</td><td>stage desc3</td><td>1,2,3</td><td>1002</td><td>1</td>
 </tr>
 <tr align="center">
+<td/>
 <td>2</td>
 <td>task2</td>
 <td>1</td><td>stage1</td><td>stage desc1</td><td>1,2,3</td><td>1001</td><td>1</td>
 </tr>
 <tr align="center">
-<td/><td/><td>2</td><td>stage2</td><td>stage desc2</td><td>1,2,3</td><td>1002</td><td>1</td>
+<td/><td/><td/><td>2</td><td>stage2</td><td>stage desc2</td><td>1,2,3</td><td>1002</td><td>1</td>
 </tr>
 </table>
 
@@ -330,24 +351,24 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 ### 单例表
 有一些配置全局只有一份，比如 公会模块的开启等级，背包初始大小，背包上限。此时使用单例表来配置这些数据比较合适。
 
-| guld_open_level | bag_init_capacity | bag_max_capacity | newbie_tasks |
-| - | - | - | - |
-|int | int | int | list,int|
-|desc1 | desc 2 | desc 3 | desc 4 |
-|10 | 100| 500| 10001,10002 |
+| ##| guld_open_level | bag_init_capacity | bag_max_capacity | newbie_tasks |
+| - |- | - | - | - |
+| ##type | int | int | int | list,int|
+| ## |desc1 | desc 2 | desc 3 | desc 4 |
+| | 10 | 100| 500| 10001,10002 |
 
 
 
 ### 纵表
 
-大多数表都是横表，即一行一个记录。有些表，比如单例表，如果纵着填，一行一个字段，会比较舒服。meta行添加 orientation=c 则使用纵表模式来填写内容。 上面的单例表，以纵表模式填如下。
+大多数表都是横表，即一行一个记录。有些表，比如单例表，如果纵着填，一行一个字段，会比较舒服。A1为##column表示使用纵表模式。 上面的单例表，以纵表模式填如下。
 
 
 <table border="1">
 <tr align="center">
+<td>##column</td>
+<td>##type</td>
 <td>##</td>
-<td>orientation=c</td>
-<td>title_rows=3</td>
 <td></td>
 </tr>
 <tr align="center">
@@ -379,6 +400,7 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 
 <table border="1" >
 <tr align="center">
+  <td>##</td>
   <td>id</td>
   <td >item_id</td>
   <td>items</td>
@@ -386,6 +408,7 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
   <td colspan="3">rewards&sep=,</td>
 </tr>
 <tr align="center">
+  <td>##type</td>
   <td>int</td>
   <td>int</td>
   <td>int&ref=item.TbItem</td>
@@ -393,6 +416,7 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
   <td colspan="3">reward</td>
 </tr>
 <tr align="center">
+  <td>##</td>
   <td>id</td>
   <td>desc1</td>
   <td>desc2</td>
@@ -400,6 +424,7 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
   <td colspan="3">desc4</td>
 </tr>
 <tr align="center">
+  <td/>
   <td>1</td>
   <td>1001</td>
   <td>1001,1002</td>
@@ -407,6 +432,7 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
   <td>1001,10,item1</td><td>1002,2,item2</td><td/>
 </tr>
 <tr align="center">
+  <td/>
   <td>2</td>
   <td>1002</td>
   <td>1003,1004,1005</td>
@@ -422,12 +448,12 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 
 对于这些字段添加属性 path=unity或者path=ue或path=normal;xxxx。
 
-| id | icon |
-| - | - |
-| int | string&path=unity|
-|id | icon desc |
-| 1| Assets/UI/item1.jpg|
-|2| Assets/UI/item2.jpg|
+| ## | id | icon |
+| - | - | - |
+| ##type| int | string&path=unity|
+| ##|id | icon desc |
+| | 1| Assets/UI/item1.jpg|
+| | 2| Assets/UI/item2.jpg|
 
 
 ### 分组导出
@@ -440,10 +466,10 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 
 开发期经常会制作一些仅供开发使用的配置，比如测试道具，比如自动化测试使用的配置，希望在正式发布时不导出这些数据。 
 
-|\_\_tag\_\_  | id | name |  |
+| ##  | id | name |  |
 | - | - | - | - |
-| | int | string |  |
-| 导出标记 | id | desc1| 注释 |
+| ##type | int | string |  |
+| ## | id | desc1| 注释 |
 | | 1 | item1 | 永远导出 |
 |##| 2 | item2 | 永远不导出 |
 |test| 4 | item4 | --export_exclude_tags test 时不导出 |
@@ -459,13 +485,14 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 <table border="1">
 
 <tr align="center">
-  <td rowspan="2"></td>
+  <td>##</td>
   <td>id</td>
   <td>name</td>
   <td colspan="6">stages</td>
 </tr>
 <tr align="center">
-  <td></td>
+  <td>##field</td>
+  <td/>
   <td/>
   <td>id</td>
   <td>name</td>
@@ -475,13 +502,13 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
   <td>num</td>
 </tr>
 <tr align="center">
-  <td/>
+  <td>##type</td>
   <td>int</td>
   <td>string</td>
   <td colspan="6">list,Stage</td>
 </tr>
 <tr align="center">
-  <td/>
+  <td>##</td>
   <td>id</td>
   <td>desc1</td>
   <td>desc1</td>
@@ -518,13 +545,13 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 ### 可空数据类型
 配置数据中经常有空值的语义需求，实际项目中往往混杂地使用0或-1表达空值，既不自然清晰也不统一。luban借鉴了c#中的可空变量的概念，特地提供可空数据支持。所有原生数据类型，以及enum、bean、和多态bean类型都有相应的可空数据类型。定义方式为 <类型名>?，与c#里的Nullable类型定义方式相同。例如 bool?,int?,long?,double?, EColor?, DemoType?
 
-|id|x1|x2|x3|x4|x5|
-|-|-|-|-|-|-|
-|int|bool?|int?|float?|datetime?|QualityType?|
-|id|desc1|desc2|desc3|desc4|desc5|
-|1|true|1|1.2|1999-09-09 10:10:10| RED|
-|2|null|null|null|null|null|
-|3| |||||
+|##|id|x1|x2|x3|x4|x5|
+| - |-|-|-|-|-|-|
+|##type|int|bool?|int?|float?|datetime?|QualityType?|
+|##|id|desc1|desc2|desc3|desc4|desc5|
+||1|true|1|1.2|1999-09-09 10:10:10| RED|
+||2|null|null|null|null|null|
+||3| |||||
 
 
 ### 类型继承(inheritance)
@@ -556,18 +583,22 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 ```
 <table border="1">
 <tr align="center">
+  <td>##</td>
   <td>id</td>
   <td colspan="4">shapes&sep=,</td>
 </tr>
 <tr align="center">
+  <td>##type</td>
   <td>int</td>
   <td colspan="4">list,Shape</td>
 </tr>
 <tr align="center">
+  <td>##</td>
   <td>id</td>
   <td colspan="4"> shape desc</td>
 </tr>
 <tr align="center">
+  <td/>
   <td>1</td>
   <td>Circle,10</td>
   <td>Rectangle,100,200</td>
@@ -575,6 +606,7 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
   <td/>
 </tr>
 <tr align="center">
+  <td/>
   <td>2</td>
   <td>Circle,20</td>
   <td>Rectangle,100,200</td>
@@ -589,13 +621,13 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 
 如示例，id=2的记录，x1与x2皆为空，x1=0,x2=-1。
 
-|id | x1 | x2&default=-1|
-| - | - | - |
-| int | int | int |
-|id|desc1|desc2|
-|1 | 10 |20|
-|2| | |
-|3| | 30|
+|##|id | x1 | x2&default=-1|
+| - | - | - | - |
+|##type| int | int | int |
+|##|id|desc1|desc2|
+||1 | 10 |20|
+||2| | |
+||3| | 30|
 
 
 ### 常量别名
@@ -609,13 +641,13 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 </enum>
 ```
 
-|id| item_id |
-| - | - |
-|int| int&convert=EFunctionItemId|
-|id| desc|
-|1 | SHENG_JI_DAN|
-|2| 进阶丹|
-|3| 1001|
+|##|id| item_id |
+|-| - | - |
+|##type|int| int&convert=EFunctionItemId|
+|##|id| desc|
+||1 | SHENG_JI_DAN|
+||2| 进阶丹|
+||3| 1001|
 
 ### 灵活的配置文件组织形式
 支持以下几种组织形式，允许开发者根据情况灵活组织配置文件结构。例如可以一个表对应一个xlsx文件；可以多个表都放到同个xlsx文件；可以一个表对应多个xlsx文件；可以一个表对应一个目录。
