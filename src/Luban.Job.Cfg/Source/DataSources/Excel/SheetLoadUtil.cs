@@ -221,7 +221,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
             tableName = "";
 
             // meta 行 必须以 ##为第一个单元格内容,紧接着 key:value 形式 表达meta属性
-            if (!metaStr.StartsWith("##"))
+            if (string.IsNullOrEmpty(metaStr) || !metaStr.StartsWith("##"))
             {
                 return false;
             }

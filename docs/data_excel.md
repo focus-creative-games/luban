@@ -3,32 +3,23 @@
 
 ## bool 类型
 
-- 新增 一个字段 batch_useable，表示能否批量使用
-- 用 true 或 false 表示 bool 值，只需要小写后是这两个值即可，比如 true,True,True 都是合法的值。excel 会自动将输入的值大写化。
-- [定义](images/adv/def_02.png):
-  ```xml
-  <module name = "item">
-    <bean name = "Item">
-      <var name = "batch_usable" type = "bool" />
-    </bean>
-  </module>
-  ```
-- 配置:  
-  ![如图](images/adv/def_01.png)
+用 true 或 false 表示 bool 值，只需要小写后是这两个值即可，比如 true,True,True 都是合法的值。excel 会自动将输入的值大写化。
+
+
+
+|##| id | x|
+|-|-|-|
+|##type|int| bool|
+|| 1| true|
+||2| false |
 
 ## float 类型
 
-- 新增一个 float 类型字段，掉落概率 drop_prob.
-- [定义](images/adv/def_04.png):
-  ```xml
-  <module name = "item">
-    <bean name = "Item">
-      <var name = "drop_prob" type = "float" />
-    </bean>
-  </module>
-  ```
-- 配置:  
-  ![如图](images/adv/def_03.png)
+|##| id | x|
+|-|-|-|
+|##type|int| float|
+|| 1| 1.2|
+||2| 4.895 |
 
 ## byte,short,int,long,string
 
@@ -41,28 +32,14 @@
 
 可能会有疑问，如何恰好想表达 ""是怎么办呢？ 如果真遇到这种需求，再寻找解决方案吧。
 
-定义：
+|##| id | x|
+|-|-|-|
+|##type|int| string|
+|| 1| aaabbb|
+||2|  |
+||3| ""|
 
-```xml
-	<bean name="CompactString">
-		<var name="id" type="int"/>
-		<var name="s2" type="string"/>
-		<var name="s3" type="string"/>
-	</bean>
-	
-	<bean name="TestString">
-		<var name="id" type="int"/>
-		<var name="s1" type="string"/>
-		<var name="cs1" type="CompactString"/>
-		<var name="cs2" type="CompactString" sep=","/>
-	</bean>
-	
-	<table name="TbTestString" value="TestString" input="test/test_string.xlsx"/>
-```
 
-配置数据：
-
-![配置](images/examples/ex_string_01.png)
 
 
 ## text 类型
@@ -73,21 +50,13 @@
 
 text的key和text字段都是string类型，因此在连续单元格或者sep产生的连续数据流模式中，同样要遵循用""来表达空白字符串的规则。
 
-定义：
 
-```xml
-	<bean name="L10NDemo">
-		<var name="id" type="int"/>
-		<var name="text" type="text"/>
-	</bean>
-	
-	<table name="TbL10NDemo" value="L10NDemo" input="l10n/Demo.xlsx"/>
-```
-
-配置数据:
-
-![数据](images/examples/ex_i10n_2.png)
-
+|##| id | x&sep=|
+|-|-|-|
+|##type|int| text|
+|| 1| /demo/key1#aaaa|
+||2|  /demo/key2#bbbb|
+||3| | |
 
 ## datetime 类型
 
@@ -101,62 +70,43 @@ text的key和text字段都是string类型，因此在连续单元格或者sep产
     - yyyy-mm-dd 如 2003-04-05
   - 以 excel内置的时间格式填写
     
-- 为 Item 新增一个 失效时间字段 expire_time 。  
-- [定义](images/adv/def_38.png)  
-  ``` xml
-  <bean name="Item">
-    ...
-    <var name="expire_time" type="datetime"/>
-  </bean>
-  ```
-- 配置  
-  图中红框中第一个时间以 excel的时间格式填写
-  剩下第2，3，4个时间以 纯字符串形式填写
 
-  ![如图](images/adv/def_39.png)
+|##| id | x|
+|-|-|-|
+|##type|int| datetime|
+|| 1|1999-09-09 01:02:03|
+||2| 1999-09-09 01:02|
+||3| 1999-09-09 01 |
+||4| 1999-09-09|
 
 ## 可空变量
 
 - 有时候会有一种变量，我们希望它 功能生效时填一个有效值，功能不生效里，用一个值来表示。 例如 int 类型，常常拿 0 或者-1 作无效值常量。 但有时候，0 或-1 也是有效值时，这种做法就不生效了。或者说 项目组内 有时候拿 0，有时候拿-1 作无效值标记，很不统一。我们借鉴 sql 及 c#,引入 可空值概念，用 null 表达空值。
-- 我们为 Item 添加 min_use_level 字段，类型为 int? 当填有效值时，使用时要检查等级，否则不检查。
-- [定义](images/adv/def_36.png)
-  ``` xml
-  <bean name="Item">
-    ...
-    <var name="min_use_level" type="int?"/>
-  </bean>
-  ```
-- 配置  
-  ![如图](images/adv/def_37.png)
+
+|##| id | x| color |
+|-|-|-| - |
+|##type|int| int?|QualityColor?|
+|| 1| 1| A |
+||2|  null|B|
+||3| 2|null|
 
 ## 列表类型 list,int
 
-- 我们新增一个字段， 宝箱的随机抽取道具列表 random_item_ids。
-- [定义](images/adv/def_06.png)
-  ```xml
-  <module name = "item">
-    <bean name = "Item">
-      <var name = "random_item_ids" type = "list, int" />
-    </bean>
-  </module>
-  ```
-- 配置:  
-  ![如图](images/adv/def_05.png)
+|##| id | x| 
+|-|-|-| 
+|##type|int| list,int|
+|| 1| 12,33,44| 
+||2|  10,20,30,40|
 
-## 向量类型 vector3
+## 向量类型 vector2,vector3,vector4
 
-- vector3 有三个字段 float x, float y, float z, 适合用于表示坐标之类的数据。
-- 我们新增一个 spawn_location 字段，表示物品产生的场景位置。
-- [定义](images/adv/def_08.png):
-  ```xml
-  <module name = "item">
-    <bean name = "Item">
-      <var name = "spawn_location" type = "vector3" />
-    </bean>
-  </module>
-  ```
-- 配置:  
-  ![如图](images/adv/def_07.png)
+vector3 有三个字段 float x, float y, float z, 适合用于表示坐标之类的数据。
+
+|##| id | x2|x3|x4| 
+|-|-|-| -| -|
+|##type|int| vector2|vector3|vector4|
+|| 1| 1,2|11,22,33|12,33,44,55| 
+||2|  2,3|22,44,55|6.5,4.7,8.9|
 
 ## 枚举类型
 
@@ -199,7 +149,14 @@ text的key和text字段都是string类型，因此在连续单元格或者sep产
 - excel 表中，想表达一个枚举值，既可以用检举项 name,也可以用枚举项的 alias，但不能是相应的整数值。
 - 注意！如果想引用其他模块定义的 enum 或者 bean, type 里必须指定全名。  
   比如 type=”mall.TradeInfo” 。
-- ![如图](images/adv/def_11.png)
+
+|##| id |  color |
+|-|-| - |
+|##type|int| QualityColor?|
+|| 1|  GREEN |
+||2| RED|
+||3| 白|
+
 
 ## bean 类型
 
