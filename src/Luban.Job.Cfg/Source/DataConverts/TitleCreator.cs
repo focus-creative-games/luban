@@ -64,10 +64,6 @@ namespace Luban.Job.Cfg.DataConverts
                 {
                     subTitle.Tags.Add("sep", sep);
                 }
-                if (f.CType.Tags.TryGetValue("multi_rows", out var multiRows))
-                {
-                    subTitle.Tags.Add("multiRows", multiRows);
-                }
 
                 f.CType.Apply(this, subTitle, startColumn);
                 lastColumn = subTitle.ToIndex;

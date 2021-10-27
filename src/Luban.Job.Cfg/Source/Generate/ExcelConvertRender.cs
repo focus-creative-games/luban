@@ -1,6 +1,8 @@
 ﻿using Luban.Job.Cfg.Cache;
 using Luban.Job.Cfg.DataConverts;
 using Luban.Job.Cfg.Utils;
+using Luban.Job.Common.Types;
+using Luban.Job.Common.TypeVisitors;
 using Luban.Job.Common.Utils;
 using SpreadsheetLight;
 using System;
@@ -31,23 +33,37 @@ namespace Luban.Job.Cfg.Generate
 
                     var title = TitleCreator.Ins.CreateTitle(table);
 
+                    TBean valueType = table.ValueTType;
 
                     var dataRangeArray = new List<object[]>();
+                    {
+                        var titleRow = new object[title.ToIndex + 1];
+                        titleRow[0] = "##";
+
+                        foreach (var subTitle in title.SubTitleList)
+                        {
+                            string titleAndTags = subTitle.Tags.Count == 0 ? subTitle.Name : subTitle.Name + "&" + string.Join('&', subTitle.Tags.Select(e => $"{e.Key}={e.Value}"));
+                            titleRow[subTitle.FromIndex] = titleAndTags;
+                        }
+                        dataRangeArray.Add(titleRow);
+                    }
+                    {
+
+                        var typeRow = new object[title.ToIndex + 1];
+                        typeRow[0] = "##type";
+
+                        foreach (var subTitle in title.SubTitleList)
+                        {
+                            string typeAndTags = valueType.Bean.TryGetField(subTitle.Name, out var f, out _) ?
+                            (f.CType.Tags.Count == 0 ? f.CType.Apply(CsDefineTypeName.Ins) : f.CType.Apply(CsDefineTypeName.Ins) + "&" + string.Join('&', f.CType.Tags.Select(e => $"{e.Key}={e.Value}")))
+                            : "";
+                            typeRow[subTitle.FromIndex] = typeAndTags;
+                        }
+                        dataRangeArray.Add(typeRow);
+                    }
+
 
                     dataRangeArray.Add(new object[] { "##" });
-
-                    var titleRow = new object[title.ToIndex + 1];
-
-                    foreach (var subTitle in title.SubTitleList)
-                    {
-                        string titleAndTags = subTitle.Tags.Count == 0 ? subTitle.Name : subTitle.Name + "&" + string.Join('&', subTitle.Tags.Select(e => $"{e.Key}={e.Value}"));
-                        titleRow[subTitle.FromIndex] = titleAndTags;
-                    }
-                    dataRangeArray.Add(titleRow);
-                    // 注释行1
-                    dataRangeArray.Add(Array.Empty<object>());
-                    // 注释行2
-                    dataRangeArray.Add(Array.Empty<object>());
 
                     int totalRowCount = dataRangeArray.Count;
                     foreach (var rec in records)
@@ -105,6 +121,21 @@ namespace Luban.Job.Cfg.Generate
                                         break;
                                     }
                                     case float t:
+                                    {
+                                        worksheet.SetCellValue(i + 1, j + 1, t);
+                                        break;
+                                    }
+                                    case double t:
+                                    {
+                                        worksheet.SetCellValue(i + 1, j + 1, t);
+                                        break;
+                                    }
+                                    case long t:
+                                    {
+                                        worksheet.SetCellValue(i + 1, j + 1, t);
+                                        break;
+                                    }
+                                    case short t:
                                     {
                                         worksheet.SetCellValue(i + 1, j + 1, t);
                                         break;
