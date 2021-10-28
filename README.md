@@ -158,7 +158,16 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 <tr align="center">
 <td/>
 <td>2</td>
-<td>2,4</td>
+<td>2;4</td>
+<td>3</td><td>4</td><td>5</td><td></td>
+<td>aaaa|bbbb|cccc</td>
+<td>aaa</td><td>bbb</td><td>ccc</td>
+</tr>
+
+<tr align="center">
+<td/>
+<td>3</td>
+<td>2|4|6</td>
 <td>3</td><td>4</td><td>5</td><td>6</td>
 <td>aaaa|bbbb|cccc</td>
 <td>aaa</td><td>bbb</td><td>ccc</td>

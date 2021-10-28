@@ -1,5 +1,6 @@
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.TypeVisitors;
+using Luban.Job.Common.Utils;
 using System;
 using System.Collections.Generic;
 
@@ -7,9 +8,10 @@ namespace Luban.Job.Common.Types
 {
     public class TBean : TType
     {
-        public static TBean Create(bool isNullable, DefBeanBase defBean)
+        public static TBean Create(bool isNullable, DefBeanBase defBean, Dictionary<string, string> tags)
         {
-            return new TBean(isNullable, defBean.Tags, defBean);
+            // TODO
+            return new TBean(isNullable, DefUtil.MergeTags(defBean.Tags, tags), defBean);
         }
 
         public DefBeanBase Bean { get; set; }

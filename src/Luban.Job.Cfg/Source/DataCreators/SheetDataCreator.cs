@@ -481,7 +481,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TMap type, Sheet sheet, TitleRow row)
         {
-            string sep = DataUtil.GetSep(type);
+            string sep = "";
 
             if (row.Row != null)
             {

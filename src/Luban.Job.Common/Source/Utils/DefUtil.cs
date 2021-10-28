@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Bright.Collections;
+using System;
 using System.Collections.Generic;
 
 namespace Luban.Job.Common.Utils
@@ -123,7 +124,35 @@ namespace Luban.Job.Common.Utils
 
         public static bool IsNormalFieldName(string name)
         {
-            return !name.StartsWith("__");
+            return !name.StartsWith("__") && !name.StartsWith("#");
+        }
+
+        public static Dictionary<string, string> MergeTags(Dictionary<string, string> tags1, Dictionary<string, string> tags2)
+        {
+            if (tags2 != null && tags2.Count > 0)
+            {
+                if (tags1 != null)
+                {
+                    if (tags1.Count == 0)
+                    {
+                        return tags2;
+                    }
+                    else
+                    {
+                        var result = new Dictionary<string, string>(tags1);
+                        result.AddAll(tags2);
+                        return result;
+                    }
+                }
+                else
+                {
+                    return tags2;
+                }
+            }
+            else
+            {
+                return tags1;
+            }
         }
     }
 }

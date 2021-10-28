@@ -1,5 +1,6 @@
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.TypeVisitors;
+using Luban.Job.Common.Utils;
 using System;
 using System.Collections.Generic;
 
@@ -7,9 +8,9 @@ namespace Luban.Job.Common.Types
 {
     public class TEnum : TType
     {
-        public static TEnum Create(bool isNullable, DefEnum defEnum)
+        public static TEnum Create(bool isNullable, DefEnum defEnum, Dictionary<string, string> tags)
         {
-            return new TEnum(isNullable, defEnum.Tags, defEnum);
+            return new TEnum(isNullable, DefUtil.MergeTags(defEnum.Tags, tags), defEnum);
         }
 
         public DefEnum DefineEnum { get; }

@@ -87,37 +87,51 @@ namespace Luban.Job.Common.Defs
 
         private readonly Dictionary<(DefTypeBase, bool), TType> _cacheDefTTypes = new Dictionary<(DefTypeBase, bool), TType>();
 
-        protected TType GetOrCreateTEnum(DefEnum defType, bool nullable)
+        protected TType GetOrCreateTEnum(DefEnum defType, bool nullable, Dictionary<string, string> tags)
         {
-            if (_cacheDefTTypes.TryGetValue((defType, nullable), out var t))
+            if (tags == null || tags.Count == 0)
             {
-                return t;
+                if (_cacheDefTTypes.TryGetValue((defType, nullable), out var t))
+                {
+                    return t;
+                }
+                else
+                {
+                    return _cacheDefTTypes[(defType, nullable)] = TEnum.Create(nullable, defType, tags);
+                }
             }
             else
             {
-                return _cacheDefTTypes[(defType, nullable)] = TEnum.Create(nullable, defType);
+                return TEnum.Create(nullable, defType, tags); ;
             }
         }
 
-        protected TType GetOrCreateTBean(DefTypeBase defType, bool nullable)
+        protected TType GetOrCreateTBean(DefTypeBase defType, bool nullable, Dictionary<string, string> tags)
         {
-            if (_cacheDefTTypes.TryGetValue((defType, nullable), out var t))
+            if (tags == null || tags.Count == 0)
             {
-                return t;
+                if (_cacheDefTTypes.TryGetValue((defType, nullable), out var t))
+                {
+                    return t;
+                }
+                else
+                {
+                    return _cacheDefTTypes[(defType, nullable)] = TBean.Create(nullable, (DefBeanBase)defType, tags);
+                }
             }
             else
             {
-                return _cacheDefTTypes[(defType, nullable)] = TBean.Create(nullable, (DefBeanBase)defType);
+                return TBean.Create(nullable, (DefBeanBase)defType, tags);
             }
         }
 
-        public TType GetDefTType(string module, string type, bool nullable)
+        public TType GetDefTType(string module, string type, bool nullable, Dictionary<string, string> tags)
         {
             var defType = GetDefType(module, type);
             switch (defType)
             {
-                case DefBeanBase d: return GetOrCreateTBean(d, nullable);
-                case DefEnum d: return GetOrCreateTEnum(d, nullable);
+                case DefBeanBase d: return GetOrCreateTBean(d, nullable, tags);
+                case DefEnum d: return GetOrCreateTEnum(d, nullable, tags);
                 default: return null;
             }
         }
@@ -202,7 +216,7 @@ namespace Luban.Job.Common.Defs
                 case "datetime": return SupportDatetimeType ? TDateTime.Create(nullable, tags) : throw new NotSupportedException($"只有配置支持datetime数据类型");
                 default:
                 {
-                    var dtype = GetDefTType(module, type, nullable);
+                    var dtype = GetDefTType(module, type, nullable, tags);
                     if (dtype != null)
                     {
                         return dtype;

@@ -139,23 +139,15 @@ namespace Luban.Job.Cfg.Utils
             return tags.Count > 0 ? tags : null;
         }
 
-        public const string SimpleContainerSep = ",;";
+        public const string SimpleContainerSep = ",;|";
 
-        public static string GetSep(TType type)
+        public static string GetBeanSep(TBean type)
         {
-
             if (type.Tags != null && type.Tags.TryGetValue("sep", out var s) && !string.IsNullOrWhiteSpace(s))
             {
                 return s;
             }
-            switch (type)
-            {
-                case TBean tb: return (tb.Bean as DefBean).Sep;
-                case TArray ta: return ta.ElementType.Apply(IsNotSepTypeVisitor.Ins) ? SimpleContainerSep : "";
-                case TList ta: return ta.ElementType.Apply(IsNotSepTypeVisitor.Ins) ? SimpleContainerSep : "";
-                case TSet ta: return ta.ElementType.Apply(IsNotSepTypeVisitor.Ins) ? SimpleContainerSep : "";
-                default: return "";
-            }
+            return ((DefBean)type.Bean).Sep;
         }
 
         public static string GetTypeSep(TType type)
