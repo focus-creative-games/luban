@@ -75,6 +75,20 @@ namespace Luban.Job.Cfg.DataVisitors
                     _path.Pop();
                 }
             }
+
+            if (elementType is TBean)
+            {
+                int index = 0;
+                foreach (var value in eles)
+                {
+                    _path.Push(index++);
+                    if (value != null)
+                    {
+                        elementType.Apply(this, value);
+                    }
+                    _path.Pop();
+                }
+            }
         }
 
         public void Accept(TBool type, DType x)
@@ -219,9 +233,24 @@ namespace Luban.Job.Cfg.DataVisitors
                             if (v is IValidator eleVal)
                             {
                                 eleVal.Validate(Ctx, valueType, e.Value);
-                                valueType.Apply(this, e.Value);
+                                if (e.Value != null)
+                                {
+                                    valueType.Apply(this, e.Value);
+                                }
                             }
                         }
+                    }
+                    _path.Pop();
+                }
+            }
+            if (valueType is TBean)
+            {
+                foreach (var e in ((DMap)x).Datas)
+                {
+                    _path.Push(e.Key);
+                    if (e.Value != null)
+                    {
+                        valueType.Apply(this, e.Value);
                     }
                     _path.Pop();
                 }
