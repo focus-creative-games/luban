@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29418.71
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Excel2TextDiff", "Excel2TextDiff\Excel2TextDiff.csproj", "{9477226F-469E-458F-A3AD-9115D777A65A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LubanAssistant", "LubanAssistant\LubanAssistant.csproj", "{353807D5-2074-42CD-AD69-F3F59D359E57}"
 EndProject
 Global
