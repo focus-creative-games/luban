@@ -90,11 +90,30 @@ namespace LubanAssistant
             return rootTile;
         }
 
-        private static bool IsSubFieldRow(Range cell)
+        private static bool TryParseNextSubFieldRowIndex(Range sheetCells, int startRowIndex, out int rowIndex)
         {
-            var s = cell.Value?.ToString()?.Trim();
-            return s == "##field";
+            for (int i = startRowIndex; ; i++)
+            {
+                string rowTag = sheetCells[i, 1].Value?.ToString() ?? "";
+                if (rowTag.StartsWith("##field"))
+                {
+                    rowIndex = i;
+                    return true;
+                }
+                else if (!rowTag.StartsWith("##"))
+                {
+                    break;
+                }
+            }
+            rowIndex = 0;
+            return false;
         }
+
+        //private static bool IsSubFieldRow(Range cell)
+        //{
+        //    var s = cell.Value?.ToString()?.Trim();
+        //    return s == "##field";
+        //}
 
         private static bool IsTypeRow(Range cell)
         {
@@ -140,11 +159,11 @@ namespace LubanAssistant
                 }
                 title.AddSubTitle(newSubTitle);
             }
-            if (rowIndex < sheet.UsedRange.Rows.Count && IsSubFieldRow(sheet.Cells[rowIndex + 1, 1]))
+            if (rowIndex < sheet.UsedRange.Rows.Count && TryParseNextSubFieldRowIndex(sheet.Cells, rowIndex + 1, out int nextRowIndex))
             {
                 foreach (var subTitle in title.SubTitleList)
                 {
-                    ParseSubTitle(sheet, rowIndex + 1, subTitle);
+                    ParseSubTitle(sheet, nextRowIndex, subTitle);
                 }
             }
         }

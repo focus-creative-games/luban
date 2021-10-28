@@ -298,16 +298,6 @@ namespace Luban.Job.Cfg.DataSources.Excel
             return TryParseMeta(metaStr, out orientRow, out tableName);
         }
 
-        private static bool IsSubFieldRow(List<Cell> row)
-        {
-            if (row.Count == 0)
-            {
-                return false;
-            }
-            var s = row[0].Value?.ToString()?.Trim();
-            return s == "##field";
-        }
-
         private static bool IsTypeRow(List<Cell> row)
         {
             if (row.Count == 0)
