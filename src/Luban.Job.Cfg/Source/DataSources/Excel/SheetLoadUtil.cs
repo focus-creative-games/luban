@@ -410,7 +410,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
             if (typeRowIndex < 0)
             {
-                throw new Exception($"缺失type行");
+                throw new Exception($"缺失type行。请用'##type'标识type行");
             }
             List<Cell> typeRow = cells[typeRowIndex];
             List<Cell> descRow = cells.Count > typeRowIndex + 1 ? cells[typeRowIndex + 1] : null;

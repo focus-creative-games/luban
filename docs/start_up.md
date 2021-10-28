@@ -18,20 +18,26 @@
    
    文件内容如下
 
-   ![配置](images/install/install_04.png)
+   |##|id|name|desc|count|
+   |-|-|-|-|-|
+   |##type|int|string|string|int|
+   |##|id|名字|描述|个数|
+   ||1001|item1| desc1| 10|
+   ||1002|item2| desc2| 10|
+   ||1003|item3| desc3| 10|
+   ||1004|item4| desc4| 10|
 
-   - 第 1 行是 meta 行，包含关于excel文件的元描述，title_rows=4表示除了meta行外，有4行标题头。此值默认为3，可以根据需求调整。
-     单元格 A1 必须是 ##。表示这是一个有效数据表。
-   - 第 2 行是程序字段名行。
-   - 第3行是属性行。格式为 type&属性1=值1&属性2=值2 ...
-   - 第 4 行是标题头行。策划自行填写，可留空。
-   - 第 5 行是描述行。策划可以填写字段的补充描述。可留空。
-   - 从第 6 开始为实际的数据行。如果某个数据行整行为空，则会被跳过。
+
+   - 第 1 行是 主字段行，包含表字段定义。单元格 A1 必须是 ##。表示这是一个有效数据表。
+   - 第 2 行是类型行，第1个单元格必须为 ##type。
+   - 第 3 行是注释行。 以##开头。 可以有0-N个注释行，而且可以出现在任何位置
+   - 第 4 行起是数据行。
 
 3. 在 Datas 目录下的__tables__.xlsx添加表声明。如下图：
 
-![添加声明](images/install/install_10.png)
-
+|##|full_name|value_type|define_from_excel|input|index|mode|group|comment|patch_input|tags|output|
+|-|-|-|-|-|-|-|-|-|-|-|-|
+||demo.TbItem|Item|true|物品表.xlsx||||||||
 
 4. 至此,物品表的创建工作大功告成!
 

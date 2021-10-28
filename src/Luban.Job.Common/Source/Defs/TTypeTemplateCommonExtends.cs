@@ -174,10 +174,14 @@ namespace Luban.Job.Common.Defs
             return type.Apply(RustTypeNameVisitor.Ins);
         }
 
-
         public static string RustConstValue(TType type, string value)
         {
             return type.Apply(LuaConstValueVisitor.Ins, value);
+        }
+
+        public static string ErlangDefineType(TType type)
+        {
+            return type.Apply(ErlangDefineTypeNameVisitor.Ins);
         }
 
         public static bool HasTag(dynamic obj, string attrName)
