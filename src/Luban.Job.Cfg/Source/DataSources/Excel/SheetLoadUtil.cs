@@ -96,6 +96,30 @@ namespace Luban.Job.Cfg.DataSources.Excel
             return rootTitle;
         }
 
+        private static bool TryFindNextSubFieldRowIndex(List<List<Cell>> cells, int startRowIndex, out int rowIndex)
+        {
+            for (int i = startRowIndex; i < cells.Count; i++)
+            {
+                var row = cells[i];
+                if (row.Count == 0)
+                {
+                    break;
+                }
+                string rowTag = row[0].Value?.ToString() ?? "";
+                if (rowTag.StartsWith("##field"))
+                {
+                    rowIndex = i;
+                    return true;
+                }
+                else if (!rowTag.StartsWith("##"))
+                {
+                    break;
+                }
+            }
+            rowIndex = 0;
+            return false;
+        }
+
         private static bool IsIgnoreTitle(string title)
         {
 #if !LUBAN_LITE
@@ -134,9 +158,9 @@ namespace Luban.Job.Cfg.DataSources.Excel
             return (titleName, tags);
         }
 
-        private static void ParseSubTitles(Title title, List<List<Cell>> cells, CellRange[] mergeCells, bool orientRow, int curDepth)
+        private static void ParseSubTitles(Title title, List<List<Cell>> cells, CellRange[] mergeCells, bool orientRow, int excelRowIndex)
         {
-            var rowIndex = curDepth - 1;
+            var rowIndex = excelRowIndex - 1;
             var titleRow = cells[rowIndex];
             if (mergeCells != null)
             {
@@ -177,9 +201,9 @@ namespace Luban.Job.Cfg.DataSources.Excel
                         continue;
                     }
 
-                    if (curDepth < cells.Count && IsSubFieldRow(cells[curDepth]))
+                    if (excelRowIndex < cells.Count && TryFindNextSubFieldRowIndex(cells, excelRowIndex, out int nextRowIndex))
                     {
-                        ParseSubTitles(subTitle, cells, mergeCells, orientRow, curDepth + 1);
+                        ParseSubTitles(subTitle, cells, mergeCells, orientRow, nextRowIndex + 1);
                     }
                     title.AddSubTitle(subTitle);
 
@@ -207,9 +231,9 @@ namespace Luban.Job.Cfg.DataSources.Excel
                     }
                 }
                 subTitle = new Title() { Name = titleName, Tags = tags, FromIndex = i, ToIndex = i };
-                if (curDepth < cells.Count && IsSubFieldRow(cells[curDepth]))
+                if (excelRowIndex < cells.Count && TryFindNextSubFieldRowIndex(cells, excelRowIndex, out int nextRowIndex))
                 {
-                    ParseSubTitles(subTitle, cells, mergeCells, orientRow, curDepth + 1);
+                    ParseSubTitles(subTitle, cells, mergeCells, orientRow, nextRowIndex + 1);
                 }
                 title.AddSubTitle(subTitle);
             }
