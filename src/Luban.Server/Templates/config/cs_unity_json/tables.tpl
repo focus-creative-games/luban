@@ -13,7 +13,7 @@ public sealed partial class {{name}}
     {{~for table in tables ~}}
 {{~if table.comment != '' ~}}
     /// <summary>
-    /// {{table.comment}}
+    /// {{table.escape_comment}}
     /// </summary>
 {{~end~}}
     public {{table.full_name}} {{table.name}} {get; }

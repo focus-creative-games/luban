@@ -36,7 +36,7 @@
 
 {{~if x.comment != '' ~}}
 /**
- * {{x.comment}}
+ * {{x.escape_comment}}
  */
 {{~end~}}
 export class {{name}} {

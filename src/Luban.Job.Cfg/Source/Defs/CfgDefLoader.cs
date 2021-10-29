@@ -292,7 +292,7 @@ namespace Luban.Job.Cfg.Defs
             var stream = new MemoryStream(await this.Agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5));
             var tableDefInfo = source.LoadTableDefInfo(file.OriginFile, file.SheetName, stream);
 
-            var cb = new CfgBean() { Namespace = table.Namespace, Name = table.ValueType, };
+            var cb = new CfgBean() { Namespace = table.Namespace, Name = table.ValueType, Comment = "" };
 #if !LUBAN_LITE
             foreach (var (name, f) in tableDefInfo.FieldInfos)
             {

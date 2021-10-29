@@ -300,12 +300,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         private static bool IsTypeRow(List<Cell> row)
         {
-            if (row.Count == 0)
-            {
-                return false;
-            }
-            var s = row[0].Value?.ToString()?.Trim();
-            return s == "##type";
+            return IsRowTagEqual(row, "##type");
         }
 
         private static bool IsHeaderRow(List<Cell> row)
@@ -316,6 +311,16 @@ namespace Luban.Job.Cfg.DataSources.Excel
             }
             var s = row[0].Value?.ToString()?.Trim();
             return !string.IsNullOrEmpty(s) && s.StartsWith("##");
+        }
+
+        private static bool IsRowTagEqual(List<Cell> row, string tag)
+        {
+            if (row.Count == 0)
+            {
+                return false;
+            }
+            var s = row[0].Value?.ToString()?.Trim();
+            return s == tag;
         }
 
         private static List<List<Cell>> ParseRawSheetContent(IExcelDataReader reader, bool orientRow, bool headerOnly)
@@ -413,7 +418,17 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 throw new Exception($"缺失type行。请用'##type'标识type行");
             }
             List<Cell> typeRow = cells[typeRowIndex];
-            List<Cell> descRow = cells.Count > typeRowIndex + 1 ? cells[typeRowIndex + 1] : null;
+
+            // 先找 ##desc 行，再找##comment行，最后找 ##type的下一行
+            List<Cell> descRow = cells.Find(row => IsRowTagEqual(row, "##desc"));
+            if (descRow == null)
+            {
+                descRow = cells.Find(row => IsRowTagEqual(row, "##comment"));
+            }
+            if (descRow == null)
+            {
+                descRow = cells.Count > 1 ? cells.Skip(1).FirstOrDefault(row => IsRowTagEqual(row, "##")) : null;
+            }
 
             var fields = new Dictionary<string, FieldInfo>();
             foreach (var subTitle in title.SubTitleList)

@@ -3,7 +3,7 @@ namespace {{namespace_with_top_module}}
 {
 {{~if comment != '' ~}}
     /// <summary>
-    /// {{comment}}
+    /// {{comment | html.escape}}
     /// </summary>
 {{~end~}}
     {{~if is_flags~}}
@@ -14,7 +14,7 @@ namespace {{namespace_with_top_module}}
         {{~ for item in items ~}}
 {{~if item.comment != '' ~}}
         /// <summary>
-        /// {{item.comment}}
+        /// {{item.escape_comment}}
         /// </summary>
 {{~end~}}
         {{item.name}} = {{item.value}},

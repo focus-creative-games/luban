@@ -11,7 +11,7 @@ import bright.serialization.*;
 
 {{~if x.comment != '' ~}}
 /**
- * {{x.comment}}
+ * {{x.escape_comment}}
  */
 {{~end~}}
 public {{x.java_class_modifier}} class {{name}}{{if parent_def_type}} extends {{x.parent_def_type.full_name_with_top_module}}{{end}} {
@@ -57,7 +57,7 @@ public {{x.java_class_modifier}} class {{name}}{{if parent_def_type}} extends {{
     {{~ for field in export_fields ~}}
 {{~if field.comment != '' ~}}
     /**
-     * {{field.comment}}
+     * {{field.escape_comment}}
      */
 {{~end~}}
     public final {{java_define_type field.ctype}} {{field.convention_name}};

@@ -34,7 +34,7 @@ class {{name}}:
     {{~ for field in value_type.bean.hierarchy_export_fields ~}}
 {{~if field.comment != '' ~}}
     '''
-    {{field.comment}}
+    {{field.escape_comment}}
     '''
 {{~end~}}
     def {{field.convention_name}}(self) : return self._data.{{field.convention_name}}

@@ -8,7 +8,7 @@
 {{x.typescript_namespace_begin}}
 {{~if x.comment != '' ~}}
 /**
- * {{x.comment}}
+ * {{x.escape_comment}}
  */
 {{~end~}}
 export class {{name}} {
@@ -53,7 +53,7 @@ export class {{name}} {
     {{~ for field in value_type.bean.hierarchy_export_fields ~}}
 {{~if field.comment != '' ~}}
     /**
-     * {{field.comment}}
+     * {{field.escape_comment}}
      */
 {{~end~}}
      get {{field.convention_name}}(): {{ts_define_type field.ctype}} { return this._data.{{field.convention_name}} }

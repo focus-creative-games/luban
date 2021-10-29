@@ -9,7 +9,7 @@
 {{x.typescript_namespace_begin}}
 {{~if x.comment != '' ~}}
 /**
- * {{x.comment}}
+ * {{x.escape_comment}}
  */
 {{~end~}}
 export {{if x.is_abstract_type}}abstract {{end}}class {{name}}{{if parent_def_type}} extends {{x.parent}}{{end}} {
@@ -39,7 +39,7 @@ export {{if x.is_abstract_type}}abstract {{end}}class {{name}}{{if parent_def_ty
     {{~ for field in export_fields ~}}
 {{~if field.comment != '' ~}}
     /**
-     * {{field.comment}}
+     * {{field.escape_comment}}
      */
 {{~end~}}
     readonly {{field.convention_name}}: {{ts_define_type field.ctype}}

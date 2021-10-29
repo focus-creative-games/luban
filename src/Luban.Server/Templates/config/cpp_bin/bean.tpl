@@ -9,7 +9,7 @@
 
 {{~if x.comment != '' ~}}
 /**
- * {{x.comment}}
+ * {{x.escape_comment}}
  */
 {{~end~}}
 class {{name}} : public {{if parent_def_type}} {{parent_def_type.cpp_full_name}} {{else}} bright::CfgBean {{end}}
@@ -42,7 +42,7 @@ class {{name}} : public {{if parent_def_type}} {{parent_def_type.cpp_full_name}}
     {{~ for field in export_fields ~}}
 {{~if field.comment != '' ~}}
     /**
-     * {{field.comment}}
+     * {{field.escape_comment}}
      */
 {{~end~}}
     {{cpp_define_type field.ctype}} {{field.convention_name}};

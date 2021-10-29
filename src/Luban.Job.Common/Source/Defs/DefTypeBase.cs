@@ -1,4 +1,5 @@
 using Luban.Common.Utils;
+using Luban.Job.Common.Utils;
 using Luban.Server.Common;
 using System.Collections.Generic;
 
@@ -47,6 +48,8 @@ namespace Luban.Job.Common.Defs
         public string RustFullName => TypeUtil.MakeRustFullName(Namespace, Name);
 
         public string Comment { get; protected set; }
+
+        public string EscapeComment => DefUtil.EscapeCommentByCurrentLanguage(Comment);
 
         public Dictionary<string, string> Tags { get; protected set; }
 

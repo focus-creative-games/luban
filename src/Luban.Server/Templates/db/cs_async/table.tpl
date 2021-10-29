@@ -13,7 +13,7 @@ namespace {{x.namespace_with_top_module}}
 
 {{~if x.comment != '' ~}}
 /// <summary>
-/// {{x.comment}}
+/// {{x.escape_comment}}
 /// </summary>
 {{~end~}}
 public sealed class {{name}}

@@ -12,7 +12,7 @@ export class {{name}} {
     private _{{table.name}}: {{table.full_name}}
 {{~if table.comment != '' ~}}
     /**
-     * {{table.comment}}
+     * {{table.escape_comment}}
      */
 {{~end~}}
     get {{table.name}}(): {{table.full_name}}  { return this._{{table.name}}}

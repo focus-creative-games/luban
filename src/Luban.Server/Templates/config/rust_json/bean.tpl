@@ -8,7 +8,7 @@
 
 {{~if x.comment != '' ~}}
 /**
- * {{x.comment}}
+ * {{x.escape_comment}}
  */
 {{~end~}}
 {{~if !x.is_abstract_type~}}

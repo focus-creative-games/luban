@@ -11,7 +11,7 @@ public final class {{name}}
     {{~for table in tables ~}}
 {{~if table.comment != '' ~}}
     /**
-     * {{table.comment}}
+     * {{table.escape_comment}}
      */
 {{~end~}}
     private final {{table.full_name_with_top_module}} {{table.inner_name}};

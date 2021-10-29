@@ -71,6 +71,8 @@ namespace Luban.Job.Common.Defs
 
         public string Comment { get; }
 
+        public string EscapeComment => DefUtil.EscapeCommentByCurrentLanguage(Comment);
+
         public Dictionary<string, string> Tags { get; }
 
         public bool IgnoreNameValidation { get; set; }

@@ -12,7 +12,7 @@ import com.google.gson.JsonElement;
 
 {{~if x.comment != '' ~}}
 /**
- * {{x.comment}}
+ * {{x.escape_comment}}
  */
 {{~end~}}
 public final class {{name}} {
@@ -62,7 +62,7 @@ public final class {{name}} {
     {{~ for field in value_type.bean.hierarchy_export_fields ~}}
 {{~if field.comment != '' ~}}
     /**
-     * {{field.comment}}
+     * {{field.escape_comment}}
      */
 {{~end~}}
      public {{java_define_type field.ctype}} {{field.convention_getter_name}}() { return _data.{{field.convention_name}}; }

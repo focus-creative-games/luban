@@ -15,7 +15,7 @@ namespace {{x.namespace_with_top_module}}
 
 {{~if x.comment != '' ~}}
 /// <summary>
-/// {{x.comment}}
+/// {{x.escape_comment}}
 /// </summary>
 {{~end~}}
 public sealed class {{name}}
@@ -78,7 +78,7 @@ public sealed class {{name}}
     {{~ for field in value_type.bean.hierarchy_export_fields ~}}
 {{~if field.comment != '' ~}}
     /// <summary>
-    /// {{field.comment}}
+    /// {{field.escape_comment}}
     /// </summary>
 {{~end~}}
      public {{cs_define_type field.ctype}} {{field.convention_name}} => _data.{{field.convention_name}};

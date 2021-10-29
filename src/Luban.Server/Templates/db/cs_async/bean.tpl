@@ -14,7 +14,7 @@ namespace {{x.namespace_with_top_module}}
 
 {{~if x.comment != '' ~}}
 /// <summary>
-/// {{x.comment}}
+/// {{x.escape_comment}}
 /// </summary>
 {{~end~}}
 public interface {{readonly_name}} {{if parent_def_type}}: IReadOnly{{x.parent_def_type.name}} {{end}}
@@ -26,7 +26,7 @@ public interface {{readonly_name}} {{if parent_def_type}}: IReadOnly{{x.parent_d
 
 {{~if x.comment != '' ~}}
 /// <summary>
-/// {{x.comment}}
+/// {{x.escape_comment}}
 /// </summary>
 {{~end~}}
 public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.parent}} {{else}} Bright.Transaction.TxnBeanBase {{end}}, {{readonly_name}}
@@ -65,7 +65,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
 
 {{~if field.comment != '' ~}}
     /// <summary>
-    /// {{field.comment}}
+    /// {{field.escape_comment}}
     /// </summary>
 {{~end~}}
     public {{db_cs_define_type ctype}} {{field.convention_name}}
@@ -106,7 +106,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
         {{~else~}}
 {{~if field.comment != '' ~}}
         /// <summary>
-        /// {{field.comment}}
+        /// {{field.escape_comment}}
         /// </summary>
 {{~end~}}
          public {{db_cs_define_type ctype}} {{field.convention_name}} => {{field.internal_name}};
@@ -115,14 +115,14 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
         {{~if ctype.bean || ctype.element_type ~}}
 {{~if field.comment != '' ~}}
         /// <summary>
-        /// {{field.comment}}
+        /// {{field.escape_comment}}
         /// </summary>
 {{~end~}}
         {{db_cs_readonly_define_type ctype}} {{readonly_name}}.{{field.convention_name}} => {{field.internal_name}};
         {{~else if ctype.is_map~}}
 {{~if field.comment != '' ~}}
         /// <summary>
-        /// {{field.comment}}
+        /// {{field.escape_comment}}
         /// </summary>
 {{~end~}}
         {{db_cs_readonly_define_type ctype}} {{readonly_name}}.{{field.convention_name}} => new Bright.Transaction.Collections.PReadOnlyMap<{{db_cs_readonly_define_type ctype.key_type}}, {{db_cs_readonly_define_type ctype.value_type}}, {{db_cs_define_type ctype.value_type}}>({{field.internal_name}});

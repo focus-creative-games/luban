@@ -13,7 +13,7 @@ namespace {{x.namespace_with_top_module}}
 
 {{~if x.comment != '' ~}}
 /// <summary>
-/// {{x.comment}}
+/// {{x.escape_comment}}
 /// </summary>
 {{~end~}}
 public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {{x.parent}} {{else}} Bright.Config.BeanBase {{end}}
@@ -49,7 +49,7 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
     {{~ for field in export_fields ~}}
 {{~if field.comment != '' ~}}
     /// <summary>
-    /// {{field.comment}}
+    /// {{field.escape_comment}}
     /// </summary>
 {{~end~}}
     public {{cs_define_type field.ctype}} {{field.convention_name}} { get; private set; }

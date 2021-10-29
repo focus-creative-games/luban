@@ -8,7 +8,7 @@
 
 {{~if x.comment != '' ~}}
 /**
- * {{x.comment}}
+ * {{x.escape_comment}}
  */
 {{~end~}}
 export class {{name}} extends Protocol {
@@ -19,7 +19,7 @@ export class {{name}} extends Protocol {
     {{~ for field in fields ~}}
 {{~if field.comment != '' ~}}
     /**
-     * {{field.comment}}
+     * {{field.escape_comment}}
      */
 {{~end~}}
      {{field.convention_name}}{{if field.is_nullable}}?{{end}} : {{ts_define_type field.ctype}}

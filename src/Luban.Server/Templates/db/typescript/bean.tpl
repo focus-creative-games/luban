@@ -11,14 +11,14 @@
 {{x.typescript_namespace_begin}}
 {{~if x.comment != '' ~}}
 /**
- * {{x.comment}}
+ * {{x.escape_comment}}
  */
 {{~end~}}
 export {{x.ts_class_modifier}} class {{name}} extends {{if parent_def_type}} {{x.parent}} {{else}} TxnBeanBase {{end}}{
     {{~ for field in fields~}}
 {{~if field.comment != '' ~}}
     /**
-     * {{field.comment}}
+     * {{field.escape_comment}}
      */
 {{~end~}}
     {{if is_abstract_type}}protected{{else}}private{{end}} {{field.internal_name}}: {{db_ts_define_type field.ctype}} 
@@ -50,7 +50,7 @@ export {{x.ts_class_modifier}} class {{name}} extends {{if parent_def_type}} {{x
 
 {{~if field.comment != '' ~}}
     /**
-     * {{field.comment}}
+     * {{field.escape_comment}}
      */
 {{~end~}}
     get {{field.convention_name}}(): {{db_ts_define_type ctype}} {
@@ -66,7 +66,7 @@ export {{x.ts_class_modifier}} class {{name}} extends {{if parent_def_type}} {{x
 
 {{~if field.comment != '' ~}}
     /**
-     * {{field.comment}}
+     * {{field.escape_comment}}
      */
 {{~end~}}
     set {{field.convention_name}}(value: {{db_ts_define_type ctype}}) {
@@ -87,7 +87,7 @@ export {{x.ts_class_modifier}} class {{name}} extends {{if parent_def_type}} {{x
         {{~else~}}
 {{~if field.comment != '' ~}}
     /**
-     * {{field.comment}}
+     * {{field.escape_comment}}
      */
 {{~end~}}
     get {{field.convention_name}}(): {{db_ts_define_type ctype}}  { return {{field.internal_name_with_this}} }

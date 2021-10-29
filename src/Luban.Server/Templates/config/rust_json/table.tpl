@@ -5,7 +5,7 @@
 }}
 {{~if x.comment != '' ~}}
 /**
- * {{x.comment}}
+ * {{x.escape_comment}}
  */
 {{~end~}}
 #[allow(non_camel_case_types)]

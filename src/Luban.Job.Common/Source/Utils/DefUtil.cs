@@ -1,6 +1,8 @@
 ﻿using Bright.Collections;
+using Luban.Job.Common.Defs;
 using System;
 using System.Collections.Generic;
+using System.Net;
 
 namespace Luban.Job.Common.Utils
 {
@@ -152,6 +154,26 @@ namespace Luban.Job.Common.Utils
             else
             {
                 return tags1;
+            }
+        }
+
+        public static string EscapeCommentByCurrentLanguage(string comment)
+        {
+            //comment = comment.Replace('\n', ' ').Replace('\r', ' ');
+            var curLan = DefAssemblyBase.LocalAssebmly.CurrentLanguage;
+            switch (curLan)
+            {
+                case ELanguage.INVALID: throw new Exception($"not set current language. can't get recommend naming convention name");
+                case ELanguage.CS:
+                case ELanguage.JAVA:
+                case ELanguage.GO:
+                case ELanguage.CPP:
+                case ELanguage.LUA:
+                case ELanguage.JS:
+                case ELanguage.TYPESCRIPT:
+                case ELanguage.PYTHON:
+                case ELanguage.RUST: return WebUtility.HtmlDecode(comment).Replace("\n", "<br/>");
+                default: throw new Exception($"unknown language:{curLan}");
             }
         }
     }

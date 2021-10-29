@@ -24,6 +24,8 @@ namespace Luban.Job.Common.Defs
 
             public string Comment { get; set; }
 
+            public string EscapeComment => DefUtil.EscapeCommentByCurrentLanguage(Comment);
+
             public Dictionary<string, string> Tags { get; set; }
 
             public bool HasTag(string attrName)

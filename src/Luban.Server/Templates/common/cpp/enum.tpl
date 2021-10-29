@@ -1,7 +1,7 @@
 {{cpp_namespace_begin}}
 {{~if comment != '' ~}}
 /**
- * {{comment}}
+ * {{comment | html.escape}}
  */
 {{~end~}}
 enum class {{name}}
@@ -9,7 +9,7 @@ enum class {{name}}
     {{~ for item in items ~}}
 {{~if item.comment != '' ~}}
     /**
-     * {{item.comment}}
+     * {{item.escape_comment}}
      */
 {{~end~}}
     {{item.name}} = {{item.value}},

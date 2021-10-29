@@ -12,7 +12,7 @@ pub struct {{name}} {
 
 {{~if table.comment != '' ~}}
     /**
-     * {{table.comment}}
+     * {{table.escape_comment}}
      */
 {{~end~}}
     pub {{string.downcase table.name}}: {{table.rust_full_name}},
