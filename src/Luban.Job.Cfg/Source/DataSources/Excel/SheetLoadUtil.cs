@@ -437,12 +437,39 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 {
                     continue;
                 }
+                string desc = "";
+                if (descRow != null)
+                {
+                    // 如果有子字段,并且子字段个数>=2时,如果对应注释行有效注释个数为1，表示这是给当前字段的注释,
+                    // 否则是给子字段的注释，取注释为空，而不是第一个注释
+                    if (subTitle.SubTitles.Count >= 2)
+                    {
+                        int notEmptyCellCount = 0;
+                        for (int i = subTitle.FromIndex; i <= subTitle.ToIndex; i++)
+                        {
+                            var cellValue = descRow?[i].Value?.ToString();
+                            if (!string.IsNullOrWhiteSpace(cellValue))
+                            {
+                                ++notEmptyCellCount;
+                                desc = cellValue;
+                            }
+                        }
+                        if (notEmptyCellCount > 1)
+                        {
+                            desc = "";
+                        }
+                    }
+                    else
+                    {
+                        desc = descRow?[subTitle.FromIndex].Value?.ToString() ?? "";
+                    }
+                }
                 fields.Add(subTitle.Name, new FieldInfo()
                 {
                     Name = subTitle.Name,
                     Tags = title.Tags,
                     Type = typeRow[subTitle.FromIndex].Value?.ToString() ?? "",
-                    Desc = descRow?[subTitle.FromIndex].Value?.ToString() ?? "",
+                    Desc = desc,
                 });
             }
 

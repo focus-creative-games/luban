@@ -159,7 +159,6 @@ namespace Luban.Job.Common.Utils
 
         public static string EscapeCommentByCurrentLanguage(string comment)
         {
-            //comment = comment.Replace('\n', ' ').Replace('\r', ' ');
             var curLan = DefAssemblyBase.LocalAssebmly.CurrentLanguage;
             switch (curLan)
             {
@@ -172,7 +171,7 @@ namespace Luban.Job.Common.Utils
                 case ELanguage.JS:
                 case ELanguage.TYPESCRIPT:
                 case ELanguage.PYTHON:
-                case ELanguage.RUST: return WebUtility.HtmlDecode(comment).Replace("\n", "<br/>");
+                case ELanguage.RUST: return System.Web.HttpUtility.HtmlEncode(comment).Replace("\n", "<br/>");
                 default: throw new Exception($"unknown language:{curLan}");
             }
         }
