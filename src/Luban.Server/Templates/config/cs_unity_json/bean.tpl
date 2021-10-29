@@ -18,7 +18,7 @@ namespace {{x.namespace_with_top_module}}
 /// {{x.escape_comment}}
 /// </summary>
 {{~end~}}
-public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {{parent}} {{else}} Bright.Config.BeanBase {{end}}
+public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{parent}} {{else}} Bright.Config.BeanBase {{end}}
 {
     public {{name}}(JSONNode _json) {{if parent_def_type}} : base(_json) {{end}}
     {

@@ -8,7 +8,7 @@ using SimpleJSON;
 namespace {{namespace}}
 {
    
-public sealed partial class {{name}}
+public sealed class {{name}}
 {
     {{~for table in tables ~}}
 {{~if table.comment != '' ~}}
