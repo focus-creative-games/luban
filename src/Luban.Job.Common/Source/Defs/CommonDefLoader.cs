@@ -296,7 +296,7 @@ namespace Luban.Job.Common.Defs
         private static readonly List<string> _enumRequiredAttrs = new List<string> { "name" };
 
 
-        private static readonly List<string> _enumItemOptionalAttrs = new List<string> { "value", "alias", "comment", "tags" };
+        private static readonly List<string> _enumItemOptionalAttrs = new List<string> { "value", "alias", "comment", "tags", "unique" };
         private static readonly List<string> _enumItemRequiredAttrs = new List<string> { "name" };
 
         protected void AddEnum(string defineFile, XElement e)
@@ -309,6 +309,7 @@ namespace Luban.Job.Common.Defs
                 Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
                 IsFlags = XmlUtil.GetOptionBoolAttribute(e, "flags"),
                 Tags = XmlUtil.GetOptionalAttribute(e, "tags"),
+                IsUniqueItemId = XmlUtil.GetOptionBoolAttribute(e, "unique", true),
             };
 
             foreach (XElement item in e.Elements())

@@ -47,6 +47,8 @@ namespace Luban.Job.Common.Defs
 
         private readonly Dictionary<string, int> _nameOrAlias2Value = new();
 
+        private readonly Dictionary<int, string> _vaule2Name = new();
+
         public bool TryValueByNameOrAlias(string name, out int value)
         {
             return _nameOrAlias2Value.TryGetValue(name, out value);
@@ -74,9 +76,17 @@ namespace Luban.Job.Common.Defs
             {
                 return value;
             }
+            else if (int.TryParse(name, out value))
+            {
+                if (!_vaule2Name.ContainsKey(value))
+                {
+                    throw new Exception($"{value} 不是 enum:'{FullName}'的有效枚举值");
+                }
+                return value;
+            }
             else
             {
-                throw new Exception($"'{name}' 不是有效 枚举:'{FullName}' 值");
+                throw new Exception($"'{name}' 不是enum:'{FullName}'的有效枚举值");
             }
         }
 
@@ -168,6 +178,17 @@ namespace Luban.Job.Common.Defs
                 if (!string.IsNullOrWhiteSpace(item.Alias) && !_nameOrAlias2Value.TryAdd(item.Alias, item.IntValue))
                 {
                     throw new Exception($"enum:'{fullName}' 枚举名:'{Name}' alias:'{item.Alias}' 重复");
+                }
+                if (_vaule2Name.TryGetValue(item.IntValue, out var itemName))
+                {
+                    if (IsUniqueItemId)
+                    {
+                        throw new Exception($"enum:'{fullName}' 枚举值:{item.IntValue} 重复. 枚举名:'{itemName}' <=> '{item.Name}'");
+                    }
+                }
+                else
+                {
+                    _vaule2Name.Add(item.IntValue, item.Name);
                 }
             }
         }
