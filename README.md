@@ -32,7 +32,7 @@ luban相较于常规的excel导表工具有以下核心优势：
 
 - [主页](https://focus-creative-games.github.io/luban/index.html)
 - [特性](docs/traits.md)
-- [快速上手](docs/install.md)
+- [快速上手](docs/start_up.md)
 - [Excel 配置数据简介](docs/data_excel.md)
 - [client&server安装与使用说明](docs/luban_install_manual.md)
 - [本地化](docs/l10n.md)
@@ -181,6 +181,7 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 ### 枚举
 以枚举名或者别名或者值的方式填写枚举值。
 
+在xml中定义
 ```xml
 <enum name="ItemQuality">
 	<var name="WHITE" alias="白" value="0"/>
@@ -188,6 +189,15 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 	<var name="RED" alias="红" value="2"/>
 </enum>
 ```
+或者在 \_\_enums\_\_.xlsx 中 定义
+|##|full_name|item|alias|value|comment|tags|
+|- | - | - | - | - | - | - |
+||ItemQuality|WHITE|白|1|||
+||ItemQuality|GREEN|绿|2|||
+||ItemQuality|RED|红|3|||
+
+
+数据表如下
 
 | ##|id| quality| quality2 |
 | -| - | - | - |
@@ -204,6 +214,7 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 
 假设任务中包含一个 奖励信息 字段
 
+在xml中定义
 ```xml
 <bean name="Reward">
 	<var name="item_id" type="int"/>
@@ -211,6 +222,15 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 	<var name="desc" type="string">
 </bean>
 ```
+或者在 \_\_beans__.xlsx 里定义
+
+|##|full_name|sep|comment|*fields_name| *fields.type | ...|
+| - | - | - | - | - | - | - |
+|| Reward|||item_id|int||
+|||||count|int||
+|||||desc|string||
+
+数据表如下
 
 <table border="1">
 <tr align="center">
@@ -249,6 +269,8 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 - 每个结构占据一个单元格，使用sep分割结构子字段。如items2字段。
 - 整个列表占据一个单元格，使用sep分割列表及结构子字段。如items3字段。
 
+xml中定义如下
+
 ```xml
 <bean name="Reward">
 	<var name="item_id" type="int"/>
@@ -256,6 +278,10 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 	<var name="desc" type="string">
 </bean>
 ```
+
+或者也可以在\_\_beans\_\_.xlsx中定义，此处不再赘述，==**后面的涉及到结构定义的例子都只给xml的示例**==。
+
+数据表如下：
 
 <table border="1">
 <tr align="center">
