@@ -96,7 +96,7 @@ namespace Luban.Job.Db
                     NamingConventionBeanMember = args.NamingConventionBeanMember,
                     NamingConventionEnumMember = args.NamingConventionEnumMember,
                 };
-
+                DefAssemblyBase.LocalAssebmly = ass;
                 ass.Load(rawDefines, agent);
 
 

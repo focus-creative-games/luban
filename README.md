@@ -33,6 +33,7 @@ luban相较于常规的excel导表工具有以下核心优势：
 - [主页](https://focus-creative-games.github.io/luban/index.html)
 - [特性](docs/traits.md)
 - [快速上手](docs/start_up.md)
+- [wiki](https://github.com/focus-creative-games/luban/wiki)。 有使用疑问，请先查看此wiki。
 - [Excel 配置数据简介](docs/data_excel.md)
 - [client&server安装与使用说明](docs/luban_install_manual.md)
 - [本地化](docs/l10n.md)

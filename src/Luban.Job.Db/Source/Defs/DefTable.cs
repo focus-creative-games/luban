@@ -15,6 +15,7 @@ namespace Luban.Job.Db.Defs
             KeyType = b.KeyType;
             ValueType = b.ValueType;
             IsPersistent = b.IsPersistent;
+            Comment = b.Comment;
         }
 
         public string KeyType { get; }
