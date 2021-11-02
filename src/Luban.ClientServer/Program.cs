@@ -34,6 +34,8 @@ namespace Luban.ClientServer
 
             public string[] WatchDir { get; set; }
 
+            public bool GenerateOnly { get; set; }
+
             [Option('t', "template_search_path", Required = false, HelpText = "string template search path.")]
             public string TemplateSearchPath { get; set; }
         }
@@ -55,6 +57,7 @@ Options:
   -l  --loglevel <level>        log level. default INFO. avaliable value: TRACE,DEBUG,INFO,WARN,ERROR,FATAL,OFF
   -c  --cachemetafile <file>    cache meta file name. default is '.cache.meta'
   -w  --watch  <dir>            watch data change and regenerate.
+  --generateonly                generate only. not download generate results.
   -t  --template_search_path <dir> additional template search path
   -h  --help                    show usage
 ");
@@ -120,6 +123,11 @@ Options:
                         case "--watch":
                         {
                             ops.WatchDir = args[++i].Split(';', ',');
+                            break;
+                        }
+                        case "--generateonly":
+                        {
+                            ops.GenerateOnly = true;
                             break;
                         }
                         case "-t":
@@ -305,19 +313,22 @@ Options:
                 return 1;
             }
 
-            var tasks = new List<Task>();
-
-            foreach (var fg in res.FileGroups)
+            if (!options.GenerateOnly)
             {
-                tasks.Add(DownloadFileUtil.DownloadGeneratedFiles(fg.Dir, fg.Files));
-            }
+                var tasks = new List<Task>();
 
-            foreach (var f in res.ScatteredFiles)
-            {
-                tasks.Add(DownloadFileUtil.DownloadGeneratedFile(f));
-            }
+                foreach (var fg in res.FileGroups)
+                {
+                    tasks.Add(DownloadFileUtil.DownloadGeneratedFiles(fg.Dir, fg.Files));
+                }
 
-            Task.WaitAll(tasks.ToArray());
+                foreach (var f in res.ScatteredFiles)
+                {
+                    tasks.Add(DownloadFileUtil.DownloadGeneratedFile(f));
+                }
+
+                Task.WaitAll(tasks.ToArray());
+            }
             return 0;
         }
     }

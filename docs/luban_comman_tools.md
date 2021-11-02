@@ -63,6 +63,7 @@ Luban工具有两种部属方式。
     -l,--loglevel <log level>   可选参数。 日志级别。默认为INFO。有效值有: TRACE,DEBUG,INFO,WARN,ERROR,FATAL,OFF
     -c,--cachemetafile <meta file>  可选参数。 meta缓存文件名。 默认为 .cache.meta
     -w,--watch <dir1;dir2...>     可选参数。 监测目录或者目录列表，以逗号';'分隔。当开启此选项后，生成结束后不会退出程序，而是进入自动生成模式。监听到目标目录发生变化后，自动重新运行生成。省去改动后手动运行生成脚本的麻烦。
+    --generateonly              可选参数。  仅生成。不从服务器下载生成结果。可以用于检查服务器是否能成功生成。
     -h,--help                   可选参数。显示帮助信息
     --  <job options>           必选参数。 从此参数起，便是 不同job的特有选项
 
