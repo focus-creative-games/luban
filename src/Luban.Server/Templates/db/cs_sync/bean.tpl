@@ -29,7 +29,7 @@ public interface {{readonly_name}} {{if parent_def_type}}: IReadOnly{{x.parent_d
 /// {{x.escape_comment}}
 /// </summary>
 {{~end~}}
-public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.parent}} {{else}} Bright.Transaction.TxnBeanBase {{end}}, {{readonly_name}}
+public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.parent}} {{else}} BrightDB.Transaction.TxnBeanBase {{end}}, {{readonly_name}}
 {
     {{~ for field in fields~}}
     {{if is_abstract_type}}protected{{else}}private{{end}} {{db_cs_define_type field.ctype}} {{field.internal_name}};
@@ -46,7 +46,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
         {{ctype = field.ctype}}
         {{~if has_setter ctype~}}
 
-    private sealed class {{field.log_type}} :  Bright.Transaction.FieldLogger<{{name}}, {{db_cs_define_type ctype}}>
+    private sealed class {{field.log_type}} :  BrightDB.Transaction.FieldLogger<{{name}}, {{db_cs_define_type ctype}}>
     {
         public {{field.log_type}}({{name}} self, {{db_cs_define_type ctype}} value) : base(self, value) {  }
 
@@ -74,7 +74,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
         {
             if (this.IsManaged)
             {
-                var txn = Bright.Transaction.TransactionContext.ThreadStaticCtx;
+                var txn = BrightDB.Transaction.TransactionContext.ThreadStaticCtx;
                 if (txn == null) return {{field.internal_name}};
                 var log = ({{field.log_type}})txn.GetField(this.GetObjectId() + {{field.id}});
                 return log != null ? log.Value : {{field.internal_name}};
@@ -91,7 +91,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
             {{~end~}}
             if (this.IsManaged)
             {
-                var txn = Bright.Transaction.TransactionContext.ThreadStaticCtx;
+                var txn = BrightDB.Transaction.TransactionContext.ThreadStaticCtx;
                 txn.PutField(this.GetObjectId() + {{field.id}}, new {{field.log_type}}(this, value));
                 {{~if ctype.need_set_children_root}}
                 value?.InitRoot(GetRoot());
@@ -125,7 +125,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
         /// {{field.escape_comment}}
         /// </summary>
 {{~end~}}
-        {{db_cs_readonly_define_type ctype}} {{readonly_name}}.{{field.convention_name}} => new Bright.Transaction.Collections.PReadOnlyMap<{{db_cs_readonly_define_type ctype.key_type}}, {{db_cs_readonly_define_type ctype.value_type}}, {{db_cs_define_type ctype.value_type}}>({{field.internal_name}});
+        {{db_cs_readonly_define_type ctype}} {{readonly_name}}.{{field.convention_name}} => new BrightDB.Transaction.Collections.PReadOnlyMap<{{db_cs_readonly_define_type ctype.key_type}}, {{db_cs_readonly_define_type ctype.value_type}}, {{db_cs_define_type ctype.value_type}}>({{field.internal_name}});
         {{~end~}}
     {{~end~}}
 

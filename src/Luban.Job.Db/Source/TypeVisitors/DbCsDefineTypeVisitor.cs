@@ -15,17 +15,17 @@ namespace Luban.Job.Db.TypeVisitors
 
         public override string Accept(TList type)
         {
-            return $"Bright.Transaction.Collections.{(type.ElementType is TBean ? " PList2" : "PList1")}<{type.ElementType.Apply(this)}>";
+            return $"BrightDB.Transaction.Collections.{(type.ElementType is TBean ? " PList2" : "PList1")}<{type.ElementType.Apply(this)}>";
         }
 
         public override string Accept(TSet type)
         {
-            return $"Bright.Transaction.Collections.PSet<{type.ElementType.Apply(this)}>";
+            return $"BrightDB.Transaction.Collections.PSet<{type.ElementType.Apply(this)}>";
         }
 
         public override string Accept(TMap type)
         {
-            return $"Bright.Transaction.Collections.{(type.ValueType is TBean ? " PMap2" : "PMap1")}<{type.KeyType.Apply(this)}, {type.ValueType.Apply(this)}>";
+            return $"BrightDB.Transaction.Collections.{(type.ValueType is TBean ? " PMap2" : "PMap1")}<{type.KeyType.Apply(this)}, {type.ValueType.Apply(this)}>";
         }
     }
 }
