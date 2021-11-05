@@ -195,24 +195,7 @@ namespace LubanAssistant
 
             //int nextRowIndex = titleRowNum + 2;
 
-            // 对于 int和long类型记录，按值排序
-            var records = tableDataInfo.MainRecords;
-            DefField keyField = tableDataInfo.Table.IndexField;
-            if (keyField != null && (keyField.CType is TInt || keyField.CType is TLong))
-            {
-                string keyFieldName = keyField.Name;
-                records.Sort((a, b) =>
-                {
-                    DType keya = a.Data.GetField(keyFieldName);
-                    DType keyb = b.Data.GetField(keyFieldName);
-                    switch (keya)
-                    {
-                        case DInt ai: return ai.Value.CompareTo((keyb as DInt).Value);
-                        case DLong al: return al.Value.CompareTo((keyb as DLong).Value);
-                        default: throw new NotSupportedException();
-                    }
-                });
-            }
+            var records = DefAssembly.ToSortByKeyDataList(tableDataInfo.Table, tableDataInfo.MainRecords);
 
             int totalRowCount = 0;
             var dataRangeArray = new List<object[]>();

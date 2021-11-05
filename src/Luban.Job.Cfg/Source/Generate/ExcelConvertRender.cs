@@ -1,6 +1,7 @@
 ﻿using ClosedXML.Excel;
 using Luban.Job.Cfg.Cache;
 using Luban.Job.Cfg.DataConverts;
+using Luban.Job.Cfg.Defs;
 using Luban.Job.Cfg.Utils;
 using Luban.Job.Common.Types;
 using Luban.Job.Common.TypeVisitors;
@@ -25,7 +26,8 @@ namespace Luban.Job.Cfg.Generate
             {
                 ctx.Tasks.Add(Task.Run(() =>
                 {
-                    var records = ctx.Assembly.GetTableAllDataList(table);
+                    var records = DefAssembly.ToSortByKeyDataList(table, ctx.Assembly.GetTableAllDataList(table));
+
                     string dirName = table.FullName;
                     var fileName = table.FullName;
                     var filePath = $"{dirName}/{fileName}.xlsx";

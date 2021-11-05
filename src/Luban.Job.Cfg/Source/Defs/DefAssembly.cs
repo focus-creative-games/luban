@@ -7,6 +7,7 @@ using Luban.Job.Cfg.l10n;
 using Luban.Job.Cfg.RawDefs;
 using Luban.Job.Cfg.TypeVisitors;
 using Luban.Job.Common.Defs;
+using Luban.Job.Common.Types;
 using Luban.Server.Common;
 using System;
 using System.Collections.Concurrent;
@@ -138,6 +139,29 @@ namespace Luban.Job.Cfg.Defs
                 }
                 return finalRecords;
             }
+        }
+
+        public static List<Record> ToSortByKeyDataList(DefTable table, List<Record> originRecords)
+        {
+            var sortedRecords = new List<Record>(originRecords);
+
+            DefField keyField = table.IndexField;
+            if (keyField != null && (keyField.CType is TInt || keyField.CType is TLong))
+            {
+                string keyFieldName = keyField.Name;
+                sortedRecords.Sort((a, b) =>
+                {
+                    DType keya = a.Data.GetField(keyFieldName);
+                    DType keyb = b.Data.GetField(keyFieldName);
+                    switch (keya)
+                    {
+                        case DInt ai: return ai.Value.CompareTo((keyb as DInt).Value);
+                        case DLong al: return al.Value.CompareTo((keyb as DLong).Value);
+                        default: throw new NotSupportedException();
+                    }
+                });
+            }
+            return sortedRecords;
         }
 
         public TableDataInfo GetTableDataInfo(DefTable table)
