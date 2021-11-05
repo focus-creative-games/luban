@@ -173,7 +173,7 @@ namespace Luban.Job.Cfg
                         hasLoadCfgData = true;
                         var timer = new ProfileTimer();
                         timer.StartPhase("load config data");
-                        await DataLoaderUtil.LoadCfgDataAsync(agent, ass, args.InputDataDir, args.PatchName, args.PatchInputDataDir);
+                        await DataLoaderUtil.LoadCfgDataAsync(agent, ass, args.InputDataDir, args.PatchName, args.PatchInputDataDir, args.InputConvertDataDir);
                         timer.EndPhaseAndLog();
 
                         if (needL10NTextConvert)

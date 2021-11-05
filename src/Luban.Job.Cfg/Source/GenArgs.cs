@@ -14,6 +14,9 @@ namespace Luban.Job.Cfg
         [Option("output_data_dir", Required = true, HelpText = "output data directory")]
         public string OutputDataDir { get; set; }
 
+        [Option("input_convert_data_dir", Required = false, HelpText = "override input data dir with convert data dir")]
+        public string InputConvertDataDir { get; set; }
+
         [Option("output_data_resource_list_file", Required = false, HelpText = "output resource list file")]
         public string OutputDataResourceListFile { get; set; }
 

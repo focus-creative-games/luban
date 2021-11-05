@@ -95,10 +95,26 @@ namespace Luban.Job.Cfg.Utils
             }
         }
 
-        public static async Task LoadTableAsync(IAgent agent, DefTable table, string dataDir, string patchName, string patchDataDir)
+        public static async Task LoadTableAsync(IAgent agent, DefTable table, string dataDir, string patchName, string patchDataDir, string inputConvertDataDir)
         {
             var mainLoadTasks = new List<Task<List<Record>>>();
-            var mainGenerateTask = GenerateLoadRecordFromFileTasksAsync(agent, table, dataDir, table.InputFiles, mainLoadTasks);
+
+            // 如果指定了 inputConvertDataDir, 则覆盖dataDir为 inputConvertDataDir
+            // 同时 修改所有表的input为 table.FullName
+            string finalDataDir;
+            List<string> finalInputFiles;
+            if (string.IsNullOrWhiteSpace(inputConvertDataDir))
+            {
+                finalDataDir = dataDir;
+                finalInputFiles = table.InputFiles;
+            }
+            else
+            {
+                finalDataDir = inputConvertDataDir;
+                finalInputFiles = new List<string>() { table.FullName };
+            }
+
+            var mainGenerateTask = GenerateLoadRecordFromFileTasksAsync(agent, table, finalDataDir, finalInputFiles, mainLoadTasks);
 
             var patchLoadTasks = new List<Task<List<Record>>>();
 
@@ -138,7 +154,7 @@ namespace Luban.Job.Cfg.Utils
             s_logger.Trace("table:{name} record num:{num}", table.FullName, mainRecords.Count);
         }
 
-        public static async Task LoadCfgDataAsync(IAgent agent, DefAssembly ass, string dataDir, string patchName, string patchDataDir)
+        public static async Task LoadCfgDataAsync(IAgent agent, DefAssembly ass, string dataDir, string patchName, string patchDataDir, string inputConvertDataDir)
         {
             var ctx = agent;
             List<DefTable> exportTables = ass.Types.Values.Where(t => t is DefTable ct && ct.NeedExport).Select(t => (DefTable)t).ToList();
@@ -152,7 +168,7 @@ namespace Luban.Job.Cfg.Utils
                 genDataTasks.Add(Task.Run(async () =>
                 {
                     long beginTime = TimeUtil.NowMillis;
-                    await LoadTableAsync(agent, table, dataDir, patchName, patchDataDir);
+                    await LoadTableAsync(agent, table, dataDir, patchName, patchDataDir, inputConvertDataDir);
                     long endTime = TimeUtil.NowMillis;
                     if (endTime - beginTime > 100)
                     {
