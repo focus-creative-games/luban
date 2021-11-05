@@ -345,7 +345,7 @@ namespace Luban.Job.Cfg.DataCreators
                     {
                         throw new Exception($"type:'{fullType}' 不是 bean 类型");
                     }
-                    return new DBean(originBean, implType, CreateBeanFields(implType, sheet, row));
+                    return new DBean(type, implType, CreateBeanFields(implType, sheet, row));
                 }
                 else
                 {
@@ -362,7 +362,7 @@ namespace Luban.Job.Cfg.DataCreators
                         }
                     }
 
-                    return new DBean(originBean, originBean, CreateBeanFields(originBean, sheet, row));
+                    return new DBean(type, originBean, CreateBeanFields(originBean, sheet, row));
                 }
             }
             else if (row.Elements != null)

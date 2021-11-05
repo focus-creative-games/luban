@@ -93,8 +93,16 @@ namespace Luban.Job.Cfg.DataConverts
 
         public string Accept(DBean type, string sep)
         {
+            if (!string.IsNullOrWhiteSpace(type.Type.Sep))
+            {
+                sep = type.Type.Sep;
+            }
             var sb = new List<string>();
             if (type.Type.IsAbstractType)
+            {
+                sb.Add(type.ImplType != null ? type.ImplType.Name : DefBean.BEAN_NULL_STR);
+            }
+            else if (type.TType.IsNullable)
             {
                 sb.Add(type.ImplType != null ? type.ImplType.Name : DefBean.BEAN_NULL_STR);
             }

@@ -1,13 +1,16 @@
 using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Cfg.Utils;
+using Luban.Job.Common.Types;
 using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.Datas
 {
     public class DBean : DType
     {
-        public DefBean Type { get; }
+        public TBean TType { get; }
+
+        public DefBean Type => (DefBean)TType.Bean;
 
         public DefBean ImplType { get; }
 
@@ -15,9 +18,9 @@ namespace Luban.Job.Cfg.Datas
 
         public override string TypeName => "bean";
 
-        public DBean(DefBean defType, DefBean implType, List<DType> fields)
+        public DBean(TBean defType, DefBean implType, List<DType> fields)
         {
-            this.Type = defType;
+            this.TType = defType;
             this.ImplType = implType;
             this.Fields = fields;
         }

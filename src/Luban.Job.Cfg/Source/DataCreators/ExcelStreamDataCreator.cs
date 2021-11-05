@@ -351,7 +351,7 @@ namespace Luban.Job.Cfg.DataCreators
                 {
                     throw new InvalidExcelDataException($"type:{fullType} 不是bean类型");
                 }
-                return new DBean(originBean, implType, CreateBeanFields(implType, x));
+                return new DBean(type, implType, CreateBeanFields(implType, x));
             }
             else
             {
@@ -367,7 +367,7 @@ namespace Luban.Job.Cfg.DataCreators
                         throw new Exception($"type:'{type.Bean.FullName}' 可空标识:'{subType}' 不合法（只能为{DefBean.BEAN_NOT_NULL_STR}或{DefBean.BEAN_NULL_STR}或{originBean.Name})");
                     }
                 }
-                return new DBean(originBean, originBean, CreateBeanFields(originBean, x));
+                return new DBean(type, originBean, CreateBeanFields(originBean, x));
             }
         }
 

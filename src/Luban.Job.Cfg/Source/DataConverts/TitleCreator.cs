@@ -157,9 +157,12 @@ namespace Luban.Job.Cfg.DataConverts
         {
             title.FromIndex = column;
             title.ToIndex = column;
-            if (!title.Tags.ContainsKey("sep"))
+            if (type.Bean is DefBean dbean && string.IsNullOrWhiteSpace(dbean.Sep))
             {
-                title.Tags.Add("sep", "|");
+                if (!title.Tags.ContainsKey("sep"))
+                {
+                    title.Tags.Add("sep", "|");
+                }
             }
 
             //int lastColumn = column - 1;

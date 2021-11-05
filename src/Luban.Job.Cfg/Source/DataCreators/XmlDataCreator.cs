@@ -145,7 +145,7 @@ namespace Luban.Job.Cfg.DataCreators
                 }
 
             }
-            return new DBean(bean, implBean, fields);
+            return new DBean(type, implBean, fields);
         }
 
         private List<DType> ReadList(TType type, XElement x, DefAssembly ass)

@@ -2,6 +2,7 @@
 using Luban.Job.Cfg.DataSources.Excel;
 using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Common.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -125,7 +126,6 @@ namespace Luban.Job.Cfg.DataConverts
 
         public int Accept(DBean type, Title x)
         {
-
             if (x.SubTitleList.Count > 0)
             {
                 if (type.Type.IsAbstractType)
@@ -178,6 +178,10 @@ namespace Luban.Job.Cfg.DataConverts
 
                             //    (_cells[_startRowIndex, fieldTitle.FromIndex] as Range).Value = data.Apply(ToExcelStringVisitor.Ins, fieldTitle.Sep);
                             //}
+                        }
+                        else if (field.CType is TText)
+                        {
+                            SetTitleValue(fieldTitle, $"null{fieldTitle.Sep}null");
                         }
                     }
                 }
