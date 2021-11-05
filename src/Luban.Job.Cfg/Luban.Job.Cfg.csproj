@@ -12,9 +12,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.95.4" />
     <PackageReference Include="ExcelDataReader" Version="3.6.0" />
     <PackageReference Include="NeoLua" Version="1.3.13" />
-    <PackageReference Include="SpreadsheetLight" Version="3.5.0" />
     <PackageReference Include="Ude.NetStandard" Version="1.2.0" />
     <PackageReference Include="YamlDotNet" Version="11.2.1" />
   </ItemGroup>

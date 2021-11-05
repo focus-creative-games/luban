@@ -1,10 +1,10 @@
-﻿using Luban.Job.Cfg.Cache;
+﻿using ClosedXML.Excel;
+using Luban.Job.Cfg.Cache;
 using Luban.Job.Cfg.DataConverts;
 using Luban.Job.Cfg.Utils;
 using Luban.Job.Common.Types;
 using Luban.Job.Common.TypeVisitors;
 using Luban.Job.Common.Utils;
-using SpreadsheetLight;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -72,112 +72,11 @@ namespace Luban.Job.Cfg.Generate
                         totalRowCount += rec.Data.Apply(fillVisitor, title);
                     }
 
-
-
-                    //var memoryStream = new MemoryStream();
-                    //using (var package = new ExcelPackage(memoryStream))
-                    //{
-                    //    var sheet = package.Workbook.Worksheets.Add("sheet1");
-                    //    for (int i = 0; i < dataRangeArray.Count; i++)
-                    //    {
-                    //        var rawRow = dataRangeArray[i];
-                    //        sheet.Cells[i + 1, 1, i + 1, rawRow.Length].FillList(rawRow);
-                    //    }
-                    //    sheet.Cells.AutoFitColumns();
-                    //    content = package.GetAsByteArray();
-                    //}
-
-                    var worksheet = new SLDocument();
-                    //var rows = new List<Row>();
-                    //for (int i = 0; i < dataRangeArray.Count; i++)
-                    //{
-                    //    var rawRow = dataRangeArray[i];
-                    //    var cells = new List<Cell>();
-                    //    for (int j = 0; j < rawRow.Length; j++)
-                    //    {
-                    //        cells.Add(new Cell(j + 1, rawRow[j]));
-                    //    }
-                    //    rows.Add(new Row(i + 1, cells));
-                    //}
-                    //worksheet.Rows = rows;
-                    for (int i = 0; i < dataRangeArray.Count; i++)
-                    {
-                        var rawRow = dataRangeArray[i];
-                        for (int j = 0; j < rawRow.Length; j++)
-                        {
-                            object v = dataRangeArray[i][j];
-                            if (v != null)
-                            {
-                                switch (v)
-                                {
-                                    case int t:
-                                    {
-                                        worksheet.SetCellValue(i + 1, j + 1, t);
-                                        break;
-                                    }
-                                    case string t:
-                                    {
-                                        worksheet.SetCellValue(i + 1, j + 1, t);
-                                        break;
-                                    }
-                                    case float t:
-                                    {
-                                        worksheet.SetCellValue(i + 1, j + 1, t);
-                                        break;
-                                    }
-                                    case double t:
-                                    {
-                                        worksheet.SetCellValue(i + 1, j + 1, t);
-                                        break;
-                                    }
-                                    case long t:
-                                    {
-                                        worksheet.SetCellValue(i + 1, j + 1, t);
-                                        break;
-                                    }
-                                    case short t:
-                                    {
-                                        worksheet.SetCellValue(i + 1, j + 1, t);
-                                        break;
-                                    }
-                                    case bool t:
-                                    {
-                                        worksheet.SetCellValue(i + 1, j + 1, t);
-                                        break;
-                                    }
-                                    case DateTime t:
-                                    {
-
-                                        worksheet.SetCellValue(i + 1, j + 1, t);
-                                        break;
-                                    }
-                                    default:
-                                    {
-                                        worksheet.SetCellValue(i + 1, j + 1, v.ToString());
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    worksheet.AutoFitColumn(1, title.ToIndex + 1);
-                    worksheet.AutoFitRow(1, dataRangeArray.Count);
+                    using var workbook = new XLWorkbook(XLEventTracking.Disabled);
+                    var sheet = workbook.AddWorksheet();
+                    sheet.Cell(1, 1).InsertData(dataRangeArray);
                     var stream = new MemoryStream();
-                    worksheet.SaveAs(stream);
-
-
-
-                    //var tempFile = $"{Path.GetTempFileName()}_{fileName}.tmp";
-                    //var outputFile = $"{Path.GetTempFileName()}_{fileName}.xlsx";
-                    //var outputStream = new FileStream(tempFile, FileMode.CreateNew, FileAccess.ReadWrite);
-                    //var writer = ExcelDataWriter.ExcelDataWriter.GetAsByteArray(dataRangeArray, new ExcelDataWriter.ClassMap<object[]>());
-                    //using (FastExcel.FastExcel fastExcel = new FastExcel.FastExcel(new System.IO.FileInfo(tempFile), new System.IO.FileInfo(outputFile)))
-                    //{
-                    //    // Write the data
-                    //    fastExcel.Write(worksheet, "sheet1");
-                    //}
-                    //outputStream.Close();
-                    //outputStream.Flush();
+                    workbook.SaveAs(stream);
                     byte[] content = DataUtil.StreamToBytes(stream);
                     var md5 = CacheFileUtil.GenStringOrBytesMd5AndAddCache(filePath, content);
                     FileRecordCacheManager.Ins.AddCachedRecordOutputData(table, records, genType, md5);

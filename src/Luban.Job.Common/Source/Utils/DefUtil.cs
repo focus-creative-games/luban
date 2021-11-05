@@ -171,7 +171,12 @@ namespace Luban.Job.Common.Utils
                 case ELanguage.JS:
                 case ELanguage.TYPESCRIPT:
                 case ELanguage.PYTHON:
-                case ELanguage.RUST: return System.Web.HttpUtility.HtmlEncode(comment).Replace("\n", "<br/>");
+                case ELanguage.RUST:
+#if !LUBAN_LITE
+                    return System.Web.HttpUtility.HtmlEncode(comment).Replace("\n", "<br/>");
+#else
+                    throw new NotSupportedException();
+#endif
                 default: throw new Exception($"unknown language:{curLan}");
             }
         }
