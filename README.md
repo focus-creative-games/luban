@@ -40,6 +40,7 @@ luban相较于常规的excel导表工具有以下核心优势：
 - [文档目录](docs/catalog.md)
 - [完整手册](docs/manual.md)
 - **示例项目** ([github](https://github.com/focus-creative-games/luban_examples)) ([gitee](https://gitee.com/focus-creative-games/luban_examples))
+- [版本变更记录](https://github.com/focus-creative-games/luban/wiki/%E7%89%88%E6%9C%AC%E5%8F%98%E6%9B%B4%E8%AE%B0%E5%BD%95)
 
 - 支持与联系
   - QQ群: 692890842 （Luban开发交流群）。有使用方面的疑问请及时加QQ群询问，随时有人帮助解决。
@@ -53,6 +54,7 @@ luban相较于常规的excel导表工具有以下核心优势：
 - 灵活的数据源定义。一个表可以来自多个文件或者一个文件内定义多个表或者一个目录下所有文件甚至来自云表格，以及以上的组合
 - 支持表与字段级别分组。可以灵活定义分组，选择性地导出客户端或者服务器或编辑器所用的表及字段
 - 多种导出数据格式支持。支持binary、json、lua、xml、erlang、**xlsx** 及自定义的导出数据格式
+- 支持xlsx与json、lua之类的格式之间互转
 - 强大灵活的定制能力
 	- 支持代码模板，可以用自定义模板定制生成的代码格式
 	- **支持数据模板**，可以用模板文件定制导出格式。意味着可以在不改动现有程序代码的情况下，把luban当作**配置处理前端**，生成自定义格式的数据与自己项目的配置加载代码配合工作。开发已久的项目或者已经上线的老项目，也能从luban强大的数据处理工作流中获益
