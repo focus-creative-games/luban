@@ -29,16 +29,8 @@ luban相较于常规的excel导表工具有以下核心优势：
 - 通用型生成工具。也可以用于生成协议、数据库之类的代码，甚至可以用作对象缓存服务。
 
 ## 文档
-
-- [主页](https://focus-creative-games.github.io/luban/index.html)
-- [特性](docs/traits.md)
 - [快速上手](docs/start_up.md)
-- [wiki](https://github.com/focus-creative-games/luban/wiki)。 有使用疑问，请先查看此wiki。
-- [Excel 配置数据简介](docs/data_excel.md)
-- [client&server安装与使用说明](docs/luban_install_manual.md)
-- [本地化](docs/l10n.md)
-- [文档目录](docs/catalog.md)
-- [完整手册](docs/manual.md)
+- [wiki](https://github.com/focus-creative-games/luban/wiki)  有使用疑问，请先查看此wiki。
 - **示例项目** ([github](https://github.com/focus-creative-games/luban_examples)) ([gitee](https://gitee.com/focus-creative-games/luban_examples))
 - [版本变更记录](https://github.com/focus-creative-games/luban/wiki/%E7%89%88%E6%9C%AC%E5%8F%98%E6%9B%B4%E8%AE%B0%E5%BD%95)
 
@@ -898,7 +890,7 @@ println(tables.TbItem.Get(12).Name)
 ## 开发环境架设
 
 - 安装 [VS2019 社区版](https://visualstudio.microsoft.com/zh-hans/vs/)
-- 安装 [.dotnet core sdk 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
+- 安装 [.dotnet core sdk 6.0](https://dotnet.microsoft.com/download/dotnet/6.0)
 
 ## 安装与使用
 

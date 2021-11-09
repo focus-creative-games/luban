@@ -2,13 +2,23 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
+    <PackageProjectUrl>https://github.com/focus-creative-games/luban</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="Source\TypeVisitors\**" />
     <EmbeddedResource Remove="Source\TypeVisitors\**" />
     <None Remove="Source\TypeVisitors\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

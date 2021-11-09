@@ -2,7 +2,7 @@
 
 ## 安装
 
-1. dotnet sdk 5.0 
+1. [dotnet sdk 6.0](https://dotnet.microsoft.com/download/dotnet/6.0)
 1. 下载luban_examples项目
 
     下载项目 [luban_examples](https://github.com/focus-creative-games/luban_examples)。
