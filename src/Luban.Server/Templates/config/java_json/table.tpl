@@ -24,7 +24,7 @@ public final class {{name}} {
         _dataMap = new java.util.HashMap<{{java_box_define_type key_type}}, {{java_box_define_type value_type}}>();
         _dataList = new java.util.ArrayList<{{java_box_define_type value_type}}>();
         
-        for(var _e_ : __json__.getAsJsonArray()) {
+        for(com.google.gson.JsonElement _e_ : __json__.getAsJsonArray()) {
             {{java_box_define_type value_type}} _v;
             {{java_deserialize '_e_.getAsJsonObject()' '_v' value_type}}
             _dataList.add(_v);

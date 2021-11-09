@@ -91,22 +91,22 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TArray type, string bufName, string fieldName)
         {
-            return $"{{int n = Math.min({bufName}.readSize(), {bufName}.size());{fieldName} = new {type.ElementType.Apply(JavaDefineTypeName.Ins)}[n];for(var i = 0 ; i < n ; i++) {{ {type.ElementType.Apply(JavaDefineTypeName.Ins)} _e;{type.ElementType.Apply(this, bufName, "_e")} {fieldName}[i] = _e;}}}}";
+            return $"{{int n = Math.min({bufName}.readSize(), {bufName}.size());{fieldName} = new {type.ElementType.Apply(JavaDefineTypeName.Ins)}[n];for(int i = 0 ; i < n ; i++) {{ {type.ElementType.Apply(JavaDefineTypeName.Ins)} _e;{type.ElementType.Apply(this, bufName, "_e")} {fieldName}[i] = _e;}}}}";
         }
 
         public string Accept(TList type, string bufName, string fieldName)
         {
-            return $"{{int n = Math.min({bufName}.readSize(), {bufName}.size());{fieldName} = new {type.Apply(JavaDefineTypeName.Ins)}(n);for(var i = 0 ; i < n ; i++) {{ {type.ElementType.Apply(JavaBoxDefineTypeName.Ins)} _e;  {type.ElementType.Apply(this, bufName, "_e")} {fieldName}.add(_e);}}}}";
+            return $"{{int n = Math.min({bufName}.readSize(), {bufName}.size());{fieldName} = new {type.Apply(JavaDefineTypeName.Ins)}(n);for(int i = 0 ; i < n ; i++) {{ {type.ElementType.Apply(JavaBoxDefineTypeName.Ins)} _e;  {type.ElementType.Apply(this, bufName, "_e")} {fieldName}.add(_e);}}}}";
         }
 
         public string Accept(TSet type, string bufName, string fieldName)
         {
-            return $"{{int n = Math.min({bufName}.readSize(), {bufName}.size());{fieldName} = new {type.Apply(JavaDefineTypeName.Ins)}(n * 3 / 2);for(var i = 0 ; i < n ; i++) {{ {type.ElementType.Apply(JavaBoxDefineTypeName.Ins)} _e;  {type.ElementType.Apply(this, bufName, "_e")} {fieldName}.add(_e);}}}}";
+            return $"{{int n = Math.min({bufName}.readSize(), {bufName}.size());{fieldName} = new {type.Apply(JavaDefineTypeName.Ins)}(n * 3 / 2);for(int i = 0 ; i < n ; i++) {{ {type.ElementType.Apply(JavaBoxDefineTypeName.Ins)} _e;  {type.ElementType.Apply(this, bufName, "_e")} {fieldName}.add(_e);}}}}";
         }
 
         public string Accept(TMap type, string bufName, string fieldName)
         {
-            return $"{{int n = Math.min({bufName}.readSize(), {bufName}.size());{fieldName} = new {type.Apply(JavaDefineTypeName.Ins)}(n * 3 / 2);for(var i = 0 ; i < n ; i++) {{ {type.KeyType.Apply(JavaBoxDefineTypeName.Ins)} _k;  {type.KeyType.Apply(this, bufName, "_k")} {type.ValueType.Apply(JavaBoxDefineTypeName.Ins)} _v;  {type.ValueType.Apply(this, bufName, "_v")}     {fieldName}.put(_k, _v);}}}}";
+            return $"{{int n = Math.min({bufName}.readSize(), {bufName}.size());{fieldName} = new {type.Apply(JavaDefineTypeName.Ins)}(n * 3 / 2);for(int i = 0 ; i < n ; i++) {{ {type.KeyType.Apply(JavaBoxDefineTypeName.Ins)} _k;  {type.KeyType.Apply(this, bufName, "_k")} {type.ValueType.Apply(JavaBoxDefineTypeName.Ins)} _v;  {type.ValueType.Apply(this, bufName, "_v")}     {fieldName}.put(_k, _v);}}}}";
 
         }
 
