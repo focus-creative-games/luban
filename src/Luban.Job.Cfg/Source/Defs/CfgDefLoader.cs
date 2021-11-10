@@ -1,5 +1,5 @@
-using Bright.Collections;
 using Luban.Common.Utils;
+using Luban.Job.Cfg.Cache;
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.DataSources.Excel;
 using Luban.Job.Cfg.RawDefs;
@@ -7,7 +7,6 @@ using Luban.Job.Cfg.Utils;
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.RawDefs;
 using Luban.Job.Common.Types;
-using Luban.Job.Common.Utils;
 using Luban.Server.Common;
 using System;
 using System.Collections.Generic;
@@ -288,9 +287,14 @@ namespace Luban.Job.Cfg.Defs
         {
             var inputFileInfos = await DataLoaderUtil.CollectInputFilesAsync(this.Agent, table.InputFiles, dataDir);
             var file = inputFileInfos[0];
-            var source = new ExcelDataSource();
-            var stream = new MemoryStream(await this.Agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5));
-            var tableDefInfo = source.LoadTableDefInfo(file.OriginFile, file.SheetName, stream);
+            RawSheetTableDefInfo tableDefInfo;
+            if (!ExcelTableValueTypeDefInfoCacheManager.Instance.TryGetTableDefInfo(file.MD5, file.SheetName, out tableDefInfo))
+            {
+                var source = new ExcelDataSource();
+                var stream = new MemoryStream(await this.Agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5));
+                tableDefInfo = source.LoadTableDefInfo(file.OriginFile, file.SheetName, stream);
+                ExcelTableValueTypeDefInfoCacheManager.Instance.AddTableDefInfoToCache(file.MD5, file.SheetName, tableDefInfo);
+            }
 
             var cb = new CfgBean() { Namespace = table.Namespace, Name = table.ValueType, Comment = "" };
 #if !LUBAN_LITE
