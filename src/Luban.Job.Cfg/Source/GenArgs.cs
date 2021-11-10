@@ -11,7 +11,7 @@ namespace Luban.Job.Cfg
         [Option('v', "validate_root_dir", Required = false, HelpText = "validate root directory")]
         public string ValidateRootDir { get; set; }
 
-        [Option("output_data_dir", Required = true, HelpText = "output data directory")]
+        [Option("output_data_dir", Required = false, HelpText = "output data directory")]
         public string OutputDataDir { get; set; }
 
         [Option("input_convert_data_dir", Required = false, HelpText = "override input data dir with convert data dir")]
@@ -23,7 +23,7 @@ namespace Luban.Job.Cfg
         [Option("output_data_json_monolithic_file", Required = false, HelpText = "output monolithic json file")]
         public string OutputDataJsonMonolithicFile { get; set; }
 
-        [Option("gen_types", Required = true, HelpText = "code_cs_bin,code_cs_json,code_cs_unity_json,code_lua_bin,code_java_bin,code_java_json,code_go_bin,code_go_json,code_cpp_bin,code_python3_json,code_typescript_bin,code_typescript_json,code_rust_json,data_bin,data_lua,data_json,data_json2,data_json_monolithic,data_resources,data_template . can be multi")]
+        [Option("gen_types", Required = true, HelpText = "code_cs_bin,code_cs_json,code_cs_unity_json,code_lua_bin,code_java_bin,code_java_json,code_go_bin,code_go_json,code_cpp_bin,code_python3_json,code_typescript_bin,code_typescript_json,code_rust_json,data_bin,data_lua,data_json,data_json2,data_json_monolithic,data_resources,data_template,convert_json,convert_lua,convert_xlsx . can be multi")]
         public string GenType { get; set; }
 
         [Option("template_name", Required = false, HelpText = "template name. use with gen_types=data_template")]

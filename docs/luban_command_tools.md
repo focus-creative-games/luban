@@ -47,8 +47,9 @@ Luban工具有两种部属方式。
     dotnet Luban.Server.dll [-p <port>] [-l <log level>]
 
     参数介绍：
-    -p <port>           可选参数。 监听端口 <port>，默认为8899。
-    -l <log level>      可选参数。 日志级别。默认为INFO。 有效值有: TRACE,DEBUG,INFO,WARN,ERROR,FATAL,OFF
+    -p, --port <port>               可选参数。 监听端口 <port>，默认为8899。
+    -l, --loglevel <log level>      可选参数。 日志级别。默认为INFO。 有效值有: TRACE,DEBUG,INFO,WARN,ERROR,FATAL,OFF
+    -t, --template_search_path      可选参数。模板的额外搜索路径。优先从此路径，再从Templates目录搜索模板文件。
 
 ## luban-client 使用介绍
 
@@ -73,14 +74,21 @@ Luban工具有两种部属方式。
 
     -d,--define_file <root file>            必选参数。 根定义文件名。
     --input_data_dir  <input data dir>      必选参数。 配置数据文件根目录。
+    --input_convert_dir <dir>               可选参数。 执行json、lua、xlsx之类数据格式转换时，提供的数据源，覆盖table中默认的input参数。
     -c,--output_code_dir <output code dir>  可选参数。 生成代码文件的目录。
     -s,--service                            必选参数。生成分组目标。一般来说，会定义client,server,editor等好几个目标，不同目标的生成内容不同。
-    --gen_types <type1,type2,,,>            必选参数。生成任务类型。既可以是生成代码也可以是生成数据或者其他。目前支持的有 code_cs_bin,code_cs_json,code_cs_unity_json,code_lua_bin,code_java_bin,code_go_bin,code_go_json,code_cpp_bin,code_python27_json,code_python3_json，code_typescript_bin,code_typescript_json,data_bin,data_lua,data_json,data_json_monolithic,data_template
-    --output_data_dir <output data dir>     可选参数。 导出的数据文件的目录。
+    --gen_types <type1,type2,,,>            必选参数。生成任务类型。既可以是生成代码也可以是生成数据或者其他。目前支持的有 code_cs_bin,code_cs_json,code_cs_unity_json,code_lua_bin,code_java_bin,code_go_bin,code_go_json,code_cpp_bin,code_python27_json,code_python3_json，code_typescript_bin,code_typescript_json,data_bin,data_lua,data_json,data_json_monolithic,data_template,convert_json,convert_lua,convert_xlsx
+    --output_data_dir <output data dir>     可选参数。 导出的数据文件的目录。只生成代码时可不指定。
+    --output_compact_json                   可选参数。默认导出的json格式为对齐后的优雅格式，使用此参数后导出紧凑的不带空格和换行的格式。
     --validate_root_dir <path validate root dir>. 可选参数。 配置path检查的根目录。
-    --export_test_data                      可选参数。 是否导出测试数据。默认为false
+    --export_exclude_tags <tag1,tag2>       可选参数。 导出时排除包含这些tag的数据
     --template_name  <template name>        可选参数。数据模板的名称（不包含后缀），当gen_types包含 data_template时必须指定。
     --data_file_extension  <output data file extension>     可选参数。 导出数据文件的后缀。默认按照生成类型自动选择。
+    --use_unity_vector                      可选参数。默认生成的c#代码中使用System.Numerics.Vector，使用此参数后，变成UnityEngine.Vector。
+    --naming_convention_module <convention> 可选参数。生成代码中模板名的命名约定，可用值为 language_recommend,none,camelCase,PascalCase,under_scores。 默认为language_recommend，即选择与相应语言推荐的命名约定风格。 此选项目前未生效。
+    --naming_convention_bean_member <convention>    可选参数。生成代码中bean类型字段名的命名约定，可用值为 language_recommend,none,camelCase,PascalCase,under_scores。 默认为language_recommend。
+    --naming_convention_enum_member <convention>    可选参数。生成代码中enum类型名的命名约定，可用值为 language_recommend,none,camelCase,PascalCase,under_scores。 默认为language_recommend。此选项目前未生效。
+    --access_bean_member <access mode>  可选参数。 bean属性的访问方式。可用值为language_recommend,variable,getter_setter,property。默认为 language_recommend。此字段目前未生效。
 
     -t,--l10n_timezone <timezone>           可选参数。 指定所在时区。影响datetime类型转换为utc时间。 默认为中国北京时间。
     --input_l10n_text_files <file1,file2..> 可选参数。 本地化的文本映射表。可以有多个。
