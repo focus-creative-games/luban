@@ -80,12 +80,14 @@ Options:
                             // 打个补丁。好多人忘了设置 LUBAN_SERVER_IP 环境变量，导致启动时出问题
                             if (args[i + 1].StartsWith("-"))
                             {
-                                Console.WriteLine("[WARN] --host (or -h) <LUBAN_SERVER_IP> argument is missing, use 127.0.0.1 as default. do you forget to set LUBAN_SERVER_IP env variable?");
-                                ops.Host = "127.0.0.1";
+                                //Console.WriteLine("[WARN] --host (or -h) <LUBAN_SERVER_IP> 参数丢失, use 127.0.0.1 as default. do you forget to set LUBAN_SERVER_IP env variable?");
+                                //ops.Host = "127.0.0.1";
+                                Console.WriteLine("[WARN] 对于Luban.ClientServer，参数 {0} 没有意义，忽略。", arg);
                             }
                             else
                             {
-                                ops.Host = args[++i];
+                                string argv = args[++i];
+                                Console.WriteLine("[WARN] 对于Luban.ClientServer，参数 {0} {1} 没有意义，忽略。", arg, argv);
                             }
                             break;
                         }
