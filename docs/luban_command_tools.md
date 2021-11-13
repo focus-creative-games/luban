@@ -32,7 +32,7 @@ Luban工具有两种部属方式。
 
   Client与Server在同个进程内运行，不需要单独部属Luban.Server。
 
-  将运行脚本中%LUBAN_CLIENT%变量由 Luban.Client/Luban.Client 改为 Luban.ClientServer/Luban.ClientServer，同时删除 -h (--host ) 选项及其参数（如果指定了-h选项，则不启动内嵌Luban.Server，使用云生成）。
+  将运行脚本中%LUBAN_CLIENT%变量由 Luban.Client/Luban.Client 改为 Luban.ClientServer/Luban.ClientServer，同时删除 -h (--host ) 选项及其参数。
 
   Luban.ClientServer是Luban.Client的功能超集，可以完全替代Luban.Client。
 

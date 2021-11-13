@@ -68,8 +68,18 @@ namespace Luban.Job.Cfg.DataSources.Excel
             }
             var cells = ParseRawSheetContent(reader, orientRow, false);
             var title = ParseTitle(cells, reader.MergeCells, orientRow);
-            cells.RemoveAll(c => c.Count == 0 || IsHeaderRow(c));
+            cells.RemoveAll(c => IsNotDataRow(c));
             return new RawSheet() { Title = title, TableName = tableName, Cells = cells };
+        }
+
+        private static bool IsNotDataRow(List<Cell> row)
+        {
+            if (row.Count == 0)
+            {
+                return true;
+            }
+            var s = row[0].Value?.ToString()?.Trim();
+            return !string.IsNullOrEmpty(s) && s.StartsWith("##");
         }
 
         public static Title ParseTitle(List<List<Cell>> cells, CellRange[] mergeCells, bool orientRow)
@@ -334,7 +344,6 @@ namespace Luban.Job.Cfg.DataSources.Excel
             int rowIndex = 0;
             do
             {
-                ++rowIndex; // 第1行是 meta ，标题及数据行从第2行开始
                 var row = new List<Cell>();
                 for (int i = 0, n = reader.FieldCount; i < n; i++)
                 {
@@ -345,6 +354,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 {
                     break;
                 }
+                ++rowIndex;
             } while (reader.Read());
 
             List<List<Cell>> finalRows;

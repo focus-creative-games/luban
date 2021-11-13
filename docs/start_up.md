@@ -72,8 +72,6 @@
 - --output_code_dir 参数为生成的代码文件存放的路径。 建议建议指向 unity的 Assets 目录下的某级子目录
 - --output_data_dir 参数为生成的数据文件的存放路径。
 
-注意，如果你直接使用 Csharp_unity_json中的gen_code_json.bat脚本，并且使用Luban.ClientServer，一定要记得 =====**删除 -h %LUBAN_SERVER_IP% 参数** =====。因为添加-h 参数情况下，会使用云生成而不是本地生成！！！
-
 详细的命令文档请看 [luban_command_tools](./luban_command_tools.md)。
 
 如果一切正常，会产生一系列日志，最终一行是 == succ == 。
