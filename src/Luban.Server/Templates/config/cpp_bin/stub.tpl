@@ -37,7 +37,7 @@ namespace {{x.top_module}}
         switch (id)
         {
         {{~for child in type.hierarchy_not_abstract_children~}}
-            case {{child.cpp_full_name}}::ID: { _out.reset(new {{child.cpp_full_name}}()); if (_out->deserialize(_buf)) { return true; } else { _out.reset(); return false;} }
+            case {{child.cpp_full_name}}::__ID__: { _out.reset(new {{child.cpp_full_name}}()); if (_out->deserialize(_buf)) { return true; } else { _out.reset(); return false;} }
         {{~end~}}
             default: { _out = nullptr; return false;}
         }

@@ -73,10 +73,10 @@ public {{x.java_class_modifier}} class {{name}}{{if parent_def_type}} extends {{
     {{~end~}}
 
 {{~if !x.is_abstract_type && x.parent_def_type~}}
-    public static final int ID = {{x.id}};
+    public static final int __ID__ = {{x.id}};
 
     @Override
-    public int getTypeId() { return ID; }
+    public int getTypeId() { return __ID__; }
 {{~else if x.is_abstract_type && !x.parent_def_type~}}
     public abstract int getTypeId();
 {{~end~}}

@@ -75,8 +75,8 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{parent}
     {{~end~}}
 
 {{~if !x.is_abstract_type~}}
-    public const int ID = {{x.id}};
-    public override int GetTypeId() => ID;
+    public const int __ID__ = {{x.id}};
+    public override int GetTypeId() => __ID__;
 {{~end~}}
 
     public {{x.cs_method_modifier}} void Resolve(Dictionary<string, object> _tables)

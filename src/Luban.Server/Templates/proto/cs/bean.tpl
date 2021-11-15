@@ -62,7 +62,7 @@ namespace {{x.namespace_with_top_module}}
             {
                 case 0 : return null;
             {{~ for child in x.hierarchy_not_abstract_children~}}
-                case {{child.full_name}}.ID: x = new {{child.full_name}}(); break;
+                case {{child.full_name}}.__ID__: x = new {{child.full_name}}(); break;
             {{~end~}}
                 default: throw new SerializationException();
             }
@@ -85,8 +85,8 @@ namespace {{x.namespace_with_top_module}}
         {{~end~}}
 
         {{~if !is_abstract_type~}}
-        public const int ID = {{x.id}};
-        public override int GetTypeId() => ID;
+        public const int __ID__ = {{x.id}};
+        public override int GetTypeId() => __ID__;
 
         public override void Serialize(ByteBuf _buf)
         {

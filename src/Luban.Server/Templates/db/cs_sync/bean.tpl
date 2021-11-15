@@ -144,7 +144,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
         {
             case 0 : return null;
         {{~ for child in x.hierarchy_not_abstract_children~}}
-            case {{child.full_name}}.ID: x = new {{child.full_name}}(); break;
+            case {{child.full_name}}.__ID__: x = new {{child.full_name}}(); break;
         {{~end~}}
             default: throw new SerializationException();
         }
@@ -176,8 +176,8 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
         }
     }
 
-    public const int ID = {{x.id}};
-    public override int GetTypeId() => ID;
+    public const int __ID__ = {{x.id}};
+    public override int GetTypeId() => __ID__;
     {{~end~}}
 
     protected override void InitChildrenRoot(Bright.Storage.TKey root)

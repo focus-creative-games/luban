@@ -36,8 +36,8 @@ export {{if x.is_abstract_type}} abstract {{end}} class {{name}} extends {{if pa
         return _bean_
     }
 {{else}}
-    static readonly ID = {{x.id}}
-    getTypeId() { return {{name}}.ID }
+    static readonly __ID__ = {{x.id}}
+    getTypeId() { return {{name}}.__ID__ }
 {{~end~}}
 
 

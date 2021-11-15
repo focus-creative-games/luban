@@ -12,8 +12,8 @@
  */
 {{~end~}}
 export class {{name}} extends Protocol {
-    static readonly ID = {{x.id}}
-    getTypeId() { return {{name}}.ID }
+    static readonly __ID__ = {{x.id}}
+    getTypeId() { return {{name}}.__ID__ }
 
 
     {{~ for field in fields ~}}

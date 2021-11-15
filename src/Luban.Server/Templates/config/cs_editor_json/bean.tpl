@@ -34,7 +34,7 @@ public {{cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{parent}} 
         {
             case 0 : return null;
         {{~for child in hierarchy_not_abstract_children~}}
-            case {{child.full_name}}.ID: x = new {{child.full_name}}(false); break;
+            case {{child.full_name}}.__ID__: x = new {{child.full_name}}(false); break;
         {{~end~}}
             default: throw new SerializationException();
         }
@@ -50,10 +50,10 @@ public {{cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{parent}} 
     public abstract int GetTypeId();
     {{~end~}}
     {{~if parent_def_type && !is_abstract_type~}}
-    public const int ID = {{id}};
+    public const int __ID__ = {{id}};
     public override int GetTypeId()
     {
-        return ID;
+        return __ID__;
     }
     {{~end~}}
 

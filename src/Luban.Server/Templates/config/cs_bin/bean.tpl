@@ -37,7 +37,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
         switch (_buf.ReadInt())
         {
         {{~for child in x.hierarchy_not_abstract_children~}}
-            case {{child.full_name}}.ID: return new {{child.full_name}}(_buf);
+            case {{child.full_name}}.__ID__: return new {{child.full_name}}(_buf);
         {{~end~}}
             default: throw new SerializationException();
         }
@@ -65,8 +65,8 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
     {{~end~}}
 
 {{~if !x.is_abstract_type~}}
-    public const int ID = {{x.id}};
-    public override int GetTypeId() => ID;
+    public const int __ID__ = {{x.id}};
+    public override int GetTypeId() => __ID__;
 {{~end~}}
 
     public {{x.cs_method_modifier}} void Resolve(Dictionary<string, object> _tables)

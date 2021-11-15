@@ -55,9 +55,9 @@ class {{name}} : public {{if parent_def_type}} {{parent_def_type.cpp_full_name}}
     {{~end~}}
 
 {{~if !x.is_abstract_type~}}
-    static constexpr int ID = {{x.id}};
+    static constexpr int __ID__ = {{x.id}};
 
-    int getTypeId() const { return ID; }
+    int getTypeId() const { return __ID__; }
 {{~end~}}
 
     virtual void resolve(::bright::HashMap<::bright::String, void*>& _tables);

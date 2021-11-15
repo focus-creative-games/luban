@@ -22,11 +22,11 @@ namespace {{x.namespace_with_top_module}}
         {
         }
         
-        public const int ID = {{x.id}};
+        public const int __ID__ = {{x.id}};
 
         public override int GetTypeId()
         {
-            return ID;
+            return __ID__;
         }
 
         public override void Reset()

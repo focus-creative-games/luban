@@ -19,11 +19,11 @@ public sealed class {{name}} : Bright.Net.Protocol
         {{~end~}}
         {{~end~}}
     }
-    public const int ID = {{id}};
+    public const int __ID__ = {{id}};
 
     public override int GetTypeId()
     {
-        return ID;
+        return __ID__;
     }
 
     public override void Serialize(ByteBuf _buf)

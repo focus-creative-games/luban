@@ -105,7 +105,7 @@ export {{x.ts_class_modifier}} class {{name}} extends {{if parent_def_type}} {{x
         let x: {{name}}
         switch (_buf.ReadInt()) {
         {{~ for child in x.hierarchy_not_abstract_children~}}
-            case {{child.full_name}}.ID: x = new {{child.full_name}}(); break
+            case {{child.full_name}}.__ID__: x = new {{child.full_name}}(); break
         {{~end~}}
             default: throw new Error()
         }
@@ -133,8 +133,8 @@ export {{x.ts_class_modifier}} class {{name}} extends {{if parent_def_type}} {{x
         }
     }
 
-    static readonly ID = {{x.id}}
-    getTypeId(): number { return {{name}}.ID }
+    static readonly __ID__ = {{x.id}}
+    getTypeId(): number { return {{name}}.__ID__ }
     {{~end~}}
 
     initChildrenRoot(root: TKey) {

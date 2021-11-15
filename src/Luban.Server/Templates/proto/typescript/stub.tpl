@@ -5,11 +5,11 @@
         static readonly Factories = new Map<number, ProtocolFactory>([
 
         {{~ for proto in protos ~}}
-            [{{proto.full_name}}.ID, () => new {{proto.full_name}}()],
+            [{{proto.full_name}}.__ID__, () => new {{proto.full_name}}()],
         {{~end~}}
 
         {{~ for rpc in rpcs ~}}
-            // TODO RPC .. [{{rpc.full_name}}.ID] = () => new {{rpc.full_name}}(),
+            // TODO RPC .. [{{rpc.full_name}}.__ID__] = () => new {{rpc.full_name}}(),
         {{~end~}}
         ])
     }
