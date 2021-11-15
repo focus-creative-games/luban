@@ -12,23 +12,43 @@ namespace Luban.Job.Cfg.DataSources.Json
 {
     class JsonDataSource : AbstractDataSource
     {
-        JsonElement _data;
+        private JsonElement _data;
 
         public override void Load(string rawUrl, string sheetName, Stream stream)
         {
             RawUrl = rawUrl;
             this._data = JsonDocument.Parse(stream).RootElement;
+
+            if (!string.IsNullOrEmpty(sheetName))
+            {
+                if (sheetName.StartsWith("*"))
+                {
+                    sheetName = sheetName.Substring(1);
+                }
+                if (!string.IsNullOrEmpty(sheetName))
+                {
+                    foreach (var subField in sheetName.Split('.'))
+                    {
+                        _data = _data.GetProperty(subField);
+                    }
+                }
+            }
         }
 
         public override List<Record> ReadMulti(TBean type)
         {
-            throw new NotImplementedException();
+            var records = new List<Record>();
+            foreach (var ele in _data.EnumerateArray())
+            {
+                records.Add(ReadBean(ele, type));
+            }
+            return records;
         }
 
-        public override Record ReadOne(TBean type)
+        private Record ReadBean(JsonElement ele, TBean type)
         {
             List<string> tags;
-            if (_data.TryGetProperty(TAG_KEY, out var tagEle))
+            if (ele.TryGetProperty(TAG_KEY, out var tagEle))
             {
                 var tagName = tagEle.GetString();
                 if (DataUtil.IsIgnoreTag(tagName))
@@ -42,8 +62,13 @@ namespace Luban.Job.Cfg.DataSources.Json
                 tags = null;
             }
 
-            var data = (DBean)type.Apply(JsonDataCreator.Ins, _data, (DefAssembly)type.Bean.AssemblyBase);
+            var data = (DBean)type.Apply(JsonDataCreator.Ins, ele, (DefAssembly)type.Bean.AssemblyBase);
             return new Record(data, RawUrl, tags);
+        }
+
+        public override Record ReadOne(TBean type)
+        {
+            return ReadBean(_data, type);
         }
     }
 }

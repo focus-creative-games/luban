@@ -64,6 +64,16 @@ namespace Luban.Job.Cfg.Utils
             return allFiles;
         }
 
+        public static bool IsMultiRecordField(string sheet)
+        {
+            return !string.IsNullOrEmpty(sheet) && sheet.StartsWith("*");
+        }
+
+        private static bool IsMultiRecordFile(string file, string sheetOrFieldName)
+        {
+            return FileUtil.IsExcelFile(file) || IsMultiRecordField(sheetOrFieldName);
+        }
+
         public static async Task GenerateLoadRecordFromFileTasksAsync(IAgent agent, DefTable table, string dataDir, List<string> inputFiles2, List<Task<List<Record>>> tasks)
         {
             var inputFileInfos = await CollectInputFilesAsync(agent, inputFiles2, dataDir);
@@ -86,7 +96,7 @@ namespace Luban.Job.Cfg.Utils
                         file.OriginFile,
                         file.SheetName,
                         await agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5),
-                        FileUtil.IsExcelFile(file.ActualFile));
+                        IsMultiRecordFile(file.ActualFile, file.SheetName));
 
                     FileRecordCacheManager.Ins.AddCacheLoadedRecords(table, file.MD5, file.SheetName, res);
 
