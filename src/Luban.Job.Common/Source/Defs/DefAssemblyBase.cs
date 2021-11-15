@@ -213,6 +213,7 @@ namespace Luban.Job.Common.Defs
                 case "vector2": return TVector2.Create(nullable, tags);
                 case "vector3": return TVector3.Create(nullable, tags);
                 case "vector4": return TVector4.Create(nullable, tags);
+                case "time":
                 case "datetime": return SupportDatetimeType ? TDateTime.Create(nullable, tags) : throw new NotSupportedException($"只有配置支持datetime数据类型");
                 default:
                 {

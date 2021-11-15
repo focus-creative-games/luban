@@ -20,6 +20,9 @@ namespace Luban.Server
 
             [Option('t', "template_search_path", Required = false, HelpText = "additional template search path")]
             public string TemplateSearchPath { get; set; }
+
+            [Option("timezone", Required = false, HelpText = "default timezone")]
+            public string DefaultTimeZone { get; set; } = "Asia/Shanghai";
         }
 
         private static CommandLineOptions ParseOptions(String[] args)
@@ -55,6 +58,8 @@ namespace Luban.Server
             Luban.Common.Utils.LogUtil.InitSimpleNLogConfigure(NLog.LogLevel.FromString(options.LogLevel));
 
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+            TimeZoneUtil.DefaultTimeZone = TimeZoneInfo.FindSystemTimeZoneById(options.DefaultTimeZone);
 
             GenServer.Ins.Start(false, options.Port, ProtocolStub.Factories);
 

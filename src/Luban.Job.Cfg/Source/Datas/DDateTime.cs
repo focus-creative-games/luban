@@ -1,3 +1,4 @@
+using Luban.Common.Utils;
 using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Utils;
 using System;
@@ -15,10 +16,11 @@ namespace Luban.Job.Cfg.Datas
 
         public DDateTime(DateTime time)
         {
+
             this.Time = time;
             // time.Kind == DateTimeKind.Unspecified
             // DateTimeOffset把它当作Local处理
-            this._localTime = (int)new DateTimeOffset(time).ToUnixTimeSeconds();
+            this._localTime = (int)new DateTimeOffset(TimeZoneInfo.ConvertTime(time, TimeZoneUtil.DefaultTimeZone, TimeZoneInfo.Utc)).ToUnixTimeSeconds();
         }
 
         public override bool Equals(object obj)

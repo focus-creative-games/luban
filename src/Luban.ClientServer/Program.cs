@@ -38,6 +38,9 @@ namespace Luban.ClientServer
 
             [Option('t', "template_search_path", Required = false, HelpText = "string template search path.")]
             public string TemplateSearchPath { get; set; }
+
+            [Option("timezone", Required = false, HelpText = "default timezone")]
+            public string DefaultTimeZone { get; set; } = "Asia/Shanghai";
         }
 
         private static void PrintUsage(string err)
@@ -170,7 +173,7 @@ Options:
                 StringTemplateUtil.AddTemplateSearchPath(options.TemplateSearchPath);
             }
             StringTemplateUtil.AddTemplateSearchPath(FileUtil.GetPathRelateApplicationDirectory("Templates"));
-
+            TimeZoneUtil.DefaultTimeZone = TimeZoneInfo.FindSystemTimeZoneById(options.DefaultTimeZone);
             GenServer.Ins.Start(true, options.Port, ProtocolStub.Factories);
 
             GenServer.Ins.RegisterJob("cfg", new Luban.Job.Cfg.JobController());

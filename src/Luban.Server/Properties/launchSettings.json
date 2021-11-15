@@ -6,6 +6,10 @@
     "TestTemplate": {
       "commandName": "Project",
       "commandLineArgs": "-t D:\\workspace\\luban_examples\\Projects\\CustomTemplates"
+    },
+    "timezone-utc": {
+      "commandName": "Project",
+      "commandLineArgs": "--timezone \"Etc/UTC\""
     }
   }
 }

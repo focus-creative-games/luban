@@ -1,3 +1,4 @@
+using Luban.Common.Utils;
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Cfg.TypeVisitors;
@@ -61,6 +62,7 @@ namespace Luban.Job.Cfg.Utils
         public static DDateTime CreateDateTime(string x)
         {
             DateTime dateTime = DateTime.ParseExact(x, dateTimeFormats, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None);
+            //return new DDateTime(TimeZoneInfo.ConvertTime(dateTime, TimeZoneUtil.DefaultTimeZone, TimeZoneInfo.Utc));
             return new DDateTime(dateTime);
         }
 
