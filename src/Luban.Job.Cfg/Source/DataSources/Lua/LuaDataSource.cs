@@ -22,6 +22,21 @@ namespace Luban.Job.Cfg.DataSources.Lua
             RawUrl = rawUrl;
             _env = LuaManager.CreateEnvironment();
             _dataTable = (LuaTable)_env.DoChunk(new StreamReader(stream, Encoding.UTF8), rawUrl)[0];
+
+            if (!string.IsNullOrEmpty(sheetName))
+            {
+                if (sheetName.StartsWith("*"))
+                {
+                    sheetName = sheetName.Substring(1);
+                }
+                if (!string.IsNullOrEmpty(sheetName))
+                {
+                    foreach (var subField in sheetName.Split('.'))
+                    {
+                        _dataTable = (LuaTable)_dataTable[subField];
+                    }
+                }
+            }
         }
 
         public override List<Record> ReadMulti(TBean type)

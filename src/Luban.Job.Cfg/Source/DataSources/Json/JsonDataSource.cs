@@ -14,20 +14,20 @@ namespace Luban.Job.Cfg.DataSources.Json
     {
         private JsonElement _data;
 
-        public override void Load(string rawUrl, string sheetName, Stream stream)
+        public override void Load(string rawUrl, string sheetOrFieldName, Stream stream)
         {
             RawUrl = rawUrl;
             this._data = JsonDocument.Parse(stream).RootElement;
 
-            if (!string.IsNullOrEmpty(sheetName))
+            if (!string.IsNullOrEmpty(sheetOrFieldName))
             {
-                if (sheetName.StartsWith("*"))
+                if (sheetOrFieldName.StartsWith("*"))
                 {
-                    sheetName = sheetName.Substring(1);
+                    sheetOrFieldName = sheetOrFieldName.Substring(1);
                 }
-                if (!string.IsNullOrEmpty(sheetName))
+                if (!string.IsNullOrEmpty(sheetOrFieldName))
                 {
-                    foreach (var subField in sheetName.Split('.'))
+                    foreach (var subField in sheetOrFieldName.Split('.'))
                     {
                         _data = _data.GetProperty(subField);
                     }
@@ -40,12 +40,16 @@ namespace Luban.Job.Cfg.DataSources.Json
             var records = new List<Record>();
             foreach (var ele in _data.EnumerateArray())
             {
-                records.Add(ReadBean(ele, type));
+                Record rec = ReadRecord(ele, type);
+                if (rec != null)
+                {
+                    records.Add(rec);
+                }
             }
             return records;
         }
 
-        private Record ReadBean(JsonElement ele, TBean type)
+        private Record ReadRecord(JsonElement ele, TBean type)
         {
             List<string> tags;
             if (ele.TryGetProperty(TAG_KEY, out var tagEle))
@@ -68,7 +72,7 @@ namespace Luban.Job.Cfg.DataSources.Json
 
         public override Record ReadOne(TBean type)
         {
-            return ReadBean(_data, type);
+            return ReadRecord(_data, type);
         }
     }
 }

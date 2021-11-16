@@ -687,6 +687,7 @@ xml中定义如下
 - 来自某个excel文件的所有单元薄
 - 来自某个excel文件的指定单元薄
 - 来自json、xml、lua、yaml文件
+- 来自json、xml、lua、yaml子字段 (如root.a.b)
 - 来自目录树下所有文件，每个文件对应一个记录
 - 以上的随意组合
 

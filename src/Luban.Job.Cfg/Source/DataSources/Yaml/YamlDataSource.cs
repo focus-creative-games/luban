@@ -12,40 +12,56 @@ namespace Luban.Job.Cfg.DataSources.Yaml
 {
     class YamlDataSource : AbstractDataSource
     {
-        private YamlMappingNode _root;
-        public override void Load(string rawUrl, string sheetName, Stream stream)
+        private YamlNode _root;
+        public override void Load(string rawUrl, string sheetOrFieldName, Stream stream)
         {
             var ys = new YamlStream();
             ys.Load(new StreamReader(stream));
-            var rootNode = (YamlMappingNode)ys.Documents[0].RootNode;
-            if (string.IsNullOrEmpty(sheetName))
+            var rootNode = ys.Documents[0].RootNode;
+
+            this._root = rootNode;
+
+            if (!string.IsNullOrEmpty(sheetOrFieldName))
             {
-                this._root = rootNode;
-            }
-            else
-            {
-                if (rootNode.Children.TryGetValue(new YamlScalarNode(sheetName), out var childNode))
+                if (sheetOrFieldName.StartsWith("*"))
                 {
-                    this._root = (YamlMappingNode)childNode;
+                    sheetOrFieldName = sheetOrFieldName.Substring(1);
                 }
-                else
+                if (!string.IsNullOrEmpty(sheetOrFieldName))
                 {
-                    throw new Exception($"yaml文件:{RawUrl} 不包含子字段:{sheetName}");
+                    foreach (var subField in sheetOrFieldName.Split('.'))
+                    {
+                        this._root = _root[new YamlScalarNode(subField)];
+                    }
                 }
             }
         }
 
         public override List<Record> ReadMulti(TBean type)
         {
-            throw new NotImplementedException();
+            var records = new List<Record>();
+            foreach (var ele in (YamlSequenceNode)_root)
+            {
+                var rec = ReadRecord(ele, type);
+                if (rec != null)
+                {
+                    records.Add(rec);
+                }
+            }
+            return records;
         }
 
         private readonly static YamlScalarNode s_tagNameNode = new(TAG_KEY);
 
         public override Record ReadOne(TBean type)
         {
+            return ReadRecord(_root, type);
+        }
+
+        private Record ReadRecord(YamlNode yamlNode, TBean type)
+        {
             string tagName;
-            if (_root.Children.TryGetValue(s_tagNameNode, out var tagNode))
+            if (((YamlMappingNode)yamlNode).Children.TryGetValue(s_tagNameNode, out var tagNode))
             {
                 tagName = (string)tagNode;
             }
@@ -57,7 +73,7 @@ namespace Luban.Job.Cfg.DataSources.Yaml
             {
                 return null;
             }
-            var data = (DBean)type.Apply(YamlDataCreator.Ins, _root, (DefAssembly)type.Bean.AssemblyBase);
+            var data = (DBean)type.Apply(YamlDataCreator.Ins, yamlNode, (DefAssembly)type.Bean.AssemblyBase);
             var tags = DataUtil.ParseTags(tagName);
             return new Record(data, RawUrl, tags);
         }
