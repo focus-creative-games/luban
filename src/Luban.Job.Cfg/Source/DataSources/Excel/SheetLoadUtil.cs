@@ -115,8 +115,8 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 {
                     break;
                 }
-                string rowTag = row[0].Value?.ToString() ?? "";
-                if (rowTag.StartsWith("##field"))
+                string rowTag = row[0].Value?.ToString()?.ToLower() ?? "";
+                if (rowTag == "##field" || rowTag == "##var" || rowTag == "##+")
                 {
                     rowIndex = i;
                     return true;
@@ -329,7 +329,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
             {
                 return false;
             }
-            var s = row[0].Value?.ToString()?.Trim();
+            var s = row[0].Value?.ToString()?.Trim()?.ToLower();
             return s == tag;
         }
 
