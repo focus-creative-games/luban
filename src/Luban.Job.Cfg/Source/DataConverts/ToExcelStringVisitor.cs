@@ -97,6 +97,10 @@ namespace Luban.Job.Cfg.DataConverts
             {
                 sep = type.Type.Sep;
             }
+            else if (string.IsNullOrWhiteSpace(sep))
+            {
+                sep = "|";
+            }
             var sb = new List<string>();
             if (type.Type.IsAbstractType)
             {
@@ -133,33 +137,37 @@ namespace Luban.Job.Cfg.DataConverts
 
         public string Accept(DArray type, string sep)
         {
-            if (string.IsNullOrEmpty(sep) && type.Type.ElementType.Apply(IsNotSepTypeVisitor.Ins))
+            if (string.IsNullOrEmpty(sep))
             {
-                sep = ";";
+                sep = type.Type.ElementType.Apply(IsNotSepTypeVisitor.Ins) ? ";" : "|";
             }
             return string.Join(sep, type.Datas.Select(d => d.Apply(this, sep)));
         }
 
         public string Accept(DList type, string sep)
         {
-            if (string.IsNullOrEmpty(sep) && type.Type.ElementType.Apply(IsNotSepTypeVisitor.Ins))
+            if (string.IsNullOrEmpty(sep))
             {
-                sep = ",";
+                sep = type.Type.ElementType.Apply(IsNotSepTypeVisitor.Ins) ? ";" : "|";
             }
             return string.Join(sep, type.Datas.Select(d => d.Apply(this, sep)));
         }
 
         public string Accept(DSet type, string sep)
         {
-            if (string.IsNullOrEmpty(sep) && type.Type.ElementType.Apply(IsNotSepTypeVisitor.Ins))
+            if (string.IsNullOrEmpty(sep))
             {
-                sep = ",";
+                sep = type.Type.ElementType.Apply(IsNotSepTypeVisitor.Ins) ? ";" : "|";
             }
             return string.Join(sep, type.Datas.Select(d => d.Apply(this, sep)));
         }
 
         public string Accept(DMap type, string sep)
         {
+            if (string.IsNullOrEmpty(sep))
+            {
+                sep = "|";
+            }
             return string.Join(sep, type.Datas.Select(d => $"{d.Key.Apply(this, sep)}{sep}{d.Value.Apply(this, sep)}"));
         }
 
