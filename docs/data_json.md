@@ -1,7 +1,46 @@
 [//]: # (Author: bug)
 [//]: # (Date: 2020-11-01 16:26:41)
 
-### json 数据源
+# json 数据源
+
+## 以复合json文件形式组织
+
+整个表以一个或者多个json文件的形式组织。在table的input属性中手动指定json数据源，有以下几种格式：
+- xxx.json，把xxx.json当作一个记录读入。
+- *@xxx.json，把xxx.json当作记录列表读入。
+- field@xxx.json，把 xxx.json中的field字段当作一个记录读入。field可以是深层次字段，比如 a.b.c。
+- *field@xxx.json，把xxx.json中的field字段当作记录列表读入。field可以是深层次字段。
+
+比较有趣的是，与xlsx数据源相似，支持将多个表放到同一个json中，不过实践中极少这么做。
+
+如下列示例：
+
+- TbCompositeJsonTable1 从 composite_tables.json的table1字段中读入记录列表，从composite_tables2.json中读入记录列表，从one_record.json中读入一个记录
+- TbCompositeJsonTable2 从 composite_tables.json的table2字段中读入记录列表
+- TbCompositeJsonTable3 从 composite_tables.json的table3字段中读入一个记录
+
+
+```xml
+   <bean name="CompositeJsonTable1">
+        <var name="id" type="int"/>
+        <var name="x" type="string"/>
+   </bean>
+   <bean name="CompositeJsonTable2">
+        <var name="id" type="int"/>
+        <var name="y" type="int"/>
+   </bean>
+   <bean name="CompositeJsonTable3">
+        <var name="a" type="int"/>
+        <var name="b" type="int"/>
+   </bean>
+
+   <table name="TbCompositeJsonTable1" value="CompositeJsonTable1" input="*table1@composite_tables.json,*@composite_tables2.json,one_record.json"/>
+   <table name="TbCompositeJsonTable2" value="CompositeJsonTable2" input="*table2@composite_tables.json"/>
+   <table name="TbCompositeJsonTable3" value="CompositeJsonTable3" mode="one" input="table3@composite_tables.json"/>
+```
+
+## 以目录树形式组织
+典型用法是，以目录为数据源（会遍历整棵目录树），目录树下每个json文件为一个记录，读入。
 
 ```xml
 <bean name="DemoType2" >

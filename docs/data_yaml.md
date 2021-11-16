@@ -1,7 +1,14 @@
 [//]: # (Author: bug)
 [//]: # (Date: 2020-11-01 16:26:41)
 
-### json 数据源
+# yaml 数据源
+
+
+## 以复合数据形式组织
+
+整个表在一个或者多个yaml文件中组织。用法与json数据源相似，参见 [json数据源](./data_json.md)
+
+## 以目录树形式组织
 
 ```xml
 <bean name="DemoType2" >

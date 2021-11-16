@@ -1,9 +1,13 @@
 [//]: # (Author: bug)
 [//]: # (Date: 2020-11-01 16:26:41)
 
-# Lua 数据
+# Lua 数据源
 
-## 
+## 以复合lua文件形式组织
+
+整个表在一个或者多个lua文件中组织。用法与json数据源相似，参见 [json数据源](./data_json.md)
+
+## 以目录树形式组织
 
 * 与 json 相似定义。  
 * 唯一区别在于， lua 的table的key支持任意格式，所以 lua 的map 可以直接  {[key1] = value1, [key2] = value2, ,,,}
