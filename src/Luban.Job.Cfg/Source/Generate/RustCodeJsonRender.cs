@@ -23,7 +23,7 @@ namespace Luban.Job.Cfg.Generate
             var lines = new List<string>();
             GenerateCodeMonolithic(ctx, RenderFileUtil.GetFileOrDefault(ctx.GenArgs.OutputCodeMonolithicFile, "mod.rs"), lines, ls =>
             {
-                var template = StringTemplateUtil.GetTemplate("config/rust_json/mod_header");
+                var template = StringTemplateUtil.GetTemplate("config/rust_json/include");
                 var result = template.RenderCode(ctx.ExportTypes);
                 ls.Add(result);
             }, null);
@@ -53,8 +53,7 @@ namespace Luban.Job.Cfg.Generate
         public override string RenderService(string name, string module, List<DefTable> tables)
         {
             var template = StringTemplateUtil.GetTemplate("config/rust_json/tables");
-            var result = template.RenderCode(new
-            {
+            var result = template.RenderCode(new {
                 Name = name,
                 Namespace = module,
                 Tables = tables,

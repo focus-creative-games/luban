@@ -179,7 +179,7 @@
     <None Update="Templates\config\rust_json\bean.tpl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Templates\config\rust_json\mod_header.tpl">
+    <None Update="Templates\config\rust_json\include.tpl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Templates\config\rust_json\table.tpl">
