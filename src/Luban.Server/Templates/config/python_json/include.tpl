@@ -1,8 +1,6 @@
-﻿namespace Luban.Job.Common.Utils
-{
-    public class PythonStringTemplates
-    {
-        public const string PythonVectorTypes = @"
+﻿from enum import Enum
+import abc
+
 class Vector2:
     def __init__(self, x, y):
         self.x = x
@@ -54,11 +52,3 @@ class Vector4:
             raise Exception()
         return Vector4(x, y, z, w)
 
-";
-
-        public const string ImportTython3Enum = @"
-from enum import Enum
-import abc
-";
-    }
-}

@@ -16,8 +16,9 @@ namespace Luban.Job.Cfg.Generate
             var lines = new List<string>(10000);
             static void PreContent(List<string> fileContent)
             {
-                fileContent.Add(PythonStringTemplates.ImportTython3Enum);
-                fileContent.Add(PythonStringTemplates.PythonVectorTypes);
+                //fileContent.Add(PythonStringTemplates.ImportTython3Enum);
+                //fileContent.Add(PythonStringTemplates.PythonVectorTypes);
+                fileContent.Add(StringTemplateUtil.GetTemplateString("config/python_json/include"));
             }
 
             GenerateCodeMonolithic(ctx, RenderFileUtil.GetFileOrDefault(ctx.GenArgs.OutputCodeMonolithicFile, "Types.py"), lines, PreContent, null);
@@ -31,8 +32,7 @@ namespace Luban.Job.Cfg.Generate
         public override string RenderService(string name, string module, List<DefTable> tables)
         {
             var template = StringTemplateUtil.GetTemplate("config/python_json/tables");
-            var result = template.RenderCode(new
-            {
+            var result = template.RenderCode(new {
                 Name = name,
                 Namespace = module,
                 Tables = tables,
