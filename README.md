@@ -736,7 +736,7 @@ binary格式占空间最小，lua其次，json最大。
 
 ![pipeline](docs/images/examples/d_70.jpg)
 
-## [LubanAssistant](https://github.com/focus-creative-games/Tools/LubanAssistant) Excel插件。神器！
+## [LubanAssistant](https://github.com/focus-creative-games/luban_examples/tree/main/Tools/LubanAssistant) Excel插件。神器！
 对于多人协作编辑的配置表，如何以xlsx格式保存配置，很容易出现数据冲突覆盖的问题，在大型项目中尤为严重。另外合并多分支数据时，xlsx无法像文本文件那样自动解决冲突，给项目的版本维护带来很大麻烦。
 
 一个合理的解决思路是，以json、xml之类格式保存配置数据，在excel中编辑。LubanAssistant较好地解决了这个问题，使用者既享受luban强大的数据处理能力、同时拥有json良好的可阅读性及多版本可维护性，还能兼顾excel的便捷的编辑能力。

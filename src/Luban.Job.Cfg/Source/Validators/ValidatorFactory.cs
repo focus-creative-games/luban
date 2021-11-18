@@ -11,7 +11,13 @@ namespace Luban.Job.Cfg.Validators
     {
         private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private readonly static List<string> s_validatorNames = new List<string>() { RefValidator.NAME, PathValidator.NAME, RangeValidator.NAME };
+        private readonly static List<string> s_validatorNames = new List<string>()
+        {
+            RefValidator.NAME,
+            PathValidator.NAME,
+            RangeValidator.NAME,
+            SizeValidator.NAME
+        };
 
         public static List<string> ValidatorNames => s_validatorNames;
 
@@ -32,8 +38,12 @@ namespace Luban.Job.Cfg.Validators
                 {
                     return new RangeValidator(field, rule);
                 }
+                case SizeValidator.NAME:
+                {
+                    return new SizeValidator(field, rule);
+                }
                 default:
-                    throw new NotSupportedException("unknown validator type:" + type);
+                throw new NotSupportedException("unknown validator type:" + type);
             }
         }
     }
