@@ -9,6 +9,7 @@
 * 数据前有一个return，这是因为 lua 数据是当作 lua 文件加载的，每个加载后的结果当作一个记录读入。
 * set 的格式为 {v1, v2, ...}
 * 与json不同，lua 的table的key支持任意格式，所以lua的map可以直接  {[key1] = value1, [key2] = value2, ,,,} 
+* text类型，填法为 {key = key, text = text}
 
 
 定义
@@ -21,6 +22,7 @@
 	<var name="x6" type="float"/>
 	<var name="x7" type="double"/>
 	<var name="x10" type="string"/>
+	<var name="t1" type="text"/>
 	<var name="x12" type="DemoType1"/>
 	<var name="x13" type="DemoEnum"/>
 	<var name="x14" type="DemoDynamic"/>
@@ -49,6 +51,7 @@ return
 	x6 = 1.3,
 	x7 = 1122,
 	x10 = "yf",
+	t1 = {key="/key/ab1", text="apple"},
 	x12 = {x1=1},
 	x13 = "D",
 	x14 = { __type__="DemoD2", x1 = 1, x2=3},

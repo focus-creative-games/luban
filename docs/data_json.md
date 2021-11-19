@@ -10,6 +10,7 @@
 - set类型。填法为 [v1,v2,...]
 - map类型。由于json只支持string类型的key，因此map格式填法为 [[k1,v1],[k2,v2]...]
 - 多态bean类型。需要 \_\_type\_\_ 属性来指定具体类型名。
+- text类型，填法为 {"key":key, "text":text}
 
 不同数据结构在json中格式示例如下：
 
@@ -21,6 +22,7 @@
 	<var name="x6" type="float"/>
 	<var name="x7" type="double"/>
 	<var name="x10" type="string"/>
+	<var name="t1" type="text"/>
 	<var name="x12" type="DemoType1"/>
 	<var name="x13" type="DemoEnum"/>
 	<var name="x14" type="DemoDynamic"/>
@@ -48,6 +50,7 @@
 	"x6":1.2,
 	"x7":1.23432,
 	"x10":"hq",
+	"t1": {"key":"/key/xx1","text":"apple"},
 	"x12": { "x1":10},
 	"x13":"B",
 	"x14":{"__type__": "DemoD2", "x1":1, "x2":2},
