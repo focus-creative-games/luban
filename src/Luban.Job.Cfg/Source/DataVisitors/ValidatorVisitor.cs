@@ -12,6 +12,8 @@ namespace Luban.Job.Cfg.DataVisitors
 {
     public class ValidatorVisitor : ITypeActionVisitor<DType>
     {
+        public const string TAG_UNCHECKED = "unchecked";
+
         private readonly Stack<object> _path = new Stack<object>();
 
         public Stack<object> Path => _path;
@@ -31,6 +33,10 @@ namespace Luban.Job.Cfg.DataVisitors
 
             foreach (Record r in records)
             {
+                if (r.Tags != null && r.Tags.Count > 0 && r.Tags.Contains(TAG_UNCHECKED))
+                {
+                    continue;
+                }
                 CurrentValidateRecord = r;
                 DBean data = r.Data;
                 _path.Clear();
