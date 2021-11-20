@@ -124,11 +124,7 @@ namespace Luban.Job.Cfg.Utils
 
         public static bool IsIgnoreTag(string tagName)
         {
-            return !string.IsNullOrEmpty(tagName) &&
-                (
-                tagName.Equals("no", System.StringComparison.OrdinalIgnoreCase)
-                || tagName.Equals("##", System.StringComparison.Ordinal)
-                );
+            return tagName == "##";
         }
 
         public static List<string> ParseTags(string rawTagStr)

@@ -41,8 +41,6 @@ namespace Luban.Job.Cfg
 
         public string RootDir { get; }
 
-
-
         private readonly List<PathQuery> _pathQuerys = new List<PathQuery>(1000);
 
         public void AddPathQuery(PathQuery query)
@@ -52,7 +50,6 @@ namespace Luban.Job.Cfg
                 _pathQuerys.Add(query);
             }
         }
-
 
         public List<PathQuery> GetPathQueries() => _pathQuerys;
 

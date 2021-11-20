@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.DataVisitors
 {
-    public class ValidatorVisitor : ITypeActionVisitor<DType>
+    public class ValidatorVisitor : TypeActionVisitorAdaptor<DType>
     {
         public const string TAG_UNCHECKED = "unchecked";
 
@@ -97,77 +97,7 @@ namespace Luban.Job.Cfg.DataVisitors
             }
         }
 
-        public void Accept(TBool type, DType x)
-        {
-
-        }
-
-        public void Accept(TByte type, DType x)
-        {
-
-        }
-
-        public void Accept(TShort type, DType x)
-        {
-
-        }
-
-        public void Accept(TFshort type, DType x)
-        {
-
-        }
-
-        public void Accept(TInt type, DType x)
-        {
-
-        }
-
-        public void Accept(TFint type, DType x)
-        {
-
-        }
-
-        public void Accept(TLong type, DType x)
-        {
-
-        }
-
-        public void Accept(TFlong type, DType x)
-        {
-
-        }
-
-        public void Accept(TFloat type, DType x)
-        {
-
-        }
-
-        public void Accept(TDouble type, DType x)
-        {
-
-        }
-
-        public void Accept(TEnum type, DType x)
-        {
-
-        }
-
-        public void Accept(TString type, DType x)
-        {
-
-        }
-
-        public void Accept(TBytes type, DType x)
-        {
-
-        }
-
-        public void Accept(TText type, DType x)
-        {
-
-        }
-
-        public void Accept(TBean type, DType x)
+        public override void Accept(TBean type, DType x)
         {
             var beanData = (DBean)x;
             var defFields = ((DefBean)type.Bean.AssemblyBase.GetDefType(beanData.ImplType.FullName)).HierarchyFields;// beanData.ImplType.HierarchyFields;
@@ -197,22 +127,22 @@ namespace Luban.Job.Cfg.DataVisitors
             }
         }
 
-        public void Accept(TArray type, DType x)
+        public override void Accept(TArray type, DType x)
         {
             AcceptListLike(type.ElementType, ((DArray)x).Datas);
         }
 
-        public void Accept(TList type, DType x)
+        public override void Accept(TList type, DType x)
         {
             AcceptListLike(type.ElementType, ((DList)x).Datas);
         }
 
-        public void Accept(TSet type, DType x)
+        public override void Accept(TSet type, DType x)
         {
             AcceptListLike(type.ElementType, ((DSet)x).Datas);
         }
 
-        public void Accept(TMap type, DType x)
+        public override void Accept(TMap type, DType x)
         {
             var keyType = type.KeyType;
             var valueType = type.ValueType;
@@ -261,26 +191,6 @@ namespace Luban.Job.Cfg.DataVisitors
                     _path.Pop();
                 }
             }
-        }
-
-        public void Accept(TVector2 type, DType x)
-        {
-
-        }
-
-        public void Accept(TVector3 type, DType x)
-        {
-
-        }
-
-        public void Accept(TVector4 type, DType x)
-        {
-
-        }
-
-        public void Accept(TDateTime type, DType x)
-        {
-
         }
     }
 }
