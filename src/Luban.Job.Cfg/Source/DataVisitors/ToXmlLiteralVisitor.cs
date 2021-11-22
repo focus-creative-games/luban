@@ -49,7 +49,7 @@ namespace Luban.Job.Cfg.DataVisitors
         }
 
 
-        protected override void Append(List<DType> datas, StringBuilder x)
+        override protected void Append(List<DType> datas, StringBuilder x)
         {
             x.Append('{');
             foreach (var e in datas)

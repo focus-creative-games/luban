@@ -1,5 +1,6 @@
 ﻿using Luban.Common.Protos;
 using Luban.Job.Cfg.Cache;
+using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Utils;
 using Luban.Job.Common.Utils;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ namespace Luban.Job.Cfg.Generate
                 foreach (var record in records)
                 {
                     var fileName = table.IsMapTable ?
-                        record.Data.GetField(table.IndexField.Name).ToString().Replace("\"", "").Replace("'", "")
+                        record.Data.GetField(table.IndexField.Name).Apply(ToStringVisitor2.Ins).Replace("\"", "").Replace("'", "")
                         : (++index).ToString();
                     var file = RenderFileUtil.GetOutputFileName(genType, $"{dirName}/{fileName}", ctx.GenArgs.DataFileExtension);
                     ctx.Tasks.Add(Task.Run(() =>

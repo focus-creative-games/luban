@@ -10,7 +10,7 @@ namespace Luban.Job.Cfg.DataExporters
 {
     class Json2Exportor : JsonExportor
     {
-        public new static Json2Exportor Ins { get; } = new();
+        public static new Json2Exportor Ins { get; } = new();
 
         public void WriteAsObject(DefTable table, List<Record> datas, Utf8JsonWriter x)
         {

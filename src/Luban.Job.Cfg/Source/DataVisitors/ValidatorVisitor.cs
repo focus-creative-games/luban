@@ -2,6 +2,7 @@ using Luban.Common.Utils;
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.DataSources;
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Cfg.Utils;
 using Luban.Job.Cfg.Validators;
 using Luban.Job.Common.Types;
 using Luban.Job.Common.TypeVisitors;
@@ -12,7 +13,6 @@ namespace Luban.Job.Cfg.DataVisitors
 {
     public class ValidatorVisitor : TypeActionVisitorAdaptor<DType>
     {
-        public const string TAG_UNCHECKED = "unchecked";
 
         private readonly Stack<object> _path = new Stack<object>();
 
@@ -33,7 +33,7 @@ namespace Luban.Job.Cfg.DataVisitors
 
             foreach (Record r in records)
             {
-                if (r.Tags != null && r.Tags.Count > 0 && r.Tags.Contains(TAG_UNCHECKED))
+                if (DataUtil.IsUnchecked(r))
                 {
                     continue;
                 }

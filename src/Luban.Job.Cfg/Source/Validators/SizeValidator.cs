@@ -9,15 +9,13 @@ using System.Threading.Tasks;
 
 namespace Luban.Job.Cfg.Validators
 {
+    [Validator("size")]
     internal class SizeValidator : IValidator
     {
-        public const string NAME = "size";
-        private readonly TType _field;
         private readonly int _size;
 
-        public SizeValidator(TType field, string rule)
+        public SizeValidator(TType type, string rule)
         {
-            this._field = field;
             this._size = int.Parse(rule);
         }
 
@@ -26,7 +24,7 @@ namespace Luban.Job.Cfg.Validators
 
         }
 
-        private string Source => ValidatorContext.CurrentVisitor.CurrentValidateRecord.Source;
+        private static string Source => ValidatorContext.CurrentVisitor.CurrentValidateRecord.Source;
 
         public void Validate(ValidatorContext ctx, TType type, DType data)
         {

@@ -11,38 +11,31 @@ namespace Luban.Job.Cfg.Validators
     {
         private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private readonly static List<string> s_validatorNames = new List<string>()
+        static ValidatorFactory()
         {
-            RefValidator.NAME,
-            PathValidator.NAME,
-            RangeValidator.NAME,
-            SizeValidator.NAME
-        };
+            foreach (var type in Bright.Common.ReflectionUtil.GetCallingTypesByAttr(typeof(ValidatorAttribute)))
+            {
+                var va = (ValidatorAttribute)type.GetCustomAttributes(typeof(ValidatorAttribute), false)[0];
+                s_validators.Add(va.Name, type);
+                s_validatorNames.Add(va.Name);
+            }
+        }
+
+        private static readonly Dictionary<string, Type> s_validators = new Dictionary<string, Type>();
+
+        private static readonly List<string> s_validatorNames = new List<string>();
 
         public static List<string> ValidatorNames => s_validatorNames;
 
-        public static IValidator Create(TType field, string type, string rule)
+        public static IValidator Create(TType ttype, string type, string rule)
         {
             s_logger.Debug("== create validator {type}:{rule}", type, rule);
-            switch (type)
+            if (s_validators.TryGetValue(type, out var validatorType))
             {
-                case RefValidator.NAME:
-                {
-                    return new RefValidator(field, rule.Split(',').ToList());
-                }
-                case PathValidator.NAME:
-                {
-                    return new PathValidator(field, rule);//.Split(',').ToList());
-                }
-                case RangeValidator.NAME:
-                {
-                    return new RangeValidator(field, rule);
-                }
-                case SizeValidator.NAME:
-                {
-                    return new SizeValidator(field, rule);
-                }
-                default:
+                return (IValidator)System.Activator.CreateInstance(validatorType, ttype, rule);
+            }
+            else
+            {
                 throw new NotSupportedException("unknown validator type:" + type);
             }
         }

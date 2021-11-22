@@ -6,7 +6,7 @@ namespace Luban.Job.Db.TypeVisitors
 {
     class DbTypescriptDefineTypeNameVisitor : TypescriptDefineTypeNameVisitor
     {
-        public new static DbTypescriptDefineTypeNameVisitor Ins { get; } = new();
+        public static new DbTypescriptDefineTypeNameVisitor Ins { get; } = new();
 
         public override string Accept(TArray type)
         {

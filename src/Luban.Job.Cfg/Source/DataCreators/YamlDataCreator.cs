@@ -91,8 +91,8 @@ namespace Luban.Job.Cfg.DataCreators
             throw new NotSupportedException();
         }
 
-        private readonly static YamlScalarNode s_keyNodeName = new("key");
-        private readonly static YamlScalarNode s_textNodeName = new("text");
+        private static readonly YamlScalarNode s_keyNodeName = new("key");
+        private static readonly YamlScalarNode s_textNodeName = new("text");
 
         public DType Accept(TText type, YamlNode x, DefAssembly y)
         {
@@ -102,7 +102,7 @@ namespace Luban.Job.Cfg.DataCreators
             return new DText(key, text);
         }
 
-        private readonly static YamlScalarNode s_typeNodeName = new(DefBean.TYPE_NAME_KEY);
+        private static readonly YamlScalarNode s_typeNodeName = new(DefBean.TYPE_NAME_KEY);
 
         public DType Accept(TBean type, YamlNode x, DefAssembly y)
         {
@@ -204,10 +204,10 @@ namespace Luban.Job.Cfg.DataCreators
             return new DMap(type, map);
         }
 
-        private readonly static YamlScalarNode s_xNodeName = new("x");
-        private readonly static YamlScalarNode s_yNodeName = new("y");
-        private readonly static YamlScalarNode s_zNodeName = new("z");
-        private readonly static YamlScalarNode s_wNodeName = new("w");
+        private static readonly YamlScalarNode s_xNodeName = new("x");
+        private static readonly YamlScalarNode s_yNodeName = new("y");
+        private static readonly YamlScalarNode s_zNodeName = new("z");
+        private static readonly YamlScalarNode s_wNodeName = new("w");
 
         private static float ParseChildFloatValue(YamlNode node, YamlScalarNode keyName)
         {

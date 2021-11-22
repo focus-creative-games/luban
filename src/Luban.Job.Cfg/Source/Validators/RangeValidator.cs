@@ -6,12 +6,9 @@ using System;
 
 namespace Luban.Job.Cfg.Validators
 {
+    [Validator("range")]
     class RangeValidator : IValidator
     {
-        public const string NAME = "range";
-
-        public string Name => NAME;
-
         public TType Type { get; }
 
         private readonly string _str;

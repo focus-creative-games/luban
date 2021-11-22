@@ -661,7 +661,7 @@ namespace Luban.Job.Cfg.Defs
 
         private static readonly List<string> _fieldRequireAttrs = new List<string> { "name", "type" };
 
-        protected override Field CreateField(string defineFile, XElement e)
+        override protected Field CreateField(string defineFile, XElement e)
         {
             ValidAttrKeys(defineFile, e, _fieldOptionalAttrs, _fieldRequireAttrs);
 
@@ -726,7 +726,7 @@ namespace Luban.Job.Cfg.Defs
         private static readonly List<string> _beanOptinsAttrs = new List<string> { "value_type", "alias", "sep", "comment", "tags" };
         private static readonly List<string> _beanRequireAttrs = new List<string> { "name" };
 
-        protected override void AddBean(string defineFile, XElement e, string parent)
+        override protected void AddBean(string defineFile, XElement e, string parent)
         {
             ValidAttrKeys(defineFile, e, _beanOptinsAttrs, _beanRequireAttrs);
 

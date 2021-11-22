@@ -151,10 +151,9 @@ namespace Luban.Job.Cfg.Validators
         }
     }
 
+    [Validator("path")]
     public class PathValidator : IValidator
     {
-        public const string NAME = "path";
-
         public string RawPattern { get; }
 
         public TType Type { get; }

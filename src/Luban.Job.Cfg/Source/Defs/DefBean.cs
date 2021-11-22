@@ -103,7 +103,7 @@ namespace Luban.Job.Cfg.Defs
             Sep = b.Sep;
         }
 
-        protected override DefFieldBase CreateField(Common.RawDefs.Field f, int idOffset)
+        override protected DefFieldBase CreateField(Common.RawDefs.Field f, int idOffset)
         {
             return new DefField(this, (CfgField)f, idOffset);
         }

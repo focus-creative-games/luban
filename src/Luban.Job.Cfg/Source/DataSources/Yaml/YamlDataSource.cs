@@ -51,7 +51,7 @@ namespace Luban.Job.Cfg.DataSources.Yaml
             return records;
         }
 
-        private readonly static YamlScalarNode s_tagNameNode = new(TAG_KEY);
+        private static readonly YamlScalarNode s_tagNameNode = new(TAG_KEY);
 
         public override Record ReadOne(TBean type)
         {

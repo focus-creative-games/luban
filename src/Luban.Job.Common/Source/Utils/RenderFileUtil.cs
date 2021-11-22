@@ -59,7 +59,7 @@ namespace Luban.Job.Common.Utils
             return fullName + ".bin";
         }
 
-        private readonly static Dictionary<string, ELanguage> s_name2Lans = new()
+        private static readonly Dictionary<string, ELanguage> s_name2Lans = new()
         {
             { "cs", ELanguage.CS },
             { "java", ELanguage.JAVA },
@@ -85,7 +85,7 @@ namespace Luban.Job.Common.Utils
             throw new ArgumentException($"not support output data type:{genType}");
         }
 
-        private readonly static Dictionary<string, string> s_name2Suxxifx = new()
+        private static readonly Dictionary<string, string> s_name2Suxxifx = new()
         {
             { "json", "json" },
             { "lua", "lua" },

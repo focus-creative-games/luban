@@ -8,9 +8,9 @@ namespace Luban.Job.Common.Utils
 {
     public class DefUtil
     {
-        private readonly static char[] s_attrSep = new char[] { '|', '#', '&' };
+        private static readonly char[] s_attrSep = new char[] { '|', '#', '&' };
 
-        private readonly static char[] s_attrKeyValueSep = new char[] { '=', ':' };
+        private static readonly char[] s_attrKeyValueSep = new char[] { '=', ':' };
 
         public static Dictionary<string, string> ParseAttrs(string tags)
         {

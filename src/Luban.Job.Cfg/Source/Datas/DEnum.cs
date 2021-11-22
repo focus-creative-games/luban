@@ -41,6 +41,11 @@ namespace Luban.Job.Cfg.Datas
             return visitor.Accept(this, x);
         }
 
+        public override string ToString()
+        {
+            return $"{StrValue}({Value})";
+        }
+
         public override bool Equals(object obj)
         {
             switch (obj)

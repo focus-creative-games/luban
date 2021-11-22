@@ -9,6 +9,7 @@ using System.Linq;
 
 namespace Luban.Job.Cfg.Validators
 {
+    [Validator("ref")]
     public class RefValidator : IValidator
     {
 
@@ -21,18 +22,16 @@ namespace Luban.Job.Cfg.Validators
 #endif
         }
 
-        public const string NAME = "ref";
-
         public List<string> Tables { get; }
 
         public string FirstTable => GetActualTableName(Tables[0]);
 
         public TType Type { get; }
 
-        public RefValidator(TType type, List<string> tables)
+        public RefValidator(TType type, string tablesStr)
         {
             Type = type;
-            this.Tables = new List<string>(tables);
+            this.Tables = new List<string>(tablesStr.Split(','));
         }
 
         public void Validate(ValidatorContext ctx, TType type, DType key)

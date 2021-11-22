@@ -49,7 +49,7 @@ namespace Luban.Client.Utils
             }
         }
 
-        private readonly static List<string> _filterSuffixs = new List<string>
+        private static readonly List<string> _filterSuffixs = new List<string>
         {
             ".xlsx",
             ".csv",

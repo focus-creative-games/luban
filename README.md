@@ -18,7 +18,7 @@
 ## 介绍
 
 
-在中大型游戏项目中，excel配置表时常出现较复杂的数据结构，常规的导表工具面对此类需求要么无法支持，要么就强迫策划和程序使用拆表等奇技淫巧，严重影响设计和开发效率。另外具有复杂GamePlay的游戏中，技能、行为树、关卡之类的功能有非常复杂的数据结构，往往使用自定义编辑器制作，并以json、xml等文件格式保存，以excel为中心的导表工具无法处理这些数据，给策划和程序的工作流带来麻烦。
+在中大型游戏项目中，excel配置表时常出现较复杂的数据结构，常规的导表工具面对此类需求要么无法支持，要么就强迫策划和程序使用拆表等奇技淫巧，严重影响设计和开发效率。另外具有复杂GamePlay的游戏中，技能、行为树、关卡之类的功能也有非常复杂的数据结构，它们往往使用自定义编辑器制作，并以json、xml等文件格式保存，以excel为中心的导表工具无法处理这些数据，给策划和程序的工作流带来麻烦。
 
 luban相较于常规的excel导表工具有以下核心优势：
 - 增强了excel格式。可以比较简洁地excel配置**任意复杂**的数据，像子结构、结构列表，以及更复杂的深层次的嵌套结构都能直接解析处理。
@@ -30,7 +30,7 @@ luban相较于常规的excel导表工具有以下核心优势：
 
 ## 文档
 - [快速上手](docs/start_up.md)
-- [wiki](https://github.com/focus-creative-games/luban/wiki)  有使用疑问，请先查看此wiki。
+- [**wiki**](https://github.com/focus-creative-games/luban/wiki) ，比较完善，有使用疑问，请先查看此wiki。
 - **示例项目** ([github](https://github.com/focus-creative-games/luban_examples)) ([gitee](https://gitee.com/focus-creative-games/luban_examples))
 - [版本变更记录](https://github.com/focus-creative-games/luban/wiki/%E7%89%88%E6%9C%AC%E5%8F%98%E6%9B%B4%E8%AE%B0%E5%BD%95)
 

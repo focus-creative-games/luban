@@ -1,5 +1,6 @@
 using Luban.Common.Utils;
 using Luban.Job.Cfg.Datas;
+using Luban.Job.Cfg.DataSources;
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Cfg.TypeVisitors;
 using Luban.Job.Common.Types;
@@ -135,6 +136,14 @@ namespace Luban.Job.Cfg.Utils
             }
             var tags = new List<string>(rawTagStr.Split(',').Select(t => t.Trim().ToLower()).Where(t => !string.IsNullOrEmpty(t)));
             return tags.Count > 0 ? tags : null;
+        }
+
+
+        private const string TAG_UNCHECKED = "unchecked";
+
+        public static bool IsUnchecked(Record rec)
+        {
+            return rec.Tags != null && rec.Tags.Count > 0 && rec.Tags.Contains(TAG_UNCHECKED);
         }
 
         public const string SimpleContainerSep = ",;|";
