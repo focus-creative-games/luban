@@ -19,8 +19,9 @@ namespace Luban.Job.Common.Utils
             {
                 return am;
             }
-            foreach (var pair in tags.Split(s_attrSep))
+            foreach (var rawPair in tags.Split(s_attrSep))
             {
+                var pair = TrimBracePairs(rawPair);
                 int sepIndex = pair.IndexOfAny(s_attrKeyValueSep);
                 if (sepIndex >= 0)
                 {
@@ -173,7 +174,7 @@ namespace Luban.Job.Common.Utils
                 case ELanguage.PYTHON:
                 case ELanguage.RUST:
 #if !LUBAN_LITE
-                    return System.Web.HttpUtility.HtmlEncode(comment).Replace("\n", "<br/>");
+                return System.Web.HttpUtility.HtmlEncode(comment).Replace("\n", "<br/>");
 #else
                     throw new NotSupportedException();
 #endif

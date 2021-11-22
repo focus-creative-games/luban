@@ -13,7 +13,8 @@ namespace Luban.Job.Cfg
             var ctx = new TemplateContext();
             var env = new TTypeTemplateExtends
             {
-                ["x"] = model
+                ["x"] = model,
+                ["assembly"] = DefAssembly.LocalAssebmly,
             };
             if (extraModels != null)
             {
@@ -34,6 +35,7 @@ namespace Luban.Job.Cfg
             {
                 ["table"] = table,
                 ["datas"] = exportDatas,
+                ["assembly"] = DefAssembly.LocalAssebmly,
             };
             if (extraModels != null)
             {
