@@ -1,8 +1,10 @@
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Cfg.Utils;
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.Types;
+using Luban.Job.Common.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +33,7 @@ namespace Luban.Job.Cfg.Validators
         public RefValidator(TType type, string tablesStr)
         {
             Type = type;
-            this.Tables = new List<string>(tablesStr.Split(','));
+            this.Tables = new List<string>(DefUtil.TrimBracePairs(tablesStr).Split(','));
         }
 
         public void Validate(ValidatorContext ctx, TType type, DType key)

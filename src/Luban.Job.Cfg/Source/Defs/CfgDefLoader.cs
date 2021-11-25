@@ -339,7 +339,7 @@ namespace Luban.Job.Cfg.Defs
                         case "path":
                         case "range":
                         {
-                            cf.Type = cf.Type + "&" + attrs[i];
+                            cf.Type = cf.Type + "&(" + attrs[i] + ")";
                             break;
                         }
                         case "group":
@@ -665,16 +665,17 @@ namespace Luban.Job.Cfg.Defs
         {
             ValidAttrKeys(defineFile, e, _fieldOptionalAttrs, _fieldRequireAttrs);
 
-            string refStr = XmlUtil.GetOptionalAttribute(e, "ref");
             string typeStr = XmlUtil.GetRequiredAttribute(e, "type");
+
+            string refStr = XmlUtil.GetOptionalAttribute(e, "ref");
             if (!string.IsNullOrWhiteSpace(refStr))
             {
-                typeStr = typeStr + "&ref=" + refStr;
+                typeStr = typeStr + "&(ref=" + refStr + ")";
             }
             string pathStr = XmlUtil.GetOptionalAttribute(e, "path");
             if (!string.IsNullOrWhiteSpace(pathStr))
             {
-                typeStr = typeStr + "&path=" + pathStr;
+                typeStr = typeStr + "&(path=" + pathStr + ")";
             }
 
             return CreateField(defineFile, XmlUtil.GetRequiredAttribute(e, "name"),

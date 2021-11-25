@@ -143,7 +143,7 @@ namespace Luban.Job.Common.Defs
 
         public TType CreateType(string module, string type)
         {
-            int sepIndex = DefUtil.IndexOfIncludeBrace(type, ',');
+            int sepIndex = DefUtil.IndexOfElementTypeSep(type);
             if (sepIndex > 0)
             {
                 string containerTypeAndTags = DefUtil.TrimBracePairs(type.Substring(0, sepIndex));
@@ -232,7 +232,7 @@ namespace Luban.Job.Common.Defs
 
         protected TMap CreateMapType(string module, Dictionary<string, string> tags, string keyValueType, bool isTreeMap)
         {
-            int typeSepIndex = DefUtil.IndexOfIncludeBrace(keyValueType, ',');
+            int typeSepIndex = DefUtil.IndexOfElementTypeSep(keyValueType);
             if (typeSepIndex <= 0 || typeSepIndex >= keyValueType.Length - 1)
             {
                 throw new ArgumentException($"invalid map element type:'{keyValueType}'");

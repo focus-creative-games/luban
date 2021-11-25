@@ -2,6 +2,7 @@ using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.Types;
+using Luban.Job.Common.Utils;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -163,7 +164,7 @@ namespace Luban.Job.Cfg.Validators
         public PathValidator(TType type, string pathPattern)
         {
             Type = type;
-            this.RawPattern = pathPattern;
+            this.RawPattern = DefUtil.TrimBracePairs(pathPattern);
         }
 
         public void Validate(ValidatorContext ctx, TType type, DType data)

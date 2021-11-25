@@ -2,6 +2,7 @@
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.Types;
+using Luban.Job.Common.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace Luban.Job.Cfg.Validators
         {
             _type = ttype;
             _datas = new HashSet<DType>();
-            _valueSetStr = param;
+            _valueSetStr = DefUtil.TrimBracePairs(param);
         }
 
         public void Compile(DefFieldBase def)

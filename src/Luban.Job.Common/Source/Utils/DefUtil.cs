@@ -39,7 +39,7 @@ namespace Luban.Job.Common.Utils
             return am;
         }
 
-        public static int IndexOfIncludeBrace(string s, char sep)
+        public static int IndexOfElementTypeSep(string s)
         {
             int braceDepth = 0;
             for (int i = 0; i < s.Length; i++)
@@ -54,7 +54,7 @@ namespace Luban.Job.Common.Utils
                     --braceDepth;
                 }
 
-                if (braceDepth == 0 && (c == sep))
+                if (braceDepth == 0 && (c == ',' || c == ';'))
                 {
                     return i;
                 }
