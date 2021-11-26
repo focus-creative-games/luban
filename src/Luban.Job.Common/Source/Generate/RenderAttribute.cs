@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace Luban.Job.Cfg.Generate
+namespace Luban.Job.Common.Generate
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    class RenderAttribute : System.Attribute
+    public class RenderAttribute : System.Attribute
     {
         public string Name { get; }
 

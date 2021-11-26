@@ -2,6 +2,7 @@ using Luban.Common.Protos;
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Common;
 using Luban.Job.Common.Defs;
+using Luban.Job.Common.Generate;
 using Luban.Job.Common.Utils;
 using Scriban;
 using System;

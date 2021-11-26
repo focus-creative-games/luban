@@ -3,6 +3,7 @@ using Luban.Job.Cfg.Cache;
 using Luban.Job.Cfg.DataConverts;
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Cfg.Utils;
+using Luban.Job.Common.Generate;
 using Luban.Job.Common.Types;
 using Luban.Job.Common.TypeVisitors;
 using Luban.Job.Common.Utils;

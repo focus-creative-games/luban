@@ -1,6 +1,7 @@
 ﻿using Luban.Common.Protos;
 using Luban.Job.Cfg.Cache;
 using Luban.Job.Cfg.Utils;
+using Luban.Job.Common.Generate;
 using Luban.Job.Common.Utils;
 using System.Threading.Tasks;
 

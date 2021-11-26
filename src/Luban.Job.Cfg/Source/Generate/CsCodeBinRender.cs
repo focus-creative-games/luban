@@ -1,4 +1,5 @@
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Common.Generate;
 using Luban.Job.Common.Utils;
 using System.Collections.Generic;
 
@@ -24,8 +25,7 @@ namespace Luban.Job.Cfg.Generate
         public override string RenderService(string name, string module, List<DefTable> tables)
         {
             var template = StringTemplateUtil.GetTemplate("config/cs_bin/tables");
-            var result = template.RenderCode(new
-            {
+            var result = template.RenderCode(new {
                 Name = name,
                 Namespace = module,
                 Tables = tables,

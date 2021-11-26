@@ -1,4 +1,5 @@
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Common.Generate;
 using Luban.Job.Common.Utils;
 using System.Collections.Generic;
 
@@ -32,8 +33,7 @@ namespace Luban.Job.Cfg.Generate
             string package = "cfg";
 
             var template = StringTemplateUtil.GetTemplate("config/go_json/tables");
-            var result = template.Render(new
-            {
+            var result = template.Render(new {
                 Name = name,
                 Namespace = module,
                 Tables = tables,

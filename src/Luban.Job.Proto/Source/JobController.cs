@@ -17,20 +17,11 @@ using FileInfo = Luban.Common.Protos.FileInfo;
 
 namespace Luban.Job.Proto
 {
+
     [Controller("proto")]
     public class JobController : IJobController
     {
         private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
-
-        class GenArgs : GenArgsBase
-        {
-            [Option('g', "gen_type", Required = true, HelpText = "cs,lua,java,cpp,typescript")]
-            public string GenType { get; set; }
-
-            [Option('s', "service", Required = true, HelpText = "service")]
-            public string Service { get; set; }
-        }
-
 
         private bool TryParseArg(List<string> args, out GenArgs options, out string errMsg)
         {
@@ -117,114 +108,34 @@ namespace Luban.Job.Proto
 
                 var tasks = new List<Task>();
                 var genCodeFiles = new ConcurrentBag<FileInfo>();
+                var genScatteredFiles = new ConcurrentBag<FileInfo>();
 
 
                 var genType = args.GenType;
-                switch (genType)
+                var render = RenderFactory.CreateRender(genType);
+                if (render == null)
                 {
-                    case "cs":
-                    {
-                        ass.CurrentLanguage = ELanguage.CS;
-                        var render = new CsRender();
-                        foreach (var c in ass.Types.Values)
-                        {
-                            tasks.Add(Task.Run(() =>
-                            {
-                                var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderAny(c), Common.ELanguage.CS);
-                                var file = RenderFileUtil.GetDefTypePath(c.FullName, Common.ELanguage.CS);
-                                var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                                genCodeFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
-                            }));
-                        }
-                        tasks.Add(Task.Run(() =>
-                        {
-                            var module = ass.TopModule;
-                            var name = "ProtocolStub";
-                            var content = FileHeaderUtil.ConcatAutoGenerationHeader(
-                                render.RenderStubs(name, module,
-                                ass.Types.Values.Where(t => t is DefProto).ToList(),
-                                ass.Types.Values.Where(t => t is DefRpc).ToList()),
-                                Common.ELanguage.CS);
-                            var file = RenderFileUtil.GetDefTypePath(name, Common.ELanguage.CS);
-                            var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                            genCodeFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
-                        }));
-                        break;
-                    }
-                    case "lua":
-                    {
-                        ass.CurrentLanguage = ELanguage.LUA;
-                        tasks.Add(Task.Run(() =>
-                        {
-                            var render = new LuaRender();
-                            var content = FileHeaderUtil.ConcatAutoGenerationHeader(render.RenderTypes(ass.Types.Values.ToList()), Common.ELanguage.LUA);
-                            var file = "Types.lua";
-                            var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                            genCodeFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
-                        }));
-                        break;
-                    }
-                    case "typescript":
-                    {
-                        ass.CurrentLanguage = ELanguage.TYPESCRIPT;
-                        var render = new TypescriptRender();
-                        var brightRequirePath = args.TypescriptBrightRequirePath;
-                        var brightPackageName = args.TypescriptBrightPackageName;
-
-                        tasks.Add(Task.Run(() =>
-                        {
-                            var fileContent = new List<string>();
-                            if (args.UsePuertsByteBuf)
-                            {
-                                fileContent.Add(TypescriptStringTemplate.PuertsByteBufImports);
-                            }
-                            else
-                            {
-                                fileContent.Add(TypescriptStringTemplate.GetByteBufImports(brightRequirePath, brightPackageName));
-                            }
-                            if (args.EmbedBrightTypes)
-                            {
-                                fileContent.Add(StringTemplateUtil.GetTemplateString("config/typescript_bin/vectors"));
-                                fileContent.Add(TypescriptStringTemplate.SerializeTypes);
-                                fileContent.Add(TypescriptStringTemplate.ProtoTypes);
-                            }
-                            else
-                            {
-                                fileContent.Add(TypescriptStringTemplate.GetSerializeImports(brightRequirePath, brightPackageName));
-                                fileContent.Add(TypescriptStringTemplate.GetProtocolImports(brightRequirePath, brightPackageName));
-                                fileContent.Add(TypescriptStringTemplate.GetVectorImports(brightRequirePath, brightPackageName));
-                            }
-
-                            fileContent.Add(@$"export namespace {ass.TopModule} {{");
-
-                            foreach (var type in exportTypes)
-                            {
-                                fileContent.Add(render.RenderAny(type));
-                            }
-
-                            fileContent.Add(render.RenderStubs("ProtocolStub", ass.TopModule, ass.Types.Values.Where(t => t is DefProto).ToList(),
-                                ass.Types.Values.Where(t => t is DefRpc).ToList()));
-
-                            fileContent.Add("}"); // end of topmodule
-
-                            var content = FileHeaderUtil.ConcatAutoGenerationHeader(string.Join('\n', fileContent), ELanguage.TYPESCRIPT);
-                            var file = "Types.ts";
-                            var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
-                            genCodeFiles.Add(new FileInfo() { FilePath = file, MD5 = md5 });
-                        }));
-
-                        break;
-                    }
-                    default:
-                    {
-                        throw new NotSupportedException($"not support gen type:{genType}");
-                    }
-
+                    throw new NotSupportedException($"not support gen type:{genType}");
                 }
+                ass.CurrentLanguage = RenderFileUtil.GetLanguage(genType);
+                render.Render(new GenContext()
+                {
+                    GenArgs = args,
+                    Assembly = ass,
+                    Lan = ass.CurrentLanguage,
+                    GenType = genType,
+                    Render = render,
+                    Tasks = tasks,
+                    ExportTypes = exportTypes,
+                    GenCodeFilesInOutputCodeDir = genCodeFiles,
+                    GenScatteredFiles = genScatteredFiles,
+                });
+
 
                 await Task.WhenAll(tasks.ToArray());
 
                 res.FileGroups.Add(new FileGroup() { Dir = outputCodeDir, Files = genCodeFiles.ToList() });
+                res.ScatteredFiles.AddRange(genScatteredFiles);
             }
             catch (Exception e)
             {

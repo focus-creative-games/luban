@@ -1,6 +1,7 @@
 using Luban.Common.Protos;
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Common;
+using Luban.Job.Common.Generate;
 using Luban.Job.Common.Utils;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -44,8 +45,7 @@ namespace Luban.Job.Cfg.Generate
         public override string RenderService(string name, string module, List<DefTable> tables)
         {
             var template = StringTemplateUtil.GetTemplate("config/cs_editor_json/tables");
-            var result = template.Render(new
-            {
+            var result = template.Render(new {
                 Name = name,
                 Namespace = module,
                 Tables = tables,

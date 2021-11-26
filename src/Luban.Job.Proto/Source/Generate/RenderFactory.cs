@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Luban.Job.Cfg.Generate
+namespace Luban.Job.Proto.Generate
 {
     static class RenderFactory
     {

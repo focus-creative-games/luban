@@ -1,5 +1,6 @@
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Common.Defs;
+using Luban.Job.Common.Generate;
 using Luban.Job.Common.Utils;
 using Scriban;
 using System.Collections.Generic;
