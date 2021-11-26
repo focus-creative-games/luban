@@ -9,7 +9,7 @@ namespace Luban.Job.Cfg.Generate
     {
         public override string Render(DefBean b)
         {
-            string package = "cfg";
+            string package = DefAssembly.LocalAssebmly.TopModule;
 
             var template = StringTemplateUtil.GetTemplate("config/go_bin/bean");
             var result = template.RenderCode(b, new Dictionary<string, object>() { ["package"] = package });
@@ -18,8 +18,7 @@ namespace Luban.Job.Cfg.Generate
 
         public override string Render(DefTable p)
         {
-            // TODO 目前只有普通表支持多态. 单例表和双key表都不支持
-            string package = "cfg";
+            string package = DefAssembly.LocalAssebmly.TopModule;
             var template = StringTemplateUtil.GetTemplate("config/go_bin/table");
             var result = template.RenderCode(p, new Dictionary<string, object>() { ["package"] = package });
             return result;
@@ -27,11 +26,9 @@ namespace Luban.Job.Cfg.Generate
 
         public override string RenderService(string name, string module, List<DefTable> tables)
         {
-            string package = "cfg";
-
+            string package = DefAssembly.LocalAssebmly.TopModule;
             var template = StringTemplateUtil.GetTemplate("config/go_bin/tables");
-            var result = template.Render(new
-            {
+            var result = template.Render(new {
                 Name = name,
                 Namespace = module,
                 Tables = tables,
