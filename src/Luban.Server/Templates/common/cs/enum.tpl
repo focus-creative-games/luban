@@ -1,3 +1,9 @@
+{{~
+    name = x.name
+    namespace_with_top_module = x.namespace_with_top_module
+    comment = x.comment
+    items = x.items
+~}}
 
 namespace {{namespace_with_top_module}}
 {
@@ -6,7 +12,7 @@ namespace {{namespace_with_top_module}}
     /// {{comment | html.escape}}
     /// </summary>
 {{~end~}}
-    {{~if is_flags~}}
+    {{~if x.is_flags~}}
     [System.Flags]
     {{~end~}}
     public enum {{name}}

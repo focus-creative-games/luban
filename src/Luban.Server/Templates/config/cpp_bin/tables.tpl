@@ -1,3 +1,7 @@
+{{~
+    tables = x.tables
+    name = x.name
+~}}
 class {{name}}
 {
     public:

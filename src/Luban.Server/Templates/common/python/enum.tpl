@@ -1,9 +1,16 @@
+{{~
+    name = x.name
+    namespace_with_top_module = x.namespace_with_top_module
+    comment = x.comment
+    items = x.items
+~}}
+
 {{~if comment != '' ~}}
 '''
 {{comment | html.escape}}
 '''
 {{~end~}}
-class {{py_full_name}}(Enum):
+class {{x.py_full_name}}(Enum):
     {{~ for item in items ~}}
 {{~if item.comment != '' ~}}
     '''

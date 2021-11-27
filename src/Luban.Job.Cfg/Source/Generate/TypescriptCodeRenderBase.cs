@@ -6,8 +6,10 @@ using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.Generate
 {
-    abstract class TypescriptCodeRenderBase : CodeRenderBase
+    abstract class TypescriptCodeRenderBase : TemplateCodeRenderBase
     {
+        protected override string CommonRenderTemplateDir => "typescript";
+
         public override void Render(GenContext ctx)
         {
             string genType = ctx.GenType;
@@ -62,11 +64,6 @@ namespace Luban.Job.Cfg.Generate
             };
 
             GenerateCodeMonolithic(ctx, RenderFileUtil.GetFileOrDefault(ctx.GenArgs.OutputCodeMonolithicFile, "Types.ts"), lines, preContent, postContent);
-        }
-
-        public override string Render(DefEnum e)
-        {
-            return RenderUtil.RenderTypescriptEnumClass(e);
         }
     }
 }

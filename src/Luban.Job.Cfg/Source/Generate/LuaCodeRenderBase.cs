@@ -7,8 +7,10 @@ using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.Generate
 {
-    abstract class LuaCodeRenderBase : CodeRenderBase
+    abstract class LuaCodeRenderBase : TemplateCodeRenderBase
     {
+        protected override string CommonRenderTemplateDir => "lua";
+
         public override void Render(GenContext ctx)
         {
             DefAssembly.LocalAssebmly.CurrentLanguage = Common.ELanguage.LUA;
@@ -16,26 +18,6 @@ namespace Luban.Job.Cfg.Generate
             var content = this.RenderAll(ctx.ExportTypes);
             var md5 = CacheFileUtil.GenMd5AndAddCache(file, string.Join('\n', content));
             ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
-        }
-
-        public override string Render(DefEnum e)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override string Render(DefTable c)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override string Render(DefBean b)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string RenderService(string name, string module, List<DefTable> tables)
-        {
-            throw new System.NotImplementedException();
         }
 
         public abstract string RenderAll(List<DefTypeBase> types);

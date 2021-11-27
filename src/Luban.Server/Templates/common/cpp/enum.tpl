@@ -1,4 +1,11 @@
-{{cpp_namespace_begin}}
+{{~
+    name = x.name
+    namespace_with_top_module = x.namespace_with_top_module
+    comment = x.comment
+    items = x.items
+~}}
+
+{{x.cpp_namespace_begin}}
 {{~if comment != '' ~}}
 /**
  * {{comment | html.escape}}
@@ -15,4 +22,4 @@ enum class {{name}}
     {{item.name}} = {{item.value}},
     {{~end~}}
 };
-{{cpp_namespace_end}}
+{{x.cpp_namespace_end}}

@@ -1,27 +1,33 @@
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Common.Generate;
 using Luban.Job.Common.Utils;
+using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.Generate
 {
     [Render("code_python_json")]
     [Render("code_python3_json")]
-    class Python3CodeJsonRender : PythonCodeRenderBase
+    class Python3CodeJsonRender : TemplateCodeRenderBase
     {
-        public override string Render(DefBean b)
+        protected override string CommonRenderTemplateDir => "python";
+
+        protected override string RenderTemplateDir => "python_json";
+
+        public override void Render(GenContext ctx)
         {
-            var template = StringTemplateUtil.GetTemplate("config/python_json/bean");
-            var result = template.RenderCode(b);
+            ctx.Render = this;
+            ctx.Lan = Common.ELanguage.PYTHON;
+            DefAssembly.LocalAssebmly.CurrentLanguage = ctx.Lan;
 
-            return result;
-        }
+            var lines = new List<string>(10000);
+            static void PreContent(List<string> fileContent)
+            {
+                //fileContent.Add(PythonStringTemplates.ImportTython3Enum);
+                //fileContent.Add(PythonStringTemplates.PythonVectorTypes);
+                fileContent.Add(StringTemplateUtil.GetTemplateString("config/python_json/include"));
+            }
 
-        public override string Render(DefTable p)
-        {
-            var template = StringTemplateUtil.GetTemplate("config/python_json/table");
-            var result = template.RenderCode(p);
-
-            return result;
+            GenerateCodeMonolithic(ctx, RenderFileUtil.GetFileOrDefault(ctx.GenArgs.OutputCodeMonolithicFile, "Types.py"), lines, PreContent, null);
         }
     }
 }

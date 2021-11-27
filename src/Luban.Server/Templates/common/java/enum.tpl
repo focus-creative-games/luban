@@ -1,3 +1,10 @@
+{{~
+    name = x.name
+    namespace_with_top_module = x.namespace_with_top_module
+    comment = x.comment
+    items = x.items
+~}}
+
 package {{namespace_with_top_module}};
 {{~if comment != '' ~}}
 /**

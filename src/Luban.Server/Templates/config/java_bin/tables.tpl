@@ -1,4 +1,9 @@
-package {{package}};
+{{~
+    name = x.name
+    namespace = x.namespace
+    tables = x.tables
+~}}
+package {{namespace}};
 
 import bright.serialization.*;
 

@@ -12,8 +12,12 @@ using System.Threading.Tasks;
 namespace Luban.Job.Cfg.Generate
 {
     [Render("code_cpp_bin")]
-    class CppCodeBinRender : CodeRenderBase
+    class CppCodeBinRender : TemplateCodeRenderBase
     {
+        protected override string CommonRenderTemplateDir => "cpp";
+
+        protected override string RenderTemplateDir => "cpp_bin";
+
         public override void Render(GenContext ctx)
         {
             // 将所有 头文件定义 生成到一个文件
@@ -96,41 +100,7 @@ namespace {ctx.TopModule}
             }
         }
 
-        public override string Render(DefEnum c)
-        {
-            return RenderUtil.RenderCppEnumClass(c);
-        }
-
-        public string RenderForwardDefine(DefBean b)
-        {
-            return $"{b.CppNamespaceBegin} class {b.Name}; {b.CppNamespaceEnd} ";
-        }
-
-        public override string Render(DefBean b)
-        {
-            var template = StringTemplateUtil.GetTemplate("config/cpp_bin/bean");
-            var result = template.RenderCode(b);
-            return result;
-        }
-
-        public override string Render(DefTable p)
-        {
-            var template = StringTemplateUtil.GetTemplate("config/cpp_bin/table");
-            var result = template.RenderCode(p);
-            return result;
-        }
-
-        public override string RenderService(string name, string module, List<DefTable> tables)
-        {
-            var template = StringTemplateUtil.GetTemplate("config/cpp_bin/tables");
-            var result = template.Render(new {
-                Name = name,
-                Tables = tables,
-            });
-            return result;
-        }
-
-        public string RenderStub(string topModule, List<DefTypeBase> types)
+        private string RenderStub(string topModule, List<DefTypeBase> types)
         {
             var template = StringTemplateUtil.GetTemplate("config/cpp_bin/stub");
             return template.RenderCode(new {
@@ -138,5 +108,11 @@ namespace {ctx.TopModule}
                 Types = types,
             });
         }
+
+        private string RenderForwardDefine(DefBean b)
+        {
+            return $"{b.CppNamespaceBegin} class {b.Name}; {b.CppNamespaceEnd} ";
+        }
+
     }
 }

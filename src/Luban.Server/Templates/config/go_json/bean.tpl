@@ -1,10 +1,10 @@
-{{-
+{{~
     go_full_name = x.go_full_name
     parent_def_type = x.parent_def_type
     is_abstract_type = x.is_abstract_type
     export_fields = x.export_fields
     hierarchy_not_abstract_children = x.hierarchy_not_abstract_children
--}}
+~}}
 
 package {{x.top_module}}
 

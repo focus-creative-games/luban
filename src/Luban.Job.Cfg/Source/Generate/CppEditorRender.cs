@@ -6,32 +6,10 @@ using System.Collections.Generic;
 namespace Luban.Job.Cfg.Generate
 {
     [Render("code_cpp_editor")]
-    class CppEditorRender : CodeRenderBase
+    class CppEditorRender : TemplateCodeRenderBase
     {
+        protected override string CommonRenderTemplateDir => "cpp";
 
-        public override void Render(GenContext ctx)
-        {
-
-        }
-
-        public override string Render(DefEnum e)
-        {
-            return "// enum";
-        }
-
-        public override string Render(DefBean b)
-        {
-            return "// bean";
-        }
-
-        public override string Render(DefTable p)
-        {
-            return "// table";
-        }
-
-        public override string RenderService(string name, string module, List<DefTable> tables)
-        {
-            return "// service";
-        }
+        protected override string RenderTemplateDir => "cpp_editor_json";
     }
 }

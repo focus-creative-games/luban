@@ -1,4 +1,11 @@
-{{typescript_namespace_begin}}
+{{~
+    name = x.name
+    namespace_with_top_module = x.namespace_with_top_module
+    comment = x.comment
+    items = x.items
+~}}
+
+{{x.typescript_namespace_begin}}
 {{~if comment != '' ~}}
 /**
  * {{comment | html.escape}}
@@ -14,4 +21,4 @@ export enum {{name}} {
     {{item.name}} = {{item.value}},
     {{~end~}}
 }
-{{typescript_namespace_end}}
+{{x.typescript_namespace_end}}

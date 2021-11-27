@@ -11,6 +11,8 @@ namespace Luban.Job.Cfg.Generate
     [Render("code_lua_bin")]
     class LuaCodeBinRender : LuaCodeRenderBase
     {
+        protected override string RenderTemplateDir => "lua_bin";
+
         public override string RenderAll(List<DefTypeBase> types)
         {
             var enums = types.Where(t => t is DefEnum).ToList();

@@ -11,8 +11,12 @@ using System.Threading.Tasks;
 namespace Luban.Job.Cfg.Generate
 {
     [Render("code_rust_json")]
-    class RustCodeJsonRender : CodeRenderBase
+    class RustCodeJsonRender : TemplateCodeRenderBase
     {
+        protected override string CommonRenderTemplateDir => "rust";
+
+        protected override string RenderTemplateDir => "rust_json";
+
         public override void Render(GenContext ctx)
         {
             string genType = ctx.GenType;
@@ -28,39 +32,6 @@ namespace Luban.Job.Cfg.Generate
                 var result = template.RenderCode(ctx.ExportTypes);
                 ls.Add(result);
             }, null);
-        }
-
-        public override string Render(DefEnum e)
-        {
-            return RenderUtil.RenderRustEnumClass(e);
-        }
-
-        public override string Render(DefBean b)
-        {
-            var template = StringTemplateUtil.GetTemplate("config/rust_json/bean");
-            var result = template.RenderCode(b);
-
-            return result;
-        }
-
-        public override string Render(DefTable p)
-        {
-            var template = StringTemplateUtil.GetTemplate("config/rust_json/table");
-            var result = template.RenderCode(p);
-
-            return result;
-        }
-
-        public override string RenderService(string name, string module, List<DefTable> tables)
-        {
-            var template = StringTemplateUtil.GetTemplate("config/rust_json/tables");
-            var result = template.RenderCode(new {
-                Name = name,
-                Namespace = module,
-                Tables = tables,
-            });
-
-            return result;
         }
     }
 }

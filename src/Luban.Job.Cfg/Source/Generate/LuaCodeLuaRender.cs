@@ -12,6 +12,8 @@ namespace Luban.Job.Cfg.Generate
     [Render("code_lua_lua")]
     class LuaCodeLuaRender : LuaCodeRenderBase
     {
+        protected override string RenderTemplateDir => "lua_lua";
+
         [ThreadStatic]
         private static Template t_allRender;
 
