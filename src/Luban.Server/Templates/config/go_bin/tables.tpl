@@ -1,5 +1,5 @@
 
-package {{package}}
+package {{namespace}}
 
 import "bright/serialization"
 

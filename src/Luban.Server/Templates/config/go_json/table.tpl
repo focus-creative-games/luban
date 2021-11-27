@@ -9,7 +9,7 @@
     index_field2 = x.index_field2
 -}}
 
-package {{package}}
+package {{x.top_module}}
 
 {{~if x.is_map_table~}}
 type {{go_full_name}} struct {

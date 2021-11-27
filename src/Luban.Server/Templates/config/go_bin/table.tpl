@@ -9,7 +9,7 @@
     index_field2 = x.index_field2
 -}}
 
-package {{package}}
+package {{x.top_module}}
 
 import "bright/serialization"
 

@@ -6,7 +6,7 @@
     hierarchy_not_abstract_children = x.hierarchy_not_abstract_children
 -}}
 
-package {{package}}
+package {{x.top_module}}
 
 {{x.go_json_import}}
 

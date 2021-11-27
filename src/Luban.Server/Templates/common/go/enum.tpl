@@ -1,4 +1,4 @@
-package {{package}}
+package {{x.top_module}}
 
 const (
     {{~for item in x.items ~}}

@@ -1,5 +1,5 @@
 
-package {{package}}
+package {{namespace}}
 
 type JsonLoader func(string) ([]map[string]interface{}, error)
 
