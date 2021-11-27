@@ -18,7 +18,6 @@ namespace Luban.Job.Proto.Generate
         {
             var template = StringTemplateUtil.GetTemplate($"common/{RenderTemplateDir}/enum");
             var result = template.Render(e);
-
             return result;
         }
 
@@ -26,7 +25,6 @@ namespace Luban.Job.Proto.Generate
         {
             var template = StringTemplateUtil.GetTemplate($"proto/{RenderTemplateDir}/bean");
             var result = template.RenderCode(b);
-
             return result;
         }
 
@@ -34,7 +32,6 @@ namespace Luban.Job.Proto.Generate
         {
             var template = StringTemplateUtil.GetTemplate($"proto/{RenderTemplateDir}/proto");
             var result = template.RenderCode(p);
-
             return result;
         }
 
@@ -42,7 +39,6 @@ namespace Luban.Job.Proto.Generate
         {
             var template = StringTemplateUtil.GetTemplate($"proto/{RenderTemplateDir}/rpc");
             var result = template.RenderCode(r);
-
             return result;
         }
 

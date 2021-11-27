@@ -251,6 +251,18 @@
     <None Update="Templates\proto\cs\stub.tpl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Templates\proto\go\bean.tpl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Templates\proto\go\proto.tpl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Templates\proto\go\rpc.tpl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Templates\proto\go\stub.tpl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Templates\proto\lua\all.tpl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
