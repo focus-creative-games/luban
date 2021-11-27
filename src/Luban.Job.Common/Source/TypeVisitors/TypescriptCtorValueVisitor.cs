@@ -39,12 +39,12 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TLong type)
         {
-            return "0";
+            return type.IsBean ? "BigInt(0)" : "0";
         }
 
         public string Accept(TFlong type)
         {
-            return "0";
+            return "BigInt(0)";
         }
 
         public string Accept(TFloat type)
@@ -69,7 +69,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TBytes type)
         {
-            return "null";
+            return "new Uint8Array()";
         }
 
         public string Accept(TText type)
@@ -84,7 +84,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TArray type)
         {
-            return "[]";
+            return TypescriptBinUnderingDeserializeVisitorBase.GetNewArray(type.ElementType);
         }
 
         public string Accept(TList type)

@@ -76,7 +76,26 @@ namespace Luban.Job.Common.TypeVisitors
 
         public abstract string Accept(TBean type, string bufVarName, string fieldName);
 
-        private string GetNewArray(TArray arrayType, string size)
+
+
+        public static string GetNewArray(TType elementType)
+        {
+            switch (elementType)
+            {
+                case TByte _: return "new Uint8Array()";
+                case TShort _:
+                case TFshort _: return "new Int16Array()";
+                case TInt _:
+                case TFint _: return "new Int32Array()";
+                case TLong _:
+                case TFlong _: return "new Int64Array()";
+                case TFloat _: return "new Float32Array()";
+                case TDouble _: return "new Float64Array()";
+                default: return "[]";
+            }
+        }
+
+        public static string GetNewArray(TArray arrayType, string size)
         {
             switch (arrayType.ElementType)
             {
