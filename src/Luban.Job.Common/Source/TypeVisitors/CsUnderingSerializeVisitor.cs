@@ -99,7 +99,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TMap type, string bufName, string fieldName)
         {
-            return $"{{ {bufName}.WriteSize({fieldName}.Count); foreach((var _k, var _v) in {fieldName}) {{ {type.KeyType.Apply(this, bufName, "_k")} {type.ValueType.Apply(this, bufName, "_v")} }} }}";
+            return $"{{ {bufName}.WriteSize({fieldName}.Count); foreach(var _e in {fieldName}) {{ {type.KeyType.Apply(this, bufName, "_e.Key")} {type.ValueType.Apply(this, bufName, "_e.Value")} }} }}";
         }
 
 

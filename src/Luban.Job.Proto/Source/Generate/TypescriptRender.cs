@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace Luban.Job.Proto.Generate
 {
     [Render("typescript")]
-    class TypescriptRender : RenderBase
+    class TypescriptRender : TemplateRenderBase
     {
         public override void Render(GenContext ctx)
         {
@@ -63,49 +63,6 @@ namespace Luban.Job.Proto.Generate
                 var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
                 ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
             }));
-        }
-
-        protected override string Render(DefEnum e)
-        {
-            return RenderUtil.RenderTypescriptEnumClass(e);
-        }
-
-        protected override string Render(DefBean b)
-        {
-            var template = StringTemplateUtil.GetTemplate("proto/typescript/bean");
-            var result = template.RenderCode(b);
-
-            return result;
-        }
-
-        protected override string Render(DefProto p)
-        {
-            var template = StringTemplateUtil.GetTemplate("proto/typescript/proto");
-            var result = template.RenderCode(p);
-
-            return result;
-        }
-
-        protected override string Render(DefRpc r)
-        {
-            var template = StringTemplateUtil.GetTemplate("proto/typescript/rpc");
-            var result = template.RenderCode(r);
-
-            return result;
-        }
-
-        public override string RenderStubs(string name, string module, List<DefProto> protos, List<DefRpc> rpcs)
-        {
-            var template = StringTemplateUtil.GetTemplate("proto/typescript/stub");
-            var result = template.Render(new
-            {
-                Name = name,
-                Namespace = module,
-                Protos = protos,
-                Rpcs = rpcs,
-            });
-
-            return result;
         }
     }
 }
