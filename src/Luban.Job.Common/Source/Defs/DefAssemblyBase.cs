@@ -28,7 +28,7 @@ namespace Luban.Job.Common.Defs
             }
         }
 
-        public static bool IsUseUnityVectors => LocalAssebmly?.UseUnityVectors == true;
+        public static bool IsUseUnityVectors => LocalAssebmly?.CsUseUnityVectors == true;
 
         public Dictionary<string, DefTypeBase> Types { get; } = new Dictionary<string, DefTypeBase>();
 
@@ -40,7 +40,7 @@ namespace Luban.Job.Common.Defs
 
         public bool SupportNullable { get; protected set; } = true;
 
-        public bool UseUnityVectors { get; set; }
+        public bool CsUseUnityVectors { get; set; }
 
         public NamingConvention NamingConventionModule { get; set; } = NamingConvention.LanguangeRecommend;
 

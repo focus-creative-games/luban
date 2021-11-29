@@ -13,21 +13,6 @@ namespace Luban.Job.Common
         [Option("output_code_monolithic_file", Required = false, HelpText = "output monolithic code file. only effect when lan=rust,python,typescript,lua")]
         public string OutputCodeMonolithicFile { get; set; }
 
-        [Option("typescript_bright_require_path", Required = false, HelpText = "bright require path in typescript")]
-        public string TypescriptBrightRequirePath { get; set; }
-
-        [Option("typescript_bright_package_name", Required = false, HelpText = "typescript bright package name")]
-        public string TypescriptBrightPackageName { get; set; }
-
-        [Option("use_puerts_bytebuf", Required = false, HelpText = "use puerts bytebuf class")]
-        public bool UsePuertsByteBuf { get; set; }
-
-        [Option("embed_bright_types", Required = false, HelpText = "use puerts bytebuf class")]
-        public bool EmbedBrightTypes { get; set; }
-
-        [Option("use_unity_vector", Required = false, HelpText = "use UnityEngine.Vector{2,3,4}")]
-        public bool UseUnityVectors { get; set; }
-
         [Option("naming_convention_module", Required = false, HelpText = "naming convention of module. can be language_recommend,none,camelCase,PascalCase,under_scores")]
         public string NamingConventionModuleStr { get; set; }
 
@@ -50,6 +35,23 @@ namespace Luban.Job.Common
 
         [Option("access_bean_member", Required = false, HelpText = "mode of bean field. can be  language_recommend,variable,getter_setter,property")]
         public string AccessConventionBeanMemberStr { get; set; }
+
+        // luanguage options
+
+        [Option("typescript:bright_require_path", Required = false, HelpText = "bright require path in typescript")]
+        public string TypescriptBrightRequirePath { get; set; }
+
+        [Option("typescript:bright_package_name", Required = false, HelpText = "typescript bright package name")]
+        public string TypescriptBrightPackageName { get; set; }
+
+        [Option("typescript:use_puerts_bytebuf", Required = false, HelpText = "use puerts bytebuf class")]
+        public bool TypescriptUsePuertsByteBuf { get; set; }
+
+        [Option("typescript:embed_bright_types", Required = false, HelpText = "use puerts bytebuf class")]
+        public bool TypescriptEmbedBrightTypes { get; set; }
+
+        [Option("cs:use_unity_vector", Required = false, HelpText = "use UnityEngine.Vector{2,3,4}")]
+        public bool CsUseUnityVectors { get; set; }
 
         public AccessConvention AccessConventionBeanMember { get; set; }
 
@@ -101,12 +103,12 @@ namespace Luban.Job.Common
                 return false;
             }
             bool hasBrightPathOrPacakge = !string.IsNullOrWhiteSpace(this.TypescriptBrightRequirePath) || !string.IsNullOrWhiteSpace(this.TypescriptBrightPackageName);
-            if (!this.UsePuertsByteBuf && !hasBrightPathOrPacakge)
+            if (!this.TypescriptUsePuertsByteBuf && !hasBrightPathOrPacakge)
             {
                 errMsg = "while --use_puerts_bytebuf is false, should provide option --typescript_bright_require_path or --typescript_bright_package_name";
                 return false;
             }
-            if (!this.EmbedBrightTypes && !hasBrightPathOrPacakge)
+            if (!this.TypescriptEmbedBrightTypes && !hasBrightPathOrPacakge)
             {
                 errMsg = "while --embed_bright_types is false, should provide option --typescript_bright_require_path or --typescript_bright_package_name";
                 return false;

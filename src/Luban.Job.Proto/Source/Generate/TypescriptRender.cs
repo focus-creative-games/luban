@@ -24,7 +24,7 @@ namespace Luban.Job.Proto.Generate
                 var render = ctx.Render;
                 var ass = ctx.Assembly;
                 var fileContent = new List<string>();
-                if (args.UsePuertsByteBuf)
+                if (args.TypescriptUsePuertsByteBuf)
                 {
                     fileContent.Add(TypescriptStringTemplate.PuertsByteBufImports);
                 }
@@ -32,7 +32,7 @@ namespace Luban.Job.Proto.Generate
                 {
                     fileContent.Add(TypescriptStringTemplate.GetByteBufImports(brightRequirePath, brightPackageName));
                 }
-                if (args.EmbedBrightTypes)
+                if (args.TypescriptEmbedBrightTypes)
                 {
                     fileContent.Add(StringTemplateUtil.GetTemplateString("config/typescript_bin/vectors"));
                     fileContent.Add(TypescriptStringTemplate.SerializeTypes);

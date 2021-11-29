@@ -26,7 +26,7 @@ namespace Luban.Job.Cfg.Generate
                 bool isGenBinary = genType.EndsWith("bin");
                 if (isGenBinary)
                 {
-                    if (args.UsePuertsByteBuf)
+                    if (args.TypescriptUsePuertsByteBuf)
                     {
                         fileContent.Add(TypescriptStringTemplate.PuertsByteBufImports);
                     }
@@ -36,7 +36,7 @@ namespace Luban.Job.Cfg.Generate
                     }
                 }
 
-                if (args.EmbedBrightTypes)
+                if (args.TypescriptEmbedBrightTypes)
                 {
                     fileContent.Add(isGenBinary ?
                         StringTemplateUtil.GetTemplateString("config/typescript_bin/vectors")

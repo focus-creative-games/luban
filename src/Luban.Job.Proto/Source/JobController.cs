@@ -89,7 +89,7 @@ namespace Luban.Job.Proto
 
                 var ass = new DefAssembly()
                 {
-                    UseUnityVectors = args.UseUnityVectors,
+                    CsUseUnityVectors = args.CsUseUnityVectors,
 
                     NamingConventionModule = args.NamingConventionModule,
                     NamingConventionType = args.NamingConventionType,
