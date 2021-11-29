@@ -2,6 +2,7 @@
 using Luban.Common.Utils;
 using Luban.Job.Proto.RawDefs;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Luban.Job.Proto.Defs
 {
@@ -22,6 +23,25 @@ namespace Luban.Job.Proto.Defs
         }
 
         public List<DefField> Fields { get; set; } = new List<DefField>();
+
+#if !LUBAN_LITE
+        public virtual string GoBinImport
+        {
+            get
+            {
+                var imports = new HashSet<string>();
+                if (this.Fields.Count > 0)
+                {
+                    imports.Add("errors");
+                }
+                foreach (var f in Fields)
+                {
+                    f.CType.Apply(Luban.Job.Common.TypeVisitors.GoBinImport.Ins, imports);
+                }
+                return string.Join('\n', imports.Select(im => $"import \"{im}\""));
+            }
+        }
+#endif
 
         public override void Compile()
         {
