@@ -28,9 +28,17 @@ namespace Luban.Job.Cfg.DataVisitors
 
         void Accept(DString type, T x);
 
+        void Accept(DText type, T x);
+
         void Accept(DBytes type, T x);
 
-        void Accept(DText type, T x);
+        void Accept(DVector2 type, T x);
+
+        void Accept(DVector3 type, T x);
+
+        void Accept(DVector4 type, T x);
+
+        void Accept(DDateTime type, T x);
 
         void Accept(DBean type, T x);
 
@@ -41,14 +49,6 @@ namespace Luban.Job.Cfg.DataVisitors
         void Accept(DSet type, T x);
 
         void Accept(DMap type, T x);
-
-        void Accept(DVector2 type, T x);
-
-        void Accept(DVector3 type, T x);
-
-        void Accept(DVector4 type, T x);
-
-        void Accept(DDateTime type, T x);
     }
 
     public interface IDataActionVisitor<T1, T2>
@@ -75,11 +75,19 @@ namespace Luban.Job.Cfg.DataVisitors
 
         void Accept(DEnum type, T1 x, T2 y);
 
+        void Accept(DDateTime type, T1 x, T2 y);
+
         void Accept(DString type, T1 x, T2 y);
+
+        void Accept(DText type, T1 x, T2 y);
 
         void Accept(DBytes type, T1 x, T2 y);
 
-        void Accept(DText type, T1 x, T2 y);
+        void Accept(DVector2 type, T1 x, T2 y);
+
+        void Accept(DVector3 type, T1 x, T2 y);
+
+        void Accept(DVector4 type, T1 x, T2 y);
 
         void Accept(DBean type, T1 x, T2 y);
 
@@ -90,13 +98,5 @@ namespace Luban.Job.Cfg.DataVisitors
         void Accept(DSet type, T1 x, T2 y);
 
         void Accept(DMap type, T1 x, T2 y);
-
-        void Accept(DVector2 type, T1 x, T2 y);
-
-        void Accept(DVector3 type, T1 x, T2 y);
-
-        void Accept(DVector4 type, T1 x, T2 y);
-
-        void Accept(DDateTime type, T1 x, T2 y);
     }
 }

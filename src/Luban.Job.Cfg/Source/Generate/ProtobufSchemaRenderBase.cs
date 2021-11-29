@@ -1,20 +1,24 @@
 ﻿using Luban.Common.Protos;
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Common.Defs;
+using Luban.Job.Common.Generate;
 using Luban.Job.Common.Utils;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Luban.Job.Cfg.Generate
 {
-    abstract class LuaCodeRenderBase : TemplateCodeRenderBase
+    abstract class ProtobufSchemaRenderBase : TemplateCodeRenderBase
     {
-        protected override string CommonRenderTemplateDir => "lua";
+        protected override string CommonRenderTemplateDir => "pb";
 
         public override void Render(GenContext ctx)
         {
             DefAssembly.LocalAssebmly.CurrentLanguage = Common.ELanguage.LUA;
-            var file = RenderFileUtil.GetFileOrDefault(ctx.GenArgs.OutputCodeMonolithicFile, "Types.lua");
+            var file = RenderFileUtil.GetFileOrDefault(ctx.GenArgs.OutputCodeMonolithicFile, "config.proto");
             var content = this.RenderAll(ctx.ExportTypes);
             var md5 = CacheFileUtil.GenMd5AndAddCache(file, string.Join('\n', content));
             ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });

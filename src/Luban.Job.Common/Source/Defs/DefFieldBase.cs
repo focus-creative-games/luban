@@ -13,9 +13,11 @@ namespace Luban.Job.Common.Defs
 
         public DefTypeBase HostType { get; set; }
 
-        public int Id { get; set; }
+        public int Id { get; protected set; }
 
-        public string Name { get; set; }
+        public string Name { get; protected set; }
+
+        public int AutoId { get; set; }
 
         public string ConventionName
         {
@@ -44,6 +46,7 @@ namespace Luban.Job.Common.Defs
                             case ELanguage.TYPESCRIPT: cn = TypeUtil.ToCamelCase(Name); break;
                             case ELanguage.PYTHON: cn = TypeUtil.ToUnderScores(Name); break;
                             case ELanguage.RUST: cn = TypeUtil.ToUnderScores(Name); break;
+                            case ELanguage.PROTOBUF: cn = Name; break;
                             default: throw new Exception($"unknown language:{curLan}");
                         }
                         break;
@@ -91,6 +94,7 @@ namespace Luban.Job.Common.Defs
         {
             HostType = host;
             Id = f.Id + idOffset;
+            AutoId = Id;
             Name = f.Name;
             Type = f.Type;
             Comment = f.Comment;

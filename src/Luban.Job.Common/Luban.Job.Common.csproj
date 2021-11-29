@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.19.1" />
     <PackageReference Include="Scriban" Version="4.1.0" />
   </ItemGroup>
 

@@ -13,6 +13,7 @@ namespace Luban.Job.Cfg.Generate
     [Render("data_lua")]
     [Render("data_xml")]
     [Render("data_yaml")]
+    [Render("data_protobuf")]
     class DataScatterRender : DataRenderBase
     {
         public override void Render(GenContext ctx)

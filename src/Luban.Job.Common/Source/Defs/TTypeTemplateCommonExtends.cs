@@ -205,6 +205,46 @@ namespace Luban.Job.Common.Defs
             return type.Apply(GoDeserializeBinVisitor.Ins, name, bufName, err);
         }
 
+        public static string ProtobufDefineType(TType type)
+        {
+            return type.Apply(ProtobufTypeNameVisitor.Ins);
+        }
+
+        public static string ProtobufPreDecorator(TType type)
+        {
+            if (type.IsNullable)
+            {
+                return "optional";
+            }
+            else if (type.IsCollection)
+            {
+                if (type is TMap)
+                {
+                    return "";
+                }
+                else
+                {
+                    return "repeated";
+                }
+            }
+            else
+            {
+                return "required";
+            }
+        }
+
+        public static string ProtobufSuffixOptions(TType type)
+        {
+            if (type.IsCollection && !(type is TMap))
+            {
+                return $"[packed = {(type.ElementType.Apply(IsProtobufPackedType.Ins) ? "true" : "false")}]";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
         public static bool HasTag(dynamic obj, string attrName)
         {
             return obj.HasTag(attrName);

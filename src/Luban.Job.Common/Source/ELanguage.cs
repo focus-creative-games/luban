@@ -13,5 +13,6 @@ namespace Luban.Job.Common
         PYTHON,
         ERLANG,
         RUST,
+        PROTOBUF,
     }
 }

@@ -12,7 +12,7 @@ namespace Luban.Job.Common.Types
             return new TArray(isNullable, tags, elementType);
         }
 
-        public TType ElementType { get; }
+        public override TType ElementType { get; }
 
         private TArray(bool isNullable, Dictionary<string, string> tags, TType elementType) : base(isNullable, tags)
         {

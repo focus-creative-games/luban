@@ -18,6 +18,7 @@ namespace Luban.Job.Common.Utils
                 case ELanguage.JS: return fullName + ".js";
                 case ELanguage.TYPESCRIPT: return fullName.Replace('.', '/') + ".ts";
                 case ELanguage.RUST: return fullName.Replace('.', '_') + ".rs";
+                case ELanguage.PROTOBUF: return fullName.Replace('.', '_') + ".pb";
                 default: throw new NotSupportedException();
             }
 
@@ -71,6 +72,7 @@ namespace Luban.Job.Common.Utils
             { "javascript", ELanguage.JS },
             { "erlang", ELanguage.ERLANG },
             { "rust", ELanguage.RUST },
+            { "pb", ELanguage.PROTOBUF },
         };
 
         public static ELanguage GetLanguage(string genType)
@@ -96,6 +98,7 @@ namespace Luban.Job.Common.Utils
             { "erlang", "erl" },
             { "erl", "erl" },
             { "xlsx", "xlsx" },
+            { "protobuf", "pb" },
         };
 
         public static string GetOutputFileSuffix(string genType)

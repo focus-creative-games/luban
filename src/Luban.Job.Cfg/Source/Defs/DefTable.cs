@@ -49,6 +49,8 @@ namespace Luban.Job.Cfg.Defs
 
         public TBean ValueTType { get; private set; }
 
+        public TType Type { get; private set; }
+
         public DefField IndexField { get; private set; }
 
         public int IndexFieldIdIndex { get; private set; }
@@ -86,6 +88,7 @@ namespace Luban.Job.Cfg.Defs
                 case ETableMode.ONE:
                 {
                     KeyTType = null;
+                    Type = ValueTType;
                     break;
                 }
                 case ETableMode.MAP:
@@ -113,6 +116,7 @@ namespace Luban.Job.Cfg.Defs
                         IndexFieldIdIndex = 0;
                     }
                     KeyTType = IndexField.CType;
+                    Type = TMap.Create(false, null, KeyTType, ValueTType, false);
                     break;
                 }
                 default: throw new Exception($"unknown mode:'{Mode}'");

@@ -86,6 +86,12 @@ namespace Luban.Job.Cfg.Utils
                     }
                     return string.Join('\n', content);
                 }
+                case "data_protobuf":
+                {
+                    var ms = new MemoryStream();
+                    ProtobufExportor.Ins.WriteList(table, records, ms);
+                    return DataUtil.StreamToBytes(ms);
+                }
                 //case "data_erlang":
                 //{
                 //    var content = new StringBuilder();

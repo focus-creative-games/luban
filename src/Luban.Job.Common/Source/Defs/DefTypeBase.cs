@@ -47,6 +47,8 @@ namespace Luban.Job.Common.Defs
 
         public string RustFullName => TypeUtil.MakeRustFullName(Namespace, Name);
 
+        public string PbFullName => TypeUtil.MakePbFullName(Namespace, Name);
+
         public string Comment { get; protected set; }
 
         public string EscapeComment => DefUtil.EscapeCommentByCurrentLanguage(Comment);

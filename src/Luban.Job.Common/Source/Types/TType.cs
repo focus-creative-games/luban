@@ -42,6 +42,8 @@ namespace Luban.Job.Common.Types
 
         public virtual bool IsBean => false;
 
+        public virtual TType ElementType => null;
+
         public abstract void Apply<T>(ITypeActionVisitor<T> visitor, T x);
         public abstract void Apply<T1, T2>(ITypeActionVisitor<T1, T2> visitor, T1 x, T2 y);
         public abstract TR Apply<TR>(ITypeFuncVisitor<TR> visitor);

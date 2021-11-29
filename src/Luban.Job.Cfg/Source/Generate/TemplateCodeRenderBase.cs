@@ -52,5 +52,21 @@ namespace Luban.Job.Cfg.Generate
             });
             return result;
         }
+
+        public virtual string RenderAll(List<DefTypeBase> types)
+        {
+            var enums = types.Where(t => t is DefEnum).ToList();
+            var beans = types.Where(t => t is DefBean).ToList();
+            var tables = types.Where(t => t is DefTable).ToList();
+
+            var template = StringTemplateUtil.GetTemplate($"config/{RenderTemplateDir}/all");
+            var result = template.RenderCode(new {
+                Namespace = DefAssembly.LocalAssebmly.TopModule,
+                Enums = enums.Select(e => Render((DefEnum)e)).ToList(),
+                Beans = beans.Select(b => Render((DefBean)b)).ToList(),
+                Tables = tables.Select(t => Render((DefTable)t)).ToList(),
+            });
+            return result;
+        }
     }
 }

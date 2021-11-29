@@ -173,6 +173,7 @@ namespace Luban.Job.Common.Utils
                 case ELanguage.TYPESCRIPT:
                 case ELanguage.PYTHON:
                 case ELanguage.RUST:
+                case ELanguage.PROTOBUF:
 #if !LUBAN_LITE
                 return System.Web.HttpUtility.HtmlEncode(comment).Replace("\n", "<br/>");
 #else

@@ -26,6 +26,8 @@ namespace Luban.Job.Cfg.Defs
 
         public List<DefField> ExportFields { get; private set; }
 
+        public int AutoId { get; set; }
+
         public bool IsDefineEquals(DefBean b)
         {
             return DeepCompareTypeDefine.Ins.Compare(this, b, new Dictionary<DefTypeBase, bool>(), new HashSet<DefTypeBase>());
@@ -196,6 +198,18 @@ namespace Luban.Job.Cfg.Defs
                 }
             }
             DefField.CompileFields(this, HierarchyFields, false);
+
+            var allocAutoIds = this.HierarchyFields.Select(f => f.Id).ToHashSet();
+
+            int nextAutoId = 1;
+            foreach (var f in this.HierarchyFields)
+            {
+                while (!allocAutoIds.Add(nextAutoId))
+                {
+                    ++nextAutoId;
+                }
+                f.AutoId = nextAutoId;
+            }
         }
 
         public override void PostCompile()
@@ -203,6 +217,14 @@ namespace Luban.Job.Cfg.Defs
             foreach (var field in HierarchyFields)
             {
                 field.PostCompile();
+            }
+            if (this.IsAbstractType && this.ParentDefType == null)
+            {
+                int nextAutoId = 0;
+                foreach (DefBean c in this.HierarchyNotAbstractChildren)
+                {
+                    c.AutoId = ++nextAutoId;
+                }
             }
         }
     }
