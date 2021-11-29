@@ -214,8 +214,6 @@ Options:
             LogUtil.InitSimpleNLogConfigure(NLog.LogLevel.FromString(options.LogLevel));
             s_logger = NLog.LogManager.GetCurrentClassLogger();
 
-
-
             int processorCount = System.Environment.ProcessorCount;
             ThreadPool.SetMinThreads(Math.Max(4, processorCount), 5);
             ThreadPool.SetMaxThreads(Math.Max(16, processorCount * 4), 10);

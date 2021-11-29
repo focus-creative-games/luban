@@ -21,25 +21,8 @@ namespace Luban.Server
             [Option('t', "template_search_path", Required = false, HelpText = "additional template search path")]
             public string TemplateSearchPath { get; set; }
 
-            [Option("timezone", Required = false, HelpText = "default timezone")]
-            public string DefaultTimeZone { get; set; } = "Asia/Shanghai";
-        }
-
-        private static CommandLineOptions ParseOptions(String[] args)
-        {
-            var helpWriter = new StringWriter();
-            var parser = new Parser(ps =>
-            {
-                ps.HelpWriter = helpWriter;
-            });
-
-            var result = parser.ParseArguments<CommandLineOptions>(args);
-            if (result.Tag == ParserResultType.NotParsed)
-            {
-                Console.Error.WriteLine(helpWriter.ToString());
-                Environment.Exit(1);
-            }
-            return ((Parsed<CommandLineOptions>)result).Value;
+            [Option("i10n:default_timezone", Required = false, HelpText = "default timezone")]
+            public string L10nDefaultTimeZone { get; set; } = "Asia/Shanghai";
         }
 
         static void Main(string[] args)
@@ -47,7 +30,7 @@ namespace Luban.Server
             ConsoleWindow.EnableQuickEditMode(false);
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-            var options = ParseOptions(args);
+            var options = CommandLineUtil.ParseOptions<CommandLineOptions>(args);
 
             if (!string.IsNullOrEmpty(options.TemplateSearchPath))
             {
@@ -59,7 +42,7 @@ namespace Luban.Server
 
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
-            TimeZoneUtil.DefaultTimeZone = TimeZoneInfo.FindSystemTimeZoneById(options.DefaultTimeZone);
+            TimeZoneUtil.DefaultTimeZone = TimeZoneInfo.FindSystemTimeZoneById(options.L10nDefaultTimeZone);
 
             GenServer.Ins.Start(false, options.Port, ProtocolStub.Factories);
 

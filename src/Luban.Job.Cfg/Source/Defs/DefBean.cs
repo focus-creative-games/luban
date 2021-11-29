@@ -32,22 +32,6 @@ namespace Luban.Job.Cfg.Defs
         }
 
 #if !LUBAN_LITE
-        public string GoBinImport
-        {
-            get
-            {
-                var imports = new HashSet<string>();
-                if (IsAbstractType)
-                {
-                    imports.Add("errors");
-                }
-                foreach (var f in Fields)
-                {
-                    f.CType.Apply(TypeVisitors.GoBinImport.Ins, imports);
-                }
-                return string.Join('\n', imports.Select(im => $"import \"{im}\""));
-            }
-        }
 
         public string GoJsonImport
         {

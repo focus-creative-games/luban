@@ -184,6 +184,27 @@ namespace Luban.Job.Common.Defs
             return type.Apply(ErlangDefineTypeNameVisitor.Ins);
         }
 
+
+        public static string GoDefineType(TType type)
+        {
+            return type.Apply(GoTypeNameVisitor.Ins);
+        }
+
+        public static string GoDeserializeType(TBean type, string bufName)
+        {
+            return $"Deserialize{type.Bean.GoFullName}({bufName})";
+        }
+
+        public static string GoSerializeField(TType type, string name, string bufName)
+        {
+            return type.Apply(GoSerializeBinVisitor.Ins, name, bufName);
+        }
+
+        public static string GoDeserializeField(TType type, string name, string bufName, string err)
+        {
+            return type.Apply(GoDeserializeBinVisitor.Ins, name, bufName, err);
+        }
+
         public static bool HasTag(dynamic obj, string attrName)
         {
             return obj.HasTag(attrName);

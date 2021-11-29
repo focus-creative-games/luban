@@ -17,7 +17,7 @@ namespace Luban.Job.Proto.Generate
         protected override string Render(DefEnum e)
         {
             var template = StringTemplateUtil.GetTemplate($"common/{RenderTemplateDir}/enum");
-            var result = template.Render(e);
+            var result = template.RenderCode(e);
             return result;
         }
 

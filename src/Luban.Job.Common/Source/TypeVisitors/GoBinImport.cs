@@ -1,10 +1,9 @@
 using Luban.Job.Common.Types;
-using Luban.Job.Common.TypeVisitors;
 using System.Collections.Generic;
 
-namespace Luban.Job.Cfg.TypeVisitors
+namespace Luban.Job.Common.TypeVisitors
 {
-    class GoBinImport : DecoratorActionVisitor<HashSet<string>>
+    public class GoBinImport : DecoratorActionVisitor<HashSet<string>>
     {
         public static GoBinImport Ins { get; } = new();
 

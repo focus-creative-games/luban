@@ -58,6 +58,25 @@ namespace Luban.Job.Common.Defs
             }
         }
 
+#if !LUBAN_LITE
+        public string GoBinImport
+        {
+            get
+            {
+                var imports = new HashSet<string>();
+                if (IsAbstractType)
+                {
+                    imports.Add("errors");
+                }
+                foreach (var f in Fields)
+                {
+                    f.CType.Apply(Luban.Job.Common.TypeVisitors.GoBinImport.Ins, imports);
+                }
+                return string.Join('\n', imports.Select(im => $"import \"{im}\""));
+            }
+        }
+#endif
+
         protected abstract DefFieldBase CreateField(Field f, int idOffset);
 
         public void CollectHierarchyNotAbstractChildren(List<DefBeanBase> children)

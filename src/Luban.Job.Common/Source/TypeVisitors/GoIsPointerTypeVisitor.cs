@@ -1,11 +1,10 @@
 ﻿using Luban.Job.Common.Types;
-using Luban.Job.Common.TypeVisitors;
 
-namespace Luban.Job.Cfg.TypeVisitors
+namespace Luban.Job.Common.TypeVisitors
 {
-    class IsGoPointerTypeVisitor : DecoratorFuncVisitor<bool>
+    public class GoIsPointerTypeVisitor : DecoratorFuncVisitor<bool>
     {
-        public static IsGoPointerTypeVisitor Ins { get; } = new();
+        public static GoIsPointerTypeVisitor Ins { get; } = new();
 
         public override bool DoAccept(TType type)
         {

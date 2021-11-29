@@ -1,9 +1,9 @@
 using Luban.Job.Common.Types;
 using Luban.Job.Common.TypeVisitors;
 
-namespace Luban.Job.Cfg.TypeVisitors
+namespace Luban.Job.Common.TypeVisitors
 {
-    class GoTypeUnderingNameVisitor : ITypeFuncVisitor<string>
+    public class GoTypeUnderingNameVisitor : ITypeFuncVisitor<string>
     {
         public static GoTypeUnderingNameVisitor Ins { get; } = new GoTypeUnderingNameVisitor();
 
@@ -79,7 +79,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TBean type)
         {
-            return type.Bean.IsAbstractType ? $"interface{{}}" : $"*{type.Bean.GoFullName}";
+            return type.Bean.IsAbstractType ? $"serialization.ISerializable" : $"*{type.Bean.GoFullName}";
         }
 
         public string Accept(TArray type)

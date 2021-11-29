@@ -133,21 +133,6 @@ namespace Luban.Job.Cfg.Utils
             }
         }
 
-        public static string GoDefineType(TType type)
-        {
-            return type.Apply(GoTypeNameVisitor.Ins);
-        }
-
-        public static string GoDeserializeType(TBean type, string bufName)
-        {
-            return $"New{type.Bean.GoFullName}({bufName})";
-        }
-
-        public static string GoDeserializeField(TType type, string name, string bufName)
-        {
-            return type.Apply(GoDeserializeBinVisitor.Ins, name, bufName);
-        }
-
         public static string GoDeserializeJsonField(TType type, string name, string fieldName, string bufName)
         {
             return type.Apply(GoDeserializeJsonVisitor.Ins, name, fieldName, bufName);

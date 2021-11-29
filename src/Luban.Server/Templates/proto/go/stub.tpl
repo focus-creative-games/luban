@@ -1,1 +1,1 @@
-// stub
+package {{namespace}}

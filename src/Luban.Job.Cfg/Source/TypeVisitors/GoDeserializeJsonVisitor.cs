@@ -12,7 +12,7 @@ namespace Luban.Job.Cfg.TypeVisitors
             if (type.IsNullable)
             {
                 var jsonObjName = $"__json_{fieldName}__";
-                return $"{{ var _ok_ bool; var {jsonObjName} interface{{}}; if {jsonObjName}, _ok_ = {bufName}[\"{fieldName}\"]; !_ok_ || {jsonObjName} == nil {{ return }} else {{ var __x__ {type.Apply(GoTypeUnderingNameVisitor.Ins)};  {type.Apply(GoDeserializeJsonUndering2Visitor.Ins, "__x__", jsonObjName)}; {varName} = {(type.Apply(IsGoPointerTypeVisitor.Ins) ? "&" : "")}__x__ }}}}";
+                return $"{{ var _ok_ bool; var {jsonObjName} interface{{}}; if {jsonObjName}, _ok_ = {bufName}[\"{fieldName}\"]; !_ok_ || {jsonObjName} == nil {{ return }} else {{ var __x__ {type.Apply(GoTypeUnderingNameVisitor.Ins)};  {type.Apply(GoDeserializeJsonUndering2Visitor.Ins, "__x__", jsonObjName)}; {varName} = {(type.Apply(GoIsPointerTypeVisitor.Ins) ? "&" : "")}__x__ }}}}";
             }
             else
             {

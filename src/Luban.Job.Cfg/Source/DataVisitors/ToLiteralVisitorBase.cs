@@ -92,7 +92,7 @@ namespace Luban.Job.Cfg.DataVisitors
 
         public virtual string Accept(DDateTime type)
         {
-            var ass = DefAssembly.LocalAssebmly as DefAssembly;
+            var ass = DefAssembly.LocalAssebmly;
             return type.GetUnixTime(ass.TimeZone).ToString();
         }
     }

@@ -28,9 +28,17 @@ namespace Luban.Job.Common.TypeVisitors
 
         TR Accept(TString type);
 
+        TR Accept(TText type);
+
         TR Accept(TBytes type);
 
-        TR Accept(TText type);
+        TR Accept(TVector2 type);
+
+        TR Accept(TVector3 type);
+
+        TR Accept(TVector4 type);
+
+        TR Accept(TDateTime type);
 
         TR Accept(TBean type);
 
@@ -41,14 +49,6 @@ namespace Luban.Job.Common.TypeVisitors
         TR Accept(TSet type);
 
         TR Accept(TMap type);
-
-        TR Accept(TVector2 type);
-
-        TR Accept(TVector3 type);
-
-        TR Accept(TVector4 type);
-
-        TR Accept(TDateTime type);
     }
 
     public interface ITypeFuncVisitor<T, TR>
@@ -77,9 +77,17 @@ namespace Luban.Job.Common.TypeVisitors
 
         TR Accept(TString type, T x);
 
+        TR Accept(TText type, T x);
+
         TR Accept(TBytes type, T x);
 
-        TR Accept(TText type, T x);
+        TR Accept(TVector2 type, T x);
+
+        TR Accept(TVector3 type, T x);
+
+        TR Accept(TVector4 type, T x);
+
+        TR Accept(TDateTime type, T x);
 
         TR Accept(TBean type, T x);
 
@@ -90,14 +98,6 @@ namespace Luban.Job.Common.TypeVisitors
         TR Accept(TSet type, T x);
 
         TR Accept(TMap type, T x);
-
-        TR Accept(TVector2 type, T x);
-
-        TR Accept(TVector3 type, T x);
-
-        TR Accept(TVector4 type, T x);
-
-        TR Accept(TDateTime type, T x);
     }
 
     public interface ITypeFuncVisitor<T, T2, TR>
@@ -126,9 +126,17 @@ namespace Luban.Job.Common.TypeVisitors
 
         TR Accept(TString type, T x, T2 y);
 
+        TR Accept(TText type, T x, T2 y);
+
         TR Accept(TBytes type, T x, T2 y);
 
-        TR Accept(TText type, T x, T2 y);
+        TR Accept(TVector2 type, T x, T2 y);
+
+        TR Accept(TVector3 type, T x, T2 y);
+
+        TR Accept(TVector4 type, T x, T2 y);
+
+        TR Accept(TDateTime type, T x, T2 y);
 
         TR Accept(TBean type, T x, T2 y);
 
@@ -139,14 +147,6 @@ namespace Luban.Job.Common.TypeVisitors
         TR Accept(TSet type, T x, T2 y);
 
         TR Accept(TMap type, T x, T2 y);
-
-        TR Accept(TVector2 type, T x, T2 y);
-
-        TR Accept(TVector3 type, T x, T2 y);
-
-        TR Accept(TVector4 type, T x, T2 y);
-
-        TR Accept(TDateTime type, T x, T2 y);
     }
 
     public interface ITypeFuncVisitor<T, T2, T3, TR>
@@ -175,9 +175,17 @@ namespace Luban.Job.Common.TypeVisitors
 
         TR Accept(TString type, T x, T2 y, T3 z);
 
+        TR Accept(TText type, T x, T2 y, T3 z);
+
         TR Accept(TBytes type, T x, T2 y, T3 z);
 
-        TR Accept(TText type, T x, T2 y, T3 z);
+        TR Accept(TVector2 type, T x, T2 y, T3 z);
+
+        TR Accept(TVector3 type, T x, T2 y, T3 z);
+
+        TR Accept(TVector4 type, T x, T2 y, T3 z);
+
+        TR Accept(TDateTime type, T x, T2 y, T3 z);
 
         TR Accept(TBean type, T x, T2 y, T3 z);
 
@@ -188,13 +196,5 @@ namespace Luban.Job.Common.TypeVisitors
         TR Accept(TSet type, T x, T2 y, T3 z);
 
         TR Accept(TMap type, T x, T2 y, T3 z);
-
-        TR Accept(TVector2 type, T x, T2 y, T3 z);
-
-        TR Accept(TVector3 type, T x, T2 y, T3 z);
-
-        TR Accept(TVector4 type, T x, T2 y, T3 z);
-
-        TR Accept(TDateTime type, T x, T2 y, T3 z);
     }
 }

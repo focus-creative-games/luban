@@ -11,7 +11,7 @@ namespace Luban.Job.Cfg.TypeVisitors
         {
             if (type.IsNullable)
             {
-                return $"{{ if {bufName} == nil {{ return }} else {{ var __x__ {type.Apply(GoTypeUnderingNameVisitor.Ins)};  {type.Apply(GoDeserializeJsonUndering2Visitor.Ins, "__x__", bufName)}; {varName} = {(type.Apply(IsGoPointerTypeVisitor.Ins) ? "&" : "")}__x__ }}}}";
+                return $"{{ if {bufName} == nil {{ return }} else {{ var __x__ {type.Apply(GoTypeUnderingNameVisitor.Ins)};  {type.Apply(GoDeserializeJsonUndering2Visitor.Ins, "__x__", bufName)}; {varName} = {(type.Apply(GoIsPointerTypeVisitor.Ins) ? "&" : "")}__x__ }}}}";
             }
             else
             {
