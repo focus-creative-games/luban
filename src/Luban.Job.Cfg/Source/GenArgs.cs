@@ -41,22 +41,22 @@ namespace Luban.Job.Cfg
         [Option("export_exclude_tags", Required = false, HelpText = "export exclude tags. default export all tags")]
         public string ExportExcludeTags { get; set; } = "";
 
-        [Option('t', "l10n_timezone", Required = false, HelpText = "timezone")]
-        public string TimeZone { get; set; }
+        [Option("l10n:timezone", Required = false, HelpText = "timezone")]
+        public string L10nTimeZone { get; set; }
 
-        [Option("input_l10n_text_files", Required = false, HelpText = "input l10n text table files. can be multi, sep by ','")]
-        public string InputTextTableFiles { get; set; }
+        [Option("l10n:input_text_files", Required = false, HelpText = "input l10n text table files. can be multi, sep by ','")]
+        public string L10nInputTextTableFiles { get; set; }
 
-        [Option("l10n_text_field_name", Required = false, HelpText = "text value field name of text table files. default is text")]
-        public string TextValueFieldName { get; set; }
+        [Option("l10n:text_field_name", Required = false, HelpText = "text value field name of text table files. default is text")]
+        public string L10nTextValueFieldName { get; set; }
 
-        [Option("output_l10n_not_translated_text_file", Required = false, HelpText = "the file save not translated l10n texts.")]
-        public string OutputNotTranslatedTextFile { get; set; }
+        [Option("l10n:output_not_translated_text_file", Required = false, HelpText = "the file save not translated l10n texts.")]
+        public string L10nOutputNotTranslatedTextFile { get; set; }
 
-        [Option("patch", Required = false, HelpText = "patch name")]
-        public string PatchName { get; set; }
+        [Option("10n:patch", Required = false, HelpText = "patch name")]
+        public string L10nPatchName { get; set; }
 
-        [Option("patch_input_data_dir", Required = false, HelpText = "patch input data root dir")]
-        public string PatchInputDataDir { get; set; }
+        [Option("10n:patch_input_data_dir", Required = false, HelpText = "patch input data root dir")]
+        public string L10nPatchInputDataDir { get; set; }
     }
 }

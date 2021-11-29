@@ -76,7 +76,7 @@ namespace Luban.Job.Cfg
                         return false;
                     }
 
-                    if (string.IsNullOrWhiteSpace(options.InputTextTableFiles) ^ string.IsNullOrWhiteSpace(options.OutputNotTranslatedTextFile))
+                    if (string.IsNullOrWhiteSpace(options.L10nInputTextTableFiles) ^ string.IsNullOrWhiteSpace(options.L10nOutputNotTranslatedTextFile))
                     {
                         errMsg = "--input_l10n_text_files must be provided with --output_l10n_not_translated_text_file";
                         return false;
@@ -88,7 +88,7 @@ namespace Luban.Job.Cfg
                     }
                 }
 
-                if (string.IsNullOrWhiteSpace(options.PatchName) ^ string.IsNullOrWhiteSpace(options.PatchInputDataDir))
+                if (string.IsNullOrWhiteSpace(options.L10nPatchName) ^ string.IsNullOrWhiteSpace(options.L10nPatchInputDataDir))
                 {
                     errMsg = "--patch must be provided with --patch_input_data_dir";
                     return false;
@@ -142,10 +142,10 @@ namespace Luban.Job.Cfg
 
                 var rawDefines = loader.BuildDefines();
 
-                TimeZoneInfo timeZoneInfo = string.IsNullOrEmpty(args.TimeZone) ? null : TimeZoneInfo.FindSystemTimeZoneById(args.TimeZone);
+                TimeZoneInfo timeZoneInfo = string.IsNullOrEmpty(args.L10nTimeZone) ? null : TimeZoneInfo.FindSystemTimeZoneById(args.L10nTimeZone);
 
                 var excludeTags = args.ExportExcludeTags.Split(',').Select(t => t.Trim().ToLowerInvariant()).Where(t => !string.IsNullOrEmpty(t)).ToList();
-                var ass = new DefAssembly(args.PatchName, timeZoneInfo, excludeTags, agent)
+                var ass = new DefAssembly(args.L10nPatchName, timeZoneInfo, excludeTags, agent)
                 {
                     CsUseUnityVectors = args.CsUseUnityVectors,
                     OutputCompactJson = args.OutputCompactJson,
@@ -164,7 +164,7 @@ namespace Luban.Job.Cfg
 
                 bool hasLoadCfgData = false;
 
-                bool needL10NTextConvert = !string.IsNullOrWhiteSpace(args.InputTextTableFiles);
+                bool needL10NTextConvert = !string.IsNullOrWhiteSpace(args.L10nInputTextTableFiles);
 
                 async Task CheckLoadCfgDataAsync()
                 {
@@ -173,13 +173,13 @@ namespace Luban.Job.Cfg
                         hasLoadCfgData = true;
                         var timer = new ProfileTimer();
                         timer.StartPhase("load config data");
-                        await DataLoaderUtil.LoadCfgDataAsync(agent, ass, args.InputDataDir, args.PatchName, args.PatchInputDataDir, args.InputConvertDataDir);
+                        await DataLoaderUtil.LoadCfgDataAsync(agent, ass, args.InputDataDir, args.L10nPatchName, args.L10nPatchInputDataDir, args.InputConvertDataDir);
                         timer.EndPhaseAndLog();
 
                         if (needL10NTextConvert)
                         {
-                            ass.InitL10n(args.TextValueFieldName);
-                            await DataLoaderUtil.LoadTextTablesAsync(agent, ass, ".", args.InputTextTableFiles);
+                            ass.InitL10n(args.L10nTextValueFieldName);
+                            await DataLoaderUtil.LoadTextTablesAsync(agent, ass, ".", args.L10nInputTextTableFiles);
                         }
 
                         timer.StartPhase("validate");
@@ -228,7 +228,7 @@ namespace Luban.Job.Cfg
                 {
                     var notConvertTextList = DataExporterUtil.GenNotConvertTextList(ass.NotConvertTextSet);
                     var md5 = FileUtil.CalcMD5(notConvertTextList);
-                    string outputNotConvertTextFile = args.OutputNotTranslatedTextFile;
+                    string outputNotConvertTextFile = args.L10nOutputNotTranslatedTextFile;
                     CacheManager.Ins.AddCache(outputNotConvertTextFile, md5, notConvertTextList);
 
                     genScatteredFiles.Add(new FileInfo() { FilePath = outputNotConvertTextFile, MD5 = md5 });

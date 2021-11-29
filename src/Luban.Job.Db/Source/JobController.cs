@@ -17,15 +17,9 @@ using FileInfo = Luban.Common.Protos.FileInfo;
 
 namespace Luban.Job.Db
 {
+
     public class JobController : IJobController
     {
-        class GenArgs : GenArgsBase
-        {
-            [Option('g', "gen_type", Required = true, HelpText = "cs,typescript ")]
-            public string GenType { get; set; }
-        }
-
-
         private bool TryParseArg(List<string> args, out GenArgs options, out string errMsg)
         {
             var helpWriter = new StringWriter();
