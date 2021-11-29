@@ -32,17 +32,33 @@ namespace Luban.Job.Cfg.Defs
         }
 
 #if !LUBAN_LITE
+        public override string GoBinImport
+        {
+            get
+            {
+                var imports = new HashSet<string>();
+                if (IsAbstractType || this.HierarchyExportFields.Count > 0)
+                {
+                    imports.Add("errors");
+                }
+                foreach (var f in HierarchyExportFields)
+                {
+                    f.CType.Apply(Luban.Job.Common.TypeVisitors.GoBinImport.Ins, imports);
+                }
+                return string.Join('\n', imports.Select(im => $"import \"{im}\""));
+            }
+        }
 
         public string GoJsonImport
         {
             get
             {
                 var imports = new HashSet<string>();
-                if (IsAbstractType)
+                if (IsAbstractType || this.HierarchyExportFields.Count > 0)
                 {
                     imports.Add("errors");
                 }
-                foreach (var f in Fields)
+                foreach (var f in HierarchyExportFields)
                 {
                     f.CType.Apply(TypeVisitors.GoJsonImport.Ins, imports);
                 }

@@ -79,7 +79,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TBean type)
         {
-            return type.Bean.IsAbstractType ? $"serialization.ISerializable" : $"*{type.Bean.GoFullName}";
+            return type.Bean.IsAbstractType ? $"interface{{}}" : $"*{type.Bean.GoFullName}";
         }
 
         public string Accept(TArray type)

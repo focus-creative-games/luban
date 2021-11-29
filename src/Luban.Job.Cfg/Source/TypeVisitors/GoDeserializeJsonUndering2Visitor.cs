@@ -79,39 +79,14 @@ namespace Luban.Job.Cfg.TypeVisitors
             return DeserializeString(type, varName, bufName);
         }
 
-        public string Accept(TBytes type, string varName, string bufName)
-        {
-            //return $"{{ if {varName}, err = {bufName}.ReadBytes(); err != nil {{ return }} }}";
-            throw new System.NotSupportedException();
-        }
-
         public string Accept(TText type, string varName, string bufName)
         {
             return $"{{var _ok_ bool; var __json_text__ map[string]interface{{}}; if __json_text__, _ok_ = {bufName}.(map[string]interface{{}}) ; !_ok_ {{ err = errors.New(\"{varName} error\"); return }};   {DeserializeString(type, "_", $"__json_text__[\"{DText.KEY_NAME}\"]")}; {DeserializeString(type, varName, $"__json_text__[\"{DText.TEXT_NAME}\"]")} }}";
         }
 
-        public string Accept(TBean type, string varName, string bufName)
+        public string Accept(TBytes type, string varName, string bufName)
         {
-            return $"{{ var _ok_ bool; var _x_ map[string]interface{{}}; if _x_, _ok_ = {bufName}.(map[string]interface{{}}); !_ok_ {{ err = errors.New(\"{varName} error\"); return }}; if {varName}, err = {($"New{ type.Bean.GoFullName}(_x_)")}; err != nil {{ return }} }}";
-        }
-
-        public string Accept(TArray type, string varName, string bufName)
-        {
-            throw new System.NotSupportedException();
-        }
-
-        public string Accept(TList type, string varName, string bufName)
-        {
-            throw new System.NotSupportedException();
-        }
-
-        public string Accept(TSet type, string varName, string bufName)
-        {
-            throw new System.NotSupportedException();
-        }
-
-        public string Accept(TMap type, string varName, string bufName)
-        {
+            //return $"{{ if {varName}, err = {bufName}.ReadBytes(); err != nil {{ return }} }}";
             throw new System.NotSupportedException();
         }
 
@@ -154,6 +129,31 @@ namespace Luban.Job.Cfg.TypeVisitors
         public string Accept(TDateTime type, string varName, string bufName)
         {
             return DeserializeNumber(type, varName, bufName);
+        }
+
+        public string Accept(TBean type, string varName, string bufName)
+        {
+            return $"{{ var _ok_ bool; var _x_ map[string]interface{{}}; if _x_, _ok_ = {bufName}.(map[string]interface{{}}); !_ok_ {{ err = errors.New(\"{varName} error\"); return }}; if {varName}, err = {($"Deserialize{ type.Bean.GoFullName}(_x_)")}; err != nil {{ return }} }}";
+        }
+
+        public string Accept(TArray type, string varName, string bufName)
+        {
+            throw new System.NotSupportedException();
+        }
+
+        public string Accept(TList type, string varName, string bufName)
+        {
+            throw new System.NotSupportedException();
+        }
+
+        public string Accept(TSet type, string varName, string bufName)
+        {
+            throw new System.NotSupportedException();
+        }
+
+        public string Accept(TMap type, string varName, string bufName)
+        {
+            throw new System.NotSupportedException();
         }
     }
 }

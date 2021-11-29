@@ -59,16 +59,16 @@ namespace Luban.Job.Common.Defs
         }
 
 #if !LUBAN_LITE
-        public string GoBinImport
+        public virtual string GoBinImport
         {
             get
             {
                 var imports = new HashSet<string>();
-                if (IsAbstractType)
+                if (IsAbstractType || this.HierarchyFields.Count > 0)
                 {
                     imports.Add("errors");
                 }
-                foreach (var f in Fields)
+                foreach (var f in HierarchyFields)
                 {
                     f.CType.Apply(Luban.Job.Common.TypeVisitors.GoBinImport.Ins, imports);
                 }

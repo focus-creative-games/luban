@@ -94,7 +94,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TDateTime type, string fieldName, string bufName)
         {
-            throw new System.NotSupportedException();
+            return $"{bufName}.WriteInt({fieldName})";
         }
 
         public string Accept(TBean type, string fieldName, string bufName)

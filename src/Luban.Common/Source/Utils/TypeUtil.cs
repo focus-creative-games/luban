@@ -113,17 +113,17 @@ namespace Luban.Common.Utils
 
         public static string MakeGoFullName(string module, string name)
         {
-            return MakeGoNamespace(module) + "_" + name;
+            return MakeGoNamespace(module) + name;
         }
 
         public static string MakePyFullName(string module, string name)
         {
-            return module.Replace('.', '_') + "_" + name;
+            return module.Replace('.', '_') + name;
         }
 
         public static string MakeRustFullName(string module, string name)
         {
-            return MakeGoNamespace(module) + "_" + name;
+            return MakeGoNamespace(module) + name;
         }
 
         public static string MakeNamespace(string module, string subModule)

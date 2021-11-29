@@ -79,20 +79,61 @@ namespace Luban.Job.Cfg.TypeVisitors
             return DeserializeString(type, varName, fieldName, bufName);
         }
 
+        public string Accept(TText type, string varName, string fieldName, string bufName)
+        {
+            return $"{{var _ok_ bool; var __json_text__ map[string]interface{{}}; if __json_text__, _ok_ = {bufName}[\"{fieldName}\"].(map[string]interface{{}}) ; !_ok_ {{ err = errors.New(\"{varName} error\"); return }};  {DeserializeString(type, "_", DText.KEY_NAME, "__json_text__")}; {DeserializeString(type, varName, DText.TEXT_NAME, "__json_text__")} }}";
+        }
+
         public string Accept(TBytes type, string varName, string fieldName, string bufName)
         {
             //return $"{{ if {varName}, err = {bufName}.ReadBytes(); err != nil {{ return }} }}";
             throw new System.NotSupportedException();
         }
 
-        public string Accept(TText type, string varName, string fieldName, string bufName)
+        public string Accept(TVector2 type, string varName, string fieldName, string bufName)
         {
-            return $"{{var _ok_ bool; var __json_text__ map[string]interface{{}}; if __json_text__, _ok_ = {bufName}[\"{fieldName}\"].(map[string]interface{{}}) ; !_ok_ {{ err = errors.New(\"{varName} error\"); return }};  {DeserializeString(type, "_", DText.KEY_NAME, "__json_text__")}; {DeserializeString(type, varName, DText.TEXT_NAME, "__json_text__")} }}";
+            return $@"{{ var _ok_ bool; var _v_ map[string]interface{{}}; if _v_, _ok_ = {bufName}[""{fieldName}""].(map[string]interface{{}}); !_ok_ {{ err = errors.New(""{fieldName} error""); return }}
+            var _x_, _y_ float32;
+            {TFloat.Ins.Apply(this, "_x_", "x", "_v_")}
+            {TFloat.Ins.Apply(this, "_y_", "y", "_v_")}
+            {varName} = math.NewVector2(_x_, _y_)
+            }}
+";
+        }
+
+        public string Accept(TVector3 type, string varName, string fieldName, string bufName)
+        {
+            return $@"{{ var _ok_ bool; var _v_ map[string]interface{{}}; if _v_, _ok_ = {bufName}[""{fieldName}""].(map[string]interface{{}}); !_ok_ {{ err = errors.New(""{fieldName} error""); return }}
+            var _x_, _y_, _z_ float32;
+            {TFloat.Ins.Apply(this, "_x_", "x", "_v_")}
+            {TFloat.Ins.Apply(this, "_y_", "y", "_v_")}
+            {TFloat.Ins.Apply(this, "_z_", "z", "_v_")}
+            {varName} = math.NewVector3(_x_, _y_, _z_)
+            }}
+";
+        }
+
+        public string Accept(TVector4 type, string varName, string fieldName, string bufName)
+        {
+            return $@"{{ var _ok_ bool; var _v_ map[string]interface{{}}; if _v_, _ok_ = {bufName}[""{fieldName}""].(map[string]interface{{}}); !_ok_ {{ err = errors.New(""{fieldName} error""); return }}
+            var _x_, _y_, _z_, _w_ float32;
+            {TFloat.Ins.Apply(this, "_x_", "x", "_v_")}
+            {TFloat.Ins.Apply(this, "_y_", "y", "_v_")}
+            {TFloat.Ins.Apply(this, "_z_", "z", "_v_")}
+            {TFloat.Ins.Apply(this, "_w_", "w", "_v_")}
+            {varName} = math.NewVector4(_x_, _y_, _z_, _w_)
+            }}
+";
+        }
+
+        public string Accept(TDateTime type, string varName, string fieldName, string bufName)
+        {
+            return DeserializeNumber(type, varName, fieldName, bufName);
         }
 
         public string Accept(TBean type, string varName, string fieldName, string bufName)
         {
-            return $"{{ var _ok_ bool; var _x_ map[string]interface{{}}; if _x_, _ok_ = {bufName}[\"{fieldName}\"].(map[string]interface{{}}); !_ok_ {{ err = errors.New(\"{fieldName} error\"); return }}; if {varName}, err = {($"New{ type.Bean.GoFullName}(_x_)")}; err != nil {{ return }} }}";
+            return $"{{ var _ok_ bool; var _x_ map[string]interface{{}}; if _x_, _ok_ = {bufName}[\"{fieldName}\"].(map[string]interface{{}}); !_ok_ {{ err = errors.New(\"{fieldName} error\"); return }}; if {varName}, err = {($"Deserialize{ type.Bean.GoFullName}(_x_)")}; err != nil {{ return }} }}";
         }
 
 
@@ -148,47 +189,6 @@ namespace Luban.Job.Cfg.TypeVisitors
                     {varName}[_key_] = _value_
                 }}
                 }}";
-        }
-
-        public string Accept(TVector2 type, string varName, string fieldName, string bufName)
-        {
-            return $@"{{ var _ok_ bool; var _v_ map[string]interface{{}}; if _v_, _ok_ = {bufName}[""{fieldName}""].(map[string]interface{{}}); !_ok_ {{ err = errors.New(""{fieldName} error""); return }}
-            var _x_, _y_ float32;
-            {TFloat.Ins.Apply(this, "_x_", "x", "_v_")}
-            {TFloat.Ins.Apply(this, "_y_", "y", "_v_")}
-            {varName} = math.NewVector2(_x_, _y_)
-            }}
-";
-        }
-
-        public string Accept(TVector3 type, string varName, string fieldName, string bufName)
-        {
-            return $@"{{ var _ok_ bool; var _v_ map[string]interface{{}}; if _v_, _ok_ = {bufName}[""{fieldName}""].(map[string]interface{{}}); !_ok_ {{ err = errors.New(""{fieldName} error""); return }}
-            var _x_, _y_, _z_ float32;
-            {TFloat.Ins.Apply(this, "_x_", "x", "_v_")}
-            {TFloat.Ins.Apply(this, "_y_", "y", "_v_")}
-            {TFloat.Ins.Apply(this, "_z_", "z", "_v_")}
-            {varName} = math.NewVector3(_x_, _y_, _z_)
-            }}
-";
-        }
-
-        public string Accept(TVector4 type, string varName, string fieldName, string bufName)
-        {
-            return $@"{{ var _ok_ bool; var _v_ map[string]interface{{}}; if _v_, _ok_ = {bufName}[""{fieldName}""].(map[string]interface{{}}); !_ok_ {{ err = errors.New(""{fieldName} error""); return }}
-            var _x_, _y_, _z_, _w_ float32;
-            {TFloat.Ins.Apply(this, "_x_", "x", "_v_")}
-            {TFloat.Ins.Apply(this, "_y_", "y", "_v_")}
-            {TFloat.Ins.Apply(this, "_z_", "z", "_v_")}
-            {TFloat.Ins.Apply(this, "_w_", "w", "_v_")}
-            {varName} = math.NewVector4(_x_, _y_, _z_, _w_)
-            }}
-";
-        }
-
-        public string Accept(TDateTime type, string varName, string fieldName, string bufName)
-        {
-            return DeserializeNumber(type, varName, fieldName, bufName);
         }
     }
 }
