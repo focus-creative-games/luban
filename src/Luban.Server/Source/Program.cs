@@ -26,8 +26,8 @@ namespace Luban.Server
             [Option("disable_cache", Required = false, HelpText = "disable generation cache")]
             public bool DisableCache { get; set; }
 
-            [Option("i10n:default_timezone", Required = false, HelpText = "default timezone")]
-            public string L10nDefaultTimeZone { get; set; } = "Asia/Shanghai";
+            [Option("i10n:default_timezone", Required = false, HelpText = "default timezone id. 'Asia/Shanghai', 'China Standard Time' eg. you can also use two special values: local,utc")]
+            public string L10nDefaultTimeZone { get; set; }
         }
 
         static void Main(string[] args)
@@ -50,7 +50,7 @@ namespace Luban.Server
 
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
-            TimeZoneUtil.DefaultTimeZone = TimeZoneInfo.FindSystemTimeZoneById(options.L10nDefaultTimeZone);
+            TimeZoneUtil.InitDefaultTimeZone(options.L10nDefaultTimeZone);
 
             GenServer.Ins.Start(false, options.Port, ProtocolStub.Factories);
 

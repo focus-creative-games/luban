@@ -325,6 +325,44 @@ xml中定义如下
 
 </table>
 
+或者可以用多级标题头对每个元素单独限定
+
+<table border="1">
+
+<tr align="center">
+  <td>##</td>
+  <td>id</td>
+  <td>name</td>
+  <td colspan="9">rewards</td>
+</tr>
+<tr align="center">
+  <td>##type</td>
+  <td>int</td>
+  <td>string</td>
+  <td colspan="9">list,Reward</td>
+</tr>
+
+<tr align="center">
+  <td>##+</td>
+  <td></td>
+  <td></td>
+  <td colspan="3">0</td>
+  <td colspan="3">1</td>
+  <td colspan="3">2</td>
+</tr>
+<tr align="center">
+  <td>##+</td>
+  <td/>
+  <td/>
+  <td>item_id</td><td>num</td><td>desc</td>
+  <td>item_id</td><td>num</td><td>desc</td>
+  <td>item_id</td><td>num</td><td>desc</td>
+</tr>
+
+<tr align="center"><td/><td>1</td><td>task1</td><td>1</td><td>10</td><td>desc1</td><td>2</td><td>12</td><td>desc2</td><td>3</td><td>13</td><td>desc3</td></tr>
+<tr align="center"><td/><td>2</td><td>task1</td><td>3</td><td>30</td><td>desc3</td><td>4</td><td>40</td><td>desc4</td></tr>
+<tr align="center"><td/><td>3</td><td>task1</td><td>5</td><td>50</td><td>desc5</td></tr>
+</table>
 
 ### 多行结构列表
 有时候列表结构的每个结构字段较多，如果水平展开则占据太多列，不方便编辑，如果拆表，无论程序还是策划都不方便，此时可以使用多行模式。支持任意层次的多行结构列表（也即多行结构中的每个元素也可以是多行）， name&multi_rows=1或者  *name 都可以表达一个多行解析的字段。
@@ -579,6 +617,27 @@ xml中定义如下
 
 </table>
 
+<tr align="center">
+  <td>##+</td>
+  <td></td>
+  <td></td>
+  <td colspan="3">0</td>
+  <td colspan="3">1</td>
+  <td colspan="3">2</td>
+</tr>
+<tr align="center">
+  <td>##+</td>
+  <td/>
+  <td/>
+  <td>item_id</td><td>num</td><td>desc</td>
+  <td>item_id</td><td>num</td><td>desc</td>
+  <td>item_id</td><td>num</td><td>desc</td>
+</tr>
+
+<tr align="center"><td/><td>1</td><td>task1</td><td>1</td><td>10</td><td>desc1</td><td>2</td><td>12</td><td>desc2</td><td>3</td><td>13</td><td>desc3</td></tr>
+<tr align="center"><td/><td>2</td><td>task1</td><td>3</td><td>30</td><td>desc3</td><td>4</td><td>40</td><td>desc4</td></tr>
+<tr align="center"><td/><td>3</td><td>task1</td><td>5</td><td>50</td><td>desc5</td></tr>
+</table>
 ### 可空数据类型
 配置数据中经常有空值的语义需求，实际项目中往往混杂地使用0或-1表达空值，既不自然清晰也不统一。luban借鉴了c#中的可空变量的概念，特地提供可空数据支持。所有原生数据类型，以及enum、bean、和多态bean类型都有相应的可空数据类型。定义方式为 <类型名>?，与c#里的Nullable类型定义方式相同。例如 bool?,int?,long?,double?, EColor?, DemoType?
 
