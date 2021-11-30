@@ -45,7 +45,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
         {
             if (!SubTitles.TryAdd(title.Name, title))
             {
-                throw new Exception($"标题:{title.Name} 重复");
+                throw new Exception($"列:{title.Name} 重复");
             }
             SubTitleList.Add(title);
         }

@@ -399,84 +399,59 @@ namespace Luban.Job.Cfg.DataCreators
             return datas;
         }
 
-        public DType Accept(TArray type, Sheet sheet, TitleRow row)
+        private List<DType> ReadCollectionDatas(TType elementType, Sheet sheet, TitleRow row)
         {
-            //string sep = DataUtil.GetSep(type);
-
             if (row.Row != null)
             {
-                var s = row.AsStream(DataUtil.GetTypeSep(type.ElementType));
-                return new DArray(type, ReadList(type.ElementType, s));
+                var s = row.AsStream(DataUtil.GetTypeSep(elementType));
+                return ReadList(elementType, s);
             }
             else if (row.Rows != null)
             {
-                var s = row.AsMultiRowStream(DataUtil.GetTypeSep(type.ElementType));
-                return new DArray(type, ReadList(type.ElementType, s));
+                var s = row.AsMultiRowStream(DataUtil.GetTypeSep(elementType));
+                return ReadList(elementType, s);
             }
             else if (row.Fields != null)
             {
-                throw new Exception($"array 不支持 子字段. 忘记将字段设为多行模式?  {row.SelfTitle.Name} => *{row.SelfTitle.Name}");
+                //throw new Exception($"array 不支持 子字段. 忘记将字段设为多行模式?  {row.SelfTitle.Name} => *{row.SelfTitle.Name}");
+
+                var datas = new List<DType>(row.Fields.Count);
+                var sortedFields = row.Fields.Values.ToList();
+                sortedFields.Sort((a, b) => a.SelfTitle.FromIndex - b.SelfTitle.FromIndex);
+                foreach (var field in sortedFields)
+                {
+                    if (field.IsBlank)
+                    {
+                        continue;
+                    }
+                    datas.Add(elementType.Apply(this, sheet, field));
+                }
+                return datas;
             }
             else if (row.Elements != null)
             {
-                return new DArray(type, row.Elements.Select(e => type.ElementType.Apply(this, sheet, e)).ToList());
+                return row.Elements.Select(e => elementType.Apply(this, sheet, e)).ToList();
             }
             else
             {
                 throw new Exception();
             }
+        }
+
+        public DType Accept(TArray type, Sheet sheet, TitleRow row)
+        {
+            //string sep = DataUtil.GetSep(type);
+            return new DArray(type, ReadCollectionDatas(type.ElementType, sheet, row));
         }
 
         public DType Accept(TList type, Sheet sheet, TitleRow row)
         {
-            if (row.Row != null)
-            {
-                var s = row.AsStream(DataUtil.GetTypeSep(type.ElementType));
-                return new DList(type, ReadList(type.ElementType, s));
-            }
-            else if (row.Rows != null)
-            {
-                var s = row.AsMultiRowStream(DataUtil.GetTypeSep(type.ElementType));
-                return new DList(type, ReadList(type.ElementType, s));
-            }
-            else if (row.Fields != null)
-            {
-                throw new Exception($"list 不支持 子字段. 忘记将字段设为多行模式?  {row.SelfTitle.Name} => *{row.SelfTitle.Name}");
-            }
-            else if (row.Elements != null)
-            {
-                return new DList(type, row.Elements.Select(e => type.ElementType.Apply(this, sheet, e)).ToList());
-            }
-            else
-            {
-                throw new Exception();
-            }
+            return new DList(type, ReadCollectionDatas(type.ElementType, sheet, row));
         }
 
         public DType Accept(TSet type, Sheet sheet, TitleRow row)
         {
-            if (row.Row != null)
-            {
-                var s = row.AsStream(DataUtil.GetTypeSep(type.ElementType));
-                return new DSet(type, ReadList(type.ElementType, s));
-            }
-            else if (row.Rows != null)
-            {
-                var s = row.AsMultiRowStream(DataUtil.GetTypeSep(type.ElementType));
-                return new DSet(type, ReadList(type.ElementType, s));
-            }
-            else if (row.Fields != null)
-            {
-                throw new Exception($"set 不支持 子字段");
-            }
-            else if (row.Elements != null)
-            {
-                throw new NotSupportedException();
-            }
-            else
-            {
-                throw new Exception();
-            }
+            return new DSet(type, ReadCollectionDatas(type.ElementType, sheet, row));
         }
 
         public DType Accept(TMap type, Sheet sheet, TitleRow row)

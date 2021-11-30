@@ -62,6 +62,30 @@ namespace Luban.Job.Cfg.DataSources.Excel
             }
         }
 
+        public bool IsBlank
+        {
+            get
+            {
+                if (Row != null)
+                {
+                    return Sheet.IsBlankRow(Row, SelfTitle.FromIndex, SelfTitle.ToIndex);
+                }
+                if (Rows != null)
+                {
+                    return Sheet.IsBlankRow(Rows[0], SelfTitle.FromIndex, SelfTitle.ToIndex);
+                }
+                if (Fields != null)
+                {
+                    return Fields.Values.All(f => f.IsBlank);
+                }
+                if (Elements != null)
+                {
+                    return Elements.All(e => e.IsBlank);
+                }
+                throw new Exception();
+            }
+        }
+
         public ExcelStream AsStream(string sep)
         {
             if (string.IsNullOrEmpty(SelfTitle.Sep))
