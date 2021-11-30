@@ -99,7 +99,7 @@ namespace Luban.Client.Common.Net
 
         private async Task OnGetImportFileOrDirectoryAsync(GetImportFileOrDirectory rpc)
         {
-            long t1 = TimeUtil.NowMillis;
+            long t1 = Bright.Time.TimeUtil.NowMillis;
             var file = rpc.Arg.FileOrDirName;
             var suffixes = rpc.Arg.InclusiveSuffixs;
             var re = new GetImportFileOrDirectoryRes()
@@ -139,14 +139,14 @@ namespace Luban.Client.Common.Net
                 s_logger.Error(e);
             }
 
-            s_logger.Trace(" GetImportFileOrDirectory file:{file} err:{err} cost:{time}", file, re.Err, TimeUtil.NowMillis - t1);
+            s_logger.Trace(" GetImportFileOrDirectory file:{file} err:{err} cost:{time}", file, re.Err, Bright.Time.TimeUtil.NowMillis - t1);
 
             Session.ReplyRpc<GetImportFileOrDirectory, GetImportFileOrDirectoryArg, GetImportFileOrDirectoryRes>(rpc, re);
         }
 
         private async Task OnGetInputFileAsync(GetInputFile rpc)
         {
-            long t1 = TimeUtil.NowMillis;
+            long t1 = Bright.Time.TimeUtil.NowMillis;
             var res = new GetInputFileRes() { Err = Luban.Common.EErrorCode.OK };
             try
             {
@@ -158,7 +158,7 @@ namespace Luban.Client.Common.Net
             {
                 res.Err = Luban.Common.EErrorCode.READ_FILE_FAIL;
             }
-            s_logger.Info(" get input file:{file} err:{err} cost:{time}", rpc.Arg.File, res.Err, TimeUtil.NowMillis - t1);
+            s_logger.Info(" get input file:{file} err:{err} cost:{time}", rpc.Arg.File, res.Err, Bright.Time.TimeUtil.NowMillis - t1);
 
             Session.ReplyRpc<GetInputFile, GetInputFileArg, GetInputFileRes>(rpc, res);
         }

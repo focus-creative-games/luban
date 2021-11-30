@@ -170,16 +170,16 @@ namespace Luban.Job.Cfg.Utils
             List<DefTable> exportTables = ass.Types.Values.Where(t => t is DefTable ct && ct.NeedExport).Select(t => (DefTable)t).ToList();
             var genDataTasks = new List<Task>();
             var outputDataFiles = new ConcurrentBag<FileInfo>();
-            long genDataStartTime = TimeUtil.NowMillis;
+            long genDataStartTime = Bright.Time.TimeUtil.NowMillis;
 
             foreach (DefTable c in exportTables)
             {
                 var table = c;
                 genDataTasks.Add(Task.Run(async () =>
                 {
-                    long beginTime = TimeUtil.NowMillis;
+                    long beginTime = Bright.Time.TimeUtil.NowMillis;
                     await LoadTableAsync(agent, table, dataDir, patchName, patchDataDir, inputConvertDataDir);
-                    long endTime = TimeUtil.NowMillis;
+                    long endTime = Bright.Time.TimeUtil.NowMillis;
                     if (endTime - beginTime > 100)
                     {
                         ctx.Info("====== load {0} cost {1} ms ======", table.FullName, (endTime - beginTime));

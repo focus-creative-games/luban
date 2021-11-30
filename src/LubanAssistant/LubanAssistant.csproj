@@ -243,11 +243,17 @@
     <Compile Include="..\Luban.Common\Source\Utils\LogUtil.cs">
       <Link>Source\Utils\LogUtil.cs</Link>
     </Compile>
+    <Compile Include="..\Luban.Common\Source\Utils\TimeZoneUtil.cs">
+      <Link>Source\Common\TimeZoneUtil.cs</Link>
+    </Compile>
     <Compile Include="..\Luban.Common\Source\Utils\TypeUtil.cs">
       <Link>Source\Utils\TypeUtil.cs</Link>
     </Compile>
     <Compile Include="..\Luban.Common\Source\Utils\XmlUtil.cs">
       <Link>Source\Utils\XmlUtil.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\Cache\ExcelTableValueTypeDefInfoCacheManager.cs">
+      <Link>Source\Cache\ExcelTableValueTypeDefInfoCacheManager.cs</Link>
     </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\DataConverts\FillSheetVisitor.cs">
       <Link>Source\DataConverters\FillSheetVisitor.cs</Link>
@@ -501,6 +507,9 @@
     <Compile Include="..\Luban.Job.Cfg\Source\Validators\RefValidator.cs">
       <Link>Source\Validators\RefValidator.cs</Link>
     </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\Validators\ValidatorAttribute.cs">
+      <Link>Source\Validators\ValidatorAttribute.cs</Link>
+    </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\Validators\ValidatorFactory.cs">
       <Link>Source\Validators\ValidatorFactory.cs</Link>
     </Compile>
@@ -630,6 +639,9 @@
     <Compile Include="..\Luban.Job.Common\Source\TypeVisitors\ITypeFuncVisitor.cs">
       <Link>Source\TypeVisitors\ITypeFuncVisitor.cs</Link>
     </Compile>
+    <Compile Include="..\Luban.Job.Common\Source\TypeVisitors\TypeActionVisitorAdaptor.cs">
+      <Link>Source\TypeVisitors\TypeActionVisitorAdaptor.cs</Link>
+    </Compile>
     <Compile Include="..\Luban.Job.Common\Source\Utils\DefUtil.cs">
       <Link>Source\Utils\DefUtil.cs</Link>
     </Compile>
@@ -659,6 +671,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <None Include="app.config" />
+    <None Include="focus_creative_games.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -669,6 +682,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Source\Common\ReflectionUtil.cs" />
     <Compile Include="Source\Utils\AtomicLong.cs" />
     <Compile Include="Source\Utils\CacheFileUtil.cs" />
     <Compile Include="Source\Collections\CollectionExtension.cs" />

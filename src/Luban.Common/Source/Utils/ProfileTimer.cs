@@ -22,13 +22,13 @@ namespace Luban.Common.Utils
 
         public void StartPhase(string name)
         {
-            phaseStack.Push(new Phase() { Name = name, StartTime = TimeUtil.NowMillis });
+            phaseStack.Push(new Phase() { Name = name, StartTime = Bright.Time.TimeUtil.NowMillis });
         }
 
         private Phase EndPhase()
         {
             var phase = phaseStack.Pop();
-            phase.EndTime = TimeUtil.NowMillis;
+            phase.EndTime = Bright.Time.TimeUtil.NowMillis;
             phase.ElapseTime = phase.EndTime - phase.StartTime;
             return phase;
         }

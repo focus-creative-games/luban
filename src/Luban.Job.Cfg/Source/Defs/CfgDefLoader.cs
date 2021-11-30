@@ -1,3 +1,4 @@
+using Bright.Collections;
 using Luban.Common.Utils;
 using Luban.Job.Cfg.Cache;
 using Luban.Job.Cfg.Datas;
