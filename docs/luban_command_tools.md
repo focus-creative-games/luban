@@ -51,7 +51,9 @@ Luban工具有两种部属方式。
     -l, --loglevel <log level>      可选参数。 日志级别。默认为INFO。 有效值有: TRACE,DEBUG,INFO,WARN,ERROR,FATAL,OFF
     -t, --template_search_path      可选参数。模板的额外搜索路径。优先从此路径，再从Templates目录搜索模板文件。
     --disable_cache                 可选参数。禁用生成中间过程的缓存，但保留了源文件缓存。在模板调试时比较有用。
-    --i10n:default_timezone  <timezone>       可选参数。 datetime数据转换为UTC时间默认使用的时区。
+    --i10n:default_timezone  <timezone>       可选参数。 datetime时间所在的时区。如果未设置则会尝试用"Asia/Shangehai"和"China Standard Time"。
+
+ 关于时区，win下可使用命令"tzutil /l" 查看本机时区列表。 也可查阅MS文档[default-time-zones列表](https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11) 
 
 ## luban-client 使用介绍
 
@@ -86,10 +88,11 @@ Luban工具有两种部属方式。
     --export_exclude_tags <tag1,tag2>       可选参数。 导出时排除包含这些tag的数据
     --template_name  <template name>        可选参数。数据模板的名称（不包含后缀），当gen_types包含 data_template时必须指定。
     --data_file_extension  <output data file extension>     可选参数。 导出数据文件的后缀。默认按照生成类型自动选择。
-    --use_unity_vector                      可选参数。默认生成的c#代码中使用System.Numerics.Vector，使用此参数后，变成UnityEngine.Vector。
-    --naming_convention_module <convention> 可选参数。生成代码中模板名的命名约定，可用值为 language_recommend,none,camelCase,PascalCase,under_scores。 默认为language_recommend，即选择与相应语言推荐的命名约定风格。 此选项目前未生效。
-    --naming_convention_bean_member <convention>    可选参数。生成代码中bean类型字段名的命名约定，可用值为 language_recommend,none,camelCase,PascalCase,under_scores。 默认为language_recommend。
-    --naming_convention_enum_member <convention>    可选参数。生成代码中enum类型名的命名约定，可用值为 language_recommend,none,camelCase,PascalCase,under_scores。 默认为language_recommend。此选项目前未生效。
+    
+
+    --naming_convention:module <convention> 可选参数。生成代码中模板名的命名约定，可用值为 language_recommend,none,camelCase,PascalCase,under_scores。 默认为language_recommend，即选择与相应语言推荐的命名约定风格。 此选项目前未生效。
+    --naming_convention:bean_member <convention>    可选参数。生成代码中bean类型字段名的命名约定，可用值为 language_recommend,none,camelCase,PascalCase,under_scores。 默认为language_recommend。
+    --naming_convention:enum_member <convention>    可选参数。生成代码中enum类型名的命名约定，可用值为 language_recommend,none,camelCase,PascalCase,under_scores。 默认为language_recommend。此选项目前未生效。
     --access_bean_member <access mode>  可选参数。 bean属性的访问方式。可用值为language_recommend,variable,getter_setter,property。默认为 language_recommend。此字段目前未生效。
 
     --l10n:timezone <timezone>           可选参数。 指定所在时区。影响datetime类型转换为utc时间。 默认为中国北京时间。

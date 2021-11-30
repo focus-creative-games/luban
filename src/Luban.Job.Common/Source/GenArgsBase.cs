@@ -13,22 +13,22 @@ namespace Luban.Job.Common
         [Option("output_code_monolithic_file", Required = false, HelpText = "output monolithic code file. only effect when lan=rust,python,typescript,lua")]
         public string OutputCodeMonolithicFile { get; set; }
 
-        [Option("naming_convention_module", Required = false, HelpText = "naming convention of module. can be language_recommend,none,camelCase,PascalCase,under_scores")]
+        [Option("naming_convention:module", Required = false, HelpText = "naming convention of module. can be language_recommend,none,camelCase,PascalCase,under_scores")]
         public string NamingConventionModuleStr { get; set; }
 
         public NamingConvention NamingConventionModule { get; set; }
 
-        [Option("naming_convention_type", Required = false, HelpText = "naming convention of enum and bean. can be language_recommend,none,camelCase,PascalCase,under_scores")]
+        [Option("naming_convention:type", Required = false, HelpText = "naming convention of enum and bean. can be language_recommend,none,camelCase,PascalCase,under_scores")]
         public string NamingConventionTypeStr { get; set; }
 
         public NamingConvention NamingConventionType { get; set; }
 
-        [Option("naming_convention_bean_member", Required = false, HelpText = "naming convention of bean member. can be language_recommend,none,camelCase,PascalCase,under_scores")]
+        [Option("naming_convention:bean_member", Required = false, HelpText = "naming convention of bean member. can be language_recommend,none,camelCase,PascalCase,under_scores")]
         public string NamingConventionBeanMemberStr { get; set; }
 
         public NamingConvention NamingConventionBeanMember { get; set; }
 
-        [Option("naming_convention_enum_member", Required = false, HelpText = "naming convention of enum member. can be language_recommend,none,camelCase,PascalCase,under_scores")]
+        [Option("naming_convention:enum_member", Required = false, HelpText = "naming convention of enum member. can be language_recommend,none,camelCase,PascalCase,under_scores")]
         public string NamingConventionEnumMemberStr { get; set; }
 
         public NamingConvention NamingConventionEnumMember { get; set; }
