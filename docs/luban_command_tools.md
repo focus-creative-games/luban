@@ -32,7 +32,7 @@ Luban工具有两种部属方式。
 
   Client与Server在同个进程内运行，不需要单独部属Luban.Server。
 
-  将运行脚本中%LUBAN_CLIENT%变量由 Luban.Client/Luban.Client 改为 Luban.ClientServer/Luban.ClientServer，同时删除 -h (--host ) 选项及其参数。
+  将运行脚本中%LUBAN_CLIENT%变量由 Luban.Client/Luban.Client 改为 Luban.ClientServer/Luban.ClientServer，同时**删除 -h (--host ) 选项及其参数**。
 
   Luban.ClientServer是Luban.Client的功能超集，可以完全替代Luban.Client。
 
@@ -50,6 +50,7 @@ Luban工具有两种部属方式。
     -p, --port <port>               可选参数。 监听端口 <port>，默认为8899。
     -l, --loglevel <log level>      可选参数。 日志级别。默认为INFO。 有效值有: TRACE,DEBUG,INFO,WARN,ERROR,FATAL,OFF
     -t, --template_search_path      可选参数。模板的额外搜索路径。优先从此路径，再从Templates目录搜索模板文件。
+    --i10n:default_timezone  <timezone>       可选参数。 datetime数据转换为UTC时间默认使用的时区。
 
 ## luban-client 使用介绍
 
@@ -77,7 +78,7 @@ Luban工具有两种部属方式。
     --input_convert_dir <dir>               可选参数。 执行json、lua、xlsx之类数据格式转换时，提供的数据源，覆盖table中默认的input参数。
     -c,--output_code_dir <output code dir>  可选参数。 生成代码文件的目录。
     -s,--service                            必选参数。生成分组目标。一般来说，会定义client,server,editor等好几个目标，不同目标的生成内容不同。
-    --gen_types <type1,type2,,,>            必选参数。生成任务类型。既可以是生成代码也可以是生成数据或者其他。目前支持的有 code_cs_bin,code_cs_json,code_cs_unity_json,code_lua_bin,code_java_bin,code_go_bin,code_go_json,code_cpp_bin,code_python27_json,code_python3_json，code_typescript_bin,code_typescript_json,data_bin,data_lua,data_json,data_json_monolithic,data_template,convert_json,convert_lua,convert_xlsx
+    --gen_types <type1,type2,,,>            必选参数。生成任务类型。既可以是生成代码也可以是生成数据或者其他。目前支持的有 code_cs_bin,code_cs_json,code_cs_unity_json,code_lua_bin,code_java_bin,code_go_bin,code_go_json,code_cpp_bin,code_python27_json,code_python3_json，code_typescript_bin,code_typescript_json,code_rust_json,code_protobuf,data_bin,data_lua,data_json,data_json_monolithic,data_template,data_protobuf,convert_json,convert_lua,convert_xlsx
     --output_data_dir <output data dir>     可选参数。 导出的数据文件的目录。只生成代码时可不指定。
     --output_compact_json                   可选参数。默认导出的json格式为对齐后的优雅格式，使用此参数后导出紧凑的不带空格和换行的格式。
     --validate_root_dir <path validate root dir>. 可选参数。 配置path检查的根目录。
@@ -90,13 +91,17 @@ Luban工具有两种部属方式。
     --naming_convention_enum_member <convention>    可选参数。生成代码中enum类型名的命名约定，可用值为 language_recommend,none,camelCase,PascalCase,under_scores。 默认为language_recommend。此选项目前未生效。
     --access_bean_member <access mode>  可选参数。 bean属性的访问方式。可用值为language_recommend,variable,getter_setter,property。默认为 language_recommend。此字段目前未生效。
 
-    -t,--l10n_timezone <timezone>           可选参数。 指定所在时区。影响datetime类型转换为utc时间。 默认为中国北京时间。
-    --input_l10n_text_files <file1,file2..> 可选参数。 本地化的文本映射表。可以有多个。
-    --l10n_text_field_name <field name>     可选参数。 文本映射表中，目标映射列的列名，默认为text
-    --output_l10n_not_translated_text_file <file> 可选参数。 未被本地化映射的text key和value的输出文件。不提供该参数则不生成
-    --patch <patch name>                  可选参数。当前需要生成的分支名称。
-    --patch_input_data_dir <patch data root dir> 可选参数。分支数据的根目录。
+    --l10n:timezone <timezone>           可选参数。 指定所在时区。影响datetime类型转换为utc时间。 默认为中国北京时间。
+    --l10n:input_text_files <file1,file2..> 可选参数。 本地化的文本映射表。可以有多个。
+    --l10n:text_field_name <field name>     可选参数。 文本映射表中，目标映射列的列名，默认为text
+    --l10n:output_not_translated_text_file <file> 可选参数。 未被本地化映射的text key和value的输出文件。不提供该参数则不生成
+    --l10n:patch <patch name>                  可选参数。当前需要生成的分支名称。
+    --l10n:patch_input_data_dir <patch data root dir> 可选参数。分支数据的根目录。
 
+    --typescript:bright_require_path <path>     可选参数。生成typescript代码引用的bright模块的路径
+    --typescript:bright_package_name <packet>   可选参数。生成typescript代码以包形式引用bright库的路径
+    --typescript:use_puerts_bytebuf             可选参数。生成typescript代码中使用puerts中导入的c# Bytebuf类。
+    --cs:use_unity_vector                   可选参数。生成c#代码中，使用UnityEngine.Vector{2,3,4}作为Vector数据类型。
 
 ## 示例
 
@@ -135,8 +140,7 @@ Luban工具有两种部属方式。
         --output_code_dir d:\client\Assets\Gen ^
         --output_data_dir d:\client\Assets\StreamingAssets\GameData ^
         --gen_types code_cs_bin,data_bin ^
-        --service client ^
-        --export_test_data 
+        --service client
 
     linux bash命令同理。
 
@@ -144,7 +148,7 @@ Luban工具有两种部属方式。
 
     你要为客户端生成代码和数据。
     你期望使用json格式导出数据类型。
-    你不期望导出数据中包含测试数据
+    你不期望导出数据中包含dev和test标签的数据
         
     则win下命令为:
 
@@ -158,7 +162,8 @@ Luban工具有两种部属方式。
         --output_code_dir d:\client\Assets\Gen ^
         --output_data_dir d:\client\Assets\StreamingAssets\GameData ^
         --gen_types code_cs_unity_json,data_json ^
-        --service client
+        --service client ^
+        --export_exclude_tags dev,test
 
 案例3：
     
@@ -180,8 +185,7 @@ Luban工具有两种部属方式。
         --output_code_dir d:\server\src\Gen ^
         --output_data_dir d:\server\GameData ^
         --gen_types code_cs_json,data_json ^
-        --service server ^
-        --export_test_data
+        --service server
 案例4：
 
     luban-server 被你部属在 192.168.1.10这台机器上，端口为1111。其他的如案例3。
@@ -198,8 +202,7 @@ Luban工具有两种部属方式。
         --output_code_dir d:\server\src\Gen ^
         --output_data_dir d:\server\GameData ^
         --gen_types code_cs_json,data_json ^
-        --service server ^
-        --export_test_data
+        --service server
 
 案例5：
     
@@ -222,8 +225,7 @@ Luban工具有两种部属方式。
         --output_code_dir d:\server\src\Gen ^
         --output_data_dir d:\server\GameData ^
         --gen_types code_cs_json,data_json ^
-        --service server ^
-        --export_test_data    
+        --service server   
 
 
 

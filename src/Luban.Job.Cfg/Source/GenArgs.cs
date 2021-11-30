@@ -23,7 +23,7 @@ namespace Luban.Job.Cfg
         [Option("output_data_json_monolithic_file", Required = false, HelpText = "output monolithic json file")]
         public string OutputDataJsonMonolithicFile { get; set; }
 
-        [Option("gen_types", Required = true, HelpText = "code_cs_bin,code_cs_json,code_cs_unity_json,code_lua_bin,code_java_bin,code_java_json,code_go_bin,code_go_json,code_cpp_bin,code_python3_json,code_typescript_bin,code_typescript_json,code_rust_json,data_bin,data_lua,data_json,data_json2,data_json_monolithic,data_resources,data_template,convert_json,convert_lua,convert_xlsx . can be multi")]
+        [Option("gen_types", Required = true, HelpText = "code_cs_bin,code_cs_json,code_cs_unity_json,code_lua_bin,code_java_bin,code_java_json,code_go_bin,code_go_json,code_cpp_bin,code_python3_json,code_typescript_bin,code_typescript_json,code_rust_json,code_protobuf,data_bin,data_lua,data_json,data_json2,data_json_monolithic,data_resources,data_template,data_protobuf,convert_json,convert_lua,convert_xlsx . can be multi")]
         public string GenType { get; set; }
 
         [Option("template_name", Required = false, HelpText = "template name. use with gen_types=data_template")]
@@ -53,10 +53,10 @@ namespace Luban.Job.Cfg
         [Option("l10n:output_not_translated_text_file", Required = false, HelpText = "the file save not translated l10n texts.")]
         public string L10nOutputNotTranslatedTextFile { get; set; }
 
-        [Option("10n:patch", Required = false, HelpText = "patch name")]
+        [Option("l10n:patch", Required = false, HelpText = "patch name")]
         public string L10nPatchName { get; set; }
 
-        [Option("10n:patch_input_data_dir", Required = false, HelpText = "patch input data root dir")]
+        [Option("l10n:patch_input_data_dir", Required = false, HelpText = "patch input data root dir")]
         public string L10nPatchInputDataDir { get; set; }
     }
 }

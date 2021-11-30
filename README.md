@@ -23,7 +23,7 @@
 luban相较于常规的excel导表工具有以下核心优势：
 - 增强了excel格式。可以比较简洁地excel配置**任意复杂**的数据，像子结构、结构列表，以及更复杂的深层次的嵌套结构都能直接解析处理。
 - 完备的类型系统和多原始数据支持（excel、xml、json、lua、yaml），可以轻松表达和解析**任意复杂**的数据。意味着传统excel导表工具无法处理的技能、行为树、副本等等复杂配置，luban也能够统一处理了，彻底将程序从复杂的配置解析中解放出来。
-- 支持binary、protobuf（同时可以生成相应的pb定义）、json、lua等多种导出数据格式。
+- 支持binary、**protobuf**（同时可以生成相应的pb定义）、**msgpack**、**flatbuffers**、json、lua等多种导出数据格式。
 - 完善的工作流支持。如id的外键引用检查;资源合法性检查;灵活的数据源定义（拆表或者多表合一）;灵活的分组导出机制；多种本地化支持;生成极快（日常迭代300ms以内）；[Excel2TextDiff](https://github.com/focus-creative-games/Excel2TextDiff)工具方便diff查看excel文件的版本间差异；
 - **LubanAssistant Excel插件**。支持把json、lua、xml等文本格式的配置数据加载到excel中，批量编辑处理，最后再保存回原文件，较好地解决大型项目中多人合作数据编辑冲突合并的问题，较好解决在编辑器中制作的配置难以在excel中批量修改的问题。
 - 支持自定义代码与数据模板。强大的数据表达能力使得绝大多数项目的配置格式往往是luban的子集，因而有较低的项目迁移成本，利用模板重新适配代码和数据生成后，即使是研发已久或者上线项目也能从luban强大的数据处理能力中受益。
@@ -78,6 +78,7 @@ luban相较于常规的excel导表工具有以下核心优势：
    - python (3.0+)
    - erlang (18+)
    - rust (1.5+)
+   - 其他protobuf、msgpack、flatbuffers支持的语言
 - 支持主流引擎和平台
    - unity + c#
    - unity + [tolua](https://github.com/topameng/tolua)、[xlua](https://github.com/Tencent/xLua)
@@ -221,11 +222,15 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 ```
 或者在 \_\_beans__.xlsx 里定义
 
-|##|full_name|sep|comment|*fields_name| *fields.type | ...|
-| - | - | - | - | - | - | - |
-|| Reward|||item_id|int||
-|||||count|int||
-|||||desc|string||
+
+<table border="1">
+<tr align="center"><td>##</td><td>full_name</td><td >sep</td><td>comment</td><td colspan="5">fields</td>  </tr>
+<tr align="center"><td>##+</td><td></td><td/><td/><td>name</td><td>type</td><td>group</td><td>comment</td><td>tags</td></tr>
+<tr><td></td><td>Reward</td><td/><td/><td>item_id</td><td>int</td><td></td><td>道具id</td><td/></tr>
+<tr><td></td><td></td><td/><td/><td>count</td><td>int</td><td></td><td>个数</td><td/></tr>
+<tr><td></td><td></td><td/><td/><td>desc</td><td>string</td><td></td><td>描述</td><td/></tr>
+</table>
+
 
 数据表如下
 
@@ -243,7 +248,7 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 <tr align="center">
 <td>##</td>
 <td>id</td>
-<td>item id</td><td>count</td><td>desc</td>
+<td>道具id</td><td>个数</td><td>描述</td>
 </tr>
 <tr align="center">
 <td/>
@@ -420,9 +425,7 @@ xml中定义如下
 </table>
 
 ### 引用检查
-游戏配置中经常要填写诸如道具id之类的外键数据，这些数据必须是合法的id值，luban支持生成时检查id的合法性，如果有误，则打出警告。
-
-只要字段定义中添加 ref="表全名" 即可。不只是表顶层字段，列表及嵌套结构的子字段也支持完整的引用检查。
+游戏配置中经常要填写诸如道具id之类的外键数据，这些数据必须是合法的id值，luban支持生成时检查id的合法性，如果有误，则打出警告。不只是表顶层字段，列表及嵌套结构的子字段也支持完整的引用检查。
 
 ```xml
 <bean name="Reward">
@@ -703,6 +706,9 @@ xml中定义如下
 ### 多种导出数据格式
 支持以下几种导出数据格式
 - binary
+- protobuf
+- msgpack
+- flatbuffers
 - json
 - lua
 - erlang
@@ -748,74 +754,11 @@ binary格式占空间最小，lua其次，json最大。
 id为1的记录对应的内容如下
 ```json
 {
-  "x4": 1,
-  "x1": true,
-  "x5": 100,
-  "x6": 1.20000005,
-  "s1": "hq",
-  "s2": {
-    "key": "/asfa",
-    "text": "aabbcc"
-  },
-  "v2": {
-    "x": 1,
-    "y": 2
-  },
-  "v3": {
-    "x": 1.10000002,
-    "y": 2.20000005,
-    "z": 3.4000001
-  },
-  "v4": {
-    "x": 10.1000004,
-    "y": 11.1999998,
-    "z": 12.3000002,
-    "w": 13.3999996
-  },
-  "t1": "1990-1-1 00:00:00",
-  "x12": {
-    "x1": 10
-  },
-  "x13": "A",
-  "x14": {
-    "__type__": "DemoD2",
-    "x1": 1,
-    "x2": 2
-  },
-  "k1": [
-    12
-  ],
-  "k8": [
-    [
-      2,
-      2
-    ],
-    [
-      4,
-      10
-    ]
-  ],
-  "k9": [
-    {
-      "y1": 1,
-      "y2": true
-    },
-    {
-      "y1": 2,
-      "y2": false
-    }
-  ],
-  "k15": [
-    {
-      "__type__": "DemoD2",
-      "x1": 1,
-      "x2": 2
-    },
-    {
-      "__type__": "DemoD2",
-      "x1": 2,
-      "x2": 3
-    }
+  "id":1,
+  "x":5,
+  "items":[
+    {"x":1, "y":true, "z":"abcd", "a":{"x":10, "y":100}, "b":[1,3,5]},
+    {"x":2, "y":false, "z":"abcd", "a":{"x":22, "y":33}, "b":[4,5]}
   ]
 }
 ```
@@ -892,12 +835,12 @@ println(tables.TbItem.Get(12).Name)
 
 ## 开发环境架设
 
-- 安装 [VS2019 社区版](https://visualstudio.microsoft.com/zh-hans/vs/)
+- 安装 [VS2022 社区版](https://visualstudio.microsoft.com/zh-hans/vs/)
 - 安装 [.dotnet core sdk 6.0](https://dotnet.microsoft.com/download/dotnet/6.0)
 
 ## 安装与使用
 
-参见 [client&server安装与使用说明](docs/luban_install_manual.md)
+参见 [client&server安装与使用说明](docs/luban_command_tools.md)
 
 ## 如何贡献
 
