@@ -166,16 +166,14 @@ namespace Luban.Job.Cfg.DataExporters
             FreeMemoryStream(ms);
         }
 
-        public void Accept(DBean type, CodedOutputStream x)
+        private void WriteRawMessageWithoutLength(DBean type, CodedOutputStream temp)
         {
-            var bean = type.Type;
-            if (bean.IsAbstractType)
-            {
-                x.WriteTag(type.ImplType.AutoId, WireFormat.WireType.LengthDelimited);
-            }
-
-            var ms = AllocMemoryStream();
-            var temp = new CodedOutputStream(ms);
+            //var ms = AllocMemoryStream();
+            //var temp = new CodedOutputStream(ms);
+            //if (bean.IsAbstractType)
+            //{
+            //    temp.WriteTag(type.ImplType.AutoId, WireFormat.WireType.LengthDelimited);
+            //}
 
             var defFields = type.ImplType.HierarchyFields;
             int index = 0;
@@ -221,11 +219,41 @@ namespace Luban.Job.Cfg.DataExporters
                     }
                 }
             }
+            //temp.Flush();
+            //ms.Seek(0, SeekOrigin.Begin);
+            //var bs = ByteString.FromStream(ms);
+            //x.WriteBytes(bs);
+            //FreeMemoryStream(ms);
+        }
+
+        private void EnterScope(CodedOutputStream x, Action<CodedOutputStream> action)
+        {
+            var ms = AllocMemoryStream();
+            var temp = new CodedOutputStream(ms);
+            action(temp);
             temp.Flush();
             ms.Seek(0, SeekOrigin.Begin);
             var bs = ByteString.FromStream(ms);
             x.WriteBytes(bs);
             FreeMemoryStream(ms);
+        }
+
+        public void Accept(DBean type, CodedOutputStream x)
+        {
+            EnterScope(x, cos =>
+            {
+                var bean = type.Type;
+
+                if (bean.IsAbstractType)
+                {
+                    cos.WriteTag(type.ImplType.AutoId, WireFormat.WireType.LengthDelimited);
+                    EnterScope(cos, cos2 => WriteRawMessageWithoutLength(type, cos2));
+                }
+                else
+                {
+                    WriteRawMessageWithoutLength(type, cos);
+                }
+            });
         }
 
         private void WriteList(TType elementType, int fieldId, List<DType> datas, CodedOutputStream x)

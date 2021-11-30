@@ -1,4 +1,7 @@
 ﻿syntax = "proto2";
+
+package {{x.namespace}};
+
 // luban internal types begin
 message Vector2 {
     required float x = 1;
