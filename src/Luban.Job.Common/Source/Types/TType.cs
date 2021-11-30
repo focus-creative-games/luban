@@ -18,6 +18,8 @@ namespace Luban.Job.Common.Types
             Tags = tags ?? new Dictionary<string, string>();
         }
 
+        public abstract string TypeName { get; }
+
         public bool HasTag(string attrName)
         {
             return Tags != null && Tags.ContainsKey(attrName);

@@ -10,6 +10,8 @@ namespace Luban.Job.Common.Types
             return new TFlong(isNullable, tags);
         }
 
+        public override string TypeName => "flong";
+
         private TFlong(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)
         {
         }

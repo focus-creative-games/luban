@@ -10,6 +10,8 @@ namespace Luban.Job.Common.Types
             return new TString(isNullable, tags);
         }
 
+        public override string TypeName => "string";
+
         private TString(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)
         {
         }

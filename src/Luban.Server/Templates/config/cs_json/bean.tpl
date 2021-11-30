@@ -68,6 +68,9 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{parent}
     {{~if field.gen_ref~}}
     public {{field.cs_ref_validator_define}}
     {{~end~}}
+    {{~if field.ctype.type_name == "datetime" && !field.ctype.is_nullable ~}}
+    public long {{field.convention_name}}_Millis => {{field.convention_name}} * 1000L;
+    {{~end~}}
     {{~if field.gen_text_key~}}
     public {{cs_define_text_key_field field}} { get; }
     {{~end~}}

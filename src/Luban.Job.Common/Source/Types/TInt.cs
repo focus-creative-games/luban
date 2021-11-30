@@ -10,6 +10,8 @@ namespace Luban.Job.Common.Types
             return new TInt(isNullable, tags);
         }
 
+        public override string TypeName => "int";
+
         private TInt(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)
         {
         }

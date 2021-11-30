@@ -10,6 +10,8 @@ namespace Luban.Job.Common.Types
             return new TLong(isNullable, tags, isBigInt);
         }
 
+        public override string TypeName => "long";
+
         public bool IsBigInt { get; }
 
         private TLong(bool isNullable, Dictionary<string, string> tags, bool isBigInt) : base(isNullable, tags)

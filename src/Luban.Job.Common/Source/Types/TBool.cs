@@ -16,6 +16,8 @@ namespace Luban.Job.Common.Types
 
         public bool IsBool => true;
 
+        public override string TypeName => "bool";
+
         public override bool TryParseFrom(string s)
         {
             return bool.TryParse(s, out _);

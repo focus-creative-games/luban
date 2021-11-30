@@ -10,6 +10,8 @@ namespace Luban.Job.Common.Types
             return new TDouble(isNullable, tags);
         }
 
+        public override string TypeName => "double";
+
         private TDouble(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)
         {
         }

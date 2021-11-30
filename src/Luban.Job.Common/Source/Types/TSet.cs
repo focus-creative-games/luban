@@ -12,6 +12,8 @@ namespace Luban.Job.Common.Types
             return new TSet(isNullable, tags, elementType, isOrdered);
         }
 
+        public override string TypeName => "set";
+
         public override TType ElementType { get; }
 
         public bool IsOrderSet { get; }

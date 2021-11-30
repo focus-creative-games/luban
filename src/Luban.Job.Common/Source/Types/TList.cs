@@ -12,6 +12,8 @@ namespace Luban.Job.Common.Types
             return new TList(isNullable, tags, elementType, isArrayList);
         }
 
+        public override string TypeName => "list";
+
         public override TType ElementType { get; }
 
         public bool IsArrayList { get; }

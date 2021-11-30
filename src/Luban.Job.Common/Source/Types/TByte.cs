@@ -10,6 +10,8 @@ namespace Luban.Job.Common.Types
             return new TByte(isNullable, tags);
         }
 
+        public override string TypeName => "byte";
+
         private TByte(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)
         {
         }

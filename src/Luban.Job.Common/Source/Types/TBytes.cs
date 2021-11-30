@@ -11,6 +11,8 @@ namespace Luban.Job.Common.Types
             return new TBytes(isNullable, tags);
         }
 
+        public override string TypeName => "bytes";
+
         private TBytes(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)
         {
         }

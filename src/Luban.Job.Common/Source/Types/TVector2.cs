@@ -11,6 +11,8 @@ namespace Luban.Job.Common.Types
             return new TVector2(isNullable, tags);
         }
 
+        public override string TypeName => "vector2";
+
         private TVector2(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)
         {
         }

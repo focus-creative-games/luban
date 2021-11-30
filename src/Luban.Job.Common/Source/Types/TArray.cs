@@ -14,6 +14,8 @@ namespace Luban.Job.Common.Types
 
         public override TType ElementType { get; }
 
+        public override string TypeName => "array";
+
         private TArray(bool isNullable, Dictionary<string, string> tags, TType elementType) : base(isNullable, tags)
         {
             ElementType = elementType;

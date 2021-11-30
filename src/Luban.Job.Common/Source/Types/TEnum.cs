@@ -13,6 +13,8 @@ namespace Luban.Job.Common.Types
             return new TEnum(isNullable, DefUtil.MergeTags(defEnum.Tags, tags), defEnum);
         }
 
+        public override string TypeName => "enum";
+
         public DefEnum DefineEnum { get; }
 
         private TEnum(bool isNullable, Dictionary<string, string> tags, DefEnum defEnum) : base(isNullable, tags)

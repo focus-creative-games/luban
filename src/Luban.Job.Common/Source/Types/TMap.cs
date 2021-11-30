@@ -12,6 +12,8 @@ namespace Luban.Job.Common.Types
             return new TMap(isNullable, tags, keyType, valueType, isOrderedMap);
         }
 
+        public override string TypeName => "map";
+
         public bool IsMap => true;
 
         public TType KeyType { get; }

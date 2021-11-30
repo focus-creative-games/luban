@@ -687,7 +687,7 @@ namespace Luban.Job.Cfg.Defs
                 );
         }
 
-        private Field CreateField(string defileFile, string name, string type, string group,
+        private Field CreateField(string defineFile, string name, string type, string group,
             string comment, string tags,
             bool ignoreNameValidation)
         {
@@ -703,13 +703,9 @@ namespace Luban.Job.Cfg.Defs
             // 字段与table的默认组不一样。
             // table 默认只属于default=1的组
             // 字段默认属于所有组
-            if (f.Groups.Count == 0)
+            if (!ValidGroup(f.Groups, out var invalidGroup))
             {
-
-            }
-            else if (!ValidGroup(f.Groups, out var invalidGroup))
-            {
-                throw new Exception($"定义文件:{defileFile} field:'{name}' group:'{invalidGroup}' 不存在");
+                throw new Exception($"定义文件:{defineFile} field:'{name}' group:'{invalidGroup}' 不存在");
             }
             f.Type = type;
 
@@ -724,7 +720,7 @@ namespace Luban.Job.Cfg.Defs
             return f;
         }
 
-        private static readonly List<string> _beanOptinsAttrs = new List<string> { "value_type", "alias", "sep", "comment", "tags" };
+        private static readonly List<string> _beanOptinsAttrs = new List<string> { "value_type", "alias", "sep", "comment", "tags", "group" };
         private static readonly List<string> _beanRequireAttrs = new List<string> { "name" };
 
         override protected void AddBean(string defineFile, XElement e, string parent)

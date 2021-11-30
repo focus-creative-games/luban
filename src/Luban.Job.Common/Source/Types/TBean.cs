@@ -18,6 +18,8 @@ namespace Luban.Job.Common.Types
 
         public T GetBeanAs<T>() where T : DefBeanBase => (T)Bean;
 
+        public override string TypeName => "bean";
+
         private TBean(bool isNullable, Dictionary<string, string> attrs, DefBeanBase defBean) : base(isNullable, attrs)
         {
             this.Bean = defBean;

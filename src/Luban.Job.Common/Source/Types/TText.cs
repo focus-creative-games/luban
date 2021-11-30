@@ -12,6 +12,8 @@ namespace Luban.Job.Common.Types
             return new TText(isNullable, tags);
         }
 
+        public override string TypeName => "text";
+
         private TText(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)
         {
         }
