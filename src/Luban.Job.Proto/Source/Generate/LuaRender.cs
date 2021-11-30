@@ -1,6 +1,7 @@
 using Luban.Common.Protos;
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.Generate;
+using Luban.Job.Common.Tpl;
 using Luban.Job.Common.Utils;
 using Luban.Job.Proto.Defs;
 using System.Collections.Generic;
@@ -30,7 +31,7 @@ namespace Luban.Job.Proto.Generate
             var beans = types.Where(t => t is DefBean).ToList();
             var protos = types.Where(t => t is DefProto).ToList();
             var rpcs = types.Where(t => t is DefRpc).ToList();
-            var template = StringTemplateUtil.GetTemplate("proto/lua/all");
+            var template = StringTemplateManager.Ins.GetTemplate("proto/lua/all");
             return template.RenderCode(new { Enums = enums, Beans = beans, Protos = protos, Rpcs = rpcs });
         }
 

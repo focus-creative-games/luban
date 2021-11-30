@@ -1,4 +1,5 @@
 using Luban.Job.Common.Defs;
+using Luban.Job.Common.Tpl;
 using Luban.Job.Common.Utils;
 using Luban.Job.Db.Defs;
 using System;
@@ -26,14 +27,14 @@ namespace Luban.Job.Db.Generate
 
         public string Render(DefBean b)
         {
-            var template = StringTemplateUtil.GetTemplate("db/cs_sync/bean");
+            var template = StringTemplateManager.Ins.GetTemplate("db/cs_sync/bean");
             var result = template.RenderCode(b);
             return result;
         }
 
         public string Render(DefTable p)
         {
-            var template = StringTemplateUtil.GetTemplate("db/cs_sync/table");
+            var template = StringTemplateManager.Ins.GetTemplate("db/cs_sync/table");
             var result = template.RenderCode(p);
 
             return result;
@@ -41,7 +42,7 @@ namespace Luban.Job.Db.Generate
 
         public string RenderTables(string name, string module, List<DefTable> tables)
         {
-            var template = StringTemplateUtil.GetTemplate("db/cs_sync/tables");
+            var template = StringTemplateManager.Ins.GetTemplate("db/cs_sync/tables");
             var result = template.Render(new
             {
                 Name = name,

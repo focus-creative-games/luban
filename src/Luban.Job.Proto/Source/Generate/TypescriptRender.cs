@@ -2,6 +2,7 @@
 using Luban.Job.Common;
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.Generate;
+using Luban.Job.Common.Tpl;
 using Luban.Job.Common.Utils;
 using Luban.Job.Proto.Defs;
 using System;
@@ -34,7 +35,7 @@ namespace Luban.Job.Proto.Generate
                 }
                 if (args.TypescriptEmbedBrightTypes)
                 {
-                    fileContent.Add(StringTemplateUtil.GetTemplateString("config/typescript_bin/vectors"));
+                    fileContent.Add(StringTemplateManager.Ins.GetTemplateString("config/typescript_bin/vectors"));
                     fileContent.Add(TypescriptStringTemplate.SerializeTypes);
                     fileContent.Add(TypescriptStringTemplate.ProtoTypes);
                 }

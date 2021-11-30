@@ -1,4 +1,5 @@
 using Luban.Job.Common.Defs;
+using Luban.Job.Common.Tpl;
 using Scriban;
 
 namespace Luban.Job.Common.Utils
@@ -7,7 +8,7 @@ namespace Luban.Job.Common.Utils
     {
         public static string RenderCsEnumClass(DefEnum e)
         {
-            var template = StringTemplateUtil.GetTemplate("common/cs/enum");
+            var template = StringTemplateManager.Ins.GetTemplate("common/cs/enum");
             var result = template.Render(e);
 
             return result;
@@ -15,7 +16,7 @@ namespace Luban.Job.Common.Utils
 
         public static string RenderJavaEnumClass(DefEnum e)
         {
-            var template = StringTemplateUtil.GetTemplate("common/java/enum");
+            var template = StringTemplateManager.Ins.GetTemplate("common/java/enum");
             var result = template.Render(e);
 
             return result;
@@ -23,14 +24,14 @@ namespace Luban.Job.Common.Utils
 
         public static string RenderCppEnumClass(DefEnum e)
         {
-            var template = StringTemplateUtil.GetTemplate("common/cpp/enum");
+            var template = StringTemplateManager.Ins.GetTemplate("common/cpp/enum");
             var result = template.Render(e);
             return result;
         }
 
         public static string RenderPythonEnumClass(DefEnum e)
         {
-            var template = StringTemplateUtil.GetTemplate("common/python/enum");
+            var template = StringTemplateManager.Ins.GetTemplate("common/python/enum");
             var result = template.Render(e);
 
             return result;
@@ -38,14 +39,14 @@ namespace Luban.Job.Common.Utils
 
         public static string RenderTypescriptEnumClass(DefEnum e)
         {
-            var template = StringTemplateUtil.GetTemplate("common/typescript/enum");
+            var template = StringTemplateManager.Ins.GetTemplate("common/typescript/enum");
             var result = template.Render(e);
             return result;
         }
 
         public static string RenderRustEnumClass(DefEnum e)
         {
-            var template = StringTemplateUtil.GetTemplate("common/rust/enum");
+            var template = StringTemplateManager.Ins.GetTemplate("common/rust/enum");
             var result = template.Render(e);
 
             return result;

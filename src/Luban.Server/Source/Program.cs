@@ -1,6 +1,8 @@
 using CommandLine;
 using Luban.Common.Protos;
 using Luban.Common.Utils;
+using Luban.Job.Cfg.Cache;
+using Luban.Job.Common.Tpl;
 using Luban.Job.Common.Utils;
 using System;
 using System.IO;
@@ -21,6 +23,9 @@ namespace Luban.Server
             [Option('t', "template_search_path", Required = false, HelpText = "additional template search path")]
             public string TemplateSearchPath { get; set; }
 
+            [Option("disable_cache", Required = false, HelpText = "disable generation cache")]
+            public bool DisableCache { get; set; }
+
             [Option("i10n:default_timezone", Required = false, HelpText = "default timezone")]
             public string L10nDefaultTimeZone { get; set; } = "Asia/Shanghai";
         }
@@ -32,11 +37,14 @@ namespace Luban.Server
 
             var options = CommandLineUtil.ParseOptions<CommandLineOptions>(args);
 
+            FileRecordCacheManager.Ins.Init(!options.DisableCache);
+
+            StringTemplateManager.Ins.Init(!options.DisableCache);
             if (!string.IsNullOrEmpty(options.TemplateSearchPath))
             {
-                StringTemplateUtil.AddTemplateSearchPath(options.TemplateSearchPath);
+                StringTemplateManager.Ins.AddTemplateSearchPath(options.TemplateSearchPath);
             }
-            StringTemplateUtil.AddTemplateSearchPath(FileUtil.GetPathRelateApplicationDirectory("Templates"));
+            StringTemplateManager.Ins.AddTemplateSearchPath(FileUtil.GetPathRelateApplicationDirectory("Templates"));
 
             Luban.Common.Utils.LogUtil.InitSimpleNLogConfigure(NLog.LogLevel.FromString(options.LogLevel));
 

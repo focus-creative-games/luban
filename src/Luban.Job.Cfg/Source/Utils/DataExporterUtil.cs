@@ -7,6 +7,7 @@ using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Cfg.l10n;
 using Luban.Job.Cfg.RawDefs;
+using Luban.Job.Common.Tpl;
 using Luban.Job.Common.Utils;
 using Scriban;
 using System;
@@ -22,7 +23,7 @@ namespace Luban.Job.Cfg.Utils
     {
         public static string ToTemplateOutputData(DefTable table, List<Record> records, string templateName)
         {
-            Template template = StringTemplateUtil.GetTemplate($"config/data/{templateName}");
+            Template template = StringTemplateManager.Ins.GetTemplate($"config/data/{templateName}");
             return template.RenderData(table, records.Select(r => r.Data).ToList());
         }
 

@@ -1,5 +1,6 @@
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Common.Generate;
+using Luban.Job.Common.Tpl;
 using Luban.Job.Common.Utils;
 using System.Collections.Generic;
 
@@ -24,7 +25,7 @@ namespace Luban.Job.Cfg.Generate
             {
                 //fileContent.Add(PythonStringTemplates.ImportTython3Enum);
                 //fileContent.Add(PythonStringTemplates.PythonVectorTypes);
-                fileContent.Add(StringTemplateUtil.GetTemplateString("config/python_json/include"));
+                fileContent.Add(StringTemplateManager.Ins.GetTemplateString("config/python_json/include"));
             }
 
             GenerateCodeMonolithic(ctx, RenderFileUtil.GetFileOrDefault(ctx.GenArgs.OutputCodeMonolithicFile, "Types.py"), lines, PreContent, null);

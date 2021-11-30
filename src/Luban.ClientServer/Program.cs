@@ -4,6 +4,8 @@ using Luban.Client.Common.Utils;
 using Luban.Client.Utils;
 using Luban.Common.Protos;
 using Luban.Common.Utils;
+using Luban.Job.Cfg.Cache;
+using Luban.Job.Common.Tpl;
 using Luban.Job.Common.Utils;
 using Luban.Server;
 using System;
@@ -165,11 +167,14 @@ Options:
 
         private static void StartServer(AllCommandLineOptions options)
         {
+            FileRecordCacheManager.Ins.Init(true);
+            StringTemplateManager.Ins.Init(true);
             if (!string.IsNullOrEmpty(options.TemplateSearchPath))
             {
-                StringTemplateUtil.AddTemplateSearchPath(options.TemplateSearchPath);
+                StringTemplateManager.Ins.AddTemplateSearchPath(options.TemplateSearchPath);
             }
-            StringTemplateUtil.AddTemplateSearchPath(FileUtil.GetPathRelateApplicationDirectory("Templates"));
+            StringTemplateManager.Ins.AddTemplateSearchPath(FileUtil.GetPathRelateApplicationDirectory("Templates"));
+
             GenServer.Ins.Start(true, options.Port, ProtocolStub.Factories);
 
             GenServer.Ins.RegisterJob("cfg", new Luban.Job.Cfg.JobController());

@@ -3,6 +3,7 @@ using Luban.Job.Cfg.Defs;
 using Luban.Job.Common;
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.Generate;
+using Luban.Job.Common.Tpl;
 using Luban.Job.Common.Utils;
 using System;
 using System.Collections.Generic;
@@ -102,7 +103,7 @@ namespace {ctx.TopModule}
 
         private string RenderStub(string topModule, List<DefTypeBase> types)
         {
-            var template = StringTemplateUtil.GetTemplate("config/cpp_bin/stub");
+            var template = StringTemplateManager.Ins.GetTemplate("config/cpp_bin/stub");
             return template.RenderCode(new {
                 TopModule = topModule,
                 Types = types,

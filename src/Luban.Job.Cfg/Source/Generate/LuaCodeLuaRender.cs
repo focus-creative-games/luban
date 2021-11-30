@@ -1,6 +1,7 @@
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.Generate;
+using Luban.Job.Common.Tpl;
 using Luban.Job.Common.Utils;
 using Scriban;
 using System;
@@ -22,8 +23,8 @@ namespace Luban.Job.Cfg.Generate
             var enums = types.Where(t => t is DefEnum).ToList();
             var beans = types.Where(t => t is DefBean).ToList();
             var tables = types.Where(t => t is DefTable).ToList();
-            var template = t_allRender ??= Template.Parse(StringTemplateUtil.GetTemplateString("common/lua/base")
-                + StringTemplateUtil.GetTemplateString("config/lua_lua/all"));
+            var template = t_allRender ??= Template.Parse(StringTemplateManager.Ins.GetTemplateString("common/lua/base")
+                + StringTemplateManager.Ins.GetTemplateString("config/lua_lua/all"));
             return template.RenderCode(new { Enums = enums, Beans = beans, Tables = tables });
         }
     }

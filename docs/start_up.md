@@ -10,7 +10,7 @@
 
 ## 创建游戏配置
 
-1. 从示例项目拷贝[MiniDesignerConfigsTemplate](https://github.com/focus-creative-games/luban_examples/MiniDesignerConfigsTemplate) 到一个合适的目录，假设为 **MyConfigs**
+1. 从示例项目拷贝[MiniDesignerConfigsTemplate](https://github.com/focus-creative-games/luban_examples/tree/main/MiniDesignerConfigsTemplate) 到一个合适的目录，假设为 **MyConfigs**
 2. 添加物品表 excel 文件
     在 MyConfigs/Datas 目录下创建一个 “物品表.xlsx” 文件。  
    
@@ -43,7 +43,7 @@
 
 ## 生成代码和数据以及在程序中使用
 
- 假设是Unity项目，使用json导出格式。 示例参考项目为 [Csharp_Unity_Json](https://github.com/focus-creative-games/luban_examples/Projects/Csharp_Unity_json)。其他语言或者导出类型的组合，请参考 [luban_examples](https://github.com/focus-creative-games/luban_examples)
+ 假设是Unity项目，使用json导出格式。 示例参考项目为 [Csharp_Unity_Json](https://github.com/focus-creative-games/luban_examples/tree/main/Projects/Csharp_Unity_json)。其他语言或者导出类型的组合，请参考 [luban_examples](https://github.com/focus-creative-games/luban_examples)
 
 
 1.  项目准备。  

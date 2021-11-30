@@ -1,5 +1,6 @@
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Common.Defs;
+using Luban.Job.Common.Tpl;
 using Luban.Job.Common.Utils;
 using System;
 using System.Collections.Generic;
@@ -39,8 +40,8 @@ namespace Luban.Job.Cfg.Generate
                 if (args.TypescriptEmbedBrightTypes)
                 {
                     fileContent.Add(isGenBinary ?
-                        StringTemplateUtil.GetTemplateString("config/typescript_bin/vectors")
-                        : StringTemplateUtil.GetTemplateString("config/typescript_json/vectors"));
+                        StringTemplateManager.Ins.GetTemplateString("config/typescript_bin/vectors")
+                        : StringTemplateManager.Ins.GetTemplateString("config/typescript_json/vectors"));
                     if (isGenBinary)
                     {
                         fileContent.Add(TypescriptStringTemplate.SerializeTypes);

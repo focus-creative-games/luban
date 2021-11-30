@@ -11,7 +11,7 @@ namespace Luban.Job.Cfg.Cache
     /// 配置加载记录缓存。
     /// 如果某个表对应的数据文件未修改，定义没变化，那加载后的数据应该是一样的。
     /// </summary>
-    class FileRecordCacheManager
+    public class FileRecordCacheManager
     {
         private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -36,14 +36,21 @@ namespace Luban.Job.Cfg.Cache
             }
         }
 
+        public void Init(bool enableCache)
+        {
+            _enableCache = enableCache;
+        }
+
         private readonly ConcurrentDictionary<(string TableName, string MD5, string SheetName), FileRecordCache> _caches = new();
 
         private readonly object _shrinkLocker = new object();
 
+        private bool _enableCache = true;
+
         public bool TryGetCacheLoadedRecords(DefTable table, string md5, string originFile, string sheetName, out List<Record> cacheRecords)
         {
             cacheRecords = null;
-            if (!_caches.TryGetValue((table.FullName, md5, sheetName), out var r))
+            if (!_enableCache || !_caches.TryGetValue((table.FullName, md5, sheetName), out var r))
             {
                 return false;
             }
@@ -77,7 +84,7 @@ namespace Luban.Job.Cfg.Cache
 
         public bool TryGetRecordOutputData(DefTable table, List<Record> records, string dataType, out string md5)
         {
-            if (_tableCaches.TryGetValue((table.FullName, dataType), out var cacheInfo))
+            if (_enableCache && _tableCaches.TryGetValue((table.FullName, dataType), out var cacheInfo))
             {
                 var cacheAss = cacheInfo.Table.Assembly;
                 var curAss = table.Assembly;

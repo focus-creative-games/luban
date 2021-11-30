@@ -50,6 +50,7 @@ Luban工具有两种部属方式。
     -p, --port <port>               可选参数。 监听端口 <port>，默认为8899。
     -l, --loglevel <log level>      可选参数。 日志级别。默认为INFO。 有效值有: TRACE,DEBUG,INFO,WARN,ERROR,FATAL,OFF
     -t, --template_search_path      可选参数。模板的额外搜索路径。优先从此路径，再从Templates目录搜索模板文件。
+    --disable_cache                 可选参数。禁用生成中间过程的缓存，但保留了源文件缓存。在模板调试时比较有用。
     --i10n:default_timezone  <timezone>       可选参数。 datetime数据转换为UTC时间默认使用的时区。
 
 ## luban-client 使用介绍

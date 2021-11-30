@@ -1,6 +1,7 @@
 ﻿using Luban.Job.Cfg.Defs;
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.Generate;
+using Luban.Job.Common.Tpl;
 using Luban.Job.Common.Utils;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ namespace Luban.Job.Cfg.Generate
             var lines = new List<string>();
             GenerateCodeMonolithic(ctx, RenderFileUtil.GetFileOrDefault(ctx.GenArgs.OutputCodeMonolithicFile, "mod.rs"), lines, ls =>
             {
-                var template = StringTemplateUtil.GetTemplate("config/rust_json/include");
+                var template = StringTemplateManager.Ins.GetTemplate("config/rust_json/include");
                 var result = template.RenderCode(ctx.ExportTypes);
                 ls.Add(result);
             }, null);
