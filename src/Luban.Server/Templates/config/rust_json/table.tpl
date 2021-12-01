@@ -13,6 +13,8 @@ pub struct {{name}} {
     {{~if x.is_map_table ~}}
     data_list: Vec<std::rc::Rc<{{rust_define_type value_type}}>>,
     data_map: std::collections::HashMap<{{rust_define_type key_type}}, std::rc::Rc<{{rust_define_type value_type}}>>,
+    {{~else if x.is_list_table ~}}
+    data_list: Vec<std::rc::Rc<{{rust_define_type value_type}}>>,
     {{~else~}}
     data: {{rust_class_name value_type}},
     {{~end~}}
@@ -54,6 +56,30 @@ impl {{name}}{
     pub fn get_data_list(self:&{{name}}) -> &Vec<std::rc::Rc<{{rust_define_type value_type}}>> { &self.data_list }
     #[allow(dead_code)]
     pub fn get(self:&{{name}}, key: &{{rust_define_type key_type}}) -> std::option::Option<&std::rc::Rc<{{rust_define_type value_type}}>> { self.data_map.get(key) }
+    
+    {{~else if x.is_list_table ~}}
+        if !__js.is_array() {
+            return Err(LoadError{});
+        }
+        let mut t = {{name}} {
+            data_list : Vec::new(),
+        };
+        
+        for __e in __js.members() {
+            let __v = std::rc::Rc::new(match {{rust_class_name value_type}}::new(__e) {
+                Ok(x) => x,
+                Err(err) => return Err(err),
+            });
+            let __v2 = std::rc::Rc::clone(&__v);
+            t.data_list.push(__v);
+        }
+        Ok(t)
+    }
+
+    #[allow(dead_code)]
+    pub fn get_data_list(self:&{{name}}) -> &Vec<std::rc::Rc<{{rust_define_type value_type}}>> { &self.data_list }
+    #[allow(dead_code)]
+    pub fn get(self:&{{name}}, index: usize) -> &std::rc::Rc<{{rust_define_type value_type}}> { &self.data_list[index] }
     {{~else~}}
         if !__js.is_array() || __js.len() != 1 {
             return Err(LoadError{});

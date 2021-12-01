@@ -61,7 +61,40 @@ public sealed class {{name}}
             v.TranslateText(translator);
         }
     }
+        {{~else if x.is_list_table ~}}
+    private readonly List<{{cs_define_type value_type}}> _dataList;
+    
+    public {{name}}(ByteBuf _buf)
+    {
+        _dataList = new List<{{cs_define_type value_type}}>();
+        
+        for(int n = _buf.ReadSize() ; n > 0 ; --n)
+        {
+            {{cs_define_type value_type}} _v;
+            {{cs_deserialize '_buf' '_v' value_type}}
+        }
+    }
 
+    public List<{{cs_define_type value_type}}> DataList => _dataList;
+
+    public {{cs_define_type value_type}} Get(int index) => _dataList[index];
+    public {{cs_define_type value_type}} this[int index] => _dataList[index];
+
+    public void Resolve(Dictionary<string, object> _tables)
+    {
+        foreach(var v in _dataList)
+        {
+            v.Resolve(_tables);
+        }
+    }
+
+    public void TranslateText(System.Func<string, string, string> translator)
+    {
+        foreach(var v in _dataList)
+        {
+            v.TranslateText(translator);
+        }
+    }
     {{~else~}}
 
      private readonly {{cs_define_type value_type}} _data;

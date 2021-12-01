@@ -29,6 +29,8 @@ local tables =
 {{~for table in tables ~}}
     {{~if table.is_map_table ~}}
     { name='{{table.name}}', file='{{table.output_data_file}}', mode='map', index='{{table.index}}', value_type='{{table.value_ttype.bean.full_name}}' },
+    {{~else if table.is_list_table ~}}
+    { name='{{table.name}}', file='{{table.output_data_file}}', mode='list', index='{{table.index}}', value_type='{{table.value_ttype.bean.full_name}}' },
     {{~else~}}
     { name='{{table.name}}', file='{{table.output_data_file}}', mode='one', value_type='{{table.value_ttype.bean.full_name}}'},
     {{end}}

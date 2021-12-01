@@ -132,7 +132,7 @@ namespace Luban.Job.Cfg.Defs
                 }
                 case ETableMode.LIST:
                 {
-                    var indexs = Index.Split(',', '|', '+', '&').Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => s.Trim()).ToList();
+                    var indexs = Index.Split('+', ',').Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => s.Trim()).ToList();
                     foreach (var idx in indexs)
                     {
                         if (ValueTType.GetBeanAs<DefBean>().TryGetField(idx, out var f, out var i))
@@ -147,7 +147,7 @@ namespace Luban.Job.Cfg.Defs
                         }
                     }
                     // 如果不是 union index, 每个key必须唯一，否则 (key1,..,key n)唯一
-                    IsUnionIndex = IndexList.Count > 1 && !Index.Contains('|');
+                    IsUnionIndex = IndexList.Count > 1 && !Index.Contains(',');
                     break;
                 }
                 default: throw new Exception($"unknown mode:'{Mode}'");

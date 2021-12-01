@@ -80,6 +80,11 @@ namespace Luban.Job.Cfg.Utils
                             LuaExportor.Ins.ExportTableMap(table, records, content);
                             break;
                         }
+                        case ETableMode.LIST:
+                        {
+                            LuaExportor.Ins.ExportTableList(table, records, content);
+                            break;
+                        }
                         default:
                         {
                             throw new NotSupportedException();

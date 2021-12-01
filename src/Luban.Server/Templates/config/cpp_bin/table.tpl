@@ -58,6 +58,43 @@ class {{name}}
         }
     }
 
+    {{~else if x.is_list_table~}}
+    private:
+    ::bright::Vector<{{cpp_define_type value_type}}> _dataList;
+    
+    public:
+    bool load(ByteBuf& _buf)
+    {        
+        int n;
+        if (!_buf.readSize(n)) return false;
+        for(; n > 0 ; --n)
+        {
+            {{cpp_define_type value_type}} _v;
+            {{cpp_deserialize '_buf' '_v' value_type}}
+            _dataList.push_back(_v);
+        }
+        return true;
+    }
+
+    const ::bright::Vector<{{cpp_define_type value_type}}>& getDataList() const { return _dataList; }
+
+    {{value_type.bean.cpp_full_name}}* getRaw(size_t index) const
+    { 
+        return _dataList[index].get();
+    }
+
+    {{cpp_define_type value_type}} get(size_t index) const
+    { 
+        return _dataList[index];
+    }
+
+    void resolve(::bright::HashMap<::bright::String, void*>& _tables)
+    {
+        for(auto v : _dataList)
+        {
+            v->resolve(_tables);
+        }
+    }
     {{~else~}}
      private:
     {{cpp_define_type value_type}} _data;

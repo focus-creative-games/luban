@@ -55,7 +55,7 @@ luban相较于常规的excel导表工具有以下核心优势：
 - 支持数据标签。 可以选择导出符合要求的数据，发布正式数据时策划不必手动注释掉那些测试数据了
 - 强大的数据校验能力。支持内建数据格式检查；支持ref表引用检查（策划不用担心填错id）;支持path资源检查（策划不用担心填错资源路径）;支持range检查
 - 支持常量别名。策划不必再为诸如 升级丹 这样的道具手写具体道具id了
-- 支持多种常见数据表模式。 one(单例表)、map（常规key-value表）
+- 支持多种常见数据表模式。 singleton(单例表)、map（常规key-value表）、**list(支持无索引、多主键联合索引、多主键独立索引)**
 - 支持res资源标记。可以一键导出配置中引用的所有资源列表(icon,ui,assetbundle等等)
 - 统一了自定义编辑器的配置数据。与Unity和UE4的自定义编辑器良好配合，为编辑器生成合适的加载与保存json配置的的c#(Unity)或c++(UE4)代码。保存的json配置能够被luban识别和处理。
 - 支持emmylua anntations。生成的lua包含符合emmylua 格式anntations信息。配合emmylua有良好的配置代码提示能力
@@ -423,7 +423,66 @@ xml中定义如下
 </tr>
 </table>
 
+### 列表表 （无主键）
 
+有时候只想得到一个记录列表，无主键。mode="list"并且index为空，表示无主键表。
+
+定义表
+```xml
+<table name="TbNotKeyList" value="NotKeyList" mode="list" input="not_key_list.xlsx"/>
+```
+
+示例数据表
+
+|##|x|y|z| num|
+|-|-|-|-|-|
+|##type|int|long|string|int|
+||1|1|aaa|123|
+||1|1|bbb|124|
+||1|2|aaa|134|
+||2|1|aaa|124|
+||5|6|xxx|898|
+
+
+### 多主键表（联合索引）
+
+多个key构成联合唯一主键。使用"+"分割key，表示联合关系。
+
+定义表
+```xml
+<table name="TbUnionMultiKey" value="UnionMultiKey" index="key1+key2+key3" input="union_multi_key.xlsx"/>
+```
+
+示例数据表
+
+|##|key1|key2|key3| num|
+|-|-|-|-|-|
+|##type|int|long|string|int|
+||1|1|aaa|123|
+||1|1|bbb|124|
+||1|2|aaa|134|
+||2|1|aaa|124|
+||5|6|xxx|898|
+
+### 多主键表（独立索引）
+
+多个key，各自独立唯一索引。与联合索引写法区别在于使用 ","来划分key，表示独立关系。
+
+定义表
+```xml
+<table name="TbMultiKey" value="MultiKey" index="key1,key2,key3" input="multi_key.xlsx"/>
+```
+
+示例数据表
+ 
+|##|key1|key2|key3| num|
+|-|-|-|-|-|
+|##type|int|long|string|int|
+||1|2|aaa|123|
+||2|4|bbb|124|
+||3|6|ccc|134|
+||4|8|ddd|124|
+||5|1|eee|898|
 
 ### 单例表
 有一些配置全局只有一份，比如 公会模块的开启等级，背包初始大小，背包上限。此时使用单例表来配置这些数据比较合适。

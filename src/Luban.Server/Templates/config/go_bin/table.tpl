@@ -59,6 +59,35 @@ func (table *{{go_full_name}}) Get(key {{go_define_type key_type}}) {{go_define_
     return table._dataMap[key]
 }
 
+{{~else if x.is_list_table~}}
+type {{go_full_name}} struct {
+    _dataList []{{go_define_type value_type}}
+}
+
+func New{{go_full_name}}(_buf *serialization.ByteBuf) (*{{go_full_name}}, error) {
+	if size, err := _buf.ReadSize() ; err != nil {
+		return nil, err
+	} else {
+		_dataList := make([]{{go_define_type value_type}}, 0, size)
+
+		for i := 0 ; i < size ; i++ {
+			if _v, err2 := {{go_deserialize_type value_type '_buf'}}; err2 != nil {
+				return nil, err2
+			} else {
+				_dataList = append(_dataList, _v)
+			}
+		}
+		return &{{go_full_name}}{_dataList:_dataList}, nil
+	}
+}
+
+func (table *{{go_full_name}}) GetDataList() []{{go_define_type value_type}} {
+    return table._dataList
+}
+
+func (table *{{go_full_name}}) Get(index int) {{go_define_type value_type}} {
+    return table._dataList[index]
+}
 
 {{~else~}}
 

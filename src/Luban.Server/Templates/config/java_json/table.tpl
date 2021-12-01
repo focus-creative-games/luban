@@ -47,6 +47,29 @@ public final class {{name}} {
         }
     }
 
+    {{~else if x.is_list_table ~}}
+    private final java.util.ArrayList<{{java_box_define_type value_type}}> _dataList;
+    
+    public {{name}}(JsonElement __json__) {
+        _dataList = new java.util.ArrayList<{{java_box_define_type value_type}}>();
+        
+        for(com.google.gson.JsonElement _e_ : __json__.getAsJsonArray()) {
+            {{java_box_define_type value_type}} _v;
+            {{java_deserialize '_e_.getAsJsonObject()' '_v' value_type}}
+            _dataList.add(_v);
+        }
+    }
+
+    public java.util.ArrayList<{{java_box_define_type value_type}}> getDataList() { return _dataList; }
+
+    public {{java_box_define_type value_type}} get(int index) { return _dataList.get(index); }
+
+    public void resolve(java.util.HashMap<String, Object> _tables) {
+        for({{java_box_define_type value_type}} v : _dataList) {
+            v.resolve(_tables);
+        }
+    }
+
     {{~else~}}
     private final {{java_define_type value_type}} _data;
 

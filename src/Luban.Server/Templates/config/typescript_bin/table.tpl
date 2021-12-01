@@ -38,6 +38,28 @@ export class {{name}} {
             v.resolve(_tables)
         }
     }
+    {{~else if x.is_list_table ~}}
+    private _dataList: {{ts_define_type value_type}}[]
+    
+    constructor(_buf_: ByteBuf) {
+        this._dataList = []
+        
+        for(let n = _buf_.ReadInt() ; n > 0 ; n--) {
+            let _v: {{ts_define_type value_type}}
+            {{ts_bin_constructor '_v' '_buf_' value_type}}
+            this._dataList.push(_v)
+        }
+    }
+
+    getDataList(): {{ts_define_type value_type}}[] { return this._dataList }
+
+    get(index: number): {{ts_define_type value_type}} | undefined { return this._dataList[index] }
+
+    resolve(_tables: Map<string, any>) {
+        for(var v of this._dataList) {
+            v.resolve(_tables)
+        }
+    }
 
     {{~else~}}
 

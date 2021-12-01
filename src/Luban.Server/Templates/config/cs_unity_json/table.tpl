@@ -63,6 +63,41 @@ public sealed class {{name}}
             v.TranslateText(translator);
         }
     }
+    
+        {{~else if x.is_list_table ~}}
+    private readonly List<{{cs_define_type value_type}}> _dataList;
+    
+    public {{name}}(JSONNode _json)
+    {
+        _dataList = new List<{{cs_define_type value_type}}>();
+        
+        foreach(JSONNode _row in _json.Children)
+        {
+            var _v = {{cs_define_type value_type}}.Deserialize{{value_type.bean.name}}(_row);
+            _dataList.Add(_v);
+        }
+    }
+
+    public List<{{cs_define_type value_type}}> DataList => _dataList;
+
+    public {{cs_define_type value_type}} Get(int index) => _dataList[index];
+    public {{cs_define_type value_type}} this[int index] => _dataList[index];
+
+    public void Resolve(Dictionary<string, object> _tables)
+    {
+        foreach(var v in _dataList)
+        {
+            v.Resolve(_tables);
+        }
+    }
+
+    public void TranslateText(System.Func<string, string, string> translator)
+    {
+        foreach(var v in _dataList)
+        {
+            v.TranslateText(translator);
+        }
+    }
 
     {{~else~}}
 

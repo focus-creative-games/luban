@@ -22,6 +22,18 @@ class {{name}}:
     def getDataList(self) : return self._dataList
 
     def get(self, key) : return self._dataMap.get(key)
+    {{~else if x.is_list_table ~}}
+
+    def __init__(self, _json_ ):
+        self._dataList = []
+        
+        for _json2_ in _json_:
+            {{py3_deserialize_value '_v' '_json2_' value_type}}
+            self._dataList.append(_v)
+
+    def getDataList(self) : return self._dataList
+
+    def get(self, index) : return self._dataList[index]
 
     {{~else~}}
 

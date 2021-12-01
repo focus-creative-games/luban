@@ -36,6 +36,27 @@ export class {{name}}{
             v.resolve(_tables)
         }
     }
+    {{~else if x.is_list_table ~}}
+    private _dataList: {{ts_define_type value_type}}[]
+    
+    constructor(_json_: any) {
+        this._dataList = []
+        for(var _json2_ of _json_) {
+            let _v: {{ts_define_type value_type}}
+            {{ts_json_constructor '_v' '_json2_' value_type}}
+            this._dataList.push(_v)
+        }
+    }
+
+    getDataList(): {{ts_define_type value_type}}[] { return this._dataList }
+
+    get(index: number): {{ts_define_type value_type}} | undefined { return this._dataList[index] }
+
+    resolve(_tables: Map<string, any>) {
+        for(var v of this._dataList) {
+            v.resolve(_tables)
+        }
+    }
 
     {{~else~}}
 

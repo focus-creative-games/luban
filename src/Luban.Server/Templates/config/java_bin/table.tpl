@@ -46,6 +46,28 @@ public final class {{name}} {
             v.resolve(_tables);
         }
     }
+    {{~else if x.is_list_table ~}}
+    private final java.util.ArrayList<{{java_box_define_type value_type}}> _dataList;
+    
+    public {{name}}(ByteBuf _buf) {
+        _dataList = new java.util.ArrayList<{{java_box_define_type value_type}}>();
+        
+        for(int n = _buf.readSize() ; n > 0 ; --n) {
+            {{java_box_define_type value_type}} _v;
+            {{java_deserialize '_buf' '_v' value_type}}
+            _dataList.add(_v);
+        }
+    }
+
+    public java.util.ArrayList<{{java_box_define_type value_type}}> getDataList() { return _dataList; }
+
+    public {{java_box_define_type value_type}} get(int index) { return _dataList.get(index); }
+
+    public void resolve(java.util.HashMap<String, Object> _tables) {
+        for({{java_box_define_type value_type}} v : _dataList) {
+            v.resolve(_tables);
+        }
+    }
 
     {{~else~}}
     private final {{java_define_type value_type}} _data;

@@ -16,16 +16,13 @@ namespace Luban.Job.Cfg.Validators
     public class RefValidator : IValidator
     {
 
-        public static string GetActualTableName(string table)
-        {
-            return table.EndsWith("?") ? table.Substring(0, table.Length - 1) : table;
-        }
-
         public List<string> Tables { get; }
 
         public string FirstTable => GetActualTableName(Tables[0]);
 
         public TType Type { get; }
+
+        public bool GenRef { get; private set; }
 
         public RefValidator(TType type, string tablesStr)
         {
@@ -90,7 +87,14 @@ namespace Luban.Job.Cfg.Validators
 #endif
         }
 
-        private (string TableName, string FieldName, bool IgnoreDefault) ParseRefString(string refStr)
+
+        private static string GetActualTableName(string table)
+        {
+            var (actualTable, _, _) = ParseRefString(table);
+            return actualTable;
+        }
+
+        private static (string TableName, string FieldName, bool IgnoreDefault) ParseRefString(string refStr)
         {
             bool ignoreDefault = false;
 
@@ -126,6 +130,7 @@ namespace Luban.Job.Cfg.Validators
             }
 
             var assembly = ((DefField)def).Assembly;
+            bool first = true;
             foreach (var table in Tables)
             {
                 var (actualTable, indexName, ignoreDefault) = ParseRefString(table);
@@ -162,6 +167,10 @@ namespace Luban.Job.Cfg.Validators
                 }
                 else if (ct.IsMapTable)
                 {
+                    if (first && Tables.Count == 1)
+                    {
+                        GenRef = true;
+                    }
                     if (!string.IsNullOrEmpty(indexName))
                     {
                         throw new Exception($"结构:{hostTypeName} 字段:{fieldName} ref:{actualTable} 是map表，不能索引子字段");
@@ -188,6 +197,7 @@ namespace Luban.Job.Cfg.Validators
                         throw new Exception($"type:'{hostTypeName}' field:'{fieldName}' 类型:'{Type.TypeName}' 与 被引用的list表:'{actualTable}' key:{indexName} 类型:'{indexField.Type.TypeName}' 不一致");
                     }
                 }
+                first = false;
             }
         }
     }
