@@ -6,6 +6,7 @@ namespace Luban.Job.Cfg.RawDefs
     {
         ONE,
         MAP,
+        LIST,
     }
 
     public class CfgInputFile

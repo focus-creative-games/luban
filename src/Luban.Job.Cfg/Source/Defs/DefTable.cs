@@ -4,6 +4,7 @@ using Luban.Job.Common.Types;
 using Luban.Job.Common.Utils;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Luban.Job.Cfg.Defs
 {
@@ -37,6 +38,10 @@ namespace Luban.Job.Cfg.Defs
 
         public bool IsOneValueTable => Mode == ETableMode.ONE;
 
+        public bool IsSingletonTable => Mode == ETableMode.ONE;
+
+        public bool IsListTable => Mode == ETableMode.LIST;
+
         public List<string> InputFiles { get; }
 
         private readonly Dictionary<string, List<string>> _patchInputFiles;
@@ -47,13 +52,17 @@ namespace Luban.Job.Cfg.Defs
 
         public TType KeyTType { get; private set; }
 
+        public DefField IndexField { get; private set; }
+
+        public int IndexFieldIdIndex { get; private set; }
+
         public TBean ValueTType { get; private set; }
 
         public TType Type { get; private set; }
 
-        public DefField IndexField { get; private set; }
+        public bool IsUnionIndex { get; private set; }
 
-        public int IndexFieldIdIndex { get; private set; }
+        public List<(TType Type, DefField IndexField, int IndexFieldIdIndex)> IndexList { get; } = new();
 
         public bool NeedExport => Assembly.NeedExport(this.Groups);
 
@@ -87,12 +96,14 @@ namespace Luban.Job.Cfg.Defs
             {
                 case ETableMode.ONE:
                 {
+                    IsUnionIndex = false;
                     KeyTType = null;
                     Type = ValueTType;
                     break;
                 }
                 case ETableMode.MAP:
                 {
+                    IsUnionIndex = true;
                     if (!string.IsNullOrWhiteSpace(Index))
                     {
                         if (ValueTType.GetBeanAs<DefBean>().TryGetField(Index, out var f, out var i))
@@ -117,6 +128,26 @@ namespace Luban.Job.Cfg.Defs
                     }
                     KeyTType = IndexField.CType;
                     Type = TMap.Create(false, null, KeyTType, ValueTType, false);
+                    break;
+                }
+                case ETableMode.LIST:
+                {
+                    var indexs = Index.Split(',', '|', '+', '&').Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => s.Trim()).ToList();
+                    foreach (var idx in indexs)
+                    {
+                        if (ValueTType.GetBeanAs<DefBean>().TryGetField(idx, out var f, out var i))
+                        {
+                            IndexField = f;
+                            IndexFieldIdIndex = i;
+                            this.IndexList.Add((f.CType, f, i));
+                        }
+                        else
+                        {
+                            throw new Exception($"table:'{FullName}' index:'{idx}' 字段不存在");
+                        }
+                    }
+                    // 如果不是 union index, 每个key必须唯一，否则 (key1,..,key n)唯一
+                    IsUnionIndex = IndexList.Count > 1 && !Index.Contains('|');
                     break;
                 }
                 default: throw new Exception($"unknown mode:'{Mode}'");

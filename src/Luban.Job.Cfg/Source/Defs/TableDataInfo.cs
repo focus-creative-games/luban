@@ -1,0 +1,177 @@
+﻿using Luban.Job.Cfg.Datas;
+using Luban.Job.Cfg.DataSources;
+#if !LUBAN_LITE
+#endif
+using Luban.Job.Cfg.RawDefs;
+using Luban.Job.Cfg.Utils;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Luban.Job.Cfg.Defs
+{
+    public class TableDataInfo
+    {
+        private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
+
+        public DefTable Table { get; }
+
+        public List<Record> MainRecords { get; }
+
+        public List<Record> PatchRecords { get; }
+
+        public List<Record> FinalRecords { get; private set; }
+
+        public Dictionary<DType, Record> FinalRecordMap { get; private set; }
+
+        public Dictionary<string, Dictionary<DType, Record>> FinalRecordMapByIndexs { get; private set; }
+
+        public TableDataInfo(DefTable table, List<Record> mainRecords, List<Record> patchRecords)
+        {
+            Table = table;
+            MainRecords = mainRecords;
+            PatchRecords = patchRecords;
+
+            BuildIndexs();
+        }
+
+        private void BuildIndexs()
+        {
+#if !LUBAN_LITE
+            List<Record> mainRecords = MainRecords;
+            List<Record> patchRecords = PatchRecords;
+
+            // 这么大费周张是为了保证被覆盖的id仍然保持原来的顺序，而不是出现在最后
+            int index = 0;
+            var recordIndex = new Dictionary<Record, int>();
+            var overrideRecords = new HashSet<Record>();
+            foreach (var r in mainRecords)
+            {
+                recordIndex.Add(r, index++);
+            }
+            if (patchRecords != null)
+            {
+                foreach (var r in patchRecords)
+                {
+                    recordIndex.Add(r, index++);
+                }
+            }
+
+            var table = Table;
+            // TODO 有一个微妙的问题，ref检查虽然通过，但ref的记录有可能未导出
+            switch (Table.Mode)
+            {
+                case ETableMode.ONE:
+                {
+                    // TODO 如果此单例表使用tag,有多个记录，则patchRecords会覆盖全部。
+                    // 好像也挺有道理的，毕竟没有key，无法区分覆盖哪个
+                    if (patchRecords != null && patchRecords.Count > 0)
+                    {
+                        mainRecords = patchRecords;
+                    }
+                    FinalRecords = mainRecords;
+                    break;
+                }
+                case ETableMode.MAP:
+                {
+                    var recordMap = new Dictionary<DType, Record>();
+                    foreach (Record r in mainRecords)
+                    {
+                        DType key = r.Data.Fields[table.IndexFieldIdIndex];
+                        if (!recordMap.TryAdd(key, r))
+                        {
+                            throw new Exception($@"配置表 '{table.FullName}' 主文件 主键字段:'{table.Index}' 主键值:'{key}' 重复.
+        记录1 来自文件:{r.Source}
+        记录2 来自文件:{recordMap[key].Source}
+");
+                        }
+                    }
+                    if (patchRecords != null && patchRecords.Count > 0)
+                    {
+                        foreach (Record r in patchRecords)
+                        {
+                            DType key = r.Data.Fields[table.IndexFieldIdIndex];
+                            if (recordMap.TryGetValue(key, out var old))
+                            {
+                                if (overrideRecords.Contains(old))
+                                {
+                                    throw new Exception($"配置表 '{table.FullName}' 主文件 主键字段:'{table.Index}' 主键值:'{key}' 被patch多次覆盖，请检查patch是否有重复记录");
+                                }
+                                s_logger.Debug("配置表 {} 分支文件 主键:{} 覆盖 主文件记录", table.FullName, key);
+                                mainRecords[recordIndex[old]] = r;
+                            }
+                            else
+                            {
+                                mainRecords.Add(r);
+                            }
+                            overrideRecords.Add(r);
+                            recordMap[key] = r;
+                        }
+                    }
+                    FinalRecords = mainRecords;
+                    FinalRecordMap = recordMap;
+                    break;
+                }
+                case ETableMode.LIST:
+                {
+                    if (patchRecords != null && patchRecords.Count > 0)
+                    {
+                        throw new Exception($"配置表 '{table.FullName}' 是list表.不支持patch");
+                    }
+                    var recordMapByIndexs = new Dictionary<string, Dictionary<DType, Record>>();
+                    if (table.IsUnionIndex)
+                    {
+                        var unionRecordMap = new Dictionary<List<DType>, Record>(ListEqualityComparer<DType>.Default); // comparetor
+                        foreach (Record r in mainRecords)
+                        {
+                            var unionKeys = table.IndexList.Select(idx => r.Data.Fields[idx.IndexFieldIdIndex]).ToList();
+                            if (!unionRecordMap.TryAdd(unionKeys, r))
+                            {
+                                throw new Exception($@"配置表 '{table.FullName}' 主文件 主键字段:'{table.Index}' 主键值:'{Bright.Common.StringUtil.CollectionToString(unionKeys)}' 重复.
+        记录1 来自文件:{r.Source}
+        记录2 来自文件:{unionRecordMap[unionKeys].Source}
+");
+                            }
+                        }
+
+                        // 联合索引的 独立子索引允许有重复key
+                        foreach (var indexInfo in table.IndexList)
+                        {
+                            var recordMap = new Dictionary<DType, Record>();
+                            foreach (Record r in mainRecords)
+                            {
+                                DType key = r.Data.Fields[indexInfo.IndexFieldIdIndex];
+                                recordMap[key] = r;
+                            }
+                            recordMapByIndexs.Add(indexInfo.IndexField.Name, recordMap);
+                        }
+                    }
+                    else
+                    {
+                        foreach (var indexInfo in table.IndexList)
+                        {
+                            var recordMap = new Dictionary<DType, Record>();
+                            foreach (Record r in mainRecords)
+                            {
+                                DType key = r.Data.Fields[indexInfo.IndexFieldIdIndex];
+                                if (!recordMap.TryAdd(key, r))
+                                {
+                                    throw new Exception($@"配置表 '{table.FullName}' 主文件 主键字段:'{indexInfo.IndexField.Name}' 主键值:'{key}' 重复.
+        记录1 来自文件:{r.Source}
+        记录2 来自文件:{recordMap[key].Source}
+");
+                                }
+                            }
+                            recordMapByIndexs.Add(indexInfo.IndexField.Name, recordMap);
+                        }
+                    }
+                    this.FinalRecordMapByIndexs = recordMapByIndexs;
+                    FinalRecords = mainRecords;
+                    break;
+                }
+                default: throw new Exception($"unknown mode:{Table.Mode}");
+            }
+#endif
+        }
+    }
+}

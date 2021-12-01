@@ -11,8 +11,6 @@ namespace Luban.Job.Cfg.DataSources
 
         public List<string> Tags { get; }
 
-        public int Index { get; set; }
-
         public bool IsNotFiltered(List<string> excludeTags)
         {
             if (Tags == null)

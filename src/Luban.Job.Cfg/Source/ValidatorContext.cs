@@ -61,45 +61,31 @@ namespace Luban.Job.Cfg
 
         public async Task ValidateTables(IEnumerable<DefTable> tables)
         {
+            var tasks = new List<Task>();
+            foreach (var t in tables)
             {
-                var tasks = new List<Task>();
-                foreach (var t in tables)
+                tasks.Add(Task.Run(() =>
                 {
-                    tasks.Add(Task.Run(() =>
+                    var records = t.Assembly.GetTableAllDataList(t);
+                    var visitor = new ValidatorVisitor(this);
+                    try
                     {
-                        ValidateTableModeIndex(t);
-                    }));
-                }
-                await Task.WhenAll(tasks);
-            }
-
-            {
-                var tasks = new List<Task>();
-                foreach (var t in tables)
-                {
-                    tasks.Add(Task.Run(() =>
-                    {
-                        var records = t.Assembly.GetTableAllDataList(t);
-                        var visitor = new ValidatorVisitor(this);
-                        try
-                        {
-                            CurrentVisitor = visitor;
-                            visitor.ValidateTable(t, records);
+                        CurrentVisitor = visitor;
+                        visitor.ValidateTable(t, records);
 #if !LUBAN_LITE
-                            if (this.Assembly.NeedL10nTextTranslate)
-                            {
-                                ValidateText(t, records);
-                            }
-#endif
-                        }
-                        finally
+                        if (this.Assembly.NeedL10nTextTranslate)
                         {
-                            CurrentVisitor = null;
+                            ValidateText(t, records);
                         }
-                    }));
-                }
-                await Task.WhenAll(tasks);
+#endif
+                    }
+                    finally
+                    {
+                        CurrentVisitor = null;
+                    }
+                }));
             }
+            await Task.WhenAll(tasks);
 
             if (!string.IsNullOrWhiteSpace(RootDir))
             {
@@ -181,88 +167,5 @@ namespace Luban.Job.Cfg
             }
         }
 
-        private void ValidateTableModeIndex(DefTable table)
-        {
-            var tableDataInfo = Assembly.GetTableDataInfo(table);
-
-            List<Record> mainRecords = tableDataInfo.MainRecords;
-            List<Record> patchRecords = tableDataInfo.PatchRecords;
-
-            // 这么大费周张是为了保证被覆盖的id仍然保持原来的顺序，而不是出现在最后
-            int index = 0;
-            foreach (var r in mainRecords)
-            {
-                r.Index = index++;
-            }
-            if (patchRecords != null)
-            {
-                foreach (var r in patchRecords)
-                {
-                    r.Index = index++;
-                }
-            }
-
-            var mainRecordMap = new Dictionary<DType, Record>();
-
-            switch (table.Mode)
-            {
-                case ETableMode.ONE:
-                {
-                    //if (mainRecords.Count != 1)
-                    //{
-                    //    throw new Exception($"配置表 {table.FullName} 是单值表 mode=one,但主文件数据个数:{mainRecords.Count} != 1");
-                    //}
-                    //if (patchRecords != null && patchRecords.Count != 1)
-                    //{
-                    //    throw new Exception($"配置表 {table.FullName} 是单值表 mode=one,但分支文件数据个数:{patchRecords.Count} != 1");
-                    //}
-                    if (patchRecords != null)
-                    {
-                        mainRecords = patchRecords;
-                    }
-                    break;
-                }
-                case ETableMode.MAP:
-                {
-                    foreach (Record r in mainRecords)
-                    {
-                        DType key = r.Data.Fields[table.IndexFieldIdIndex];
-                        if (!mainRecordMap.TryAdd(key, r))
-                        {
-                            throw new Exception($@"配置表 '{table.FullName}' 主文件 主键字段:'{table.Index}' 主键值:'{key}' 重复.
-        记录1 来自文件:{r.Source}
-        记录2 来自文件:{mainRecordMap[key].Source}
-");
-                        }
-                    }
-                    if (patchRecords != null)
-                    {
-                        var patchRecordMap = new Dictionary<DType, Record>();
-                        foreach (Record r in patchRecords)
-                        {
-                            DType key = r.Data.Fields[table.IndexFieldIdIndex];
-                            if (!patchRecordMap.TryAdd(key, r))
-                            {
-                                throw new Exception($@"配置表 '{table.FullName}' 分支文件 主键字段:'{table.Index}' 主键值:'{key}' 重复.
-        记录1 来自文件:{r.Source}
-        记录2 来自文件:{patchRecordMap[key].Source}
-");
-                            }
-                            if (mainRecordMap.TryGetValue(key, out var old))
-                            {
-                                s_logger.Debug("配置表 {} 分支文件 主键:{} 覆盖 主文件记录", table.FullName, key);
-                                mainRecords[old.Index] = r;
-                            }
-                            mainRecordMap[key] = r;
-                        }
-                    }
-                    break;
-                }
-            }
-#if !LUBAN_LITE
-            tableDataInfo.FinalRecords = mainRecords;
-            tableDataInfo.FinalRecordMap = mainRecordMap;
-#endif
-        }
     }
 }

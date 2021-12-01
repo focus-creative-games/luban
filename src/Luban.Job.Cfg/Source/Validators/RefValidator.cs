@@ -1,6 +1,7 @@
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Cfg.RawDefs;
 using Luban.Job.Cfg.Utils;
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.Types;
@@ -17,11 +18,7 @@ namespace Luban.Job.Cfg.Validators
 
         public static string GetActualTableName(string table)
         {
-#if !LUBAN_LITE
-            return table.EndsWith("?") ? table[0..^1] : table;
-#else
             return table.EndsWith("?") ? table.Substring(0, table.Length - 1) : table;
-#endif
         }
 
         public List<string> Tables { get; }
@@ -45,57 +42,78 @@ namespace Luban.Job.Cfg.Validators
             }
             var assembly = ctx.Assembly;
 
+#if !LUBAN_LITE
             foreach (var table in Tables)
             {
-                bool zeroAble;
-                string actualTable;
-                if (table.EndsWith("?"))
-                {
-                    zeroAble = true;
-#if !LUBAN_LITE
-                    actualTable = table[0..^1];
-#else
-                    actualTable = table.Substring(0, table.Length - 1);
-#endif
-                }
-                else
-                {
-                    zeroAble = false;
-                    actualTable = table;
-                }
+                var (actualTable, field, zeroAble) = ParseRefString(table);
                 if (zeroAble && key.Apply(IsDefaultValue.Ins))
                 {
                     return;
                 }
                 DefTable ct = assembly.GetCfgTable(actualTable);
-#if !LUBAN_LITE
-                var recordMap = assembly.GetTableDataInfo(ct).FinalRecordMap;
-                if (/*recordMap != null &&*/ recordMap.ContainsKey(key))
+
+                switch (ct.Mode)
                 {
-                    return;
+                    case ETableMode.ONE:
+                    {
+                        throw new NotSupportedException($"{actualTable} 是singleton表，不支持ref");
+                    }
+                    case ETableMode.MAP:
+                    {
+                        var recordMap = assembly.GetTableDataInfo(ct).FinalRecordMap;
+                        if (/*recordMap != null &&*/ recordMap.ContainsKey(key))
+                        {
+                            return;
+                        }
+                        break;
+                    }
+                    case ETableMode.LIST:
+                    {
+                        var recordMap = assembly.GetTableDataInfo(ct).FinalRecordMapByIndexs[field];
+                        if (recordMap.ContainsKey(key))
+                        {
+                            return;
+                        }
+                        break;
+                    }
+                    default: throw new NotSupportedException();
                 }
-#endif
             }
 
+            string source = ValidatorContext.CurrentVisitor.CurrentValidateRecord.Source;
             foreach (var table in Tables)
             {
-                string actualTable;
-                if (table.EndsWith("?"))
-                {
-#if !LUBAN_LITE
-                    actualTable = table[0..^1];
-#else
-                    actualTable = table.Substring(0, table.Length - 1);
-#endif
-                }
-                else
-                {
-                    actualTable = table;
-                }
+                var (actualTable, field, zeroAble) = ParseRefString(table);
                 DefTable ct = assembly.GetCfgTable(actualTable);
-                string source = ValidatorContext.CurrentVisitor.CurrentValidateRecord.Source;
                 assembly.Agent.Error("记录 {0} = {1} (来自文件:{2}) 在引用表:{3} 中不存在", ValidatorContext.CurrentRecordPath, key, source, table);
             }
+#endif
+        }
+
+        private (string TableName, string FieldName, bool IgnoreDefault) ParseRefString(string refStr)
+        {
+            bool ignoreDefault = false;
+
+            if (refStr.EndsWith("?"))
+            {
+                refStr = refStr.Substring(0, refStr.Length - 1);
+                ignoreDefault = true;
+            }
+
+            string tableName;
+            string fieldName;
+            int sepIndex = refStr.IndexOf('@');
+            if (sepIndex >= 0)
+            {
+                tableName = refStr.Substring(sepIndex + 1);
+                fieldName = refStr.Substring(0, sepIndex);
+            }
+            else
+            {
+                tableName = refStr;
+                fieldName = "";
+            }
+            return (tableName, fieldName, ignoreDefault);
         }
 
         public void Compile(DefFieldBase def)
@@ -110,28 +128,65 @@ namespace Luban.Job.Cfg.Validators
             var assembly = ((DefField)def).Assembly;
             foreach (var table in Tables)
             {
-#if !LUBAN_LITE
-                string actualTable = table.EndsWith("?") ? table[0..^1] : table;
-#else
-                string actualTable = table.EndsWith("?") ? table.Substring(0, table.Length - 1) : table;
-#endif
+                var (actualTable, indexName, ignoreDefault) = ParseRefString(table);
                 var ct = assembly.GetCfgTable(actualTable);
                 if (ct == null)
                 {
-                    throw new Exception($"结构:{hostTypeName} 字段:{fieldName} ref:{table} 不存在");
+                    throw new Exception($"结构:{hostTypeName} 字段:{fieldName} ref:{actualTable} 不存在");
                 }
                 if (!ct.NeedExport)
                 {
-                    throw new Exception($"type:'{hostTypeName}' field:'{fieldName}' ref 引用的表:'{table}' 没有导出");
+                    throw new Exception($"type:'{hostTypeName}' field:'{fieldName}' ref 引用的表:'{actualTable}' 没有导出");
                 }
                 if (ct.IsOneValueTable)
                 {
-                    throw new Exception($"结构:{hostTypeName} 字段:{fieldName} ref:{table} 是单值表，不能执行引用检查");
+                    if (string.IsNullOrEmpty(fieldName))
+                    {
+                        throw new Exception($"结构:{hostTypeName} 字段:{fieldName} ref:{actualTable} 是singleton表，索引字段不能为空");
+                    }
+                    else
+                    {
+                        if (!ct.ValueTType.Bean.TryGetField(fieldName, out var indexField, out _))
+                        {
+                            throw new Exception($"结构:{hostTypeName} 字段:{fieldName} ref:{actualTable} value_type:{ct.ValueTType.Bean.FullName} 未包含索引字段:{fieldName}");
+                        }
+                        if (!(indexField.CType is TMap tmap))
+                        {
+                            throw new Exception($"结构:{hostTypeName} 字段:{fieldName} ref:{actualTable} value_type:{ct.ValueTType.Bean.FullName} 索引字段:{fieldName} type:{indexField.CType.TypeName} 不是map类型");
+                        }
+                        if (tmap.KeyType.TypeName != Type.TypeName)
+                        {
+                            throw new Exception($"结构:{hostTypeName} 字段:{fieldName} 类型:'{Type.TypeName}' 与被引用的表:{actualTable} value_type:{ct.ValueTType.Bean.FullName} 索引字段:{fieldName} key_type:{tmap.KeyType.TypeName} 不一致");
+                        }
+                    }
                 }
-                var keyType = ct.KeyTType;
-                if (keyType.GetType() != Type.GetType())
+                else if (ct.IsMapTable)
                 {
-                    throw new Exception($"type:'{hostTypeName}' field:'{fieldName}' 类型:'{Type.GetType()}' 与 被引用的表:'{ct.FullName}' key类型:'{keyType.GetType()}' 不一致");
+                    if (!string.IsNullOrEmpty(indexName))
+                    {
+                        throw new Exception($"结构:{hostTypeName} 字段:{fieldName} ref:{actualTable} 是map表，不能索引子字段");
+                    }
+                    var keyType = ct.KeyTType;
+                    if (keyType.TypeName != Type.TypeName)
+                    {
+                        throw new Exception($"type:'{hostTypeName}' field:'{fieldName}' 类型:'{Type.TypeName}' 与 被引用的map表:'{actualTable}' key类型:'{keyType.TypeName}' 不一致");
+                    }
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(indexName))
+                    {
+                        throw new Exception($"结构:{hostTypeName} 字段:{fieldName} ref:{actualTable} 是list表，必须显式指定索引字段");
+                    }
+                    var indexField = ct.IndexList.Find(k => k.IndexField.Name == indexName);
+                    if (indexField.Type == null)
+                    {
+                        throw new Exception($"结构:{hostTypeName} 字段:{fieldName} 索引字段:{indexName} 不是被引用的list表:{actualTable} 的索引字段，合法值为'{ct.Index}'之一");
+                    }
+                    if (indexField.Type.TypeName != Type.TypeName)
+                    {
+                        throw new Exception($"type:'{hostTypeName}' field:'{fieldName}' 类型:'{Type.TypeName}' 与 被引用的list表:'{actualTable}' key:{indexName} 类型:'{indexField.Type.TypeName}' 不一致");
+                    }
                 }
             }
         }

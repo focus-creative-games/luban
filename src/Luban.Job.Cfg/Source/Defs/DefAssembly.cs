@@ -16,25 +16,6 @@ using System.Linq;
 
 namespace Luban.Job.Cfg.Defs
 {
-    public class TableDataInfo
-    {
-        public DefTable Table { get; }
-
-        public List<Record> MainRecords { get; }
-
-        public List<Record> PatchRecords { get; }
-
-        public List<Record> FinalRecords { get; set; }
-
-        public Dictionary<DType, Record> FinalRecordMap { get; set; }
-
-        public TableDataInfo(DefTable table, List<Record> mainRecords, List<Record> patchRecords)
-        {
-            Table = table;
-            MainRecords = mainRecords;
-            PatchRecords = patchRecords;
-        }
-    }
 
     public class DefAssembly : DefAssemblyBase
     {

@@ -183,29 +183,45 @@ namespace Luban.Job.Cfg.Defs
         private ETableMode ConvertMode(string defineFile, string tableName, string modeStr, string indexStr)
         {
             ETableMode mode;
+            string[] indexs = indexStr.Split(',');
             switch (modeStr)
             {
+                case "1":
                 case "one":
+                case "single":
+                case "singleton":
                 {
                     if (!string.IsNullOrWhiteSpace(indexStr))
                     {
-                        throw new Exception($"定义文件:{defineFile} table:'{tableName}' mode=one 是单例表，不支持定义index属性");
+                        throw new Exception($"定义文件:{defineFile} table:'{tableName}' mode={modeStr} 是单例表，不支持定义index属性");
                     }
                     mode = ETableMode.ONE;
                     break;
                 }
                 case "map":
                 {
-                    //if ((string.IsNullOrWhiteSpace(indexStr) || indexStr.Split(',').Length != 1))
-                    //{
-                    //    throw new Exception($"定义文件:{CurImportFile} table:{tableName} 是单键表，必须在index属性里指定1个key");
-                    //}
+                    if ((string.IsNullOrWhiteSpace(indexStr) || indexs.Length != 1))
+                    {
+                        throw new Exception($"定义文件:'{defineFile}' table:'{tableName}' 是单键表，index:'{indexStr}'不能包含多个key");
+                    }
                     mode = ETableMode.MAP;
+                    break;
+                }
+                case "list":
+                {
+                    mode = ETableMode.LIST;
                     break;
                 }
                 case "":
                 {
-                    mode = ETableMode.MAP;
+                    if (string.IsNullOrWhiteSpace(indexStr) || indexs.Length == 1)
+                    {
+                        mode = ETableMode.MAP;
+                    }
+                    else
+                    {
+                        mode = ETableMode.LIST;
+                    }
                     break;
                 }
                 default:
