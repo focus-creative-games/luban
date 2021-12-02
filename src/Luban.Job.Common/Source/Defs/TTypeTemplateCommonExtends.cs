@@ -71,9 +71,9 @@ namespace Luban.Job.Common.Defs
             return type.Apply(JavaBoxDefineTypeName.Ins);
         }
 
-        public static string JavaToString(string filedName, TType type)
+        public static string JavaToString(string fieldName, TType type)
         {
-            return $"{filedName}";
+            return $"{fieldName}";
         }
 
         public static string JavaConstValue(TType type, string value)
@@ -128,9 +128,9 @@ namespace Luban.Job.Common.Defs
             return type.Apply(TypescriptDefineTypeNameVisitor.Ins);
         }
 
-        public static string TsToString(string filedName, TType type)
+        public static string TsToString(string fieldName, TType type)
         {
-            return filedName;
+            return fieldName;
         }
 
         public static string TsCtorDefaultValue(TType type)

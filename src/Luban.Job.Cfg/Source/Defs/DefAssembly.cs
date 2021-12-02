@@ -57,7 +57,8 @@ namespace Luban.Job.Cfg.Defs
 
         private readonly ConcurrentDictionary<string, TableDataInfo> _recordsByTables = new();
 
-        public Dictionary<string, DefTable> CfgTables { get; } = new Dictionary<string, DefTable>();
+        public Dictionary<string, DefTable> CfgTablesByName = new();
+        public Dictionary<string, DefTable> CfgTablesByFullName { get; } = new Dictionary<string, DefTable>();
 
 #if !LUBAN_LITE
         public RawTextTable RawTextTable { get; } = new RawTextTable();
@@ -83,15 +84,19 @@ namespace Luban.Job.Cfg.Defs
 
         public void AddCfgTable(DefTable table)
         {
-            if (!CfgTables.TryAdd(table.FullName, table))
+            if (!CfgTablesByFullName.TryAdd(table.FullName, table))
             {
                 throw new Exception($"table:'{table.FullName}' duplicated");
+            }
+            if (!CfgTablesByName.TryAdd(table.Name, table))
+            {
+                throw new Exception($"table:'{table.FullName} 与 table:'{CfgTablesByName[table.Name].FullName}' 的表名重复(不同模块下也不允许定义同名表，将来可能会放开限制)");
             }
         }
 
         public DefTable GetCfgTable(string name)
         {
-            return CfgTables.TryGetValue(name, out var t) ? t : null;
+            return CfgTablesByFullName.TryGetValue(name, out var t) ? t : null;
         }
 
         public void AddDataTable(DefTable table, List<Record> mainRecords, List<Record> patchRecords)

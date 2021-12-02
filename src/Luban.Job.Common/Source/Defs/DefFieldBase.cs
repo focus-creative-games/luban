@@ -111,7 +111,7 @@ namespace Luban.Job.Common.Defs
             }
             if (!IgnoreNameValidation && !TypeUtil.IsValidName(Name))
             {
-                throw new Exception($"type:'{HostType.FullName}' filed name:'{Name}' is reserved");
+                throw new Exception($"type:'{HostType.FullName}' field name:'{Name}' is reserved");
             }
 
             try
@@ -120,12 +120,12 @@ namespace Luban.Job.Common.Defs
             }
             catch (Exception e)
             {
-                throw new Exception($"type:'{HostType.FullName}' filed:'{Name}' type:'{Type}' is invalid", e);
+                throw new Exception($"type:'{HostType.FullName}' field:'{Name}' type:'{Type}' is invalid", e);
             }
 
             //if (IsNullable && (CType.IsCollection || (CType is TBean)))
             //{
-            //    throw new Exception($"type:{HostType.FullName} filed:{Name} type:{Type} is collection or bean. not support nullable");
+            //    throw new Exception($"type:{HostType.FullName} field:{Name} type:{Type} is collection or bean. not support nullable");
             //}
 
             switch (CType)

@@ -8,6 +8,7 @@ using Luban.Job.Cfg.Utils;
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.RawDefs;
 using Luban.Job.Common.Types;
+using Luban.Job.Common.Utils;
 using Luban.Server.Common;
 using System;
 using System.Collections.Generic;
@@ -312,7 +313,12 @@ namespace Luban.Job.Cfg.Defs
                 ExcelTableValueTypeDefInfoCacheManager.Instance.AddTableDefInfoToCache(file.MD5, file.SheetName, tableDefInfo);
             }
 
-            var cb = new CfgBean() { Namespace = table.Namespace, Name = table.ValueType, Comment = "" };
+            var ns = TypeUtil.GetNamespace(table.ValueType);
+
+            string valueTypeNamespace = string.IsNullOrEmpty(ns) ? table.Namespace : ns;
+            string valueTypeName = TypeUtil.GetName(table.ValueType);
+
+            var cb = new CfgBean() { Namespace = valueTypeNamespace, Name = valueTypeName, Comment = "" };
 #if !LUBAN_LITE
             foreach (var (name, f) in tableDefInfo.FieldInfos)
             {
