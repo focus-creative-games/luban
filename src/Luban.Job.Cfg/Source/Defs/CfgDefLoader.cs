@@ -770,7 +770,7 @@ namespace Luban.Job.Cfg.Defs
             return f;
         }
 
-        private static readonly List<string> _beanOptinsAttrs = new List<string> { "value_type", "alias", "sep", "comment", "tags", "group", "externaltype" };
+        private static readonly List<string> _beanOptinsAttrs = new List<string> { "value_type", "alias", "sep", "comment", "tags", "externaltype" };
         private static readonly List<string> _beanRequireAttrs = new List<string> { "name" };
 
         override protected void AddBean(string defineFile, XElement e, string parent)

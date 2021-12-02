@@ -351,8 +351,8 @@ namespace Luban.Job.Cfg.DataCreators
                 {
                     if (type.IsNullable)
                     {
-                        string subType = row.GetSubTitleNamedRow(DefBean.TYPE_NAME_KEY).Current.ToString().Trim();
-                        if (subType == DefBean.BEAN_NULL_STR)
+                        string subType = row.GetSubTitleNamedRow(DefBean.TYPE_NAME_KEY).Current?.ToString()?.Trim();
+                        if (subType == null || subType == DefBean.BEAN_NULL_STR)
                         {
                             return null;
                         }
