@@ -87,19 +87,9 @@ namespace Luban.Job.Proto
 
                 var rawDefines = loader.BuildDefines();
 
-                var ass = new DefAssembly()
-                {
-                    CsUseUnityVectors = args.CsUseUnityVectors,
+                var ass = new DefAssembly();
 
-                    NamingConventionModule = args.NamingConventionModule,
-                    NamingConventionType = args.NamingConventionType,
-                    NamingConventionBeanMember = args.NamingConventionBeanMember,
-                    NamingConventionEnumMember = args.NamingConventionEnumMember,
-                };
-
-                ass.Load(rawDefines, agent);
-
-                DefAssemblyBase.LocalAssebmly = ass;
+                ass.Load(rawDefines, agent, args);
 
                 var targetService = args.Service;
 

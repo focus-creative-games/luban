@@ -83,15 +83,8 @@ namespace Luban.Job.Db
 
                 var rawDefines = loader.BuildDefines();
 
-                var ass = new DefAssembly()
-                {
-                    NamingConventionModule = args.NamingConventionModule,
-                    NamingConventionType = args.NamingConventionType,
-                    NamingConventionBeanMember = args.NamingConventionBeanMember,
-                    NamingConventionEnumMember = args.NamingConventionEnumMember,
-                };
-                DefAssemblyBase.LocalAssebmly = ass;
-                ass.Load(rawDefines, agent);
+                var ass = new DefAssembly();
+                ass.Load(rawDefines, agent, args);
 
 
                 List<DefTypeBase> exportTypes = ass.GetExportTypes();

@@ -28,11 +28,10 @@ namespace Luban.Job.Db.Defs
         }
 
 
-        public void Load(Defines defines, RemoteAgent agent)
+        public void Load(Defines defines, RemoteAgent agent, GenArgs args)
         {
+            LoadCommon(defines, agent, args);
             this.SupportNullable = false;
-            this.Agent = agent;
-            TopModule = defines.TopModule;
 
             foreach (var e in defines.Enums)
             {

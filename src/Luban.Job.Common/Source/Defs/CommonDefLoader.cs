@@ -1,5 +1,6 @@
 using Luban.Common.Utils;
 using Luban.Job.Common.RawDefs;
+using Luban.Job.Common.Utils;
 using Luban.Server.Common;
 using System;
 using System.Collections.Generic;
@@ -50,6 +51,7 @@ namespace Luban.Job.Common.Defs
         protected readonly List<PEnum> _enums = new List<PEnum>();
         protected readonly List<Bean> _beans = new List<Bean>();
         protected readonly HashSet<string> _externalSelectors = new();
+        protected readonly Dictionary<string, ExternalType> _externalTypes = new();
 
         protected CommonDefLoader(IAgent agent)
         {
@@ -61,6 +63,7 @@ namespace Luban.Job.Common.Defs
             _moduleDefineHandlers.Add("module", AddModule);
             _moduleDefineHandlers.Add("enum", AddEnum);
             _moduleDefineHandlers.Add("bean", AddBean);
+            _moduleDefineHandlers.Add("externaltype", AddExternalType);
         }
 
         public string RootXml => _rootXml;
@@ -111,6 +114,7 @@ namespace Luban.Job.Common.Defs
             defines.Enums = _enums;
             defines.Beans = _beans;
             defines.ExternalSelectors = _externalSelectors;
+            defines.ExternalTypes = _externalTypes;
         }
 
         #region root handler
@@ -302,11 +306,11 @@ namespace Luban.Job.Common.Defs
             }
         }
 
-        private static readonly List<string> _enumOptionalAttrs = new List<string> { "flags", "comment", "tags" };
+        private static readonly List<string> _enumOptionalAttrs = new List<string> { "flags", "comment", "tags", "unique", "externaltype" };
         private static readonly List<string> _enumRequiredAttrs = new List<string> { "name" };
 
 
-        private static readonly List<string> _enumItemOptionalAttrs = new List<string> { "value", "alias", "comment", "tags", "unique" };
+        private static readonly List<string> _enumItemOptionalAttrs = new List<string> { "value", "alias", "comment", "tags" };
         private static readonly List<string> _enumItemRequiredAttrs = new List<string> { "name" };
 
         protected void AddEnum(string defineFile, XElement e)
@@ -320,6 +324,7 @@ namespace Luban.Job.Common.Defs
                 IsFlags = XmlUtil.GetOptionBoolAttribute(e, "flags"),
                 Tags = XmlUtil.GetOptionalAttribute(e, "tags"),
                 IsUniqueItemId = XmlUtil.GetOptionBoolAttribute(e, "unique", true),
+                ExternalType = XmlUtil.GetOptionalAttribute(e, "externaltype"),
             };
 
             foreach (XElement item in e.Elements())
@@ -347,7 +352,76 @@ namespace Luban.Job.Common.Defs
             {
                 throw new LoadDefException($"定义文件:{_rootXml} externalselector name:{name} 重复");
             }
-            s_logger.Info("add selector:{}", name);
+            s_logger.Trace("add selector:{}", name);
+        }
+
+        private static readonly List<string> _externalRequiredAttrs = new List<string> { "name" };
+        private void AddExternalType(string defineFile, XElement e)
+        {
+            ValidAttrKeys(_rootXml, e, null, _externalRequiredAttrs);
+            string name = XmlUtil.GetRequiredAttribute(e, "name");
+
+            if (_externalTypes.ContainsKey(name))
+            {
+                throw new LoadDefException($"定义文件:{_rootXml} externaltype:{name} 重复");
+            }
+
+            var et = new ExternalType()
+            {
+                Name = name,
+            };
+            var mappers = new Dictionary<string, ExternalTypeMapper>();
+            foreach (XElement mapperEle in e.Elements())
+            {
+                var tagName = mapperEle.Name.LocalName;
+                if (tagName == "mapper")
+                {
+                    var mapper = CreateMapper(defineFile, name, mapperEle);
+                    string uniqKey = $"{mapper.Lan}##{mapper.Selector}";
+                    if (mappers.ContainsKey(uniqKey))
+                    {
+                        throw new LoadDefException($"定义文件:{_rootXml} externaltype name:{name} mapper(lan='{mapper.Lan}',selector='{mapper.Selector}') 重复");
+                    }
+                    mappers.Add(uniqKey, mapper);
+                    et.Mappers.Add(mapper);
+                    s_logger.Trace("add mapper. externaltype:{} mapper:{@}", name, mapper);
+                }
+                else
+                {
+                    throw new LoadDefException($"定义文件:{defineFile} externaltype:{name} 非法 tag:'{tagName}'");
+                }
+            }
+            _externalTypes.Add(name, et);
+        }
+
+        private static readonly List<string> _mapperOptionalAttrs = new List<string> { };
+        private static readonly List<string> _mapperRequiredAttrs = new List<string> { "lan", "selector" };
+        private ExternalTypeMapper CreateMapper(string defineFile, string externalType, XElement e)
+        {
+            ValidAttrKeys(_rootXml, e, _mapperOptionalAttrs, _mapperRequiredAttrs);
+            var m = new ExternalTypeMapper()
+            {
+                Lan = DefUtil.ParseLanguage(XmlUtil.GetRequiredAttribute(e, "lan")),
+                Selector = XmlUtil.GetRequiredAttribute(e, "selector"),
+            };
+            foreach (XElement attrEle in e.Elements())
+            {
+                var tagName = attrEle.Name.LocalName;
+                switch (tagName)
+                {
+                    case "typename":
+                    {
+                        m.TypeName = attrEle.Value;
+                        break;
+                    }
+                    default: throw new LoadDefException($"定义文件:{defineFile} externaltype:{externalType} 非法 tag:{tagName}");
+                }
+            }
+            if (string.IsNullOrWhiteSpace(m.TypeName))
+            {
+                throw new LoadDefException($"定义文件:{defineFile} externaltype:{externalType} lan:{m.Lan} selector:{m.Selector} 没有定义 typename");
+            }
+            return m;
         }
         #endregion
     }

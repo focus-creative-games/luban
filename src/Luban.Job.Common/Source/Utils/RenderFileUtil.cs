@@ -15,7 +15,7 @@ namespace Luban.Job.Common.Utils
                 case ELanguage.CPP: return fullName + ".cpp";
                 case ELanguage.GO: return fullName + ".go";
                 case ELanguage.LUA: return fullName.Replace('.', '_') + ".lua";
-                case ELanguage.JS: return fullName + ".js";
+                case ELanguage.JAVASCRIPT: return fullName + ".js";
                 case ELanguage.TYPESCRIPT: return fullName.Replace('.', '/') + ".ts";
                 case ELanguage.RUST: return fullName.Replace('.', '_') + ".rs";
                 case ELanguage.PROTOBUF: return fullName.Replace('.', '_') + ".pb";
@@ -69,7 +69,7 @@ namespace Luban.Job.Common.Utils
             { "lua", ELanguage.LUA },
             { "python", ELanguage.PYTHON },
             { "typescript", ELanguage.TYPESCRIPT },
-            { "javascript", ELanguage.JS },
+            { "javascript", ELanguage.JAVASCRIPT },
             { "erlang", ELanguage.ERLANG },
             { "rust", ELanguage.RUST },
             { "pb", ELanguage.PROTOBUF },

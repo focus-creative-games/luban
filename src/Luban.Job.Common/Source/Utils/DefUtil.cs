@@ -169,7 +169,7 @@ namespace Luban.Job.Common.Utils
                 case ELanguage.GO:
                 case ELanguage.CPP:
                 case ELanguage.LUA:
-                case ELanguage.JS:
+                case ELanguage.JAVASCRIPT:
                 case ELanguage.TYPESCRIPT:
                 case ELanguage.PYTHON:
                 case ELanguage.RUST:
@@ -180,6 +180,31 @@ namespace Luban.Job.Common.Utils
                     throw new NotSupportedException();
 #endif
                 default: throw new Exception($"unknown language:{curLan}");
+            }
+        }
+
+        public static ELanguage ParseLanguage(string lan)
+        {
+            switch (lan.ToLower())
+            {
+                case "cs":
+                case "c#":
+                case "csharp": return ELanguage.CS;
+                case "java": return ELanguage.JAVA;
+                case "go":
+                case "golang": return ELanguage.GO;
+                case "cpp":
+                case "c++": return ELanguage.CPP;
+                case "lua": return ELanguage.LUA;
+                case "js":
+                case "javascript": return ELanguage.JAVASCRIPT;
+                case "ts":
+                case "typescript": return ELanguage.TYPESCRIPT;
+                case "python": return ELanguage.PYTHON;
+                case "rust": return ELanguage.RUST;
+                case "pb":
+                case "protobuf": return ELanguage.PROTOBUF;
+                default: throw new ArgumentException($"parse lan:'{lan}' fail");
             }
         }
     }

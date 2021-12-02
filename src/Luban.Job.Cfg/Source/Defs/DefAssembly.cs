@@ -187,17 +187,19 @@ namespace Luban.Job.Cfg.Defs
             return refTypes.Values.ToList();
         }
 
-        public void Load(string outputService, Defines defines)
+        public void Load(Defines defines, RemoteAgent agent, GenArgs args)
         {
+            LoadCommon(defines, agent, args);
+
+            OutputCompactJson = args.OutputCompactJson;
+
             SupportDatetimeType = true;
 
-            TopModule = defines.TopModule;
-
-            CfgTargetService = defines.Services.Find(s => s.Name == outputService);
+            CfgTargetService = defines.Services.Find(s => s.Name == args.Service);
 
             if (CfgTargetService == null)
             {
-                throw new ArgumentException($"service:{outputService} not exists");
+                throw new ArgumentException($"service:{args.Service} not exists");
             }
 
             if (!string.IsNullOrWhiteSpace(_patchName))

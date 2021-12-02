@@ -54,7 +54,6 @@ namespace Luban.Job.Common.Defs
             return _nameOrAlias2Value.TryGetValue(name, out value);
         }
 
-
         public int GetValueByNameOrAlias(string name)
         {
             // TODO flags ?
@@ -98,7 +97,7 @@ namespace Luban.Job.Common.Defs
             IsUniqueItemId = e.IsUniqueItemId;
             Comment = e.Comment;
             Tags = DefUtil.ParseAttrs(e.Tags);
-
+            _externalTypeName = e.ExternalType;
             foreach (var item in e.Items)
             {
                 Items.Add(new Item
@@ -115,6 +114,7 @@ namespace Luban.Job.Common.Defs
 
         public override void Compile()
         {
+            base.Compile();
             var fullName = FullName;
 
             int lastEnumValue = -1;
@@ -191,6 +191,8 @@ namespace Luban.Job.Common.Defs
                     _vaule2Name.Add(item.IntValue, item.Name);
                 }
             }
+
+
         }
 
     }

@@ -1,6 +1,8 @@
 using Luban.Common.Utils;
+using Luban.Job.Common.RawDefs;
 using Luban.Job.Common.Utils;
 using Luban.Server.Common;
+using System;
 using System.Collections.Generic;
 
 namespace Luban.Job.Common.Defs
@@ -18,6 +20,10 @@ namespace Luban.Job.Common.Defs
         public string Name { get; set; }
 
         public string Namespace { get; set; }
+
+        protected string _externalTypeName;
+
+        public ExternalType ExternalType { get; private set; }
 
         public string FullName => TypeUtil.MakeFullName(Namespace, Name);
 
@@ -65,9 +71,34 @@ namespace Luban.Job.Common.Defs
             return Tags != null && Tags.TryGetValue(attrName, out var value) ? value : null;
         }
 
+        public ExternalTypeMapper CurrentExternalTypeMapper
+        {
+            get
+            {
+                if (ExternalType == null)
+                {
+                    return null;
+                }
+                return ExternalType.Mappers.Find(m => m.Lan == DefAssemblyBase.LocalAssebmly.CurrentLanguage);
+            }
+        }
+
         public virtual void PreCompile() { }
 
-        public abstract void Compile();
+        public virtual void Compile()
+        {
+            if (!string.IsNullOrEmpty(_externalTypeName))
+            {
+                if (AssemblyBase.TryGetExternalType(_externalTypeName, out var type))
+                {
+                    this.ExternalType = type;
+                }
+                else
+                {
+                    throw new Exception($"enum:'{FullName}' 对应的 externaltype:{_externalTypeName} 不存在");
+                }
+            }
+        }
 
         public virtual void PostCompile() { }
     }

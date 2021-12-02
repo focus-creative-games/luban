@@ -8,7 +8,7 @@ namespace Luban.Job.Common
         GO,
         CPP,
         LUA,
-        JS,
+        JAVASCRIPT,
         TYPESCRIPT,
         PYTHON,
         ERLANG,

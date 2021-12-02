@@ -145,19 +145,8 @@ namespace Luban.Job.Cfg
                 TimeZoneInfo timeZoneInfo = string.IsNullOrEmpty(args.L10nTimeZone) ? null : TimeZoneInfo.FindSystemTimeZoneById(args.L10nTimeZone);
 
                 var excludeTags = args.ExportExcludeTags.Split(',').Select(t => t.Trim().ToLowerInvariant()).Where(t => !string.IsNullOrEmpty(t)).ToList();
-                var ass = new DefAssembly(args.L10nPatchName, timeZoneInfo, excludeTags, agent)
-                {
-                    CsUseUnityVectors = args.CsUseUnityVectors,
-                    OutputCompactJson = args.OutputCompactJson,
-                    NamingConventionModule = args.NamingConventionModule,
-                    NamingConventionType = args.NamingConventionType,
-                    NamingConventionBeanMember = args.NamingConventionBeanMember,
-                    NamingConventionEnumMember = args.NamingConventionEnumMember,
-                };
-
-                ass.Load(args.Service, rawDefines);
-
-                DefAssemblyBase.LocalAssebmly = ass;
+                var ass = new DefAssembly(args.L10nPatchName, timeZoneInfo, excludeTags, agent);
+                ass.Load(rawDefines, agent, args);
 
                 List<DefTable> exportTables = ass.GetExportTables();
                 List<DefTypeBase> exportTypes = ass.GetExportTypes();

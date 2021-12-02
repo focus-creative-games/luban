@@ -27,11 +27,9 @@ namespace Luban.Job.Proto.Defs
             }
         }
 
-
-        public void Load(Defines defines, RemoteAgent agent)
+        public void Load(Defines defines, RemoteAgent agent, GenArgs args)
         {
-            this.Agent = agent;
-            TopModule = defines.TopModule;
+            LoadCommon(defines, agent, args);
 
             foreach (var e in defines.Enums)
             {

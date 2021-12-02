@@ -52,6 +52,7 @@ namespace Luban.Job.Common.Defs
             IsValueType = b.IsValueType;
             Comment = b.Comment;
             Tags = DefUtil.ParseAttrs(b.Tags);
+            _externalTypeName = b.ExternalType;
             foreach (var field in b.Fields)
             {
                 Fields.Add(CreateField(field, 0));
@@ -160,6 +161,8 @@ namespace Luban.Job.Common.Defs
 
         public override void Compile()
         {
+            base.Compile();
+
             var cs = new List<DefBeanBase>();
             if (Children != null)
             {

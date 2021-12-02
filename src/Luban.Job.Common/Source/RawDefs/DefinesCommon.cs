@@ -10,10 +10,12 @@ namespace Luban.Job.Common.RawDefs
     {
         public string TopModule { get; set; } = "";
 
-        public HashSet<string> ExternalSelectors { get; set; } = new HashSet<string>();
+        public HashSet<string> ExternalSelectors { get; set; } = new();
 
-        public List<Bean> Beans { get; set; } = new List<Bean>();
+        public Dictionary<string, ExternalType> ExternalTypes { get; set; } = new();
 
-        public List<PEnum> Enums { get; set; } = new List<PEnum>();
+        public List<Bean> Beans { get; set; } = new();
+
+        public List<PEnum> Enums { get; set; } = new();
     }
 }

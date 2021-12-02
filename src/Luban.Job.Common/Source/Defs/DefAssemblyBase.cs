@@ -1,5 +1,6 @@
 
 using Luban.Common.Utils;
+using Luban.Job.Common.RawDefs;
 using Luban.Job.Common.Types;
 using Luban.Job.Common.Utils;
 using Luban.Server.Common;
@@ -53,6 +54,55 @@ namespace Luban.Job.Common.Defs
         public AccessConvention AccessConventionBeanMember { get; set; } = AccessConvention.LanguangeRecommend;
 
         public ELanguage CurrentLanguage { get; set; } = ELanguage.INVALID;
+
+        public HashSet<string> ExternalSelectors { get; private set; }
+
+        private Dictionary<string, ExternalType> ExternalTypes { get; set; }
+
+        public List<string> CurrentExternalSelectors { get; private set; }
+
+        private void SetCurrentExternalSelectors(string selectors)
+        {
+            if (string.IsNullOrEmpty(selectors))
+            {
+                CurrentExternalSelectors = new List<string>();
+            }
+            else
+            {
+
+                CurrentExternalSelectors = selectors.Split(',').Select(s => s.Trim()).ToList();
+                foreach (var selector in CurrentExternalSelectors)
+                {
+                    if (!ExternalSelectors.Contains(selector))
+                    {
+                        throw new Exception($"未知 externalselector:{selector}, 有效值应该为 '{Bright.Common.StringUtil.CollectionToString(ExternalSelectors)}'");
+                    }
+                }
+            }
+        }
+
+        public void LoadCommon(DefinesCommon defines, IAgent agent, GenArgsBase args)
+        {
+            LocalAssebmly = this;
+
+            this.Agent = agent;
+            this.TopModule = defines.TopModule;
+            this.ExternalSelectors = defines.ExternalSelectors;
+            this.ExternalTypes = defines.ExternalTypes;
+
+            SetCurrentExternalSelectors(args.ExternalSelectors);
+
+            CsUseUnityVectors = args.CsUseUnityVectors;
+            NamingConventionModule = args.NamingConventionModule;
+            NamingConventionType = args.NamingConventionType;
+            NamingConventionBeanMember = args.NamingConventionBeanMember;
+            NamingConventionEnumMember = args.NamingConventionEnumMember;
+        }
+
+        public bool TryGetExternalType(string typeName, out ExternalType type)
+        {
+            return ExternalTypes.TryGetValue(typeName, out type);
+        }
 
         public void AddType(DefTypeBase type)
         {
@@ -175,11 +225,7 @@ namespace Luban.Job.Common.Defs
                     throw new Exception($"not support nullable type:'{module}.{type}'");
                 }
                 nullable = true;
-#if !LUBAN_LITE
-                type = type[0..^1];
-#else
                 type = type.Substring(0, type.Length - 1);
-#endif
             }
             else
             {

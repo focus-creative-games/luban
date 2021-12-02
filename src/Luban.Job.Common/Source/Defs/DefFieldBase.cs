@@ -42,7 +42,7 @@ namespace Luban.Job.Common.Defs
                             case ELanguage.GO: cn = TypeUtil.ToPascalCase(Name); break;
                             case ELanguage.CPP: cn = TypeUtil.ToCamelCase(Name); break;
                             case ELanguage.LUA: cn = TypeUtil.ToUnderScores(Name); break;
-                            case ELanguage.JS: cn = TypeUtil.ToCamelCase(Name); break;
+                            case ELanguage.JAVASCRIPT: cn = TypeUtil.ToCamelCase(Name); break;
                             case ELanguage.TYPESCRIPT: cn = TypeUtil.ToCamelCase(Name); break;
                             case ELanguage.PYTHON: cn = TypeUtil.ToUnderScores(Name); break;
                             case ELanguage.RUST: cn = TypeUtil.ToUnderScores(Name); break;

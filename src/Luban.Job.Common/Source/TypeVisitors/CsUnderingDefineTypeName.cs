@@ -59,7 +59,8 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TEnum type)
         {
-            return type.DefineEnum.FullName;
+            var mapper = type.DefineEnum.CurrentExternalTypeMapper;
+            return mapper != null ? mapper.TypeName : type.DefineEnum.FullName;
         }
 
         public string Accept(TString type)

@@ -22,6 +22,8 @@ namespace Luban.Job.Common.RawDefs
 
         public string Tags { get; set; }
 
+        public string ExternalType { get; set; }
+
         public List<Field> Fields { get; set; } = new List<Field>();
     }
 }
