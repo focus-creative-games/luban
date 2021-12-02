@@ -219,5 +219,24 @@ namespace Luban.Common.Utils
             }
             return bytes;
         }
+
+        public static void DeleteDirectoryRecursive(string rootDir)
+        {
+            string[] files = Directory.GetFiles(rootDir);
+            string[] dirs = Directory.GetDirectories(rootDir);
+
+            foreach (string file in files)
+            {
+                File.SetAttributes(file, FileAttributes.Normal);
+                File.Delete(file);
+            }
+
+            foreach (string dir in dirs)
+            {
+                DeleteDirectoryRecursive(dir);
+            }
+
+            Directory.Delete(rootDir, false);
+        }
     }
 }

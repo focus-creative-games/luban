@@ -164,7 +164,7 @@ namespace Luban.Job.Common.Defs
 
         private void AddModule(string defineFile, XElement me)
         {
-            var name = XmlUtil.GetOptionalAttribute(me, "name");
+            var name = XmlUtil.GetOptionalAttribute(me, "name")?.Trim();
             //if (string.IsNullOrEmpty(name))
             //{
             //    throw new LoadDefException($"xml:{CurImportFile} contains module which's name is empty");
@@ -235,7 +235,7 @@ namespace Luban.Job.Common.Defs
             }
             var b = new Bean()
             {
-                Name = XmlUtil.GetRequiredAttribute(e, "name"),
+                Name = XmlUtil.GetRequiredAttribute(e, "name").Trim(),
                 Namespace = CurNamespace,
                 Parent = parent.Length > 0 ? parent : "",
                 TypeId = XmlUtil.GetOptionIntAttribute(e, "id"),
@@ -319,7 +319,7 @@ namespace Luban.Job.Common.Defs
             ValidAttrKeys(defineFile, e, _enumOptionalAttrs, _enumRequiredAttrs);
             var en = new PEnum()
             {
-                Name = XmlUtil.GetRequiredAttribute(e, "name"),
+                Name = XmlUtil.GetRequiredAttribute(e, "name").Trim(),
                 Namespace = CurNamespace,
                 Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
                 IsFlags = XmlUtil.GetOptionBoolAttribute(e, "flags"),

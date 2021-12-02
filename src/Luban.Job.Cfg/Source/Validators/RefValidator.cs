@@ -27,7 +27,7 @@ namespace Luban.Job.Cfg.Validators
         public RefValidator(TType type, string tablesStr)
         {
             Type = type;
-            this.Tables = new List<string>(DefUtil.TrimBracePairs(tablesStr).Split(','));
+            this.Tables = DefUtil.TrimBracePairs(tablesStr).Split(',').Select(s => s.Trim()).ToList();
         }
 
         public void Validate(ValidatorContext ctx, TType type, DType key)

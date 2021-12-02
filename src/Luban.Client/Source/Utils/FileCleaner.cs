@@ -90,7 +90,7 @@ namespace Luban.Client.Common.Utils
                 else
                 {
                     s_logger.Info("[remove] dir: {dir}", subDir);
-                    Directory.Delete(subDir);
+                    FileUtil.DeleteDirectoryRecursive(subDir);
                 }
             }
         }

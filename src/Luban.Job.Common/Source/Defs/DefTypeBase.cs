@@ -81,7 +81,8 @@ namespace Luban.Job.Common.Defs
                 {
                     return null;
                 }
-                return ExternalType.Mappers.Find(m => m.Lan == DefAssemblyBase.LocalAssebmly.CurrentLanguage);
+
+                return ExternalType.Mappers.Find(m => m.Lan == this.AssemblyBase.CurrentLanguage && this.AssemblyBase.CurrentExternalSelectors.Contains(m.Selector));
             }
         }
 
