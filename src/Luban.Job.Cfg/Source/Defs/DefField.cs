@@ -28,7 +28,7 @@ namespace Luban.Job.Cfg.Defs
         // 如果ref了多个表，不再生成 xxx_ref之类的字段，也不会resolve
         public bool GenRef => Ref != null && Ref.GenRef;
 
-        public bool HasRecursiveRef => (CType.IsBean)
+        public bool HasRecursiveRef => (CType is TBean tb && tb.Bean.CurrentExternalTypeMapper == null)
             || (CType is TArray ta && ta.ElementType.IsBean)
             || (CType is TList tl && tl.ElementType.IsBean)
             || (CType is TMap tm && tm.ValueType.IsBean);

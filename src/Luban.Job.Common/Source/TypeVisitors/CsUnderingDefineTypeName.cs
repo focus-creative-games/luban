@@ -1,5 +1,6 @@
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.Types;
+using Luban.Job.Common.Utils;
 
 namespace Luban.Job.Common.TypeVisitors
 {
@@ -59,8 +60,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TEnum type)
         {
-            var mapper = type.DefineEnum.CurrentExternalTypeMapper;
-            return mapper != null ? mapper.TypeName : type.DefineEnum.FullName;
+            return ExternalTypeUtil.CsMapperToExternalType(type.DefineEnum);
         }
 
         public string Accept(TString type)
@@ -80,7 +80,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TBean type)
         {
-            return type.Bean.FullName;
+            return ExternalTypeUtil.CsMapperToExternalType(type.Bean);
         }
 
         public string Accept(TArray type)

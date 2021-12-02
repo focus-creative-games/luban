@@ -770,7 +770,7 @@ namespace Luban.Job.Cfg.Defs
             return f;
         }
 
-        private static readonly List<string> _beanOptinsAttrs = new List<string> { "value_type", "alias", "sep", "comment", "tags", "group" };
+        private static readonly List<string> _beanOptinsAttrs = new List<string> { "value_type", "alias", "sep", "comment", "tags", "group", "externaltype" };
         private static readonly List<string> _beanRequireAttrs = new List<string> { "name" };
 
         override protected void AddBean(string defineFile, XElement e, string parent)
@@ -789,6 +789,7 @@ namespace Luban.Job.Cfg.Defs
                 Sep = XmlUtil.GetOptionalAttribute(e, "sep"),
                 Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
                 Tags = XmlUtil.GetOptionalAttribute(e, "tags"),
+                ExternalType = XmlUtil.GetOptionalAttribute(e, "externaltype"),
             };
             var childBeans = new List<XElement>();
 

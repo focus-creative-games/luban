@@ -56,6 +56,7 @@ luban相较于常规的excel导表工具有以下核心优势：
 - 强大的数据校验能力。支持内建数据格式检查；支持ref表引用检查（策划不用担心填错id）;支持path资源检查（策划不用担心填错资源路径）;支持range检查
 - 支持常量别名。策划不必再为诸如 升级丹 这样的道具手写具体道具id了
 - 支持多种常见数据表模式。 singleton(单例表)、map（常规key-value表）、**list(支持无索引、多主键联合索引、多主键独立索引)**
+- 支持**external type**，即外部类。 你可以在配置中引用现成的enum和class类，比如 UnityEngine.Color，UnityEngine.AudioType。
 - 支持res资源标记。可以一键导出配置中引用的所有资源列表(icon,ui,assetbundle等等)
 - 统一了自定义编辑器的配置数据。与Unity和UE4的自定义编辑器良好配合，为编辑器生成合适的加载与保存json配置的的c#(Unity)或c++(UE4)代码。保存的json配置能够被luban识别和处理。
 - 支持emmylua anntations。生成的lua包含符合emmylua 格式anntations信息。配合emmylua有良好的配置代码提示能力

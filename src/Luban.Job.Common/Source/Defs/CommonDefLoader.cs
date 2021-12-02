@@ -217,10 +217,10 @@ namespace Luban.Job.Common.Defs
             AddBean(defineFile, e, "");
         }
 
-        private static readonly List<string> _beanOptinsAttrs1 = new List<string> { "compatible", "value_type", "comment", "tags" };
+        private static readonly List<string> _beanOptinsAttrs1 = new List<string> { "compatible", "value_type", "comment", "tags", "externaltype" };
         private static readonly List<string> _beanRequireAttrs1 = new List<string> { "id", "name" };
 
-        private static readonly List<string> _beanOptinsAttrs2 = new List<string> { "id", "compatible", "value_type", "comment", "tags" };
+        private static readonly List<string> _beanOptinsAttrs2 = new List<string> { "id", "compatible", "value_type", "comment", "tags", "externaltype" };
         private static readonly List<string> _beanRequireAttrs2 = new List<string> { "name" };
 
         protected virtual void AddBean(string defineFile, XElement e, string parent)
@@ -243,6 +243,7 @@ namespace Luban.Job.Common.Defs
                 IsValueType = XmlUtil.GetOptionBoolAttribute(e, "value_type"),
                 Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
                 Tags = XmlUtil.GetOptionalAttribute(e, "tags"),
+                ExternalType = XmlUtil.GetOptionalAttribute(e, "externaltype"),
             };
             var childBeans = new List<XElement>();
 
@@ -412,6 +413,11 @@ namespace Luban.Job.Common.Defs
                     case "typename":
                     {
                         m.TypeName = attrEle.Value;
+                        break;
+                    }
+                    case "create_external_object_function":
+                    {
+                        m.CreateExternalObjectFunction = attrEle.Value;
                         break;
                     }
                     default: throw new LoadDefException($"定义文件:{defineFile} externaltype:{externalType} 非法 tag:{tagName}");

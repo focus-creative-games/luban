@@ -31,6 +31,8 @@ namespace Luban.Job.Common.Defs
 
         public string FullNameWithTopModule => TypeUtil.MakeFullName(AssemblyBase.TopModule, FullName);
 
+        public string CsFullName => TypeUtil.MakeFullName(Namespace, Name);
+
         public string JavaFullName => TypeUtil.MakeFullName(Namespace, Name);
 
         public string GoFullName => TypeUtil.MakeGoFullName(Namespace, Name);
@@ -83,9 +85,7 @@ namespace Luban.Job.Common.Defs
             }
         }
 
-        public virtual void PreCompile() { }
-
-        public virtual void Compile()
+        protected void ResolveExternalType()
         {
             if (!string.IsNullOrEmpty(_externalTypeName))
             {
@@ -98,6 +98,13 @@ namespace Luban.Job.Common.Defs
                     throw new Exception($"enum:'{FullName}' 对应的 externaltype:{_externalTypeName} 不存在");
                 }
             }
+        }
+
+        public virtual void PreCompile() { }
+
+        public virtual void Compile()
+        {
+            ResolveExternalType();
         }
 
         public virtual void PostCompile() { }

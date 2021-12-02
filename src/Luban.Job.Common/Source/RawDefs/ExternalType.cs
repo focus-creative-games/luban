@@ -14,6 +14,8 @@ namespace Luban.Job.Common.RawDefs
         public ELanguage Lan { get; set; }
 
         public string TypeName { get; set; }
+
+        public string CreateExternalObjectFunction { get; set; }
     }
 
     public class ExternalType

@@ -170,6 +170,8 @@ namespace Luban.Job.Cfg.Defs
 
         public override void Compile()
         {
+            ResolveExternalType();
+
             var cs = new List<DefBeanBase>();
             if (Children != null)
             {
