@@ -53,6 +53,9 @@ namespace Luban.Job.Common
         [Option("cs:use_unity_vector", Required = false, HelpText = "use UnityEngine.Vector{2,3,4}")]
         public bool CsUseUnityVectors { get; set; }
 
+        [Option("external:selectors", Required = false, HelpText = "external selectors")]
+        public string ExternalSelectors { get; set; }
+
         public AccessConvention AccessConventionBeanMember { get; set; }
 
         public bool ValidateOutouptCodeDir(ref string errMsg)

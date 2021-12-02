@@ -52,16 +52,15 @@ namespace Luban.Job.Cfg.Defs
 
         public Defines BuildDefines()
         {
-            return new Defines()
+            var defines = new Defines()
             {
-                TopModule = TopModule,
                 Patches = _patches,
-                Enums = _enums,
-                Beans = _beans,
                 Tables = _cfgTables,
                 Services = _cfgServices,
                 Groups = _cfgGroups,
             };
+            BuildCommonDefines(defines);
+            return defines;
         }
 
         private static readonly List<string> _excelImportRequireAttrs = new List<string> { "name", "type" };
@@ -480,6 +479,36 @@ namespace Luban.Job.Cfg.Defs
             }
             var inputFileInfos = await DataLoaderUtil.CollectInputFilesAsync(this.Agent, this._importExcelEnumFiles, dataDir);
 
+
+            var ass = new DefAssembly("", null, new List<string>(), Agent);
+
+            var enumItemType = new DefBean(new CfgBean()
+            {
+                Namespace = "__intern__",
+                Name = "__EnumItem__",
+                Parent = "",
+                Alias = "",
+                IsValueType = false,
+                Sep = "",
+                TypeId = 0,
+                IsSerializeCompatible = false,
+                Fields = new List<Field>
+                {
+                    new CfgField() { Name = "name", Type = "string" },
+                    new CfgField() { Name = "alias", Type = "string" },
+                    new CfgField() { Name = "value", Type = "string" },
+                    new CfgField() { Name = "comment", Type = "string" },
+                    new CfgField() { Name = "tags", Type = "string" },
+                }
+            })
+            {
+                AssemblyBase = ass,
+            };
+            ass.AddType(enumItemType);
+            enumItemType.PreCompile();
+            enumItemType.Compile();
+            enumItemType.PostCompile();
+
             var defTableRecordType = new DefBean(new CfgBean()
             {
                 Namespace = "__intern__",
@@ -493,16 +522,17 @@ namespace Luban.Job.Cfg.Defs
                 Fields = new List<Field>
                 {
                     new CfgField() { Name = "full_name", Type = "string" },
-                    new CfgField() { Name = "item", Type = "string" },
-                    new CfgField() { Name = "alias", Type = "string" },
-                    new CfgField() { Name = "value", Type = "int" },
                     new CfgField() { Name = "comment", Type = "string" },
+                    new CfgField() { Name = "flags", Type = "bool" },
                     new CfgField() { Name = "tags", Type = "string" },
+                    new CfgField() { Name = "unique", Type = "bool" },
+                    new CfgField() { Name = "items", Type = "list,__EnumItem__" },
                 }
             })
             {
-                AssemblyBase = new DefAssembly("", null, new List<string>(), Agent),
+                AssemblyBase = ass,
             };
+            ass.AddType(defTableRecordType);
             defTableRecordType.PreCompile();
             defTableRecordType.Compile();
             defTableRecordType.PostCompile();
@@ -514,7 +544,6 @@ namespace Luban.Job.Cfg.Defs
                 var bytes = await this.Agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5);
                 var records = DataLoaderUtil.LoadCfgRecords(tableRecordType, file.OriginFile, null, bytes, true);
 
-                PEnum curEnum = null;
                 foreach (var r in records)
                 {
                     DBean data = r.Data;
@@ -527,22 +556,26 @@ namespace Luban.Job.Cfg.Defs
                     }
                     string module = TypeUtil.GetNamespace(fullName);
 
-                    if (curEnum == null || curEnum.Name != name || curEnum.Namespace != module)
-                    {
-                        curEnum = new PEnum() { Name = name, Namespace = module, IsFlags = false, Comment = "", IsUniqueItemId = true };
-                        this._enums.Add(curEnum);
-                    }
+                    DList items = (data.GetField("items") as DList);
 
-                    string item = (data.GetField("item") as DString).Value.Trim();
-                    if (string.IsNullOrWhiteSpace(item))
+                    var curEnum = new PEnum()
                     {
-                        throw new Exception($"file:{file.ActualFile} module:'{module}' name:'{name}' 定义了一个空枚举项");
-                    }
-                    string alias = (data.GetField("alias") as DString).Value.Trim();
-                    string value = (data.GetField("value") as DInt).Value.ToString();
-                    string comment = (data.GetField("comment") as DString).Value.Trim();
-                    string tags = (data.GetField("tags") as DString).Value.Trim();
-                    curEnum.Items.Add(new EnumItem() { Name = item, Alias = alias, Value = value, Comment = comment, Tags = tags });
+                        Name = name,
+                        Namespace = module,
+                        IsFlags = (data.GetField("flags") as DBool).Value,
+                        Tags = (data.GetField("tags") as DString).Value,
+                        Comment = (data.GetField("comment") as DString).Value,
+                        IsUniqueItemId = (data.GetField("unique") as DBool).Value,
+                        Items = items.Datas.Cast<DBean>().Select(d => new EnumItem()
+                        {
+                            Name = (d.GetField("name") as DString).Value,
+                            Alias = (d.GetField("alias") as DString).Value,
+                            Value = (d.GetField("value") as DString).Value,
+                            Comment = (d.GetField("comment") as DString).Value,
+                            Tags = (d.GetField("tags") as DString).Value,
+                        }).ToList(),
+                    };
+                    this._enums.Add(curEnum);
                 };
             }
         }

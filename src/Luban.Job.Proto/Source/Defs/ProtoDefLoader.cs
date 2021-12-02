@@ -24,14 +24,13 @@ namespace Luban.Job.Proto.Defs
 
         public Defines BuildDefines()
         {
-            return new Defines()
+            var defines = new Defines()
             {
-                TopModule = TopModule,
-                Enums = _enums,
-                Beans = _beans,
                 Protos = _protos,
                 Rpcs = _rpcs,
             };
+            BuildCommonDefines(defines);
+            return defines;
         }
 
         private readonly List<string> rpcAttrs = new List<string> { "id" };

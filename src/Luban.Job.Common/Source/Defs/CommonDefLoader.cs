@@ -49,12 +49,14 @@ namespace Luban.Job.Common.Defs
 
         protected readonly List<PEnum> _enums = new List<PEnum>();
         protected readonly List<Bean> _beans = new List<Bean>();
+        protected readonly HashSet<string> _externalSelectors = new();
 
         protected CommonDefLoader(IAgent agent)
         {
             Agent = agent;
 
             _rootDefineHandlers.Add("topmodule", SetTopModule);
+            _rootDefineHandlers.Add("externalselector", AddExternalSelector);
 
             _moduleDefineHandlers.Add("module", AddModule);
             _moduleDefineHandlers.Add("enum", AddEnum);
@@ -102,6 +104,14 @@ namespace Luban.Job.Common.Defs
         }
 
         protected string CurNamespace => _namespaceStack.Count > 0 ? _namespaceStack.Peek() : "";
+
+        protected void BuildCommonDefines(DefinesCommon defines)
+        {
+            defines.TopModule = TopModule;
+            defines.Enums = _enums;
+            defines.Beans = _beans;
+            defines.ExternalSelectors = _externalSelectors;
+        }
 
         #region root handler
 
@@ -326,6 +336,18 @@ namespace Luban.Job.Common.Defs
             }
             s_logger.Trace("add enum:{@enum}", en);
             _enums.Add(en);
+        }
+
+        private static readonly List<string> _selectorRequiredAttrs = new List<string> { "name" };
+        private void AddExternalSelector(XElement e)
+        {
+            ValidAttrKeys(_rootXml, e, null, _selectorRequiredAttrs);
+            string name = XmlUtil.GetRequiredAttribute(e, "name");
+            if (!_externalSelectors.Add(name))
+            {
+                throw new LoadDefException($"定义文件:{_rootXml} externalselector name:{name} 重复");
+            }
+            s_logger.Info("add selector:{}", name);
         }
         #endregion
     }

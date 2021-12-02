@@ -188,11 +188,15 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 </enum>
 ```
 或者在 \_\_enums\_\_.xlsx 中 定义
-|##|full_name|item|alias|value|comment|tags|
-|- | - | - | - | - | - | - |
-||ItemQuality|WHITE|白|1|||
-||ItemQuality|GREEN|绿|2|||
-||ItemQuality|RED|红|3|||
+
+<table border="1">
+<tr align="center"><td>##</td><td>full_name</td><td>flags</td><td>unique</td><td>comment</td><td>tags</td><td colspan="5">*items</td></tr>
+<tr align="center"><td>##+</td><td></td><td></td><td></td><td></td><td></td><td>name</td><td>alias</td><td>value</td><td>comment</td><td>tags</td></tr>
+<tr align="center"><td/><td>ItemQuality</td><td>false</td><td>true</td><td/><td/><td>WHITE</td><td>白</td><td>0</td><td/><td/></tr>
+<tr align="center"><td/><td></td><td></td><td></td><td/><td/><td>GREEN</td><td>绿</td><td>1</td><td/><td/></tr>
+<tr align="center"><td/><td></td><td></td><td></td><td/><td/><td>RED</td><td>红</td><td>2</td><td/><td/></tr>
+
+</table>
 
 
 数据表如下
@@ -360,8 +364,8 @@ xml中定义如下
 </tr>
 
 <tr align="center"><td/><td>1</td><td>task1</td><td>1</td><td>10</td><td>desc1</td><td>2</td><td>12</td><td>desc2</td><td>3</td><td>13</td><td>desc3</td></tr>
-<tr align="center"><td/><td>2</td><td>task1</td><td>3</td><td>30</td><td>desc3</td><td>4</td><td>40</td><td>desc4</td></tr>
-<tr align="center"><td/><td>3</td><td>task1</td><td>5</td><td>50</td><td>desc5</td></tr>
+<tr align="center"><td/><td>2</td><td>task1</td><td>3</td><td>30</td><td>desc3</td><td>4</td><td>40</td><td>desc4</td><td/><td/><td/></tr>
+<tr align="center"><td/><td>3</td><td>task1</td><td>5</td><td>50</td><td>desc5</td><td/><td/><td/><td/><td/><td/></tr>
 </table>
 
 ### 多行结构列表

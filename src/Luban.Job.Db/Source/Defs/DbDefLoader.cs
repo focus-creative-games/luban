@@ -20,13 +20,12 @@ namespace Luban.Job.Db.Defs
 
         public Defines BuildDefines()
         {
-            return new Defines()
+            var defines = new Defines()
             {
-                TopModule = TopModule,
-                Enums = _enums,
-                Beans = _beans,
                 DbTables = _tables,
             };
+            BuildCommonDefines(defines);
+            return defines;
         }
 
         private readonly List<string> _tableOptionalAttrs = new List<string> { "memory", "comment" };

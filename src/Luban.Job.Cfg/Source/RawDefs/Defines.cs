@@ -3,15 +3,9 @@ using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.RawDefs
 {
-    public class Defines
+    public class Defines : DefinesCommon
     {
-        public string TopModule { get; set; } = "";
-
         public List<Patch> Patches { get; set; } = new List<Patch>();
-
-        public List<Bean> Beans { get; set; } = new List<Bean>();
-
-        public List<PEnum> Enums { get; set; } = new List<PEnum>();
 
         public List<Table> Tables { get; set; } = new List<Table>();
 
