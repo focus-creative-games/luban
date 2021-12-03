@@ -30,10 +30,10 @@ luban相较于常规的excel导表工具有以下核心优势：
 - 通用型生成工具。也可以用于生成协议、数据库之类的代码，甚至可以用作对象缓存服务。
 
 ## 文档
-- [快速上手](docs/start_up.md)
+- [快速上手](https://github.com/focus-creative-games/luban/wiki/start_up)
 - [**wiki**](https://github.com/focus-creative-games/luban/wiki) ，比较完善，有使用疑问，请先查看此wiki。
 - **示例项目** ([github](https://github.com/focus-creative-games/luban_examples)) ([gitee](https://gitee.com/focus-creative-games/luban_examples))
-- [版本变更记录](https://github.com/focus-creative-games/luban/wiki/%E7%89%88%E6%9C%AC%E5%8F%98%E6%9B%B4%E8%AE%B0%E5%BD%95)
+- [版本变更记录](https://github.com/focus-creative-games/luban/wiki/changelog)
 
 - 支持与联系
   - QQ群: 692890842 （Luban开发交流群）。有使用方面的疑问请及时加QQ群询问，随时有人帮助解决。
