@@ -621,6 +621,57 @@ xml中定义如下
 ### 层级标题头 (hierarchy title)
 在多行数据或者深层次嵌套的数据中，如果数据字段较多，填写时不易区分子元素。luban提供层级标题实现深层次的子字段对应。以上面的多行数据列表为例,第一列为##+表示这是个子字段行。
 
+- 普通bean结构的子标题
+
+<table border="1">
+
+<tr align="center">
+  <td>##</td>
+  <td>id</td>
+  <td>name</td>
+  <td colspan="5">stage</td>
+</tr>
+<tr align="center">
+  <td>##type</td>
+  <td>int</td>
+  <td>string</td>
+  <td colspan="5">Stage</td>
+</tr>
+<tr align="center">
+  <td>##+</td>
+  <td/>
+  <td/>
+  <td>name</td>
+  <td>desc</td>
+  <td>location</td>
+  <td>item_id</td>
+  <td>num</td>
+</tr>
+<tr align="center">
+  <td>##</td>
+  <td>id</td>
+  <td>name</td>
+  <td>desc2</td>
+  <td>desc3</td>
+  <td>desc4</td>
+  <td>desc5</td>
+  <td>desc6</td>
+</tr>
+
+<tr align="center">
+<td/>
+<td>1</td><td>task1</td><td>stage1</td><td>stage desc1</td><td>1,2,3</td><td>1001</td><td>1</td>
+</tr>
+
+<tr align="center">
+<td/>
+<td>2</td><td>task2</td><td>stage2</td><td>stage desc2</td><td>3,4,5</td><td>2001</td><td>3</td>
+</tr>
+
+</table>
+
+- list,bean 的多行展开多级子标题
+
 <table border="1">
 
 <tr align="center">
@@ -681,6 +732,12 @@ xml中定义如下
 
 </table>
 
+- list,bean 的水平展开多级子标题
+
+<table border="1">
+<tr align="center"><td>##</td><td>id</td><td>name</td><td colspan="9">items</td></tr>
+<tr align="center"><td>##type</td><td>int</td><td>string</td><td colspan="9">list,Item</td></tr>
+
 <tr align="center">
   <td>##+</td>
   <td></td>
@@ -699,9 +756,22 @@ xml中定义如下
 </tr>
 
 <tr align="center"><td/><td>1</td><td>task1</td><td>1</td><td>10</td><td>desc1</td><td>2</td><td>12</td><td>desc2</td><td>3</td><td>13</td><td>desc3</td></tr>
-<tr align="center"><td/><td>2</td><td>task1</td><td>3</td><td>30</td><td>desc3</td><td>4</td><td>40</td><td>desc4</td></tr>
-<tr align="center"><td/><td>3</td><td>task1</td><td>5</td><td>50</td><td>desc5</td></tr>
+<tr align="center"><td/><td>2</td><td>task1</td><td>3</td><td>30</td><td>desc3</td><td>4</td><td>40</td><td>desc4</td><td/><td/><td/></tr>
+<tr align="center"><td/><td>3</td><td>task1</td><td>5</td><td>50</td><td>desc5</td><td/><td/><td/><td/><td/><td/></tr>
 </table>
+
+- map 类型的多级子标题
+
+<table border="1">
+
+<tr align="center"><td>##</td><td>id</td><td colspan="4">lans</td></tr>
+<tr align="center"><td>##type</td><td>int</td><td colspan="4">map,string,string</td></tr>
+<tr align="center"><td>##+</td><td/><td>ch-zn</td><td>en</td><td>jp</td><td>fr</td></tr>
+<tr align="center"><td/><td>1</td><td>苹果</td><td>apple</td><td>aaa</td><td>aaa</td></tr>
+<tr align="center"><td/><td>2</td><td>香蕉</td><td>banana</td><td>bbb</td><td>bbb</td></tr>
+
+</table>
+
 ### 可空数据类型
 配置数据中经常有空值的语义需求，实际项目中往往混杂地使用0或-1表达空值，既不自然清晰也不统一。luban借鉴了c#中的可空变量的概念，特地提供可空数据支持。所有原生数据类型，以及enum、bean、和多态bean类型都有相应的可空数据类型。定义方式为 <类型名>?，与c#里的Nullable类型定义方式相同。例如 bool?,int?,long?,double?, EColor?, DemoType?
 
