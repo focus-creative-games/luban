@@ -34,6 +34,8 @@ namespace Luban.Job.Cfg.Defs
 
         public bool OutputCompactJson { get; set; }
 
+        public string TableManagerName => CfgTargetService.Manager;
+
         public DefAssembly(string patchName, TimeZoneInfo timezone, List<string> excludeTags, IAgent agent)
         {
             this._patchName = patchName;

@@ -70,7 +70,7 @@ namespace Luban.Job.Cfg.Generate
                     fileContent.Add(ctx.Render.RenderAny(type));
                 }
 
-                fileContent.Add(ctx.Render.RenderService("Tables", ctx.TopModule, ctx.ExportTables));
+                fileContent.Add(ctx.Render.RenderService(ctx.Assembly.TableManagerName, ctx.TopModule, ctx.ExportTables));
                 postContent?.Invoke(fileContent);
 
                 var file = outputFile;

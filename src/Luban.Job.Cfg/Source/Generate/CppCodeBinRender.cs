@@ -71,7 +71,7 @@ namespace {ctx.TopModule}
                     headerFileContent.Add(Render(type));
                 }
 
-                headerFileContent.Add(RenderService("Tables", ctx.TopModule, ctx.ExportTables));
+                headerFileContent.Add(RenderService(ctx.Assembly.TableManagerName, ctx.TopModule, ctx.ExportTables));
 
                 headerFileContent.Add("}"); // end of topmodule
 
