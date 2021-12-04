@@ -39,7 +39,12 @@ namespace Luban.Job.Cfg.Generate
             {
                 ctx.Tasks.Add(Task.Run(() =>
                 {
-                    var content = FileHeaderUtil.ConcatAutoGenerationHeader(ctx.Render.RenderAny(c), ctx.Lan);
+                    string body = ctx.Render.RenderAny(c);
+                    if (string.IsNullOrWhiteSpace(body))
+                    {
+                        return;
+                    }
+                    var content = FileHeaderUtil.ConcatAutoGenerationHeader(body, ctx.Lan);
                     var file = RenderFileUtil.GetDefTypePath(c.FullName, ctx.Lan);
                     var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
                     ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });
@@ -50,7 +55,12 @@ namespace Luban.Job.Cfg.Generate
             {
                 var module = ctx.TopModule;
                 var name = ctx.TargetService.Manager;
-                var content = FileHeaderUtil.ConcatAutoGenerationHeader(ctx.Render.RenderService(name, module, ctx.ExportTables), ctx.Lan);
+                var body = ctx.Render.RenderService(name, module, ctx.ExportTables);
+                if (string.IsNullOrWhiteSpace(body))
+                {
+                    return;
+                }
+                var content = FileHeaderUtil.ConcatAutoGenerationHeader(body, ctx.Lan);
                 var file = RenderFileUtil.GetDefTypePath(name, ctx.Lan);
                 var md5 = CacheFileUtil.GenMd5AndAddCache(file, content);
                 ctx.GenCodeFilesInOutputCodeDir.Add(new FileInfo() { FilePath = file, MD5 = md5 });

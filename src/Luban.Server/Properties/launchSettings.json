@@ -13,7 +13,11 @@
     },
     "TestTemplate-DisableCache": {
       "commandName": "Project",
-      "commandLineArgs": "-t D:\\workspace\\luban_examples\\Projects\\CustomTemplates --disable_template_cache"
+      "commandLineArgs": "-t D:\\workspace\\luban_examples\\Projects\\CustomTemplates --disable_cache"
+    },
+    "TestEncryptMemory-DisableCache": {
+      "commandName": "Project",
+      "commandLineArgs": "-t D:\\workspace\\luban_examples\\Projects\\Csharp_CustomTemplate_EncryptMemory\\CustomTemplate --disable_cache"
     }
   }
 }
