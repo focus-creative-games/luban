@@ -14,8 +14,6 @@ namespace Luban.Job.Cfg.Generate
     [Render("code_rust_json")]
     class RustCodeJsonRender : TemplateCodeRenderBase
     {
-        protected override string CommonRenderTemplateDir => "rust";
-
         protected override string RenderTemplateDir => "rust_json";
 
         public override void Render(GenContext ctx)
@@ -23,7 +21,7 @@ namespace Luban.Job.Cfg.Generate
             string genType = ctx.GenType;
             var args = ctx.GenArgs;
             ctx.Render = this;
-            ctx.Lan = RenderFileUtil.GetLanguage(genType);
+            ctx.Lan = GetLanguage(ctx);
             DefAssembly.LocalAssebmly.CurrentLanguage = ctx.Lan;
 
             var lines = new List<string>();

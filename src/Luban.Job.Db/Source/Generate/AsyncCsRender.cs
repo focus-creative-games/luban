@@ -22,7 +22,10 @@ namespace Luban.Job.Db.Generate
 
         public string Render(DefEnum e)
         {
-            return RenderUtil.RenderCsEnumClass(e);
+            var template = StringTemplateManager.Ins.GetTemplate("common/cs/enum");
+            var result = template.Render(e);
+
+            return result;
         }
 
         public string Render(DefBean b)

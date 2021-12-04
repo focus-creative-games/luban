@@ -8,8 +8,6 @@ namespace Luban.Job.Cfg.Generate
     [Render("code_cs_bin")]
     class CsCodeBinRender : TemplateCodeRenderBase
     {
-        protected override string CommonRenderTemplateDir => "cs";
-
         protected override string RenderTemplateDir => "cs_bin";
     }
 }

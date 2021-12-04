@@ -72,7 +72,7 @@ namespace Luban.Job.Common.Utils
             { "javascript", ELanguage.JAVASCRIPT },
             { "erlang", ELanguage.ERLANG },
             { "rust", ELanguage.RUST },
-            { "pb", ELanguage.PROTOBUF },
+            { "protobuf", ELanguage.PROTOBUF },
         };
 
         public static ELanguage GetLanguage(string genType)
@@ -84,7 +84,26 @@ namespace Luban.Job.Common.Utils
                     return lan;
                 }
             }
-            throw new ArgumentException($"not support output data type:{genType}");
+            throw new ArgumentException($"can't guess Language from gen_type:{genType}");
+        }
+
+        public static string GetCommonTemplateDirName(ELanguage lan)
+        {
+            return lan switch
+            {
+                ELanguage.CS => "cs",
+                ELanguage.JAVA => "java",
+                ELanguage.GO => "go",
+                ELanguage.CPP => "cpp",
+                ELanguage.LUA => "lua",
+                ELanguage.PYTHON => "python",
+                ELanguage.TYPESCRIPT => "typescript",
+                ELanguage.JAVASCRIPT => "javascript",
+                ELanguage.ERLANG => "erlang",
+                ELanguage.RUST => "rust",
+                ELanguage.PROTOBUF => "protobuf",
+                _ => throw new Exception($"not support common template dir for lan:{lan}"),
+            };
         }
 
         private static readonly Dictionary<string, string> s_name2Suxxifx = new()

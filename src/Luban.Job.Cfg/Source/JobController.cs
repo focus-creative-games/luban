@@ -81,9 +81,14 @@ namespace Luban.Job.Cfg
                         errMsg = "--input_l10n_text_files must be provided with --output_l10n_not_translated_text_file";
                         return false;
                     }
-                    if (genTypes.Contains("data_template") ^ !string.IsNullOrWhiteSpace(options.TemplateName))
+                    if (genTypes.Contains("data_template") ^ !string.IsNullOrWhiteSpace(options.TemplateDataFile))
                     {
-                        errMsg = "gen_types data_template should use with --template_name";
+                        errMsg = "gen_types data_template should use with --template:data:file";
+                        return false;
+                    }
+                    if (genTypes.Contains("code_template") ^ !string.IsNullOrWhiteSpace(options.TemplateCodeDir))
+                    {
+                        errMsg = "gen_types code_template should use with --template:code:dir";
                         return false;
                     }
                 }
@@ -144,7 +149,7 @@ namespace Luban.Job.Cfg
 
                 TimeZoneInfo timeZoneInfo = string.IsNullOrEmpty(args.L10nTimeZone) ? null : TimeZoneInfo.FindSystemTimeZoneById(args.L10nTimeZone);
 
-                var excludeTags = args.ExportExcludeTags.Split(',').Select(t => t.Trim().ToLowerInvariant()).Where(t => !string.IsNullOrEmpty(t)).ToList();
+                var excludeTags = args.OutputExcludeTags.Split(',').Select(t => t.Trim().ToLowerInvariant()).Where(t => !string.IsNullOrEmpty(t)).ToList();
                 var ass = new DefAssembly(args.L10nPatchName, timeZoneInfo, excludeTags, agent);
                 ass.Load(rawDefines, agent, args);
 
@@ -199,6 +204,7 @@ namespace Luban.Job.Cfg
                         Tasks = tasks,
                         DataLoader = CheckLoadCfgDataAsync,
                     };
+                    GenContext.Ctx = ctx;
 
                     var render = RenderFactory.CreateRender(genType);
                     if (render == null)
@@ -210,6 +216,7 @@ namespace Luban.Job.Cfg
                         await CheckLoadCfgDataAsync();
                     }
                     render.Render(ctx);
+                    GenContext.Ctx = null;
                 }
                 await Task.WhenAll(tasks.ToArray());
 

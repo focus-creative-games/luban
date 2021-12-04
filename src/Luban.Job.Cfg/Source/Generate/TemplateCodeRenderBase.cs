@@ -12,7 +12,7 @@ namespace Luban.Job.Cfg.Generate
 {
     abstract class TemplateCodeRenderBase : CodeRenderBase
     {
-        protected abstract string CommonRenderTemplateDir { get; }
+        protected virtual string CommonRenderTemplateDir => RenderFileUtil.GetCommonTemplateDirName(DefAssembly.LocalAssebmly.CurrentLanguage);
 
         protected abstract string RenderTemplateDir { get; }
 

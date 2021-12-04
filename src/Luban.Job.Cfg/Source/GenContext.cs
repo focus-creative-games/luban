@@ -6,6 +6,7 @@ using Luban.Job.Common.Defs;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using FileInfo = Luban.Common.Protos.FileInfo;
 
@@ -13,6 +14,10 @@ namespace Luban.Job.Cfg
 {
     class GenContext
     {
+        private readonly static AsyncLocal<GenContext> s_asyncLocal = new();
+
+        public static GenContext Ctx { get => s_asyncLocal.Value; set => s_asyncLocal.Value = value; }
+
         public GenArgs GenArgs { get; init; }
         public DefAssembly Assembly { get; init; }
         public string GenType { get; set; }

@@ -1,5 +1,6 @@
 using Luban.Common.Protos;
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Common;
 using Luban.Job.Common.Defs;
 using Luban.Job.Common.Utils;
 using System;
@@ -29,11 +30,16 @@ namespace Luban.Job.Cfg.Generate
             }
         }
 
+        protected virtual ELanguage GetLanguage(GenContext ctx)
+        {
+            return RenderFileUtil.GetLanguage(ctx.GenType);
+        }
+
         protected void GenerateCodeScatter(GenContext ctx)
         {
             string genType = ctx.GenType;
             ctx.Render = this;
-            ctx.Lan = RenderFileUtil.GetLanguage(genType);
+            ctx.Lan = GetLanguage(ctx);
             DefAssembly.LocalAssebmly.CurrentLanguage = ctx.Lan;
             foreach (var c in ctx.ExportTypes)
             {

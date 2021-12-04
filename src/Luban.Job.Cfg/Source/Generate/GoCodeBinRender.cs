@@ -8,8 +8,6 @@ namespace Luban.Job.Cfg.Generate
     [Render("code_go_bin")]
     class GoCodeBinRender : TemplateCodeRenderBase
     {
-        protected override string CommonRenderTemplateDir => "go";
-
         protected override string RenderTemplateDir => "go_bin";
     }
 }

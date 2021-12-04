@@ -61,7 +61,7 @@
     <None Update="Templates\common\lua\base.tpl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Templates\common\pb\enum.tpl">
+    <None Update="Templates\common\protobuf\enum.tpl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Templates\common\python\enum.tpl">
@@ -166,16 +166,16 @@
     <None Update="Templates\config\lua_lua\all.tpl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Templates\config\pb2\bean.tpl">
+    <None Update="Templates\config\protobuf2\bean.tpl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Templates\config\pb2\all.tpl">
+    <None Update="Templates\config\protobuf2\all.tpl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Templates\config\pb2\table.tpl">
+    <None Update="Templates\config\protobuf2\table.tpl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Templates\config\pb2\tables.tpl">
+    <None Update="Templates\config\protobuf2\tables.tpl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Templates\config\python_json\bean.tpl">

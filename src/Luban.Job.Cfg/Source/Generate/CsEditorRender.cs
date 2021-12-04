@@ -11,8 +11,6 @@ namespace Luban.Job.Cfg.Generate
     [Render("code_cs_unity_editor")]
     class CsEditorRender : TemplateCodeRenderBase
     {
-        override protected string CommonRenderTemplateDir => "cs";
-
         override protected string RenderTemplateDir => "cs_editor_json";
 
         public override void Render(GenContext ctx)

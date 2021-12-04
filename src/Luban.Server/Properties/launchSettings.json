@@ -18,6 +18,14 @@
     "TestEncryptMemory-DisableCache": {
       "commandName": "Project",
       "commandLineArgs": "-t D:\\workspace\\luban_examples\\Projects\\Csharp_CustomTemplate_EncryptMemory\\CustomTemplate --disable_cache"
+    },
+    "CodeTemplate-AsyncLoad-DisableCache": {
+      "commandName": "Project",
+      "commandLineArgs": "-t D:\\workspace\\luban_examples\\Projects\\Csharp_CustomTemplate_ExternalCodeTemplate\\CustomTemplate --disable_cache"
+    },
+    "ExternalCodeTemplate": {
+      "commandName": "Project",
+      "commandLineArgs": "-t D:\\workspace\\luban_examples\\Projects\\Csharp_CustomTemplate_ExternalCodeTemplate\\CustomTemplate --disable_cache"
     }
   }
 }

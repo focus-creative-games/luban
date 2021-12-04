@@ -198,7 +198,7 @@ namespace Luban.Job.Cfg.Defs
         {
             LoadCommon(defines, agent, args);
 
-            OutputCompactJson = args.OutputCompactJson;
+            OutputCompactJson = args.OutputDataCompactJson;
 
             SupportDatetimeType = true;
 

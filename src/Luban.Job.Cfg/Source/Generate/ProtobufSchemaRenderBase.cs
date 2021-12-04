@@ -13,11 +13,9 @@ namespace Luban.Job.Cfg.Generate
 {
     abstract class ProtobufSchemaRenderBase : TemplateCodeRenderBase
     {
-        protected override string CommonRenderTemplateDir => "pb";
-
         public override void Render(GenContext ctx)
         {
-            DefAssembly.LocalAssebmly.CurrentLanguage = Common.ELanguage.LUA;
+            DefAssembly.LocalAssebmly.CurrentLanguage = Common.ELanguage.PROTOBUF;
             var file = RenderFileUtil.GetFileOrDefault(ctx.GenArgs.OutputCodeMonolithicFile, "config.proto");
             var content = this.RenderAll(ctx.ExportTypes);
             var md5 = CacheFileUtil.GenMd5AndAddCache(file, string.Join('\n', content));

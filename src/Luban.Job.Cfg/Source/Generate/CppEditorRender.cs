@@ -8,8 +8,6 @@ namespace Luban.Job.Cfg.Generate
     [Render("code_cpp_editor")]
     class CppEditorRender : TemplateCodeRenderBase
     {
-        protected override string CommonRenderTemplateDir => "cpp";
-
         protected override string RenderTemplateDir => "cpp_editor_json";
     }
 }

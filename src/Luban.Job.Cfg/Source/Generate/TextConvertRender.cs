@@ -25,7 +25,7 @@ namespace Luban.Job.Cfg.Generate
                     var fileName = table.IsMapTable ?
                         record.Data.GetField(table.IndexField.Name).Apply(ToStringVisitor2.Ins).Replace("\"", "").Replace("'", "")
                         : (++index).ToString();
-                    var file = RenderFileUtil.GetOutputFileName(genType, $"{dirName}/{fileName}", ctx.GenArgs.DataFileExtension);
+                    var file = RenderFileUtil.GetOutputFileName(genType, $"{dirName}/{fileName}", ctx.GenArgs.OutputDataFileExtension);
                     ctx.Tasks.Add(Task.Run(() =>
                     {
                         //if (!FileRecordCacheManager.Ins.TryGetRecordOutputData(table, records, genType, out string md5))

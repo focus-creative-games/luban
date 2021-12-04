@@ -8,8 +8,6 @@ namespace Luban.Job.Cfg.Generate
     [Render("code_java_bin")]
     class JavaCodeBinRender : TemplateCodeRenderBase
     {
-        protected override string CommonRenderTemplateDir => "java";
-
         protected override string RenderTemplateDir => "java_bin";
     }
 }

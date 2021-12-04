@@ -5,6 +5,9 @@ namespace Luban.Job.Cfg
 {
     public class GenArgs : GenArgsBase
     {
+        [Option('s', "service", Required = true, HelpText = "service")]
+        public string Service { get; set; }
+
         [Option("input_data_dir", Required = true, HelpText = "input data dir")]
         public string InputDataDir { get; set; }
 
@@ -23,23 +26,23 @@ namespace Luban.Job.Cfg
         [Option("output_data_json_monolithic_file", Required = false, HelpText = "output monolithic json file")]
         public string OutputDataJsonMonolithicFile { get; set; }
 
-        [Option("gen_types", Required = true, HelpText = "code_cs_bin,code_cs_json,code_cs_unity_json,code_lua_bin,code_java_bin,code_java_json,code_go_bin,code_go_json,code_cpp_bin,code_python3_json,code_typescript_bin,code_typescript_json,code_rust_json,code_protobuf,data_bin,data_lua,data_json,data_json2,data_json_monolithic,data_resources,data_template,data_protobuf,convert_json,convert_lua,convert_xlsx . can be multi")]
+        [Option("gen_types", Required = true, HelpText = "code_cs_bin,code_cs_json,code_cs_unity_json,code_lua_bin,code_java_bin,code_java_json,code_go_bin,code_go_json,code_cpp_bin,code_python3_json,code_typescript_bin,code_typescript_json,code_rust_json,code_protobuf,code_template,data_bin,data_lua,data_json,data_json2,data_json_monolithic,data_resources,data_template,data_protobuf,convert_json,convert_lua,convert_xlsx . can be multi")]
         public string GenType { get; set; }
 
-        [Option("template_name", Required = false, HelpText = "template name. use with gen_types=data_template")]
-        public string TemplateName { get; set; }
+        [Option("template:data:file", Required = false, HelpText = "template name. use with gen_types=data_template")]
+        public string TemplateDataFile { get; set; }
 
-        [Option("data_file_extension", Required = false, HelpText = "data file name extension. default choose by gen_type")]
-        public string DataFileExtension { get; set; }
+        [Option("template:code:dir", Required = false, HelpText = "code template dir. use with gen_types=code_template")]
+        public string TemplateCodeDir { get; set; }
 
-        [Option("output_compact_json", Required = false, HelpText = "output compact json data. drop blank characters. ")]
-        public bool OutputCompactJson { get; set; }
+        [Option("output:data:file_extension", Required = false, HelpText = "data file name extension. default choose by gen_type")]
+        public string OutputDataFileExtension { get; set; }
 
-        [Option('s', "service", Required = true, HelpText = "service")]
-        public string Service { get; set; }
+        [Option("output:data:compact_json", Required = false, HelpText = "output compact json data. drop blank characters. ")]
+        public bool OutputDataCompactJson { get; set; }
 
-        [Option("export_exclude_tags", Required = false, HelpText = "export exclude tags. default export all tags")]
-        public string ExportExcludeTags { get; set; } = "";
+        [Option("output:exclude_tags", Required = false, HelpText = "export exclude tags. default export all tags")]
+        public string OutputExcludeTags { get; set; } = "";
 
         [Option("l10n:timezone", Required = false, HelpText = "timezone")]
         public string L10nTimeZone { get; set; }

@@ -22,7 +22,9 @@ namespace Luban.Job.Db.Generate
 
         private string Render(DefEnum e)
         {
-            return RenderUtil.RenderTypescriptEnumClass(e);
+            var template = StringTemplateManager.Ins.GetTemplate("common/typescript/enum");
+            var result = template.Render(e);
+            return result;
         }
 
         public string Render(DefBean b)

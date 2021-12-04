@@ -15,8 +15,6 @@ namespace Luban.Job.Cfg.Generate
     [Render("code_cpp_bin")]
     class CppCodeBinRender : TemplateCodeRenderBase
     {
-        protected override string CommonRenderTemplateDir => "cpp";
-
         protected override string RenderTemplateDir => "cpp_bin";
 
         public override void Render(GenContext ctx)

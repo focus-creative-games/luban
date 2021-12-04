@@ -9,8 +9,6 @@ namespace Luban.Job.Cfg.Generate
 {
     abstract class LuaCodeRenderBase : TemplateCodeRenderBase
     {
-        protected override string CommonRenderTemplateDir => "lua";
-
         public override void Render(GenContext ctx)
         {
             DefAssembly.LocalAssebmly.CurrentLanguage = Common.ELanguage.LUA;

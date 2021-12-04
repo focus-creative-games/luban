@@ -23,7 +23,7 @@ namespace Luban.Job.Cfg.Generate
             {
                 ctx.Tasks.Add(Task.Run(() =>
                 {
-                    var file = RenderFileUtil.GetOutputFileName(genType, table.OutputDataFile, ctx.GenArgs.DataFileExtension);
+                    var file = RenderFileUtil.GetOutputFileName(genType, table.OutputDataFile, ctx.GenArgs.OutputDataFileExtension);
                     var records = ctx.Assembly.GetTableExportDataList(table);
                     if (!FileRecordCacheManager.Ins.TryGetRecordOutputData(table, records, genType, out string md5))
                     {

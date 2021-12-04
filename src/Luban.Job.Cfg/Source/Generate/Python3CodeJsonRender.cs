@@ -10,8 +10,6 @@ namespace Luban.Job.Cfg.Generate
     [Render("code_python3_json")]
     class Python3CodeJsonRender : TemplateCodeRenderBase
     {
-        protected override string CommonRenderTemplateDir => "python";
-
         protected override string RenderTemplateDir => "python_json";
 
         public override void Render(GenContext ctx)
