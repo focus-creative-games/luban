@@ -58,7 +58,7 @@ namespace Luban.Job.Cfg.Validators
                     case ETableMode.MAP:
                     {
                         var recordMap = assembly.GetTableDataInfo(ct).FinalRecordMap;
-                        if (/*recordMap != null &&*/ recordMap.ContainsKey(key))
+                        if (recordMap.ContainsKey(key))
                         {
                             return;
                         }
@@ -139,10 +139,10 @@ namespace Luban.Job.Cfg.Validators
                 {
                     throw new Exception($"结构:{hostTypeName} 字段:{fieldName} ref:{actualTable} 不存在");
                 }
-                if (!ct.NeedExport)
-                {
-                    throw new Exception($"type:'{hostTypeName}' field:'{fieldName}' ref 引用的表:'{actualTable}' 没有导出");
-                }
+                //if (!ct.NeedExport)
+                //{
+                //    throw new Exception($"type:'{hostTypeName}' field:'{fieldName}' ref 引用的表:'{actualTable}' 没有导出");
+                //}
                 if (ct.IsOneValueTable)
                 {
                     if (string.IsNullOrEmpty(fieldName))
@@ -167,8 +167,10 @@ namespace Luban.Job.Cfg.Validators
                 }
                 else if (ct.IsMapTable)
                 {
-                    if (first && Tables.Count == 1)
+                    if (first && Tables.Count == 1 && ct.NeedExport)
                     {
+                        // 只引用一个表时才生成ref代码。
+                        // 如果被引用的表没有导出，生成ref没有意义，还会产生编译错误
                         GenRef = true;
                     }
                     if (!string.IsNullOrEmpty(indexName))

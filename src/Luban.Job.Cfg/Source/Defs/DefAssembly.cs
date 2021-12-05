@@ -157,6 +157,11 @@ namespace Luban.Job.Cfg.Defs
             return _recordsByTables[table.FullName];
         }
 
+        public List<DefTable> GetAllTables()
+        {
+            return Types.Values.Where(t => t is DefTable).Cast<DefTable>().ToList();
+        }
+
         public List<DefTable> GetExportTables()
         {
             return Types.Values.Where(t => t is DefTable ct && ct.NeedExport).Select(t => (DefTable)t).ToList();

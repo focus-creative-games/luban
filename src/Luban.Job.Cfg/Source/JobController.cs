@@ -178,7 +178,7 @@ namespace Luban.Job.Cfg
 
                         timer.StartPhase("validate");
                         var validateCtx = new ValidatorContext(ass, args.ValidateRootDir);
-                        await validateCtx.ValidateTables(exportTables);
+                        await validateCtx.ValidateTables(ass.GetAllTables());
                         timer.EndPhaseAndLog();
                     }
                 }

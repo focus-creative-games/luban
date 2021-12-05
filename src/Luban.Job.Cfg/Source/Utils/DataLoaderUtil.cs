@@ -167,7 +167,7 @@ namespace Luban.Job.Cfg.Utils
         public static async Task LoadCfgDataAsync(IAgent agent, DefAssembly ass, string dataDir, string patchName, string patchDataDir, string inputConvertDataDir)
         {
             var ctx = agent;
-            List<DefTable> exportTables = ass.Types.Values.Where(t => t is DefTable ct && ct.NeedExport).Select(t => (DefTable)t).ToList();
+            List<DefTable> exportTables = ass.Types.Values.Where(t => t is DefTable).Cast<DefTable>().ToList(); //&& ct.NeedExport.Select(t => (DefTable)t)
             var genDataTasks = new List<Task>();
             var outputDataFiles = new ConcurrentBag<FileInfo>();
             long genDataStartTime = Bright.Time.TimeUtil.NowMillis;
