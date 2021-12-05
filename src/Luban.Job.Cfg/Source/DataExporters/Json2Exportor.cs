@@ -2,6 +2,7 @@
 using Luban.Job.Cfg.DataSources;
 using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Cfg.RawDefs;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
@@ -16,12 +17,12 @@ namespace Luban.Job.Cfg.DataExporters
         {
             switch (table.Mode)
             {
-                case RawDefs.ETableMode.ONE:
+                case ETableMode.ONE:
                 {
                     this.Accept(datas[0].Data, x);
                     break;
                 }
-                case RawDefs.ETableMode.MAP:
+                case ETableMode.MAP:
                 {
 
                     x.WriteStartObject();
@@ -35,6 +36,11 @@ namespace Luban.Job.Cfg.DataExporters
                     }
 
                     x.WriteEndObject();
+                    break;
+                }
+                case ETableMode.LIST:
+                {
+                    JsonExportor.Ins.WriteAsArray(datas, x);
                     break;
                 }
                 default:

@@ -193,7 +193,7 @@ namespace Luban.Job.Common.Defs
 
         public TType CreateType(string module, string type)
         {
-            int sepIndex = DefUtil.IndexOfElementTypeSep(type);
+            int sepIndex = DefUtil.IndexOfBaseTypeEnd(type);
             if (sepIndex > 0)
             {
                 string containerTypeAndTags = DefUtil.TrimBracePairs(type.Substring(0, sepIndex));
@@ -294,14 +294,8 @@ namespace Luban.Job.Common.Defs
             {
                 case "array": return TArray.Create(false, containerTags, CreateNotContainerType(module, elementType));
                 case "list": return TList.Create(false, containerTags, CreateNotContainerType(module, elementType), true);
-                case "linkedlist": return TList.Create(false, containerTags, CreateNotContainerType(module, elementType), false);
-                case "arraylist": return TList.Create(false, containerTags, CreateNotContainerType(module, elementType), true);
                 case "set": return TSet.Create(false, containerTags, CreateNotContainerType(module, elementType), false);
-                case "hashset": return TSet.Create(false, containerTags, CreateNotContainerType(module, elementType), false);
-                case "treeset": return TSet.Create(false, containerTags, CreateNotContainerType(module, elementType), true);
                 case "map": return CreateMapType(module, containerTags, elementType, false);
-                case "treemap": return CreateMapType(module, containerTags, elementType, true);
-                case "hashmap": return CreateMapType(module, containerTags, elementType, false);
                 default:
                 {
                     throw new ArgumentException($"invalid container type. module:'{module}' container:'{containerType}' element:'{elementType}'");

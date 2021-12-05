@@ -157,7 +157,7 @@ namespace Luban.Job.Cfg.Utils
             return ((DefBean)type.Bean).Sep;
         }
 
-        public static string GetTypeSep(TType type)
+        public static string GetCollectionElementTypeSep(TType type)
         {
             if (type.Tags != null && type.Tags.TryGetValue("sep", out var s) && !string.IsNullOrWhiteSpace(s))
             {

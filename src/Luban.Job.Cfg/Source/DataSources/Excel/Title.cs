@@ -28,7 +28,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         public string SepOr(string sep)
         {
-            return string.IsNullOrEmpty(Sep) ? sep : Sep;
+            return string.IsNullOrEmpty(sep) ? Sep : sep;
         }
 
         public bool NonEmpty { get; private set; }
@@ -65,7 +65,11 @@ namespace Luban.Job.Cfg.DataSources.Excel
         public void Init()
         {
             SortSubTitles();
-            Sep = Tags.TryGetValue("sep", out var v) && !string.IsNullOrWhiteSpace(v) ? v : null;
+            Sep = Tags.TryGetValue("sep", out var sep) ? sep : "";
+            //if (Tags.ContainsKey("sep"))
+            //{
+            //    throw new Exception($"字段名现在不支持sep，请移到##type行，例如'int&sep=;'");
+            //}
             NonEmpty = Tags.TryGetValue("non_empty", out var ne) && ne == "1";
             SelfMultiRows = Tags.TryGetValue("multi_rows", out var v2) && (v2 == "1" || v2 == "true");
             Default = Tags.TryGetValue("default", out var v3) ? v3 : null;

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Luban.Job.Cfg.DataConverts
 {
-    public class FillSheetVisitor : IDataFuncVisitor<Title, int>
+    public class FillSheetVisitor : IDataFuncVisitor<TType, Title, int>
     {
 
         private readonly List<object[]> _cells;
@@ -36,107 +36,107 @@ namespace Luban.Job.Cfg.DataConverts
             _cells[_startRowIndex][title.FromIndex] = value;
         }
 
-        public int Accept(DBool type, Title x)
+        public int Accept(DBool data, TType type, Title x)
         {
-            SetTitleValue(x, type.Value);
+            SetTitleValue(x, data.Value);
             return 1;
         }
 
-        public int Accept(DByte type, Title x)
+        public int Accept(DByte data, TType type, Title x)
         {
-            SetTitleValue(x, type.Value);
+            SetTitleValue(x, data.Value);
             return 1;
         }
 
-        public int Accept(DShort type, Title x)
+        public int Accept(DShort data, TType type, Title x)
         {
-            SetTitleValue(x, type.Value);
+            SetTitleValue(x, data.Value);
             return 1;
         }
 
-        public int Accept(DFshort type, Title x)
+        public int Accept(DFshort data, TType type, Title x)
         {
-            SetTitleValue(x, type.Value);
+            SetTitleValue(x, data.Value);
             return 1;
         }
 
-        public int Accept(DInt type, Title x)
+        public int Accept(DInt data, TType type, Title x)
         {
-            SetTitleValue(x, type.Value);
+            SetTitleValue(x, data.Value);
             return 1;
         }
 
-        public int Accept(DFint type, Title x)
+        public int Accept(DFint data, TType type, Title x)
         {
-            SetTitleValue(x, type.Value);
+            SetTitleValue(x, data.Value);
             return 1;
         }
 
-        public int Accept(DLong type, Title x)
+        public int Accept(DLong data, TType type, Title x)
         {
-            SetTitleValue(x, type.Value);
+            SetTitleValue(x, data.Value);
             return 1;
         }
 
-        public int Accept(DFlong type, Title x)
+        public int Accept(DFlong data, TType type, Title x)
         {
-            SetTitleValue(x, type.Value);
+            SetTitleValue(x, data.Value);
             return 1;
         }
 
-        public int Accept(DFloat type, Title x)
+        public int Accept(DFloat data, TType type, Title x)
         {
-            SetTitleValue(x, type.Value);
+            SetTitleValue(x, data.Value);
             return 1;
         }
 
-        public int Accept(DDouble type, Title x)
+        public int Accept(DDouble data, TType type, Title x)
         {
-            SetTitleValue(x, type.Value);
+            SetTitleValue(x, data.Value);
             return 1;
         }
 
-        public int Accept(DEnum type, Title x)
+        public int Accept(DEnum data, TType type, Title x)
         {
-            SetTitleValue(x, type.StrValue);
+            SetTitleValue(x, data.StrValue);
             return 1;
         }
 
-        public int Accept(DString type, Title x)
+        public int Accept(DString data, TType type, Title x)
         {
-            SetTitleValue(x, type.Value);
+            SetTitleValue(x, data.Value);
             return 1;
         }
 
-        public int Accept(DBytes type, Title x)
+        public int Accept(DBytes data, TType type, Title x)
         {
             throw new NotImplementedException();
         }
 
-        public int Accept(DText type, Title x)
+        public int Accept(DText data, TType type, Title x)
         {
             //if (x.FromIndex == x.ToIndex)
             //{
             //    throw new Exception($"title:{x.Name}为text类型，至少要占两列");
             //}
-            SetTitleValue(x, type.Apply(ToExcelStringVisitor.Ins, x.Sep));
+            SetTitleValue(x, data.Apply(ToExcelStringVisitor.Ins, type.OrTag("sep", "#")));
             //(_cells[_startRowIndex, x.FromIndex + 1] as Range).Value = type.RawValue;
             return 1;
         }
 
-        public int Accept(DBean type, Title x)
+        public int Accept(DBean data, TType type, Title x)
         {
             if (x.SubTitleList.Count > 0)
             {
-                if (type.Type.IsAbstractType)
+                if (data.Type.IsAbstractType)
                 {
                     if (!x.SubTitles.TryGetValue(DefBean.TYPE_NAME_KEY, out var typeTitle))
                     {
-                        throw new Exception($"多态bean:{type.Type.FullName} 缺失 __type__ 标题列");
+                        throw new Exception($"多态bean:{data.Type.FullName} 缺失 __type__ 标题列");
                     }
-                    if (type.ImplType != null)
+                    if (data.ImplType != null)
                     {
-                        SetTitleValue(typeTitle, type.ImplType.Name);
+                        SetTitleValue(typeTitle, data.ImplType.Name);
                     }
                     else
                     {
@@ -145,7 +145,7 @@ namespace Luban.Job.Cfg.DataConverts
                 }
                 else
                 {
-                    if (type.ImplType != null)
+                    if (data.ImplType != null)
                     {
 
                     }
@@ -156,22 +156,22 @@ namespace Luban.Job.Cfg.DataConverts
                     }
                 }
                 int rowCount = 1;
-                if (type.ImplType != null)
+                if (data.ImplType != null)
                 {
                     int index = 0;
-                    foreach (var field in type.ImplType.HierarchyFields)
+                    foreach (var field in data.ImplType.HierarchyFields)
                     {
-                        var data = type.Fields[index++];
+                        var fdata = data.Fields[index++];
                         if (!x.SubTitles.TryGetValue(field.Name, out var fieldTitle))
                         {
                             throw new Exception($"title:{x.Name} 子title:{field.Name} 缺失");
                         }
 
-                        if (data != null)
+                        if (fdata != null)
                         {
                             //if (fieldTitle.SubTitleList.Count > 0)
                             //{
-                            rowCount = Math.Max(rowCount, data.Apply(this, fieldTitle));
+                            rowCount = Math.Max(rowCount, fdata.Apply(this, field.CType, fieldTitle));
                             //}
                             //else
                             //{
@@ -181,7 +181,7 @@ namespace Luban.Job.Cfg.DataConverts
                         }
                         else if (field.CType is TText)
                         {
-                            SetTitleValue(fieldTitle, $"null{fieldTitle.Sep}null");
+                            SetTitleValue(fieldTitle, $"null{(field.CType.HasTag("sep") ? field.CType.GetTag("sep") : "#")}null");
                         }
                     }
                 }
@@ -189,12 +189,12 @@ namespace Luban.Job.Cfg.DataConverts
             }
             else
             {
-                SetTitleValue(x, type.Apply(ToExcelStringVisitor.Ins, x.Sep));
+                SetTitleValue(x, data.Apply(ToExcelStringVisitor.Ins, type.GetTag("sep")));
                 return 1;
             }
         }
 
-        public int Accept(DArray type, Title x)
+        public int Accept(DArray data, TType type, Title x)
         {
             if (x.SelfMultiRows)
             {
@@ -202,9 +202,10 @@ namespace Luban.Job.Cfg.DataConverts
                 int totalRow = 0;
                 try
                 {
-                    foreach (var ele in type.Datas)
+                    var elementType = data.Type.ElementType;
+                    foreach (var ele in data.Datas)
                     {
-                        totalRow += ele.Apply(this, x);
+                        totalRow += ele.Apply(this, elementType, x);
                         _startRowIndex = oldStartRow + totalRow;
                     }
                     return totalRow;
@@ -216,12 +217,12 @@ namespace Luban.Job.Cfg.DataConverts
             }
             else
             {
-                SetTitleValue(x, type.Apply(ToExcelStringVisitor.Ins, x.Sep));
+                SetTitleValue(x, data.Apply(ToExcelStringVisitor.Ins, type.GetTag("sep")));
                 return 1;
             }
         }
 
-        public int Accept(DList type, Title x)
+        public int Accept(DList data, TType type, Title x)
         {
             if (x.SelfMultiRows)
             {
@@ -229,9 +230,10 @@ namespace Luban.Job.Cfg.DataConverts
                 int totalRow = 0;
                 try
                 {
-                    foreach (var ele in type.Datas)
+                    var elementType = data.Type.ElementType;
+                    foreach (var ele in data.Datas)
                     {
-                        totalRow += ele.Apply(this, x);
+                        totalRow += ele.Apply(this, elementType, x);
                         _startRowIndex = oldStartRow + totalRow;
                     }
                     return totalRow;
@@ -243,47 +245,47 @@ namespace Luban.Job.Cfg.DataConverts
             }
             else
             {
-                SetTitleValue(x, type.Apply(ToExcelStringVisitor.Ins, x.Sep));
+                SetTitleValue(x, data.Apply(ToExcelStringVisitor.Ins, type.GetTag("sep")));
                 return 1;
             }
         }
 
-        public int Accept(DSet type, Title x)
+        public int Accept(DSet data, TType type, Title x)
         {
-            SetTitleValue(x, type.Apply(ToExcelStringVisitor.Ins, x.Sep));
+            SetTitleValue(x, data.Apply(ToExcelStringVisitor.Ins, type.GetTag("sep")));
             return 1;
         }
 
-        public int Accept(DMap type, Title x)
+        public int Accept(DMap data, TType type, Title x)
         {
-            SetTitleValue(x, type.Apply(ToExcelStringVisitor.Ins, x.Sep));
+            SetTitleValue(x, data.Apply(ToExcelStringVisitor.Ins, type.GetTag("sep")));
             return 1;
         }
 
-        public int Accept(DVector2 type, Title x)
+        public int Accept(DVector2 data, TType type, Title x)
         {
-            var v = type.Value;
+            var v = data.Value;
             SetTitleValue(x, $"{v.X}, {v.Y}");
             return 1;
         }
 
-        public int Accept(DVector3 type, Title x)
+        public int Accept(DVector3 data, TType type, Title x)
         {
-            var v = type.Value;
+            var v = data.Value;
             SetTitleValue(x, $"{v.X},{v.Y},{v.Z}");
             return 1;
         }
 
-        public int Accept(DVector4 type, Title x)
+        public int Accept(DVector4 data, TType type, Title x)
         {
-            var v = type.Value;
+            var v = data.Value;
             SetTitleValue(x, $"{v.X},{v.Y},{v.Z},{v.W}");
             return 1;
         }
 
-        public int Accept(DDateTime type, Title x)
+        public int Accept(DDateTime data, TType type, Title x)
         {
-            SetTitleValue(x, type.Time);
+            SetTitleValue(x, data.Time);
             return 1;
         }
     }

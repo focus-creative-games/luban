@@ -360,8 +360,9 @@ namespace Luban.Job.Cfg.Defs
                         case "ref":
                         case "path":
                         case "range":
+                        case "sep":
                         {
-                            cf.Type = cf.Type + "&(" + attrs[i] + ")";
+                            cf.Type = cf.Type + "#(" + attrs[i] + ")";
                             break;
                         }
                         case "group":
@@ -431,7 +432,7 @@ namespace Luban.Job.Cfg.Defs
                     new CfgField() { Name = "mode", Type = "string" },
                     new CfgField() { Name = "group", Type = "string" },
                     new CfgField() { Name = "comment", Type = "string" },
-                    new CfgField() { Name = "define_from_excel", Type = "bool" },
+                    new CfgField() { Name = "define_from_file", Type = "bool" },
                     new CfgField() { Name = "input", Type = "string" },
                     new CfgField() { Name = "output", Type = "string" },
                     new CfgField() { Name = "patch_input", Type = "string" },
@@ -467,7 +468,7 @@ namespace Luban.Job.Cfg.Defs
                     string mode = (data.GetField("mode") as DString).Value.Trim();
                     string group = (data.GetField("group") as DString).Value.Trim();
                     string comment = (data.GetField("comment") as DString).Value.Trim();
-                    bool isDefineFromExcel = (data.GetField("define_from_excel") as DBool).Value;
+                    bool isDefineFromExcel = (data.GetField("define_from_file") as DBool).Value;
                     string inputFile = (data.GetField("input") as DString).Value.Trim();
                     string patchInput = (data.GetField("patch_input") as DString).Value.Trim();
                     string tags = (data.GetField("tags") as DString).Value.Trim();
@@ -726,12 +727,12 @@ namespace Luban.Job.Cfg.Defs
             string refStr = XmlUtil.GetOptionalAttribute(e, "ref");
             if (!string.IsNullOrWhiteSpace(refStr))
             {
-                typeStr = typeStr + "&(ref=" + refStr + ")";
+                typeStr = typeStr + "#(ref=" + refStr + ")";
             }
             string pathStr = XmlUtil.GetOptionalAttribute(e, "path");
             if (!string.IsNullOrWhiteSpace(pathStr))
             {
-                typeStr = typeStr + "&(path=" + pathStr + ")";
+                typeStr = typeStr + "#(path=" + pathStr + ")";
             }
 
             return CreateField(defineFile, XmlUtil.GetRequiredAttribute(e, "name"),

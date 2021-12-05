@@ -33,6 +33,11 @@ namespace Luban.Job.Cfg.Datas
             return visitor.Accept(this, x);
         }
 
+        public override TR Apply<T1, T2, TR>(IDataFuncVisitor<T1, T2, TR> visitor, T1 x, T2 y)
+        {
+            return visitor.Accept(this, x, y);
+        }
+
         public override bool Equals(object obj)
         {
             return obj is DVector3 o && o.Value == this.Value;

@@ -99,4 +99,53 @@ namespace Luban.Job.Cfg.DataVisitors
 
         TR Accept(DDateTime type, T x);
     }
+
+    public interface IDataFuncVisitor<T1, T2, TR>
+    {
+        TR Accept(DBool type, T1 x, T2 y);
+
+        TR Accept(DByte type, T1 x, T2 y);
+
+        TR Accept(DShort type, T1 x, T2 y);
+
+        TR Accept(DFshort type, T1 x, T2 y);
+
+        TR Accept(DInt type, T1 x, T2 y);
+
+        TR Accept(DFint type, T1 x, T2 y);
+
+        TR Accept(DLong type, T1 x, T2 y);
+
+        TR Accept(DFlong type, T1 x, T2 y);
+
+        TR Accept(DFloat type, T1 x, T2 y);
+
+        TR Accept(DDouble type, T1 x, T2 y);
+
+        TR Accept(DEnum type, T1 x, T2 y);
+
+        TR Accept(DString type, T1 x, T2 y);
+
+        TR Accept(DBytes type, T1 x, T2 y);
+
+        TR Accept(DText type, T1 x, T2 y);
+
+        TR Accept(DBean type, T1 x, T2 y);
+
+        TR Accept(DArray type, T1 x, T2 y);
+
+        TR Accept(DList type, T1 x, T2 y);
+
+        TR Accept(DSet type, T1 x, T2 y);
+
+        TR Accept(DMap type, T1 x, T2 y);
+
+        TR Accept(DVector2 type, T1 x, T2 y);
+
+        TR Accept(DVector3 type, T1 x, T2 y);
+
+        TR Accept(DVector4 type, T1 x, T2 y);
+
+        TR Accept(DDateTime type, T1 x, T2 y);
+    }
 }

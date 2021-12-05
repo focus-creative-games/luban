@@ -72,7 +72,7 @@ namespace Luban.Job.Cfg.Generate
                     foreach (var rec in records)
                     {
                         var fillVisitor = new FillSheetVisitor(dataRangeArray, title.ToIndex + 1, totalRowCount);
-                        totalRowCount += rec.Data.Apply(fillVisitor, title);
+                        totalRowCount += rec.Data.Apply(fillVisitor, TBean.Create(false, rec.Data.Type, null), title);
                     }
 
                     using var workbook = new XLWorkbook(XLEventTracking.Disabled);

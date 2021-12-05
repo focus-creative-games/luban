@@ -281,6 +281,50 @@ namespace Luban.Job.Cfg.DataCreators
             return new DText(key, text);
         }
 
+        public DType Accept(TDateTime type, ExcelStream x)
+        {
+            var d = x.Read();
+            if (CheckNull(type.IsNullable, d))
+            {
+                return null;
+            }
+            if (d is System.DateTime datetime)
+            {
+                return new DDateTime(datetime);
+            }
+            return DataUtil.CreateDateTime(d.ToString());
+        }
+
+        public DType Accept(TVector2 type, ExcelStream x)
+        {
+            var d = x.Read();
+            if (CheckNull(type.IsNullable, d))
+            {
+                return null;
+            }
+            return DataUtil.CreateVector(type, d.ToString());
+        }
+
+        public DType Accept(TVector3 type, ExcelStream x)
+        {
+            var d = x.Read();
+            if (CheckNull(type.IsNullable, d))
+            {
+                return null;
+            }
+            return DataUtil.CreateVector(type, d.ToString());
+        }
+
+        public DType Accept(TVector4 type, ExcelStream x)
+        {
+            var d = x.Read();
+            if (CheckNull(type.IsNullable, d))
+            {
+                return null;
+            }
+            return DataUtil.CreateVector(type, d.ToString());
+        }
+
         private List<DType> CreateBeanFields(DefBean bean, ExcelStream stream)
         {
             var list = new List<DType>();
@@ -328,6 +372,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TBean type, ExcelStream x)
         {
+            var originX = x;
             var originBean = (DefBean)type.Bean;
             if (!string.IsNullOrEmpty(originBean.Sep))
             {
@@ -376,9 +421,17 @@ namespace Luban.Job.Cfg.DataCreators
         public List<DType> ReadList(TType type, ExcelStream stream)
         {
             var datas = new List<DType>();
+            string elementSep = type.GetTag("sep");
             while (!stream.TryReadEOF())
             {
-                datas.Add(type.Apply(this, stream));
+                if (string.IsNullOrEmpty(elementSep))
+                {
+                    datas.Add(type.Apply(this, stream));
+                }
+                else
+                {
+                    datas.Add(type.Apply(this, new ExcelStream(stream.ReadCell(), elementSep)));
+                }
             }
             return datas;
         }
@@ -413,50 +466,6 @@ namespace Luban.Job.Cfg.DataCreators
                 }
             }
             return new DMap(type, datas);
-        }
-
-        public DType Accept(TVector2 type, ExcelStream x)
-        {
-            var d = x.Read();
-            if (CheckNull(type.IsNullable, d))
-            {
-                return null;
-            }
-            return DataUtil.CreateVector(type, d.ToString());
-        }
-
-        public DType Accept(TVector3 type, ExcelStream x)
-        {
-            var d = x.Read();
-            if (CheckNull(type.IsNullable, d))
-            {
-                return null;
-            }
-            return DataUtil.CreateVector(type, d.ToString());
-        }
-
-        public DType Accept(TVector4 type, ExcelStream x)
-        {
-            var d = x.Read();
-            if (CheckNull(type.IsNullable, d))
-            {
-                return null;
-            }
-            return DataUtil.CreateVector(type, d.ToString());
-        }
-
-        public DType Accept(TDateTime type, ExcelStream x)
-        {
-            var d = x.Read();
-            if (CheckNull(type.IsNullable, d))
-            {
-                return null;
-            }
-            if (d is System.DateTime datetime)
-            {
-                return new DDateTime(datetime);
-            }
-            return DataUtil.CreateDateTime(d.ToString());
         }
     }
 }

@@ -30,6 +30,11 @@ namespace Luban.Job.Common.Types
             return Tags != null && Tags.TryGetValue(attrName, out var value) ? value : null;
         }
 
+        public string OrTag(string attrName, string defaultValue)
+        {
+            return Tags != null && Tags.TryGetValue(attrName, out var value) ? value : defaultValue;
+        }
+
         public abstract bool TryParseFrom(string s);
 
         public virtual void Compile(DefFieldBase field)

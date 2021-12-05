@@ -13,6 +13,8 @@ namespace Luban.Job.Cfg.Datas
 
         public abstract TR Apply<T, TR>(IDataFuncVisitor<T, TR> visitor, T x);
 
+        public abstract TR Apply<T1, T2, TR>(IDataFuncVisitor<T1, T2, TR> visitor, T1 x, T2 y);
+
         public abstract string TypeName { get; }
 
         public override string ToString()

@@ -8,9 +8,27 @@ namespace Luban.Job.Common.Utils
 {
     public class DefUtil
     {
-        private static readonly char[] s_attrSep = new char[] { '|', '#', '&' };
+        private static readonly char[] s_attrSep = new char[] { '#' };
 
         private static readonly char[] s_attrKeyValueSep = new char[] { '=', ':' };
+
+        private static void AddAttr(Dictionary<string, string> attrs, string rawPair)
+        {
+            var pair = TrimBracePairs(rawPair);
+            int sepIndex = pair.IndexOfAny(s_attrKeyValueSep);
+            string key;
+            string value;
+            if (sepIndex >= 0)
+            {
+                key = pair.Substring(0, sepIndex).Trim();
+                value = pair.Substring(sepIndex + 1).Trim();
+            }
+            else
+            {
+                key = value = pair.Trim();
+            }
+            attrs.Add(key, value);
+        }
 
         public static Dictionary<string, string> ParseAttrs(string tags)
         {
@@ -19,29 +37,43 @@ namespace Luban.Job.Common.Utils
             {
                 return am;
             }
-            foreach (var rawPair in tags.Split(s_attrSep))
+
+            int braceDepth = 0;
+            int pairStart = 0;
+            for (int i = 0; i < tags.Length; i++)
             {
-                var pair = TrimBracePairs(rawPair);
-                int sepIndex = pair.IndexOfAny(s_attrKeyValueSep);
-                if (sepIndex >= 0)
+                var c = tags[i];
+                if (c == '(' || c == '[' || c == '{')
                 {
-#if !LUBAN_LITE
-                    am.Add(pair[..sepIndex].Trim(), pair[(sepIndex + 1)..].Trim());
-#else
-                    am.Add(pair.Substring(0, sepIndex).Trim(), pair.Substring(sepIndex + 1).Trim());
-#endif
+                    ++braceDepth;
                 }
-                else
+                else if (c == ')' || c == ']' || c == '}')
                 {
-                    am.Add(pair.Trim(), pair.Trim());
+                    --braceDepth;
                 }
+
+                if (braceDepth == 0 && c == '#')
+                {
+                    string rawPair = tags.Substring(pairStart, i - pairStart);
+                    pairStart = i + 1;
+                    AddAttr(am, rawPair);
+                }
+            }
+            if (braceDepth != 0)
+            {
+                throw new Exception($"非法tags:{tags}");
+            }
+            if (pairStart < tags.Length)
+            {
+                AddAttr(am, tags.Substring(pairStart));
             }
             return am;
         }
 
-        public static int IndexOfElementTypeSep(string s)
+        public static int IndexOfBaseTypeEnd(string s)
         {
             int braceDepth = 0;
+            int firstSharpIndex = -1;// '#'
             for (int i = 0; i < s.Length; i++)
             {
                 var c = s[i];
@@ -52,6 +84,48 @@ namespace Luban.Job.Common.Utils
                 else if (c == ')' || c == ')' || c == '}')
                 {
                     --braceDepth;
+                }
+                if (c == '#' && firstSharpIndex == -1)
+                {
+                    firstSharpIndex = i;
+                }
+
+                if (braceDepth == 0 && (c == ',' || c == ';'))
+                {
+                    var strContainBaseType = firstSharpIndex > 0 ? s.Substring(0, firstSharpIndex) : s.Substring(0, i);
+                    strContainBaseType = strContainBaseType.Replace("(", "").Replace(")", "").Replace("[", "").Replace("]", "");
+
+                    if (strContainBaseType == "array" || strContainBaseType == "list" || strContainBaseType == "set" || strContainBaseType == "map")
+                    {
+                        return i;
+                    }
+                    else
+                    {
+                        return -1;
+                    }
+                }
+            }
+            return -1;
+        }
+
+        public static int IndexOfElementTypeSep(string s)
+        {
+            int braceDepth = 0;
+            int firstSharpIndex = -1;// '#'
+            for (int i = 0; i < s.Length; i++)
+            {
+                var c = s[i];
+                if (c == '(' || c == '[' || c == '{')
+                {
+                    ++braceDepth;
+                }
+                else if (c == ')' || c == ')' || c == '}')
+                {
+                    --braceDepth;
+                }
+                if (c == '#' && firstSharpIndex == -1)
+                {
+                    firstSharpIndex = i;
                 }
 
                 if (braceDepth == 0 && (c == ',' || c == ';'))
@@ -95,12 +169,12 @@ namespace Luban.Job.Common.Utils
                     {
                         ++braceDepth;
                     }
-                    else if (c == ')' || c == ')' || c == '}')
+                    else if (c == ')' || c == ']' || c == '}')
                     {
                         --braceDepth;
                     }
 
-                    if (braceDepth == 0 && (c == '#' || c == '&' || c == '|'))
+                    if (braceDepth == 0 && (c == '#'))
                     {
                         return (s.Substring(0, i), ParseAttrs(s.Substring(i + 1)));
                     }

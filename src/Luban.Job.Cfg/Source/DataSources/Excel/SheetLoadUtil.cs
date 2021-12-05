@@ -1,4 +1,5 @@
 ﻿using ExcelDataReader;
+using Luban.Job.Cfg.Defs;
 using Luban.Job.Common.Utils;
 using System;
 using System.Collections.Generic;
@@ -151,11 +152,21 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 titleName = titleName.Substring(1);
                 tags.Add("multi_rows", "1");
             }
+            //if (titleName.EndsWith("*"))
+            //{
+            //    titleName = titleName.Substring(0, titleName.Length - 1);
+            //    tags.Add("multi_rows", "1");
+            //}
             if (titleName.StartsWith("!"))
             {
                 titleName = titleName.Substring(1);
                 tags.Add("non_empty", "1");
             }
+            //if (titleName.EndsWith("!"))
+            //{
+            //    titleName = titleName.Substring(0, titleName.Length - 1);
+            //    tags.Add("non_empty", "1");
+            //}
             foreach (var attrPair in attrs.Skip(1))
             {
                 var pairs = attrPair.Split('=');
@@ -163,7 +174,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 {
                     throw new Exception($"invalid title: {nameAndAttrs}");
                 }
-                tags.Add(pairs[0], pairs[1]);
+                tags.Add(pairs[0].Trim(), pairs[1].Trim());
             }
             return (titleName, tags);
         }

@@ -88,28 +88,13 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         public ExcelStream AsStream(string sep)
         {
-            if (string.IsNullOrEmpty(SelfTitle.Sep))
+            if (string.IsNullOrEmpty(sep))
             {
-                if (string.IsNullOrEmpty(sep))
-                {
-                    return new ExcelStream(Row, SelfTitle.FromIndex, SelfTitle.ToIndex, "", SelfTitle.Default);
-                }
-                else
-                {
-                    return new ExcelStream(Row, SelfTitle.FromIndex, SelfTitle.ToIndex, sep, SelfTitle.Default);
-                }
+                return new ExcelStream(Row, SelfTitle.FromIndex, SelfTitle.ToIndex, "", SelfTitle.Default);
             }
             else
             {
-                //if (string.IsNullOrEmpty(sep) || sep == SelfTitle.Sep)
-                //{
-                //    return new ExcelStream(Row, SelfTitle.FromIndex, SelfTitle.ToIndex, sep);
-                //}
-                //else
-                //{
-                // SelfTitle.Sep 设置覆盖 bean的 sep设置（只有这个可能）
-                return new ExcelStream(Row, SelfTitle.FromIndex, SelfTitle.ToIndex, SelfTitle.Sep, SelfTitle.Default);
-                //}
+                return new ExcelStream(Row, SelfTitle.FromIndex, SelfTitle.ToIndex, sep, SelfTitle.Default);
             }
         }
 
@@ -171,13 +156,12 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         public ExcelStream AsMultiRowConcatStream(string sep)
         {
-            sep = string.IsNullOrEmpty(sep) ? SelfTitle.Sep : sep;
             return new ExcelStream(Rows, SelfTitle.FromIndex, SelfTitle.ToIndex, sep, SelfTitle.Default);
         }
 
-        public ExcelStream AsMultiRowConcatElements()
+        public ExcelStream AsMultiRowConcatElements(string sep)
         {
-            return new ExcelStream(Elements.Select(e => e.Row).ToList(), SelfTitle.FromIndex, SelfTitle.ToIndex, SelfTitle.Sep, SelfTitle.Default);
+            return new ExcelStream(Elements.Select(e => e.Row).ToList(), SelfTitle.FromIndex, SelfTitle.ToIndex, sep, SelfTitle.Default);
         }
     }
 }

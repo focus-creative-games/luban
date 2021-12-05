@@ -249,7 +249,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TText type, Sheet sheet, TitleRow row)
         {
-            if (string.IsNullOrEmpty(row.SelfTitle.Sep))
+            if (!type.HasTag("sep"))
             {
                 if (row.CellCount != 2)
                 {
@@ -267,9 +267,68 @@ namespace Luban.Job.Cfg.DataCreators
             }
             else
             {
-                var s = row.AsStream("");
+                var s = row.AsStream(type.GetTag("sep"));
                 return type.Apply(ExcelStreamDataCreator.Ins, s);
             }
+        }
+
+        public DType Accept(TDateTime type, Sheet sheet, TitleRow row)
+        {
+            var d = row.Current;
+            if (CheckNull(type.IsNullable, d))
+            {
+                return null;
+            }
+            if (d is System.DateTime datetime)
+            {
+                return new DDateTime(datetime);
+            }
+            return DataUtil.CreateDateTime(d.ToString());
+        }
+
+        public DType Accept(TVector2 type, Sheet sheet, TitleRow row)
+        {
+            var d = row.Current;
+            if (CheckNull(type.IsNullable, d))
+            {
+                return null;
+            }
+            if (CheckDefault(d))
+            {
+                ThrowIfNonEmpty(row);
+                return DVector2.Default;
+            }
+            return DataUtil.CreateVector(type, d.ToString());
+        }
+
+        public DType Accept(TVector3 type, Sheet sheet, TitleRow row)
+        {
+            var d = row.Current;
+            if (CheckNull(type.IsNullable, d))
+            {
+                return null;
+            }
+            if (CheckDefault(d))
+            {
+                ThrowIfNonEmpty(row);
+                return DVector3.Default;
+            }
+            return DataUtil.CreateVector(type, d.ToString());
+        }
+
+        public DType Accept(TVector4 type, Sheet sheet, TitleRow row)
+        {
+            var d = row.Current;
+            if (CheckNull(type.IsNullable, d))
+            {
+                return null;
+            }
+            if (CheckDefault(d))
+            {
+                ThrowIfNonEmpty(row);
+                return DVector4.Default;
+            }
+            return DataUtil.CreateVector(type, d.ToString());
         }
 
         private List<DType> CreateBeanFields(DefBean bean, Sheet sheet, TitleRow row)
@@ -305,11 +364,16 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TBean type, Sheet sheet, TitleRow row)
         {
-            //string sep = DataUtil.GetSep(type);
+            string sep = "";// type.GetBeanAs<DefBean>().Sep;
+            if (string.IsNullOrWhiteSpace(sep))
+            {
+                sep = row.SelfTitle.SepOr(type.GetTag("sep"));
+            }
+
 
             if (row.Row != null)
             {
-                var s = row.AsStream("");
+                var s = row.AsStream(sep);
                 if (type.IsNullable && s.TryReadEOF())
                 {
                     return null;
@@ -318,7 +382,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
             else if (row.Rows != null)
             {
-                var s = row.AsMultiRowConcatStream("");
+                var s = row.AsMultiRowConcatStream(sep);
                 if (type.IsNullable && s.TryReadEOF())
                 {
                     return null;
@@ -367,7 +431,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
             else if (row.Elements != null)
             {
-                var s = row.AsMultiRowConcatElements();
+                var s = row.AsMultiRowConcatElements(sep);
                 return type.Apply(ExcelStreamDataCreator.Ins, s);
             }
             else
@@ -378,10 +442,18 @@ namespace Luban.Job.Cfg.DataCreators
 
         public List<DType> ReadList(TType type, ExcelStream stream)
         {
+            var sep = type.GetTag("sep");
             var datas = new List<DType>();
             while (!stream.TryReadEOF())
             {
-                datas.Add(type.Apply(ExcelStreamDataCreator.Ins, stream));
+                if (string.IsNullOrEmpty(sep))
+                {
+                    datas.Add(type.Apply(ExcelStreamDataCreator.Ins, stream));
+                }
+                else
+                {
+                    datas.Add(type.Apply(ExcelStreamDataCreator.Ins, new ExcelStream(stream.ReadCell(), sep)));
+                }
             }
             return datas;
         }
@@ -399,16 +471,16 @@ namespace Luban.Job.Cfg.DataCreators
             return datas;
         }
 
-        private List<DType> ReadCollectionDatas(TType elementType, Sheet sheet, TitleRow row)
+        private List<DType> ReadCollectionDatas(TType elementType, Sheet sheet, TitleRow row, string containerSep)
         {
             if (row.Row != null)
             {
-                var s = row.AsStream(DataUtil.GetTypeSep(elementType));
-                return ReadList(elementType, s);
+                var s = row.AsStream(string.IsNullOrEmpty(containerSep) ? DataUtil.GetCollectionElementTypeSep(elementType) : containerSep);
+                return ExcelStreamDataCreator.Ins.ReadList(elementType, s);
             }
             else if (row.Rows != null)
             {
-                var s = row.AsMultiRowStream(DataUtil.GetTypeSep(elementType));
+                var s = row.AsMultiRowStream(string.IsNullOrEmpty(containerSep) ? DataUtil.GetCollectionElementTypeSep(elementType) : containerSep);
                 return ReadList(elementType, s);
             }
             else if (row.Fields != null)
@@ -441,22 +513,22 @@ namespace Luban.Job.Cfg.DataCreators
         public DType Accept(TArray type, Sheet sheet, TitleRow row)
         {
             //string sep = DataUtil.GetSep(type);
-            return new DArray(type, ReadCollectionDatas(type.ElementType, sheet, row));
+            return new DArray(type, ReadCollectionDatas(type.ElementType, sheet, row, row.SelfTitle.SepOr(type.GetTag("sep"))));
         }
 
         public DType Accept(TList type, Sheet sheet, TitleRow row)
         {
-            return new DList(type, ReadCollectionDatas(type.ElementType, sheet, row));
+            return new DList(type, ReadCollectionDatas(type.ElementType, sheet, row, row.SelfTitle.SepOr(type.GetTag("sep"))));
         }
 
         public DType Accept(TSet type, Sheet sheet, TitleRow row)
         {
-            return new DSet(type, ReadCollectionDatas(type.ElementType, sheet, row));
+            return new DSet(type, ReadCollectionDatas(type.ElementType, sheet, row, row.SelfTitle.SepOr(type.GetTag("sep"))));
         }
 
         public DType Accept(TMap type, Sheet sheet, TitleRow row)
         {
-            string sep = "";
+            string sep = row.SelfTitle.SepOr(type.GetTag("sep"));
 
             if (row.Row != null)
             {
@@ -496,7 +568,7 @@ namespace Luban.Job.Cfg.DataCreators
                     {
                         continue;
                     }
-                    var valueData = type.ValueType.Apply(ExcelStreamDataCreator.Ins, e.Value.AsStream(sep));
+                    var valueData = type.ValueType.Apply(ExcelStreamDataCreator.Ins, e.Value.AsStream(""));
                     datas.Add(keyData, valueData);
                 }
                 return new DMap(type, datas);
@@ -506,7 +578,7 @@ namespace Luban.Job.Cfg.DataCreators
                 var datas = new Dictionary<DType, DType>();
                 foreach (var e in row.Elements)
                 {
-                    var stream = e.AsStream("");
+                    var stream = e.AsStream(sep);
                     var keyData = type.KeyType.Apply(ExcelStreamDataCreator.Ins, stream);
                     var valueData = type.ValueType.Apply(ExcelStreamDataCreator.Ins, stream);
                     datas.Add(keyData, valueData);
@@ -517,65 +589,6 @@ namespace Luban.Job.Cfg.DataCreators
             {
                 throw new Exception();
             }
-        }
-
-        public DType Accept(TVector2 type, Sheet sheet, TitleRow row)
-        {
-            var d = row.Current;
-            if (CheckNull(type.IsNullable, d))
-            {
-                return null;
-            }
-            if (CheckDefault(d))
-            {
-                ThrowIfNonEmpty(row);
-                return DVector2.Default;
-            }
-            return DataUtil.CreateVector(type, d.ToString());
-        }
-
-        public DType Accept(TVector3 type, Sheet sheet, TitleRow row)
-        {
-            var d = row.Current;
-            if (CheckNull(type.IsNullable, d))
-            {
-                return null;
-            }
-            if (CheckDefault(d))
-            {
-                ThrowIfNonEmpty(row);
-                return DVector3.Default;
-            }
-            return DataUtil.CreateVector(type, d.ToString());
-        }
-
-        public DType Accept(TVector4 type, Sheet sheet, TitleRow row)
-        {
-            var d = row.Current;
-            if (CheckNull(type.IsNullable, d))
-            {
-                return null;
-            }
-            if (CheckDefault(d))
-            {
-                ThrowIfNonEmpty(row);
-                return DVector4.Default;
-            }
-            return DataUtil.CreateVector(type, d.ToString());
-        }
-
-        public DType Accept(TDateTime type, Sheet sheet, TitleRow row)
-        {
-            var d = row.Current;
-            if (CheckNull(type.IsNullable, d))
-            {
-                return null;
-            }
-            if (d is System.DateTime datetime)
-            {
-                return new DDateTime(datetime);
-            }
-            return DataUtil.CreateDateTime(d.ToString());
         }
     }
 }
