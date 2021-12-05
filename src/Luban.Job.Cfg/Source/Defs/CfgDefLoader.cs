@@ -38,6 +38,8 @@ namespace Luban.Job.Cfg.Defs
 
         private readonly List<string> _defaultGroups = new List<string>();
 
+        private readonly List<RefGroup> _refGroups = new();
+
         public CfgDefLoader(IAgent agent) : base(agent)
         {
             RegisterRootDefineHandler("importexcel", AddImportExcel);
@@ -46,6 +48,7 @@ namespace Luban.Job.Cfg.Defs
             RegisterRootDefineHandler("group", AddGroup);
 
             RegisterModuleDefineHandler("table", AddTable);
+            RegisterModuleDefineHandler("refgroup", AddRefGroup);
 
 
             IsBeanFieldMustDefineId = false;
@@ -59,6 +62,7 @@ namespace Luban.Job.Cfg.Defs
                 Tables = _cfgTables,
                 Services = _cfgServices,
                 Groups = _cfgGroups,
+                RefGroups = _refGroups,
             };
             BuildCommonDefines(defines);
             return defines;
@@ -834,6 +838,21 @@ namespace Luban.Job.Cfg.Defs
             {
                 AddBean(defineFile, cb, fullname);
             }
+        }
+
+
+        private static readonly List<string> _refGroupRequireAttrs = new List<string> { "name", "ref" };
+
+        private void AddRefGroup(string defineFile, XElement e)
+        {
+            ValidAttrKeys(defineFile, e, null, _refGroupRequireAttrs);
+
+            var refGroup = new RefGroup()
+            {
+                Name = XmlUtil.GetRequiredAttribute(e, "name"),
+                Refs = XmlUtil.GetRequiredAttribute(e, "ref").Split(",").Select(s => s.Trim()).ToList(),
+            };
+            _refGroups.Add(refGroup);
         }
     }
 }

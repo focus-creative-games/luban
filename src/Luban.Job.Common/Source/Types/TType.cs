@@ -37,7 +37,7 @@ namespace Luban.Job.Common.Types
 
         public abstract bool TryParseFrom(string s);
 
-        public virtual void Compile(DefFieldBase field)
+        public virtual void PostCompile(DefFieldBase field)
         {
             foreach (var p in Processors)
             {

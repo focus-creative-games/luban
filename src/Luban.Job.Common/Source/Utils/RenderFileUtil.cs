@@ -110,14 +110,14 @@ namespace Luban.Job.Common.Utils
         {
             { "json", "json" },
             { "lua", "lua" },
-            { "bin", "bin" },
+            { "bin", "bytes" },
             { "xml", "xml" },
             { "yaml", "yml" },
             { "yml", "yml" },
             { "erlang", "erl" },
             { "erl", "erl" },
             { "xlsx", "xlsx" },
-            { "protobuf", "pb" },
+            { "protobuf", "bytes" },
         };
 
         public static string GetOutputFileSuffix(string genType)

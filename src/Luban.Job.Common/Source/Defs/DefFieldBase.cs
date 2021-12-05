@@ -151,7 +151,7 @@ namespace Luban.Job.Common.Defs
 
         public virtual void PostCompile()
         {
-            CType.Compile(this);
+            CType.PostCompile(this);
         }
 
         public static void CompileFields<T>(DefTypeBase hostType, List<T> fields, bool verifyId) where T : DefFieldBase

@@ -57,6 +57,8 @@ namespace Luban.Job.Cfg.Defs
 
         private readonly List<Service> _cfgServices = new List<Service>();
 
+        private readonly Dictionary<string, DefRefGroup> _refGroups = new();
+
         private readonly ConcurrentDictionary<string, TableDataInfo> _recordsByTables = new();
 
         public Dictionary<string, DefTable> CfgTablesByName = new();
@@ -199,6 +201,20 @@ namespace Luban.Job.Cfg.Defs
             return refTypes.Values.ToList();
         }
 
+        private void AddRefGroup(RefGroup g)
+        {
+            if (_refGroups.ContainsKey(g.Name))
+            {
+                throw new Exception($"refgroup:{g.Name} 重复");
+            }
+            _refGroups.Add(g.Name, new DefRefGroup(g));
+        }
+
+        public DefRefGroup GetRefGroup(string groupName)
+        {
+            return _refGroups.TryGetValue(groupName, out var refGroup) ? refGroup : null;
+        }
+
         public void Load(Defines defines, RemoteAgent agent, GenArgs args)
         {
             LoadCommon(defines, agent, args);
@@ -224,6 +240,11 @@ namespace Luban.Job.Cfg.Defs
             }
 
             this._patches.AddRange(defines.Patches);
+
+            foreach (var g in defines.RefGroups)
+            {
+                AddRefGroup(g);
+            }
 
             foreach (var e in defines.Enums)
             {
@@ -278,6 +299,7 @@ namespace Luban.Job.Cfg.Defs
                     throw;
                 }
             }
+
             foreach (var type in Types.Values)
             {
                 try

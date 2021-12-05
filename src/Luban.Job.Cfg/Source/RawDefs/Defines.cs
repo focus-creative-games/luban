@@ -5,12 +5,14 @@ namespace Luban.Job.Cfg.RawDefs
 {
     public class Defines : DefinesCommon
     {
-        public List<Patch> Patches { get; set; } = new List<Patch>();
+        public List<Patch> Patches { get; set; } = new();
 
-        public List<Table> Tables { get; set; } = new List<Table>();
+        public List<Table> Tables { get; set; } = new();
 
-        public List<Group> Groups { get; set; } = new List<Group>();
+        public List<Group> Groups { get; set; } = new();
 
-        public List<Service> Services { get; set; } = new List<Service>();
+        public List<Service> Services { get; set; } = new();
+
+        public List<RefGroup> RefGroups { get; set; } = new();
     }
 }

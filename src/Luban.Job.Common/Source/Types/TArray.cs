@@ -28,9 +28,9 @@ namespace Luban.Job.Common.Types
 
         public override bool IsCollection => true;
 
-        public override void Compile(DefFieldBase field)
+        public override void PostCompile(DefFieldBase field)
         {
-            base.Compile(field);
+            base.PostCompile(field);
 
             foreach (var p in ElementType.Processors)
             {
