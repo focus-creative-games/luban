@@ -14,5 +14,6 @@ namespace Luban.Job.Common
         ERLANG,
         RUST,
         PROTOBUF,
+        FLATBUFFERS,
     }
 }

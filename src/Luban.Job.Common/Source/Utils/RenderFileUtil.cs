@@ -102,6 +102,7 @@ namespace Luban.Job.Common.Utils
                 ELanguage.ERLANG => "erlang",
                 ELanguage.RUST => "rust",
                 ELanguage.PROTOBUF => "protobuf",
+                ELanguage.FLATBUFFERS => "flatbuffers",
                 _ => throw new Exception($"not support common template dir for lan:{lan}"),
             };
         }

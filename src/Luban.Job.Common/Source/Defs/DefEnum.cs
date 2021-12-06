@@ -49,6 +49,8 @@ namespace Luban.Job.Common.Defs
 
         private readonly Dictionary<int, string> _vaule2Name = new();
 
+        public bool HasZeroValueItem => this.Items.Any(item => item.IntValue == 0);
+
         public bool TryValueByNameOrAlias(string name, out int value)
         {
             return _nameOrAlias2Value.TryGetValue(name, out value);

@@ -66,12 +66,31 @@ namespace Luban.Job.Common.TypeVisitors
             DoAccept(type, x);
         }
 
+        public virtual void Accept(TText type, T x)
+        {
+            DoAccept(type, x);
+        }
+
         public virtual void Accept(TBytes type, T x)
         {
             DoAccept(type, x);
         }
 
-        public virtual void Accept(TText type, T x)
+        public virtual void Accept(TDateTime type, T x)
+        {
+            DoAccept(type, x);
+        }
+        public virtual void Accept(TVector2 type, T x)
+        {
+            DoAccept(type, x);
+        }
+
+        public virtual void Accept(TVector3 type, T x)
+        {
+            DoAccept(type, x);
+        }
+
+        public virtual void Accept(TVector4 type, T x)
         {
             DoAccept(type, x);
         }
@@ -97,26 +116,6 @@ namespace Luban.Job.Common.TypeVisitors
         }
 
         public virtual void Accept(TMap type, T x)
-        {
-            DoAccept(type, x);
-        }
-
-        public virtual void Accept(TVector2 type, T x)
-        {
-            DoAccept(type, x);
-        }
-
-        public virtual void Accept(TVector3 type, T x)
-        {
-            DoAccept(type, x);
-        }
-
-        public virtual void Accept(TVector4 type, T x)
-        {
-            DoAccept(type, x);
-        }
-
-        public virtual void Accept(TDateTime type, T x)
         {
             DoAccept(type, x);
         }
@@ -188,12 +187,32 @@ namespace Luban.Job.Common.TypeVisitors
             DoAccept(type, x, y);
         }
 
+        public virtual void Accept(TText type, T1 x, T2 y)
+        {
+            DoAccept(type, x, y);
+        }
+
         public virtual void Accept(TBytes type, T1 x, T2 y)
         {
             DoAccept(type, x, y);
         }
 
-        public virtual void Accept(TText type, T1 x, T2 y)
+        public virtual void Accept(TDateTime type, T1 x, T2 y)
+        {
+            DoAccept(type, x, y);
+        }
+
+        public virtual void Accept(TVector2 type, T1 x, T2 y)
+        {
+            DoAccept(type, x, y);
+        }
+
+        public virtual void Accept(TVector3 type, T1 x, T2 y)
+        {
+            DoAccept(type, x, y);
+        }
+
+        public virtual void Accept(TVector4 type, T1 x, T2 y)
         {
             DoAccept(type, x, y);
         }
@@ -222,28 +241,5 @@ namespace Luban.Job.Common.TypeVisitors
         {
             DoAccept(type, x, y);
         }
-
-        public virtual void Accept(TVector2 type, T1 x, T2 y)
-        {
-            DoAccept(type, x, y);
-        }
-
-        public virtual void Accept(TVector3 type, T1 x, T2 y)
-        {
-            DoAccept(type, x, y);
-        }
-
-        public virtual void Accept(TVector4 type, T1 x, T2 y)
-        {
-            DoAccept(type, x, y);
-        }
-
-        public virtual void Accept(TDateTime type, T1 x, T2 y)
-        {
-            DoAccept(type, x, y);
-        }
-
-
-
     }
 }

@@ -245,6 +245,17 @@ namespace Luban.Job.Common.Defs
             }
         }
 
+        public static string FlatBuffersDefineType(TType type)
+        {
+            return type.Apply(FlatBuffersTypeNameVisitor.Ins);
+        }
+
+        public static string FlatBuffersTypeMetadata(TType type)
+        {
+            string metadata = type.IsNullable || type.Apply(IsFlatBuffersScalarTypeVisitor.Ins) ? "" : $"(required)";
+            return metadata;
+        }
+
         public static bool HasTag(dynamic obj, string attrName)
         {
             return obj.HasTag(attrName);

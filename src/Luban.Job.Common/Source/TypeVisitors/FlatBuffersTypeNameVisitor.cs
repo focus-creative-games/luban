@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Luban.Job.Common.TypeVisitors
 {
-    public class ProtobufTypeNameVisitor : ITypeFuncVisitor<string>
+    public class FlatBuffersTypeNameVisitor : ITypeFuncVisitor<string>
     {
-        public static ProtobufTypeNameVisitor Ins { get; } = new();
+        public static FlatBuffersTypeNameVisitor Ins { get; } = new();
 
         public string Accept(TBool type)
         {
@@ -18,17 +18,17 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TByte type)
         {
-            return "int32";
+            return "ubyte";
         }
 
         public string Accept(TShort type)
         {
-            return "int32";
+            return "int16";
         }
 
         public string Accept(TFshort type)
         {
-            return "int32";
+            return "int16";
         }
 
         public string Accept(TInt type)
@@ -38,7 +38,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TFint type)
         {
-            return "sfixed32";
+            return "int32";
         }
 
         public string Accept(TLong type)
@@ -48,22 +48,22 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TFlong type)
         {
-            return "sfixed64";
+            return "int64";
         }
 
         public string Accept(TFloat type)
         {
-            return "float";
+            return "float32";
         }
 
         public string Accept(TDouble type)
         {
-            return "double";
+            return "float64";
         }
 
         public string Accept(TEnum type)
         {
-            return type.DefineEnum.PbFullName;
+            return type.DefineEnum.FlatBuffersFullName;
         }
 
         public string Accept(TString type)
@@ -78,7 +78,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TBytes type)
         {
-            return "bytes";
+            return "[ubyte]";
         }
 
         public string Accept(TVector2 type)
@@ -103,28 +103,27 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TBean type)
         {
-            return type.Bean.PbFullName;
+            return type.Bean.FlatBuffersFullName;
         }
 
         public string Accept(TArray type)
         {
-            return $"{type.ElementType.Apply(this)}";
+            return $"[{type.ElementType.Apply(this)}]";
         }
 
         public string Accept(TList type)
         {
-            return $"{type.ElementType.Apply(this)}";
+            return $"[{type.ElementType.Apply(this)}]";
         }
 
         public string Accept(TSet type)
         {
-            return $"{type.ElementType.Apply(this)}";
+            return $"[{type.ElementType.Apply(this)}]";
         }
 
         public string Accept(TMap type)
         {
-            string key = type.KeyType is TEnum ? "int32" : (type.KeyType.Apply(this));
-            return $"map<{key}, {type.ValueType.Apply(this)}>";
+            return $"[KeyValue_{type.KeyType.Apply(this)}_{type.ValueType.Apply(this)}]";
         }
     }
 }

@@ -63,7 +63,7 @@ namespace Luban.Job.Cfg.Utils
                         Json2Exportor.Ins.WriteAsObject(table, records, jsonWriter);
                     }
                     jsonWriter.Flush();
-                    return System.Text.Encoding.UTF8.GetString(DataUtil.StreamToBytes(ss));
+                    return DataUtil.StreamToBytes(ss);
                 }
                 case "data_lua":
                 {
@@ -106,6 +106,19 @@ namespace Luban.Job.Cfg.Utils
                     MsgPackExportor.Ins.WriteList(table, records, ref writer);
                     writer.Flush();
                     return ms.WrittenSpan.ToArray();
+                }
+                case "data_flatbuffers_json":
+                {
+                    var ss = new MemoryStream();
+                    var jsonWriter = new Utf8JsonWriter(ss, new JsonWriterOptions()
+                    {
+                        Indented = !table.Assembly.OutputCompactJson,
+                        SkipValidation = false,
+                        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(System.Text.Unicode.UnicodeRanges.All),
+                    });
+                    FlatBuffersJsonExportor.Ins.WriteAsTable(records, jsonWriter);
+                    jsonWriter.Flush();
+                    return DataUtil.StreamToBytes(ss);
                 }
                 //case "data_erlang":
                 //{

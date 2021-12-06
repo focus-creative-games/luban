@@ -131,6 +131,11 @@ namespace Luban.Common.Utils
             return MakeGoNamespace(module) + name;
         }
 
+        public static string MakeFlatBuffersFullName(string module, string name)
+        {
+            return MakeGoNamespace(module) + name;
+        }
+
         public static string MakeNamespace(string module, string subModule)
         {
             if (module.Length == 0)

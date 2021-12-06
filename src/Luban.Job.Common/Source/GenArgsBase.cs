@@ -10,7 +10,7 @@ namespace Luban.Job.Common
         [Option('c', "output_code_dir", Required = false, HelpText = "output code directory")]
         public string OutputCodeDir { get; set; }
 
-        [Option("output_code_monolithic_file", Required = false, HelpText = "output monolithic code file. only effect when lan=rust,python,typescript,lua")]
+        [Option("output:code:monolithic_file", Required = false, HelpText = "output monolithic code file. only effect when lan=rust,python,typescript,lua,protobuf,flatbuffers")]
         public string OutputCodeMonolithicFile { get; set; }
 
         [Option("naming_convention:module", Required = false, HelpText = "naming convention of module. can be language_recommend,none,camelCase,PascalCase,under_scores")]

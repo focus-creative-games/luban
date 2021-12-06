@@ -57,6 +57,8 @@ namespace Luban.Job.Common.Defs
 
         public string PbFullName => TypeUtil.MakePbFullName(Namespace, Name);
 
+        public string FlatBuffersFullName => TypeUtil.MakeFlatBuffersFullName(Namespace, Name);
+
         public string Comment { get; protected set; }
 
         public string EscapeComment => DefUtil.EscapeCommentByCurrentLanguage(Comment);

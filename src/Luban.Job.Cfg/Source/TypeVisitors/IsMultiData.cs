@@ -37,20 +37,5 @@ namespace Luban.Job.Cfg.TypeVisitors
         {
             return true;
         }
-
-        public override bool Accept(TVector2 type)
-        {
-            return false;
-        }
-
-        public override bool Accept(TVector3 type)
-        {
-            return false;
-        }
-
-        public override bool Accept(TVector4 type)
-        {
-            return false;
-        }
     }
 }
