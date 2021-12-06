@@ -9,6 +9,7 @@ using Luban.Job.Cfg.l10n;
 using Luban.Job.Cfg.RawDefs;
 using Luban.Job.Common.Tpl;
 using Luban.Job.Common.Utils;
+using MessagePack;
 using Scriban;
 using System;
 using System.Collections.Generic;
@@ -97,6 +98,14 @@ namespace Luban.Job.Cfg.Utils
                     var ms = new MemoryStream();
                     ProtobufExportor.Ins.WriteList(table, records, ms);
                     return DataUtil.StreamToBytes(ms);
+                }
+                case "data_msgpack":
+                {
+                    var ms = new System.Buffers.ArrayBufferWriter<byte>();
+                    var writer = new MessagePackWriter(ms);
+                    MsgPackExportor.Ins.WriteList(table, records, ref writer);
+                    writer.Flush();
+                    return ms.WrittenSpan.ToArray();
                 }
                 //case "data_erlang":
                 //{

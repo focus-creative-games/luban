@@ -14,6 +14,8 @@ namespace Luban.Job.Cfg.Generate
     [Render("data_xml")]
     [Render("data_yaml")]
     [Render("data_protobuf")]
+    [Render("data_msgpack")]
+    [Render("data_flatbuffers")]
     class DataScatterRender : DataRenderBase
     {
         public override void Render(GenContext ctx)

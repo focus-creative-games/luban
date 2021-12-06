@@ -88,8 +88,7 @@ namespace Luban.Job.Cfg.DataExporters
         public void Accept(DText type, ByteBuf x)
         {
             x.WriteString(type.Key);
-            var ass = DefAssembly.LocalAssebmly;
-            x.WriteString(type.GetText(ass.ExportTextTable, ass.NotConvertTextSet));
+            x.WriteString(type.TextOfCurrentAssembly);
         }
 
         public void Accept(DBean type, ByteBuf x)
@@ -180,7 +179,7 @@ namespace Luban.Job.Cfg.DataExporters
 
         public void Accept(DDateTime type, ByteBuf x)
         {
-            x.WriteInt(type.GetUnixTime(DefAssembly.LocalAssebmly.TimeZone));
+            x.WriteInt(type.UnixTimeOfCurrentAssembly);
         }
     }
 }

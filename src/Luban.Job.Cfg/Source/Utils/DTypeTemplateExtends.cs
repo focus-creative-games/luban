@@ -18,12 +18,6 @@ namespace Luban.Job.Cfg.Utils
             return type.Apply(IsSimpleLiteralDataVisitor2.Ins);
         }
 
-        public static string ToLocalizedText(DText type)
-        {
-            var ass = DefAssembly.LocalAssebmly;
-            return type.GetText(ass.ExportTextTable, ass.NotConvertTextSet);
-        }
-
         public static DType GetField(DBean bean, string fieldName)
         {
             int index = 0;

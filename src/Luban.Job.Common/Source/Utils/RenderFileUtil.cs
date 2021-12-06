@@ -118,6 +118,8 @@ namespace Luban.Job.Common.Utils
             { "erl", "erl" },
             { "xlsx", "xlsx" },
             { "protobuf", "bytes" },
+            { "msgpack", "bytes" },
+            { "flatbuffers", "bytes" },
         };
 
         public static string GetOutputFileSuffix(string genType)

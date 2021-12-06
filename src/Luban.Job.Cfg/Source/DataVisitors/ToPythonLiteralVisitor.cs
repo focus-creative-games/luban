@@ -12,8 +12,7 @@ namespace Luban.Job.Cfg.DataVisitors
 
         public override string Accept(DText type)
         {
-            var ass = DefAssembly.LocalAssebmly;
-            return $"{{\"{DText.KEY_NAME}\":\"{type.Key}\",\"{DText.TEXT_NAME}\":\"{DataUtil.EscapeString(type.GetText(ass.ExportTextTable, ass.NotConvertTextSet))}\"}}";
+            return $"{{\"{DText.KEY_NAME}\":\"{type.Key}\",\"{DText.TEXT_NAME}\":\"{DataUtil.EscapeString(type.TextOfCurrentAssembly)}\"}}";
         }
 
         public override string Accept(DBean type)

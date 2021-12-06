@@ -12,8 +12,7 @@ namespace Luban.Job.Cfg.DataVisitors
         public override string Accept(DText type)
         {
 #if !LUBAN_LITE
-            var ass = DefAssembly.LocalAssebmly;
-            return $"\"{type.Key}#{type.GetText(ass.ExportTextTable, ass.NotConvertTextSet)}\"";
+            return $"\"{type.Key}#{type.TextOfCurrentAssembly}\"";
 #else
             return $"\"{type.Key}#{type.RawValue}\"";
 #endif

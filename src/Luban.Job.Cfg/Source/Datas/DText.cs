@@ -1,4 +1,5 @@
 using Luban.Job.Cfg.DataVisitors;
+using Luban.Job.Cfg.Defs;
 #if !LUBAN_LITE
 using Luban.Job.Cfg.l10n;
 #endif
@@ -39,6 +40,15 @@ namespace Luban.Job.Cfg.Datas
                 }
             }
             return _rawValue;
+        }
+
+        public string TextOfCurrentAssembly
+        {
+            get
+            {
+                var ass = DefAssembly.LocalAssebmly;
+                return GetText(ass.ExportTextTable, ass.NotConvertTextSet);
+            }
         }
 #endif
 

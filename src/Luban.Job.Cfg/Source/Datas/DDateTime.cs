@@ -1,5 +1,6 @@
 using Luban.Common.Utils;
 using Luban.Job.Cfg.DataVisitors;
+using Luban.Job.Cfg.Defs;
 using Luban.Job.Cfg.Utils;
 using System;
 
@@ -59,6 +60,8 @@ namespace Luban.Job.Cfg.Datas
                 return (int)new DateTimeOffset(destDateTime).ToUnixTimeSeconds();
             }
         }
+
+        public int UnixTimeOfCurrentAssembly => GetUnixTime(DefAssembly.LocalAssebmly.TimeZone);
 
         public override void Apply<T>(IDataActionVisitor<T> visitor, T x)
         {

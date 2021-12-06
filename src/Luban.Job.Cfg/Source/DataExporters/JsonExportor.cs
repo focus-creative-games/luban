@@ -93,8 +93,7 @@ namespace Luban.Job.Cfg.DataExporters
             x.WritePropertyName(DText.KEY_NAME);
             x.WriteStringValue(type.Key);
             x.WritePropertyName(DText.TEXT_NAME);
-            var ass = DefAssembly.LocalAssebmly;
-            x.WriteStringValue(type.GetText(ass.ExportTextTable, ass.NotConvertTextSet));
+            x.WriteStringValue(type.TextOfCurrentAssembly);
             x.WriteEndObject();
         }
 
@@ -196,7 +195,7 @@ namespace Luban.Job.Cfg.DataExporters
 
         public virtual void Accept(DDateTime type, Utf8JsonWriter x)
         {
-            x.WriteNumberValue(type.GetUnixTime(DefAssembly.LocalAssebmly.TimeZone));
+            x.WriteNumberValue(type.UnixTimeOfCurrentAssembly);
         }
     }
 }

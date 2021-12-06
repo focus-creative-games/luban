@@ -87,7 +87,7 @@ namespace Luban.Job.Cfg.DataExporters
 
         public void Accept(DDateTime type, CodedOutputStream x)
         {
-            x.WriteInt32(type.GetUnixTime(DefAssembly.LocalAssebmly.TimeZone));
+            x.WriteInt32(type.UnixTimeOfCurrentAssembly);
         }
 
         public void Accept(DString type, CodedOutputStream x)
@@ -104,12 +104,12 @@ namespace Luban.Job.Cfg.DataExporters
         {
             // 此处与 binary格式不同. binary格式还包含了key
             // 意味pb格式是无法支持动态本土化的。
-            var ass = DefAssembly.LocalAssebmly;
-            x.WriteString(type.GetText(ass.ExportTextTable, ass.NotConvertTextSet));
+            x.WriteString(type.TextOfCurrentAssembly);
         }
 
         private MemoryStream AllocMemoryStream()
         {
+            // TODO 优化
             return new MemoryStream();
         }
 
