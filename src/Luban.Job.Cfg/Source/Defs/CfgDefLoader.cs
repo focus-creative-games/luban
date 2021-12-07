@@ -850,7 +850,7 @@ namespace Luban.Job.Cfg.Defs
             var refGroup = new RefGroup()
             {
                 Name = XmlUtil.GetRequiredAttribute(e, "name"),
-                Refs = XmlUtil.GetRequiredAttribute(e, "ref").Split(",").Select(s => s.Trim()).ToList(),
+                Refs = XmlUtil.GetRequiredAttribute(e, "ref").Split(',').Select(s => s.Trim()).ToList(),
             };
             _refGroups.Add(refGroup);
         }

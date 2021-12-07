@@ -215,7 +215,7 @@ namespace Luban.Job.Cfg.Defs
             return _refGroups.TryGetValue(groupName, out var refGroup) ? refGroup : null;
         }
 
-        public void Load(Defines defines, RemoteAgent agent, GenArgs args)
+        public void Load(Defines defines, IAgent agent, GenArgs args)
         {
             LoadCommon(defines, agent, args);
 

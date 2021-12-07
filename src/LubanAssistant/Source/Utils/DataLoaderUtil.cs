@@ -206,7 +206,10 @@ namespace Luban.Job.Cfg.Utils
             var excludeTags = new List<string>();
             var ass = new DefAssembly("", timeZoneInfo, excludeTags, agent);
 
-            ass.Load("all", rawDefines);
+            ass.Load(rawDefines, agent, new GenArgs()
+            {
+                Service = "all",
+            });
 
             DefAssemblyBase.LocalAssebmly = ass;
             return ass;

@@ -130,17 +130,20 @@
   -->
   <ItemGroup>
     <Reference Include="Accessibility" />
+    <Reference Include="CommandLine, Version=2.8.0.0, Culture=neutral, PublicKeyToken=5a870481e358d379, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommandLineParser.2.8.0\lib\net461\CommandLine.dll</HintPath>
+    </Reference>
     <Reference Include="ExcelDataReader, Version=3.6.0.0, Culture=neutral, PublicKeyToken=93517dbe6a4012fa, processorArchitecture=MSIL">
       <HintPath>..\packages\ExcelDataReader.3.6.0\lib\net45\ExcelDataReader.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.5.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.6.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="Neo.Lua, Version=5.3.0.0, Culture=neutral, PublicKeyToken=fdb0cd4fe8a6e3b2, processorArchitecture=MSIL">
-      <HintPath>..\packages\NeoLua.1.3.13\lib\net47\Neo.Lua.dll</HintPath>
+      <HintPath>..\packages\NeoLua.1.3.14\lib\net47\Neo.Lua.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.7.11\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\packages\NLog.4.7.13\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -157,16 +160,16 @@
     <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
     </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Text.Encodings.Web, Version=5.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Text.Encodings.Web.5.0.1\lib\net461\System.Text.Encodings.Web.dll</HintPath>
+    <Reference Include="System.Text.Encodings.Web, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encodings.Web.6.0.0\lib\net461\System.Text.Encodings.Web.dll</HintPath>
     </Reference>
-    <Reference Include="System.Text.Json, Version=5.0.0.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Text.Json.5.0.2\lib\net461\System.Text.Json.dll</HintPath>
+    <Reference Include="System.Text.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Json.6.0.0\lib\net461\System.Text.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
@@ -447,8 +450,17 @@
     <Compile Include="..\Luban.Job.Cfg\Source\Defs\DefField.cs">
       <Link>Source\Defs\DefField.cs</Link>
     </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\Defs\DefRefGroup.cs">
+      <Link>Source\Defs\DefRefGroup.cs</Link>
+    </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\Defs\DefTable.cs">
       <Link>Source\Defs\DefTable.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\Defs\TableDataInfo.cs">
+      <Link>Source\RawDefs\TableDataInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\GenArgs.cs">
+      <Link>Source\GenArgs.cs</Link>
     </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\RawDefs\CfgBean.cs">
       <Link>Source\RawDefs\CfgBean.cs</Link>
@@ -464,6 +476,9 @@
     </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\RawDefs\Patch.cs">
       <Link>Source\RawDefs\Patch.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Cfg\Source\RawDefs\RefGroup.cs">
+      <Link>Source\RawDefs\RefGroup.cs</Link>
     </Compile>
     <Compile Include="..\Luban.Job.Cfg\Source\RawDefs\ResourceInfo.cs">
       <Link>Source\RawDefs\ResourceInfo.cs</Link>
@@ -540,11 +555,20 @@
     <Compile Include="..\Luban.Job.Common\Source\ELanguage.cs">
       <Link>Source\ELanguage.cs</Link>
     </Compile>
+    <Compile Include="..\Luban.Job.Common\Source\GenArgsBase.cs">
+      <Link>Source\GenArgsBase.cs</Link>
+    </Compile>
     <Compile Include="..\Luban.Job.Common\Source\NamingConvention.cs">
       <Link>Source\NamingConvention.cs</Link>
     </Compile>
     <Compile Include="..\Luban.Job.Common\Source\RawDefs\Bean.cs">
       <Link>Source\RawDefs\Bean.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Common\Source\RawDefs\DefinesCommon.cs">
+      <Link>Source\RawDefs\DefinesCommon.cs</Link>
+    </Compile>
+    <Compile Include="..\Luban.Job.Common\Source\RawDefs\ExternalType.cs">
+      <Link>Source\RawDefs\ExternalType.cs</Link>
     </Compile>
     <Compile Include="..\Luban.Job.Common\Source\RawDefs\Field.cs">
       <Link>Source\RawDefs\Field.cs</Link>
@@ -745,4 +769,11 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
+  <Import Project="..\packages\System.Text.Json.6.0.0\build\System.Text.Json.targets" Condition="Exists('..\packages\System.Text.Json.6.0.0\build\System.Text.Json.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\System.Text.Json.6.0.0\build\System.Text.Json.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Text.Json.6.0.0\build\System.Text.Json.targets'))" />
+  </Target>
 </Project>
