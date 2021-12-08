@@ -15,9 +15,9 @@ using System.Threading.Tasks;
 
 namespace Luban.Job.Cfg.DataExporters
 {
-    class ProtobufExportor : IDataActionVisitor<CodedOutputStream>
+    class ProtobufBinExportor : IDataActionVisitor<CodedOutputStream>
     {
-        public static ProtobufExportor Ins { get; } = new();
+        public static ProtobufBinExportor Ins { get; } = new();
 
         public void WriteList(DefTable table, List<Record> datas, MemoryStream x)
         {

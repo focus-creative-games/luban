@@ -245,6 +245,29 @@ namespace Luban.Job.Common.Defs
             }
         }
 
+        public static string Protobuf3PreDecorator(TType type)
+        {
+            if (type.IsNullable)
+            {
+                return "optional";
+            }
+            else if (type.IsCollection)
+            {
+                if (type is TMap)
+                {
+                    return "";
+                }
+                else
+                {
+                    return "repeated";
+                }
+            }
+            else
+            {
+                return "";
+            }
+        }
+
         public static string FlatBuffersDefineType(TType type)
         {
             return type.Apply(FlatBuffersTypeNameVisitor.Ins);

@@ -93,11 +93,24 @@ namespace Luban.Job.Cfg.Utils
                     }
                     return string.Join('\n', content);
                 }
-                case "data_protobuf":
+                case "data_protobuf_bin":
                 {
                     var ms = new MemoryStream();
-                    ProtobufExportor.Ins.WriteList(table, records, ms);
+                    ProtobufBinExportor.Ins.WriteList(table, records, ms);
                     return DataUtil.StreamToBytes(ms);
+                }
+                case "data_protobuf_json":
+                {
+                    var ss = new MemoryStream();
+                    var jsonWriter = new Utf8JsonWriter(ss, new JsonWriterOptions()
+                    {
+                        Indented = !table.Assembly.OutputCompactJson,
+                        SkipValidation = false,
+                        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(System.Text.Unicode.UnicodeRanges.All),
+                    });
+                    ProtobufJsonExportor.Ins.WriteAsTable(records, jsonWriter);
+                    jsonWriter.Flush();
+                    return DataUtil.StreamToBytes(ss);
                 }
                 case "data_msgpack":
                 {

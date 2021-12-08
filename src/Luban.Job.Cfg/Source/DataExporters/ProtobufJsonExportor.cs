@@ -10,7 +10,7 @@ using System.Text.Json;
 
 namespace Luban.Job.Cfg.DataExporters
 {
-    class FlatBuffersJsonExportor : JsonExportor
+    class ProtobufJsonExportor : JsonExportor
     {
         public static new FlatBuffersJsonExportor Ins { get; } = new();
 
@@ -43,12 +43,12 @@ namespace Luban.Job.Cfg.DataExporters
         {
             x.WriteStartObject();
 
-            // flatc 不允许有多余字段
-            //if (type.Type.IsAbstractType)
-            //{
-            //    x.WritePropertyName(DefBean.TYPE_NAME_KEY);
-            //    x.WriteStringValue(type.ImplType.Name);
-            //}
+            if (type.Type.IsAbstractType)
+            {
+                // protobuf oneof 用 @type来识别类型
+                x.WritePropertyName("@type");
+                x.WriteStringValue(TBean.Create(false, type.ImplType, null).Apply(ProtobufTypeNameVisitor.Ins));
+            }
 
             var defFields = type.ImplType.HierarchyFields;
             int index = 0;
@@ -64,14 +64,6 @@ namespace Luban.Job.Cfg.DataExporters
                 }
                 else
                 {
-                    // flatbuffers的union类型的json格式,会额外产生一个 xx_type字段。
-                    // 另外，json格式不支持union出现在容器类型上。
-                    if (d is DBean beanField && beanField.Type.IsAbstractType)
-                    {
-                        x.WritePropertyName($"{defField.Name}_type");
-                        x.WriteStringValue(TBean.Create(defField.CType.IsNullable, beanField.ImplType, null).Apply(FlatBuffersTypeNameVisitor.Ins));
-                    }
-
                     x.WritePropertyName(defField.Name);
                     d.Apply(this, x);
                 }
@@ -79,17 +71,16 @@ namespace Luban.Job.Cfg.DataExporters
             x.WriteEndObject();
         }
 
+
         public override void Accept(DMap type, Utf8JsonWriter x)
         {
             x.WriteStartArray();
             foreach (var d in type.Datas)
             {
-                x.WriteStartObject();
-                x.WritePropertyName("key");
-                d.Key.Apply(this, x);
-                x.WritePropertyName("value");
+                x.WriteStartArray();
+                x.WriteStringValue(d.Key.Apply(ToJsonLiteralVisitor.Ins));
                 d.Value.Apply(this, x);
-                x.WriteEndObject();
+                x.WriteEndArray();
             }
             x.WriteEndArray();
         }

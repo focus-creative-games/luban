@@ -13,7 +13,8 @@ namespace Luban.Job.Cfg.Generate
     [Render("data_lua")]
     [Render("data_xml")]
     [Render("data_yaml")]
-    [Render("data_protobuf")]
+    [Render("data_protobuf_bin")]
+    [Render("data_protobuf_json")]
     [Render("data_msgpack")]
     [Render("data_flatbuffers_json")]
     class DataScatterRender : DataRenderBase
