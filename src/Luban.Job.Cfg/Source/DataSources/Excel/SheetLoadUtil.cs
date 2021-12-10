@@ -240,18 +240,47 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 }
                 var (titleName, tags) = ParseNameAndMetaAttrs(nameAndAttrs);
 
-                if (title.SubTitles.TryGetValue(titleName, out var subTitle))
+                Title subTitle;
+                if (titleName.StartsWith('['))
                 {
-                    if (subTitle.FromIndex != i)
+                    int startIndex = i;
+                    titleName = titleName.Substring(1);
+                    bool findEndPair = false;
+                    for (++i; i <= title.ToIndex; i++)
                     {
-                        throw new Exception($"列:{titleName} 重复");
+                        var endNamePair = titleRow[i].Value?.ToString()?.Trim();
+                        if (string.IsNullOrEmpty(endNamePair))
+                        {
+                            continue;
+                        }
+                        if (!endNamePair.EndsWith(']') || endNamePair[0..^1] != titleName)
+                        {
+                            throw new Exception($"列:'[{titleName}' 后第一个有效列必须为匹配 '{titleName}]'，却发现:'{endNamePair}'");
+                        }
+                        findEndPair = true;
+                        break;
                     }
-                    else
+                    if (!findEndPair)
                     {
-                        continue;
+                        throw new Exception($"列:'[{titleName}' 未找到结束匹配列 '{titleName}]'");
                     }
+                    subTitle = new Title() { Name = titleName, Tags = tags, FromIndex = startIndex, ToIndex = i };
                 }
-                subTitle = new Title() { Name = titleName, Tags = tags, FromIndex = i, ToIndex = i };
+                else
+                {
+                    if (title.SubTitles.TryGetValue(titleName, out subTitle))
+                    {
+                        if (subTitle.FromIndex != i)
+                        {
+                            throw new Exception($"列:{titleName} 重复");
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                    }
+                    subTitle = new Title() { Name = titleName, Tags = tags, FromIndex = i, ToIndex = i };
+                }
                 if (excelRowIndex < cells.Count && TryFindNextSubFieldRowIndex(cells, excelRowIndex, out int nextRowIndex))
                 {
                     ParseSubTitles(subTitle, cells, mergeCells, orientRow, nextRowIndex + 1);
