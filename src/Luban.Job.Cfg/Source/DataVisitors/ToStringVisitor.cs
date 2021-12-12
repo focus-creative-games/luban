@@ -11,11 +11,7 @@ namespace Luban.Job.Cfg.DataVisitors
 
         public override string Accept(DText type)
         {
-#if !LUBAN_LITE
             return $"\"{type.Key}#{type.TextOfCurrentAssembly}\"";
-#else
-            return $"\"{type.Key}#{type.RawValue}\"";
-#endif
         }
 
         public override string Accept(DBean type)

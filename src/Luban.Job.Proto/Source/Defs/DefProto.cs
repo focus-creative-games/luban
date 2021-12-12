@@ -24,7 +24,6 @@ namespace Luban.Job.Proto.Defs
 
         public List<DefField> Fields { get; set; } = new List<DefField>();
 
-#if !LUBAN_LITE
         public virtual string GoBinImport
         {
             get
@@ -41,7 +40,6 @@ namespace Luban.Job.Proto.Defs
                 return string.Join('\n', imports.Select(im => $"import \"{im}\""));
             }
         }
-#endif
 
         public override void Compile()
         {

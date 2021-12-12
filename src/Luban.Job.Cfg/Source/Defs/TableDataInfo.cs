@@ -1,7 +1,5 @@
 ﻿using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.DataSources;
-#if !LUBAN_LITE
-#endif
 using Luban.Job.Cfg.RawDefs;
 using Luban.Job.Cfg.Utils;
 using System;
@@ -37,7 +35,6 @@ namespace Luban.Job.Cfg.Defs
 
         private void BuildIndexs()
         {
-#if !LUBAN_LITE
             List<Record> mainRecords = MainRecords;
             List<Record> patchRecords = PatchRecords;
 
@@ -171,7 +168,6 @@ namespace Luban.Job.Cfg.Defs
                 }
                 default: throw new Exception($"unknown mode:{Table.Mode}");
             }
-#endif
         }
     }
 }

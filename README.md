@@ -197,7 +197,7 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 
 <table border="1">
 <tr align="center"><td>##</td><td>full_name</td><td>flags</td><td>unique</td><td>comment</td><td>tags</td><td colspan="5">*items</td></tr>
-<tr align="center"><td>##+</td><td></td><td></td><td></td><td></td><td></td><td>name</td><td>alias</td><td>value</td><td>comment</td><td>tags</td></tr>
+<tr align="center"><td>##var</td><td></td><td></td><td></td><td></td><td></td><td>name</td><td>alias</td><td>value</td><td>comment</td><td>tags</td></tr>
 <tr align="center"><td/><td>ItemQuality</td><td>false</td><td>true</td><td/><td/><td>WHITE</td><td>白</td><td>0</td><td/><td/></tr>
 <tr align="center"><td/><td></td><td></td><td></td><td/><td/><td>GREEN</td><td>绿</td><td>1</td><td/><td/></tr>
 <tr align="center"><td/><td></td><td></td><td></td><td/><td/><td>RED</td><td>红</td><td>2</td><td/><td/></tr>
@@ -234,7 +234,7 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 
 <table border="1">
 <tr align="center"><td>##</td><td>full_name</td><td >sep</td><td>comment</td><td colspan="5">fields</td>  </tr>
-<tr align="center"><td>##+</td><td></td><td/><td/><td>name</td><td>type</td><td>group</td><td>comment</td><td>tags</td></tr>
+<tr align="center"><td>##var</td><td></td><td/><td/><td>name</td><td>type</td><td>group</td><td>comment</td><td>tags</td></tr>
 <tr><td></td><td>Reward</td><td/><td/><td>item_id</td><td>int</td><td></td><td>道具id</td><td/></tr>
 <tr><td></td><td></td><td/><td/><td>count</td><td>int</td><td></td><td>个数</td><td/></tr>
 <tr><td></td><td></td><td/><td/><td>desc</td><td>string</td><td></td><td>描述</td><td/></tr>
@@ -352,7 +352,7 @@ xml中定义如下
 </tr>
 
 <tr align="center">
-  <td>##+</td>
+  <td>##var</td>
   <td></td>
   <td></td>
   <td colspan="3">0</td>
@@ -360,7 +360,7 @@ xml中定义如下
   <td colspan="3">2</td>
 </tr>
 <tr align="center">
-  <td>##+</td>
+  <td>##var</td>
   <td/>
   <td/>
   <td>item_id</td><td>num</td><td>desc</td>
@@ -625,7 +625,7 @@ xml中定义如下
 
 ### 层级标题头 (hierarchy title)
 
-在多行数据或者深层次嵌套的数据中，如果数据字段较多，填写时不易区分子元素。luban提供层级标题实现深层次的子字段对应。以上面的多行数据列表为例,第一列为##+表示这是个子字段行。
+在多行数据或者深层次嵌套的数据中，如果数据字段较多，填写时不易区分子元素。luban提供层级标题实现深层次的子字段对应。以上面的多行数据列表为例,第一列为##var表示这是个子字段行。
 
 - 普通bean结构的子标题
 
@@ -644,7 +644,7 @@ xml中定义如下
   <td colspan="5">Stage</td>
 </tr>
 <tr align="center">
-  <td>##+</td>
+  <td>##var</td>
   <td/>
   <td/>
   <td>name</td>
@@ -687,7 +687,7 @@ xml中定义如下
   <td colspan="6">stages</td>
 </tr>
 <tr align="center">
-  <td>##+</td>
+  <td>##var</td>
   <td/>
   <td/>
   <td>id</td>
@@ -745,7 +745,7 @@ xml中定义如下
 <tr align="center"><td>##type</td><td>int</td><td>string</td><td colspan="9">list,Item</td></tr>
 
 <tr align="center">
-  <td>##+</td>
+  <td>##var</td>
   <td></td>
   <td></td>
   <td colspan="3">0</td>
@@ -753,7 +753,7 @@ xml中定义如下
   <td colspan="3">2</td>
 </tr>
 <tr align="center">
-  <td>##+</td>
+  <td>##var</td>
   <td/>
   <td/>
   <td>item_id</td><td>num</td><td>desc</td>
@@ -772,7 +772,7 @@ xml中定义如下
 
 <tr align="center"><td>##</td><td>id</td><td colspan="4">lans</td></tr>
 <tr align="center"><td>##type</td><td>int</td><td colspan="4">map,string,string</td></tr>
-<tr align="center"><td>##+</td><td/><td>ch-zn</td><td>en</td><td>jp</td><td>fr</td></tr>
+<tr align="center"><td>##var</td><td/><td>ch-zn</td><td>en</td><td>jp</td><td>fr</td></tr>
 <tr align="center"><td/><td>1</td><td>苹果</td><td>apple</td><td>aaa</td><td>aaa</td></tr>
 <tr align="center"><td/><td>2</td><td>香蕉</td><td>banana</td><td>bbb</td><td>bbb</td></tr>
 
@@ -931,11 +931,11 @@ binary格式占空间最小，lua其次，json最大。
 
 ### 自定义代码和数据模板
 
-[自定义模板](docs/render_template.md)
+[自定义模板](https://github.com/focus-creative-games/luban/wiki/render_template)
 
 ### 本地化
 
-支持以下几种本地化机制，详见[本地化](docs/l10n.md)
+支持以下几种本地化机制，详见[本地化](https://github.com/focus-creative-games/luban/wiki/l10n)
 
 - 静态本地化
 - 动态本地化

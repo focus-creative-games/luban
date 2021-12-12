@@ -33,7 +33,6 @@ namespace Luban.Job.Cfg.Defs
             return DeepCompareTypeDefine.Ins.Compare(this, b, new Dictionary<DefTypeBase, bool>(), new HashSet<DefTypeBase>());
         }
 
-#if !LUBAN_LITE
         public override string GoBinImport
         {
             get
@@ -96,7 +95,6 @@ namespace Luban.Job.Cfg.Defs
                 throw new NotImplementedException();
             }
         }
-#endif
 
         public DefBean(CfgBean b) : base(b)
         {
@@ -187,11 +185,7 @@ namespace Luban.Job.Cfg.Defs
                 Id = TypeUtil.ComputCfgHashIdByName(FullName);
             }
             // 检查别名是否重复
-#if !LUBAN_LITE
             HashSet<string> nameOrAliasName = cs.Select(b => b.Name).ToHashSet();
-#else
-            HashSet<string> nameOrAliasName = new HashSet<string>(cs.Select(b => b.Name));
-#endif
             foreach (DefBean c in cs)
             {
                 if (!string.IsNullOrWhiteSpace(c.Alias) && !nameOrAliasName.Add(c.Alias))

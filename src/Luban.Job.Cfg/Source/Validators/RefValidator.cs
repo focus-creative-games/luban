@@ -41,7 +41,6 @@ namespace Luban.Job.Cfg.Validators
             }
             var assembly = ctx.Assembly;
 
-#if !LUBAN_LITE
             foreach (var tableInfo in _compiledTables)
             {
                 var (defTable, field, zeroAble) = tableInfo;
@@ -83,7 +82,6 @@ namespace Luban.Job.Cfg.Validators
             {
                 assembly.Agent.Error("记录 {0} = {1} (来自文件:{2}) 在引用表:{3} 中不存在", ValidatorContext.CurrentRecordPath, key, source, table.Table.FullName);
             }
-#endif
         }
 
 

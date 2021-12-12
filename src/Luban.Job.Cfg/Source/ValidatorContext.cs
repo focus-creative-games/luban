@@ -72,12 +72,10 @@ namespace Luban.Job.Cfg
                     {
                         CurrentVisitor = visitor;
                         visitor.ValidateTable(t, records);
-#if !LUBAN_LITE
                         if (this.Assembly.NeedL10nTextTranslate)
                         {
                             ValidateText(t, records);
                         }
-#endif
                     }
                     finally
                     {
@@ -93,7 +91,6 @@ namespace Luban.Job.Cfg
             }
         }
 
-#if !LUBAN_LITE
         private void ValidateText(DefTable table, List<Record> records)
         {
             foreach (var r in records)
@@ -103,7 +100,6 @@ namespace Luban.Job.Cfg
             }
             CurrentVisitor.CurrentValidateRecord = null;
         }
-#endif
 
         private async Task ValidatePaths()
         {
@@ -154,11 +150,7 @@ namespace Luban.Job.Cfg
                     {
                         if (ls.All(f => fileNotExistsSet.Contains(f)))
                         {
-#if !LUBAN_LITE
                             agent.Error("记录 {0} = {1} (来自文件:{2}) 所引用文件:{3} 不存在", q.DataPath, q.Value, q.Source, string.Join(',', ls));
-#else
-                            agent.Error("记录 {0} = {1} (来自文件:{2}) 所引用文件:{3} 不存在", q.DataPath, q.Value, q.Source, string.Join(",", ls));
-#endif
                         }
                         break;
                     }

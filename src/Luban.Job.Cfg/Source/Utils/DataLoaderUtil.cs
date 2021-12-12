@@ -84,7 +84,6 @@ namespace Luban.Job.Cfg.Utils
             foreach (var file in inputFileInfos)
             {
                 var actualFile = file.ActualFile;
-                //s_logger.Info("== get input file:{file} actualFile:{actual}", file, actualFile);
 
                 tasks.Add(Task.Run(async () =>
                 {

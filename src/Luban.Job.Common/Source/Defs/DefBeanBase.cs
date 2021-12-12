@@ -59,7 +59,6 @@ namespace Luban.Job.Common.Defs
             }
         }
 
-#if !LUBAN_LITE
         public virtual string GoBinImport
         {
             get
@@ -76,7 +75,6 @@ namespace Luban.Job.Common.Defs
                 return string.Join('\n', imports.Select(im => $"import \"{im}\""));
             }
         }
-#endif
 
         protected abstract DefFieldBase CreateField(Field f, int idOffset);
 

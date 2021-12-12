@@ -112,11 +112,7 @@ namespace Luban.Job.Cfg.Validators
                 string suffix = groups[2].Value.Substring(1);
                 if (suffix.EndsWith("_C"))
                 {
-#if !LUBAN_LITE
                     suffix = suffix[0..^2];
-#else
-                    suffix = suffix.Substring(0, suffix.Length - 2);
-#endif
                 }
                 return path.EndsWith(suffix);
             }
@@ -221,17 +217,9 @@ namespace Luban.Job.Cfg.Validators
 
             string patType = ss[0];
             bool emptyAble = false;
-#if !LUBAN_LITE
             if (patType.EndsWith('?'))
-#else
-            if (patType.EndsWith("?"))
-#endif
             {
-#if !LUBAN_LITE
                 patType = patType[0..^1];
-#else
-                patType = patType.Substring(0, patType.Length - 1);
-#endif
                 emptyAble = true;
             }
 

@@ -1,9 +1,7 @@
 using Bright.Collections;
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.DataSources;
-#if !LUBAN_LITE
 using Luban.Job.Cfg.l10n;
-#endif
 using Luban.Job.Cfg.RawDefs;
 using Luban.Job.Cfg.TypeVisitors;
 using Luban.Job.Common.Defs;
@@ -64,7 +62,6 @@ namespace Luban.Job.Cfg.Defs
         public Dictionary<string, DefTable> CfgTablesByName = new();
         public Dictionary<string, DefTable> CfgTablesByFullName { get; } = new Dictionary<string, DefTable>();
 
-#if !LUBAN_LITE
         public RawTextTable RawTextTable { get; } = new RawTextTable();
 
         public TextTable ExportTextTable { get; private set; }
@@ -78,8 +75,6 @@ namespace Luban.Job.Cfg.Defs
             ExportTextTable = new TextTable(this, textValueFieldName);
             NotConvertTextSet = new NotConvertTextSet();
         }
-
-#endif
 
         public Patch GetPatch(string name)
         {

@@ -214,11 +214,7 @@ namespace Luban.Job.Common.Defs
             rawType = DefUtil.TrimBracePairs(rawType);
             var (type, tags) = DefUtil.ParseType(rawType);
 
-#if !LUBAN_LITE
             if (type.EndsWith('?'))
-#else
-            if (type.EndsWith("?"))
-#endif
             {
                 if (!SupportNullable)
                 {

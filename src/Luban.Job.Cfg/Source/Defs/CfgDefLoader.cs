@@ -323,15 +323,8 @@ namespace Luban.Job.Cfg.Defs
             string valueTypeName = TypeUtil.GetName(table.ValueType);
 
             var cb = new CfgBean() { Namespace = valueTypeNamespace, Name = valueTypeName, Comment = "" };
-#if !LUBAN_LITE
             foreach (var (name, f) in tableDefInfo.FieldInfos)
             {
-#else
-            foreach (var e in tableDefInfo.FieldInfos)
-            {
-                var name = e.Key;
-                var f = e.Value;
-#endif
                 var cf = new CfgField() { Name = name, Id = 0 };
 
                 string[] attrs = f.Type.Trim().Split('&').Select(s => s.Trim()).ToArray();
@@ -347,11 +340,7 @@ namespace Luban.Job.Cfg.Defs
 
                 for (int i = 1; i < attrs.Length; i++)
                 {
-#if !LUBAN_LITE
                     var pair = attrs[i].Split('=', 2);
-#else
-                    var pair = attrs[i].Split(new char[] { '=' }, 2);
-#endif
                     if (pair.Length != 2)
                     {
                         throw new Exception($"table:'{table.Name}' file:{file.OriginFile} title:'{name}' attr:'{attrs[i]}' is invalid!");

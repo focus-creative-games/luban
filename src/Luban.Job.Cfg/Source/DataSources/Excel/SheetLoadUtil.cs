@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Luban.Job.Cfg.DataSources.Excel
@@ -31,9 +32,12 @@ namespace Luban.Job.Cfg.DataSources.Excel
             }
         }
 
+        private static readonly AsyncLocal<string> s_curExcel = new();
+
         public static IEnumerable<RawSheet> LoadRawSheets(string rawUrl, string sheetName, Stream stream)
         {
             s_logger.Trace("{filename} {sheet}", rawUrl, sheetName);
+            s_curExcel.Value = rawUrl;
             string ext = Path.GetExtension(rawUrl);
             using (var reader = ext != ".csv" ? ExcelReaderFactory.CreateReader(stream) : ExcelReaderFactory.CreateCsvReader(stream, new ExcelReaderConfiguration() { FallbackEncoding = DetectCsvEncoding(stream) }))
             {
@@ -68,9 +72,46 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 return null;
             }
             var cells = ParseRawSheetContent(reader, orientRow, false);
+            ValidateTitles(cells);
             var title = ParseTitle(cells, reader.MergeCells, orientRow);
             cells.RemoveAll(c => IsNotDataRow(c));
             return new RawSheet() { Title = title, TableName = tableName, Cells = cells };
+        }
+
+
+        private static readonly HashSet<string> s_knownSpecialTags = new HashSet<string>
+        {
+            "##var",
+            "##+",
+            "##type",
+            "##desc",
+            "##comment",
+            "##column",
+            "##",
+        };
+
+        private static void ValidateTitles(List<List<Cell>> rows)
+        {
+            foreach (var row in rows)
+            {
+                if (row.Count == 0)
+                {
+                    continue;
+                }
+                string rowTag = row[0].Value?.ToString()?.ToLower()?.Trim();
+                if (string.IsNullOrEmpty(rowTag))
+                {
+                    continue;
+                }
+                if (!rowTag.StartsWith("##"))
+                {
+                    break;
+                }
+                if (!s_knownSpecialTags.Contains(rowTag))
+                {
+                    DefAssembly.LocalAssebmly?.Agent?.Error("文件:'{0}' 行标签:'{1}' 未知，是否有拼写错误?", s_curExcel.Value, rowTag);
+                }
+            }
         }
 
         private static bool IsNotDataRow(List<Cell> row)
@@ -133,11 +174,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         private static bool IsIgnoreTitle(string title)
         {
-#if !LUBAN_LITE
             return string.IsNullOrEmpty(title) || title.StartsWith('#');
-#else
-            return string.IsNullOrEmpty(title) || title.StartsWith("#");
-#endif
         }
 
         public static (string Name, Dictionary<string, string> Tags) ParseNameAndMetaAttrs(string nameAndAttrs)
@@ -241,6 +278,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 var (titleName, tags) = ParseNameAndMetaAttrs(nameAndAttrs);
 
                 Title subTitle;
+                // [field,,,, field] 形成多列字段
                 if (titleName.StartsWith('['))
                 {
                     int startIndex = i;
