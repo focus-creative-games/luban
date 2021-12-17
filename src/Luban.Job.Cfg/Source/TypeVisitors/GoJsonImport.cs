@@ -1,3 +1,4 @@
+using Luban.Job.Cfg.Defs;
 using Luban.Job.Common.Types;
 using Luban.Job.Common.TypeVisitors;
 using System.Collections.Generic;
@@ -37,19 +38,19 @@ namespace Luban.Job.Cfg.TypeVisitors
         public override void Accept(TVector2 type, HashSet<string> x)
         {
             x.Add("errors");
-            x.Add("bright/math");
+            x.Add($"{DefAssembly.LocalAssebmly.Args.GoBrightModuleName}/serialization");
         }
 
         public override void Accept(TVector3 type, HashSet<string> x)
         {
             x.Add("errors");
-            x.Add("bright/math");
+            x.Add($"{DefAssembly.LocalAssebmly.Args.GoBrightModuleName}/serialization");
         }
 
         public override void Accept(TVector4 type, HashSet<string> x)
         {
             x.Add("errors");
-            x.Add("bright/math");
+            x.Add($"{DefAssembly.LocalAssebmly.Args.GoBrightModuleName}/serialization");
         }
     }
 }

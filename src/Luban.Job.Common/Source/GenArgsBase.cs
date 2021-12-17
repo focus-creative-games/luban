@@ -53,6 +53,9 @@ namespace Luban.Job.Common
         [Option("cs:use_unity_vector", Required = false, HelpText = "use UnityEngine.Vector{2,3,4}")]
         public bool CsUseUnityVectors { get; set; }
 
+        [Option("go:bright_module_name", Required = false, HelpText = "go bright module name")]
+        public string GoBrightModuleName { get; set; }
+
         [Option("external:selectors", Required = false, HelpText = "external selectors")]
         public string ExternalSelectors { get; set; }
 
@@ -114,6 +117,16 @@ namespace Luban.Job.Common
             if (!this.TypescriptEmbedBrightTypes && !hasBrightPathOrPacakge)
             {
                 errMsg = "while --embed_bright_types is false, should provide option --typescript_bright_require_path or --typescript_bright_package_name";
+                return false;
+            }
+            return true;
+        }
+
+        public bool ValidateGoRequire(string genType, ref string errMsg)
+        {
+            if (string.IsNullOrWhiteSpace(this.GoBrightModuleName))
+            {
+                errMsg = "option '--go:bright_module_name <module name> ' missing";
                 return false;
             }
             return true;

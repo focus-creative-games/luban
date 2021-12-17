@@ -9,7 +9,7 @@
 package {{x.top_module}}
 
 import (
-    "bright/serialization"
+    "{{assembly.args.go_bright_module_name}}/serialization"
 )
 
 {{x.go_bin_import}}

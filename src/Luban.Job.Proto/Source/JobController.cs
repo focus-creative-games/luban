@@ -49,6 +49,10 @@ namespace Luban.Job.Proto
             {
                 return false;
             }
+            if (options.GenType.Contains("go_") && !options.ValidateGoRequire(options.GenType, ref errMsg))
+            {
+                return false;
+            }
             if (!options.ValidateConvention(ref errMsg))
             {
                 return false;

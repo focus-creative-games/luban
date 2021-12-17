@@ -43,6 +43,8 @@ namespace Luban.Job.Common.Defs
 
         public bool CsUseUnityVectors { get; set; }
 
+        public GenArgsBase Args { get; private set; }
+
         public NamingConvention NamingConventionModule { get; set; } = NamingConvention.LanguangeRecommend;
 
         public NamingConvention NamingConventionType { get; set; } = NamingConvention.LanguangeRecommend;
@@ -89,6 +91,8 @@ namespace Luban.Job.Common.Defs
             this.TopModule = defines.TopModule;
             this.ExternalSelectors = defines.ExternalSelectors;
             this.ExternalTypes = defines.ExternalTypes;
+
+            this.Args = args;
 
             SetCurrentExternalSelectors(args.ExternalSelectors);
 

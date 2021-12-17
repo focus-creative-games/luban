@@ -11,7 +11,7 @@
 
 package {{x.top_module}}
 
-import "bright/serialization"
+import "{{assembly.args.go_bright_module_name}}/serialization"
 
 {{~if x.is_map_table~}}
 type {{go_full_name}} struct {

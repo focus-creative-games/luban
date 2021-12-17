@@ -96,7 +96,7 @@ namespace Luban.Job.Cfg.TypeVisitors
             var _x_, _y_ float32;
             {TFloat.Ins.Apply(this, "_x_", "x", "_v_")}
             {TFloat.Ins.Apply(this, "_y_", "y", "_v_")}
-            {varName} = math.NewVector2(_x_, _y_)
+            {varName} = serialization.NewVector2(_x_, _y_)
             }}
 ";
         }
@@ -108,7 +108,7 @@ namespace Luban.Job.Cfg.TypeVisitors
             {TFloat.Ins.Apply(this, "_x_", "x", "_v_")}
             {TFloat.Ins.Apply(this, "_y_", "y", "_v_")}
             {TFloat.Ins.Apply(this, "_z_", "z", "_v_")}
-            {varName} = math.NewVector3(_x_, _y_, _z_)
+            {varName} = serialization.NewVector3(_x_, _y_, _z_)
             }}
 ";
         }
@@ -121,7 +121,7 @@ namespace Luban.Job.Cfg.TypeVisitors
             {TFloat.Ins.Apply(this, "_y_", "y", "_v_")}
             {TFloat.Ins.Apply(this, "_z_", "z", "_v_")}
             {TFloat.Ins.Apply(this, "_w_", "w", "_v_")}
-            {varName} = math.NewVector4(_x_, _y_, _z_, _w_)
+            {varName} = serialization.NewVector4(_x_, _y_, _z_, _w_)
             }}
 ";
         }

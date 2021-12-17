@@ -104,17 +104,17 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TVector2 type)
         {
-            return $"math.Vector2";
+            return $"serialization.Vector2";
         }
 
         public string Accept(TVector3 type)
         {
-            return $"math.Vector3";
+            return $"serialization.Vector3";
         }
 
         public string Accept(TVector4 type)
         {
-            return $"math.Vector4";
+            return $"serialization.Vector4";
         }
 
         public string Accept(TDateTime type)
