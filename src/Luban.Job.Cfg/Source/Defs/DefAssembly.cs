@@ -70,6 +70,12 @@ namespace Luban.Job.Cfg.Defs
 
         public bool NeedL10nTextTranslate => ExportTextTable != null;
 
+        private HashSet<string> _overrideOutputTables;
+
+        private readonly HashSet<string> _outputIncludeTables = new();
+
+        private readonly HashSet<string> _outputExcludeTables = new();
+
         public void InitL10n(string textValueFieldName)
         {
             ExportTextTable = new TextTable(this, textValueFieldName);
@@ -161,7 +167,10 @@ namespace Luban.Job.Cfg.Defs
 
         public List<DefTable> GetExportTables()
         {
-            return Types.Values.Where(t => t is DefTable ct && ct.NeedExport).Select(t => (DefTable)t).ToList();
+            return Types.Values.Where(t => t is DefTable ct
+            && !_outputExcludeTables.Contains(t.FullName)
+            && (_outputIncludeTables.Contains(t.FullName) || (_overrideOutputTables == null ? ct.NeedExport : _overrideOutputTables.Contains(ct.FullName)))
+            ).Select(t => (DefTable)t).ToList();
         }
 
         public List<DefTypeBase> GetExportTypes()
@@ -210,6 +219,11 @@ namespace Luban.Job.Cfg.Defs
             return _refGroups.TryGetValue(groupName, out var refGroup) ? refGroup : null;
         }
 
+        private IEnumerable<string> SplitTableList(string tables)
+        {
+            return tables.Split(',').Select(t => t.Trim());
+        }
+
         public void Load(Defines defines, IAgent agent, GenArgs args)
         {
             LoadCommon(defines, agent, args);
@@ -256,6 +270,41 @@ namespace Luban.Job.Cfg.Defs
                 var table = new DefTable(p);
                 AddType(table);
                 AddCfgTable(table);
+            }
+
+            if (!string.IsNullOrWhiteSpace(args.OutputTables))
+            {
+                foreach (var tableFullName in SplitTableList(args.OutputTables))
+                {
+                    if (GetCfgTable(tableFullName) == null)
+                    {
+                        throw new Exception($"--output:tables 参数中 table:'{tableFullName}' 不存在");
+                    }
+                    _overrideOutputTables ??= new HashSet<string>();
+                    _overrideOutputTables.Add(tableFullName);
+                }
+            }
+            if (!string.IsNullOrWhiteSpace(args.OutputIncludeTables))
+            {
+                foreach (var tableFullName in SplitTableList(args.OutputIncludeTables))
+                {
+                    if (GetCfgTable(tableFullName) == null)
+                    {
+                        throw new Exception($"--output:include_tables 参数中 table:'{tableFullName}' 不存在");
+                    }
+                    _outputIncludeTables.Add(tableFullName);
+                }
+            }
+            if (!string.IsNullOrWhiteSpace(args.OutputExcludeTables))
+            {
+                foreach (var tableFullName in SplitTableList(args.OutputExcludeTables))
+                {
+                    if (GetCfgTable(tableFullName) == null)
+                    {
+                        throw new Exception($"--output:exclude_tables 参数中 table:'{tableFullName}' 不存在");
+                    }
+                    _outputExcludeTables.Add(tableFullName);
+                }
             }
 
             _cfgServices.AddRange(defines.Services);

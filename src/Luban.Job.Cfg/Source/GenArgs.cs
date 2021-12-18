@@ -23,6 +23,15 @@ namespace Luban.Job.Cfg
         [Option("input:convert_data_dir", Required = false, HelpText = "override input data dir with convert data dir")]
         public string InputConvertDataDir { get; set; }
 
+        [Option("output:tables", Required = false, HelpText = "override tables in export group with this list")]
+        public string OutputTables { get; set; }
+
+        [Option("output:include_tables", Required = false, HelpText = "include tables")]
+        public string OutputIncludeTables { get; set; }
+
+        [Option("output:exclude_tables", Required = false, HelpText = "exclude tables")]
+        public string OutputExcludeTables { get; set; }
+
         [Option("output:data:resource_list_file", Required = false, HelpText = "output resource list file")]
         public string OutputDataResourceListFile { get; set; }
 
