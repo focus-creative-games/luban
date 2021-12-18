@@ -20,7 +20,7 @@ namespace Luban.Job.Cfg
         [Option("output_data_dir", Required = false, HelpText = "output data directory")]
         public string OutputDataDir { get; set; }
 
-        [Option("input:convert_data_dir", Required = false, HelpText = "override input data dir with convert data dir")]
+        [Option("input:convert:data_dir", Required = false, HelpText = "override input data dir with convert data dir")]
         public string InputConvertDataDir { get; set; }
 
         [Option("output:tables", Required = false, HelpText = "override tables in export group with this list")]
@@ -52,6 +52,12 @@ namespace Luban.Job.Cfg
 
         [Option("template:code:dir", Required = false, HelpText = "code template dir. use with gen_types=code_template")]
         public string TemplateCodeDir { get; set; }
+
+        [Option("template:convert:file", Required = false, HelpText = "convert template file name. use with gen_tpes=convert_template")]
+        public string TemplateConvertFile { get; set; }
+
+        [Option("output:convert:file_extension", Required = false, HelpText = "output convert file extension. default guess by convert template name")]
+        public string OutputConvertFileExtension { get; set; }
 
         [Option("l10n:timezone", Required = false, HelpText = "timezone")]
         public string L10nTimeZone { get; set; }

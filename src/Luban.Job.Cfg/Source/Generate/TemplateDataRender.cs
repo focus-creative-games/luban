@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Luban.Job.Cfg.Generate
 {
     [Render("data_template")]
-    class TemplateDataScatterRender : DataRenderBase
+    class TemplateDataRender : DataRenderBase
     {
         public override void Render(GenContext ctx)
         {

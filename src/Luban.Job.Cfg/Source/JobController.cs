@@ -86,6 +86,11 @@ namespace Luban.Job.Cfg
                         errMsg = "gen_types data_template should use with --template:data:file";
                         return false;
                     }
+                    if (genTypes.Contains("convert_template") ^ !string.IsNullOrWhiteSpace(options.TemplateConvertFile))
+                    {
+                        errMsg = "gen_types convert_template should use with --template:convert:file";
+                        return false;
+                    }
                     if (genTypes.Contains("code_template") ^ !string.IsNullOrWhiteSpace(options.TemplateCodeDir))
                     {
                         errMsg = "gen_types code_template should use with --template:code:dir";

@@ -26,6 +26,10 @@
     "ExternalCodeTemplate": {
       "commandName": "Project",
       "commandLineArgs": "-t D:\\workspace\\luban_examples\\Projects\\Csharp_CustomTemplate_ExternalCodeTemplate\\CustomTemplate --disable_cache"
+    },
+    "convert_template": {
+      "commandName": "Project",
+      "commandLineArgs": "-t D:\\workspace\\luban_examples\\Projects\\ConvertTemplates\\CustomTemplates"
     }
   }
 }

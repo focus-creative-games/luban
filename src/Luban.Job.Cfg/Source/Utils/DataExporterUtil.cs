@@ -25,7 +25,7 @@ namespace Luban.Job.Cfg.Utils
         public static string ToTemplateOutputData(DefTable table, List<Record> records, string templateName)
         {
             Template template = StringTemplateManager.Ins.GetTemplate($"config/data/{templateName}");
-            return template.RenderData(table, records.Select(r => r.Data).ToList());
+            return template.RenderDatas(table, records.Select(r => r.Data).ToList());
         }
 
         public static object ToOutputData(DefTable table, List<Record> records, string dataType)

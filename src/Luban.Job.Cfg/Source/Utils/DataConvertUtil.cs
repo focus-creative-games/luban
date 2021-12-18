@@ -37,7 +37,7 @@ namespace Luban.Job.Cfg.Utils
                 }
                 case "convert_lua":
                 {
-                    return new LuaConvertor().ExportRecord(table, record);
+                    return LuaConvertor.Ins.ExportRecord(table, record);
                 }
                 default:
                 {

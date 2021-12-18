@@ -12,7 +12,7 @@ namespace Luban.Job.Cfg.DataConverts
 {
     class LuaConvertor : DataVisitors.ToLuaLiteralVisitor
     {
-        //public static new LuaConvertor Ins { get; } = new();
+        public static new LuaConvertor Ins { get; } = new();
 
         private string _indentStr = "";
 
