@@ -15,7 +15,7 @@ namespace Luban.Job.Cfg.DataSources
             ".lua",
             ".json",
             ".yml",
-            ".bin",
+            ".asset",
         };
 
         public static AbstractDataSource Create(string url, string sheetName, Stream stream)
@@ -32,8 +32,8 @@ namespace Luban.Job.Cfg.DataSources
                     case "xml": source = new Xml.XmlDataSource(); break;
                     case "lua": source = new Lua.LuaDataSource(); break;
                     case "json": source = new Json.JsonDataSource(); break;
-                    case "bin": source = new Binary.BinaryDataSource(); break;
                     case "yml": source = new Yaml.YamlDataSource(); break;
+                    case "asset": source = new UnityAsset.UnityAssetDataSource(); break;
                     default: throw new Exception($"不支持的文件类型:{url}");
                 }
                 source.Load(url, sheetName, stream);

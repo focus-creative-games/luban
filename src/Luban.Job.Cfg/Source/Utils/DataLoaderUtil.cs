@@ -51,7 +51,7 @@ namespace Luban.Job.Cfg.Utils
                     }
                     else
                     {
-                        return fileOrDirContent.SubFiles.Select(f => new InputFileInfo() { OriginFile = f.FilePath, ActualFile = f.FilePath, MD5 = f.MD5 }).ToList();
+                        return fileOrDirContent.SubFiles.Select(f => new InputFileInfo() { OriginFile = f.FilePath, ActualFile = f.FilePath, SheetName = sheetName, MD5 = f.MD5 }).ToList();
                     }
                 }));
             }
