@@ -135,9 +135,13 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 ToIndex = cells.Select(r => r.Count).Max() - 1
             };
 
+            if (!TryFindTopTitle(cells, out var topTitleRowIndex))
+            {
+                throw new Exception($"没有定义任何有效 标题行");
+            }
             //titleRowNum = GetTitleRowNum(mergeCells, orientRow);
 
-            ParseSubTitles(rootTitle, cells, mergeCells, orientRow, 1);
+            ParseSubTitles(rootTitle, cells, mergeCells, orientRow, topTitleRowIndex + 1);
 
             rootTitle.Init();
 
@@ -146,6 +150,37 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 throw new Exception($"没有定义任何有效 列");
             }
             return rootTitle;
+        }
+
+        private static bool TryFindTopTitle(List<List<Cell>> cells, out int rowIndex)
+        {
+            for (int i = 0; i < cells.Count; i++)
+            {
+                var row = cells[i];
+                if (row.Count == 0)
+                {
+                    break;
+                }
+                string rowTag = row[0].Value?.ToString()?.ToLower() ?? "";
+                if (!rowTag.StartsWith("##"))
+                {
+                    break;
+                }
+                var tags = rowTag.Substring(2).Split('&').Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToList();
+                if (tags.Contains("field") || tags.Contains("var") || tags.Contains("+"))
+                {
+                    rowIndex = i;
+                    return true;
+                }
+                // 出于历史兼容性，对第一行特殊处理，如果不包含任何tag或者只包含column，则也认为是标题行
+                if (i == 0 && (tags.Count == 0 || (tags.Count == 1 && tags[0] == "column")))
+                {
+                    rowIndex = i;
+                    return true;
+                }
+            }
+            rowIndex = 0;
+            return false;
         }
 
         private static bool TryFindNextSubFieldRowIndex(List<List<Cell>> cells, int startRowIndex, out int rowIndex)
@@ -337,7 +372,6 @@ namespace Luban.Job.Cfg.DataSources.Excel
             {
                 return false;
             }
-
             foreach (var attr in metaStr.Substring(2).Split('&'))
             {
                 if (string.IsNullOrWhiteSpace(attr))
@@ -350,6 +384,15 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 string value = sepIndex >= 0 ? attr.Substring(sepIndex + 1) : "";
                 switch (key)
                 {
+                    case "field":
+                    case "+":
+                    case "var":
+                    case "comment":
+                    case "desc":
+                    case "type":
+                    {
+                        break;
+                    }
                     case "row":
                     {
                         orientRow = true;
@@ -367,7 +410,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                     }
                     default:
                     {
-                        throw new Exception($"非法单元薄 meta 属性定义 {attr}, 合法属性有: row,column,table=<tableName>");
+                        throw new Exception($"非法单元薄 meta 属性定义 {attr}, 合法属性有: +,var,row,column,table=<tableName>");
                     }
                 }
             }

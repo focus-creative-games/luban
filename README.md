@@ -112,7 +112,7 @@ luban支持在excel中解析任意复杂的数据结构，哪怕复杂如技能�
 
 支持 bool,int,float,string,text,datetime,vector2,vector3,vector4 等等类型，它们的填写跟常规认知一致。
 
-|##| x1 | x3 | x4 | x5 | x6  | x7   | s1   | s2&sep=#  | v2    | v3   | v4     | t1 |
+|##var| x1 | x3 | x4 | x5 | x6  | x7   | s1   | s2&sep=#  | v2    | v3   | v4     | t1 |
 | -| -  |  -  | -  | -  | -   | -    | -    | -         | -     | -    | -      | -  |
 |##type|bool|short|int|long|float|double|string|text       |vector2|vector3|vector4|datetime|
 |##|desc1|id|desc4|desc5|desc6|desc7|desc1|desc2   |desc2|desc3|desc4|desc1|
@@ -126,7 +126,7 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 
 <table border="1">
 <tr align="center">
-  <td>##</td>
+  <td>##var</td>
   <td>id</td>
   <td>arr1</td>
   <td colspan="4">arr2</td>
@@ -196,7 +196,7 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 或者在 \_\_enums\_\_.xlsx 中 定义
 
 <table border="1">
-<tr align="center"><td>##</td><td>full_name</td><td>flags</td><td>unique</td><td>comment</td><td>tags</td><td colspan="5">*items</td></tr>
+<tr align="center"><td>##var</td><td>full_name</td><td>flags</td><td>unique</td><td>comment</td><td>tags</td><td colspan="5">*items</td></tr>
 <tr align="center"><td>##var</td><td></td><td></td><td></td><td></td><td></td><td>name</td><td>alias</td><td>value</td><td>comment</td><td>tags</td></tr>
 <tr align="center"><td/><td>ItemQuality</td><td>false</td><td>true</td><td/><td/><td>WHITE</td><td>白</td><td>0</td><td/><td/></tr>
 <tr align="center"><td/><td></td><td></td><td></td><td/><td/><td>GREEN</td><td>绿</td><td>1</td><td/><td/></tr>
@@ -206,7 +206,7 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 
 数据表如下
 
-| ##|id| quality| quality2 |
+|##var|id| quality| quality2 |
 | -| - | - | - |
 |##type|int|ItemQuality|ItemQuality|
 | | 1| 白 | RED |
@@ -233,7 +233,7 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 或者在 \_\_beans__.xlsx 里定义
 
 <table border="1">
-<tr align="center"><td>##</td><td>full_name</td><td >sep</td><td>comment</td><td colspan="5">fields</td>  </tr>
+<tr align="center"><td>##var</td><td>full_name</td><td >sep</td><td>comment</td><td colspan="5">fields</td>  </tr>
 <tr align="center"><td>##var</td><td></td><td/><td/><td>name</td><td>type</td><td>group</td><td>comment</td><td>tags</td></tr>
 <tr><td></td><td>Reward</td><td/><td/><td>item_id</td><td>int</td><td></td><td>道具id</td><td/></tr>
 <tr><td></td><td></td><td/><td/><td>count</td><td>int</td><td></td><td>个数</td><td/></tr>
@@ -244,7 +244,7 @@ array与list类型都能表示列表，它们区别在于array生成的代码为
 
 <table border="1">
 <tr align="center">
-<td>##</td>
+<td>##var</td>
 <td>id</td>
 <td colspan="3">reward</td>
 </tr>
@@ -296,7 +296,7 @@ xml中定义如下
 
 <table border="1">
 <tr align="center">
-<td>##</td>
+<td>##var</td>
 <td>id</td>
 <td colspan="6">rewards1</td>
 <td colspan="3">rewards2&sep=,</td>
@@ -339,7 +339,7 @@ xml中定义如下
 <table border="1">
 
 <tr align="center">
-  <td>##</td>
+  <td>##var</td>
   <td>id</td>
   <td>name</td>
   <td colspan="9">rewards</td>
@@ -392,7 +392,7 @@ xml中定义如下
 
 <table border="1">
 <tr align="center">
-<td>##</td>
+<td>##var</td>
 <td>id</td>
 <td>name</td>
 <td colspan="6">*stage2</td>
@@ -445,7 +445,7 @@ xml中定义如下
 
 示例数据表
 
-|##|x|y|z| num|
+|##var|x|y|z| num|
 |-|-|-|-|-|
 |##type|int|long|string|int|
 ||1|1|aaa|123|
@@ -466,7 +466,7 @@ xml中定义如下
 
 示例数据表
 
-|##|key1|key2|key3| num|
+|##var|key1|key2|key3| num|
 |-|-|-|-|-|
 |##type|int|long|string|int|
 ||1|1|aaa|123|
@@ -487,7 +487,7 @@ xml中定义如下
 
 示例数据表
 
-|##|key1|key2|key3| num|
+|##var|key1|key2|key3| num|
 |-|-|-|-|-|
 |##type|int|long|string|int|
 ||1|2|aaa|123|
@@ -500,7 +500,7 @@ xml中定义如下
 
 有一些配置全局只有一份，比如 公会模块的开启等级，背包初始大小，背包上限。此时使用单例表来配置这些数据比较合适。
 
-| ##| guld_open_level | bag_init_capacity | bag_max_capacity | newbie_tasks |
+|##var| guld_open_level | bag_init_capacity | bag_max_capacity | newbie_tasks |
 | - |- | - | - | - |
 | ##type | int | int | int | list,int|
 | ## |desc1 | desc 2 | desc 3 | desc 4 |
@@ -512,7 +512,7 @@ xml中定义如下
 
 <table border="1">
 <tr align="center">
-<td>##column</td>
+<td>##var&column</td>
 <td>##type</td>
 <td>##</td>
 <td></td>
@@ -545,7 +545,7 @@ xml中定义如下
 
 <table border="1" >
 <tr align="center">
-  <td>##</td>
+  <td>##var</td>
   <td>id</td>
   <td >item_id</td>
   <td>items</td>
@@ -592,7 +592,7 @@ xml中定义如下
 
 对于这些字段添加属性 path=unity或者path=ue或path=normal;xxxx。
 
-| ## | id | icon |
+|##var| id | icon |
 | - | - | - |
 | ##type| int | string&path=unity|
 | ##|id | icon desc |
@@ -610,7 +610,7 @@ xml中定义如下
 
 开发期经常会制作一些仅供开发使用的配置，比如测试道具，比如自动化测试使用的配置，希望在正式发布时不导出这些数据。
 
-| ##  | id | name |  |
+|##var| id | name |  |
 | - | - | - | - |
 | ##type | int | string |  |
 | ## | id | desc1| 注释 |
@@ -632,7 +632,7 @@ xml中定义如下
 <table border="1">
 
 <tr align="center">
-  <td>##</td>
+  <td>##var</td>
   <td>id</td>
   <td>name</td>
   <td colspan="5">stage</td>
@@ -681,7 +681,7 @@ xml中定义如下
 <table border="1">
 
 <tr align="center">
-  <td>##</td>
+  <td>##var</td>
   <td>id</td>
   <td>name</td>
   <td colspan="6">stages</td>
@@ -741,7 +741,7 @@ xml中定义如下
 - list,bean 的水平展开多级子标题
 
 <table border="1">
-<tr align="center"><td>##</td><td>id</td><td>name</td><td colspan="9">items</td></tr>
+<tr align="center"><td>##var</td><td>id</td><td>name</td><td colspan="9">items</td></tr>
 <tr align="center"><td>##type</td><td>int</td><td>string</td><td colspan="9">list,Item</td></tr>
 
 <tr align="center">
@@ -770,7 +770,7 @@ xml中定义如下
 
 <table border="1">
 
-<tr align="center"><td>##</td><td>id</td><td colspan="4">lans</td></tr>
+<tr align="center"><td>##var</td><td>id</td><td colspan="4">lans</td></tr>
 <tr align="center"><td>##type</td><td>int</td><td colspan="4">map,string,string</td></tr>
 <tr align="center"><td>##var</td><td/><td>ch-zn</td><td>en</td><td>jp</td><td>fr</td></tr>
 <tr align="center"><td/><td>1</td><td>苹果</td><td>apple</td><td>aaa</td><td>aaa</td></tr>
@@ -782,7 +782,7 @@ xml中定义如下
 
 配置数据中经常有空值的语义需求，实际项目中往往混杂地使用0或-1表达空值，既不自然清晰也不统一。luban借鉴了c#中的可空变量的概念，特地提供可空数据支持。所有原生数据类型，以及enum、bean、和多态bean类型都有相应的可空数据类型。定义方式为 <类型名>?，与c#里的Nullable类型定义方式相同。例如 bool?,int?,long?,double?, EColor?, DemoType?
 
-|##|id|x1|x2|x3|x4|x5|
+|##var|id|x1|x2|x3|x4|x5|
 | - |-|-|-|-|-|-|
 |##type|int|bool?|int?|float?|datetime?|QualityType?|
 |##|id|desc1|desc2|desc3|desc4|desc5|
@@ -821,7 +821,7 @@ xml中定义如下
 
 <table border="1">
 <tr align="center">
-  <td>##</td>
+  <td>##var</td>
   <td>id</td>
   <td colspan="4">shapes&sep=,</td>
 </tr>
@@ -859,7 +859,7 @@ xml中定义如下
 
 如示例，id=2的记录，x1与x2皆为空，x1=0,x2=-1。
 
-|##|id | x1 | x2&default=-1|
+|##var|id | x1 | x2&default=-1|
 | - | - | - | - |
 |##type| int | int | int |
 |##|id|desc1|desc2|
@@ -878,7 +878,7 @@ xml中定义如下
 </enum>
 ```
 
-|##|id| item_id |
+|##var|id| item_id |
 |-| - | - |
 |##type|int| int&convert=EFunctionItemId|
 |##|id| desc|
