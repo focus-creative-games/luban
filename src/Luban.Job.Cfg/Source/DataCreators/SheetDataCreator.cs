@@ -394,12 +394,18 @@ namespace Luban.Job.Cfg.DataCreators
                 var originBean = (DefBean)type.Bean;
                 if (originBean.IsAbstractType)
                 {
-                    string subType = row.GetSubTitleNamedRow(DefBean.TYPE_NAME_KEY).Current.ToString().Trim();
-                    if (subType.ToLower() == DefBean.BEAN_NULL_STR)
+                    TitleRow typeTitle = row.GetSubTitleNamedRow(DefBean.TYPE_NAME_KEY);
+                    if (typeTitle == null)
+                    {
+                        throw new Exception($"type:'{originBean.FullName}' 是多态类型,需要定义'{DefBean.TYPE_NAME_KEY}'列来指定具体子类型");
+                    }
+
+                    string subType = typeTitle.Current?.ToString()?.Trim();
+                    if (subType == null || subType == DefBean.BEAN_NULL_STR)
                     {
                         if (!type.IsNullable)
                         {
-                            throw new Exception($"type:'{type}' 不是可空类型 '{type.Bean.FullName}?' , 不能为空");
+                            throw new Exception($"type:'{originBean.FullName}' 不是可空类型 '{type.Bean.FullName}?' , 不能为空");
                         }
                         return null;
                     }
@@ -407,7 +413,7 @@ namespace Luban.Job.Cfg.DataCreators
                     DefBean implType = (DefBean)originBean.GetNotAbstractChildType(subType);
                     if (implType == null)
                     {
-                        throw new Exception($"type:'{fullType}' 不是 bean 类型");
+                        throw new Exception($"type:'{fullType}' 不是 bean 类型或者不是'{originBean.FullName}'的子类");
                     }
                     return new DBean(type, implType, CreateBeanFields(implType, sheet, row));
                 }
@@ -415,14 +421,19 @@ namespace Luban.Job.Cfg.DataCreators
                 {
                     if (type.IsNullable)
                     {
-                        string subType = row.GetSubTitleNamedRow(DefBean.TYPE_NAME_KEY).Current?.ToString()?.Trim();
+                        TitleRow typeTitle = row.GetSubTitleNamedRow(DefBean.TYPE_NAME_KEY);
+                        if (typeTitle == null)
+                        {
+                            throw new Exception($"type:'{originBean.FullName}' 是可空类型,需要定义'{DefBean.TYPE_NAME_KEY}'列来指明是否可空");
+                        }
+                        string subType = typeTitle.Current?.ToString()?.Trim();
                         if (subType == null || subType == DefBean.BEAN_NULL_STR)
                         {
                             return null;
                         }
                         else if (subType != DefBean.BEAN_NOT_NULL_STR && subType != originBean.Name)
                         {
-                            throw new Exception($"type:'{type.Bean.FullName}' 可空标识:'{subType}' 不合法（只能为{DefBean.BEAN_NOT_NULL_STR}或{DefBean.BEAN_NULL_STR}或{originBean.Name})");
+                            throw new Exception($"type:'{originBean.FullName}' 可空标识:'{subType}' 不合法（只能为'{DefBean.BEAN_NULL_STR}'或'{DefBean.BEAN_NOT_NULL_STR}'或'{originBean.Name}')");
                         }
                     }
 
