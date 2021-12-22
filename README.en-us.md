@@ -1,143 +1,988 @@
 # Luban
 
 [![license](http://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Build Status](https://travis-ci.com/focus-creative-games/luban.svg?branch=main)](https://travis-ci.com/focus-creative-games/luban )
+[![Build Status](https://travis-ci.com/focus-creative-games/luban.svg?branch=main)](https://travis-ci.com/focus-creative-games/luban)  
 ![Docker Auto](https://img.shields.io/docker/cloud/automated/hugebug4ever/luban.svg)
 ![Docker Build](https://img.shields.io/docker/cloud/build/hugebug4ever/luban.svg)
 
 ![icon](docs/images/icon.png)
 
------
+- -- --
+
 ## links
+
 - [README - English](./README.en-us.md)
 - [github link](https://github.com/focus-creative-games/luban)
 - [gitee link](https://gitee.com/focus-creative-games/luban)
-----
+
+- -- --
 
 ## introduce
 
-Luban is a subordinated project of [BrightDB](https://github.com/focus-creative-games/BrightDB), a general-purpose object generation and caching tool, on this basis it has realized a function ** complete, powerful, flexible and easy to use **The **Game Configuration Solution**.
+In medium and large game projects, excel configuration tables often have more complex data structures. Conventional table guide tools are either unable to support this type of demand, or they force planning and procedures to use tricks such as dismantling tables, which seriously affects the design. And development efficiency. In addition, in games with complex GamePlay, functions such as skills, behavior trees, and levels also have very complex data structures. They are often made with custom editors and saved in file formats such as json, xml, and excel- centric guides. The table tool cannot process these data, which brings trouble to the planning and program workflow.
 
-Based on the design of **meta definition + data source**, luban implements a **complete type system**, enhances the excel format, and provides rich data source support such as json, xml, lua, yaml, etc. It can handle both conventional simple configurations and complex configurations such as **AI, skills, and duengon**. It truly realizes the game configuration workflow of unified data definition, loading, verification, data export and code generation. It is better to solve the problem that it is difficult to check complex configuration errors in real-time and iteratively edit the program in the planning of medium and large projects, and the problem that complex AI, skills and other configuration data cannot be unified with the excel configuration and need to be dealt with separately by the programmer.
+Luban has the following core advantages compared to the conventional excel guide tool:
 
-**Luban has relatively complete functions and supports almost all mainstream front-end and back-end languages ​​and client engines in the game industry**. Luban is currently maintained by a professional team to maintain active feature updates and function optimizations, and R&D personnel provide timely development guidance and follow-up feedback.
-
-Luban is suitable for developers with the following needs:
--I hope to find a game configuration solution that meets the configuration requirements of **medium and large** game projects with complete functions and has been tested by online projects
--Hope to have a more complete workflow to effectively improve the efficiency of planning and program development
--Hope to easily customize configuration and message generation according to project requirements to meet more stringent memory and performance requirements
--Hope to do other custom generation or caching
-
-====** If you feel good, please click a star, your support will give us great motivation ^_^**====
+- Enhanced the excel format. You can configure excel to configure **arbitrarily complex** data more concisely, such as substructures, structure lists, and more complex deep nested structures can be directly parsed and processed.
+- Complete type system and multiple raw data support (excel, xml, json, lua, yaml, unity asset), can easily express and analyze **arbitrarily complex** data. It means that luban can also handle complex configurations such as skills, behavior trees, copies, etc. that traditional excel guide tools cannot handle, completely freeing the program from complex configuration analysis.
+- Support multiple export data formats such as binary, **protobuf** (corresponding pb definition can be generated at the same time), **msgpack**, **flatbuffers**, json, lua, etc.
+- Complete workflow support. Such as ID foreign key reference check; resource legitimacy check; flexible data source definition (split tables or multiple tables into one); flexible group export mechanism; multiple localization support; extremely fast generation (within 300ms of daily iteration); [Excel2TextDiff](https://github.com/focus-creative-games/Excel2TextDiff) tool to facilitate diff to view differences between versions of excel files;
+- **LubanAssistant Excel add- in**. Supports loading configuration data in text formats such as json, lua, xml, etc. into excel, batch editing, and finally saving back to the original file, which can better solve the problem of multi- person collaborative data editing conflicts and mergers in large- scale projects. The configuration made in the editor is difficult to modify in batches in excel.
+- Support custom code and data templates. Powerful data expression capabilities make the configuration format of most projects often a subset of luban, so there is a lower project migration cost. After using the template to re- adapt the code and data generation, even if the project has been developed for a long time or is online Benefit from luban's powerful data processing capabilities.
+- Universal generation tool. It can also be used to generate codes such as protocols and databases, and can even be used as an object caching service.
 
 ## Documentation
 
-- [Homepage](https://focus-creative-games.github.io/luban/index.html)
-- [Features](docs/traits.md)
-- [Quick Start](docs/install.md)
-- [Introduction to Excel Configuration Data](docs/data_excel.md)
-- [Client&server installation and usage instructions](docs/luban_install_manual.md)
-- [Document Catalog](docs/catalog.md)
-- [[TODO] Complete Manual](docs/manual.md)
-- **====>Highly recommended to view: Example project** ([github](https://github.com/focus-creative-games/luban_examples)) ([gitee](https://gitee.com /focus-creative-games/luban_examples)) **<====**
+- [Quick Start](https://focus-creative-games.github.io/lubandoc/start_up.html)
+- [**Document**](https://focus-creative-games.github.io/lubandoc), it is relatively complete, if you have any questions, please check this wiki first.
+- **Example Project** ([github](https://github.com/focus-creative-games/luban_examples)) ([gitee](https://gitee.com/focus-creative-games/luban_examples) )
+- [Version Change History](https://focus-creative-games.github.io/lubandoc/changelog.html)
 
 - Support and contact
-  - QQ group: 692890842 (Luban development exchange group) [click the link to join](https://qm.qq.com/cgi-bin/qm/qr?k=4bMoe11knBW7Tcs1sqMafZE1I4zpT4sh&jump_from=webapi). If you have any questions about use, please add to the QQ group to ask, and someone can help solve it at any time.
+  - QQ group: 692890842 (Luban development exchange group). If you have any questions about use, please add to the QQ group to ask, and someone can help solve it at any time.
   - Email: taojingjian#gmail.com
-  - Skypy group: https://join.skype.com/xr2nhdMKjac0
-
-
------
 
 ## Features
-- Supports multiple data formats of excel family, json, xml, lua, yaml, which basically unifies the common configuration data of the game
-- **Powerful and complete type system**. **Any complex data structure can be expressed elegantly**. Supports all common primitive types, datetime types, container types list, set, map, enumeration and structure, **polymorphic structure** and **nullable type**.
-- Support enhanced excel format. You can fill in very complex data more concisely in excel (for example, the top-level field contains "list, A" type fields, and A is a structure and it contains "list, B" type fields, and B is also a structure and contains "list, C" "Such a field...).
-- The generated code is clear, easy to read, and well modularized. Specially supports atomic hot update configuration at runtime.
-- Generate extremely fast. It supports the regular local cache incremental generation mode, and also supports the cloud generation mode. Large projects like MMORPG can also be generated within seconds. The daily incremental generation is basically within 300ms, which greatly saves iteration time in the later stage of the project. In addition, it supports **watch monitoring mode**, and the data directory changes are regenerated immediately.
+
+- Supports multiple data formats such as excel, json, xml, lua, yaml, unity asset, etc., which basically unifies the common configuration data of the game
+- **Powerful and complete type system**. **Any complex data structure can be expressed elegantly**. Supports all common primitive types, text localized types, datetime types, vector{2,3,4}, container types list, set, map, enumeration and structure, **polymorphic structure** and **nullable type* *.
+- Support enhanced excel format. You can fill in arbitrarily complex nested data more concisely in excel.
+- The generated code is clear, easy to read, and well modularized. Supports the convention of specifying variable naming style. Specially supports atomic hot update configuration at runtime.
 - Flexible data source definition. A table can come from multiple files or multiple tables defined in a file, or all files in a directory or even from cloud tables, and a combination of the above
-- Support table and field level grouping. You can selectively export tables and fields used by the client or server
-- Multiple export data format support. Support export data formats such as binary, json, lua, xml, erlang, etc.
+- Support table and field level grouping. Groups can be flexibly defined, and tables and fields used by the client or server or editor can be selectively exported
+- Support the generation of **protobuf**, **msgpack**, **flatbuffers** corresponding definition files and corresponding data files (direct reflection export, efficient, and no need to generate code and then use the generated code to load and export)
+- Multiple export data format support. Support binary, json, **protobuf**, **msgpack**, **flatbuffers**, lua, xml, erlang, **xlsx** and custom export data formats
+- Support conversion between xlsx and json, lua, xml, yaml and other formats
 - Powerful and flexible customization capabilities
-- Support code templates, you can use custom templates to customize the generated code format
-- **Support data template**, you can customize the export format with the template file. It means that you can use luban as a **configuration processing front end** without changing the existing program code, and generate data in a custom format to work with the configuration loading code of your own project. Long-developed projects or old projects that have been launched can also benefit from luban's powerful data processing workflow
+  - Support code templates, you can use custom templates to customize the generated code format
+  - **Support data template**, you can customize the export format with a template file. It means that you can use Luban as a **configuration processing front end** without changing the existing program code, and generate data in a custom format to work with the configuration loading code of your own project. Long- developed projects or old projects that have been launched can also benefit from luban's powerful data processing workflow
 - Support data tags. You can choose to export the data that meets the requirements, and you don’t have to manually comment out those test data when planning to release the official data.
-- Powerful data verification capabilities. Support built-in data format check; support ref table reference check (don’t worry about filling in the wrong id for planning); support path resource check (don’t worry about filling in the wrong resource path for planning); support range check
+- Powerful data verification capabilities. Support built- in data format check; support ref table reference check (don’t worry about filling in the wrong id for planning); support path resource check (don’t worry about filling in the wrong resource path for planning); support range check
 - Support constant alias. Planning no longer has to write specific item IDs for items such as Upgrade Dan
-- Support a variety of common data table modes. one (singleton table), map (regular key-value table)
+- Support a variety of common data table modes. singleton (singleton table), map (regular key- value table), **list (supports no index, multiple primary key joint index, multiple primary key independent index)**
+- Support **external type**, that is, external type. You can reference existing enum and class classes in the configuration, such as UnityEngine.Color and UnityEngine.AudioType.
 - Support res resource mark. You can export all resource lists (icon, ui, assetbundle, etc.) referenced in the configuration with one click
-- Unify the configuration data of the custom editor. It works well with Unity and UE4 custom editors, and generates suitable c# (Unity) or c++ (UE4) code for loading and saving json configuration for the editor. The saved json configuration can be recognized and processed by luban.
-- Support emmylua anntations. The generated lua contains anntations information that conforms to the emmylua format. Cooperate with emmylua, have good configuration code prompt ability
+- Unify the configuration data of the custom editor. It works well with Unity and UE4 custom editors, and generates suitable c# (Unity) or c++ (UE4) codes for loading and saving json configuration for the editor. The saved json configuration can be recognized and processed by luban.
+- Support emmylua anntations. The generated lua contains anntations information conforming to the emmylua format. Cooperate with emmylua, have good configuration code prompt ability
 - **Localization Support**
-	- Support time localization. The datetime type data will be converted to UTC time in the target area at that time according to the specified timezone, which is convenient for the program to use.
-	- Support text static localization. When exporting, all text type data is correctly replaced with the final localized string. Most business functions no longer need to run to find the content of the text according to the localized id, simplifying the programmer's work.
-	- Support text dynamic localization. Dynamically switch all text type data to the target localized string at runtime.
-	- Support main + patches data merging. On the basic data, differential data is applied to generate the final complete data, which is suitable for the production of configuration data with subtle differences in multiple regions.
-	- [TODO] [Original] Support the localization of any granularity and any type of data (such as int, bean, list, map).
+  - Support time localization. The datetime type data will be converted to UTC time in the target area at that time according to the specified timezone, which is convenient for the program to use.
+  - Support text static localization. When exporting, all text type data is correctly replaced with the final localized string. Most business functions no longer need to run to find the content of the text based on the localized id, simplifying the programmer's work.
+  - Support text dynamic localization. Dynamically switch all text type data to target localized strings during runtime.
+  - Support main + patches data merging. On the basic data, differential data is applied to generate the final complete data, which is suitable for the production of configuration data with subtle differences in multiple regions.
+  - [TODO] [Original] Support the localization of any granularity and any type of data (such as int, bean, list, map).
+- Generate extremely fast. It supports regular local cache incremental generation mode and cloud generation mode. Large projects like MMORPG can also be generated within seconds. The daily incremental generation is basically within 300ms, which greatly saves iteration time in the later stage of the project. In addition, it supports **watch monitoring mode**, and the data directory changes are regenerated immediately.
+- **LubanAssistant**, Luban's Excel add- in. It supports loading configuration data in text formats such as json, lua, xml, etc. into excel, batch editing and processing, and finally saving back to the original file, which can better solve the problem of multi- person collaborative data editing conflicts and mergers in large- scale projects. The configuration made in the editor is difficult to modify in batches in excel.
+- Excel2TextDiff. Convert excel to text and then diff to clearly compare the content changes between excel versions.
 - Support mainstream game development languages
-   - c++ (11+)
-   - c# (.net framework 4+. dotnet core 3+)
-   - java (1.6+)
-   - go (1.10+)
-   - lua (5.1+)
-   - js and typescript (3.0+)
-   - python (3.0+)
-   - erlang (18+)
+  - c++ (11+)
+  - c# (.net framework 4+. dotnet core 3+)
+  - java (1.6+)
+  - go (1.10+)
+  - lua (5.1+)
+  - js and typescript (3.0+)
+  - python (3.0+)
+  - erlang (18+)
+  - rust (1.5+)
+  - Other languages ​​supported by protobuf, msgpack, flatbuffers
 - Support mainstream engines and platforms
-   - unity + c#
-   - unity + [tolua](https://github.com/topameng/tolua), [xlua](https://github.com/Tencent/xLua)
-   - unity + [ILRuntime](https://github.com/Ourpalm/ILRuntime)
-   - unity + [puerts](https://github.com/Tencent/puerts)
-   - unity + [GameFramework](https://github.com/EllanJiang/GameFramework)
-   - unity + [ET game framework](https://github.com/egametang/ET)
-   - unreal + c++
-   - unreal + [unlua](https://github.com/Tencent/UnLua)
-   - unreal + [sluaunreal](https://github.com/Tencent/sluaunreal)
-   - unreal + [puerts](https://github.com/Tencent/puerts)
-   - cocos2d-x + lua
-   - cocos2d-x + js
-   - [skynet](https://github.com/cloudwu/skynet)
-   - WeChat app Program Platform
-   - Other js-based small program platforms
-   - All other engines and platforms that support lua
-   - All other engines and platforms that support js
+  - unity + c#
+  - unity + [tolua](https://github.com/topameng/tolua), [xlua](https://github.com/Tencent/xLua)
+  - unity + [ILRuntime](https://github.com/Ourpalm/ILRuntime)
+  - unity + [puerts](https://github.com/Tencent/puerts)
+  - unity + [GameFramework](https://github.com/EllanJiang/GameFramework)
+  - unity + [ET game framework](https://github.com/egametang/ET)
+  - unreal + c++
+  - unreal + [unlua](https://github.com/Tencent/UnLua)
+  - unreal + [sluaunreal](https://github.com/Tencent/sluaunreal)
+  - unreal + [puerts](https://github.com/Tencent/puerts)
+  - cocos2d- x + lua
+  - cocos2d- x + js
+  - [skynet](https://github.com/cloudwu/skynet)
+  - WeChat Mini Program Platform
+  - Other js- based small program platforms
+  - All other engines and platforms that support lua
+  - All other engines and platforms that support js
 
------
-## luban workflow Pipeline
+## Enhanced excel format
 
-![pipeline](docs/images/pipeline.jpg)
+Luban supports the parsing of arbitrarily complex data structures in excel, even as complex as skills and behavior trees (but in practice, editors are generally used to make these data and save them in json format instead of filling them in excel). The following shows how to configure these data in luban from simple to complex.
 
-## benchmark performance test results
+### Native data type
 
-Hardware: Intel(R) Core i7-10700 @ 2.9G 16 core, 32G memory
+Supports bool, int, float, string, text, datetime, vector2, vector3, vector4 and other types, and their filling is consistent with conventional recognition.
 
-Data set: 500 excel tables, each table has 1000 rows of records, the records are complicated
+|##var| x1 | x3 | x4 | x5 | x6 | x7 | s1 | s2&sep=# | v2 | v3 | v4 | t1 |
+| - |- |- |- |- |- |- |- |- |- |- |- |- |
+|##type|bool|short|int|long|float|double|string|text |vector2|vector3|vector4|datetime|
+|##|desc1|id|desc4|desc5|desc6|desc7|desc1|desc2 |desc2|desc3|desc4|desc1|
+|| false| 10| 100| 1000| 1.23| 1.2345|hello |key1#world1|1,2|1,2,3|1,2,3,4|1999- 10- 10 11:12:13|
+|| true | 20| 200| 1000| 1.23| 1.2345|world |key2#world2|1,2|1,2,3|1,2,3,4|1999- 10- 12 11:12:13|
 
-Test Results:
+### Native data list
 
-| Format | Time-consuming full generation | Time-consuming incremental generation | Single output file size | Total output file size |
-| ---- | --------| ------ | ---- | ------ |
-| bin | 15.652 s| 797 ms | 164 K | 59.5 M |
-| json | 17.746 s| 796 ms | 1.11 M | 555 M |
-| lua | 17.323 s| 739 ms | 433 K | 212 M |
+Both array and list types can represent lists. The difference between them is that the code generated by array is an array, while the code generated by list is a list. For example, the c# code type generated by "array,int" is int[], and the c# code type generated by "list,int" is List&lt;int&gt;.
 
+<table border="1">
+<tr align="center">
+  <td>##var</td>
+  <td>id</td>
+  <td>arr1</td>
+  <td colspan="4">arr2</td>
+  <td>arr3&sep=|</td>
+  <td colspan="3">arr4</td>
+</tr>
+<tr align="center">
+  <td>##type</td>
+  <td>int</id>
+  <td>array,int</td>
+  <td colspan="4">list,int</td>
+  <td>list,string</td>
+  <td colspan="3">list,string</td>
+</tr>
+<tr align="center">
+  <td>##</td>
+  <td>id</id>
+  <td>desc1</td>
+  <td colspan="4">desc2</td>
+  <td>desc3</td>
+  <td colspan="3">desc4</td>
+</tr>
 
-## Code usage example
+<tr align="center">
+<td/>
+<td>1</td>
+<td>1,2,3</td>
+<td>1</td><td>2</td><td></td><td></td>
+<td>xx|yy</td>
+<td>xxx</td><td>zzz</td><td></td>
+</tr>
 
-Here is only a brief display of the usage of lua, c#, typescript, and go languages ​​in development. For more languages ​​and more detailed usage examples and codes, please see [Sample Project](https://github.com/focus-creative-games/luban_examples ).
+<tr align="center">
+<td/>
+<td>2</td>
+<td>2;4</td>
+<td>3</td><td>4</td><td>5</td><td></td>
+<td>aaaa|bbbb|cccc</td>
+<td>aaa</td><td>bbb</td><td>ccc</td>
+</tr>
 
+<tr align="center">
+<td/>
+<td>3</td>
+<td>2|4|6</td>
+<td>3</td><td>4</td><td>5</td><td>6</td>
+<td>aaaa|bbbb|cccc</td>
+<td>aaa</td><td>bbb</td><td>ccc</td>
+</tr>
+
+</table>
+
+### Enumeration
+
+Fill in the enumeration value in the form of enumeration name or alias or value.
+
+Defined in xml
+
+```xml
+<enum name="ItemQuality">
+ <var name="WHITE" alias="白" value="0"/>
+ <var name="GREEN" alias="green" value="1"/>
+ <var name="RED" alias="Red" value="2"/>
+</enum>
+```
+
+Or define in \_\_enums\_\_.xlsx
+
+<table border="1">
+<tr align="center"><td>##var</td><td>full_name</td><td>flags</td><td>unique</td><td>comment</td> <td>tags</td><td colspan="5">*items</td></tr>
+<tr align="center"><td>##var</td><td></td><td></td><td></td><td></td><td></td><td>name</td><td>alias</td><td>value</td><td>comment</td><td>tags</td></tr>
+<tr align="center"><td/><td>ItemQuality</td><td>false</td><td>true</td><td/><td/><td>WHITE</td><td>White</td><td>0</td><td/><td/></tr>
+<tr align="center"><td/><td></td><td></td><td></td><td/><td/><td>GREEN</td><td>Green</td><td>1</td><td/><td/></tr>
+<tr align="center"><td/><td></td><td></td><td></td><td/><td/><td>RED</td><td>Red</td><td>2</td><td/><td/></tr>
+
+</table>
+
+The data table is as follows
+
+|##var|id| quality| quality2 |
+| - |- |- |- |
+|##type|int|ItemQuality|ItemQuality|
+| | 1| White | RED |
+| | 2| GREEN | Red |
+| | 3| RED | WHITE |
+| | 4| 1 | 0 |
+
+### Nested substructure
+
+It is often encountered that a certain field is a structure, especially this structure will be reused in many configurations.
+
+Suppose the task contains a field of reward information
+
+Defined in xml
+
+```xml
+<bean name="Reward">
+ <var name="item_id" type="int"/>
+ <var name="count" type="int"/>
+ <var name="desc" type="string">
+</bean>
+```
+
+Or define in \_\_beans__.xlsx
+
+<table border="1">
+<tr align="center"><td>##var</td><td>full_name</td><td >sep</td><td>comment</td><td colspan="5"> fields</td> </tr>
+<tr align="center"><td>##var</td><td></td><td/><td/><td>name</td><td>type</td><td>group</td><td>comment</td><td>tags</td></tr>
+<tr><td></td><td>Reward</td><td/><td/><td>item_id</td><td>int</td><td></td><td>Item id</td><td/></tr>
+<tr><td></td><td></td><td/><td/><td>count</td><td>int</td><td></td><td >Number</td><td/></tr>
+<tr><td></td><td></td><td/><td/><td>desc</td><td>string</td><td></td><td >Description</td><td/></tr>
+</table>
+
+The data table is as follows
+
+<table border="1">
+<tr align="center">
+<td>##var</td>
+<td>id</td>
+<td colspan="3">reward</td>
+</tr>
+<tr align="center">
+<td>##type</td>
+<td>int</td>
+<td colspan="3">Reward</td>
+</tr>
+<tr align="center">
+<td>##</td>
+<td>id</td>
+<td>Item id</td><td>Number</td><td>Description</td>
+</tr>
+<tr align="center">
+<td/>
+<td>1</td>
+<td>1001</td><td>1</td><td>desc1</td>
+</tr>
+<tr align="center">
+<td/>
+<td>2</td>
+<td>1002</td><td>100</td><td>desc2</td>
+</tr>
+</table>
+
+### Simple structure list
+
+It is also very common that a certain field is a structured list. For example, the reward information list contains multiple reward information, and each reward has multiple fields.
+
+Assume that the gift package contains a list of item information. Support 3 types of filling modes, the specific choice is determined by planning flexibly.
+
+- All fields are fully expanded, and each cell is filled with one element. The disadvantage is that it takes up more columns. Such as the items1 field.
+- Each structure occupies a cell, use sep to divide structure subfields. Such as the items2 field.
+- The entire list occupies one cell, use sep to split the list and structure subfields. Such as the items3 field.
+
+The xml is defined as follows
+
+```xml
+<bean name="Reward">
+ <var name="item_id" type="int"/>
+ <var name="count" type="int"/>
+ <var name="desc" type="string">
+</bean>
+```
+
+Or it can be defined in \_\_beans\_\_.xlsx, which will not be repeated here. ==**The following examples involving structure definitions are only examples of xml**==.
+
+The data table is as follows:
+
+<table border="1">
+<tr align="center">
+<td>##var</td>
+<td>id</td>
+<td colspan="6">rewards1</td>
+<td colspan="3">rewards2&sep=,</td>
+<td>rewards3&sep=,|</td>
+</tr>
+<tr align="center">
+<td>##type</td>
+<td>int</td>
+<td colspan="6">list,Reward</td>
+<td colspan="3">list,Reward</td>
+<td>list,Reward</td>
+</tr>
+<tr align="center">
+<td>##</td>
+<td>id</td>
+<td colspan="6">reward list desc1</td>
+<td colspan="3">reward list desc2</td>
+<td>reward list desc3</td>
+</tr>
+<tr align="center">
+<td/>
+<td>1</td>
+<td>1001</td><td>1</td><td>desc1</td><td>1002</td><td>2</td><td>desc2</td>
+<td>1001,1,desc1</td><td>1002,2,desc2</td><td>1003,3,desc3</td>
+<td>1001,1,desc1|1002,2,desc2</td>
+</tr>
+
+<tr align="center">
+<td/>
+<td>2</td>
+<td>1001</td><td>1</td><td>desc1</td><td></td><td></td><td></td>
+<td>1001,1,desc1</td><td>1002,2,desc2</td><td></td>
+<td>1001,1,desc1|1002,2,desc2|1003,1,desc3</td>
+</tr>
+
+</table>
+
+Or you can use a multi- level header to limit each element individually
+
+<table border="1">
+
+<tr align="center">
+  <td>##var</td>
+  <td>id</td>
+  <td>name</td>
+  <td colspan="9">rewards</td>
+</tr>
+<tr align="center">
+  <td>##type</td>
+  <td>int</td>
+  <td>string</td>
+  <td colspan="9">list,Reward</td>
+</tr>
+
+<tr align="center">
+  <td>##var</td>
+  <td></td>
+  <td></td>
+  <td colspan="3">0</td>
+  <td colspan="3">1</td>
+  <td colspan="3">2</td>
+</tr>
+<tr align="center">
+  <td>##var</td>
+  <td/>
+  <td/>
+  <td>item_id</td><td>num</td><td>desc</td>
+  <td>item_id</td><td>num</td><td>desc</td>
+  <td>item_id</td><td>num</td><td>desc</td>
+</tr>
+
+<tr align="center"><td/><td>1</td><td>task1</td><td>1001</td><td>10</td><td>desc1</td><td>1002</td><td>12</td><td>desc2</td><td>1003</td><td>13</td><td>desc3</td> </tr>
+<tr align="center"><td/><td>2</td><td>task1</td><td>1003</td><td>30</td><td>desc3</td><td>1004</td><td>40</td><td>desc4</td><td/><td/><td/></tr>
+<tr align="center"><td/><td>3</td><td>task1</td><td>1005</td><td>50</td><td>desc5</td><td/><td/><td/><td/><td/><td/></tr>
+</table>
+
+### Multi- line structure list
+
+Sometimes there are many fields in each structure of the list structure. If it is expanded horizontally, it occupies too many columns, which is not convenient for editing. If the table is split, it is inconvenient to program or plan. At this time, you can use the multi- line mode. Support any level of multi- row structure list (that is, each element in the multi- row structure can also be multiple rows), name&multi_rows=1 or *name can express a multi- row parsed field.
+
+Assuming that each task contains multiple stages, there is a stage list field.
+
+```xml
+<bean name="Stage">
+ <var name="id" type="int"/>
+ <var name="name" type="string"/>
+ <var name="desc" type="string"/>
+ <var name="location" type="vector3"/>
+ <var name="reward_item_id" type="int"/>
+ <var name="reward_item_count" type="int"/>
+</bean>
+```
+
+<table border="1">
+<tr align="center">
+<td>##var</td>
+<td>id</td>
+<td>name</td>
+<td colspan="6">*stage2</td>
+</tr>
+<tr align="center">
+<td>##type</td>
+<td>int</td>
+<td>string</td>
+<td colspan="6">list,Stage</td>
+</tr>
+<tr align="center">
+<td>##</td>
+<td>id</td>
+<td>desc</td>
+<td colspan="6">stage info</td>
+</tr>
+<tr align="center">
+<td/>
+<td>1</td>
+<td>task1</td>
+<td>1</td><td>stage1</td><td>stage desc1</td><td>1,2,3</td><td>1001</td><td>1</td>
+</tr>
+<tr align="center">
+<td/>
+<td/><td/><td>2</td><td>stage2</td><td>stage desc2</td><td>1,2,3</td><td>1001</td><td>1</td>
+</tr>
+<tr align="center">
+<td/><td/><td/><td>3</td><td>stage3</td><td>stage desc3</td><td>1,2,3</td><td>1002</td><td>1</td>
+</tr>
+<tr align="center">
+<td/>
+<td>2</td>
+<td>task2</td>
+<td>1</td><td>stage1</td><td>stage desc1</td><td>1,2,3</td><td>1001</td><td>1</td>
+</tr>
+<tr align="center">
+<td/><td/><td/><td>2</td><td>stage2</td><td>stage desc2</td><td>1,2,3</td><td>1002</td><td>1</td>
+</tr>
+</table>
+
+### List table (no primary key)
+
+Sometimes I just want to get a list of records without a primary key. mode="list" and index is empty, indicating that there is no primary key table.
+
+Definition table
+
+```xml
+<table name="TbNotKeyList" value="NotKeyList" mode="list" input="not_key_list.xlsx"/>
+```
+
+Sample data sheet
+
+|##var|x|y|z| num|
+|- |- |- |- |- |
+|##type|int|long|string|int|
+||1|1|aaa|123|
+||1|1|bbb|124|
+||1|2|aaa|134|
+||2|1|aaa|124|
+||5|6|xxx|898|
+
+### Multi- primary key table (joint index)
+
+Multiple keys form a joint unique primary key. Use "+" to split the key to indicate the union relationship.
+
+Definition table
+
+```xml
+<table name="TbUnionMultiKey" value="UnionMultiKey" index="key1+key2+key3" input="union_multi_key.xlsx"/>
+```
+
+Sample data sheet
+
+|##var|key1|key2|key3| num|
+|- |- |- |- |- |
+|##type|int|long|string|int|
+||1|1|aaa|123|
+||1|1|bbb|124|
+||1|2|aaa|134|
+||2|1|aaa|124|
+||5|6|xxx|898|
+
+### Multi- primary key table (independent index)
+
+Multiple keys, each independently and uniquely indexed. The difference with the joint index is the use of "," to divide the key, indicating an independent relationship.
+
+Definition table
+
+```xml
+<table name="TbMultiKey" value="MultiKey" index="key1,key2,key3" input="multi_key.xlsx"/>
+```
+
+Sample data sheet
+
+|##var|key1|key2|key3| num|
+|- |- |- |- |- |
+|##type|int|long|string|int|
+||1|2|aaa|123|
+||2|4|bbb|124|
+||3|6|ccc|134|
+||4|8|ddd|124|
+||5|1|eee|898|
+
+### Singleton table
+
+Some configurations only have one copy globally, such as the opening level of the guild module, the initial size of the backpack, and the upper limit of the backpack. At this time, it is more appropriate to use a singleton table to configure these data.
+
+|##var| guld_open_level | bag_init_capacity | bag_max_capacity | newbie_tasks |
+|- |- |- |- |- |
+| ##type | int | int | int | list,int|
+| ## |desc1 | desc 2 | desc 3 | desc 4 |
+| | 10 | 100| 500| 10001,10002 |
+
+### Vertical table
+
+Most tables are horizontal, that is, one record per row. Some tables, such as singleton tables, are more comfortable if they are filled vertically, with one field per row. A1 is ##column which means the vertical table mode is used. The above singleton table is filled in as follows in vertical table mode.
+
+<table border="1">
+<tr align="center">
+<td>##var&column</td>
+<td>##type</td>
+<td>##</td>
+<td></td>
+</tr>
+<tr align="center">
+<td>guild_open_level</td><td>int</td><td>desc1</td><td>10</td>
+</tr>
+<tr align="center">
+<td>bag_init_capacity</td><td>int</td><td>desc2</td><td>100</td>
+</tr>
+<tr align="center">
+<td>bag_max_capacity</td><td>int</td><td>desc3</td><td>500</td>
+</tr>
+<tr align="center">
+<td>newbie_tasks</td><td>list,int</td><td>desc4</td><td>10001,10002</td>
+</tr>
+</table>
+
+### Reference Check
+
+The game configuration often needs to fill in foreign key data such as item id. These data must be legal id values. Luban supports checking the legitimacy of the id when it is generated. If there is an error, a warning will be issued. Not only the top- level fields of the table, but the sub- fields of the list and nested structure also support complete reference checking.
+
+```xml
+<bean name="Reward">
+ <var name="item_id" type="int" ref="item.TbItem"/>
+ <var name="count" type="int"/>
+ <var name="desc" type="string">
+</bean>
+```
+
+<table border="1">
+<tr align="center">
+  <td>##var</td>
+  <td>id</td>
+  <td >item_id</td>
+  <td>items</td>
+  <td colspan="3">reward</td>
+  <td colspan="3">rewards&sep=,</td>
+</tr>
+<tr align="center">
+  <td>##type</td>
+  <td>int</td>
+  <td>int</td>
+  <td>int&ref=item.TbItem</td>
+  <td colspan="3">list,int&ref=item.TbItem</td>
+  <td colspan="3">reward</td>
+</tr>
+<tr align="center">
+  <td>##</td>
+  <td>id</td>
+  <td>desc1</td>
+  <td>desc2</td>
+  <td colspan="3">desc3</td>
+  <td colspan="3">desc4</td>
+</tr>
+<tr align="center">
+  <td/>
+  <td>1</td>
+  <td>1001</td>
+  <td>1001,1002</td>
+  <td>1001</td><td>10</td><td>1001</td>
+  <td>1001,10,1001</td><td>1002,2,1002</td><td/>
+</tr>
+<tr align="center">
+  <td/>
+  <td>2</td>
+  <td>1002</td>
+  <td>1003,1004,1005</td>
+  <td>1002</td><td>10</td><td>1002</td>
+  <td>1004,10,item4</td><td>1005,2,item5</td><td>1010,1,10010</td>
+</tr>
+</table>
+
+### Resource Check
+
+The resource path is often filled in in the configuration, such as the resource of the prop icon. These data are all string types, which are very easy to fill in errors and cause the normal display during runtime. Luban supports the legitimacy check of unity and ue4 resources and the general file path check. Not only the top- level fields of the table, but the sub- fields of the list and nested structure also support complete reference checking.
+
+Add the attribute path=unity or path=ue or path=normal;xxxx to these fields.
+
+|##var| id | icon |
+|- |- |- |
+| ##type| int | string&path=unity|
+| ##|id | icon desc |
+| | 1| Assets/UI/1001.jpg|
+| | 2| Assets/UI/1002.jpg|
+
+### Group export
+
+Flexible grouping definition, not just client and server grouping. The following grouping granularity is supported:
+
+- Table level grouping
+- Field level grouping (any bean field granularity, not limited to top- level fields)
+
+### Data label filtering
+
+During the development period, some configurations that are only used for development are often made, such as test props, such as configurations used for automated testing. It is hoped that these data will not be exported during the official release.
+
+|##var| id | name | |
+|- |- |- |- |
+| ##type | int | string | |
+| ## | id | desc1| Comments |
+| | 1 | 1001 | Export forever |
+|##| 2 | 1002 | Never export |
+|test| 4 | item4 | - -export_exclude_tags do not export when test |
+|TEST| 5 | item5 | - -export_exclude_tags do not export when test |
+|dev |6 | item6 | - -export_exclude_tags don't export when dev |
+| | 7|item7| Export forever |
+
+## Advanced features
+
+### Hierarchy title (hierarchy title)
+
+In multi- line data or deeply nested data, if there are many data fields, it is not easy to distinguish the molecular elements when filling in. Luban provides hierarchical headings to achieve deep- level sub- field correspondence. Take the above multi- row data list as an example, the first column is ##var, which means this is a subfield row.
+
+- Subheading of common bean structure
+
+<table border="1">
+
+<tr align="center">
+  <td>##var</td>
+  <td>id</td>
+  <td>name</td>
+  <td colspan="5">stage</td>
+</tr>
+<tr align="center">
+  <td>##type</td>
+  <td>int</td>
+  <td>string</td>
+  <td colspan="5">Stage</td>
+</tr>
+<tr align="center">
+  <td>##var</td>
+  <td/>
+  <td/>
+  <td>name</td>
+  <td>desc</td>
+  <td>location</td>
+  <td>item_id</td>
+  <td>num</td>
+</tr>
+<tr align="center">
+  <td>##</td>
+  <td>id</td>
+  <td>name</td>
+  <td>desc2</td>
+  <td>desc3</td>
+  <td>desc4</td>
+  <td>desc5</td>
+  <td>desc6</td>
+</tr>
+
+<tr align="center">
+<td/>
+<td>1</td><td>task1</td><td>stage1</td><td>stage desc1</td><td>1,2,3</td><td>1001</td><td>1</td>
+</tr>
+
+<tr align="center">
+<td/>
+<td>2</td><td>task2</td><td>stage2</td><td>stage desc2</td><td>3,4,5</td><td>2001</td><td>3</td>
+</tr>
+
+</table>
+
+- Multi- line expansion of multi- level sub- headings of list and bean
+
+<table border="1">
+
+<tr align="center">
+  <td>##var</td>
+  <td>id</td>
+  <td>name</td>
+  <td colspan="6">stages</td>
+</tr>
+<tr align="center">
+  <td>##var</td>
+  <td/>
+  <td/>
+  <td>id</td>
+  <td>name</td>
+  <td>desc</td>
+  <td>location</td>
+  <td>item_id</td>
+  <td>num</td>
+</tr>
+<tr align="center">
+  <td>##type</td>
+  <td>int</td>
+  <td>string</td>
+  <td colspan="6">list,Stage</td>
+</tr>
+<tr align="center">
+  <td>##</td>
+  <td>id</td>
+  <td>desc1</td>
+  <td>desc1</td>
+  <td>desc2</td>
+  <td>desc3</td>
+  <td>desc4</td>
+  <td>desc5</td>
+  <td>desc6</td>
+</tr>
+
+<tr align="center">
+<td/>
+<td>1</td>
+<td>task1</td>
+<td>1</td><td>stage1</td><td>stage desc1</td><td>1,2,3</td><td>1001</td><td>1</td>
+</tr>
+<tr align="center">
+<td/><td/><td/><td>2</td><td>stage2</td><td>stage desc2</td><td>1,2,3</td><td>1001</td><td>1</td>
+</tr>
+<tr align="center">
+<td/><td/><td/><td>3</td><td>stage3</td><td>stage desc3</td><td>1,2,3</td><td>1002</td><td>1</td>
+</tr>
+<tr align="center">
+<td/><td>2</td>
+<td>task2</td>
+<td>1</td><td>stage1</td><td>stage desc1</td><td>1,2,3</td><td>1001</td><td>1</td>
+</tr>
+<tr align="center">
+<td/><td/><td/><td>2</td><td>stage2</td><td>stage desc2</td><td>1,2,3</td><td>1002</td><td>1</td>
+</tr>
+
+</table>
+
+- Horizontally expand multi- level sub- headings of list and bean
+
+<table border="1">
+<tr align="center"><td>##var</td><td>id</td><td>name</td><td colspan="9">items</td></tr >
+<tr align="center"><td>##type</td><td>int</td><td>string</td><td colspan="9">list,Item</td></tr>
+
+<tr align="center">
+  <td>##var</td>
+  <td></td>
+  <td></td>
+  <td colspan="3">0</td>
+  <td colspan="3">1</td>
+  <td colspan="3">2</td>
+</tr>
+<tr align="center">
+  <td>##var</td>
+  <td/>
+  <td/>
+  <td>item_id</td><td>num</td><td>desc</td>
+  <td>item_id</td><td>num</td><td>desc</td>
+  <td>item_id</td><td>num</td><td>desc</td>
+</tr>
+
+<tr align="center"><td/><td>1</td><td>task1</td><td>1</td><td>10</td><td>desc1</td><td>2</td><td>12</td><td>desc2</td><td>3</td><td>13</td><td>desc3</td> </tr>
+<tr align="center"><td/><td>2</td><td>task1</td><td>3</td><td>30</td><td>desc3</td><td>4</td><td>40</td><td>desc4</td><td/><td/><td/></tr>
+<tr align="center"><td/><td>3</td><td>task1</td><td>5</td><td>50</td><td>desc5</td><td/><td/><td/><td/><td/><td/></tr>
+</table>
+
+- Multi- level subtitles of map type
+
+<table border="1">
+
+<tr align="center"><td>##var</td><td>id</td><td colspan="4">lans</td></tr>
+<tr align="center"><td>##type</td><td>int</td><td colspan="4">map,string,string</td></tr>
+<tr align="center"><td>##var</td><td/><td>ch- zn</td><td>en</td><td>jp</td><td >fr</td></tr>
+<tr align="center"><td/><td>1</td><td>Apple</td><td>apple</td><td>aaa</td><td>aaa</td></tr>
+<tr align="center"><td/><td>2</td><td>banana</td><td>banana</td><td>bbb</td><td>bbb</td></tr>
+
+</table>
+
+### Nullable data type
+
+There are often semantic requirements for null values ​​in configuration data. In actual projects, 0 or - 1 are often used mixedly to express null values, which is neither natural, clear nor uniform. Luban draws on the concept of nullable variables in c#, and specifically provides support for nullable data. All native data types, as well as enum, bean, and polymorphic bean types have corresponding nullable data types. The definition method is <type name>?, which is the same as the definition method of the Nullable type in c#. For example, bool?, int?, long?, double?, EColor?, DemoType?
+
+|##var|id|x1|x2|x3|x4|x5|
+|- |- |- |- |- |- |- |
+|##type|int|bool?|int?|float?|datetime?|QualityType?|
+|##|id|desc1|desc2|desc3|desc4|desc5|
+||1|true|1|1.2|1999- 09- 09 10:10:10| RED|
+||2|null|null|null|null|null|
+||3| |||||
+
+### Type inheritance (inheritance)
+
+It supports OOP's type inheritance system, which facilitates the expression of multiple types of data, and is often used in modules such as skills and AI. Type inheritance is the soul of the Luban type system. Without type inheritance, it is impossible to express arbitrarily complex data structures concisely, and therefore it is impossible to define and read complex configuration data from the configuration.
+
+In practice, data such as skills and AI are generally produced with an editor and saved in a format such as json instead of editing in excel.
+
+```xml
+<bean name="Shape">
+ <bean name="Circle">
+  <var name="radius" type="float"/>
+ </bean>
+ <bean name="Rectangle" alias="rectangle">
+  <var name="width" type="float"/>
+  <var name="height" type="float"/>
+ </bean>
+ <bean name="Curve">
+  <bean name="Line" alias="线">
+   <var name="param_a" type="float"/>
+   <var name="param_b" type="float"/>
+  </bean>
+  <bean name="Parabola" alias="Parabola">
+   <var name="param_a" type="float"/>
+   <var name="param_b" type="float"/>
+  </bean>
+ </bean>
+</bean>
+
+```
+
+<table border="1">
+<tr align="center">
+  <td>##var</td>
+  <td>id</td>
+  <td colspan="4">shapes&sep=,</td>
+</tr>
+<tr align="center">
+  <td>##type</td>
+  <td>int</td>
+  <td colspan="4">list,Shape</td>
+</tr>
+<tr align="center">
+  <td>##</td>
+  <td>id</td>
+  <td colspan="4"> shape desc</td>
+</tr>
+<tr align="center">
+  <td/>
+  <td>1</td>
+  <td>Circle,10</td>
+  <td>Rectangle,100,200</td>
+  <td/>
+  <td/>
+</tr>
+<tr align="center">
+  <td/>
+  <td>2</td>
+  <td>Circle,20</td>
+  <td>Rectangle,100,200</td>
+  <td>Line,5,8</td>
+  <td>Parabola,15,30</td>
+</tr>
+</table>
+
+### Field default value
+
+We hope that when the cell in excel is left blank, the field takes the specified value instead of the default false, 0 or the like. Specify the default value by defining the default=xxx attribute of the field.
+
+For example, for the record with id=2, x1 and x2 are both empty, x1=0, x2=- 1.
+
+|##var|id | x1 | x2&default=- 1|
+|- |- |- |- |
+|##type| int | int | int |
+|##|id|desc1|desc2|
+||1 | 10 |20|
+||2| | |
+||3| | 30|
+
+### Constant alias
+
+There are often some commonly used values ​​similar to enumerations in the game, such as the id of the upgrade Dan, which must be filled in many places. If the id of the item is directly used, it is neither intuitive nor easy to make mistakes. Luban supports constant substitution. For example, SHENG_JI_DAN will be replaced with 11220304 when exporting.
+
+``` xml
+<enum name="EFunctionItemId">
+ <var name="SHENG_JI_DAN" alias="Upgrade Dan" value="11220304"/>
+ <var name="JIN_JIE_DAN" alias="Advanced Dan" value="11220506"/>
+</enum>
+```
+
+|##var|id| item_id |
+|- |- |- |
+|##type|int| int&convert=EFunctionItemId|
+|##|id| desc|
+||1 | SHENG_JI_DAN|
+||2| Advanced Dan|
+||3| 1001|
+
+### Flexible configuration file organization
+
+The following organizational forms are supported, allowing developers to flexibly organize the configuration file structure according to the situation. For example, one table can correspond to one xlsx file; multiple tables can be placed in the same xlsx file; one table can correspond to multiple xlsx files; one table can correspond to one directory.
+
+- All cell sheets from a certain excel file
+- A specified cell book from an excel file
+- From json, xml, lua, yaml files
+- From json, xml, lua, yaml subfields (e.g. root.a.b)
+- From all files under the directory tree, each file corresponds to a record
+- Any combination of the above
+
+### Other data sources
+
+- [json](docs/data_json.md)
+- [lua](docs/data_lua.md)
+- [xml](docs/data_xml.md)
+- [yaml](docs/data_yaml.md)
+
+### Multiple export data formats
+
+Support the following export data formats
+
+- binary
+- protobuf (binary, json)
+- msgpack (binary)
+- flatbuffers (json)
+- json
+- lua
+- erlang
+- Use templates to customize the generated data format (only text data format is supported)
+
+The binary format loads the fastest, json loads the second, and lua loads the slowest.
+
+The binary format occupies the smallest space, followed by lua, and json the largest.
+
+Different export types only affect the size of the exported data and the performance of the loaded data, and do not affect the structure definition and the final load to the memory usage.
+
+**Different export data types are transparent to the program and planning, and switching does not affect the data editing mode and the configuration mode used in the business code. **
+
+### Editor support
+
+Support the generation of c# (for unity) and c++ (for UE4) json configuration loading and saving code, which is convenient for students who make editors to load and save data that conforms to the luban configuration format.
+
+### Custom code and data templates
+
+[Custom Template](https://focus-creative-games.github.io/lubandoc/render_template.html)
+
+### Localization
+
+The following localization mechanisms are supported, see [Localization](https://focus-creative-games.github.io/lubandoc/l10n.html)
+
+- Static localization
+- Dynamic localization
+- Multi- branch data
+- Time localization
+- [TODO] Data localization at any granularity (not just text and record level)
+
+## Excel2TextDiff
+
+Convert the excel file to text, and then call the diff tool for comparison. It works well with version management tools such as TortoiseGit and TortoiseSvn.
+
+![pipeline](docs/images/examples/d_70.jpg)
+
+## [LubanAssistant](https://github.com/focus-creative-games/luban_examples/tree/main/Tools/LubanAssistant) Excel plugin. Artifact
+
+For the configuration table edited by multiple people, how to save the configuration in the xlsx format is prone to data conflict coverage, which is especially serious in large projects. In addition, when merging multi- branch data, xlsx cannot automatically resolve conflicts like text files, which brings a lot of trouble to the version maintenance of the project.
+
+A reasonable solution is to save the configuration data in json, xml format and edit it in excel. LubanAssistant solves this problem well. Users not only enjoy Luban's powerful data processing capabilities, but also have good json readability and multi- version maintainability, as well as the convenient editing capabilities of excel.
+
+![pipeline](docs/images/examples/e_10.jpg)
+
+The corresponding content of the record with id 1 is as follows
+
+```json
+{
+  "id":1,
+  "x":5,
+  "items":[
+    {"x":1, "y":true, "z":"abcd", "a":{"x":10, "y":100}, "b":[1,3,5] },
+    {"x":2, "y":false, "z":"abcd", "a":{"x":22, "y":33}, "b":[4,5]}
+  ]
+}
+```
+
+## Code preview
+
+Here is only a brief display of the usage of c#, typescript, and go languages ​​in development. For more languages ​​and more detailed usage examples and codes, please see [Sample Project](https://github.com/focus-creative-games/luban_examples).
 
 - C# usage example
 
 ```C#
-  // One line of code can load all configurations. cfg.Tables contains an instance field for all tables.
-  var tables = new cfg.Tables(file => return new ByteBuf(File.ReadAllBytes("<data path>/" + file)));
-  // Access a singleton table
-  Console.WriteLine(tables.TbGlobal.Name);
-  // Access the ordinary key-value table
-  Console.WriteLine(tables.TbItem.Get(12).X1);
-  // Support operator [] usage
-  Console.WriteLine(tables.TbMail[1001].X2);
+// One line of code can load all configurations. cfg.Tables contains an instance field for all tables.
+var tables = new cfg.Tables(file => return new ByteBuf(File.ReadAllBytes(gameConfDir + "/" + file + ".bin")));
+// Access a singleton table
+Console.WriteLine(tables.TbGlobal.Name);
+// Access ordinary key- value table
+Console.WriteLine(tables.TbItem.Get(12).Name);
+// Support operator [] usage
+Console.WriteLine(tables.TbMail[1001].Desc);
 ```
 
 - Typescript usage example
@@ -147,717 +992,60 @@ Here is only a brief display of the usage of lua, c#, typescript, and go languag
 let tables = new cfg.Tables(f => JsHelpers.LoadFromFile(gameConfDir, f))
 // Access a singleton table
 console.log(tables.TbGlobal.name)
-// Access ordinary key-value table
-console.log(tables.TbItem.get(12).x1)
+// Access ordinary key- value table
+console.log(tables.TbItem.get(12).Name)
 ```
 
-- golang usage example
+- go use example
+
 ```go
 // One line of code can load all configurations. cfg.Tables contains an instance field for all tables.
 if tables, err := cfg.NewTables(loader); err != nil {
-   println(err.Error())
-   return
+ println(err.Error())
+ return
 }
 // Access a singleton table
 println(tables.TbGlobal.Name)
-// Access the ordinary key-value table
-println(tables.TbItem.Get(12).X1)
+// Access ordinary key- value table
+println(tables.TbItem.Get(12).Name)
 
 ```
 
-- Lua usage example
+## Performance test data
 
-```Lua
-  -- Access a singleton table
-  print(require("TbGlobal").name)
-  -- Access ordinary key-value table
-  print(require("TbItem")[12].x1)
-```
+hardware:
 
-- [Examples in more languages](docs/samples.md)
+ Intel(R) Core i7- 10700 @ 2.9G 16 core
+ 32G RAM
 
-------
+data set
 
-## Quick preview
-**luban is compatible with commonplace excel table generation tools, and a complete data table can be defined in excel**. Unlike common table guide tools that focus on excel, because luban supports a powerful type system and supports json, xml, lua and other file types, luban’s native usage is to separate definition and data, and use separate xml to define tables and structures* *, the data file only contains data.
+ 500 excel sheets
+ Each table has 1000 rows of relatively large records
+ The file size of each table is 132k
 
-After showing the examples of common compatible horizontal and vertical tables below, the remaining examples are all in the luban style of **definition and data separation**. The user chooses whether to define the method of mixing with the data or the method of separating it from the data or mixture of these two style. At present, most of the examples in the luban_examples project use the method of separating definition and data.
+Test Results:
 
-### commonplace compatible horizontal table
+| Format | Time- consuming full generation | Time- consuming incremental generation | Single output file size | Total output file size |
+| -| -|-| - | - |
+| bin | 15.652 s| 797 ms | 164 K | 59.5 M |
+| json | 17.746 s| 796 ms | 1.11 M | 555 M |
+| lua | 17.323 s| 739 ms | 433 K | 212 M |
 
-Add table definition in xml
-```xml
-<table name="TbDefineFromExcel" value="DefineFromExcel" input="test/define_from_excel.xlsx" define_from_file="1"/>
-```
-
-Or add in the tables.xlsx file
-
-![tables.xlsx](docs/images/examples/ex_03.png)
-
-excel file
-
-![excel](docs/images/examples/ex_01.png)
-
-### commonplace compatible vertical table
-
-Add table definition in xml
-
-```xml
-<table name="TbDefineFromExcelOne" value="DefineFromExcelOne" mode="one" input="test/define_from_excel_one.xlsx" define_from_file="1"/>
-```
-
-Or add in the tables.xlsx file
-
-![tables.xlsx](docs/images/examples/ex_04.png)
-
-excel file
-
-![Compatible vertical table](docs/images/examples/ex_02.png)
-
-### Regular primitive data
-
-The following is a table containing all common simple primitive data.
-
-```xml
-<bean name="DemoPrimitiveTypesTable">
-<var name="x1" type="bool"/>
-<var name="x2" type="byte"/>
-<var name="x3" type="short"/>
-<var name="x4" type="int" />
-<var name="x5" type="long" />
-<var name="x6" type="float"/>
-<var name="x7" type="double"/>
-<var name="s1" type="string" />
-<var anme="s2" type="text"/> Localized string, composed of two fields, key and text
-<var name="v2" type="vector2"/>
-<var name="v3" type="vector3"/>
-<var name="v4" type="vector4"/>
-<var name="t1" type="datetime"/>
-</bean>
-
-<table name="TbDemoPrimitive" index="x4" value="DemoPrimitiveTypesTable" input="demo_primitive.xlsx"/>
-```
-
-![ex_2](docs/images/examples/ex_2.png)
-
-
-- name="TbDemoPrimitive" means that the data table name is TbDemoPrimitive, and this class name is used when the table code is generated.
-- value="DemoPrimitiveTypesTable" means that the type of each row of the data table (ie V in KV) is DemoPrimitiveTypesTable.
-- index="x4" means that the data table uses the x4 field of type <value> as the key. You can leave it blank, **default is the first field**.
-- input="demo_primitive.xlsx" means that the data file of the data table is demo_primitives.xlsx
-
-### Enumeration
-
-Define the enumeration class, and force the enumeration name or alias to be filled in the configuration to improve the readability of the configuration.
-
-```xml
-<enum name="DemoEnum">
-<var name="RED" alias="Red" value="1"/>
-<var name="BLUE" alias="蓝" value="3"/>
-<var name="GREEN" alias="green" value="5"/>
-</enum>
-
-<bean name="DemoEnumTable">
-<var name="id" type="int"/>
-<var name="x2" type="DemoEnum"/>
-</bean>
-
-<table name="TbDemoEnum" value="DemoEnumTable" input="demo_enum.xlsx"/>
-```
-
-![ex_12](docs/images/examples/ex_12.png)
-
-### Custom structure bean
-
-```xml
-<bean name="IntRange">
-<var name="min" type="int"/>
-<var name="max" type="int"/>
-</bean>
-
-<bean name="DemoBeanTable">
-<var name="id" type="int"/>
-<var name="range" type="IntRange"/>
-</bean>
-
-<table name="TbDemoBean" value="DemoBeanTable" input="demo_bean.xlsx"/>
-```
-
-![ex_22](docs/images/examples/ex_22.png)
-
-### Polymorphic structure bean
-The type inheritance system that supports OOP is convenient for expressing multiple types of data, and is often used in modules such as skills and AI.
-
-```xml
-<bean name="Shape">
-	<var name="id" type="int"/>
-	<bean name="Circle">
-		<var name="radius" type="float"/>
-	</bean>
-	<bean name="Rectangle" alias="长方形">
-		<var name="width" type="float"/>
-		<var name="height" type="float"/>
-	</bean>
-	<bean name="Curve">
-		<bean name="Line" alias="直线">
-			<var name="direction" type="vector2"/>
-		</bean>
-		<bean name="Parabola" alias="抛物线">
-			<var name="param_a" type="float"/>
-			<var name="param_b" type="float"/>
-		</bean>
-	</bean>
-</bean>
-
-<bean name="ShapeTable">
-	<var name="id" type="int"/>
-	<var name="shape" type="Shape"/>
-</bean>
-
-<table name="TbDemoShape" value="DemoShapeTable" input="demo_shape.xlsx"/>
-```
-
-![ex_32](docs/images/examples/ex_32.png)
-
-### Nullable data type
-There are often semantic requirements for null values in configuration data. In actual projects, 0 or -1 are often used mixedly to express null values, which is neither natural, clear nor uniform. Luban draws on the concept of nullable variables in c#, and specifically provides support for nullable data. All native data types, as well as enum, bean, and polymorphic bean types have corresponding nullable data types. The definition method is <type name>?, which is the same as the definition method of the Nullable type in c#. For example, bool?, int?, long?, double?, EColor?, DemoType?
-
-```xml
-	<bean name="DemoType1">
-		<var name="x1" type="int"/>
-	</bean>
-	<bean name="DemoDynamic"> 多态数据结构
-		<var name="x1" type="int"/>
-		
-		<bean name="DemoD2" alias="测试别名">
-			<var name="x2" type="int"/>
-		</bean>
-		
-		<bean name="DemoD3">
-			<var name="x3" type="int"/>
-		</bean>
-	</bean>
-	<bean name="TestNull">
-		<var name="id" type="int"/>
-		<var name="x1" type="int?"/>
-		<var name="x2" type="DemoEnum?"/>
-		<var name="x3" type="DemoType1?"/>
-		<var name="x4" type="DemoDynamic?"/>
-	</bean>
-	<table name="TbTestNull" value="TestNull" input="test/test_null.xlsx"/>
-```
-
-![ex_42](docs/images/examples/ex_42.png)
-
-### Simple primitive data list type
-Generally speaking, you can either fill in a cell separated by a comma ",", or fill in one data for each cell. note! Empty cells will be ignored.
-
-```xml
-<bean name="CollectionTable">
-	<var name="id" type="int"/>
-	<var name="items" type="list,int"/>
-	<var name="coefs" type="list,int"/>
-</bean>
-
-<table name="TbSimpleCollection" value="CollectionTable" input="collection.xlsx">
-```
-
-![ex_52](docs/images/examples/ex_52.png)
-
-### Structure list
-For the structure list type, there are multiple types of filling. Plan to choose the most suitable filling method according to the specific situation.
-
-1. Expand all.
-```xml
-	<bean name="Item">
-		<var name="id" type="int"/>
-		<var name="name" type="string"/>
-		<var name="num" type="int"/>
-	</bean>
-
-	<bean name="CollectionTable2">
-		<var name="id" type="int"/>
-		<var name="items" type="list,Item"/>
-	</bean>
-
-	<table name="TbBeanCollection" value="CollectionTable2" input="collection2.xlsx">
-```
-
-![ex_61](docs/images/examples/ex_61.png)
-
-1. Each Item is in a cell
-
-```xml
-	<bean name="Item" sep=",">
-		<var name="id" type="int"/>
-		<var name="name" type="string"/>
-		<var name="num" type="int"/>
-	</bean>
-
-	<bean name="CollectionTable2">
-		<var name="id" type="int"/>
-		<var name="items" type="list,Item"/>
-	</bean>
-
-	<table name="TbBeanCollection" value="CollectionTable2" input="collection2.xlsx">
-```
-
-![ex_62](docs/images/examples/ex_62.png)
-
-1. All data are in one cell
-```xml
-	<bean name="Item" sep=",">
-		<var name="id" type="int"/>
-		<var name="name" type="string"/>
-		<var name="num" type="int"/>
-	</bean>
-
-	<bean name="CollectionTable2">
-		<var name="id" type="int"/>
-		<var name="items" type="list,Item" sep="|"/>
-	</bean>
-
-	<table name="TbBeanCollection" value="CollectionTable2" input="collection2.xlsx">
-```
-
-![ex_63](docs/images/examples/ex_63.png)
-
-### Polymorphic structure list
-
-```xml
-<bean name="CollectionTable3">
-	<var name="id" type="int"/>
-	<var name="shapes" type="list,Shape" sep=","/>
-</bean>
-
-<table name="TbBeanCollection3" value="CollectionTable3" input="collection3.xlsx">
-```
-
-![ex_71](docs/images/examples/ex_71.png)
-
-### Multi-line records
-
-It is often encountered that some records contain a list: bean type structure list. If one line of configuration is forcibly required, the readability and maintainability will be poor. If the table is disassembled, it will not be friendly to planning and procedures. We support multi-row configuration for this type of data, and only need to add the attribute multi_rows="1" after the multi-row field.
-Examples are as follows:
-
-The **levels** field in the hero level table is a list. We mark it as multi_rows and fill in multiple rows.
-
-
-definition:
-
-![multi_define](docs/images/examples/multi_01.png)
-
-data:
-
-![multi_data](docs/images/examples/multi_02.png)
-
-
-### Singleton table
-
-Singleton refers to the meaning of singleton in code mode, which is used to configure only one copy of data globally.
-
-```xml
-<bean name="SingletonTable">
-	<var name="init_gold_num" type="int"/>
-	<var name="guild_module_open_level" type="int"/>
-</bean>
-
-<table name="TbSingleton" value="SingletonTable" mode="one" input="examples.xlsx"/>
-```
-
-Luban supports horizontal and vertical tables, and the default is horizontal table. For singleton tables, the vertical table is more comfortable to fill in, so we fill in row:0 in cell B1 of excel to indicate that it is a vertical table.
-
-![ex_a1](docs/images/examples/ex_a1.png)
-
-### Data Validation
-
-It supports key reference checking, path resource checking, and range checking.
-
-- Reference check
-
-   For simple data types such as int, long, and string, you can check whether the data is a valid id of a table, which is very common in game configuration. For example, in the TbBonus table below, item_id must be a legal item id, then explicitly constrained by ref="item.TbItem". If an illegal integer value is filled in, a warning will be printed during the generation process. It is found that the reference error will not stop the generation, and the data will still be exported. Because in the actual project development process, it is very common to temporarily generate some illegal data due to frequent data changes. These incorrect data may not affect most of the tests. If you stop the generation , Will cause unrelated development students to often be blocked in the development process.
-
-   Sometimes you don't want to check the value of 0 or empty string, you can pass ref="<full table name>?" to indicate that the default value data is ignored, such as ref="item.TbItem?". If it is a nullable data type such as int?, ref="<table name>?" is not required, and null data will be automatically ignored, but the value of 0 will still be checked and a warning will be issued.
-
-```xml
-	<module name="item">
-		<bean name="Item">
-			<var name="id" type="int">
-			<var name="num" type="int">
-		</bean>
-
-		<table name="TbItem" value="Item" input="item/item.xlsx">
-
-		<bean name="Bonus1">
-			<var name="id" type="int">
-			<var name="item_id" type="int" ref="item.TbItem">
-			<var name="num" type="int">
-		</bean>
-		<table name="TbBonus" value="Bonus1" input="item/bonus.xlsx">
-
-		<bean name="Bonus2">
-			<var name="id" type="int">
-			<var name="item_id" type="int?" ref="item.TbItem">
-			<var name="num" type="int">
-		</bean>
-		<table name="TbBonus2" value="Bonus2" input="item/bonus2.xlsx">
-	</module>
-```
-
-![ex_e1](docs/images/examples/ex_e1.png)
-
-![ex_e2](docs/images/examples/ex_e2.png)
-
-![ex_e3](docs/images/examples/ex_e3.png)
-
-- path resource check
-
-It is used to check whether the resource path filled in the planning is legal, and to prevent errors that cannot be found when the resource is running. The goal has been to implement a special resource check mechanism for Unity and UE4. For details, please see [Complete Manual](docs/manual.md)
-
-For example, the icon field in the equipment table of the unity project must be a valid resource, add the definition path="unity" in the icon field
-
-Definition:
-
-![path_define](docs/images/examples/path_01.png)
-
-Data:
-
-![path_data](docs/images/examples/path_02.png)
-
-- range check
-
-It is used to check whether the data filled in the planning is within the legal range, and supports [x,y],[x,],(x,y),(x,) and other open and closed interval writing. For details, please see [Complete Manual](docs/manual.md)
-
-Example: The hero's position coordinates must be within the range of [1,5], then add the range="[1,5]" attribute to the position field
-
-Definition:
-
-![range_define](docs/images/examples/range_01.png)
-
-Data:
-
-![range_data](docs/images/examples/range_02.png)
-
-### Group export
-
-In most projects, the data exported to the front and back ends are not exactly the same. Some tables may only be required by the front-end or the back-end, and some fields may be required only by the front-end or the back-end.
-
-Luban supports two levels of grouping at the same time:
-- Table level grouping
-
-The definition method is to define the group attribute in the table. If the group is not defined, it will be exported to all groups by default. If the group is defined, it will only be exported to the specified group. There can be multiple, separated by commas ",".
-
-&lt; table name="xxx" group="&lt;group1&gt;,&lt;group2&gt;..." &gt;
-
-For example: The TbDemoGroup_C table is only used by the client, TbDemoGroup_S can only be used by the server, and TbDemoGroup_E is only used by the editor.
-It is defined as follows:
-
-![group_table](docs/images/examples/group_02.png)
-
-- Field level grouping
-
-The definition method is to assign the group attribute to var. If it is not specified, it will be exported to all groups by default. It can be multiple, separated by a comma ",". Compared with most table guide tools that only support group export of **table top-level fields**, luban supports group export of any bean field granularity level.
-
-&lt;var name="xxx" group="&lt;group1&gt;,&lt;group2&gt; ..." /&gt;
-
-
-For example, the id, x1, and x4 fields in the TbDemoGroup table are required for the front and back ends; x3 is only required for the back end; and the x2 field is only required for the front end. x5 is a bean type, it is exported to the front and back ends, but its sub-fields can also be grouped and filtered, x5.y1, x2.y4 will be exported at the front and back ends, x5.x3 is only exported to the back end, and x5.x2 is only exported to the front end .
-It is defined as follows:
-
-![group_var](docs/images/examples/group_01.png)
-
-
-### Tag data filtering
-
-Selectively export data that meets the requirements based on data tags. It is suitable for some situations, such as: some test data was produced during the research and development period. We hope that these data will not be exported when it is officially launched, but we do not want to manually delete those records in the excel sheet, because these test data are still needed for intranet testing. A more elegant way is to mark these data as TEST (or test, or other labels), and ignore data with some labels when exporting.
-
-Example: 102149001 and 102149002 are test items and hope they will not be included in the official release. As long as you turn off -- export- test in the command line option, these test data will not be exported.
-
-![tag](docs/images/examples/tag_01.png)
-
-### Constant alias
-
-Some digital frequencies are often used in the project, such as upgrading the Dan item id. Plan to fill in the number every time, it is easy to make mistakes and fill in the wrong. We allow you to specify constant aliases for integers. When the tool exports the configuration, it will automatically replace the aliases with the corresponding integers.
-
-### Multiple data sources
-
-- One data table comes from two excel files
-
-Specify that the data of the data table comes from multiple files by means of excel file 1, excel file 2..., and different files are separated by commas ",". When the data source is an excel file and @ is not used to specify a cell table, all cell tables in the excel file will be read in. For example, the data of the TbItem table comes from item1.xlsx and item2.xlsx in the item directory.
-
-```xml
-		<bean name="Item">
-			<var name="id" type="int">
-			<var name="num" type="int">
-		</bean>
-
-		<table name="TbItem" value="Item" input="item/item1.xlsx,item/item2.xlsx">
-```
-
-![ex_c1](docs/images/examples/ex_c1.png)
-
-![ex_c2](docs/images/examples/ex_c2.png)
-
-![ex_c3](docs/images/examples/ex_c3.png)
-
-![ex_c4](docs/images/examples/ex_c4.png)
-
-- Two data tables are from different cell tables of the same excel file
-To
-Specify the data from a certain unit table of the excel file by way of <unit table name>@excel file, you can specify multiple unit tables, separated by commas ",". In the example, TbItem occupies two cell tables, table1 and table3; TbEquip occupies two cell tables, table2 and table4. The cell tables occupied by the same data table need not be consecutive. In the example, TbItem and TbEquip are deliberately accounted for two non-adjacent unit tables.
-```xml
-	<bean name="Item">
-		<var name="id" type="int">
-		<var name="num" type="int">
-	</bean>
-
-	<table name="TbItem" value="Item" input="table1@examples.xlsx,table3@examples.xlsx">
-
-	<bean name="Equip">
-		<var name="id" type="int">
-		<var name="count" type="int">
-	</bean>
-
-	<table name="TbEquip" value="Equip" input="table2@examples.xlsx,table4@examples.xlsx">
-```
-![ex_b1](docs/images/examples/ex_b1.png)
-
-![ex_b2](docs/images/examples/ex_b2.png)
-
-![ex_b3](docs/images/examples/ex_b3.png)
-
-![ex_b4](docs/images/examples/ex_b4.png)
-
-
-- The data of a data table comes from all the files under the **directory**
-To
-When using a directory as the data source, all files in the entire directory tree will be traversed, except for the file whose name starts with ",.~" (character comma or period or tilde), read in the data in each file. If it is the data of the excel family, multiple records will be read from each file. If it is the data of the xml, lua, json family, each file will be read as one record. You can specify multiple directories as data sources at the same time, separated by commas ",".
-```xml
-	<bean name="Item">
-		<var name="id" type="int">
-		<var name="num" type="int">
-	</bean>
-
-	<table name="TbItem" value="Item" input="item.xlsx">
-
-```
-![ex_d1](docs/images/examples/ex_d1.png)
-
-![ex_c1](docs/images/examples/ex_c1.png)
-
-![ex_c3](docs/images/examples/ex_c3.png)
-
-### json data source
-In a large and complex project, some table data is saved in json format, such as skills, AI, plot, etc. Conventional table guide tools can only process excel. Data such as xml and json are generally processed by programmers themselves, which eventually leads to several configuration loading schemes in the game, and the front and back end
-Editor developers have to spend a lot of time writing code to process these data, which is troublesome and difficult to locate errors.
-
-Luban unifies all configurations through **definition + data source**. The usage of json data source is basically the same as that of excel data source, the only difference is
-The format of the input data file is changed from xlsx to json. In the actual project, if json is used as the data format, in order to facilitate editor processing, generally one record occupies one file, and all records are unified under one directory, so the data source becomes a directory. The input="test/json_datas" directory in the figure below.
-
-```xml
-<bean name="DemoType2" >
-	<var name="x4" type="int" convert="DemoEnum"/>
-	<var name="x1" type="bool"/>
-	<var name="x2" type="byte"/>
-	<var name="x3" type="short" ref="test.TbFullTypes"/>
-	<var name="x5" type="long" convert="DemoEnum"/>
-	<var name="x5" type="long" convert="DemoEnum"/>
-	<var name="x6" type="float"/>
-	<var name="x7" type="double"/>
-	<var name="x8_0" type="fshort"/>
-	<var name="x8" type="fint"/>
-	<var name="x9" type="flong"/>
-	<var name="x10" type="string" path="normal;*.txt"/>
-	<var name="x12" type="DemoType1"/>
-	<var name="x13" type="DemoEnum"/>
-	<var name="x14" type="DemoDynamic" sep=","/>多态数据结构
-	<var name="v2" type="vector2"/>
-	<var name="v3" type="vector3"/>
-	<var name="v4" type="vector4"/>
-	<var name="t1" type="datetime"/>
-	<var name="k1" type="array,int"/> 使用;来分隔
-	<var name="k2" type="list,int"/>
-	<var name="k3" type="linkedlist,int"/>
-	<var name="k4" type="arraylist,int"/>
-	<var name="k5" type="set,int"/>
-	<var name="k6" type="treeset,int"/>
-	<var name="k7" type="hashset,int"/>
-	<var name="k8" type="map,int,int"/>
-	<var name="k9" type="list,DemoE2" sep="," index="y1"/>
-	<var name="k15" type="array,DemoDynamic" sep=","/> 
-</bean>
-
-<table name="TbDataFromJson" value="DemoType2" input="test/json_datas"/>
-```
-
-Using the directory as the data source, recursively traverse the entire directory tree, **after sorting by file**, read each json data as a record in turn.
-
-![ex_81](docs/images/examples/ex_81.png)
-
-The content of the 1.json file is as follows
-
-```json
- {
-	"x1":true,
-	"x2":3,
-	"x3":128,
-	"x4":1,
-	"x5":11223344,
-	"x6":1.2,
-	"x7":1.23432,
-	"x8_0":12312,
-	"x8":112233,
-	"x9":223344,
-	"x10":"hq",
-	"x12": { "x1":10},
-	"x13":"B",
-	"x14":{"__type__": "DemoD2", "x1":1, "x2":2},
-	"v2":{"x":1, "y":2},
-	"v3":{"x":1.1, "y":2.2, "z":3.4},
-	"v4":{"x":10.1, "y":11.2, "z":12.3, "w":13.4},
-	"t1":"1970-01-01 00:00:00",
-	"k1":[1,2],
-	"k2":[2,3],
-	"k3":[1,3],
-	"k4":[1,5],
-	"k5":[1,6],
-	"k6":[1,7],
-	"k7":[2,3],
-	"k8":[[2,2],[4,10]],
-	"k9":[{"y1":1, "y2":true},{"y1":2, "y2":false}],
-	"k15":[{"__type__": "DemoD2", "x1":1, "x2":2}]
- }
-```
-
-### xml data source
-definition
-
-```xml
-
-<table name="TbDataFromXml" value="DemoType2" input="test/xml_datas"/>
-```
-
-Take the directory as the data source, traverse the entire directory tree recursively, and read each xml data as a record.
-
-The content of the 1.xml file is as follows
-```xml
- <data>
-	<x1>true</x1>
-	<x2>4</x2>
-	<x3>128</x3>
-	<x4>1</x4>
-	<x5>112233445566</x5>
-	<x6>1.3</x6>
-	<x7>1112232.43123</x7>
-	<x8>112233</x8>
-	<x8_0>123</x8_0>
-	<x9>112334</x9>
-	<x10>yf</x10>
-	<x12>		<x1>1</x1>	</x12>
-	<x13>C</x13>
-	<x14 __type__="DemoD2">		<x1>1</x1>		<x2>2</x2>	</x14>
-	<v2>1,2</v2>
-	<v3>1.2,2.3,3.4</v3>
-	<v4>1.2,2.2,3.2,4.3</v4>
-	<t1>1970-01-01 00:00:00</t1>
-	<k1>    <item>1</item>	<item>2</item>	</k1>
-	<k2>	<item>1</item>	<item>2</item>	</k2>
-	<k3>	<item>1</item>	<item>2</item>	</k3>
-	<k4>	<item>1</item>	<item>2</item>	</k4>
-	<k5>	<item>1</item>	<item>2</item>	</k5>
-	<k6>	<item>1</item>	<item>2</item>	</k6>
-	<k7>	<item>1</item>	<item>3</item>	</k7>
-	<k8>
-		<item> <key>2</key><value>10</value></item>
-		<item> <key>3</key><value>30</value></item>
-	</k8>
-	<k9>
-		<item>	<y1>1</y1>	<y2>true</y2>	</item>
-		<item>	<y1>2</y1>	<y2>false</y2>	</item>
-	</k9>
-	<k15>
-		<item __type__="DemoD2">	<x1>1</x1>	<x2>2</x2>	</item>
-	</k15>
-</data>
-```
-### lua data source
-
-definition
-
-```xml
-<table name="TbDataFromLua" value="DemoType2" input="test/lua_datas"/>
-```
-Take the directory as the data source, traverse the entire directory tree recursively, and read each lua data as a record.
-
-The content of 1.lua file is as follows
-
-```lua
-return
-{
-   x1 = false,
-   x2 = 2,
-   x3 = 128,
-   x4 = 1122,
-   x5 = 112233445566,
-   x6 = 1.3,
-   x7 = 1122,
-   x8 = 12,
-   x8_0 = 13,
-   x9 = 123,
-   x10 = "yf",
-   x12 = {x1=1},
-   x13 = "D",
-   x14 = {__type__="DemoD2", x1 = 1, x2=3},
-   v2 = {x = 1,y = 2},
-   v3 = {x=0.1, y= 0.2,z=0.3},
-   v4 = {x=1,y=2,z=3.5,w=4},
-   t1 = "1970-01-01 00:00:00",
-   k1 = {1,2},
-   k2 = {2,3},
-   k3 = {3,4},
-   k4 = {1,2},
-   k5 = {1,3},
-   k6 = {1,2},
-   k7 = {1,8},
-   k8 = {[2]=10,[3]=12},
-   k9 = {{y1=1,y2=true}, {y1=10,y2=false}},
-   k15 = {{ __type__="DemoD2", x1 = 1, x2=3}},
-}
-```
-
-------
 ## route map
 
-- [ ] Added unity built-in editor
-- [ ] Added unreal built-in editor
+- [ ] Added unity built- in editor
+- [ ] Added unreal built- in editor
 - [ ] Supplementary unit test
 
 ## Development environment setup
 
-- Install [VS2019 Community Edition](https://visualstudio.microsoft.com/zh-hans/vs/)
-- Install [.dotnet core sdk 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
+- Install [VS2022 Community Edition](https://visualstudio.microsoft.com/zh- hans/vs/)
+- Install [.dotnet core sdk 6.0](https://dotnet.microsoft.com/download/dotnet/6.0)
 
-## Subordinate luban-server
+## Installation and use
 
-- Based on docker
-
-docker run -d --rm --name luban-server -p 8899:8899 focuscreativegames/luban-server:latest
-
-- Based on .net 5 runtime (recommended for win platform, cross-platform, no need to recompile)
-- Install .net 5 runtime by yourself.
-- Copy Luban.Server from [example project](https://github.com/focus-creative-games/luban_examples/tree/main/Tools/Luban.Server) (** can be cross-platform, even on linux and mac platforms No need to recompile **)
-- Run dotnet Luban.Server.dll in the Luban.Server directory
-
-## Use luban-client
-- Based on docker (recommended for linux and mac platforms)
-
-   docker run --rm -v $PWD/.cache.meta:/bin/.cache.meta focuscreativegames/luban-client <parameter>
-
-   To Remind! The .cache.meta file is used to save the md5 cache of the files generated locally or submitted to the remote. **strongly recommended** add the -v mapping, otherwise every time all the md5 involved in the file is recalculated, this may cause more in the later stage of the project A delay of a few seconds.
-- Based on .net 5 runtime (recommended for win platform, cross-platform, no need to recompile)
-- Install .net 5 runtime by yourself.
-- Copy Luban.Client from [example project](https://github.com/focus-creative-games/luban_examples/tree/main/Tools/Luban.Client) (** can be cross-platform, even on linux and mac platforms No need to recompile **)
-- Run dotnet Luban.Client.dll <parameters> in the Luban.Client directory
+See [client&server installation and usage instructions](docs/luban_command_tools.md)
 
 ## How to contribute
 
@@ -867,8 +1055,6 @@ docker run -d --rm --name luban-server -p 8899:8899 focuscreativegames/luban-ser
 ## Useful links
 
 - [.NET Core source index](https://source.dot.net)
-
-
 
 ## License
 

@@ -34,10 +34,10 @@ luban相较于常规的excel导表工具有以下核心优势：
 
 ## 文档
 
-- [快速上手](https://github.com/focus-creative-games/luban/wiki/start_up)
-- [**wiki**](https://github.com/focus-creative-games/luban/wiki) ，比较完善，有使用疑问，请先查看此wiki。
+- [快速上手](https://focus-creative-games.github.io/lubandoc/start_up.html)
+- [**wiki**](https://focus-creative-games.github.io/lubandoc) ，比较完善，有使用疑问，请先查看此wiki。
 - **示例项目** ([github](https://github.com/focus-creative-games/luban_examples)) ([gitee](https://gitee.com/focus-creative-games/luban_examples))
-- [版本变更记录](https://github.com/focus-creative-games/luban/wiki/changelog)
+- [版本变更记录](https://focus-creative-games.github.io/lubandoc/changelog.html)
 
 - 支持与联系
   - QQ群: 692890842 （Luban开发交流群）。有使用方面的疑问请及时加QQ群询问，随时有人帮助解决。
@@ -931,11 +931,11 @@ binary格式占空间最小，lua其次，json最大。
 
 ### 自定义代码和数据模板
 
-[自定义模板](https://github.com/focus-creative-games/luban/wiki/render_template)
+[自定义模板](https://focus-creative-games.github.io/lubandoc/render_template.html)
 
 ### 本地化
 
-支持以下几种本地化机制，详见[本地化](https://github.com/focus-creative-games/luban/wiki/l10n)
+支持以下几种本地化机制，详见[本地化](https://focus-creative-games.github.io/lubandoc/l10n.html)
 
 - 静态本地化
 - 动态本地化
