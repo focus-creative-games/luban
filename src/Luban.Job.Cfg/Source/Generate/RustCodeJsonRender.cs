@@ -25,7 +25,10 @@ namespace Luban.Job.Cfg.Generate
             DefAssembly.LocalAssebmly.CurrentLanguage = ctx.Lan;
 
             var lines = new List<string>();
-            GenerateCodeMonolithic(ctx, RenderFileUtil.GetFileOrDefault(ctx.GenArgs.OutputCodeMonolithicFile, "mod.rs"), lines, ls =>
+            GenerateCodeMonolithic(ctx,
+                System.IO.Path.Combine(ctx.GenArgs.OutputCodeDir, RenderFileUtil.GetFileOrDefault(ctx.GenArgs.OutputCodeMonolithicFile, "mod.rs")),
+                lines,
+                ls =>
             {
                 var template = StringTemplateManager.Ins.GetTemplate("config/rust_json/include");
                 var result = template.RenderCode(ctx.ExportTypes);

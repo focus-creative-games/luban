@@ -26,7 +26,11 @@ namespace Luban.Job.Cfg.Generate
                 fileContent.Add(StringTemplateManager.Ins.GetTemplateString("config/python2_json/include"));
             }
 
-            GenerateCodeMonolithic(ctx, RenderFileUtil.GetFileOrDefault(ctx.GenArgs.OutputCodeMonolithicFile, "Types.py"), lines, PreContent, null);
+            GenerateCodeMonolithic(ctx,
+                System.IO.Path.Combine(ctx.GenArgs.OutputCodeDir, RenderFileUtil.GetFileOrDefault(ctx.GenArgs.OutputCodeMonolithicFile, "Types.py")),
+                lines,
+                PreContent,
+                null);
 
             //string indexFileName = "__init__.py";
             //string indexFileContent = "";

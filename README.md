@@ -29,7 +29,7 @@ luban统一了游戏配置开发工作流，极大提升了策划和程序的工
 ## 核心特性
 
 - 强大的数据解析和转换能力 {excel(csv,xls,xlsx), json, bson, xml, yaml, lua, unity ScriptableObject} => {binary, json, bson, xml, lua, yaml, erlang}
-- 支持生成c#,java,go,c++,lua,python,typescript,erlang,rust代码
+- 支持生成c#,java,go,c++,lua,python,javascript,typescript,erlang,rust代码
 - 增强的excel格式，可以简洁地配置出像简单列表、子结构、结构列表，以及任意复杂的深层次的嵌套结构。
 - 支持json、lua、xml等格式的数据来表达行为树、技能、剧情、副本之类复杂GamePlay数据
 - 支持生成 protobuf(schema + binary + json)、flatbuffers(schema + json)、msgpack(binary)

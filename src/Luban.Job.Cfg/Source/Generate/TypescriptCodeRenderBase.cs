@@ -62,7 +62,11 @@ namespace Luban.Job.Cfg.Generate
                 //fileContent.Add("}"); // end of topmodule
             };
 
-            GenerateCodeMonolithic(ctx, RenderFileUtil.GetFileOrDefault(ctx.GenArgs.OutputCodeMonolithicFile, "Types.ts"), lines, preContent, postContent);
+            GenerateCodeMonolithic(ctx,
+                System.IO.Path.Combine(ctx.GenArgs.OutputCodeDir, RenderFileUtil.GetFileOrDefault(ctx.GenArgs.OutputCodeMonolithicFile, "Types.ts")),
+                lines,
+                preContent,
+                postContent);
         }
     }
 }
