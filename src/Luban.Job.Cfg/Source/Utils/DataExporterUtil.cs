@@ -8,6 +8,7 @@ using Luban.Job.Cfg.Defs;
 using Luban.Job.Cfg.l10n;
 using Luban.Job.Cfg.RawDefs;
 using Luban.Job.Common.Tpl;
+using Luban.Job.Common.Types;
 using Luban.Job.Common.Utils;
 using MessagePack;
 using Scriban;
@@ -167,7 +168,7 @@ namespace Luban.Job.Cfg.Utils
             var resList = new List<ResourceInfo>();
             foreach (Record res in records)
             {
-                ResourceExportor.Ins.Accept(res.Data, null, resList);
+                ResourceExportor.Ins.Accept(res.Data, TBean.Create(false, res.Data.Type, null), resList);
             }
             return resList;
         }
