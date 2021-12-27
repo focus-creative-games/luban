@@ -32,7 +32,7 @@ namespace Luban.Job.Cfg.Generate
                     {
                         if (ress.Add((ri.Resource, ri.Tag)))
                         {
-                            resourceLines.Add($"{ri.Resource},{ri.Tag}");
+                            resourceLines.Add($"{ri.Tag},{ri.Resource}");
                         }
                     }
                 }

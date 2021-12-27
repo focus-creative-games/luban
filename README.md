@@ -211,7 +211,7 @@ luban统一了游戏配置开发工作流，极大提升了策划和程序的工
 
 <tr align="center"><td>##var</td><td>id</td><td colspan="4">shape</td><td colspan="4">shape2</td></tr>
 <tr align="center"><td>##type</td><td>int</td><td colspan="4">Shape</td><td colspan="4">Shape</td></tr>
-<tr align="center"><td>##var</td><td></td><td>__type__</td><td>radius</td><td>width</td><td>height</td><td></td><td></td><td></td><td></td></tr>
+<tr align="center"><td>##var</td><td></td><td>\_\_type\_\_</td><td>radius</td><td>width</td><td>height</td><td></td><td></td><td></td><td></td></tr>
 <tr align="center"><td/><td>1</td><td>Circle</td><td>10</td><td/><td/><td>Circle</td><td>100</td><td></td><td></td></tr>
 <tr align="center"><td/><td>2</td><td>Rectangle</td><td></td><td>10</td><td>20</td><td>矩形</td><td>10</td><td>20</td><td></td></tr>
 <tr align="center"><td/><td>3</td><td>圆</td><td>10</td><td/><td/><td>Triangle</td><td>15</td><td>15</td><td>15</td></tr>
