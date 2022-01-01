@@ -60,14 +60,71 @@ luban统一了游戏配置开发工作流，极大提升了策划和程序的工
 
 ### 普通表
 
-|##var| id | x1 | x5 | x6  | s1   | s2&sep=#  | v3  | t1 |
+|##var| id | x1 | x5 | x6  | s1   | s2  | v3  | t1 |
 | -|- | -| -| -| -| - | - | - |
-|##type|int|bool|long|float|string|text|vector3|datetime|
+|##type|int|bool|long|float|string|text#sep=\||vector3|datetime|
 |##|id|desc1|desc2|desc3|desc4|desc7|desc1|time|
-|| 1|false| 1000| 1.2| hello |key1#world1|1,2,3|1999-10-10 11:12:13|
-|| 2|true| 1000| 2.4|world |key2#world2|2,4,5|1999-10-12 11:12:13|
+|| 1|false| 1000| 1.2| hello |key1\|world1|1,2,3|1999-10-10 11:12:13|
+|| 2|true| 1000| 2.4|world |key2\|world2|2,4,5|1999-10-12 11:12:13|
 
-### 多行表1
+### 原生数据列表
+
+<table border="1">
+<tr align="center">
+  <td>##var</td>
+  <td>id</td>
+  <td>arr1</td>
+  <td colspan="4">arr2</td>
+  <td>arr3</td>
+  <td colspan="3">arr4</td>
+</tr>
+<tr align="center">
+  <td>##type</td>
+  <td>int</id>
+  <td>array,int</td>
+  <td colspan="4">list,int</td>
+  <td>(list#sep=|),string</td>
+  <td colspan="3">list,string</td>
+</tr>
+<tr align="center">
+  <td>##</td>
+  <td>id</id>
+  <td>desc1</td>
+  <td colspan="4">desc2</td>
+  <td>desc3</td>
+  <td colspan="3">desc4</td>
+</tr>
+
+<tr align="center">
+<td/>
+<td>1</td>
+<td>1,2,3</td>
+<td>1</td><td>2</td><td></td><td></td>
+<td>xx|yy</td>
+<td>xxx</td><td>zzz</td><td></td>
+</tr>
+
+<tr align="center">
+<td/>
+<td>2</td>
+<td>2;4</td>
+<td>3</td><td>4</td><td>5</td><td></td>
+<td>aaaa|bbbb|cccc</td>
+<td>aaa</td><td>bbb</td><td>ccc</td>
+</tr>
+
+<tr align="center">
+<td/>
+<td>3</td>
+<td>2|4|6</td>
+<td>3</td><td>4</td><td>5</td><td>6</td>
+<td>aaaa|bbbb|cccc</td>
+<td>aaa</td><td>bbb</td><td>ccc</td>
+</tr>
+
+</table>
+
+### 结构列表
 
 <table border="1">
 <tr align="center">
@@ -104,7 +161,7 @@ luban统一了游戏配置开发工作流，极大提升了策划和程序的工
 
 </table>
 
-### 多行表2
+### 多行表 1
 
 <table border="1">
 
@@ -166,7 +223,7 @@ luban统一了游戏配置开发工作流，极大提升了策划和程序的工
 
 </table>
 
-### 多行表3
+### 多行表 2
 
 <table border="1">
 
@@ -205,13 +262,25 @@ luban统一了游戏配置开发工作流，极大提升了策划和程序的工
 <tr align="center"><td/><td>3</td><td>task1</td><td>1005</td><td>50</td><td>desc5</td><td/><td/><td/><td/><td/><td/></tr>
 </table>
 
+### map 类型的多级子标题
+
+<table border="1">
+
+<tr align="center"><td>##var</td><td>id</td><td colspan="4">lans</td></tr>
+<tr align="center"><td>##type</td><td>int</td><td colspan="4">map,string,string</td></tr>
+<tr align="center"><td>##var</td><td/><td>ch-zn</td><td>en</td><td>jp</td><td>fr</td></tr>
+<tr align="center"><td/><td>1</td><td>苹果</td><td>apple</td><td>aaa</td><td>aaa</td></tr>
+<tr align="center"><td/><td>2</td><td>香蕉</td><td>banana</td><td>bbb</td><td>bbb</td></tr>
+
+</table>
+
 ### 类型继承（适合技能、buff相关配置）
 
 <table border="1">
 
 <tr align="center"><td>##var</td><td>id</td><td colspan="4">shape</td><td colspan="4">shape2</td></tr>
 <tr align="center"><td>##type</td><td>int</td><td colspan="4">Shape</td><td colspan="4">Shape</td></tr>
-<tr align="center"><td>##var</td><td></td><td>\_\_type\_\_</td><td>radius</td><td>width</td><td>height</td><td></td><td></td><td></td><td></td></tr>
+<tr align="center"><td>##var</td><td></td><td>__type__</td><td>radius</td><td>width</td><td>height</td><td></td><td></td><td></td><td></td></tr>
 <tr align="center"><td/><td>1</td><td>Circle</td><td>10</td><td/><td/><td>Circle</td><td>100</td><td></td><td></td></tr>
 <tr align="center"><td/><td>2</td><td>Rectangle</td><td></td><td>10</td><td>20</td><td>矩形</td><td>10</td><td>20</td><td></td></tr>
 <tr align="center"><td/><td>3</td><td>圆</td><td>10</td><td/><td/><td>Triangle</td><td>15</td><td>15</td><td>15</td></tr>
@@ -231,6 +300,19 @@ luban统一了游戏配置开发工作流，极大提升了策划和程序的工
 ||1|2|aaa|134|
 ||2|1|aaa|124|
 ||5|6|xxx|898|
+
+### 多主键表（独立索引）
+
+多个key独立索引。
+
+|##var|key1|key2|key3| num|
+|-|-|-|-|-|
+|##type|int|long|string|int|
+||1|2|aaa|123|
+||2|4|bbb|124|
+||3|6|ccc|134|
+||4|8|ddd|124|
+||5|10|eee|898|
 
 ### 单例表
 
