@@ -127,6 +127,7 @@ namespace Luban.Job.Cfg.Validators
             }
 
             var assembly = ((DefField)def).Assembly;
+            bool anyRefGroup = false;
             foreach (var table in Tables)
             {
                 var (actualTable, indexName, ignoreDefault) = ParseRefString(table);
@@ -152,13 +153,14 @@ namespace Luban.Job.Cfg.Validators
                         }
                         CompileTable(def, subTable, refIndex, ignoreDefault && refIgnoreDefault);
                     }
+                    anyRefGroup = true;
                 }
                 else
                 {
                     throw new Exception($"结构:'{hostTypeName}' 字段:'{fieldName}' ref:'{actualTable}' 不存在");
                 }
             }
-            if (_compiledTables.Count == 1 && (_compiledTables[0].Table is DefTable t && t.IsMapTable && t.NeedExport))
+            if (!anyRefGroup && _compiledTables.Count == 1 && (_compiledTables[0].Table is DefTable t && t.IsMapTable && t.NeedExport))
             {
                 // 只引用一个表时才生成ref代码。
                 // 如果被引用的表没有导出，生成ref没有意义，还会产生编译错误
