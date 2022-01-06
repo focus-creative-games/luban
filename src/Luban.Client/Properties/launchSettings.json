@@ -2,8 +2,8 @@
   "profiles": {
     "Luban.Client": {
       "commandName": "Project",
-      "commandLineArgs": "-h %LUBAN_SERVER_IP% -j cfg -w ..\\DesignerConfigs\\Datas  -- -d ..\\DesignerConfigs\\Defines\\__root__.xml --input_data_dir ..\\DesignerConfigs\\Datas  --output_code_dir TsScripts/src/Gen/Cfg  --output_data_dir ConfigData  --gen_types code_typescript_bin,data_bin  -s client --export_test_data --validate_root_dir Assets ",
-      "workingDirectory": "C:\\workspace\\unity-world\\Client"
+      "commandLineArgs": "-h %LUBAN_SERVER_IP% -j cfg  -- -d ..\\..\\DesignerConfigs\\Defines\\__root__.xml --input_data_dir ..\\..\\DesignerConfigs\\Datas  --output_code_dir Assets/Gen  --output_data_dir ..\\GenerateDatas\\json --gen_types code_cs_unity_json,data_json  -s all  --validate_root_dir .",
+      "workingDirectory": "D:\\workspace\\luban_examples\\Projects\\Csharp_Unity_json"
     },
     "Luban.Client-db": {
       "commandName": "Project",

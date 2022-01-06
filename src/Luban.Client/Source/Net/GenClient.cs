@@ -8,11 +8,14 @@ using Luban.Client.Common.Utils;
 using Luban.Common.Protos;
 using Luban.Common.Utils;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using YamlDotNet.RepresentationModel;
 
 namespace Luban.Client.Common.Net
 {
@@ -163,14 +166,84 @@ namespace Luban.Client.Common.Net
             Session.ReplyRpc<GetInputFile, GetInputFileArg, GetInputFileRes>(rpc, res);
         }
 
+        private readonly Regex _subResPattern = new Regex(@"(.+)\[(\d+)]$");
+
+        private readonly ConcurrentDictionary<string, YamlDocument> _cacheYamlDocs = new();
+
+        private YamlDocument GetCacheYamlDoc(string mainResFileName)
+        {
+            return _cacheYamlDocs.GetOrAdd(mainResFileName, (file) =>
+            {
+                var yamlStream = new YamlStream();
+                yamlStream.Load(new StreamReader(new FileStream(mainResFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)));
+                return yamlStream.Documents[0];
+            });
+        }
+
+        private bool CheckSubResourceExists(string mainResFileName, string subResName)
+        {
+            s_logger.Debug("check resources main:{} sub:{}", mainResFileName, subResName);
+            if (!File.Exists(mainResFileName))
+            {
+                return false;
+            }
+            try
+            {
+                var yamlNode = (YamlMappingNode) GetCacheYamlDoc(mainResFileName).RootNode;
+                var yamlSubResName = new YamlScalarNode(subResName);
+                foreach (var (resType, node) in yamlNode)
+                {
+                   
+                    switch(resType.ToString())
+                    {
+                        case "SpriteAtlas":
+                            {
+                                var mnode = (YamlMappingNode)node;
+                                var r = (YamlSequenceNode) mnode[new YamlScalarNode("m_PackedSpriteNamesToIndex")];
+                                if (r == null)
+                                {
+                                    return false;
+                                }
+                                return r.Contains(yamlSubResName);
+                            }
+                    }
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                s_logger.Error(ex);
+                return false;
+            }
+        }
+
         private void Process(QueryFilesExists p)
         {
             var root = p.Arg.Root;
             var files = p.Arg.Files;
             var re = new QueryFilesExistsRes() { Exists = new List<bool>(files.Count) };
+
+            var tasks = new List<Task<bool>>();
+
             foreach (var f in files)
             {
-                re.Exists.Add(File.Exists(Path.Combine(root, f)));
+                var match = _subResPattern.Match(f);
+                if (match.Success)
+                {
+                    var groups = match.Groups;
+                    tasks.Add(Task.Run(() => CheckSubResourceExists(Path.Join(root, groups[1].Value), groups[2].Value)));
+                }
+                else
+                {
+                    tasks.Add(Task.Run(() => File.Exists(Path.Combine(root, f))));
+                }
+            }
+
+            Task.WhenAll(tasks);
+            foreach (var task in tasks)
+            {
+                re.Exists.Add(task.Result);
             }
             Session.ReplyRpc<QueryFilesExists, QueryFilesExistsArg, QueryFilesExistsRes>(p, re);
         }
