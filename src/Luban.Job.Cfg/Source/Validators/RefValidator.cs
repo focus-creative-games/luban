@@ -151,7 +151,7 @@ namespace Luban.Job.Cfg.Validators
                         {
                             throw new Exception($"结构:'{hostTypeName}' 字段:'{fieldName}' refgroup:'{actualTable}' ref:'{actualRefTableName}' 不存在");
                         }
-                        CompileTable(def, subTable, refIndex, ignoreDefault && refIgnoreDefault);
+                        CompileTable(def, subTable, refIndex, ignoreDefault || refIgnoreDefault);
                     }
                     anyRefGroup = true;
                 }
