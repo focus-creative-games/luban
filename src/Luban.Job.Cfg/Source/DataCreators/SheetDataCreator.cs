@@ -249,7 +249,10 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TText type, Sheet sheet, TitleRow row)
         {
-            if (!type.HasTag("sep"))
+            //var s = row.AsStream(row.SelfTitle.Sep);
+            //return type.Apply(ExcelStreamDataCreator.Ins, s);
+
+            if (string.IsNullOrEmpty(row.SelfTitle.SepOr(type.GetTag("sep"))))
             {
                 if (row.CellCount != 2)
                 {
@@ -267,7 +270,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
             else
             {
-                var s = row.AsStream(type.GetTag("sep"));
+                var s = row.AsStream(row.SelfTitle.Sep);
                 return type.Apply(ExcelStreamDataCreator.Ins, s);
             }
         }
@@ -364,12 +367,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TBean type, Sheet sheet, TitleRow row)
         {
-            string sep = "";// type.GetBeanAs<DefBean>().Sep;
-            if (string.IsNullOrWhiteSpace(sep))
-            {
-                sep = row.SelfTitle.SepOr(type.GetTag("sep"));
-            }
-
+            string sep = row.SelfTitle.Sep;// type.GetBeanAs<DefBean>().Sep;
 
             if (row.Row != null)
             {
@@ -482,16 +480,16 @@ namespace Luban.Job.Cfg.DataCreators
             return datas;
         }
 
-        private List<DType> ReadCollectionDatas(TType elementType, Sheet sheet, TitleRow row, string containerSep)
+        private List<DType> ReadCollectionDatas(TType type, TType elementType, Sheet sheet, TitleRow row)
         {
             if (row.Row != null)
             {
-                var s = row.AsStream(string.IsNullOrEmpty(containerSep) ? DataUtil.GetCollectionElementTypeSep(elementType) : containerSep);
-                return ExcelStreamDataCreator.Ins.ReadList(elementType, s);
+                var s = row.AsStream(row.SelfTitle.Sep);
+                return ExcelStreamDataCreator.Ins.ReadList(type, elementType, s);
             }
             else if (row.Rows != null)
             {
-                var s = row.AsMultiRowStream(string.IsNullOrEmpty(containerSep) ? DataUtil.GetCollectionElementTypeSep(elementType) : containerSep);
+                var s = row.AsMultiRowStream(row.SelfTitle.Sep);
                 return ReadList(elementType, s);
             }
             else if (row.Fields != null)
@@ -524,36 +522,27 @@ namespace Luban.Job.Cfg.DataCreators
         public DType Accept(TArray type, Sheet sheet, TitleRow row)
         {
             //string sep = DataUtil.GetSep(type);
-            return new DArray(type, ReadCollectionDatas(type.ElementType, sheet, row, row.SelfTitle.SepOr(type.GetTag("sep"))));
+            return new DArray(type, ReadCollectionDatas(type, type.ElementType, sheet, row));
         }
 
         public DType Accept(TList type, Sheet sheet, TitleRow row)
         {
-            return new DList(type, ReadCollectionDatas(type.ElementType, sheet, row, row.SelfTitle.SepOr(type.GetTag("sep"))));
+            return new DList(type, ReadCollectionDatas(type, type.ElementType, sheet, row));
         }
 
         public DType Accept(TSet type, Sheet sheet, TitleRow row)
         {
-            return new DSet(type, ReadCollectionDatas(type.ElementType, sheet, row, row.SelfTitle.SepOr(type.GetTag("sep"))));
+            return new DSet(type, ReadCollectionDatas(type, type.ElementType, sheet, row));
         }
 
         public DType Accept(TMap type, Sheet sheet, TitleRow row)
         {
-            string sep = row.SelfTitle.SepOr(type.GetTag("sep"));
+            string sep = row.SelfTitle.Sep;
 
             if (row.Row != null)
             {
                 var s = row.AsStream(sep);
-                var datas = new Dictionary<DType, DType>();
-
-                while (!s.TryReadEOF())
-                {
-                    var key = type.KeyType.Apply(ExcelStreamDataCreator.Ins, s);
-                    var value = type.ValueType.Apply(ExcelStreamDataCreator.Ins, s);
-                    datas.Add(key, value);
-                }
-
-                return new DMap(type, datas);
+                return type.Apply(ExcelStreamDataCreator.Ins, s);
             }
             else if (row.Rows != null)
             {

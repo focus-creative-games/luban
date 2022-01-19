@@ -3,6 +3,7 @@ using Luban.Common.Utils;
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.DataSources.Excel;
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Cfg.TypeVisitors;
 using Luban.Job.Cfg.Utils;
 using Luban.Job.Common.Types;
 using Luban.Job.Common.TypeVisitors;
@@ -263,6 +264,8 @@ namespace Luban.Job.Cfg.DataCreators
         public DType Accept(TText type, ExcelStream x)
         {
             //x = SepIfNeed(type, x);
+            x = TrySep(type, x);
+
             string key = ParseString(x.Read());
             if (key == null)
             {
@@ -372,11 +375,14 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TBean type, ExcelStream x)
         {
-            var originX = x;
             var originBean = (DefBean)type.Bean;
             if (!string.IsNullOrEmpty(originBean.Sep))
             {
                 x = new ExcelStream(x.ReadCell(), originBean.Sep);
+            }
+            else
+            {
+                x = TrySep(type, x);
             }
 
             if (originBean.IsAbstractType)
@@ -416,50 +422,59 @@ namespace Luban.Job.Cfg.DataCreators
             }
         }
 
+        private static ExcelStream TrySep(TType type, ExcelStream stream)
+        {
+            string sep = type.GetTag("sep");
+            if (string.IsNullOrEmpty(sep) && type.ElementType != null && type.ElementType.Apply(IsNotSepTypeVisitor.Ins))
+            {
+                sep = DataUtil.SimpleContainerSep;
+            }
+            
+            if (!string.IsNullOrEmpty(sep) && !stream.TryReadEOF())
+            {
+                stream = new ExcelStream(stream.ReadCell(), sep);
+            }
+            return stream;
+        }
+
         // 容器类统统不支持 type.IsNullable
         // 因为貌似没意义？
-        public List<DType> ReadList(TType type, ExcelStream stream)
+        public List<DType> ReadList(TType type, TType eleType, ExcelStream stream)
         {
             var datas = new List<DType>();
-            string elementSep = type.GetTag("sep");
+            stream = TrySep(type, stream);
             while (!stream.TryReadEOF())
             {
-                if (string.IsNullOrEmpty(elementSep))
-                {
-                    datas.Add(type.Apply(this, stream));
-                }
-                else
-                {
-                    datas.Add(type.Apply(this, new ExcelStream(stream.ReadCell(), elementSep)));
-                }
+                datas.Add(eleType.Apply(this, stream));
             }
             return datas;
         }
 
         public DType Accept(TArray type, ExcelStream x)
         {
-            return new DArray(type, ReadList(type.ElementType, x));
+            return new DArray(type, ReadList(type, type.ElementType, x));
         }
 
         public DType Accept(TList type, ExcelStream x)
         {
-            return new DList(type, ReadList(type.ElementType, x));
+            return new DList(type, ReadList(type, type.ElementType, x));
         }
 
         public DType Accept(TSet type, ExcelStream x)
         {
-            return new DSet(type, ReadList(type.ElementType, x));
+            return new DSet(type, ReadList(type, type.ElementType, x));
         }
 
-        public DType Accept(TMap type, ExcelStream x)
+        public DType Accept(TMap type, ExcelStream stream)
         {
             //x = SepIfNeed(type, x);
+            stream = TrySep(type, stream);
 
             var datas = new Dictionary<DType, DType>();
-            while (!x.TryReadEOF())
+            while (!stream.TryReadEOF())
             {
-                var key = type.KeyType.Apply(this, x);
-                var value = type.ValueType.Apply(this, x);
+                var key = type.KeyType.Apply(this, stream);
+                var value = type.ValueType.Apply(this, stream);
                 if (!datas.TryAdd(key, value))
                 {
                     throw new InvalidExcelDataException($"map 的 key:{key} 重复");
