@@ -62,6 +62,14 @@ namespace Luban.Job.Cfg.DataSources.Excel
             }
         }
 
+        private static HashSet<string> s_validTags = new HashSet<string>()
+        {
+            "sep",
+            "non_empty",
+            "multi_rows",
+            "default",
+        };
+
         public void Init()
         {
             SortSubTitles();
@@ -73,6 +81,15 @@ namespace Luban.Job.Cfg.DataSources.Excel
             NonEmpty = Tags.TryGetValue("non_empty", out var ne) && ne == "1";
             SelfMultiRows = Tags.TryGetValue("multi_rows", out var v2) && (v2 == "1" || v2 == "true");
             Default = Tags.TryGetValue("default", out var v3) ? v3 : null;
+
+            foreach (var (key, value) in Tags)
+            {
+                if (!s_validTags.Contains(key))
+                {
+                    throw new Exception($"excel标题列:'{Name}' 不支持tag:'{key}',请移到##type行");
+                }
+            }
+
             if (SubTitleList.Count > 0)
             {
                 if (Root)

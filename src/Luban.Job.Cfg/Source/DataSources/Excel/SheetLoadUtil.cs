@@ -598,7 +598,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 fields.Add(subTitle.Name, new FieldInfo()
                 {
                     Name = subTitle.Name,
-                    Tags = title.Tags,
+                    Tags = subTitle.Tags,
                     Type = typeRow[subTitle.FromIndex].Value?.ToString() ?? "",
                     Desc = desc,
                 });
