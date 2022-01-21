@@ -29,17 +29,15 @@ luban统一了游戏配置开发工作流，极大提升了策划和程序的工
 ## 核心特性
 
 - 强大的数据解析和转换能力 {excel(csv,xls,xlsx), json, bson, xml, yaml, lua, unity ScriptableObject} => {binary, json, bson, xml, lua, yaml, erlang}
-- 支持生成c#,java,go,c++,lua,python,javascript,typescript,erlang,rust代码
 - 增强的excel格式，可以简洁地配置出像简单列表、子结构、结构列表，以及任意复杂的深层次的嵌套结构。
-- 支持json、lua、xml等格式的数据来表达行为树、技能、剧情、副本之类复杂GamePlay数据
+- 完备的类型系统，**支持OOP类型继承**，搭配excel、json、lua、xml等格式数据**灵活优雅**表达行为树、技能、剧情、副本之类复杂GamePlay数据
 - 支持生成 protobuf(schema + binary + json)、flatbuffers(schema + json)、msgpack(binary)
-- 强大的数据校验能力。ref引用检查，path资源路径检查等等。
-- 支持unity、unreal、cocos2x、微信小游戏等主流引擎及 win、linux、mac等平台。
-- 支持xLua、toLua、ILRuntime、Puerts、unLua、sLuaUnreal、XIL等等主流热更新方案
-- 支持skynet、ET、GameFramework、QFramework、xlua-famework、KSFramework等第三方框架
-- 完善的本地化支持。
+- 强大的数据校验能力。ref引用检查，path资源路径检查等等
+- 支持生成c#,java,go,c++,lua,python,javascript,typescript,erlang,rust代码
+- 完善的本地化支持
 - 强大灵活的自定义能力，支持代码模板和数据模板
-- **==通用型生成和缓存工具==**。也可以用于生成协议、数据库之类的代码，甚至可以用作对象缓存服务。
+- **==通用型生成和缓存工具==**。也可以用于生成协议、数据库之类的代码，甚至可以用作对象缓存服务
+- **良好支持主流引擎、全平台、主流热更新方案、主流前后端框架**。支持unity、unreal、cocos2x、微信小游戏等主流引擎。工具自身跨平台，能在Win,Linux,Mac平台良好工作。[详见](https://focus-creative-games.github.io/lubandoc/feature.html#%E6%94%AF%E6%8C%81%E4%B8%BB%E6%B5%81%E7%9A%84%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E8%AF%AD%E8%A8%80)
 
 完整特性请参见 [feature](https://focus-creative-games.github.io/lubandoc/feature.html)
 
