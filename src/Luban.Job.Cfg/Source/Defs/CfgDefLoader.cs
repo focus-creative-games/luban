@@ -187,7 +187,7 @@ namespace Luban.Job.Cfg.Defs
         private ETableMode ConvertMode(string defineFile, string tableName, string modeStr, string indexStr)
         {
             ETableMode mode;
-            string[] indexs = indexStr.Split(',');
+            string[] indexs = indexStr.Split(',', '+');
             switch (modeStr)
             {
                 case "1":
