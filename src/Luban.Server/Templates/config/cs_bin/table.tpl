@@ -72,6 +72,7 @@ public sealed class {{name}}
         {
             {{cs_define_type value_type}} _v;
             {{cs_deserialize '_buf' '_v' value_type}}
+            _dataList.Add(_v);
         }
     }
 
