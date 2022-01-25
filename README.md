@@ -65,6 +65,7 @@ luban统一了游戏配置开发工作流，极大提升了策划和程序的工
 || 1|false| 1000| 1.2| hello |key1\|world1|1,2,3|1999-10-10 11:12:13|
 || 2|true| 1000| 2.4|world |key2\|world2|2,4,5|1999-10-12 11:12:13|
 
+
 ### 原生数据列表
 
 <table border="1">
@@ -122,7 +123,21 @@ luban统一了游戏配置开发工作流，极大提升了策划和程序的工
 
 </table>
 
-### 结构列表
+### 子结构
+
+Reward为包含 "int item_id; int count; string desc; " 这三个字段的子结构。
+
+<table border="1">
+
+<tr align="center"><td>##var</td><td>id</td><td colspan="3">reward</td><td colspan="3">reward2</td><td>reward3</td></tr>
+<tr align="center"><td>##type</td><td>int</td><td colspan="3">Reward</td><td colspan="3">Reward</td><td>Reward#sep=,</td></tr>
+<tr align="center"><td>##var</td><td></td><td>item_id</td><td>count</td><td>desc</td><td></td><td></td><td></td><td/></tr>
+<tr align="center"><td/><td>1</td><td>1001</td><td>10</td><td>item 1</td><td>1002</td><td>11</td><td>item 2</td><td>1002,1,item 3</td></tr>
+<tr align="center"><td/><td>2</td><td>2001</td><td>10</td><td>item 2</td><td>2002</td><td>20</td><td>item 4</td><td>2003,2,item 5</td></tr>
+
+</table>
+
+### 结构列表 1
 
 <table border="1">
 <tr align="center">
@@ -159,7 +174,7 @@ luban统一了游戏配置开发工作流，极大提升了策划和程序的工
 
 </table>
 
-### 多行表 1
+### 结构列表 2
 
 <table border="1">
 
@@ -167,7 +182,77 @@ luban统一了游戏配置开发工作流，极大提升了策划和程序的工
   <td>##var</td>
   <td>id</td>
   <td>name</td>
-  <td colspan="6">stages</td>
+  <td colspan="9">rewards</td>
+</tr>
+<tr align="center">
+  <td>##type</td>
+  <td>int</td>
+  <td>string</td>
+  <td colspan="9">list,Reward</td>
+</tr>
+
+<tr align="center">
+  <td>##var</td>
+  <td></td>
+  <td></td>
+  <td colspan="3">0</td>
+  <td colspan="3">1</td>
+  <td colspan="3">2</td>
+</tr>
+
+<tr align="center"><td/><td>1</td><td>task1</td><td>1001</td><td>10</td><td>desc1</td><td>1002</td><td>12</td><td>desc2</td><td>1003</td><td>13</td><td>desc3</td></tr>
+<tr align="center"><td/><td>2</td><td>task1</td><td>1003</td><td>30</td><td>desc3</td><td>1004</td><td>40</td><td>desc4</td><td/><td/><td/></tr>
+<tr align="center"><td/><td>3</td><td>task1</td><td>1005</td><td>50</td><td>desc5</td><td/><td/><td/><td/><td/><td/></tr>
+</table>
+
+### 结构列表 3
+
+<table border="1">
+
+<tr align="center">
+  <td>##var</td>
+  <td>id</td>
+  <td>name</td>
+  <td colspan="9">rewards</td>
+</tr>
+<tr align="center">
+  <td>##type</td>
+  <td>int</td>
+  <td>string</td>
+  <td colspan="9">list,Reward</td>
+</tr>
+
+<tr align="center">
+  <td>##var</td>
+  <td></td>
+  <td></td>
+  <td colspan="3">0</td>
+  <td colspan="3">1</td>
+  <td colspan="3">2</td>
+</tr>
+<tr align="center">
+  <td>##var</td>
+  <td/>
+  <td/>
+  <td>item_id</td><td>num</td><td>desc</td>
+  <td>item_id</td><td>num</td><td>desc</td>
+  <td>item_id</td><td>num</td><td>desc</td>
+</tr>
+
+<tr align="center"><td/><td>1</td><td>task1</td><td>1001</td><td>10</td><td>desc1</td><td>1002</td><td>12</td><td>desc2</td><td>1003</td><td>13</td><td>desc3</td></tr>
+<tr align="center"><td/><td>2</td><td>task1</td><td>1003</td><td>30</td><td>desc3</td><td>1004</td><td>40</td><td>desc4</td><td/><td/><td/></tr>
+<tr align="center"><td/><td>3</td><td>task1</td><td>1005</td><td>50</td><td>desc5</td><td/><td/><td/><td/><td/><td/></tr>
+</table>
+
+### 多行表
+
+<table border="1">
+
+<tr align="center">
+  <td>##var</td>
+  <td>id</td>
+  <td>name</td>
+  <td colspan="6">*stages</td>
 </tr>
 <tr align="center">
   <td>##type</td>
@@ -219,45 +304,6 @@ luban统一了游戏配置开发工作流，极大提升了策划和程序的工
 <td/><td/><td/><td>2</td><td>stage2</td><td>stage desc2</td><td>1,2,3</td><td>1002</td><td>1</td>
 </tr>
 
-</table>
-
-### 多行表 2
-
-<table border="1">
-
-<tr align="center">
-  <td>##var</td>
-  <td>id</td>
-  <td>name</td>
-  <td colspan="9">rewards</td>
-</tr>
-<tr align="center">
-  <td>##type</td>
-  <td>int</td>
-  <td>string</td>
-  <td colspan="9">list,Reward</td>
-</tr>
-
-<tr align="center">
-  <td>##var</td>
-  <td></td>
-  <td></td>
-  <td colspan="3">0</td>
-  <td colspan="3">1</td>
-  <td colspan="3">2</td>
-</tr>
-<tr align="center">
-  <td>##var</td>
-  <td/>
-  <td/>
-  <td>item_id</td><td>num</td><td>desc</td>
-  <td>item_id</td><td>num</td><td>desc</td>
-  <td>item_id</td><td>num</td><td>desc</td>
-</tr>
-
-<tr align="center"><td/><td>1</td><td>task1</td><td>1001</td><td>10</td><td>desc1</td><td>1002</td><td>12</td><td>desc2</td><td>1003</td><td>13</td><td>desc3</td></tr>
-<tr align="center"><td/><td>2</td><td>task1</td><td>1003</td><td>30</td><td>desc3</td><td>1004</td><td>40</td><td>desc4</td><td/><td/><td/></tr>
-<tr align="center"><td/><td>3</td><td>task1</td><td>1005</td><td>50</td><td>desc5</td><td/><td/><td/><td/><td/><td/></tr>
 </table>
 
 ### map 类型的多级子标题
