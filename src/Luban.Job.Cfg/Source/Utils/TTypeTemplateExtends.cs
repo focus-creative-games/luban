@@ -4,6 +4,7 @@ using Luban.Job.Common.Defs;
 using Luban.Job.Common.Types;
 using Luban.Job.Common.TypeVisitors;
 using System;
+using System.Linq;
 
 namespace Luban.Job.Cfg.Utils
 {
@@ -205,6 +206,26 @@ namespace Luban.Job.Cfg.Utils
         public static string RustJsonConstructor(string jsonFieldName, TType type)
         {
             return type.Apply(RustJsonConstructorVisitor.Ins, jsonFieldName);
+        }
+
+        public static string CsTableUnionMapTypeName(DefTable table)
+        {
+            return $"Dictionary<({string.Join(", ", table.IndexList.Select(idx => CsDefineType(idx.Type)))}), {CsDefineType(table.ValueTType)}>";
+        }
+
+        public static string CsTableKeyList(DefTable table, string varName)
+        {
+            return string.Join(", ", table.IndexList.Select(idx => $"{varName}.{idx.IndexField.ConventionName}"));
+        }
+
+        public static string CsTableGetParamDefList(DefTable table)
+        {
+            return string.Join(", ", table.IndexList.Select(idx => $"{CsDefineType(idx.Type)} {idx.IndexField.Name}"));
+        }
+
+        public static string CsTableGetParamNameList(DefTable table)
+        {
+            return string.Join(", ", table.IndexList.Select(idx => $"{idx.IndexField.Name}"));
         }
 
         //public static string DeserializeTextKeyField(DefField field, string lan, string bufName)

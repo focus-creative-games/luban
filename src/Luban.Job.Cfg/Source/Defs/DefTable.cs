@@ -8,6 +8,8 @@ using System.Linq;
 
 namespace Luban.Job.Cfg.Defs
 {
+    public record class IndexInfo(TType Type, DefField IndexField, int IndexFieldIdIndex);
+
     public class DefTable : CfgDefTypeBase
     {
         private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
@@ -62,7 +64,7 @@ namespace Luban.Job.Cfg.Defs
 
         public bool IsUnionIndex { get; private set; }
 
-        public List<(TType Type, DefField IndexField, int IndexFieldIdIndex)> IndexList { get; } = new();
+        public List<IndexInfo> IndexList { get; } = new();
 
         public bool NeedExport => Assembly.NeedExport(this.Groups);
 
@@ -139,7 +141,7 @@ namespace Luban.Job.Cfg.Defs
                         {
                             IndexField = f;
                             IndexFieldIdIndex = i;
-                            this.IndexList.Add((f.CType, f, i));
+                            this.IndexList.Add(new IndexInfo(f.CType, f, i));
                         }
                         else
                         {

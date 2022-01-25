@@ -63,7 +63,15 @@ public sealed class {{name}}
     }
         {{~else if x.is_list_table ~}}
     private readonly List<{{cs_define_type value_type}}> _dataList;
-    
+
+    {{~if x.is_union_index~}}
+    private {{cs_table_union_map_type_name x}} _dataMapUnion;
+    {{~else if !x.index_list.empty?~}}
+    {{~for idx in x.index_list~}}
+    private Dictionary<{{cs_define_type idx.type}}, {{cs_define_type value_type}}> _dataMap_{{idx.index_field.name}};
+    {{~end~}}
+    {{~end~}}
+
     public {{name}}(ByteBuf _buf)
     {
         _dataList = new List<{{cs_define_type value_type}}>();
@@ -74,12 +82,34 @@ public sealed class {{name}}
             {{cs_deserialize '_buf' '_v' value_type}}
             _dataList.Add(_v);
         }
+    {{~if x.is_union_index~}}
+        _dataMapUnion = new {{cs_table_union_map_type_name x}}();
+        foreach(var _v in _dataList)
+        {
+            _dataMapUnion.Add(({{cs_table_key_list x "_v"}}), _v);
+        }
+    {{~else if !x.index_list.empty?~}}
+    {{~for idx in x.index_list~}}
+        _dataMap_{{idx.index_field.name}} = new Dictionary<{{cs_define_type idx.type}}, {{cs_define_type value_type}}>();
+    {{~end~}}
+    foreach(var _v in _dataList)
+    {
+    {{~for idx in x.index_list~}}
+        _dataMap_{{idx.index_field.name}}.Add(_v.{{idx.index_field.convention_name}}, _v);
+    {{~end~}}
+    }
+    {{~end~}}
     }
 
     public List<{{cs_define_type value_type}}> DataList => _dataList;
 
-    public {{cs_define_type value_type}} Get(int index) => _dataList[index];
-    public {{cs_define_type value_type}} this[int index] => _dataList[index];
+    {{~if x.is_union_index~}}
+    public {{cs_define_type value_type}} Get({{cs_table_get_param_def_list x}}) => _dataMapUnion.TryGetValue(({{cs_table_get_param_name_list x}}), out {{cs_define_type value_type}} __v) ? __v : null;
+    {{~else if !x.index_list.empty? ~}}
+        {{~for idx in x.index_list~}}
+    public {{cs_define_type value_type}} GetBy{{idx.index_field.convention_name}}({{cs_define_type idx.type}} key) => _dataMap_{{idx.index_field.name}}.TryGetValue(key, out {{cs_define_type value_type}} __v) ? __v : null;
+        {{~end~}}
+    {{~end~}}
 
     public void Resolve(Dictionary<string, object> _tables)
     {
