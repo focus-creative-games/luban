@@ -18,7 +18,7 @@ namespace {{x.namespace_with_top_module}}
 /// {{x.escape_comment}}
 /// </summary>
 {{~end~}}
-public sealed class {{name}}
+public sealed partial class {{name}}
 {
     {{~if x.is_map_table ~}}
     private readonly Dictionary<{{cs_define_type key_type}}, {{cs_define_type value_type}}> _dataMap;
@@ -35,6 +35,7 @@ public sealed class {{name}}
             _dataList.Add(_v);
             _dataMap.Add(_v.{{x.index_field.convention_name}}, _v);
         }
+        PostInit();
     }
 
     public Dictionary<{{cs_define_type key_type}}, {{cs_define_type value_type}}> DataMap => _dataMap;
@@ -54,6 +55,7 @@ public sealed class {{name}}
         {
             v.Resolve(_tables);
         }
+        PostResolve();
     }
 
     public void TranslateText(System.Func<string, string, string> translator)
@@ -101,6 +103,7 @@ public sealed class {{name}}
     {{~end~}}
     }
     {{~end~}}
+        PostInit();
     }
 
     public List<{{cs_define_type value_type}}> DataList => _dataList;
@@ -119,6 +122,7 @@ public sealed class {{name}}
         {
             v.Resolve(_tables);
         }
+        PostResolve();
     }
 
     public void TranslateText(System.Func<string, string, string> translator)
@@ -137,6 +141,7 @@ public sealed class {{name}}
         int n = _json.GetArrayLength();
         if (n != 1) throw new SerializationException("table mode=one, but size != 1");
         _data = {{cs_define_type value_type}}.Deserialize{{value_type.bean.name}}(_json[0]);
+        PostInit();
     }
 
     {{~ for field in value_type.bean.hierarchy_export_fields ~}}
@@ -154,6 +159,7 @@ public sealed class {{name}}
     public void Resolve(Dictionary<string, object> _tables)
     {
         _data.Resolve(_tables);
+        PostResolve();
     }
 
     public void TranslateText(System.Func<string, string, string> translator)
@@ -162,6 +168,9 @@ public sealed class {{name}}
     }
 
     {{~end~}}
+
+    partial void PostInit();
+    partial void PostResolve();
 }
 
 }

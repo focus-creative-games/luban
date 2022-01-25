@@ -18,7 +18,7 @@ namespace {{x.namespace_with_top_module}}
 /// {{x.escape_comment}}
 /// </summary>
 {{~end~}}
-public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{parent}} {{else}} Bright.Config.BeanBase {{end}}
+public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {{parent}} {{else}} Bright.Config.BeanBase {{end}}
 {
     public {{name}}(JSONNode _json) {{if parent_def_type}} : base(_json) {{end}}
     {
@@ -28,6 +28,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{parent}
         foreach(var _v in {{field.convention_name}}) { {{field.convention_name}}_Index.Add(_v.{{field.index_field.convention_name}}, _v); }
         {{~end~}}
         {{~end~}}
+        PostInit();
     }
 
     public {{name}}({{~for field in hierarchy_export_fields }}{{cs_define_type field.ctype}} {{field.name}}{{if !for.last}},{{end}} {{end}}) {{if parent_def_type}} : base({{- for field in parent_def_type.hierarchy_export_fields }}{{field.name}}{{if !for.last}},{{end}}{{end}}) {{end}}
@@ -38,6 +39,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{parent}
         foreach(var _v in {{field.convention_name}}) { {{field.convention_name}}_Index.Add(_v.{{field.index_field.convention_name}}, _v); }
         {{~end~}}
         {{~end~}}
+        PostInit();
     }
 
     public static {{name}} Deserialize{{name}}(JSONNode _json)
@@ -94,6 +96,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{parent}
         {{cs_recursive_resolve field '_tables'}}
         {{~end~}}
         {{~end~}}
+        PostResolve();
     }
 
     public {{x.cs_method_modifier}} void TranslateText(System.Func<string, string, string> translator)
@@ -118,5 +121,8 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{parent}
     {{~end~}}
         + "}";
     }
-    }
+    
+    partial void PostInit();
+    partial void PostResolve();
+}
 }

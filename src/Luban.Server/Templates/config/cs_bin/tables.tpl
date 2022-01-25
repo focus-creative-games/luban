@@ -9,7 +9,7 @@ using Bright.Serialization;
 namespace {{namespace}}
 {
    
-public sealed class {{name}}
+public partial class {{name}}
 {
     {{~for table in tables ~}}
 {{~if table.comment != '' ~}}
@@ -28,9 +28,11 @@ public sealed class {{name}}
         tables.Add("{{table.full_name}}", {{table.name}});
         {{~end~}}
 
+        PostInit();
         {{~for table in tables ~}}
         {{table.name}}.Resolve(tables); 
         {{~end~}}
+        PostResolve();
     }
 
     public void TranslateText(System.Func<string, string, string> translator)
@@ -39,6 +41,9 @@ public sealed class {{name}}
         {{table.name}}.TranslateText(translator); 
         {{~end~}}
     }
+    
+    partial void PostInit();
+    partial void PostResolve();
 }
 
 }
