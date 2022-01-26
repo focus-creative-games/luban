@@ -31,6 +31,10 @@ namespace Luban.Job.Common.Defs
 
         public string FullNameWithTopModule => TypeUtil.MakeFullName(AssemblyBase.TopModule, FullName);
 
+        public string NamespaceWithEditorTopModule => TypeUtil.MakeNamespace(AssemblyBase.EditorTopModule, Namespace);
+
+        public string FullNameWithEditorTopModule => TypeUtil.MakeFullName(AssemblyBase.EditorTopModule, FullName);
+
         public string CsFullName => TypeUtil.MakeFullName(Namespace, Name);
 
         public string JavaFullName => TypeUtil.MakeFullName(Namespace, Name);

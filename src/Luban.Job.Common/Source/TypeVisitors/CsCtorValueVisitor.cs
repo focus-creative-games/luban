@@ -11,7 +11,6 @@ namespace Luban.Job.Common.TypeVisitors
             return "default";
         }
 
-
         public override string Accept(TString type)
         {
             return "\"\"";
@@ -39,17 +38,17 @@ namespace Luban.Job.Common.TypeVisitors
 
         public override string Accept(TList type)
         {
-            return $"new System.Collections.Generic.List<{type.ElementType.Apply(CsDefineTypeName.Ins)}>()";
+            return $"new {ConstStrings.CsList}<{type.ElementType.Apply(CsDefineTypeName.Ins)}>()";
         }
 
         public override string Accept(TSet type)
         {
-            return $"new System.Collections.Generic.HashSet<{type.ElementType.Apply(CsDefineTypeName.Ins)}>()";
+            return $"new {ConstStrings.CsHashSet}<{type.ElementType.Apply(CsDefineTypeName.Ins)}>()";
         }
 
         public override string Accept(TMap type)
         {
-            return $"new System.Collections.Generic.Dictionary<{type.KeyType.Apply(CsDefineTypeName.Ins)},{type.ValueType.Apply(CsDefineTypeName.Ins)}>()";
+            return $"new {ConstStrings.CsHashMap}<{type.KeyType.Apply(CsDefineTypeName.Ins)},{type.ValueType.Apply(CsDefineTypeName.Ins)}>()";
         }
     }
 }

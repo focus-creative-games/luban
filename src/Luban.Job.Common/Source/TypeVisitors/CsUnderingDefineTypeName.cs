@@ -58,7 +58,7 @@ namespace Luban.Job.Common.TypeVisitors
             return "double";
         }
 
-        public string Accept(TEnum type)
+        public virtual string Accept(TEnum type)
         {
             return ExternalTypeUtil.CsMapperToExternalType(type.DefineEnum);
         }
@@ -73,7 +73,7 @@ namespace Luban.Job.Common.TypeVisitors
             return "byte[]";
         }
 
-        public string Accept(TText type)
+        public virtual string Accept(TText type)
         {
             return "string";
         }
@@ -90,17 +90,17 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TList type)
         {
-            return $"System.Collections.Generic.List<{type.ElementType.Apply(this)}>";
+            return $"{ConstStrings.CsList}<{type.ElementType.Apply(this)}>";
         }
 
         public string Accept(TSet type)
         {
-            return $"System.Collections.Generic.HashSet<{type.ElementType.Apply(this)}>";
+            return $"{ConstStrings.CsHashSet}<{type.ElementType.Apply(this)}>";
         }
 
         public string Accept(TMap type)
         {
-            return $"System.Collections.Generic.Dictionary<{type.KeyType.Apply(this)}, {type.ValueType.Apply(this)}>";
+            return $"{ConstStrings.CsHashMap}<{type.KeyType.Apply(this)}, {type.ValueType.Apply(this)}>";
         }
 
         public string Accept(TVector2 type)
@@ -130,7 +130,7 @@ namespace Luban.Job.Common.TypeVisitors
             return "System.Numerics.Vector4";
         }
 
-        public string Accept(TDateTime type)
+        public virtual string Accept(TDateTime type)
         {
             return "int";
         }

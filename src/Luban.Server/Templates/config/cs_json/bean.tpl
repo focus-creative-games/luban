@@ -10,7 +10,7 @@ using System.Text.Json;
     hierarchy_export_fields = x.hierarchy_export_fields
 }}
 
-namespace {{x.namespace_with_top_module}}
+namespace {{x.namespace_with_editor_top_module}}
 {
 
 {{~if x.comment != '' ~}}
@@ -18,7 +18,7 @@ namespace {{x.namespace_with_top_module}}
 /// {{x.escape_comment}}
 /// </summary>
 {{~end~}}
-public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {{parent}} {{else}} Bright.Config.BeanBase {{end}}
+public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {{parent}} {{else}} Bright.Config.EditorBeanBase {{end}}
 {
     public {{name}}(JsonElement _json) {{if parent_def_type}} : base(_json) {{end}}
     {

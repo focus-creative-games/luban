@@ -63,6 +63,20 @@ namespace Luban.Job.Common.Defs
 
         public List<string> CurrentExternalSelectors { get; private set; }
 
+        public Dictionary<string, string> Options { get; private set; }
+
+        public string EditorTopModule { get; private set; }
+
+        public bool ContainsOption(string optionName)
+        {
+            return Options.ContainsKey(optionName);
+        }
+
+        public string GetOption(string optionName)
+        {
+            return Options.TryGetValue(optionName, out var value) ? value : null;
+        }
+
         private void SetCurrentExternalSelectors(string selectors)
         {
             if (string.IsNullOrEmpty(selectors))
@@ -91,6 +105,8 @@ namespace Luban.Job.Common.Defs
             this.TopModule = defines.TopModule;
             this.ExternalSelectors = defines.ExternalSelectors;
             this.ExternalTypes = defines.ExternalTypes;
+            this.Options = defines.Options;
+            this.EditorTopModule = defines.Options.TryGetValue("editor.topmodule", out var editorTopModule) ? editorTopModule : TypeUtil.MakeFullName("editor", defines.TopModule);
 
             this.Args = args;
 

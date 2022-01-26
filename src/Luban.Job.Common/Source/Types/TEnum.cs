@@ -15,6 +15,8 @@ namespace Luban.Job.Common.Types
 
         public override string TypeName => "enum";
 
+        public bool IsEnum => true;
+
         public DefEnum DefineEnum { get; }
 
         private TEnum(bool isNullable, Dictionary<string, string> tags, DefEnum defEnum) : base(isNullable, tags)

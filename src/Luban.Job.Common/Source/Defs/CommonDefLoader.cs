@@ -4,30 +4,11 @@ using Luban.Job.Common.Utils;
 using Luban.Server.Common;
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace Luban.Job.Common.Defs
 {
-    public class LoadDefException : Exception
-    {
-        public LoadDefException()
-        {
-        }
-
-        public LoadDefException(string message) : base(message)
-        {
-        }
-
-        public LoadDefException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
-
-        protected LoadDefException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
-    }
 
     public abstract class CommonDefLoader
     {
@@ -53,11 +34,14 @@ namespace Luban.Job.Common.Defs
         protected readonly HashSet<string> _externalSelectors = new();
         protected readonly Dictionary<string, ExternalType> _externalTypes = new();
 
+        protected readonly Dictionary<string, string> _options = new();
+
         protected CommonDefLoader(IAgent agent)
         {
             Agent = agent;
 
             _rootDefineHandlers.Add("topmodule", SetTopModule);
+            _rootDefineHandlers.Add("option", AddOption);
             _rootDefineHandlers.Add("externalselector", AddExternalSelector);
 
             _moduleDefineHandlers.Add("module", AddModule);
@@ -115,6 +99,7 @@ namespace Luban.Job.Common.Defs
             defines.Beans = _beans;
             defines.ExternalSelectors = _externalSelectors;
             defines.ExternalTypes = _externalTypes;
+            defines.Options = _options;
         }
 
         #region root handler
@@ -122,6 +107,18 @@ namespace Luban.Job.Common.Defs
         private void SetTopModule(XElement e)
         {
             this.TopModule = XmlUtil.GetOptionalAttribute(e, "name");
+        }
+
+        private static readonly List<string> _optionRequireAttrs = new List<string> { "name", "value", };
+
+        private void AddOption(XElement e)
+        {
+            ValidAttrKeys(_rootXml, e, null, _optionRequireAttrs);
+            string name = XmlUtil.GetRequiredAttribute(e, "name");
+            if (!_options.TryAdd(name, XmlUtil.GetRequiredAttribute(e, "value")))
+            {
+                throw new LoadDefException($"option name:'{name}' duplicate");
+            }
         }
 
         private async Task AddImportAsync(string xmlFile)

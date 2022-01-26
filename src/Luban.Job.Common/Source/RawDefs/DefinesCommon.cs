@@ -10,6 +10,8 @@ namespace Luban.Job.Common.RawDefs
     {
         public string TopModule { get; set; } = "";
 
+        public Dictionary<string, string> Options { get; set; } = new();
+
         public HashSet<string> ExternalSelectors { get; set; } = new();
 
         public Dictionary<string, ExternalType> ExternalTypes { get; set; } = new();

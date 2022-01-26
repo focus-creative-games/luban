@@ -288,5 +288,15 @@ namespace Luban.Job.Common.Defs
         {
             return obj.GetTag(attrName);
         }
+
+        public static bool HasOption(string optionName)
+        {
+            return DefAssemblyBase.LocalAssebmly.ContainsOption(optionName);
+        }
+
+        public static string GetOption(string optionName)
+        {
+            return DefAssemblyBase.LocalAssebmly.GetOption(optionName);
+        }
     }
 }

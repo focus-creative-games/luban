@@ -12,12 +12,12 @@ using System.Threading.Tasks;
 
 namespace Luban.Job.Cfg.Generate
 {
-    [Render("code_cpp_ue_editor")]
-    class CppUE4EditorRender : CodeRenderBase
+    [Render("code_cpp_ue_editor_json")]
+    class CppUE4EditorJsonRender : CodeRenderBase
     {
         public override void Render(GenContext ctx)
         {
-            var render = new CppUE4EditorRender();
+            var render = new CppUE4EditorJsonRender();
 
             var renderTypes = ctx.Assembly.Types.Values.Where(c => c is DefEnum || c is DefBean).ToList();
 

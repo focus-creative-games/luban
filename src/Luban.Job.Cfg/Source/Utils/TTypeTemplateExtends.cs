@@ -228,13 +228,34 @@ namespace Luban.Job.Cfg.Utils
             return string.Join(", ", table.IndexList.Select(idx => $"{idx.IndexField.Name}"));
         }
 
-        //public static string DeserializeTextKeyField(DefField field, string lan, string bufName)
-        //{
-        //    switch (lan)
-        //    {
-        //        case "cpp": return $"{CppDefineTypeName.Ins.Accept(TString.Ins)} {field.CppStyleName}{L10N_FIELD_SUFFIX};";
-        //        default: throw new NotSupportedException($"not support lan:{lan}");
-        //    }
-        //}
+        public static string CsEditorDefineType(TType type)
+        {
+            return type.Apply(CsEditorDefineTypeName.Ins);
+        }
+
+        public static string CsUnityEditorJsonLoad(string jsonName, string fieldName, TType type)
+        {
+             return $"{type.Apply(CsEditorJsonLoad.Ins, jsonName, fieldName)}";
+        }
+
+        public static string CsUnityEditorJsonSave(string jsonName, string jsonFieldName, string fieldName, TType type)
+        {
+            return $"{type.Apply(CsEditorJsonSave.Ins, jsonName, jsonFieldName, fieldName)}";
+        }
+
+        public static bool CsIsEditorRawNullable(TType type)
+        {
+            return type.Apply(CsIsRawNullableTypeVisitor.Ins);
+        }
+
+        public static bool CsEditorNeedInit(TType type)
+        {
+            return type.Apply(CsEditorNeedInitVisitor.Ins);
+        }
+
+        public static string CsEditorInitValue(TType type)
+        {
+            return type.Apply(CsEditorInitValueVisitor.Ins);
+        }
     }
 }

@@ -100,13 +100,10 @@
     <None Update="Templates\config\cs_bin\tables.tpl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Templates\config\cs_editor_json\bean.tpl">
+    <None Update="Templates\config\cs_unity_editor_json\bean.tpl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Templates\config\cs_editor_json\table.tpl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Templates\config\cs_editor_json\tables.tpl">
+    <None Update="Templates\config\cs_unity_editor_json\enum.tpl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Templates\config\cs_json\bean.tpl">
