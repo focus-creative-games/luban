@@ -196,9 +196,16 @@ namespace Luban.Job.Cfg.DataCreators
             {
                 return null;
             }
-            if (x == null)
+            if (CheckDefault(x))
             {
-                throw new InvalidExcelDataException($"枚举值不能为空");
+                if (type.DefineEnum.HasZeroValueItem)
+                {
+                    return new DEnum(type, "0");
+                }
+                else
+                {
+                    throw new InvalidExcelDataException($"枚举类:'{type.DefineEnum.FullName}' 没有value为0的枚举项, 不支持默认值");
+                }
             }
             return new DEnum(type, x.ToString());
         }
