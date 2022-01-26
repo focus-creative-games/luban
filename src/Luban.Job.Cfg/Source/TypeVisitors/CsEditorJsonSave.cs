@@ -121,7 +121,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TMap type, string jsonName, string jsonFieldName, string value)
         {
-            return $"{{ var __cjson = new JSONArray(); foreach(var _e in {value}) {{ var __entry = new JSONArray(); {type.KeyType.Apply(this, "__entry", "null", "_e.Key")} {type.ValueType.Apply(this, "__entry", "null", "_e.Value")} }} {jsonName}[\"{jsonFieldName}\"] = __cjson; }}";
+            return $"{{ var __cjson = new JSONArray(); foreach(var _e in {value}) {{ var __entry = new JSONArray(); __cjson[null] = __entry; {type.KeyType.Apply(this, "__entry", "null", "_e.Key")} {type.ValueType.Apply(this, "__entry", "null", "_e.Value")} }} {jsonName}[\"{jsonFieldName}\"] = __cjson; }}";
         }
     }
 }
