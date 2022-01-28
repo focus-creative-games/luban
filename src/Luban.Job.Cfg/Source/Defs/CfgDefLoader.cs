@@ -633,6 +633,7 @@ namespace Luban.Job.Cfg.Defs
                 Fields = new List<Field>
                 {
                     new CfgField() { Name = "full_name", Type = "string" },
+                    new CfgField() {Name =  "parent", Type = "string" },
                     new CfgField() { Name = "sep", Type = "string" },
                     new CfgField() { Name = "comment", Type = "string" },
                     new CfgField() { Name = "tags", Type = "string" },
@@ -662,11 +663,15 @@ namespace Luban.Job.Cfg.Defs
                     string name = TypeUtil.GetName(fullName);
                     if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(name))
                     {
-                        throw new Exception($"file:{file.ActualFile} 定义了一个空bean类名");
+                        throw new Exception($"file:'{file.ActualFile}' 定义了一个空bean类名");
                     }
                     string module = TypeUtil.GetNamespace(fullName);
 
-
+                    string parent = (data.GetField("parent") as DString).Value.Trim();
+                    if (parent.Contains(".") && TypeUtil.GetNamespace(parent) != module)
+                    {
+                        throw new Exception($"file:'{file.ActualFile}' bean:'{fullName}' parent:'{parent}' 父类命名空间必须子类的命名空间相同");
+                    }
                     string sep = (data.GetField("sep") as DString).Value.Trim();
                     string comment = (data.GetField("comment") as DString).Value.Trim();
                     string tags = (data.GetField("tags") as DString).Value.Trim();
@@ -678,7 +683,7 @@ namespace Luban.Job.Cfg.Defs
                         Sep = sep,
                         Comment = comment,
                         Tags = tags,
-                        Parent = "",
+                        Parent = parent,
                         Fields = fields.Datas.Select(d => (DBean)d).Select(b => this.CreateField(
                             file.ActualFile,
                             (b.GetField("name") as DString).Value.Trim(),
