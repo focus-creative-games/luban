@@ -265,10 +265,10 @@ namespace Luban.Job.Cfg.DataSources.Excel
             int oldIndex = _curIndex;
             while (_curIndex <= _toIndex)
             {
-                var value = _datas[_curIndex++].Value?.ToString();
+                var value = _datas[_curIndex++].Value;
                 if (!IsSkip(value))
                 {
-                    if (value == END_OF_LIST)
+                    if (value is string s && s == END_OF_LIST)
                     {
                         LastReadIndex = _curIndex - 1;
                         return true;
@@ -283,6 +283,24 @@ namespace Luban.Job.Cfg.DataSources.Excel
             }
             _curIndex = oldIndex;
             return true;
+        }
+
+        internal ExcelStream CreateAutoSepStream(string simpleContainerSep)
+        {
+            int startIndex = _curIndex;
+            while (_curIndex <= _toIndex)
+            {
+                var value = _datas[_curIndex++].Value;
+                if (!IsSkip(value))
+                {
+                    if (value is string s && s == END_OF_LIST)
+                    {
+                        break;
+                    }
+                }
+            }
+            LastReadIndex = _curIndex - 1;
+            return new ExcelStream(_datas, startIndex, LastReadIndex, simpleContainerSep, "");
         }
     }
 }

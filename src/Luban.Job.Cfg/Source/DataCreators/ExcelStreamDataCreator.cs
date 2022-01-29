@@ -422,7 +422,8 @@ namespace Luban.Job.Cfg.DataCreators
             string sep = type.GetTag("sep");
             if (string.IsNullOrEmpty(sep) && type.ElementType != null && type.ElementType.Apply(IsNotSepTypeVisitor.Ins))
             {
-                sep = DataUtil.SimpleContainerSep;
+                // 如果是array,list,set，并且它们的elementType不包含',;|'，则自动添加sep分割。这是一个方便策划的优化
+                return stream.CreateAutoSepStream(DataUtil.SimpleContainerSep);
             }
             
             if (!string.IsNullOrEmpty(sep) && !stream.TryReadEOF())
