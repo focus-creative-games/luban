@@ -158,14 +158,7 @@ namespace Luban.Job.Cfg.DataCreators
                     throw new Exception($"结构:{bean.FullName} 是多态类型，必须用 {DefBean.TYPE_NAME_KEY} 字段指定 子类名");
                 }
                 var subType = (string)table[DefBean.TYPE_NAME_KEY];
-
-                string fullName = TypeUtil.MakeFullName(bean.Namespace, subType);
-                var defType = (DefBean)bean.GetNotAbstractChildType(subType);
-                //if (defType.IsAbstractType)
-                //{
-                //    throw new Exception($"type:{fullName} 是抽象类. 不能创建实例");
-                //}
-                implBean = defType ?? throw new Exception($"type:{fullName} 不是合法类型");
+                implBean = DataUtil.GetImplTypeByNameOrAlias(bean, subType);
             }
             else
             {

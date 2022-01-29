@@ -2,6 +2,7 @@
 using Luban.Job.Cfg.DataSources;
 using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Cfg.Utils;
 using MessagePack;
 using System;
 using System.Collections.Generic;
@@ -183,7 +184,7 @@ namespace Luban.Job.Cfg.DataExporters
             if (type.Type.IsAbstractType)
             {
                 writer.Write(DefBean.TYPE_NAME_KEY);
-                writer.Write(type.ImplType.Name);
+                writer.Write(DataUtil.GetImplTypeName(type));
             }
 
             int index = 0;

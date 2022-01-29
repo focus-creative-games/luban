@@ -173,7 +173,7 @@ namespace editor
         if (_json->TryGetStringField(FString(""__type__""), type))
         {
             {{~for child in type.hierarchy_not_abstract_children~}}
-            if (type == ""{{child.name}}"")
+            if (type == ""{{cs_impl_data_type child x}}"")
             {
                 result = new {{child.ue_fname}}();
             } else

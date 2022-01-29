@@ -17,7 +17,7 @@ class {{name}} {{if parent_def_type}}({{parent_def_type.py_full_name}}){{else if
         if not childrenTypes:
             childrenTypes = {{name}}._childrenTypes = {
         {{~ for child in x.hierarchy_not_abstract_children~}}
-            '{{child.name}}': {{child.py_full_name}},
+            '{{cs_impl_data_type child x}}': {{child.py_full_name}},
         {{~end~}}
     }
         type = _json_['__type__']

@@ -17,7 +17,7 @@ export {{if x.is_abstract_type}}abstract {{end}}class {{name}}{{if parent_def_ty
     static constructorFrom(_json_: any): {{name}}{
         switch (_json_.__type__) {
         {{~ for child in x.hierarchy_not_abstract_children~}}
-            case '{{child.name}}': return new {{child.full_name}}(_json_)
+            case '{{cs_impl_data_type child x}}': return new {{child.full_name}}(_json_)
         {{~end~}}
             default: throw new Error()
         }

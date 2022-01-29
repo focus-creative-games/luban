@@ -20,7 +20,7 @@ namespace Luban.Job.Cfg.DataVisitors
             var x = new StringBuilder();
             if (type.Type.IsAbstractType)
             {
-                x.Append($"#{{name__ => \"{type.ImplType.Name}\"");
+                x.Append($"#{{name__ => \"{DataUtil.GetImplTypeName(type)}\"");
                 if (type.Fields.Count > 0)
                 {
                     x.Append(',');

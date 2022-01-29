@@ -75,7 +75,7 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
         switch (type)
         {
         {{~for child in x.hierarchy_not_abstract_children~}}
-            case "{{child.name}}": obj = new {{child.full_name}}(); break;
+            case "{{cs_impl_data_type child x}}": obj = new {{child.full_name}}(); break;
         {{~end~}}
             default: throw new SerializationException();
         }

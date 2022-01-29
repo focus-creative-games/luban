@@ -184,6 +184,41 @@ namespace Luban.Job.Cfg.Utils
             return false;
         }
 
+        public static string GetImplTypeName(DBean bean)
+        {
+            return GetImplTypeName(bean.ImplType, bean.Type);
+        }
+
+        public static string GetImplTypeName(DefBean implType, DefBean baseType)
+        {
+            if (implType.Namespace == baseType.Namespace)
+            {
+                return implType.Name;
+            }
+            else
+            {
+                return implType.FullName;
+            }
+        }
+
+        public static DefBean GetImplTypeByNameOrAlias(DefBean bean, string subType)
+        {
+            if (string.IsNullOrEmpty(subType))
+            {
+                throw new Exception($"module:'{bean.Namespace}' 多态数据type不能为空");
+            }
+            DefBean defType = bean.HierarchyNotAbstractChildren.Cast<DefBean>().Where(c => c.Alias == subType || c.Name == subType || c.FullName == subType).FirstOrDefault();
+            if (defType == null)
+            {
+                throw new Exception($"module:'{bean.Namespace}' type:'{subType}' 不是合法类型");
+            }
+            if (defType.IsAbstractType)
+            {
+                throw new Exception($"module:'{bean.Namespace}' type:'{subType}' 是抽象类. 不能创建实例");
+            }
+            return defType;
+        }
+
         //public static string Data2String(DType data)
         //{
         //    var s = new StringBuilder();

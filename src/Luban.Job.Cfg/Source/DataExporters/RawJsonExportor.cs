@@ -105,7 +105,7 @@ namespace Luban.Job.Cfg.DataExporters
             if (type.Type.IsAbstractType)
             {
                 x.WritePropertyName(DefBean.TYPE_NAME_KEY);
-                x.WriteStringValue(type.ImplType.Name);
+                x.WriteStringValue(DataUtil.GetImplTypeName(type));
             }
 
             var defFields = type.ImplType.HierarchyFields;

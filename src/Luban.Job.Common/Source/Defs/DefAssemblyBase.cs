@@ -141,11 +141,11 @@ namespace Luban.Job.Common.Defs
 
         public DefTypeBase GetDefType(string module, string type)
         {
-            if (Types.TryGetValue(type, out var t))
+            if (Types.TryGetValue(TypeUtil.MakeFullName(module, type), out var t))
             {
                 return t;
             }
-            else if (Types.TryGetValue(TypeUtil.MakeFullName(module, type), out t))
+            else if (Types.TryGetValue(type, out t))
             {
                 return t;
             }

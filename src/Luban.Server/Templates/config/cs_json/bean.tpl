@@ -48,7 +48,7 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
         switch (_json.GetProperty("__type__").GetString())
         {
         {{~for child in x.hierarchy_not_abstract_children~}}
-            case "{{child.name}}": return new {{child.full_name}}(_json);
+            case "{{cs_impl_data_type child x}}": return new {{child.full_name}}(_json);
         {{~end~}}
             default: throw new SerializationException();
         }

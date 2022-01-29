@@ -37,6 +37,11 @@ namespace Luban.Job.Cfg.Utils
             }
         }
 
+        public static string CsImplDataType(DefBean type, DefBean parent)
+        {
+            return DataUtil.GetImplTypeName(type, parent);
+        }
+
         public static string CsUnityJsonDeserialize(string bufName, string fieldName, string jsonFieldName, TType type)
         {
             if (type.IsNullable)

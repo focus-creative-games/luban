@@ -396,12 +396,7 @@ namespace Luban.Job.Cfg.DataCreators
                     }
                     return null;
                 }
-                string fullType = TypeUtil.MakeFullName(originBean.Namespace, subType);
-                DefBean implType = (DefBean)originBean.GetNotAbstractChildType(subType);
-                if (implType == null)
-                {
-                    throw new InvalidExcelDataException($"type:{fullType} 不是bean类型");
-                }
+                DefBean implType = DataUtil.GetImplTypeByNameOrAlias(originBean, subType);
                 return new DBean(type, implType, CreateBeanFields(implType, x));
             }
             else

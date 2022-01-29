@@ -414,12 +414,7 @@ namespace Luban.Job.Cfg.DataCreators
                         }
                         return null;
                     }
-                    string fullType = TypeUtil.MakeFullName(originBean.Namespace, subType);
-                    DefBean implType = (DefBean)originBean.GetNotAbstractChildType(subType);
-                    if (implType == null)
-                    {
-                        throw new Exception($"type:'{fullType}' 不是 bean 类型或者不是'{originBean.FullName}'的子类");
-                    }
+                    DefBean implType = DataUtil.GetImplTypeByNameOrAlias(originBean, subType);
                     return new DBean(type, implType, CreateBeanFields(implType, sheet, row));
                 }
                 else

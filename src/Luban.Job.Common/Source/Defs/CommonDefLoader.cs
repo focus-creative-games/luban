@@ -217,11 +217,26 @@ namespace Luban.Job.Common.Defs
         private static readonly List<string> _beanOptinsAttrs1 = new List<string> { "compatible", "value_type", "comment", "tags", "externaltype" };
         private static readonly List<string> _beanRequireAttrs1 = new List<string> { "id", "name" };
 
-        private static readonly List<string> _beanOptinsAttrs2 = new List<string> { "id", "compatible", "value_type", "comment", "tags", "externaltype" };
+        private static readonly List<string> _beanOptinsAttrs2 = new List<string> { "id", "parent", "compatible", "value_type", "comment", "tags", "externaltype" };
         private static readonly List<string> _beanRequireAttrs2 = new List<string> { "name" };
+
+
+        protected void TryGetUpdateParent(XElement e, ref string parent)
+        {
+            string selfDefParent = XmlUtil.GetOptionalAttribute(e, "parent");
+            if (!string.IsNullOrEmpty(selfDefParent))
+            {
+                if (!string.IsNullOrEmpty(parent))
+                {
+                    throw new Exception($"嵌套在'{parent}'中定义的子bean:'{XmlUtil.GetRequiredAttribute(e, "name")}' 不能再定义parent:{selfDefParent} 属性");
+                }
+                parent = selfDefParent;
+            }
+        }
 
         protected virtual void AddBean(string defineFile, XElement e, string parent)
         {
+
             if (IsBeanFieldMustDefineId)
             {
                 ValidAttrKeys(defineFile, e, _beanOptinsAttrs1, _beanRequireAttrs1);
@@ -230,11 +245,13 @@ namespace Luban.Job.Common.Defs
             {
                 ValidAttrKeys(defineFile, e, _beanOptinsAttrs2, _beanRequireAttrs2);
             }
+            TryGetUpdateParent(e, ref parent);
+
             var b = new Bean()
             {
                 Name = XmlUtil.GetRequiredAttribute(e, "name").Trim(),
                 Namespace = CurNamespace,
-                Parent = parent.Length > 0 ? parent : "",
+                Parent = parent,
                 TypeId = XmlUtil.GetOptionIntAttribute(e, "id"),
                 IsSerializeCompatible = XmlUtil.GetOptionBoolAttribute(e, "compatible", IsBeanDefaultCompatible),
                 IsValueType = XmlUtil.GetOptionBoolAttribute(e, "value_type"),

@@ -38,7 +38,7 @@ func Deserialize{{go_full_name}}(_buf map[string]interface{}) (interface{}, erro
     }
     switch id {
         {{~for child in hierarchy_not_abstract_children~}}
-        case "{{child.name}}": _v := &{{child.go_full_name}}{}; if err := _v.Deserialize(_buf); err != nil { return nil, errors.New("{{child.full_name}}") } else { return _v, nil }
+        case "{{cs_impl_data_type child x}}": _v := &{{child.go_full_name}}{}; if err := _v.Deserialize(_buf); err != nil { return nil, errors.New("{{child.full_name}}") } else { return _v, nil }
         {{~end~}}
         default: return nil, errors.New("unknown type id")
     }

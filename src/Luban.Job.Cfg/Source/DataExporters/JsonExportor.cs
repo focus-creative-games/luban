@@ -2,6 +2,7 @@ using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.DataSources;
 using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Defs;
+using Luban.Job.Cfg.Utils;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
@@ -104,7 +105,7 @@ namespace Luban.Job.Cfg.DataExporters
             if (type.Type.IsAbstractType)
             {
                 x.WritePropertyName(DefBean.TYPE_NAME_KEY);
-                x.WriteStringValue(type.ImplType.Name);
+                x.WriteStringValue(DataUtil.GetImplTypeName(type));
             }
 
             var defFields = type.ImplType.HierarchyFields;

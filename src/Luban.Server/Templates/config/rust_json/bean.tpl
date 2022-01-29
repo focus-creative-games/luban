@@ -44,7 +44,7 @@ impl {{name}} {
         let __b = match __js["__type__"].as_str() {
             Some(type_name) => match type_name {
 {{~for child in x.hierarchy_not_abstract_children~}}
-                "{{child.name}}" => {{name}}::{{child.name}}(Box::new({{child.rust_full_name + '::new(&__js)?'}})),
+                "{{cs_impl_data_type child x}}" => {{name}}::{{child.name}}(Box::new({{child.rust_full_name + '::new(&__js)?'}})),
 {{~end~}}
                 _ => return Err(LoadError{})
                 },

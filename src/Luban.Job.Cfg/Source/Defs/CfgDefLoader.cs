@@ -775,18 +775,18 @@ namespace Luban.Job.Cfg.Defs
             return f;
         }
 
-        private static readonly List<string> _beanOptinsAttrs = new List<string> { "value_type", "alias", "sep", "comment", "tags", "externaltype" };
+        private static readonly List<string> _beanOptinsAttrs = new List<string> { "parent", "value_type", "alias", "sep", "comment", "tags", "externaltype" };
         private static readonly List<string> _beanRequireAttrs = new List<string> { "name" };
 
         override protected void AddBean(string defineFile, XElement e, string parent)
         {
             ValidAttrKeys(defineFile, e, _beanOptinsAttrs, _beanRequireAttrs);
-
+            TryGetUpdateParent(e, ref parent);
             var b = new CfgBean()
             {
                 Name = XmlUtil.GetRequiredAttribute(e, "name"),
                 Namespace = CurNamespace,
-                Parent = parent.Length > 0 ? parent : "",
+                Parent = parent,
                 TypeId = 0,
                 IsSerializeCompatible = true,
                 IsValueType = XmlUtil.GetOptionBoolAttribute(e, "value_type"),
