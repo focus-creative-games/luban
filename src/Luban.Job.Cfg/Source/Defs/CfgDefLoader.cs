@@ -668,10 +668,6 @@ namespace Luban.Job.Cfg.Defs
                     string module = TypeUtil.GetNamespace(fullName);
 
                     string parent = (data.GetField("parent") as DString).Value.Trim();
-                    if (parent.Contains(".") && TypeUtil.GetNamespace(parent) != module)
-                    {
-                        throw new Exception($"file:'{file.ActualFile}' bean:'{fullName}' parent:'{parent}' 父类命名空间必须子类的命名空间相同");
-                    }
                     string sep = (data.GetField("sep") as DString).Value.Trim();
                     string comment = (data.GetField("comment") as DString).Value.Trim();
                     string tags = (data.GetField("tags") as DString).Value.Trim();
