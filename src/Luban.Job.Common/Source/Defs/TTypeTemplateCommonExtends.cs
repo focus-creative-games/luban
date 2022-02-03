@@ -100,6 +100,11 @@ namespace Luban.Job.Common.Defs
         {
             return type.Apply(LuaCommentTypeVisitor.Ins);
         }
+        
+        public static string EmmeLuaCommentType(TType type)
+        {
+            return type.Apply(EmmeLuaCommentTypeVisitor.Ins);
+        }
 
         public static string LuaSerializeWhileNil(string bufName, string fieldName, TType type)
         {
