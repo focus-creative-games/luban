@@ -2,9 +2,9 @@ using Luban.Job.Common.Types;
 
 namespace Luban.Job.Common.TypeVisitors
 {
-    public class EmmeLuaCommentTypeVisitor : ITypeFuncVisitor<string>
+    public class EmmyLuaCommentTypeVisitor : ITypeFuncVisitor<string>
     {
-        public static EmmeLuaCommentTypeVisitor Ins { get; } = new EmmeLuaCommentTypeVisitor();
+        public static EmmyLuaCommentTypeVisitor Ins { get; } = new EmmyLuaCommentTypeVisitor();
 
         public string Accept(TBool type)
         {
