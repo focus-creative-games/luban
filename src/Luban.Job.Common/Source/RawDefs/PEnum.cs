@@ -30,8 +30,6 @@ namespace Luban.Job.Common.RawDefs
 
         public string Tags { get; set; }
 
-        public string ExternalType { get; set; }
-
         public List<EnumItem> Items { get; set; } = new List<EnumItem>();
     }
 }

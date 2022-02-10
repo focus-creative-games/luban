@@ -21,10 +21,6 @@ namespace Luban.Job.Common.Defs
 
         public string Namespace { get; set; }
 
-        protected string _externalTypeName;
-
-        public ExternalType ExternalType { get; private set; }
-
         public string FullName => TypeUtil.MakeFullName(Namespace, Name);
 
         public string NamespaceWithTopModule => TypeUtil.MakeNamespace(AssemblyBase.TopModule, Namespace);
@@ -79,40 +75,9 @@ namespace Luban.Job.Common.Defs
             return Tags != null && Tags.TryGetValue(attrName, out var value) ? value : null;
         }
 
-        public ExternalTypeMapper CurrentExternalTypeMapper
-        {
-            get
-            {
-                if (ExternalType == null)
-                {
-                    return null;
-                }
-
-                return ExternalType.Mappers.Find(m => m.Lan == this.AssemblyBase.CurrentLanguage && this.AssemblyBase.CurrentExternalSelectors.Contains(m.Selector));
-            }
-        }
-
-        protected void ResolveExternalType()
-        {
-            if (!string.IsNullOrEmpty(_externalTypeName))
-            {
-                if (AssemblyBase.TryGetExternalType(_externalTypeName, out var type))
-                {
-                    this.ExternalType = type;
-                }
-                else
-                {
-                    throw new Exception($"enum:'{FullName}' 对应的 externaltype:{_externalTypeName} 不存在");
-                }
-            }
-        }
-
         public virtual void PreCompile() { }
 
-        public virtual void Compile()
-        {
-            ResolveExternalType();
-        }
+        public abstract void Compile();
 
         public virtual void PostCompile() { }
     }

@@ -13,7 +13,7 @@ namespace Luban.Job.Common.RawDefs
 
         public ELanguage Lan { get; set; }
 
-        public string TypeName { get; set; }
+        public string TargetTypeName { get; set; }
 
         public string CreateExternalObjectFunction { get; set; }
     }
@@ -21,6 +21,8 @@ namespace Luban.Job.Common.RawDefs
     public class ExternalType
     {
         public string Name { get; set; }
+
+        public string OriginTypeName { get; set; }
 
         public List<ExternalTypeMapper> Mappers { get; set; } = new List<ExternalTypeMapper>();
     }

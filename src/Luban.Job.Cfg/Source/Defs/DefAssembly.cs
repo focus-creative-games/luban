@@ -359,6 +359,11 @@ namespace Luban.Job.Cfg.Defs
                     throw;
                 }
             }
+
+            foreach (var externalType in defines.ExternalTypes.Values)
+            {
+                AddExternalType(externalType);
+            }
         }
     }
 }

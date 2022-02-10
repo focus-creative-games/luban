@@ -789,7 +789,6 @@ namespace Luban.Job.Cfg.Defs
                 Sep = XmlUtil.GetOptionalAttribute(e, "sep"),
                 Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
                 Tags = XmlUtil.GetOptionalAttribute(e, "tags"),
-                ExternalType = XmlUtil.GetOptionalAttribute(e, "externaltype"),
             };
             var childBeans = new List<XElement>();
 

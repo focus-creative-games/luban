@@ -2,6 +2,7 @@
 using Luban.Common.Utils;
 using Luban.Job.Common.RawDefs;
 using Luban.Job.Common.Types;
+using Luban.Job.Common.TypeVisitors;
 using Luban.Job.Common.Utils;
 using Luban.Server.Common;
 using System;
@@ -61,6 +62,8 @@ namespace Luban.Job.Common.Defs
 
         private Dictionary<string, ExternalType> ExternalTypes { get; set; }
 
+        private readonly Dictionary<string, ExternalType> _externalTypesByTypeName = new();
+
         public List<string> CurrentExternalSelectors { get; private set; }
 
         public Dictionary<string, string> Options { get; private set; }
@@ -119,9 +122,45 @@ namespace Luban.Job.Common.Defs
             NamingConventionEnumMember = args.NamingConventionEnumMember;
         }
 
-        public bool TryGetExternalType(string typeName, out ExternalType type)
+        public ExternalTypeMapper GetExternalTypeMapper(TType type)
         {
-            return ExternalTypes.TryGetValue(typeName, out type);
+            return GetExternalTypeMapper(type.Apply(RawDefineTypeNameVisitor.Ins));
+        }
+
+        public ExternalTypeMapper GetExternalTypeMapper(string typeName)
+        {
+            ExternalType externalType = _externalTypesByTypeName.GetValueOrDefault(typeName);
+            if (externalType == null)
+            {
+                return null;
+            }
+            return externalType.Mappers.Find(m => m.Lan == CurrentLanguage && CurrentExternalSelectors.Contains(m.Selector));
+        }
+
+        public ExternalType GetExternalType(string typeName)
+        {
+            return _externalTypesByTypeName.GetValueOrDefault(typeName);
+        }
+
+        private static readonly HashSet<string> s_internalOriginTypes = new HashSet<string>
+        {
+            "vector2",
+            "vector3",
+            "vector4",
+            "datetime",
+        };
+
+        public void AddExternalType(ExternalType type)
+        {
+            string originTypeName = type.OriginTypeName;
+            if (!Types.ContainsKey(originTypeName) && !s_internalOriginTypes.Contains(originTypeName))
+            {
+                throw new LoadDefException($"externaltype:'{type.Name}' originTypeName:'{originTypeName}' 不存在");
+            }
+            if (!_externalTypesByTypeName.TryAdd(originTypeName, type))
+            {
+                throw new LoadDefException($"type:'{originTypeName} 被重复映射. externaltype1:'{type.Name}' exteraltype2:'{_externalTypesByTypeName[originTypeName].Name}'");
+            }
         }
 
         public void AddType(DefTypeBase type)
