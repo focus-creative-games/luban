@@ -20,7 +20,7 @@ class {{name}} {{if parent_def_type}}({{parent_def_type.py_full_name}}){{else if
             '{{cs_impl_data_type child x}}': {{child.py_full_name}},
         {{~end~}}
     }
-        type = _json_['__type__']
+        type = _json_['{{x.json_type_name_key}}']
         child = {{name}}._childrenTypes.get(type)
         if child != None:
             return  child(_json_)

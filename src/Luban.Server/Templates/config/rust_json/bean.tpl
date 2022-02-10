@@ -41,7 +41,7 @@ pub enum {{name}} {
 impl {{name}} {
     #[allow(dead_code)]
     pub fn new(__js: &json::JsonValue) -> Result<{{name}}, LoadError> {
-        let __b = match __js["__type__"].as_str() {
+        let __b = match __js["{{x.json_type_name_key}}"].as_str() {
             Some(type_name) => match type_name {
 {{~for child in x.hierarchy_not_abstract_children~}}
                 "{{cs_impl_data_type child x}}" => {{name}}::{{child.name}}(Box::new({{child.rust_full_name + '::new(&__js)?'}})),

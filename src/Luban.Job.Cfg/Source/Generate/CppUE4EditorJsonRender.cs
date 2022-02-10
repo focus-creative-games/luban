@@ -170,7 +170,7 @@ namespace editor
     bool {{type.ue_fname}}::Create(FJsonObject* _json, {{type.ue_fname}}*& result)
     {
         FString type;
-        if (_json->TryGetStringField(FString(""__type__""), type))
+        if (_json->TryGetStringField(FString(""{{type.json_type_name_key}}""), type))
         {
             {{~for child in type.hierarchy_not_abstract_children~}}
             if (type == ""{{cs_impl_data_type child x}}"")
@@ -211,7 +211,7 @@ namespace editor
         bool {{type.ue_fname}}::Save(FJsonObject*& result)
         {
             auto _json = new FJsonObject();
-            _json->SetStringField(""__type__"", ""{{type.name}}"");
+            _json->SetStringField(""{{type.json_type_name_key}}"", ""{{type.name}}"");
 
 {{~for field in type.hierarchy_fields~}}
             {{field.editor_ue_cpp_save}}

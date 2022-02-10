@@ -33,7 +33,7 @@ func (_v *{{go_full_name}})Deserialize(_buf map[string]interface{}) (err error) 
 func Deserialize{{go_full_name}}(_buf map[string]interface{}) (interface{}, error) {
     var id string
     var _ok_ bool
-    if id, _ok_ = _buf["__type__"].(string) ; !_ok_ {
+    if id, _ok_ = _buf["{{x.json_type_name_key}}"].(string) ; !_ok_ {
         return nil, errors.New("type id missing")
     }
     switch id {

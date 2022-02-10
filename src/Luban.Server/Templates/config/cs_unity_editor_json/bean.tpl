@@ -70,7 +70,7 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
     public static {{name}} LoadJson{{name}}(SimpleJSON.JSONNode _json)
     {
     {{~if x.is_abstract_type~}}
-        string type = _json["__type__"];
+        string type = _json["{{x.json_type_name_key}}"];
         {{name}} obj;
         switch (type)
         {
@@ -89,7 +89,7 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
     public static void SaveJson{{name}}({{name}} _obj, SimpleJSON.JSONNode _json)
     {
     {{~if x.is_abstract_type~}}
-        _json["__type__"] = _obj.GetType().Name;
+        _json["{{x.json_type_name_key}}"] = _obj.GetType().Name;
     {{~end~}}
         _obj.SaveJson((SimpleJSON.JSONObject)_json);
     }

@@ -36,7 +36,7 @@ namespace Luban.Job.Cfg.DataConverts
             {
                 title.AddSubTitle(new Title()
                 {
-                    Name = "__type__",
+                    Name = DefBean.TYPE_NAME_KEY,
                     FromIndex = lastColumn + 1,
                     ToIndex = lastColumn + 1,
                     Tags = new Dictionary<string, string>(),
@@ -164,85 +164,6 @@ namespace Luban.Job.Cfg.DataConverts
                     title.Tags.Add("sep", "|");
                 }
             }
-
-            //int lastColumn = column - 1;
-
-            //if (type.IsDynamic)
-            //{
-            //    title.AddSubTitle(new Title()
-            //    {
-            //        Name = "__type__",
-            //        FromIndex = lastColumn + 1,
-            //        ToIndex = lastColumn + 1,
-            //        Tags = new Dictionary<string, string>(),
-            //    });
-            //    ++lastColumn;
-            //}
-
-            //foreach (var f in type.Bean.HierarchyFields)
-            //{
-            //    int startColumn = lastColumn + 1;
-            //    var subTitle = new Title()
-            //    {
-            //        Name = f.Name,
-            //        FromIndex = startColumn,
-            //        ToIndex = startColumn,
-            //        Tags = new Dictionary<string, string>(),
-            //    };
-            //    if (f.CType.Tags.TryGetValue("sep", out var sep))
-            //    {
-            //        subTitle.Tags.Add("sep", sep);
-            //    }
-            //    if (f.CType.Tags.TryGetValue("multi_rows", out var multiRows))
-            //    {
-            //        subTitle.Tags.Add("multiRows", multiRows);
-            //    }
-
-            //    f.CType.Apply(this, subTitle, startColumn);
-            //    lastColumn = subTitle.ToIndex;
-            //    title.AddSubTitle(subTitle);
-            //}
-            //title.ToIndex = Math.Max(lastColumn, column);
-
-            //int maxFieldNum = 20;
-            //if (type.IsDynamic)
-            //{
-            //    if (!title.Tags.ContainsKey("sep"))
-            //    {
-            //        title.Tags.Add("sep", "|");
-            //    }
-            //    //var maxFieldCount = type.Bean.HierarchyNotAbstractChildren.Max(c => c.HierarchyFields.Count);
-            //    //var fields = type.Bean.HierarchyNotAbstractChildren.SelectMany(c => c.HierarchyFields).Select(f => f.Name).ToHashSet();
-            //    title.ToIndex = column;
-            //}
-            //else
-            //{
-            //    int lastColumn = column - 1;
-            //    foreach (var f in type.Bean.HierarchyFields)
-            //    {
-            //        int startColumn = lastColumn + 1;
-            //        var subTitle = new Title()
-            //        {
-            //            Name = f.Name,
-            //            FromIndex = startColumn,
-            //            ToIndex = startColumn,
-            //            Tags = new Dictionary<string, string>(),
-            //        };
-            //        if (f.CType.Tags.TryGetValue("sep", out var sep))
-            //        {
-            //            subTitle.Tags.Add("sep", sep);
-            //        }
-            //        if (f.CType.Tags.TryGetValue("multi_rows", out var multiRows))
-            //        {
-            //            subTitle.Tags.Add("multiRows", multiRows);
-            //        }
-
-            //        f.CType.Apply(this, subTitle, startColumn);
-            //        lastColumn = subTitle.ToIndex;
-            //        title.AddSubTitle(subTitle);
-            //    }
-            //    title.ToIndex = Math.Max(lastColumn, column);
-            //}
         }
 
         public void Accept(TArray type, Title title, int column)

@@ -46,7 +46,7 @@ public {{x.java_class_modifier}} class {{name}}{{if parent_def_type}} extends {{
 
     public static {{name}} deserialize{{name}}(JsonObject __json__) {
     {{~if x.is_abstract_type~}}
-        switch (__json__.get("__type__").getAsString()) {
+        switch (__json__.get("{{x.json_type_name_key}}").getAsString()) {
         {{~for child in x.hierarchy_not_abstract_children~}}
             case "{{cs_impl_data_type child x}}": return new {{child.full_name_with_top_module}}(__json__);
         {{~end~}}

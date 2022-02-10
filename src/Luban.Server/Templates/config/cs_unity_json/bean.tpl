@@ -45,7 +45,7 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
     public static {{name}} Deserialize{{name}}(JSONNode _json)
     {
     {{~if x.is_abstract_type~}}
-        string type = _json["__type__"];
+        string type = _json["{{x.json_type_name_key}}"];
         switch (type)
         {
         {{~for child in x.hierarchy_not_abstract_children~}}
