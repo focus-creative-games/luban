@@ -1,5 +1,6 @@
 using Bright.Collections;
 using Luban.Job.Cfg.RawDefs;
+using Luban.Job.Cfg.TypeVisitors;
 using Luban.Job.Common.Types;
 using Luban.Job.Common.Utils;
 using System;
@@ -130,6 +131,7 @@ namespace Luban.Job.Cfg.Defs
                     }
                     KeyTType = IndexField.CType;
                     Type = TMap.Create(false, null, KeyTType, ValueTType, false);
+                    this.IndexList.Add(new IndexInfo(KeyTType, IndexField, IndexFieldIdIndex));
                     break;
                 }
                 case ETableMode.LIST:
@@ -153,6 +155,20 @@ namespace Luban.Job.Cfg.Defs
                     break;
                 }
                 default: throw new Exception($"unknown mode:'{Mode}'");
+            }
+
+            foreach(var index in IndexList)
+            {
+                TType indexType = index.Type;
+                string idxName = index.IndexField.Name;
+                if (indexType.IsNullable)
+                {
+                    throw new Exception($"table:'{FullName}' index:'{idxName}' 不能为 nullable类型");
+                }
+                if (!indexType.Apply(IsValidTableKeyTypeVisitor.Ins))
+                {
+                    throw new Exception($"table:'{FullName}' index:'{idxName}' 的类型:'{index.IndexField.Type}' 不能作为index");
+                }
             }
         }
     }

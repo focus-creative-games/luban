@@ -80,7 +80,7 @@ luban统一了游戏配置开发工作流，极大提升了策划和程序的工
 <tr align="center">
   <td>##type</td>
   <td>int</id>
-  <td>array,int</td>
+  <td>(array#sep=;),int</td>
   <td colspan="4">list,int</td>
   <td>(list#sep=|),string</td>
   <td colspan="3">list,string</td>
@@ -97,7 +97,7 @@ luban统一了游戏配置开发工作流，极大提升了策划和程序的工
 <tr align="center">
 <td/>
 <td>1</td>
-<td>1,2,3</td>
+<td>1;2;3</td>
 <td>1</td><td>2</td><td></td><td></td>
 <td>xx|yy</td>
 <td>xxx</td><td>zzz</td><td></td>
@@ -115,7 +115,7 @@ luban统一了游戏配置开发工作流，极大提升了策划和程序的工
 <tr align="center">
 <td/>
 <td>3</td>
-<td>2|4|6</td>
+<td>2;4;6</td>
 <td>3</td><td>4</td><td>5</td><td>6</td>
 <td>aaaa|bbbb|cccc</td>
 <td>aaa</td><td>bbb</td><td>ccc</td>
@@ -372,7 +372,7 @@ Reward为包含 "int item_id; int count; string desc; " 这三个字段的子结
 
 <table border="1">
 <tr align="center">
-<td>##var&column</td>
+<td>##var#column</td>
 <td>##type</td>
 <td>##</td>
 <td></td>

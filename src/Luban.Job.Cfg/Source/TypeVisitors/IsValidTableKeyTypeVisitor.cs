@@ -3,11 +3,11 @@ using Luban.Job.Common.TypeVisitors;
 
 namespace Luban.Job.Cfg.TypeVisitors
 {
-    class IsNotSepTypeVisitor : AllTrueVisitor
+    class IsValidTableKeyTypeVisitor : AllTrueVisitor
     {
-        //public static IsNotSepTypeVisitor Ins { get; } = new IsNotSepTypeVisitor();
+        public static IsValidTableKeyTypeVisitor Ins { get; } = new();
 
-        public override bool Accept(TString type)
+        public override bool Accept(TText type)
         {
             return false;
         }
