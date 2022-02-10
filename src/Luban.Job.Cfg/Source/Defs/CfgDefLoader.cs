@@ -355,8 +355,7 @@ namespace Luban.Job.Cfg.Defs
                         case "range":
                         case "sep":
                         {
-                            cf.Type = cf.Type + "#(" + attrs[i] + ")";
-                            break;
+                            throw new Exception($"table:'{table.Name}' file:{file.OriginFile} title:'{name}' attr:'{attrName}' 属于type的属性，必须用#分割，尝试'{cf.Type}#{attrs[i]}'");
                         }
                         case "group":
                         {

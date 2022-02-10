@@ -90,6 +90,8 @@ namespace Luban.Job.Cfg.DataSources.Excel
             "##",
         };
 
+        private const char s_sep = '#';
+
         private static void ValidateTitles(List<List<Cell>> rows)
         {
             foreach (var row in rows)
@@ -166,7 +168,11 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 {
                     break;
                 }
-                var tags = rowTag.Substring(2).Split('&').Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToList();
+                if (rowTag.Substring(2).IndexOf('&') >= 0)
+                {
+                    throw new Exception($"excel标题头不再使用'&'作为分割符，请改为'{s_sep}'");
+                }
+                var tags = rowTag.Substring(2).Split(s_sep).Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToList();
                 if (tags.Contains("field") || tags.Contains("var") || tags.Contains("+"))
                 {
                     rowIndex = i;
@@ -214,7 +220,11 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         public static (string Name, Dictionary<string, string> Tags) ParseNameAndMetaAttrs(string nameAndAttrs)
         {
-            var attrs = nameAndAttrs.Split('&');
+            if (nameAndAttrs.Contains('&'))
+            {
+                throw new Exception($"excel标题头不再使用'&'作为分割符，请改为'{s_sep}'");
+            }
+            var attrs = nameAndAttrs.Split(s_sep);
 
             string titleName = attrs[0];
             var tags = new Dictionary<string, string>();
@@ -372,7 +382,11 @@ namespace Luban.Job.Cfg.DataSources.Excel
             {
                 return false;
             }
-            foreach (var attr in metaStr.Substring(2).Split('&'))
+            if (metaStr.Substring(2).Contains('&'))
+            {
+                throw new Exception($"excel标题头不再使用'&'作为分割符，请改为'{s_sep}'");
+            }
+            foreach (var attr in metaStr.Substring(2).Split(s_sep))
             {
                 if (string.IsNullOrWhiteSpace(attr))
                 {
