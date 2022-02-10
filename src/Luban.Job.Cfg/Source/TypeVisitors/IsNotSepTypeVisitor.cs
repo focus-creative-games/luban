@@ -5,8 +5,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 {
     class IsNotSepTypeVisitor : AllTrueVisitor
     {
-        public static IsNotSepTypeVisitor Ins { get; } = new IsNotSepTypeVisitor();
-
+        //public static IsNotSepTypeVisitor Ins { get; } = new IsNotSepTypeVisitor();
 
         public override bool Accept(TString type)
         {

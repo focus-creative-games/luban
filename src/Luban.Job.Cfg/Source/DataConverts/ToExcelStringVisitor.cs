@@ -139,7 +139,7 @@ namespace Luban.Job.Cfg.DataConverts
         {
             if (string.IsNullOrEmpty(sep))
             {
-                sep = type.Type.ElementType.Apply(IsNotSepTypeVisitor.Ins) ? ";" : "|";
+                sep = "|";
             }
             return string.Join(sep, type.Datas.Select(d => d.Apply(this, sep)));
         }
@@ -148,7 +148,7 @@ namespace Luban.Job.Cfg.DataConverts
         {
             if (string.IsNullOrEmpty(sep))
             {
-                sep = type.Type.ElementType.Apply(IsNotSepTypeVisitor.Ins) ? ";" : "|";
+                sep = "|";
             }
             return string.Join(sep, type.Datas.Select(d => d.Apply(this, sep)));
         }
@@ -157,7 +157,7 @@ namespace Luban.Job.Cfg.DataConverts
         {
             if (string.IsNullOrEmpty(sep))
             {
-                sep = type.Type.ElementType.Apply(IsNotSepTypeVisitor.Ins) ? ";" : "|";
+                sep = "|";
             }
             return string.Join(sep, type.Datas.Select(d => d.Apply(this, sep)));
         }

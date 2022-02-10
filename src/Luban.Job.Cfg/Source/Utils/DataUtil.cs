@@ -146,7 +146,7 @@ namespace Luban.Job.Cfg.Utils
             return rec.Tags != null && rec.Tags.Count > 0 && rec.Tags.Contains(TAG_UNCHECKED);
         }
 
-        public const string SimpleContainerSep = ",;|";
+        //public const string SimpleContainerSep = ",;|";
 
         public static string GetBeanSep(TBean type)
         {
@@ -155,17 +155,6 @@ namespace Luban.Job.Cfg.Utils
                 return s;
             }
             return ((DefBean)type.Bean).Sep;
-        }
-
-        public static string GetCollectionElementTypeSep(TType type)
-        {
-            if (type.Tags != null && type.Tags.TryGetValue("sep", out var s) && !string.IsNullOrWhiteSpace(s))
-            {
-                return s;
-            }
-
-            return type.Apply(IsNotSepTypeVisitor.Ins) ? SimpleContainerSep : "";
-
         }
 
         public static bool IsCollectionEqual(List<DType> a, List<DType> b)

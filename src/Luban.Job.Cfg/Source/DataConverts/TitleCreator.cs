@@ -247,26 +247,17 @@ namespace Luban.Job.Cfg.DataConverts
 
         public void Accept(TArray type, Title title, int column)
         {
-            if (!type.ElementType.Apply(IsNotSepTypeVisitor.Ins))
-            {
-                title.Tags.TryAdd("sep", "|");
-            }
+            title.Tags.TryAdd("sep", "|");
         }
 
         public void Accept(TList type, Title title, int column)
         {
-            if (!type.ElementType.Apply(IsNotSepTypeVisitor.Ins))
-            {
-                title.Tags.TryAdd("sep", "|");
-            }
+            title.Tags.TryAdd("sep", "|");
         }
 
         public void Accept(TSet type, Title title, int column)
         {
-            if (!type.ElementType.Apply(IsNotSepTypeVisitor.Ins))
-            {
-                title.Tags.TryAdd("sep", "|");
-            }
+            title.Tags.TryAdd("sep", "|");
         }
 
         public void Accept(TMap type, Title title, int column)

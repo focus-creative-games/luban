@@ -360,19 +360,6 @@ namespace Luban.Job.Cfg.DataCreators
             return list;
         }
 
-        //public static ExcelStream SepIfNeed(TType type, ExcelStream stream)
-        //{
-        //    string sep = DataUtil.GetSep(type);
-        //    if (!string.IsNullOrEmpty(sep))
-        //    {
-        //        return new ExcelStream(stream.ReadCell(), sep);
-        //    }
-        //    else
-        //    {
-        //        return stream;
-        //    }
-        //}
-
         public DType Accept(TBean type, ExcelStream x)
         {
             var originBean = (DefBean)type.Bean;
@@ -420,11 +407,6 @@ namespace Luban.Job.Cfg.DataCreators
         private static ExcelStream TrySep(TType type, ExcelStream stream)
         {
             string sep = type.GetTag("sep");
-            if (string.IsNullOrEmpty(sep) && type.ElementType != null && type.ElementType.Apply(IsNotSepTypeVisitor.Ins))
-            {
-                // 如果是array,list,set，并且它们的elementType不包含',;|'，则自动添加sep分割。这是一个方便策划的优化
-                return stream.CreateAutoSepStream(DataUtil.SimpleContainerSep);
-            }
             
             if (!string.IsNullOrEmpty(sep) && !stream.TryReadEOF())
             {
