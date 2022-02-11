@@ -76,7 +76,7 @@ namespace Luban.Job.Common.TypeVisitors
         public override void Accept(TMap type, MapKeyValueEntryCollection x)
         {
             x.KeyValueEntries[MakeKeyValueType(type)] = type;
-            if (type.ElementType is TBean tbean)
+            if (type.ValueType is TBean tbean)
             {
                 tbean.Apply(this, x);
             }

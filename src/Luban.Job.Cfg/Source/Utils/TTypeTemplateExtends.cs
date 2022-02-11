@@ -63,15 +63,41 @@ namespace Luban.Job.Cfg.Utils
         {
             var refVarName = field.RefVarName;
             var name = field.ConventionName;
-            var tableName = field.Ref.FirstTable;
-            var table = field.Assembly.GetCfgTable(field.Ref.FirstTable);
-            if (field.IsNullable)
+
+            if (field.Ref != null)
             {
-                return $"this.{refVarName} = this.{name} != null ? (_tables[\"{tableName}\"] as  {table.FullName}).GetOrDefault({name}.Value) : null;";
+                var tableName = field.Ref.FirstTable;
+                var table = field.Assembly.GetCfgTable(tableName);
+                if (field.IsNullable)
+                {
+                    return $"this.{refVarName} = this.{name} != null ? (_tables[\"{tableName}\"] as  {table.FullName}).GetOrDefault({name}.Value) : null;";
+                }
+                else
+                {
+                    return $"this.{refVarName} = (_tables[\"{tableName}\"] as {table.FullName}).GetOrDefault({name});";
+                }
             }
             else
             {
-                return $"this.{refVarName} = (_tables[\"{tableName}\"] as {table.FullName}).GetOrDefault({name});";
+                var tableName = field.ElementRef.FirstTable;
+                var table = field.Assembly.GetCfgTable(tableName);
+                switch (field.CType)
+                {
+                    case TArray:
+                    {
+                        return $@"{{ int __n = {name}.Length; {table.FullName} __table = ({table.FullName})_tables[""{ tableName}""]; this.{refVarName} = new {table.ValueTType.Apply(CsDefineTypeName.Ins)}[__n]; for(int i = 0 ; i < __n ; i++) {{ this.{refVarName}[i] =  __table.GetOrDefault({name}[i]); }} }}";
+                    }
+                    case TList:
+                    case TSet:
+                    {
+                        return $@"{{ {table.FullName} __table = ({table.FullName})_tables[""{ tableName}""]; this.{refVarName} = new {field.ElementRefType.Apply(CsDefineTypeName.Ins)}(); foreach(var __e in {name}) {{ this.{refVarName}.Add(__table.GetOrDefault(__e)); }} }}";
+                    }
+                    case TMap:
+                    {
+                        return $@"{{ {table.FullName} __table = ({table.FullName})_tables[""{ tableName}""]; this.{refVarName} = new {field.ElementRefType.Apply(CsDefineTypeName.Ins)}(); foreach(var __e in {name}) {{ this.{refVarName}.Add(__e.Key, __table.GetOrDefault(__e.Value)); }} }}";
+                    }
+                    default: throw new NotSupportedException($"type:'{field.CType.TypeName}' not support ref");
+                }
             }
         }
 

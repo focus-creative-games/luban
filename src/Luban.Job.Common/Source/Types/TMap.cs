@@ -20,6 +20,8 @@ namespace Luban.Job.Common.Types
 
         public TType ValueType { get; }
 
+        public override TType ElementType => ValueType;
+
         public bool IsOrderedMap { get; }
 
         private TMap(bool isNullable, Dictionary<string, string> tags, TType keyType, TType valueType, bool isOrderedMap) : base(isNullable, tags)

@@ -151,9 +151,6 @@ public partial class {{name}}
     /// </summary>
 {{~end~}}
      public {{cs_define_type field.ctype}} {{field.convention_name}} => _data.{{field.convention_name}};
-    {{~if field.ref~}}
-        public {{field.cs_ref_type_name}} {{field.ref_var_name}} => _data.{{field.ref_var_name}};
-    {{~end~}}
     {{~end~}}
 
     public void Resolve(Dictionary<string, object> _tables)
