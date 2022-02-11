@@ -81,13 +81,12 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         private static readonly HashSet<string> s_knownSpecialTags = new HashSet<string>
         {
-            "##var",
-            "##+",
-            "##type",
-            "##desc",
-            "##comment",
-            "##column",
-            "##",
+            "var",
+            "+",
+            "type",
+            "desc",
+            "comment",
+            "column",
         };
 
         private const char s_sep = '#';
@@ -109,9 +108,13 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 {
                     break;
                 }
-                if (!s_knownSpecialTags.Contains(rowTag))
+                var tags = rowTag.Substring(2).Split(s_sep).Where(s => !string.IsNullOrEmpty(s));
+                foreach (string tag in tags)
                 {
-                    DefAssembly.LocalAssebmly?.Agent?.Error("文件:'{0}' 行标签:'{1}' 未知，是否有拼写错误?", s_curExcel.Value, rowTag);
+                    if (!s_knownSpecialTags.Contains(tag))
+                    {
+                        DefAssembly.LocalAssebmly?.Agent?.Error("文件:'{0}' 行标签:'{1}' 包含未知tag:'{2}'，是否有拼写错误?", s_curExcel.Value, rowTag, tag);
+                    }
                 }
             }
         }
