@@ -322,7 +322,7 @@ Reward is a substructure containing the three fields of "int item_id; int count;
 
 <tr align="center"><td>##var</td><td>id</td><td colspan="4">shape</td><td colspan="4">shape2</ td></tr>
 <tr align="center"><td>##type</td><td>int</td><td colspan="4">Shape</td><td colspan="4">Shape</ td></tr>
-<tr align="center"><td>##var</td><td></td><td>__type__</td><td>radius</td><td>width</td><td>height</td><td></td><td></td><td></td><td></td></tr>
+<tr align="center"><td>##var</td><td></td><td>$type</td><td>radius</td><td>width</td><td>height</td><td></td><td></td><td></td><td></td></tr>
 <tr align="center"><td/><td>1</td><td>Circle</td><td>10</td><td/><td/><td>Circle</td><td>100</td><td></td><td></td></tr>
 <tr align="center"><td/><td>2</td><td>Rectangle</td><td></td><td>10</td><td>20</td ><td>Rectangle</td><td>10</td><td>20</td><td></td></tr>
 <tr align="center"><td/><td>3</td><td>Circle</td><td>10</td><td/><td/><td>Triangle</td><td>15</td><td>15</td><td>15</td></tr>
@@ -402,14 +402,14 @@ Take the behavior tree as an example to show how to configure the behavior tree 
   "executor": "SERVER",
   "blackboard_id": "demo",
   "root": {
-    "__type__": "Sequence",
+    "$type": "Sequence",
     "id": 1,
     "node_name": "test",
     "desc": "root",
     "services": [],
     "decorators": [
       {
-        "__type__": "UeLoop",
+        "$type": "UeLoop",
         "id": 3,
         "node_name": "",
         "flow_abort_mode": "SELF",
@@ -420,7 +420,7 @@ Take the behavior tree as an example to show how to configure the behavior tree 
     ],
     "children": [
       {
-        "__type__": "UeWait",
+        "$type": "UeWait",
         "id": 30,
         "node_name": "",
         "ignore_restart_self": false,
@@ -430,7 +430,7 @@ Take the behavior tree as an example to show how to configure the behavior tree 
         "decorators": []
       },
       {
-        "__type__": "MoveToRandomLocation",
+        "$type": "MoveToRandomLocation",
         "id": 75,
         "node_name": "",
         "ignore_restart_self": false,

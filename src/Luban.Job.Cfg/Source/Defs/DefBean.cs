@@ -26,7 +26,7 @@ namespace Luban.Job.Cfg.Defs
 
         public string JsonTypeNameKey => JSON_TYPE_NAME_KEY;
 
-
+        public string LuaTypeNameKey => LUA_TYPE_NAME_KEY;
 
         public string Alias { get; }
 

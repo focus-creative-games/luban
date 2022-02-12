@@ -83,7 +83,7 @@ local function InitTypes(methods)
     {{~end~}}
         local class = SimpleClass()
         class._id = {{bean.id}}
-        class._name = '{{bean.full_name}}'
+        class['{{bean.lua_type_name_key}}'] = '{{bean.full_name}}'
         local id2name = { {{for c in bean.hierarchy_not_abstract_children}} [{{c.id}}] = '{{c.full_name}}', {{end}} }
 {{~if bean.is_abstract_type~}}
         class._deserialize = function(bs)
@@ -105,7 +105,7 @@ local function InitTypes(methods)
             return o
         end
 {{~end~}}
-        beans[class._name] = class
+        beans[class['{{bean.lua_type_name_key}}']] = class
     end
 {{~end~}}
 
