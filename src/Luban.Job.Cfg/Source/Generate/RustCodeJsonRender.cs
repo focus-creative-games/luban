@@ -30,7 +30,7 @@ namespace Luban.Job.Cfg.Generate
                 lines,
                 ls =>
             {
-                var template = StringTemplateManager.Ins.GetTemplate("config/rust_json/include");
+                var template = GetConfigTemplate("include");
                 var result = template.RenderCode(ctx.ExportTypes);
                 ls.Add(result);
             }, null);

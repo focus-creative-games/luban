@@ -80,6 +80,11 @@ namespace Luban.Job.Common.Defs
             return Options.TryGetValue(optionName, out var value) ? value : null;
         }
 
+        public string GetOptionOr(string optionName, string defaultValue)
+        {
+            return Options.TryGetValue(optionName, out var value) ? value : defaultValue;
+        }
+
         private void SetCurrentExternalSelectors(string selectors)
         {
             if (string.IsNullOrEmpty(selectors))

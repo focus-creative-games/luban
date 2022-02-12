@@ -16,6 +16,16 @@ namespace Luban.Job.Cfg.Generate
 
         protected abstract string RenderTemplateDir { get; }
 
+        protected Scriban.Template GetConfigTemplate(string name)
+        {
+            return StringTemplateManager.Ins.GetTemplate($"config/{RenderTemplateDir}/{name}");
+        }
+
+        protected Scriban.Template GetCommonTemplate(string name)
+        {
+            return StringTemplateManager.Ins.GetTemplate($"common/{CommonRenderTemplateDir}/{name}");
+        }
+
         public override void Render(GenContext ctx)
         {
             GenerateCodeScatter(ctx);
@@ -23,7 +33,7 @@ namespace Luban.Job.Cfg.Generate
 
         public override string Render(DefEnum e)
         {
-            var template = StringTemplateManager.Ins.GetTemplate($"common/{CommonRenderTemplateDir}/enum");
+            var template = GetCommonTemplate("enum");
             var result = template.RenderCode(e);
 
             return result;
@@ -31,21 +41,21 @@ namespace Luban.Job.Cfg.Generate
 
         public override string Render(DefBean b)
         {
-            var template = StringTemplateManager.Ins.GetTemplate($"config/{RenderTemplateDir}/bean");
+            var template = GetConfigTemplate("bean");
             var result = template.RenderCode(b);
             return result;
         }
 
         public override string Render(DefTable p)
         {
-            var template = StringTemplateManager.Ins.GetTemplate($"config/{RenderTemplateDir}/table");
+            var template = GetConfigTemplate("table");
             var result = template.RenderCode(p);
             return result;
         }
 
         public override string RenderService(string name, string module, List<DefTable> tables)
         {
-            var template = StringTemplateManager.Ins.GetTemplate($"config/{RenderTemplateDir}/tables");
+            var template = GetConfigTemplate("tables");
             var result = template.RenderCode(new {
                 Name = name,
                 Namespace = module,
@@ -60,7 +70,7 @@ namespace Luban.Job.Cfg.Generate
             var beans = types.Where(t => t is DefBean).ToList();
             var tables = types.Where(t => t is DefTable).ToList();
 
-            var template = StringTemplateManager.Ins.GetTemplate($"config/{RenderTemplateDir}/all");
+            var template = GetConfigTemplate("all");
             var result = template.RenderCode(new {
                 Namespace = DefAssembly.LocalAssebmly.TopModule,
                 Enums = enums.Select(e => Render((DefEnum)e)).ToList(),

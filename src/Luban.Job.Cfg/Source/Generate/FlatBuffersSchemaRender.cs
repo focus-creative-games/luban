@@ -46,7 +46,7 @@ namespace Luban.Job.Cfg.Generate
 
         private string RenderConvertJson2BinaryBat(string name, string module, List<DefTable> tables)
         {
-            var template = StringTemplateManager.Ins.GetTemplate($"config/{RenderTemplateDir}/convert_json_to_binary_bat");
+            var template = GetConfigTemplate("convert_json_to_binary_bat");
             var result = template.RenderCode(new {
                 Name = name,
                 Namespace = module,
@@ -57,7 +57,7 @@ namespace Luban.Job.Cfg.Generate
 
         private string RenderConvertJson2BinarySh(string name, string module, List<DefTable> tables)
         {
-            var template = StringTemplateManager.Ins.GetTemplate($"config/{RenderTemplateDir}/convert_json_to_binary_sh");
+            var template = GetConfigTemplate("convert_json_to_binary_sh");
             var result = template.RenderCode(new {
                 Name = name,
                 Namespace = module,
@@ -92,7 +92,7 @@ namespace Luban.Job.Cfg.Generate
             // 所以排到前面生成
             beans.Sort((a, b) => (a.IsAbstractType ? 0 : 1) - (b.IsAbstractType ? 0 : 1));
 
-            var template = StringTemplateManager.Ins.GetTemplate($"config/{RenderTemplateDir}/all");
+            var template = GetConfigTemplate("all");
             var result = template.RenderCode(new {
                 Namespace = ass.TopModule,
                 Enums = enums.Select(e => Render((DefEnum)e)).ToList(),

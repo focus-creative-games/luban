@@ -17,11 +17,16 @@ namespace Luban.Job.Cfg.Generate
     [Render("convert_template")]
     class TemplateConvertRender : DataRenderBase
     {
+        protected Template GetConvertTemplate(string name)
+        {
+            return StringTemplateManager.Ins.GetTemplate($"config/convert/{name}");
+        }
+
         public override void Render(GenContext ctx)
         {
             string genType = ctx.GenType;
 
-            Template template = StringTemplateManager.Ins.GetTemplate($"config/convert/{ctx.GenArgs.TemplateConvertFile}");
+            Template template = GetConvertTemplate(ctx.GenArgs.TemplateConvertFile);
 
             foreach (var table in ctx.ExportTables)
             {

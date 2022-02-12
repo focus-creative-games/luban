@@ -3,7 +3,7 @@
 
 using ByteBuf = bright::serialization::ByteBuf;
 
-namespace {{x.top_module}}
+namespace {{assembly.top_module}}
 {
     {{~for type in x.types~}}
 
