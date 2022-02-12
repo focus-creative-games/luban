@@ -112,7 +112,7 @@ namespace Luban.Job.Cfg.DataCreators
             DefBean implBean;
             if (bean.IsAbstractType)
             {
-                if (!x.TryGetProperty(DefBean.FALLBACK_TYPE_NAME_KEY, out var typeNameProp) && !x.TryGetProperty(DefBean.JSON_TYPE_NAME_KEY, out typeNameProp))
+                if (!x.TryGetProperty(DefBean.JSON_TYPE_NAME_KEY, out var typeNameProp) && !x.TryGetProperty(DefBean.FALLBACK_TYPE_NAME_KEY, out typeNameProp))
                 {
                     throw new Exception($"结构:'{bean.FullName}' 是多态类型，必须用 '{DefBean.JSON_TYPE_NAME_KEY}' 字段指定 子类名");
                 }

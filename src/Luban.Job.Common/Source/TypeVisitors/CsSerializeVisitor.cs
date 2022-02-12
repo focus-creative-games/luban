@@ -10,7 +10,7 @@ namespace Luban.Job.Common.TypeVisitors
         {
             if (type.IsNullable)
             {
-                return $"if({fieldName} != null){{ {bufName}.WriteBool(true); {type.Apply(CsUnderingSerializeVisitor.Ins, bufName, fieldName)} }} else {{ {bufName}.WriteBool(true); }}";
+                return $"if({fieldName} != null){{ {bufName}.WriteBool(true); {type.Apply(CsUnderingSerializeVisitor.Ins, bufName, type.Apply(CsIsRawNullableTypeVisitor.Ins) ? fieldName : fieldName + ".Value" )} }} else {{ {bufName}.WriteBool(true); }}";
             }
             else
             {

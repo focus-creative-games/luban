@@ -154,13 +154,13 @@ namespace Luban.Job.Cfg.DataCreators
             if (bean.IsAbstractType)
             {
                 string subType;
-                if (table.ContainsKey(DefBean.FALLBACK_TYPE_NAME_KEY))
-                {
-                    subType = (string)table[DefBean.FALLBACK_TYPE_NAME_KEY];
-                }
-                else if(table.ContainsKey(DefBean.LUA_TYPE_NAME_KEY))
+                if(table.ContainsKey(DefBean.LUA_TYPE_NAME_KEY))
                 {
                     subType = (string)(table[DefBean.LUA_TYPE_NAME_KEY]);
+                }
+                else if (table.ContainsKey(DefBean.FALLBACK_TYPE_NAME_KEY))
+                {
+                    subType = (string)table[DefBean.FALLBACK_TYPE_NAME_KEY];
                 }
                 else
                 {

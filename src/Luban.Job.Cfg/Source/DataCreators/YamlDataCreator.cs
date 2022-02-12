@@ -102,8 +102,8 @@ namespace Luban.Job.Cfg.DataCreators
             return new DText(key, text);
         }
 
-        private static readonly YamlScalarNode s_typeNodeName = new(DefBean.FALLBACK_TYPE_NAME_KEY);
-        private static readonly YamlScalarNode s_typeNodeName2 = new(DefBean.JSON_TYPE_NAME_KEY);
+        private static readonly YamlScalarNode s_typeNodeName = new(DefBean.JSON_TYPE_NAME_KEY);
+        private static readonly YamlScalarNode s_typeNodeNameFallback = new(DefBean.FALLBACK_TYPE_NAME_KEY);
 
         public DType Accept(TBean type, YamlNode x, DefAssembly y)
         {
@@ -113,7 +113,7 @@ namespace Luban.Job.Cfg.DataCreators
             DefBean implBean;
             if (bean.IsAbstractType)
             {
-                if (!m.Children.TryGetValue(s_typeNodeName, out var typeNode) && !m.Children.TryGetValue(s_typeNodeName2, out typeNode))
+                if (!m.Children.TryGetValue(s_typeNodeName, out var typeNode) && !m.Children.TryGetValue(s_typeNodeNameFallback, out typeNode))
                 {
                     throw new Exception($"bean:'{bean.FullName}'是多态，需要指定{DefBean.JSON_TYPE_NAME_KEY}属性.\n xml:{x}");
                 }

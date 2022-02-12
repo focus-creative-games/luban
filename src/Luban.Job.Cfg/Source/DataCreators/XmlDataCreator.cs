@@ -96,10 +96,10 @@ namespace Luban.Job.Cfg.DataCreators
             DefBean implBean;
             if (bean.IsAbstractType)
             {
-                string subType = x.Attribute(DefBean.FALLBACK_TYPE_NAME_KEY)?.Value;
+                string subType = x.Attribute(DefBean.XML_TYPE_NAME_KEY)?.Value;
                 if (string.IsNullOrEmpty(subType))
                 {
-                    subType = x.Attribute(DefBean.XML_TYPE_NAME_KEY)?.Value;
+                    subType = x.Attribute(DefBean.FALLBACK_TYPE_NAME_KEY)?.Value;
                 }
                 if (string.IsNullOrWhiteSpace(subType))
                 {
