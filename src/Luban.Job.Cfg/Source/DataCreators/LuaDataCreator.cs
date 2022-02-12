@@ -153,11 +153,19 @@ namespace Luban.Job.Cfg.DataCreators
             DefBean implBean;
             if (bean.IsAbstractType)
             {
-                if (!table.ContainsKey(DefBean.TYPE_NAME_KEY))
+                string subType;
+                if (table.ContainsKey(DefBean.FALLBACK_TYPE_NAME_KEY))
                 {
-                    throw new Exception($"结构:{bean.FullName} 是多态类型，必须用 {DefBean.TYPE_NAME_KEY} 字段指定 子类名");
+                    subType = (string)table[DefBean.FALLBACK_TYPE_NAME_KEY];
                 }
-                var subType = (string)table[DefBean.TYPE_NAME_KEY];
+                else if(table.ContainsKey(DefBean.LUA_TYPE_NAME_KEY))
+                {
+                    subType = (string)(table[DefBean.LUA_TYPE_NAME_KEY]);
+                }
+                else
+                {
+                    throw new Exception($"结构:{bean.FullName} 是多态类型，必须用 {DefBean.LUA_TYPE_NAME_KEY} 字段指定 子类名");
+                }
                 implBean = DataUtil.GetImplTypeByNameOrAlias(bean, subType);
             }
             else

@@ -10,13 +10,21 @@ namespace Luban.Job.Cfg.Defs
 {
     public class DefBean : DefBeanBase
     {
-        public const string TYPE_NAME_KEY = "__type__";
+        public const string FALLBACK_TYPE_NAME_KEY = "__type__";
 
         public const string BEAN_NULL_STR = "null";
 
         public const string BEAN_NOT_NULL_STR = "{}";
 
-        public string JsonTypeNameKey => TYPE_NAME_KEY;
+        public const string JSON_TYPE_NAME_KEY = "$type";
+
+        public const string XML_TYPE_NAME_KEY = "type";
+
+        public const string LUA_TYPE_NAME_KEY = "_type_";
+
+        public const string EXCEL_TYPE_NAME_KEY = "$type";
+
+        public string JsonTypeNameKey => JSON_TYPE_NAME_KEY;
 
 
 

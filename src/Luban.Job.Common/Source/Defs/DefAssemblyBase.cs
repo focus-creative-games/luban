@@ -114,7 +114,7 @@ namespace Luban.Job.Common.Defs
             this.ExternalSelectors = defines.ExternalSelectors;
             this.ExternalTypes = defines.ExternalTypes;
             this.Options = defines.Options;
-            this.EditorTopModule = defines.Options.TryGetValue("editor.topmodule", out var editorTopModule) ? editorTopModule : TypeUtil.MakeFullName("editor", defines.TopModule);
+            this.EditorTopModule = GetOptionOr("editor.topmodule", TypeUtil.MakeFullName("editor", defines.TopModule));
 
             this.Args = args;
 

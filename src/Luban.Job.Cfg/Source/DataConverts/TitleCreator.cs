@@ -36,7 +36,7 @@ namespace Luban.Job.Cfg.DataConverts
             {
                 title.AddSubTitle(new Title()
                 {
-                    Name = DefBean.TYPE_NAME_KEY,
+                    Name = DefBean.EXCEL_TYPE_NAME_KEY,
                     FromIndex = lastColumn + 1,
                     ToIndex = lastColumn + 1,
                     Tags = new Dictionary<string, string>(),

@@ -102,7 +102,8 @@ namespace Luban.Job.Cfg.DataCreators
             return new DText(key, text);
         }
 
-        private static readonly YamlScalarNode s_typeNodeName = new(DefBean.TYPE_NAME_KEY);
+        private static readonly YamlScalarNode s_typeNodeName = new(DefBean.FALLBACK_TYPE_NAME_KEY);
+        private static readonly YamlScalarNode s_typeNodeName2 = new(DefBean.JSON_TYPE_NAME_KEY);
 
         public DType Accept(TBean type, YamlNode x, DefAssembly y)
         {
@@ -112,10 +113,14 @@ namespace Luban.Job.Cfg.DataCreators
             DefBean implBean;
             if (bean.IsAbstractType)
             {
-                string subType = m.Children.TryGetValue(s_typeNodeName, out var typeNode) ? (string)typeNode : null;
+                if (!m.Children.TryGetValue(s_typeNodeName, out var typeNode) && !m.Children.TryGetValue(s_typeNodeName2, out typeNode))
+                {
+                    throw new Exception($"bean:'{bean.FullName}'是多态，需要指定{DefBean.JSON_TYPE_NAME_KEY}属性.\n xml:{x}");
+                }
+                string subType = (string)typeNode;
                 if (string.IsNullOrWhiteSpace(subType))
                 {
-                    throw new Exception($"bean:'{bean.FullName}'是多态，需要指定{DefBean.TYPE_NAME_KEY}属性.\n xml:{x}");
+                    throw new Exception($"bean:'{bean.FullName}'是多态，需要指定{DefBean.JSON_TYPE_NAME_KEY}属性.\n xml:{x}");
                 }
                 implBean = DataUtil.GetImplTypeByNameOrAlias(bean, subType);
             }

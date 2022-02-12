@@ -20,7 +20,7 @@ namespace Luban.Job.Cfg.DataVisitors
             var x = new StringBuilder();
             if (type.Type.IsAbstractType)
             {
-                x.Append($"{{ _name='{DataUtil.GetImplTypeName(type)}',");
+                x.Append($"{{ {DefBean.LUA_TYPE_NAME_KEY}='{DataUtil.GetImplTypeName(type)}',");
             }
             else
             {

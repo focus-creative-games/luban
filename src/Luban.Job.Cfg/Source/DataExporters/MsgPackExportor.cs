@@ -183,7 +183,7 @@ namespace Luban.Job.Cfg.DataExporters
             writer.WriteMapHeader(exportCount);
             if (type.Type.IsAbstractType)
             {
-                writer.Write(DefBean.TYPE_NAME_KEY);
+                writer.Write(DefBean.JSON_TYPE_NAME_KEY);
                 writer.Write(DataUtil.GetImplTypeName(type));
             }
 

@@ -130,9 +130,9 @@ namespace Luban.Job.Cfg.DataConverts
             {
                 if (data.Type.IsAbstractType)
                 {
-                    if (!x.SubTitles.TryGetValue(DefBean.TYPE_NAME_KEY, out var typeTitle))
+                    if (!x.SubTitles.TryGetValue(DefBean.FALLBACK_TYPE_NAME_KEY, out var typeTitle) && !x.SubTitles.TryGetValue(DefBean.EXCEL_TYPE_NAME_KEY, out typeTitle))
                     {
-                        throw new Exception($"多态bean:{data.Type.FullName} 缺失 {DefBean.TYPE_NAME_KEY} 标题列");
+                        throw new Exception($"多态bean:{data.Type.FullName} 缺失 {DefBean.EXCEL_TYPE_NAME_KEY} 标题列");
                     }
                     if (data.ImplType != null)
                     {

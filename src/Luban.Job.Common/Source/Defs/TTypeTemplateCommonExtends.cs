@@ -303,5 +303,10 @@ namespace Luban.Job.Common.Defs
         {
             return DefAssemblyBase.LocalAssebmly.GetOption(optionName);
         }
+
+        public static string GetOptionOr(string optionName, string defaultValue)
+        {
+            return DefAssemblyBase.LocalAssebmly.GetOptionOr(optionName, defaultValue);
+        }
     }
 }

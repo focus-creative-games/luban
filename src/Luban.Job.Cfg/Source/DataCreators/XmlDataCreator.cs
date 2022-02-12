@@ -96,10 +96,14 @@ namespace Luban.Job.Cfg.DataCreators
             DefBean implBean;
             if (bean.IsAbstractType)
             {
-                string subType = x.Attribute(DefBean.TYPE_NAME_KEY)?.Value;
+                string subType = x.Attribute(DefBean.FALLBACK_TYPE_NAME_KEY)?.Value;
+                if (string.IsNullOrEmpty(subType))
+                {
+                    subType = x.Attribute(DefBean.XML_TYPE_NAME_KEY)?.Value;
+                }
                 if (string.IsNullOrWhiteSpace(subType))
                 {
-                    throw new Exception($"bean:'{bean.FullName}'是多态，需要指定{DefBean.TYPE_NAME_KEY}属性.\n xml:{x}");
+                    throw new Exception($"bean:'{bean.FullName}'是多态，需要指定{DefBean.XML_TYPE_NAME_KEY}属性.\n xml:{x}");
                 }
                 implBean = DataUtil.GetImplTypeByNameOrAlias(bean, subType);
             }

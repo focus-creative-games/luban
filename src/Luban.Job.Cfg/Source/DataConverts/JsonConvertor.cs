@@ -35,7 +35,7 @@ namespace Luban.Job.Cfg.DataConverts
 
             if (type.Type.IsAbstractType)
             {
-                x.WritePropertyName(DefBean.TYPE_NAME_KEY);
+                x.WritePropertyName(DefBean.JSON_TYPE_NAME_KEY);
                 x.WriteStringValue(type.ImplType.Name);
             }
 

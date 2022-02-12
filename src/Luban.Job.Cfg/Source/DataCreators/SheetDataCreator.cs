@@ -399,10 +399,10 @@ namespace Luban.Job.Cfg.DataCreators
                 var originBean = (DefBean)type.Bean;
                 if (originBean.IsAbstractType)
                 {
-                    TitleRow typeTitle = row.GetSubTitleNamedRow(DefBean.TYPE_NAME_KEY);
+                    TitleRow typeTitle = row.GetSubTitleNamedRow(DefBean.FALLBACK_TYPE_NAME_KEY) ?? row.GetSubTitleNamedRow(DefBean.EXCEL_TYPE_NAME_KEY);
                     if (typeTitle == null)
                     {
-                        throw new Exception($"type:'{originBean.FullName}' 是多态类型,需要定义'{DefBean.TYPE_NAME_KEY}'列来指定具体子类型");
+                        throw new Exception($"type:'{originBean.FullName}' 是多态类型,需要定义'{DefBean.EXCEL_TYPE_NAME_KEY}'列来指定具体子类型");
                     }
 
                     string subType = typeTitle.Current?.ToString()?.Trim();
@@ -421,10 +421,10 @@ namespace Luban.Job.Cfg.DataCreators
                 {
                     if (type.IsNullable)
                     {
-                        TitleRow typeTitle = row.GetSubTitleNamedRow(DefBean.TYPE_NAME_KEY);
+                        TitleRow typeTitle = row.GetSubTitleNamedRow(DefBean.FALLBACK_TYPE_NAME_KEY) ?? row.GetSubTitleNamedRow(DefBean.EXCEL_TYPE_NAME_KEY);
                         if (typeTitle == null)
                         {
-                            throw new Exception($"type:'{originBean.FullName}' 是可空类型,需要定义'{DefBean.TYPE_NAME_KEY}'列来指明是否可空");
+                            throw new Exception($"type:'{originBean.FullName}' 是可空类型,需要定义'{DefBean.EXCEL_TYPE_NAME_KEY}'列来指明是否可空");
                         }
                         string subType = typeTitle.Current?.ToString()?.Trim();
                         if (subType == null || subType == DefBean.BEAN_NULL_STR)

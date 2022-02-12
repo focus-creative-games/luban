@@ -12,7 +12,7 @@ namespace Luban.Job.Cfg.DataConverts
 {
     class LuaConvertor : DataVisitors.ToLuaLiteralVisitor
     {
-        public static new LuaConvertor Ins { get; } = new();
+        //public static new LuaConvertor Ins { get; } = new();
 
         private string _indentStr = "";
 
@@ -43,7 +43,7 @@ namespace Luban.Job.Cfg.DataConverts
             x.AppendLine("{");
             if (type.Type.IsAbstractType)
             {
-                x.Append(subIndent).AppendLine($"_name = '{type.ImplType.Name}',");
+                x.Append(subIndent).AppendLine($"{DefBean.LUA_TYPE_NAME_KEY} = '{type.ImplType.Name}',");
             }
 
             int index = 0;
