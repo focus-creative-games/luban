@@ -40,15 +40,8 @@ namespace {{x.namespace_with_top_module}}
         public static void Serialize{{name}}(ByteBuf _buf, {{name}} x)
         {
     {{~if is_abstract_type~}}
-            if (x != null)
-            {
-                _buf.WriteInt(x.GetTypeId());
-                x.Serialize(_buf);
-            }
-            else
-            {
-                _buf.WriteInt(0);
-            }
+            _buf.WriteInt(x.GetTypeId());
+            x.Serialize(_buf);
     {{~else~}}
             x.Serialize(_buf);
     {{~end~}}
@@ -60,7 +53,6 @@ namespace {{x.namespace_with_top_module}}
            {{full_name}} x;
             switch (_buf.ReadInt())
             {
-                case 0 : return null;
             {{~ for child in x.hierarchy_not_abstract_children~}}
                 case {{child.full_name}}.__ID__: x = new {{child.full_name}}(); break;
             {{~end~}}

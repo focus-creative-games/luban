@@ -10,17 +10,12 @@ namespace Luban.Job.Common.TypeVisitors
         {
             if (type.IsNullable)
             {
-                return $"if({fieldName} != null){{ {bufName}.WriteBool(true); {type.Apply(CsUnderingSerializeVisitor.Ins, bufName, type.Apply(CsIsRawNullableTypeVisitor.Ins) ? fieldName : fieldName + ".Value" )} }} else {{ {bufName}.WriteBool(true); }}";
+                return $"{{ if({fieldName} is {type.Apply(CsUnderingDefineTypeName.Ins)} __value__){{ {bufName}.WriteBool(true); {type.Apply(CsUnderingSerializeVisitor.Ins, bufName, "__value__" )} }} else {{ {bufName}.WriteBool(false); }} }}";
             }
             else
             {
                 return type.Apply(CsUnderingSerializeVisitor.Ins, bufName, fieldName);
             }
-        }
-
-        public override string Accept(TBean type, string bufName, string fieldName)
-        {
-            return type.Apply(CsUnderingSerializeVisitor.Ins, bufName, fieldName);
         }
     }
 }
