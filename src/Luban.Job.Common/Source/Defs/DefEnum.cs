@@ -79,7 +79,7 @@ namespace Luban.Job.Common.Defs
             }
             else if (int.TryParse(name, out value))
             {
-                if (!_vaule2Name.ContainsKey(value))
+                if (!_vaule2Name.ContainsKey(value) && !IsFlags)
                 {
                     throw new Exception($"{value} 不是 enum:'{FullName}'的有效枚举值");
                 }
