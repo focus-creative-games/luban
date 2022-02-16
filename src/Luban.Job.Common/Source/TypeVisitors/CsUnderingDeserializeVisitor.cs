@@ -81,7 +81,7 @@ namespace Luban.Job.Common.TypeVisitors
         public string Accept(TBean type, string bufName, string fieldName)
         {
             string src = $"{type.Bean.FullName}.Deserialize{type.Bean.Name}({bufName})";
-            return $"{fieldName} = {ExternalTypeUtil.CsCloneToExternal(type.Bean, src)};";
+            return $"{fieldName} = {ExternalTypeUtil.CsCloneToExternal(type.Bean.FullName, src)};";
         }
 
         public string Accept(TArray type, string bufName, string fieldName)
@@ -109,22 +109,26 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TVector2 type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.Read{VectorName}2();";
+            string src = $"{bufName}.Read{VectorName}2()";
+            return $"{fieldName} = {ExternalTypeUtil.CsCloneToExternal("vector2", src)};";
         }
 
         public string Accept(TVector3 type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.Read{VectorName}3();";
+            string src = $"{bufName}.Read{VectorName}3()";
+            return $"{fieldName} = {ExternalTypeUtil.CsCloneToExternal("vector3", src)};";
         }
 
         public string Accept(TVector4 type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.Read{VectorName}4();";
+            string src = $"{bufName}.Read{VectorName}4()";
+            return $"{fieldName} = {ExternalTypeUtil.CsCloneToExternal("vector4", src)};";
         }
 
         public string Accept(TDateTime type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadInt();";
+            string src = $"{bufName}.ReadInt()";
+            return $"{fieldName} = {ExternalTypeUtil.CsCloneToExternal("datetime", src)};";
         }
     }
 }

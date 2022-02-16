@@ -27,22 +27,27 @@ namespace Luban.Job.Common.Utils
         //    }
         //}
 
+        public static ExternalTypeMapper GetExternalTypeMappfer(string typeName)
+        {
+            return DefAssemblyBase.LocalAssebmly.GetExternalTypeMapper(typeName);
+        }
+
         public static string CsMapperToExternalType(DefTypeBase type)
         {
             var mapper = DefAssemblyBase.LocalAssebmly.GetExternalTypeMapper(type.FullName);
             return mapper != null ? mapper.TargetTypeName : type.CsFullName;
         }
 
-        public static string CsCloneToExternal(DefTypeBase type, string src)
+        public static string CsCloneToExternal(string typeName, string src)
         {
-            var mapper = DefAssemblyBase.LocalAssebmly.GetExternalTypeMapper(type.FullName);
+            var mapper = DefAssemblyBase.LocalAssebmly.GetExternalTypeMapper(typeName);
             if (mapper == null)
             {
                 return src;
             }
             if (string.IsNullOrWhiteSpace(mapper.CreateExternalObjectFunction))
             {
-                throw new Exception($"type:{type.FullName} externaltype:{DefAssemblyBase.LocalAssebmly.GetExternalType(type.FullName)} lan:{mapper.Lan} selector:{mapper.Selector} 未定义 create_external_object_function 属性");
+                throw new Exception($"type:{typeName} externaltype:{DefAssemblyBase.LocalAssebmly.GetExternalType(typeName)} lan:{mapper.Lan} selector:{mapper.Selector} 未定义 create_external_object_function 属性");
             }
             return $"{mapper.CreateExternalObjectFunction}({src})";
         }

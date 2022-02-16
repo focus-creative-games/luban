@@ -1,5 +1,6 @@
 using Luban.Job.Common.Types;
 using Luban.Job.Common.TypeVisitors;
+using Luban.Job.Common.Utils;
 using Scriban.Runtime;
 
 namespace Luban.Job.Common.Defs
@@ -307,6 +308,11 @@ namespace Luban.Job.Common.Defs
         public static string GetOptionOr(string optionName, string defaultValue)
         {
             return DefAssemblyBase.LocalAssebmly.GetOptionOr(optionName, defaultValue);
+        }
+
+        public static bool GenDatetimeMills(TType type)
+        {
+            return type is TDateTime && !type.IsNullable && ExternalTypeUtil.GetExternalTypeMappfer("datetime") == null;
         }
     }
 }

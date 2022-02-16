@@ -105,6 +105,11 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TVector2 type)
         {
+            var mapper = ExternalTypeUtil.GetExternalTypeMappfer("vector2");
+            if (mapper != null)
+            {
+                return mapper.TargetTypeName;
+            }
             if (DefAssemblyBase.IsUseUnityVectors)
             {
                 return "UnityEngine.Vector2";
@@ -114,6 +119,11 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TVector3 type)
         {
+            var mapper = ExternalTypeUtil.GetExternalTypeMappfer("vector3");
+            if (mapper != null)
+            {
+                return mapper.TargetTypeName;
+            }
             if (DefAssemblyBase.IsUseUnityVectors)
             {
                 return "UnityEngine.Vector3";
@@ -123,6 +133,11 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TVector4 type)
         {
+            var mapper = ExternalTypeUtil.GetExternalTypeMappfer("vector4");
+            if (mapper != null)
+            {
+                return mapper.TargetTypeName;
+            }
             if (DefAssemblyBase.IsUseUnityVectors)
             {
                 return "UnityEngine.Vector4";
@@ -132,6 +147,11 @@ namespace Luban.Job.Common.TypeVisitors
 
         public virtual string Accept(TDateTime type)
         {
+            var mapper = ExternalTypeUtil.GetExternalTypeMappfer("datetime");
+            if (mapper != null)
+            {
+                return mapper.TargetTypeName;
+            }
             return "int";
         }
     }
