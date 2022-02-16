@@ -117,6 +117,11 @@ namespace Luban.Job.Cfg
                     return false;
                 }
 
+                if (options.GenType.Contains("unity"))
+                {
+                    options.CsUseUnityVectors = true;
+                }
+
                 return true;
             }
         }
