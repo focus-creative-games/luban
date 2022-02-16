@@ -251,14 +251,11 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TBytes type, Sheet sheet, TitleRow row)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public DType Accept(TText type, Sheet sheet, TitleRow row)
         {
-            //var s = row.AsStream(row.SelfTitle.Sep);
-            //return type.Apply(ExcelStreamDataCreator.Ins, s);
-
             if (string.IsNullOrEmpty(row.SelfTitle.SepOr(type.GetTag("sep"))))
             {
                 if (row.CellCount != 2)

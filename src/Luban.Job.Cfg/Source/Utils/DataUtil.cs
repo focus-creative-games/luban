@@ -26,7 +26,10 @@ namespace Luban.Job.Cfg.Utils
         public static DType CreateVector(TVector2 type, string x)
         {
             var values = SplitVectorString(x);
-
+            if (values.Length != 2)
+            {
+                throw new Exception($"'{x}' 不是合法vector2类型数据");
+            }
             return new DVector2(new System.Numerics.Vector2(float.Parse(values[0]), float.Parse(values[1])));
 
         }
@@ -34,7 +37,10 @@ namespace Luban.Job.Cfg.Utils
         public static DType CreateVector(TVector3 type, string x)
         {
             var values = SplitVectorString(x);
-
+            if (values.Length != 3)
+            {
+                throw new Exception($"'{x}' 不是合法vector3类型数据");
+            }
             return new DVector3(new System.Numerics.Vector3(float.Parse(values[0]), float.Parse(values[1]), float.Parse(values[2])));
 
         }
@@ -42,7 +48,17 @@ namespace Luban.Job.Cfg.Utils
         public static DType CreateVector(TVector4 type, string x)
         {
             var values = SplitVectorString(x);
+            if (values.Length != 4)
+            {
+                throw new Exception($"'{x}' 不是合法vector4类型数据");
+            }
             return new DVector4(new System.Numerics.Vector4(float.Parse(values[0]), float.Parse(values[1]), float.Parse(values[2]), float.Parse(values[3])));
+        }
+
+        public static DType CreateBytes(string x)
+        {
+            string[] ss = SplitVectorString(x);
+            return new DBytes(ss.Select(s => byte.Parse(s)).ToArray());
         }
 
         //public static DDateTime CreateDateTime(string x, TimeZoneInfo timeZoneInfo)
