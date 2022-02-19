@@ -166,7 +166,7 @@ namespace Luban.Client.Common.Net
             Session.ReplyRpc<GetInputFile, GetInputFileArg, GetInputFileRes>(rpc, res);
         }
 
-        private readonly Regex _subResPattern = new Regex(@"(.+)\[(\d+)]$");
+        private readonly Regex _subResPattern = new Regex(@"(.+)\[(.+)\]$");
 
         private readonly ConcurrentDictionary<string, YamlDocument> _cacheYamlDocs = new();
 
