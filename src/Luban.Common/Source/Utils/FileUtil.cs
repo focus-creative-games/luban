@@ -65,19 +65,6 @@ namespace Luban.Common.Utils
             return !fname.StartsWith('.') && !fname.StartsWith('_') && !fname.StartsWith('~');
         }
 
-        [ThreadStatic]
-        private static MD5 s_cacheMd5;
-
-        private static MD5 CacheMd5
-        {
-            get
-            {
-                var md5 = s_cacheMd5 ??= MD5.Create();
-                md5.Clear();
-                return md5;
-            }
-        }
-
         public static string CalcMD5(byte[] srcBytes)
         {
             using MD5 md5 = MD5.Create();
@@ -135,19 +122,6 @@ namespace Luban.Common.Utils
             Directory.GetParent(outputPath).Create();
             if (File.Exists(outputPath))
             {
-                //if (CheckFileNotChange(outputPath, content))
-                //{
-                //    s_logger.Trace("[not change] {file}", outputPath);
-                //    return;
-                //}
-                //else
-                //{
-                //    s_logger.Info("[override] {file}", outputPath);
-                //    if (File.GetAttributes(outputPath).HasFlag(FileAttributes.ReadOnly))
-                //    {
-                //        File.SetAttributes(outputPath, FileAttributes.Normal);
-                //    }
-                //}
                 s_logger.Info("[override] {file}", outputPath);
                 if (File.GetAttributes(outputPath).HasFlag(FileAttributes.ReadOnly))
                 {
@@ -159,7 +133,7 @@ namespace Luban.Common.Utils
                 s_logger.Info("[new] {file}", outputPath);
             }
 
-            await File.WriteAllBytesAsync(outputPath, content);
+            await WriteAllBytesAsync(outputPath, content);
         }
 
         public static async Task<byte[]> ReadAllBytesAsync(string file)
@@ -190,6 +164,15 @@ namespace Luban.Common.Utils
                 writeIndex += n;
             }
             return bytes;
+        }
+
+        public static async Task WriteAllBytesAsync(string file, byte[] bytes)
+        {
+            using var fs = new FileStream(file, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
+            long count = bytes.LongLength;
+            fs.SetLength(count);
+            fs.Seek(0, SeekOrigin.Begin);
+            await fs.WriteAsync(bytes);
         }
 
         public static void DeleteDirectoryRecursive(string rootDir)
