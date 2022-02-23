@@ -34,6 +34,8 @@ namespace Luban.Job.Common.Defs
 
         public Dictionary<string, DefTypeBase> Types { get; } = new Dictionary<string, DefTypeBase>();
 
+        private readonly Dictionary<string, DefTypeBase> _notCaseSenceTypes = new ();
+
         public IAgent Agent { get; protected set; }
 
         public string TopModule { get; protected set; }
@@ -174,6 +176,11 @@ namespace Luban.Job.Common.Defs
             if (Types.ContainsKey(fullName))
             {
                 throw new Exception($"type:'{fullName}' duplicate");
+            }
+
+            if (!_notCaseSenceTypes.TryAdd(fullName.ToLower(), type))
+            {
+                throw new Exception($"type:'{fullName}' 和 type:'{_notCaseSenceTypes[fullName.ToLower()].FullName}' 类名小写重复. 在win平台有问题");
             }
             Types.Add(fullName, type);
         }

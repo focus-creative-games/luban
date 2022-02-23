@@ -15,6 +15,7 @@ namespace Luban.Common.Utils
                 layout = NLog.Layouts.Layout.FromString("${longdate}|${message}${onexception:${newline}${exception:format=tostring}${exception:format=StackTrace}}");
             }
             logConfig.AddTarget("console", new NLog.Targets.ColoredConsoleTarget() { Layout = layout });
+            logConfig.AddRule(minConsoleLogLevel, NLog.LogLevel.Off, new NLog.Targets.NullTarget(), "Bright.Net.Channels.*", true);
             logConfig.AddRule(minConsoleLogLevel, NLog.LogLevel.Fatal, "console");
             NLog.LogManager.Configuration = logConfig;
         }
