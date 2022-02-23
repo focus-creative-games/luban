@@ -306,6 +306,112 @@ Reward为包含 "int item_id; int count; string desc; " 这三个字段的子结
 
 </table>
 
+### 多级多行表
+
+多行表的列表字段，每个列表元素还可以是多行。支持任意多级的多行嵌套。另外也允许有多个多行字段，每个字段的行数还可以不同。
+
+<table border="1">
+
+<tr align="center">
+  <td>##var</td>
+  <td>id</td>
+  <td>name</td>
+  <td colspan="10">*stages</td>
+</tr>
+<tr align="center">
+  <td>##type</td>
+  <td>int</td>
+  <td>string</td>
+  <td colspan="10">list,Stage</td>
+</tr>
+<tr align="center">
+  <td>##var</td>
+  <td/>
+  <td/>
+  <td>id</td>
+  <td>name</td>
+  <td>desc</td>
+  <td colspan="3">*tips</td>
+  <td colspan="4">*rules</td>
+</tr>
+<tr align="center">
+  <td>##var</td>
+  <td/>
+  <td/>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td>location</td>
+  <td>item_id</td>
+  <td>num</td>
+  <td>id</td>
+  <td>name</td>
+  <td>item_id</td>
+  <td>num</td>
+</tr>
+<tr align="center">
+  <td>##</td>
+  <td>id</td>
+  <td>desc1</td>
+  <td>desc1</td>
+  <td>desc2</td>
+  <td>desc3</td>
+  <td>desc4</td>
+  <td>desc5</td>
+  <td>desc6</td>
+  <td>id</td>
+  <td>desc</td>
+  <td>item id</td>
+  <td>count</td>
+</tr>
+
+<tr align="center">
+<td/>
+<td>1</td>
+<td>task1</td>
+<td>1</td><td>stage1</td><td>stage desc1</td><td>1,2,3</td><td>1001</td><td>1</td><td>1</td><td>hello</td><td>5001</td><td>1</td>
+</tr>
+<tr align="center">
+<td/><td/><td/><td></td><td></td><td></td><td>2,2,2</td><td>1002</td><td>2</td><td></td><td></td><td></td><td></td>
+</tr>
+<tr align="center">
+<td/><td/><td/><td>2</td><td>stage2</td><td>stage desc2</td><td>1,2,3</td><td>1001</td><td>1</td><td>1</td><td>hello</td><td>5001</td><td>1</td>
+</tr>
+<tr align="center">
+<td/><td/><td/><td></td><td></td><td></td><td></td><td></td><td></td><td>2</td><td>hello</td><td>5001</td><td>1</td>
+</tr>
+<tr align="center">
+<td/><td/><td/><td></td><td></td><td></td><td></td><td></td><td></td><td>3</td><td>hello</td><td>5001</td><td>1</td>
+</tr>
+<tr align="center">
+<td/><td/><td/><td>3</td><td>stage3</td><td>stage desc3</td><td>1,2,3</td><td>1002</td><td>1</td><td>1</td><td>hello</td><td>5001</td><td>1</td>
+</tr>
+<tr align="center">
+<td/><td/><td/><td></td><td></td><td></td><td>2,2,2</td><td>1002</td><td>2</td><td>1</td><td>hello</td><td>5001</td><td>1</td>
+</tr>
+<tr align="center">
+<td/><td/><td/><td></td><td></td><td></td><td>2,2,2</td><td>1002</td><td>2</td><td></td><td></td><td></td><td></td>
+</tr>
+<tr align="center">
+<td/><td>2</td>
+<td>task2</td>
+<td>1</td><td>stage1</td><td>stage desc1</td><td>1,2,3</td><td>1001</td><td>1</td><td></td><td></td><td></td><td></td>
+</tr>
+<tr align="center">
+<td/><td/><td/><td></td><td></td><td></td><td>2,2,2</td><td>1002</td><td>2</td><td></td><td></td><td></td><td></td>
+</tr>
+<tr align="center">
+<td/><td/><td/><td></td><td></td><td></td><td>2,2,2</td><td>1002</td><td>2</td><td></td><td></td><td></td><td></td>
+</tr>
+<tr align="center">
+<td/><td/><td/><td>2</td><td>stage2</td><td>stage desc2</td><td>1,2,3</td><td>1002</td><td>1</td><td>1</td><td>hello</td><td>5001</td><td>1</td>
+</tr>
+<tr align="center">
+<td/><td/><td/><td></td><td></td><td></td><td>2,2,2</td><td>1002</td><td>2</td><td></td><td></td><td></td><td></td>
+</tr>
+
+</table>
+
 ### map 类型的多级子标题
 
 <table border="1">
