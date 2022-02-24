@@ -67,7 +67,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TEnum type, JsonElement x, DefAssembly ass)
         {
-            return new DEnum(type, x.GetString());
+            return new DEnum(type, x.ToString());
         }
 
         public DType Accept(TString type, JsonElement x, DefAssembly ass)

@@ -23,7 +23,7 @@ namespace Luban.Job.Cfg.DataCreators
 
         private static string GetTextValue(YamlNode node)
         {
-            return ((string)node);
+            return node.ToString();
         }
 
         public DType Accept(TBool type, YamlNode x, DefAssembly y)
