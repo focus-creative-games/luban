@@ -61,7 +61,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TEnum type, string jsonName, string jsonFieldName, string value)
         {
-            return $"{jsonName}[\"{jsonFieldName}\"] = new JSONString({value});";
+            return $"{jsonName}[\"{jsonFieldName}\"] = new JSONNumber((int){value});";
         }
 
         public string Accept(TString type, string jsonName, string jsonFieldName, string value)
@@ -81,17 +81,17 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TVector2 type, string jsonName, string jsonFieldName, string value)
         {
-            return $"{{ var __vjson = new JSONObject(); __vjson[\"x\"] = {value}{(type.IsNullable ? ".Value" : "")}.X;  __vjson[\"y\"] = {value}{(type.IsNullable ? ".Value" : "")}.Y; {jsonName}[\"{jsonFieldName}\"] = __vjson; }}";
+            return $"{{ var __vjson = new JSONObject(); __vjson[\"x\"] = {value}{(type.IsNullable ? ".Value" : "")}.x;  __vjson[\"y\"] = {value}{(type.IsNullable ? ".Value" : "")}.y; {jsonName}[\"{jsonFieldName}\"] = __vjson; }}";
         }
 
         public string Accept(TVector3 type, string jsonName, string jsonFieldName, string value)
         {
-            return $"{{ var __vjson = new JSONObject(); __vjson[\"x\"] = {value}{(type.IsNullable ? ".Value" : "")}.X;  __vjson[\"y\"] = {value}{(type.IsNullable ? ".Value" : "")}.Y; __vjson[\"z\"] = {value}{(type.IsNullable ? ".Value" : "")}.Z; {jsonName}[\"{jsonFieldName}\"] = __vjson; }}";
+            return $"{{ var __vjson = new JSONObject(); __vjson[\"x\"] = {value}{(type.IsNullable ? ".Value" : "")}.x;  __vjson[\"y\"] = {value}{(type.IsNullable ? ".Value" : "")}.y; __vjson[\"z\"] = {value}{(type.IsNullable ? ".Value" : "")}.z; {jsonName}[\"{jsonFieldName}\"] = __vjson; }}";
         }
 
         public string Accept(TVector4 type, string jsonName, string jsonFieldName, string value)
         {
-            return $"{{ var __vjson = new JSONObject(); __vjson[\"x\"] = {value}{(type.IsNullable ? ".Value" : "")}.X;  __vjson[\"y\"] = {value}{(type.IsNullable ? ".Value" : "")}.Y; __vjson[\"z\"] = {value}{(type.IsNullable ? ".Value" : "")}.Z; __vjson[\"w\"] = {value}{(type.IsNullable ? ".Value" : "")}.W; {jsonName}[\"{jsonFieldName}\"] = __vjson; }}";
+            return $"{{ var __vjson = new JSONObject(); __vjson[\"x\"] = {value}{(type.IsNullable ? ".Value" : "")}.x;  __vjson[\"y\"] = {value}{(type.IsNullable ? ".Value" : "")}.y; __vjson[\"z\"] = {value}{(type.IsNullable ? ".Value" : "")}.z; __vjson[\"w\"] = {value}{(type.IsNullable ? ".Value" : "")}.w; {jsonName}[\"{jsonFieldName}\"] = __vjson; }}";
         }
 
         public string Accept(TDateTime type, string jsonName, string jsonFieldName, string value)

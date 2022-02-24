@@ -61,7 +61,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TEnum type, string json, string x)
         {
-            return $"if(!{json}.IsString) {{ throw new SerializationException(); }}  {x} = {json};";
+            return $"if({json}.IsString) {{ {x} = ({type.Apply(CsEditorDefineTypeName.Ins)})System.Enum.Parse(typeof({type.Apply(CsEditorDefineTypeName.Ins)}), {json}); }} else if({json}.IsNumber) {{ {x} = ({type.Apply(CsEditorDefineTypeName.Ins)})(int){json}; }} else {{ throw new SerializationException(); }}  ";
         }
 
         public string Accept(TString type, string json, string x)

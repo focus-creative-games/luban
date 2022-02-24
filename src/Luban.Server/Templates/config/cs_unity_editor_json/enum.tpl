@@ -7,12 +7,28 @@
 
 namespace {{x.namespace_with_editor_top_module}}
 {
+
 {{~if comment != '' ~}}
     /// <summary>
     /// {{comment | html.escape}}
     /// </summary>
 {{~end~}}
-    public static partial class {{name}}
+    {{~if x.is_flags~}}
+    [System.Flags]
+    {{~end~}}
+    public enum {{name}}
+    {
+        {{~ for item in items ~}}
+{{~if item.comment != '' ~}}
+        /// <summary>
+        /// {{item.escape_comment}}
+        /// </summary>
+{{~end~}}
+        {{item.name}} = {{item.value}},
+        {{~end~}}
+    }
+
+    public static partial class {{name}}_Metadata
     {
         {{~ for item in items ~}}
         public static readonly {{itemType}} {{item.name}} = new {{itemType}}("{{item.name}}", "{{item.alias}}", {{item.int_value}}, "{{item.comment}}");

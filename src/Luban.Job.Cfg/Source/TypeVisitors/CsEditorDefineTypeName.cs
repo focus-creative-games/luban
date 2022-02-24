@@ -19,14 +19,9 @@ namespace Luban.Job.Cfg.TypeVisitors
             return "string";
         }
 
-        public override string Accept(TEnum type)
-        {
-            return "string";
-        }
-
         public override string Accept(TText type)
         {
-            return "Bright.Config.EditorText";
+            return CfgConstStrings.EditorTextTypeName;
         }
     }
 }

@@ -12,11 +12,6 @@ namespace Luban.Job.Cfg.TypeVisitors
     {
         public static new CsEditorUnderlyingDefineTypeName Ins { get; } = new CsEditorUnderlyingDefineTypeName();
 
-        public override string Accept(TEnum type)
-        {
-            return "string";
-        }
-
         public override string Accept(TText type)
         {
             return CfgConstStrings.EditorTextTypeName;

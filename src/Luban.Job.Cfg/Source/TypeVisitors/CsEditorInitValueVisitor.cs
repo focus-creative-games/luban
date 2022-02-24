@@ -15,7 +15,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public override string Accept(TEnum type)
         {
-            return $"\"{(type.DefineEnum.Items.Count > 0 ? type.DefineEnum.Items[0].Name : "")}\"";
+            return $"{(type.DefineEnum.Items.Count > 0 ? $"{type.Apply(CsEditorDefineTypeName.Ins)}."+type.DefineEnum.Items[0].Name : "default")}";
         }
 
         public override string Accept(TText type)
