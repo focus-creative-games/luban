@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Luban.Job.Cfg.Utils
 {
@@ -109,6 +110,38 @@ namespace Luban.Job.Cfg.Utils
         public static string EscapeString(string s)
         {
             return s.Replace("\\", "\\\\").Replace("\"", "\\\"");
+        }
+
+        public static string EscapeLuaStringWithQuote(string s)
+        {
+            if (!s.Contains('\"') && !s.Contains('\\') && !s.Contains('\n'))
+            {
+                return "\"" + s + "\"";
+            }
+
+            var multiEqaulChars = new StringBuilder();
+            var result = new StringBuilder();
+            for(int i = 0; i < 100 ;i++)
+            {
+                if (i > 0)
+                {
+                    multiEqaulChars.Append('=');
+                }
+                var multiEqualStr = multiEqaulChars.ToString();
+                if (i == 0 || s.Contains(multiEqualStr))
+                {
+                    if (s.Contains("[" + multiEqualStr + "[") ||  s.Contains("]" + multiEqualStr + "]"))
+                    {
+                        continue;
+                    }
+                }
+                result.Clear();
+                result.Append('[').Append(multiEqualStr).Append('[');
+                result.Append(s);
+                result.Append(']').Append(multiEqualStr).Append(']');
+                return result.ToString();
+            }
+            throw new Exception($"too complex string:'{s}'");
         }
 
         //public static string EscapeStringWithQuote(string s)

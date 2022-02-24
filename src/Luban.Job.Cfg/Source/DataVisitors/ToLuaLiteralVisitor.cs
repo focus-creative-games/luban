@@ -10,9 +10,14 @@ namespace Luban.Job.Cfg.DataVisitors
     {
         public static ToLuaLiteralVisitor Ins { get; } = new();
 
+        public override string Accept(DString type)
+        {
+            return DataUtil.EscapeLuaStringWithQuote(type.Value);
+        }
+
         public override string Accept(DText type)
         {
-            return $"{{{DText.KEY_NAME}='{type.Key}',{DText.TEXT_NAME}=\"{DataUtil.EscapeString(type.TextOfCurrentAssembly)}\"}}";
+            return $"{{{DText.KEY_NAME}='{type.Key}',{DText.TEXT_NAME}={DataUtil.EscapeLuaStringWithQuote(type.TextOfCurrentAssembly)}}}";
         }
 
         public override string Accept(DBean type)
