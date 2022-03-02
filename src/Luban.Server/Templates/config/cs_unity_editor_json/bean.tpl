@@ -6,6 +6,7 @@ using SimpleJSON;
     name = x.name
     parent_def_type = x.parent_def_type
     parent = x.parent
+    hierarchy_fields = x.hierarchy_fields
     fields = x.fields
 }}
 
@@ -28,12 +29,10 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
         {{~end~}}
     }
 
+    {{~if !x.is_abstract_type~}}
     public override void LoadJson(SimpleJSON.JSONObject _json)
     {
-        {{~if parent_def_type ~}}
-        base.LoadJson(_json);
-        {{~end~}}
-        {{~ for field in fields ~}}
+        {{~ for field in hierarchy_fields ~}}
         { 
             var _fieldJson = _json["{{field.name}}"];
             if (_fieldJson != null)
@@ -46,11 +45,11 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
     }
 
     public override void SaveJson(SimpleJSON.JSONObject _json)
-    {        
-        {{~if parent_def_type ~}}
-        base.SaveJson(_json);
+    {
+        {{~if parent~}}
+        _json["{{x.json_type_name_key}}"] = "{{x.full_name}}";
         {{~end~}}
-        {{~ for field in fields ~}}
+        {{~ for field in hierarchy_fields ~}}
             {{~if field.ctype.is_nullable}}
         if ({{field.convention_name}} != null)
         {
@@ -66,6 +65,7 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
             {{~end~}}
         {{~end~}}
     }
+    {{~end~}}
 
     public static {{name}} LoadJson{{name}}(SimpleJSON.JSONNode _json)
     {
@@ -75,7 +75,10 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
         switch (type)
         {
         {{~for child in x.hierarchy_not_abstract_children~}}
-            case "{{cs_impl_data_type child x}}": obj = new {{child.full_name}}(); break;
+            {{~if child.namespace == x.namespace~}}
+            case "{{child.full_name}}":   
+            {{~end~}}
+            case "{{cs_impl_data_type child x}}":obj = new {{child.full_name}}(); break;
         {{~end~}}
             default: throw new SerializationException();
         }
