@@ -75,7 +75,7 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
         switch (type)
         {
         {{~for child in x.hierarchy_not_abstract_children~}}
-            {{~if child.namespace == x.namespace~}}
+            {{~if child.namespace == x.namespace && x.namespace != '' ~}}
             case "{{child.full_name}}":   
             {{~end~}}
             case "{{cs_impl_data_type child x}}":obj = new {{child.full_name}}(); break;
