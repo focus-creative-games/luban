@@ -201,7 +201,7 @@ namespace Luban.Job.Common.Utils
 
         public static bool IsNormalFieldName(string name)
         {
-            return !name.StartsWith("__") && !name.StartsWith("#");
+            return !name.StartsWith("__") && !name.StartsWith("#") && !name.StartsWith("$");
         }
 
         public static Dictionary<string, string> MergeTags(Dictionary<string, string> tags1, Dictionary<string, string> tags2)
