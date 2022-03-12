@@ -32,9 +32,14 @@ namespace Luban.Job.Cfg.DataExporters
             return new YamlScalarNode(x) { Style = ScalarStyle.Plain };
         }
 
+        private static YamlScalarNode ToText(string x)
+        {
+            return new YamlScalarNode(x) { Style = ScalarStyle.SingleQuoted };
+        }
+
         public YamlNode Accept(DBool type)
         {
-            return ToPlainNode(type.Value.ToString());
+            return ToPlainNode(type.Value ? "true" : "false");
         }
 
         public YamlNode Accept(DByte type)
@@ -89,7 +94,7 @@ namespace Luban.Job.Cfg.DataExporters
 
         public YamlNode Accept(DString type)
         {
-            return new YamlScalarNode(type.Value) { Style = ScalarStyle.SingleQuoted };
+            return ToText(type.Value);
         }
 
         public YamlNode Accept(DBytes type)
@@ -100,8 +105,8 @@ namespace Luban.Job.Cfg.DataExporters
         public YamlNode Accept(DText type)
         {
             var m = new YamlMappingNode();
-            m.Add(DText.KEY_NAME, type.Key);
-            m.Add(DText.TEXT_NAME, type.TextOfCurrentAssembly);
+            m.Add(DText.KEY_NAME, ToText(type.Key));
+            m.Add(DText.TEXT_NAME, ToText(type.TextOfCurrentAssembly));
             return m;
         }
 
@@ -111,7 +116,7 @@ namespace Luban.Job.Cfg.DataExporters
 
             if (type.Type.IsAbstractType)
             {
-                m.Add(DefBean.JSON_TYPE_NAME_KEY, DataUtil.GetImplTypeName(type));
+                m.Add(DefBean.JSON_TYPE_NAME_KEY, ToText(DataUtil.GetImplTypeName(type)));
             }
             var defFields = type.ImplType.HierarchyFields;
             int index = 0;
