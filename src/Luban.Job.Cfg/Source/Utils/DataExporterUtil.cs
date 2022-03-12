@@ -18,6 +18,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using YamlDotNet.RepresentationModel;
 
 namespace Luban.Job.Cfg.Utils
 {
@@ -65,6 +66,17 @@ namespace Luban.Job.Cfg.Utils
                     }
                     jsonWriter.Flush();
                     return DataUtil.StreamToBytes(ss);
+                }
+                case "data_yaml":
+                {
+                    var node = YamlExportor.Ins.WriteAsArray(records);
+                    var ys = new YamlStream(new YamlDocument(node));
+
+                    var ms = new MemoryStream();
+                    var tw = new StreamWriter(ms);
+                    ys.Save(tw, false);
+                    tw.Flush();
+                    return DataUtil.StreamToBytes(ms);
                 }
                 case "data_lua":
                 {
