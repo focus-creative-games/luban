@@ -21,6 +21,7 @@ namespace Luban.Client.Common.Utils
 
         public void AddOutputDir(string dir)
         {
+            dir = dir.TrimEnd('/', '\\');
             _outputDirs.Add(dir);
         }
 
