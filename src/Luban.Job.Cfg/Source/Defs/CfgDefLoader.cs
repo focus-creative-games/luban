@@ -801,7 +801,7 @@ namespace Luban.Job.Cfg.Defs
                     {
                         if (defineAnyChildBean)
                         {
-                            throw new LoadDefException($"定义文件:{defineFile} 类型:{b.FullName} 的多态子bean必须在所有成员字段 <var> 之前定义");
+                            throw new LoadDefException($"定义文件:{defineFile} 类型:{b.FullName} 的多态子bean必须在所有成员字段 <var> 之后定义");
                         }
                         b.Fields.Add(CreateField(defineFile, fe)); ;
                         break;
