@@ -258,8 +258,31 @@ namespace Luban.Job.Cfg.DataConverts
 
         public int Accept(DMap data, TType type, Title x)
         {
-            SetTitleValue(x, data.Apply(ToExcelStringVisitor.Ins, type.GetTag("sep")));
-            return 1;
+            if (x.SelfMultiRows)
+            {
+                int oldStartRow = _startRowIndex;
+                int totalRow = 0;
+                try
+                {
+                    var elementType = data.Type.ElementType;
+                    foreach (var ele in data.Datas)
+                    {
+                        int row = Math.Max(ele.Key.Apply(this, elementType, x), ele.Value.Apply(this, elementType, x));
+                        totalRow += row;
+                        _startRowIndex = oldStartRow + totalRow;
+                    }
+                    return totalRow;
+                }
+                finally
+                {
+                    _startRowIndex = oldStartRow;
+                }
+            }
+            else
+            {
+                SetTitleValue(x, data.Apply(ToExcelStringVisitor.Ins, type.GetTag("sep")));
+                return 1;
+            }
         }
 
         public int Accept(DVector2 data, TType type, Title x)
