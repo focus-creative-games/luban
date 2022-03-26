@@ -443,7 +443,8 @@ namespace Luban.Job.Cfg.Defs
             {
                 var source = new ExcelDataSource();
                 var bytes = await this.Agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5);
-                var records = DataLoaderUtil.LoadCfgRecords(tableRecordType, file.OriginFile, null, bytes, true);
+                (var actualFile, var sheetName) = FileUtil.SplitFileAndSheetName(FileUtil.Standardize(file.OriginFile));
+                var records = DataLoaderUtil.LoadCfgRecords(tableRecordType, actualFile, sheetName, bytes, true);
                 foreach (var r in records)
                 {
                     DBean data = r.Data;
@@ -541,7 +542,8 @@ namespace Luban.Job.Cfg.Defs
             {
                 var source = new ExcelDataSource();
                 var bytes = await this.Agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5);
-                var records = DataLoaderUtil.LoadCfgRecords(tableRecordType, file.OriginFile, null, bytes, true);
+                (var actualFile, var sheetName) = FileUtil.SplitFileAndSheetName(FileUtil.Standardize(file.OriginFile));
+                var records = DataLoaderUtil.LoadCfgRecords(tableRecordType, actualFile, sheetName, bytes, true);
 
                 foreach (var r in records)
                 {
