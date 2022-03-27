@@ -183,7 +183,7 @@ namespace Luban.Client.Common.Net
         private bool CheckSubResourceExists(string mainResFileName, string subResName)
         {
             s_logger.Debug("check resources main:{} sub:{}", mainResFileName, subResName);
-            if (!File.Exists(mainResFileName))
+            if (!FileUtil.IsFileExistsSenseCase(mainResFileName))
             {
                 return false;
             }
@@ -236,7 +236,7 @@ namespace Luban.Client.Common.Net
                 }
                 else
                 {
-                    tasks.Add(Task.Run(() => File.Exists(Path.Combine(root, f))));
+                    tasks.Add(Task.Run(() => FileUtil.IsFileExistsSenseCase(Path.Combine(root, f))));
                 }
             }
 

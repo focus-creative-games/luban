@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -47,6 +49,24 @@ namespace Luban.Common.Utils
         public static string GetPathRelateRootFile(string rootFile, string file)
         {
             return Combine(GetParent(rootFile), file);
+        }
+
+        public static bool IsFileExistsSenseCase(string path)
+        {
+            if (!File.Exists(path))
+            {
+                return false;
+            }
+            if (OperatingSystem.IsWindows())
+            {
+                var fileName = Path.GetFileName(path);
+                var files = Directory.GetFiles(Path.GetDirectoryName(path), fileName, new EnumerationOptions() { MatchCasing = MatchCasing.CaseSensitive });
+                return files.Length > 0;
+            }
+            else
+            {
+                return true;
+            }
         }
 
         /// <summary>
