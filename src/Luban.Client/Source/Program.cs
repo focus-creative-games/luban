@@ -269,7 +269,7 @@ Options:
                 }
                 else
                 {
-                    s_logger.Error("GenJob fail. err:{err} msg:{msg}", res.ErrCode, res.ErrMsg);
+                    s_logger.Error("GenJob fail. msg:{msg}", res.ErrMsg);
                     if (!string.IsNullOrEmpty(res.StackTrace))
                     {
                         s_logger.Debug("StackTrace: {}", res.StackTrace);

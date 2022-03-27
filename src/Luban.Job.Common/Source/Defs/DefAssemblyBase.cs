@@ -269,7 +269,7 @@ namespace Luban.Job.Common.Defs
             {
                 string containerTypeAndTags = DefUtil.TrimBracePairs(type.Substring(0, sepIndex));
                 var elementTypeAndTags = type.Substring(sepIndex + 1);
-                var (containerType, containerTags) = DefUtil.ParseType(containerTypeAndTags);
+                var (containerType, containerTags) = DefUtil.ParseTypeAndVaildAttrs(containerTypeAndTags);
                 return CreateContainerType(module, containerType, containerTags, elementTypeAndTags.Trim());
             }
             else
@@ -283,7 +283,7 @@ namespace Luban.Job.Common.Defs
             bool nullable;
             // 去掉 rawType 两侧的匹配的 ()
             rawType = DefUtil.TrimBracePairs(rawType);
-            var (type, tags) = DefUtil.ParseType(rawType);
+            var (type, tags) = DefUtil.ParseTypeAndVaildAttrs(rawType);
 
             if (type.EndsWith('?'))
             {

@@ -183,7 +183,24 @@ namespace Luban.Job.Common.Utils
             }
         }
 
-        public static bool ParseOrientation(string value)
+        public static (string, Dictionary<string, string>) ParseTypeAndVaildAttrs(string s)
+        {
+            var (typeStr, attrs) = ParseType(s);
+
+            if (attrs.ContainsKey("group"))
+            {
+                throw new Exception("group为保留属性,只能用于table或var定义,是否用错? 如在excel中请使用&group=xxx");
+            }
+
+            if (attrs.ContainsKey("seq"))
+            {
+                throw new Exception("字段切割应该用'sep'，而不是'seq',请检查是否拼写错误");
+            }
+
+            return (typeStr, attrs);
+        }
+
+            public static bool ParseOrientation(string value)
         {
             switch (value.Trim())
             {
