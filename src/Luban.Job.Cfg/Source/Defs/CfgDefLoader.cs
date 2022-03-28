@@ -273,7 +273,14 @@ namespace Luban.Job.Cfg.Defs
                 Tags = tags,
                 OutputFile = outputFileName,
             };
-
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new Exception($"定义文件:{defineFile} table:'{p.Name}' name:'{p.Name}' 不能为空");
+            }
+            if (string.IsNullOrWhiteSpace(valueType))
+            {
+                throw new Exception($"定义文件:{defineFile} table:'{p.Name}' value_type:'{valueType}' 不能为空");
+            }
             if (p.Groups.Count == 0)
             {
                 p.Groups = this._defaultGroups;
