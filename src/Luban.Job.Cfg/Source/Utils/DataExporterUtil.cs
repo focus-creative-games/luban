@@ -53,7 +53,7 @@ namespace Luban.Job.Cfg.Utils
                     {
                         Indented = !table.Assembly.OutputCompactJson,
                         SkipValidation = false,
-                        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(System.Text.Unicode.UnicodeRanges.All),
+                        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                     });
                     if (dataType == "data_json")
                     {
