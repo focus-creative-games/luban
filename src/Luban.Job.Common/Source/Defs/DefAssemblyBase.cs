@@ -34,7 +34,11 @@ namespace Luban.Job.Common.Defs
 
         public Dictionary<string, DefTypeBase> Types { get; } = new Dictionary<string, DefTypeBase>();
 
-        private readonly Dictionary<string, DefTypeBase> _notCaseSenceTypes = new ();
+        private readonly Dictionary<string, DefTypeBase> _notCaseSenseTypes = new ();
+
+        private readonly HashSet<string> _namespaces = new();
+
+        private readonly Dictionary<string, DefTypeBase> _notCaseSenseNamespaces = new();
 
         public IAgent Agent { get; protected set; }
 
@@ -178,10 +182,17 @@ namespace Luban.Job.Common.Defs
                 throw new Exception($"type:'{fullName}' duplicate");
             }
 
-            if (!_notCaseSenceTypes.TryAdd(fullName.ToLower(), type))
+            if (!_notCaseSenseTypes.TryAdd(fullName.ToLower(), type))
             {
-                throw new Exception($"type:'{fullName}' 和 type:'{_notCaseSenceTypes[fullName.ToLower()].FullName}' 类名小写重复. 在win平台有问题");
+                throw new Exception($"type:'{fullName}' 和 type:'{_notCaseSenseTypes[fullName.ToLower()].FullName}' 类名小写重复. 在win平台有问题");
             }
+
+            string namespaze = type.Namespace;
+            if (_namespaces.Add(namespaze) && !_notCaseSenseNamespaces.TryAdd(namespaze.ToLower(), type))
+            {
+                throw new Exception($"type:'{fullName}' 和 type:'{_notCaseSenseNamespaces[namespaze.ToLower()].FullName}' 命名空间小写重复. 在win平台有问题，请修改定义并删除生成的代码目录后再重新生成");
+            }
+
             Types.Add(fullName, type);
         }
 
