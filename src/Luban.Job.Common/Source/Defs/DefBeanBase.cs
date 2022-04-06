@@ -24,6 +24,22 @@ namespace Luban.Job.Common.Defs
 
         public List<DefBeanBase> HierarchyNotAbstractChildren { get; set; }
 
+        public IEnumerable<DefBeanBase> GetHierarchyChildren()
+        {
+            yield return this;
+            if (Children == null)
+            {
+                yield break;
+            }
+            foreach (var child in Children)
+            {
+                foreach(var c2 in  child.GetHierarchyChildren())
+                {
+                    yield return c2;
+                }
+            }
+        }
+
         public bool IsNotAbstractType => Children == null;
 
         public bool IsAbstractType => Children != null;

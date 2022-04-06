@@ -245,7 +245,7 @@ namespace Luban.Job.Cfg.Utils
             {
                 throw new Exception($"module:'{bean.Namespace}' 多态数据type不能为空");
             }
-            DefBean defType = bean.HierarchyNotAbstractChildren.Cast<DefBean>().Where(c => c.Alias == subType || c.Name == subType || c.FullName == subType).FirstOrDefault();
+            DefBean defType = bean.GetHierarchyChildren().Cast<DefBean>().Where(c => c.Alias == subType || c.Name == subType || c.FullName == subType).FirstOrDefault();
             if (defType == null)
             {
                 throw new Exception($"module:'{bean.Namespace}' type:'{subType}' 不是合法类型");
