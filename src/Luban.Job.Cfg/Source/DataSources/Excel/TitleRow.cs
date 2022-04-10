@@ -16,14 +16,21 @@ namespace Luban.Job.Cfg.DataSources.Excel
         {
             get
             {
-                var v = Row[SelfTitle.FromIndex].Value;
-                if (v == null || (v is string s && string.IsNullOrEmpty(s) && !string.IsNullOrEmpty(SelfTitle.Default)))
+                if (Row != null)
                 {
-                    return SelfTitle.Default;
+                    var v = Row[SelfTitle.FromIndex].Value;
+                    if (v == null || (v is string s && string.IsNullOrEmpty(s) && !string.IsNullOrEmpty(SelfTitle.Default)))
+                    {
+                        return SelfTitle.Default;
+                    }
+                    else
+                    {
+                        return v;
+                    }
                 }
                 else
                 {
-                    return v;
+                    throw new Exception($"简单数据类型字段 不支持子列名或者多行");
                 }
             }
         }
