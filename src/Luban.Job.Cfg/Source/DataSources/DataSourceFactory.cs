@@ -28,7 +28,8 @@ namespace Luban.Job.Cfg.DataSources
                 {
                     case "csv":
                     case "xls":
-                    case "xlsx": source = new Excel.ExcelDataSource(); break;
+                    case "xlsx":
+                    case "xlsm": source = new Excel.ExcelDataSource(); break;
                     case "xml": source = new Xml.XmlDataSource(); break;
                     case "lua": source = new Lua.LuaDataSource(); break;
                     case "json": source = new Json.JsonDataSource(); break;
