@@ -18,6 +18,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Xml;
 using YamlDotNet.RepresentationModel;
 
 namespace Luban.Job.Cfg.Utils
@@ -76,6 +77,15 @@ namespace Luban.Job.Cfg.Utils
                     var tw = new StreamWriter(ms);
                     ys.Save(tw, false);
                     tw.Flush();
+                    return DataUtil.StreamToBytes(ms);
+                }
+                case "data_xml":
+                {
+                    var xwSetting = new XmlWriterSettings() { Indent = true };
+                    var ms = new MemoryStream();
+                    using var xmlWriter = XmlWriter.Create(ms, xwSetting);
+                    XmlExportor.Ins.WriteAsArray(records, xmlWriter);
+                    xmlWriter.Flush();
                     return DataUtil.StreamToBytes(ms);
                 }
                 case "data_lua":

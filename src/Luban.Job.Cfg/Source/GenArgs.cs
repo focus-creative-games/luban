@@ -8,7 +8,7 @@ namespace Luban.Job.Cfg
         [Option('s', "service", Required = true, HelpText = "service")]
         public string Service { get; set; }
 
-        [Option("gen_types", Required = true, HelpText = "code_cs_bin,code_cs_dotnet_json,code_cs_unity_json,code_cs_unity_editor_json,code_lua_bin,code_java_bin,code_java_json,code_go_bin,code_go_json,code_cpp_bin,code_cpp_ue_editor_json,code_python2_json,code_python3_json,code_typescript_bin,code_typescript_json,code_rust_json,code_protobuf,code_template,code_flatbuffers,data_bin,data_lua,data_json,data_json2,data_json_monolithic,data_yaml,data_resources,data_template,data_protobuf_bin,data_protobuf_json,data_flatbuffers_json,convert_json,convert_lua,convert_xlsx . can be multi")]
+        [Option("gen_types", Required = true, HelpText = "code_cs_bin,code_cs_dotnet_json,code_cs_unity_json,code_cs_unity_editor_json,code_lua_bin,code_java_bin,code_java_json,code_go_bin,code_go_json,code_cpp_bin,code_cpp_ue_editor_json,code_python2_json,code_python3_json,code_typescript_bin,code_typescript_json,code_rust_json,code_protobuf,code_template,code_flatbuffers,data_bin,data_lua,data_json,data_json2,data_json_monolithic,data_yaml,data_xml,data_resources,data_template,data_protobuf_bin,data_protobuf_json,data_flatbuffers_json,convert_json,convert_lua,convert_xlsx . can be multi")]
         public string GenType { get; set; }
 
         [Option("input_data_dir", Required = true, HelpText = "input data dir")]
