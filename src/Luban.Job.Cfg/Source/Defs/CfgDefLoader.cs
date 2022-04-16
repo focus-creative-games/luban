@@ -204,9 +204,9 @@ namespace Luban.Job.Cfg.Defs
                 }
                 case "map":
                 {
-                    if ((string.IsNullOrWhiteSpace(indexStr) || indexs.Length != 1))
+                    if (!string.IsNullOrWhiteSpace(indexStr) && indexs.Length > 1)
                     {
-                        throw new Exception($"定义文件:'{defineFile}' table:'{tableName}' 是单键表，index:'{indexStr}'不能包含多个key");
+                        throw new Exception($"定义文件:'{defineFile}' table:'{tableName}' 是单主键表，index:'{indexStr}'不能包含多个key");
                     }
                     mode = ETableMode.MAP;
                     break;
