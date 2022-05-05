@@ -290,16 +290,16 @@ namespace Luban.Job.Cfg.DataSources.Excel
                     }
                     else
                     {
-                        if (mergeCell.FromColumn == rowIndex && mergeCell.FromRow - 1 >= title.FromIndex && mergeCell.FromRow - 1 <= title.ToIndex)
+                        if (mergeCell.FromColumn == rowIndex && mergeCell.FromRow >= title.FromIndex && mergeCell.FromRow <= title.ToIndex)
                         {
                             // 标题 行
-                            var nameAndAttrs = titleRow[mergeCell.FromRow - 1].Value?.ToString()?.Trim();
+                            var nameAndAttrs = titleRow[mergeCell.FromRow].Value?.ToString()?.Trim();
                             if (IsIgnoreTitle(nameAndAttrs))
                             {
                                 continue;
                             }
                             var (titleName, tags) = ParseNameAndMetaAttrs(nameAndAttrs);
-                            subTitle = new Title() { Name = titleName, Tags = tags, FromIndex = mergeCell.FromRow - 1, ToIndex = mergeCell.ToRow - 1 };
+                            subTitle = new Title() { Name = titleName, Tags = tags, FromIndex = mergeCell.FromRow, ToIndex = mergeCell.ToRow };
                         }
                     }
                     if (subTitle == null)
