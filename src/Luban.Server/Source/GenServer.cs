@@ -51,7 +51,7 @@ namespace Luban.Server
 
                 InitChildrenHandler = (s, c) =>
                 {
-                    c.Pipeline.AddLast(new ProtocolFrameCodec(20_000_000, new RecycleByteBufPool(100, 100), new DefaultProtocolAllocator(factories)));
+                    c.Pipeline.AddLast(new ProtocolFrameCodec(100 * 1024 * 1024, new RecycleByteBufPool(100, 100), new DefaultProtocolAllocator(factories)));
                     c.Pipeline.AddLast(this);
                 }
             };

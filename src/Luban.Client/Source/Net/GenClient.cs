@@ -48,7 +48,7 @@ namespace Luban.Client.Common.Net
                 EventLoop = new EventLoop(null),
                 InitHandler = ch =>
                 {
-                    ch.Pipeline.AddLast(new ProtocolFrameCodec(20_000_000, new RecycleByteBufPool(100, 10), new DefaultProtocolAllocator(factories)));
+                    ch.Pipeline.AddLast(new ProtocolFrameCodec(100 * 1024 * 1024, new RecycleByteBufPool(100, 10), new DefaultProtocolAllocator(factories)));
                     ch.Pipeline.AddLast(Ins);
                 }
             };
