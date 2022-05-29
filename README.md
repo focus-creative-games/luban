@@ -601,6 +601,12 @@ println(tables.TbItem.Get(12).Name)
 - [ ] 新增 unreal 内置编辑器
 - [ ] 补充单元测试
 
+## 友情链接
+
+- [Huatuo Unity插件](https://github.com/LiuOcean/Luban_Unity_GUI) 在Unity里完成生成命令的配置和生成操作
+- [LubanTools](https://github.com/MOMOLAXI/LubanTools) Luban的Win GUI命令配置和生成工具
+
+
 ## License
 
 Luban is licensed under the [MIT](LICENSE.TXT) license.
