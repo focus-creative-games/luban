@@ -37,24 +37,23 @@ luban统一了游戏配置开发工作流，极大提升了策划和程序的工
 - 完善的本地化支持。静态文本值本地化、动态文本值本地化、时间本地化、main-patch多地区版本
 - 强大灵活的自定义能力，支持自定义代码模板和数据模板
 - **通用型生成和缓存工具**。也可以用于生成协议、数据库之类的代码，甚至可以用作对象缓存服务
-- **良好支持主流引擎、全平台、主流热更新方案、主流前后端框架**。支持unity、unreal、cocos2x、微信小游戏等主流引擎。工具自身跨平台，能在Win,Linux,Mac平台良好工作。[详见](https://focus-creative-games.github.io/lubandoc/feature.html#%E6%94%AF%E6%8C%81%E4%B8%BB%E6%B5%81%E7%9A%84%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E8%AF%AD%E8%A8%80)
+- **良好支持主流引擎、全平台、主流热更新方案、主流前后端框架**。支持unity、unreal、cocos2x、微信小游戏等主流引擎。工具自身跨平台，能在Win,Linux,Mac平台良好工作。
 
-完整特性请参见 [feature](https://focus-creative-games.github.io/lubandoc/feature.html)
+完整特性请参见 [feature](https://focus-creative-games.github.io/luban/generate_code_data/)
 
 ## 文档
 
-- [快速上手](https://focus-creative-games.github.io/lubandoc/start_up.html)
-- [Document](https://focus-creative-games.github.io/lubandoc) ，比较完善，有使用疑问，请先查看此文档。
+- [快速上手](https://focus-creative-games.github.io/luban/start_up/)
+- [Document](https://focus-creative-games.github.io/luban/) ，比较完善，有使用疑问，请先查看此文档。
 - **示例项目** ([github](https://github.com/focus-creative-games/luban_examples)) ([gitee](https://gitee.com/focus-creative-games/luban_examples))
-- [版本变更记录](https://focus-creative-games.github.io/lubandoc/changelog.html)
-
+- [版本变更记录](https://focus-creative-games.github.io/luban/changelog/)
 - 支持与联系
   - QQ群: 692890842 （Luban开发交流群）。有使用方面的疑问请及时加QQ群询问，随时有人帮助解决。
   - 邮箱: taojingjian#gmail.com
 
 ## excel格式速览
 
-完整示例请详见 [excel格式介绍](https://focus-creative-games.github.io/lubandoc/excel.html)
+完整示例请详见 [excel格式介绍](https://focus-creative-games.github.io/luban/excel/)
 
 ### 普通表
 
@@ -93,7 +92,6 @@ luban统一了游戏配置开发工作流，极大提升了策划和程序的工
   <td>desc3</td>
   <td colspan="3">desc4</td>
 </tr>
-
 <tr align="center">
 <td/>
 <td>1</td>
@@ -102,7 +100,6 @@ luban统一了游戏配置开发工作流，极大提升了策划和程序的工
 <td>xx|yy</td>
 <td>xxx</td><td>zzz</td><td></td>
 </tr>
-
 <tr align="center">
 <td/>
 <td>2</td>
@@ -111,7 +108,6 @@ luban统一了游戏配置开发工作流，极大提升了策划和程序的工
 <td>aaaa|bbbb|cccc</td>
 <td>aaa</td><td>bbb</td><td>ccc</td>
 </tr>
-
 <tr align="center">
 <td/>
 <td>3</td>
@@ -120,7 +116,6 @@ luban统一了游戏配置开发工作流，极大提升了策划和程序的工
 <td>aaaa|bbbb|cccc</td>
 <td>aaa</td><td>bbb</td><td>ccc</td>
 </tr>
-
 </table>
 
 ### 子结构
@@ -128,7 +123,6 @@ luban统一了游戏配置开发工作流，极大提升了策划和程序的工
 Reward为包含 "int item_id; int count; string desc; " 这三个字段的子结构。
 
 <table border="1">
-
 <tr align="center"><td>##var</td><td>id</td><td colspan="3">reward</td><td colspan="3">reward2</td><td>reward3</td></tr>
 <tr align="center"><td>##type</td><td>int</td><td colspan="3">Reward</td><td colspan="3">Reward</td><td>Reward#sep=,</td></tr>
 <tr align="center"><td>##var</td><td></td><td>item_id</td><td>count</td><td>desc</td><td></td><td></td><td></td><td/></tr>
@@ -164,20 +158,17 @@ Reward为包含 "int item_id; int count; string desc; " 这三个字段的子结
 <td>1001</td><td>1</td><td>desc1</td><td>1002</td><td>2</td><td>desc2</td>
 <td>1001,1,desc1</td><td>1002,2,desc2</td><td>1003,3,desc3</td>
 </tr>
-
 <tr align="center">
 <td/>
 <td>2</td>
 <td>1001</td><td>1</td><td>desc1</td><td></td><td></td><td></td>
 <td>1001,1,desc1</td><td>1002,2,desc2</td><td></td>
 </tr>
-
 </table>
 
 ### 结构列表 2
 
 <table border="1">
-
 <tr align="center">
   <td>##var</td>
   <td>id</td>
@@ -190,7 +181,6 @@ Reward为包含 "int item_id; int count; string desc; " 这三个字段的子结
   <td>string</td>
   <td colspan="9">list,Reward</td>
 </tr>
-
 <tr align="center">
   <td>##var</td>
   <td></td>
@@ -199,7 +189,6 @@ Reward为包含 "int item_id; int count; string desc; " 这三个字段的子结
   <td colspan="3">1</td>
   <td colspan="3">2</td>
 </tr>
-
 <tr align="center"><td/><td>1</td><td>task1</td><td>1001</td><td>10</td><td>desc1</td><td>1002</td><td>12</td><td>desc2</td><td>1003</td><td>13</td><td>desc3</td></tr>
 <tr align="center"><td/><td>2</td><td>task1</td><td>1003</td><td>30</td><td>desc3</td><td>1004</td><td>40</td><td>desc4</td><td/><td/><td/></tr>
 <tr align="center"><td/><td>3</td><td>task1</td><td>1005</td><td>50</td><td>desc5</td><td/><td/><td/><td/><td/><td/></tr>
@@ -208,7 +197,6 @@ Reward为包含 "int item_id; int count; string desc; " 这三个字段的子结
 ### 结构列表 3
 
 <table border="1">
-
 <tr align="center">
   <td>##var</td>
   <td>id</td>
@@ -221,7 +209,6 @@ Reward为包含 "int item_id; int count; string desc; " 这三个字段的子结
   <td>string</td>
   <td colspan="9">list,Reward</td>
 </tr>
-
 <tr align="center">
   <td>##var</td>
   <td></td>
@@ -238,7 +225,6 @@ Reward为包含 "int item_id; int count; string desc; " 这三个字段的子结
   <td>item_id</td><td>num</td><td>desc</td>
   <td>item_id</td><td>num</td><td>desc</td>
 </tr>
-
 <tr align="center"><td/><td>1</td><td>task1</td><td>1001</td><td>10</td><td>desc1</td><td>1002</td><td>12</td><td>desc2</td><td>1003</td><td>13</td><td>desc3</td></tr>
 <tr align="center"><td/><td>2</td><td>task1</td><td>1003</td><td>30</td><td>desc3</td><td>1004</td><td>40</td><td>desc4</td><td/><td/><td/></tr>
 <tr align="center"><td/><td>3</td><td>task1</td><td>1005</td><td>50</td><td>desc5</td><td/><td/><td/><td/><td/><td/></tr>
@@ -247,7 +233,6 @@ Reward为包含 "int item_id; int count; string desc; " 这三个字段的子结
 ### 多行表
 
 <table border="1">
-
 <tr align="center">
   <td>##var</td>
   <td>id</td>
@@ -282,7 +267,6 @@ Reward为包含 "int item_id; int count; string desc; " 这三个字段的子结
   <td>desc5</td>
   <td>desc6</td>
 </tr>
-
 <tr align="center">
 <td/>
 <td>1</td>
@@ -303,7 +287,6 @@ Reward为包含 "int item_id; int count; string desc; " 这三个字段的子结
 <tr align="center">
 <td/><td/><td/><td>2</td><td>stage2</td><td>stage desc2</td><td>1,2,3</td><td>1002</td><td>1</td>
 </tr>
-
 </table>
 
 ### 多级多行表
@@ -311,7 +294,6 @@ Reward为包含 "int item_id; int count; string desc; " 这三个字段的子结
 多行表的列表字段，每个列表元素还可以是多行。支持任意多级的多行嵌套。另外也允许有多个多行字段，每个字段的行数还可以不同。
 
 <table border="1">
-
 <tr align="center">
   <td>##var</td>
   <td>id</td>
@@ -364,7 +346,6 @@ Reward为包含 "int item_id; int count; string desc; " 这三个字段的子结
   <td>item id</td>
   <td>count</td>
 </tr>
-
 <tr align="center">
 <td/>
 <td>1</td>
@@ -409,25 +390,21 @@ Reward为包含 "int item_id; int count; string desc; " 这三个字段的子结
 <tr align="center">
 <td/><td/><td/><td></td><td></td><td></td><td>2,2,2</td><td>1002</td><td>2</td><td></td><td></td><td></td><td></td>
 </tr>
-
 </table>
 
 ### map 类型的多级子标题
 
 <table border="1">
-
 <tr align="center"><td>##var</td><td>id</td><td colspan="4">lans</td></tr>
 <tr align="center"><td>##type</td><td>int</td><td colspan="4">map,string,string</td></tr>
 <tr align="center"><td>##var</td><td/><td>ch-zn</td><td>en</td><td>jp</td><td>fr</td></tr>
 <tr align="center"><td/><td>1</td><td>苹果</td><td>apple</td><td>aaa</td><td>aaa</td></tr>
 <tr align="center"><td/><td>2</td><td>香蕉</td><td>banana</td><td>bbb</td><td>bbb</td></tr>
-
 </table>
 
 ### 类型继承（适合技能、buff相关配置）
 
 <table border="1">
-
 <tr align="center"><td>##var</td><td>id</td><td colspan="4">shape</td><td colspan="4">shape2</td></tr>
 <tr align="center"><td>##type</td><td>int</td><td colspan="4">Shape</td><td colspan="4">Shape</td></tr>
 <tr align="center"><td>##var</td><td></td><td>$type</td><td>radius</td><td>width</td><td>height</td><td></td><td></td><td></td><td></td></tr>
@@ -435,7 +412,6 @@ Reward为包含 "int item_id; int count; string desc; " 这三个字段的子结
 <tr align="center"><td/><td>2</td><td>Rectangle</td><td></td><td>10</td><td>20</td><td>矩形</td><td>10</td><td>20</td><td></td></tr>
 <tr align="center"><td/><td>3</td><td>圆</td><td>10</td><td/><td/><td>Triangle</td><td>15</td><td>15</td><td>15</td></tr>
 <tr align="center"><td/><td>4</td><td>Circle</td><td>10</td><td/><td/><td>Rectangle</td><td>30</td><td>20</td><td></td></tr>
-
 </table>
 
 ### 多主键表（联合索引）
@@ -499,8 +475,7 @@ Reward为包含 "int item_id; int count; string desc; " 这三个字段的子结
 
 ## json、lua、xml、yaml 格式速览
 
-以行为树为例，展示json格式下如何配置行为树配置。xml、lua、yaml等等格式请参见 [详细文档](https://focus-creative-games.github.io/lubandoc)。
-
+以行为树为例，展示json格式下如何配置行为树配置。xml、lua、yaml等等格式请参见 [详细文档](https://focus-creative-games.github.io/luban/data_source/)。
 
 ```json
 {
@@ -592,7 +567,6 @@ if tables , err := cfg.NewTables(loader) ; err != nil {
 println(tables.TbGlobal.Name)
 // 访问普通的 key-value 表
 println(tables.TbItem.Get(12).Name)
-
 ```
 
 ## 路线图
@@ -603,9 +577,8 @@ println(tables.TbItem.Get(12).Name)
 
 ## 友情链接
 
-- [Huatuo Unity插件](https://github.com/LiuOcean/Luban_Unity_GUI) 在Unity里完成生成命令的配置和生成操作
+- [Luban Unity插件](https://github.com/LiuOcean/Luban_Unity_GUI) 在Unity里完成生成命令的配置和生成操作
 - [LubanTools](https://github.com/MOMOLAXI/LubanTools) Luban的Win GUI命令配置和生成工具
-
 
 ## License
 

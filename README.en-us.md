@@ -36,16 +36,16 @@ Luban unifies the game configuration development workflow, greatly improving the
 - Perfect localization support. Static text value localization, dynamic text value localization, time localization, main-patch multi-region version
 - Powerful and flexible customization capabilities, support for custom code templates and data templates
 - **Generic generation and caching tool**. Can also be used to generate code like protocols, databases, or even as an object caching service
-- **Good support for mainstream engines, all platforms, mainstream hot update solutions, mainstream front-end and back-end frameworks**. Support mainstream engines such as unity, unreal, cocos2x, and WeChat mini-games. The tool itself is cross-platform and can work well on Win, Linux, and Mac platforms. [See details](https://focus-creative-games.github.io/lubandoc/feature.html#%E6%94%AF%E6%8C%81%E4%B8%BB%E6%B5%81% E7%9A%84%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E8%AF%AD%E8%A8%80)
+- **Good support for mainstream engines, all platforms, mainstream hot update solutions, mainstream front-end and back-end frameworks**. Support mainstream engines such as unity, unreal, cocos2x, and WeChat mini-games. The tool itself is cross-platform and can work well on Win, Linux, and Mac platforms.
 
-See [feature](https://focus-creative-games.github.io/lubandoc/feature.html) for full features
+See [feature](https://focus-creative-games.github.io/luban/feature/) for full features
 
 ## Documentation
 
-- [Quick Start](https://focus-creative-games.github.io/lubandoc/start_up.html)
-- [Document](https://focus-creative-games.github.io/lubandoc), it is relatively complete, if you have any questions, please check this document first.
+- [Quick Start](https://focus-creative-games.github.io/luban/start_up/)
+- [Document](https://focus-creative-games.github.io/luban/), it is relatively complete, if you have any questions, please check this document first.
 - **Example Project** ([github](https://github.com/focus-creative-games/luban_examples)) ([gitee](https://gitee.com/focus-creative-games/luban_examples) )
-- [Version Changelog](https://focus-creative-games.github.io/lubandoc/changelog.html)
+- [Version Changelog](https://focus-creative-games.github.io/luban/changelog/)
 
 - Support and Contact
   - QQ group: 692890842 (Luban development exchange group). If you have any questions about use, please add the QQ group to ask in time, and someone will help you at any time.
@@ -91,7 +91,6 @@ For a complete example, please refer to [Excel Format Introduction](https://focu
   <td>desc3</td>
   <td colspan="3">desc4</td>
 </tr>
-
 <tr align="center">
 <td/>
 <td>1</td>
@@ -100,7 +99,6 @@ For a complete example, please refer to [Excel Format Introduction](https://focu
 <td>xx|yy</td>
 <td>xxx</td><td>zzz</td><td></td>
 </tr>
-
 <tr align="center">
 <td/>
 <td>2</td>
@@ -109,7 +107,6 @@ For a complete example, please refer to [Excel Format Introduction](https://focu
 <td>aaaa|bbbb|cccc</td>
 <td>aaa</td><td>bbb</td><td>ccc</td>
 </tr>
-
 <tr align="center">
 <td/>
 <td>3</td>
@@ -118,7 +115,6 @@ For a complete example, please refer to [Excel Format Introduction](https://focu
 <td>aaaa|bbbb|cccc</td>
 <td>aaa</td><td>bbb</td><td>ccc</td>
 </tr>
-
 </table>
 
 ### substructure
@@ -126,13 +122,11 @@ For a complete example, please refer to [Excel Format Introduction](https://focu
 Reward is a substructure containing the three fields of "int item_id; int count; string desc;".
 
 <table border="1">
-
 <tr align="center"><td>##var</td><td>id</td><td colspan="3">reward</td><td colspan="3">reward2</ td><td>reward3</td></tr>
 <tr align="center"><td>##type</td><td>int</td><td colspan="3">Reward</td><td colspan="3">Reward</ td><td>Reward#sep=,</td></tr>
 <tr align="center"><td>##var</td><td></td><td>item_id</td><td>count</td><td>desc</td><td></td><td></td><td></td><td/></tr>
 <tr align="center"><td/><td>1</td><td>1001</td><td>10</td><td>item 1</td><td>1002< /td><td>11</td><td>item 2</td><td>1002,1,item 3</td></tr>
 <tr align="center"><td/><td>2</td><td>2001</td><td>10</td><td>item 2</td><td>2002< /td><td>20</td><td>item 4</td><td>2003,2,item 5</td></tr>
-
 </table>
 
 ### Structure List 1
@@ -162,7 +156,6 @@ Reward is a substructure containing the three fields of "int item_id; int count;
 <td>1001</td><td>1</td><td>desc1</td><td>1002</td><td>2</td><td>desc2</td>
 <td>1001,1,desc1</td><td>1002,2,desc2</td><td>1003,3,desc3</td>
 </tr>
-
 <tr align="center">
 <td/>
 <td>2</td>
@@ -175,7 +168,6 @@ Reward is a substructure containing the three fields of "int item_id; int count;
 ### Structure List 2
 
 <table border="1">
-
 <tr align="center">
   <td>##var</td>
   <td>id</td>
@@ -188,7 +180,6 @@ Reward is a substructure containing the three fields of "int item_id; int count;
   <td>string</td>
   <td colspan="9">list,Reward</td>
 </tr>
-
 <tr align="center">
   <td>##var</td>
   <td></td>
@@ -197,7 +188,6 @@ Reward is a substructure containing the three fields of "int item_id; int count;
   <td colspan="3">1</td>
   <td colspan="3">2</td>
 </tr>
-
 <tr align="center"><td/><td>1</td><td>task1</td><td>1001</td><td>10</td><td>desc1</ td><td>1002</td><td>12</td><td>desc2</td><td>1003</td><td>13</td><td>desc3</td> </tr>
 <tr align="center"><td/><td>2</td><td>task1</td><td>1003</td><td>30</td><td>desc3</ td><td>1004</td><td>40</td><td>desc4</td><td/><td/><td/></tr>
 <tr align="center"><td/><td>3</td><td>task1</td><td>1005</td><td>50</td><td>desc5</ td><td/><td/><td/><td/><td/><td/></tr>
@@ -206,7 +196,6 @@ Reward is a substructure containing the three fields of "int item_id; int count;
 ### Structure List 3
 
 <table border="1">
-
 <tr align="center">
   <td>##var</td>
   <td>id</td>
@@ -219,7 +208,6 @@ Reward is a substructure containing the three fields of "int item_id; int count;
   <td>string</td>
   <td colspan="9">list,Reward</td>
 </tr>
-
 <tr align="center">
   <td>##var</td>
   <td></td>
@@ -236,7 +224,6 @@ Reward is a substructure containing the three fields of "int item_id; int count;
   <td>item_id</td><td>num</td><td>desc</td>
   <td>item_id</td><td>num</td><td>desc</td>
 </tr>
-
 <tr align="center"><td/><td>1</td><td>task1</td><td>1001</td><td>10</td><td>desc1</ td><td>1002</td><td>12</td><td>desc2</td><td>1003</td><td>13</td><td>desc3</td> </tr>
 <tr align="center"><td/><td>2</td><td>task1</td><td>1003</td><td>30</td><td>desc3</ td><td>1004</td><td>40</td><td>desc4</td><td/><td/><td/></tr>
 <tr align="center"><td/><td>3</td><td>task1</td><td>1005</td><td>50</td><td>desc5</ td><td/><td/><td/><td/><td/><td/></tr>
@@ -245,7 +232,6 @@ Reward is a substructure containing the three fields of "int item_id; int count;
 ### Multi-row table
 
 <table border="1">
-
 <tr align="center">
   <td>##var</td>
   <td>id</td>
@@ -280,7 +266,6 @@ Reward is a substructure containing the three fields of "int item_id; int count;
   <td>desc5</td>
   <td>desc6</td>
 </tr>
-
 <tr align="center">
 <td/>
 <td>1</td>
@@ -301,25 +286,21 @@ Reward is a substructure containing the three fields of "int item_id; int count;
 <tr align="center">
 <td/><td/><td/><td>2</td><td>stage2</td><td>stage desc2</td><td>1,2,3</td><td>1002</td><td>1</td>
 </tr>
-
 </table>
 
 ### Multi-level subheadings of type map
 
 <table border="1">
-
 <tr align="center"><td>##var</td><td>id</td><td colspan="4">lans</td></tr>
 <tr align="center"><td>##type</td><td>int</td><td colspan="4">map,string,string</td></tr>
 <tr align="center"><td>##var</td><td/><td>ch-zn</td><td>en</td><td>jp</td><td >fr</td></tr>
 <tr align="center"><td/><td>1</td><td>apple</td><td>apple</td><td>aaa</td><td>aaa</td></tr>
 <tr align="center"><td/><td>2</td><td>banana</td><td>banana</td><td>bbb</td><td>bbb</td></tr>
-
 </table>
 
 ### Type inheritance (suitable for skills, buff related configuration)
 
 <table border="1">
-
 <tr align="center"><td>##var</td><td>id</td><td colspan="4">shape</td><td colspan="4">shape2</ td></tr>
 <tr align="center"><td>##type</td><td>int</td><td colspan="4">Shape</td><td colspan="4">Shape</ td></tr>
 <tr align="center"><td>##var</td><td></td><td>$type</td><td>radius</td><td>width</td><td>height</td><td></td><td></td><td></td><td></td></tr>
@@ -327,7 +308,6 @@ Reward is a substructure containing the three fields of "int item_id; int count;
 <tr align="center"><td/><td>2</td><td>Rectangle</td><td></td><td>10</td><td>20</td ><td>Rectangle</td><td>10</td><td>20</td><td></td></tr>
 <tr align="center"><td/><td>3</td><td>Circle</td><td>10</td><td/><td/><td>Triangle</td><td>15</td><td>15</td><td>15</td></tr>
 <tr align="center"><td/><td>4</td><td>Circle</td><td>10</td><td/><td/><td>Rectangle</td><td>30</td><td>20</td><td></td></tr>
-
 </table>
 
 ### Multiple primary key table (joint index)
@@ -391,7 +371,7 @@ Some configurations only have one copy globally, such as the opening level of th
 
 ## json, lua, xml, yaml format quick overview
 
-Take the behavior tree as an example to show how to configure the behavior tree configuration in json format. For formats such as xml, lua, yaml, etc., please refer to [detailed documentation](https://focus-creative-games.github.io/lubandoc).
+Take the behavior tree as an example to show how to configure the behavior tree configuration in json format. For formats such as xml, lua, yaml, etc., please refer to [detailed documentation](https://focus-creative-games.github.io/luban/data_source/).
 
 
 ````json
