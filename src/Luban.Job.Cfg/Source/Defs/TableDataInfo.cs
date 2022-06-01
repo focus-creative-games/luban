@@ -44,13 +44,19 @@ namespace Luban.Job.Cfg.Defs
             var overrideRecords = new HashSet<Record>();
             foreach (var r in mainRecords)
             {
-                recordIndex.Add(r, index++);
+                if (recordIndex.TryAdd(r, index))
+                {
+                    index++;
+                }
             }
             if (patchRecords != null)
             {
                 foreach (var r in patchRecords)
                 {
-                    recordIndex.Add(r, index++);
+                    if (recordIndex.TryAdd(r, index))
+                    {
+                        index++;
+                    }
                 }
             }
 
