@@ -19,9 +19,9 @@ namespace Luban.Job.Common.Utils
                 case ELanguage.TYPESCRIPT: return fullName.Replace('.', '/') + ".ts";
                 case ELanguage.RUST: return fullName.Replace('.', '_') + ".rs";
                 case ELanguage.PROTOBUF: return fullName.Replace('.', '_') + ".pb";
+                case ELanguage.GDSCRIPT: return fullName.Replace('.', '_') + ".gd";
                 default: throw new NotSupportedException();
             }
-
         }
 
         public static string GetCsDefTypePath(string fullName)
@@ -43,7 +43,6 @@ namespace Luban.Job.Common.Utils
         {
             return fullName.Replace('.', '_');
         }
-
 
         public static string GetCppDefTypeCppFilePath(string fullName)
         {
@@ -73,6 +72,7 @@ namespace Luban.Job.Common.Utils
             { "erlang", ELanguage.ERLANG },
             { "rust", ELanguage.RUST },
             { "protobuf", ELanguage.PROTOBUF },
+            { "gdscript", ELanguage.GDSCRIPT },
         };
 
         public static ELanguage GetLanguage(string genType)
@@ -103,6 +103,7 @@ namespace Luban.Job.Common.Utils
                 ELanguage.RUST => "rust",
                 ELanguage.PROTOBUF => "protobuf",
                 ELanguage.FLATBUFFERS => "flatbuffers",
+                ELanguage.GDSCRIPT => "gdscript",
                 _ => throw new Exception($"not support common template dir for lan:{lan}"),
             };
         }

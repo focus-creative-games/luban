@@ -87,6 +87,11 @@ namespace Luban.Job.Common.Defs
             return type.Apply(CppDefineTypeName.Ins);
         }
 
+        public static string GdscriptDefineType(TType type)
+        {
+            return type.Apply(GDScriptDefineTypeName.Ins);
+        }
+
         public static string CppConstValue(TType type, string value)
         {
             return type.Apply(CsConstValueVisitor.Ins, value);
@@ -101,7 +106,7 @@ namespace Luban.Job.Common.Defs
         {
             return type.Apply(LuaCommentTypeVisitor.Ins);
         }
-        
+
         public static string EmmyLuaCommentType(TType type)
         {
             return type.Apply(EmmyLuaCommentTypeVisitor.Ins);
@@ -189,7 +194,6 @@ namespace Luban.Job.Common.Defs
         {
             return type.Apply(ErlangDefineTypeNameVisitor.Ins);
         }
-
 
         public static string GoDefineType(TType type)
         {

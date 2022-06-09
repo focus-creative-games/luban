@@ -225,6 +225,30 @@ namespace Luban.Job.Cfg.Utils
             }
         }
 
+        public static string GdscriptDeserializeValue(string fieldName, string jsonVarName, TType type)
+        {
+            if (type.IsNullable)
+            {
+                return $"if {jsonVarName} != None: {type.Apply(GDScriptUnderingDeserializeVisitor.Ins, jsonVarName, fieldName)}";
+            }
+            else
+            {
+                return type.Apply(GDScriptUnderingDeserializeVisitor.Ins, jsonVarName, fieldName);
+            }
+        }
+
+        public static string GdscriptDeserializeField(string fieldName, string jsonVarName, string jsonFieldName, TType type)
+        {
+            if (type.IsNullable)
+            {
+                return $"if {jsonVarName}.get('{jsonFieldName}') != null: {type.Apply(GDScriptUnderingDeserializeVisitor.Ins, $"{jsonVarName}['{jsonFieldName}']", fieldName)}";
+            }
+            else
+            {
+                return type.Apply(GDScriptUnderingDeserializeVisitor.Ins, $"{jsonVarName}['{jsonFieldName}']", fieldName);
+            }
+        }
+
         public static string DefineTextKeyField(DefField field, string lan)
         {
             switch (lan)
@@ -266,7 +290,7 @@ namespace Luban.Job.Cfg.Utils
 
         public static string CsUnityEditorJsonLoad(string jsonName, string fieldName, TType type)
         {
-             return $"{type.Apply(CsEditorJsonLoad.Ins, jsonName, fieldName)}";
+            return $"{type.Apply(CsEditorJsonLoad.Ins, jsonName, fieldName)}";
         }
 
         public static string CsUnityEditorJsonSave(string jsonName, string jsonFieldName, string fieldName, TType type)

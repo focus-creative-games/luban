@@ -15,5 +15,6 @@ namespace Luban.Job.Common
         RUST,
         PROTOBUF,
         FLATBUFFERS,
+        GDSCRIPT,
     }
 }

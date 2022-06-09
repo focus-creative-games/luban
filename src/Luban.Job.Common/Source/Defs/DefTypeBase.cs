@@ -53,6 +53,8 @@ namespace Luban.Job.Common.Defs
 
         public string PyFullName => TypeUtil.MakePyFullName(Namespace, Name);
 
+        public string GDScriptFullName => TypeUtil.MakeGDScriptFullName(Namespace, Name);
+
         public string RustFullName => TypeUtil.MakeRustFullName(Namespace, Name);
 
         public string PbFullName => TypeUtil.MakePbFullName(Namespace, Name);

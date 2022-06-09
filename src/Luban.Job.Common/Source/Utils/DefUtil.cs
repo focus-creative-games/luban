@@ -265,7 +265,8 @@ namespace Luban.Job.Common.Utils
                 case ELanguage.PYTHON:
                 case ELanguage.RUST:
                 case ELanguage.PROTOBUF:
-                return System.Web.HttpUtility.HtmlEncode(comment).Replace("\n", "<br/>");
+                case ELanguage.GDSCRIPT:
+                    return System.Web.HttpUtility.HtmlEncode(comment).Replace("\n", "<br/>");
                 default: throw new Exception($"unknown language:{curLan}");
             }
         }
@@ -291,6 +292,7 @@ namespace Luban.Job.Common.Utils
                 case "rust": return ELanguage.RUST;
                 case "pb":
                 case "protobuf": return ELanguage.PROTOBUF;
+                case "gdscript": return ELanguage.GDSCRIPT;
                 default: throw new ArgumentException($"parse lan:'{lan}' fail");
             }
         }

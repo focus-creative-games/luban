@@ -33,24 +33,25 @@ namespace Luban.Job.Common.Defs
                     case NamingConvention.UnderScores: cn = TypeUtil.ToUnderScores(Name); break;
                     case NamingConvention.Invalid: throw new Exception($"invalid NamingConvention");
                     case NamingConvention.LanguangeRecommend:
-                    {
-                        switch (curLan)
                         {
-                            case ELanguage.INVALID: throw new Exception($"not set current language. can't get recommend naming convention name");
-                            case ELanguage.CS: cn = TypeUtil.ToPascalCase(Name); break;
-                            case ELanguage.JAVA: cn = TypeUtil.ToCamelCase(Name); break;
-                            case ELanguage.GO: cn = TypeUtil.ToPascalCase(Name); break;
-                            case ELanguage.CPP: cn = TypeUtil.ToCamelCase(Name); break;
-                            case ELanguage.LUA: cn = TypeUtil.ToUnderScores(Name); break;
-                            case ELanguage.JAVASCRIPT: cn = TypeUtil.ToCamelCase(Name); break;
-                            case ELanguage.TYPESCRIPT: cn = TypeUtil.ToCamelCase(Name); break;
-                            case ELanguage.PYTHON: cn = TypeUtil.ToUnderScores(Name); break;
-                            case ELanguage.RUST: cn = TypeUtil.ToUnderScores(Name); break;
-                            case ELanguage.PROTOBUF: cn = Name; break;
-                            default: throw new Exception($"unknown language:{curLan}");
+                            switch (curLan)
+                            {
+                                case ELanguage.INVALID: throw new Exception($"not set current language. can't get recommend naming convention name");
+                                case ELanguage.CS: cn = TypeUtil.ToPascalCase(Name); break;
+                                case ELanguage.JAVA: cn = TypeUtil.ToCamelCase(Name); break;
+                                case ELanguage.GO: cn = TypeUtil.ToPascalCase(Name); break;
+                                case ELanguage.CPP: cn = TypeUtil.ToCamelCase(Name); break;
+                                case ELanguage.LUA: cn = TypeUtil.ToUnderScores(Name); break;
+                                case ELanguage.JAVASCRIPT: cn = TypeUtil.ToCamelCase(Name); break;
+                                case ELanguage.TYPESCRIPT: cn = TypeUtil.ToCamelCase(Name); break;
+                                case ELanguage.PYTHON: cn = TypeUtil.ToUnderScores(Name); break;
+                                case ELanguage.GDSCRIPT: cn = TypeUtil.ToUnderScores(Name); break;
+                                case ELanguage.RUST: cn = TypeUtil.ToUnderScores(Name); break;
+                                case ELanguage.PROTOBUF: cn = Name; break;
+                                default: throw new Exception($"unknown language:{curLan}");
+                            }
+                            break;
                         }
-                        break;
-                    }
                     default: throw new Exception($"unknown NamingConvention:{AssemblyBase.NamingConventionBeanMember}");
                 }
                 if (curLan == ELanguage.RUST)
@@ -131,21 +132,21 @@ namespace Luban.Job.Common.Defs
             switch (CType)
             {
                 case TArray t:
-                {
-                    if (t.ElementType is TBean e && !e.IsDynamic && e.Bean.HierarchyFields.Count == 0)
                     {
-                        throw new Exception($"container element type:'{e.Bean.FullName}' can't be empty bean");
+                        if (t.ElementType is TBean e && !e.IsDynamic && e.Bean.HierarchyFields.Count == 0)
+                        {
+                            throw new Exception($"container element type:'{e.Bean.FullName}' can't be empty bean");
+                        }
+                        break;
                     }
-                    break;
-                }
                 case TList t:
-                {
-                    if (t.ElementType is TBean e && !e.IsDynamic && e.Bean.HierarchyFields.Count == 0)
                     {
-                        throw new Exception($"container element type:'{e.Bean.FullName}' can't be empty bean");
+                        if (t.ElementType is TBean e && !e.IsDynamic && e.Bean.HierarchyFields.Count == 0)
+                        {
+                            throw new Exception($"container element type:'{e.Bean.FullName}' can't be empty bean");
+                        }
+                        break;
                     }
-                    break;
-                }
             }
         }
 
