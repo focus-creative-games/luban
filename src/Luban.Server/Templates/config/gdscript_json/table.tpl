@@ -27,6 +27,37 @@ class {{name}}:
 
     func get(key): 
         return self._data_map.get(key)
+{{~else if x.multi_key ~}}
+{{~ for INDEX in x.index_list ~}}
+    var _data_{{INDEX.index_field.convention_name}}_map = {}    
+{{~ end ~}}
+    var _data_list = []
+
+    func _init(_json_) -> void:
+        {{~ for INDEX in x.index_list ~}}
+        self._data_{{INDEX.index_field.convention_name}}_map = {}
+        {{~ end ~}}
+        self._data_list = []
+        
+        for _json2_ in _json_:
+            var _v
+            {{gdscript_deserialize_value '_v' '_json2_' value_type}}
+            self._data_list.append(_v)
+        {{~ for INDEX in x.index_list ~}}
+            self._data_{{INDEX.index_field.convention_name}}_map[_v.{{INDEX.index_field.convention_name}}] = _v
+        {{~ end ~}}
+
+    func get_data_map() -> Dictionary:
+        return self._data_{{x.index_field.convention_name }}_map
+    func get_data_list() -> Array:
+        return self._data_list
+{{~ for INDEX in x.index_list ~}}
+    func get_by_{{INDEX.index_field.convention_name}}({{INDEX.index_field.convention_name}}):
+        return self._data_{{INDEX.index_field.name}}_map.get({{INDEX.index_field.convention_name}})
+{{~ end ~}}
+
+    func get(key): 
+        return self._data_{{x.index_field.convention_name }}_map.get(key)
 {{~else if x.is_list_table ~}}
     var _data_list
     func _init(_json_) -> void:
@@ -42,7 +73,6 @@ class {{name}}:
 
     func get(index):
         return self._data_list[index]
-
 {{~else~}}
     var _data: Dictionary
     func _init(_json_) -> void:

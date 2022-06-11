@@ -65,6 +65,8 @@ namespace Luban.Job.Cfg.Defs
 
         public bool IsUnionIndex { get; private set; }
 
+        public bool MultiKey { get; private set; }
+
         public List<IndexInfo> IndexList { get; } = new();
 
         public bool NeedExport => Assembly.NeedExport(this.Groups);
@@ -141,8 +143,11 @@ namespace Luban.Job.Cfg.Defs
                     {
                         if (ValueTType.GetBeanAs<DefBean>().TryGetField(idx, out var f, out var i))
                         {
-                            IndexField = f;
-                            IndexFieldIdIndex = i;
+                            if (IndexField == null)
+                            {
+                                IndexField = f;
+                                IndexFieldIdIndex = i;
+                            }
                             this.IndexList.Add(new IndexInfo(f.CType, f, i));
                         }
                         else
@@ -152,6 +157,7 @@ namespace Luban.Job.Cfg.Defs
                     }
                     // 如果不是 union index, 每个key必须唯一，否则 (key1,..,key n)唯一
                     IsUnionIndex = IndexList.Count > 1 && !Index.Contains(',');
+                    MultiKey = IndexList.Count > 1 && Index.Contains(',');
                     break;
                 }
                 default: throw new Exception($"unknown mode:'{Mode}'");
