@@ -59,7 +59,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TEnum type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {type.DefineEnum.FullNameWithTopModule}.valueOf({bufName}.readInt());";
+            return $"{fieldName} = {bufName}.readInt();";
         }
 
         public string Accept(TString type, string bufName, string fieldName)

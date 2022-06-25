@@ -45,7 +45,7 @@ namespace Luban.Job.Cfg.Generate
 
                         foreach (var subTitle in title.SubTitleList)
                         {
-                            string titleAndTags = subTitle.Tags.Count == 0 ? subTitle.Name : subTitle.Name + "&" + string.Join('&', subTitle.Tags.Select(e => $"{e.Key}={e.Value}"));
+                            string titleAndTags = subTitle.Tags.Count == 0 ? subTitle.Name : subTitle.Name + "#" + string.Join('#', subTitle.Tags.Select(e => $"{e.Key}={e.Value}"));
                             titleRow[subTitle.FromIndex] = titleAndTags;
                         }
                         dataRangeArray.Add(titleRow);
@@ -58,7 +58,7 @@ namespace Luban.Job.Cfg.Generate
                         foreach (var subTitle in title.SubTitleList)
                         {
                             string typeAndTags = valueType.Bean.TryGetField(subTitle.Name, out var f, out _) ?
-                            (f.CType.Tags.Count == 0 ? f.CType.Apply(CsDefineTypeName.Ins) : f.CType.Apply(CsDefineTypeName.Ins) + "&" + string.Join('&', f.CType.Tags.Select(e => $"{e.Key}={e.Value}")))
+                            (f.CType.Tags.Count == 0 ? f.CType.Apply(CsDefineTypeName.Ins) : f.CType.Apply(CsDefineTypeName.Ins) + "#" + string.Join('#', f.CType.Tags.Select(e => $"({e.Key}={e.Value})")))
                             : "";
                             typeRow[subTitle.FromIndex] = typeAndTags;
                         }

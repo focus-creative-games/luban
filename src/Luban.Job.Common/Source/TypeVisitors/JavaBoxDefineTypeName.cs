@@ -60,5 +60,11 @@ namespace Luban.Job.Common.TypeVisitors
         {
             return "Integer";
         }
+
+        public override string Accept(TEnum type)
+        {
+            //return type.DefineEnum.FullNameWithTopModule;
+            return "Integer";
+        }
     }
 }

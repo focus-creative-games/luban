@@ -56,9 +56,10 @@ namespace Luban.Job.Common.TypeVisitors
             return type.IsNullable ? "Double" : "double";
         }
 
-        public string Accept(TEnum type)
+        public virtual string Accept(TEnum type)
         {
-            return type.DefineEnum.FullNameWithTopModule;
+            //return type.DefineEnum.FullNameWithTopModule;
+            return type.IsNullable ? "Integer" : "int";
         }
 
         public string Accept(TString type)

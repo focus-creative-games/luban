@@ -61,7 +61,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TEnum type, string json, string x)
         {
-            return $"{x} = {type.DefineEnum.FullNameWithTopModule}.valueOf({json}.getAsInt());";
+            return $"{x} = {json}.getAsInt();";
         }
 
         public string Accept(TString type, string json, string x)
