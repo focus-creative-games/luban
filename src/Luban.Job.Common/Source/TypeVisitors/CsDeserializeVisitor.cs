@@ -5,7 +5,6 @@ namespace Luban.Job.Common.TypeVisitors
     public class CsDeserializeVisitor : DecoratorFuncVisitor<string, string, string>
     {
         public static CsDeserializeVisitor Ins { get; } = new CsDeserializeVisitor();
-
         public override string DoAccept(TType type, string bufName, string fieldName)
         {
             if (type.IsNullable)

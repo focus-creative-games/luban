@@ -7,6 +7,7 @@ namespace Luban.Job.Common.TypeVisitors
     class CsUnderingDeserializeVisitor : ITypeFuncVisitor<string, string, string>
     {
         public static CsUnderingDeserializeVisitor Ins { get; } = new CsUnderingDeserializeVisitor();
+        public int Flag { get; set; }
 
         public string Accept(TBool type, string bufName, string fieldName)
         {
@@ -86,17 +87,29 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TArray type, string bufName, string fieldName)
         {
-            return $"{{int n = System.Math.Min({bufName}.ReadSize(), {bufName}.Size);{fieldName} = new {type.ElementType.Apply(CsDefineTypeName.Ins)}[n];for(var i = 0 ; i < n ; i++) {{ {type.ElementType.Apply(CsDefineTypeName.Ins)} _e;{type.ElementType.Apply(this, bufName, "_e")} {fieldName}[i] = _e;}}}}";
+            Flag++;
+            string n = $"n{Flag}";
+            string _e = $"_e{Flag}";
+            string i = $"i{Flag}";
+            return $"{{int {n} = System.Math.Min({bufName}.ReadSize(), {bufName}.Size);{fieldName} = new {type.ElementType.Apply(CsDefineTypeName.Ins)}[{n}];for(var {i} = 0 ; {i} < {n} ; {i}++) {{ {type.ElementType.Apply(CsDefineTypeName.Ins)} {_e};{type.ElementType.Apply(this, bufName, $"{_e}")} {fieldName}[{i}] = {_e};}}}}";
         }
 
         public string Accept(TList type, string bufName, string fieldName)
         {
-            return $"{{int n = System.Math.Min({bufName}.ReadSize(), {bufName}.Size);{fieldName} = new {type.Apply(CsDefineTypeName.Ins)}(n);for(var i = 0 ; i < n ; i++) {{ {type.ElementType.Apply(CsDefineTypeName.Ins)} _e;  {type.ElementType.Apply(this, bufName, "_e")} {fieldName}.Add(_e);}}}}";
+            Flag++;
+            string n = $"n{Flag}";
+            string _e = $"_e{Flag}";
+            string i = $"i{Flag}";
+            return $"{{int {n} = System.Math.Min({bufName}.ReadSize(), {bufName}.Size);{fieldName} = new {type.Apply(CsDefineTypeName.Ins)}({n});for(var {i} = 0 ; {i} < {n} ; {i}++) {{ {type.ElementType.Apply(CsDefineTypeName.Ins)} {_e};  {type.ElementType.Apply(this, bufName, $"{_e}")} {fieldName}.Add({_e});}}}}";
         }
 
         public string Accept(TSet type, string bufName, string fieldName)
         {
-            return $"{{int n = System.Math.Min({bufName}.ReadSize(), {bufName}.Size);{fieldName} = new {type.Apply(CsDefineTypeName.Ins)}(/*n * 3 / 2*/);for(var i = 0 ; i < n ; i++) {{ {type.ElementType.Apply(CsDefineTypeName.Ins)} _e;  {type.ElementType.Apply(this, bufName, "_e")} {fieldName}.Add(_e);}}}}";
+            Flag++;
+            string n = $"n{Flag}";
+            string _e = $"_e{Flag}";
+            string i = $"i{Flag}";
+            return $"{{int {n} = System.Math.Min({bufName}.ReadSize(), {bufName}.Size);{fieldName} = new {type.Apply(CsDefineTypeName.Ins)}(/*{n} * 3 / 2*/);for(var {i} = 0 ; {i} < {n} ; {i}++) {{ {type.ElementType.Apply(CsDefineTypeName.Ins)} {_e};  {type.ElementType.Apply(this, bufName, $"{_e}")} {fieldName}.Add({_e});}}}}";
         }
 
         public string Accept(TMap type, string bufName, string fieldName)

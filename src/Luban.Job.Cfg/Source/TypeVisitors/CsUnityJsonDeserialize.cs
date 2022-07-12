@@ -8,6 +8,7 @@ namespace Luban.Job.Cfg.TypeVisitors
     class CsUnityJsonDeserialize : ITypeFuncVisitor<string, string, string>
     {
         public static CsUnityJsonDeserialize Ins { get; } = new();
+        public int Flag { get; set; }
 
         public string Accept(TBool type, string json, string x)
         {
@@ -86,20 +87,34 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TArray type, string json, string x)
         {
-            string tempJsonName = $"_json1";
-            return $"{{ var {tempJsonName} = {json}; if(!{tempJsonName}.IsArray) {{ throw new SerializationException(); }} int _n = {tempJsonName}.Count; {x} = new {type.ElementType.CsUnderingDefineType()}[_n]; int _index=0; foreach(JSONNode __e in {tempJsonName}.Children) {{ {type.ElementType.CsUnderingDefineType()} __v;  {type.ElementType.Apply(this, "__e", "__v")}  {x}[_index++] = __v; }}   }}";
+            Flag++;
+            string _n = $"_n{Flag}";
+            string __e = $"__e{Flag}";
+            string __v = $"__v{Flag}";
+            string __json = $"__json{Flag}";
+            string __index = $"__index{Flag}";
+            string tempJsonName = __json;
+            return $"{{ var {tempJsonName} = {json}; if(!{tempJsonName}.IsArray) {{ throw new SerializationException(); }} int {_n} = {tempJsonName}.Count; {x} = new {type.ElementType.CsUnderingDefineType()}[{_n}]; int {__index}=0; foreach(JSONNode {__e} in {tempJsonName}.Children) {{ {type.ElementType.CsUnderingDefineType()} {__v};  {type.ElementType.Apply(this, __e, __v)}  {x}[{__index}++] = {__v}; }}   }}";
         }
 
         public string Accept(TList type, string json, string x)
         {
-            string tempJsonName = $"_json1";
-            return $"{{ var {tempJsonName} = {json}; if(!{tempJsonName}.IsArray) {{ throw new SerializationException(); }} {x} = new {type.CsUnderingDefineType()}({tempJsonName}.Count); foreach(JSONNode __e in {tempJsonName}.Children) {{ {type.ElementType.CsUnderingDefineType()} __v;  {type.ElementType.Apply(this, "__e", "__v")}  {x}.Add(__v); }}   }}";
+            Flag++;
+            string __e = $"__e{Flag}";
+            string __v = $"__v{Flag}";
+            string __json = $"__json{Flag}";
+            string tempJsonName = __json;
+            return $"{{ var {tempJsonName} = {json}; if(!{tempJsonName}.IsArray) {{ throw new SerializationException(); }} {x} = new {type.CsUnderingDefineType()}({tempJsonName}.Count); foreach(JSONNode {__e} in {tempJsonName}.Children) {{ {type.ElementType.CsUnderingDefineType()} {__v};  {type.ElementType.Apply(this, __e, __v)}  {x}.Add({__v}); }}   }}";
         }
 
         public string Accept(TSet type, string json, string x)
         {
-            string tempJsonName = $"_json1";
-            return $"{{ var {tempJsonName} = {json}; if(!{tempJsonName}.IsArray) {{ throw new SerializationException(); }} {x} = new {type.CsUnderingDefineType()}(/*{tempJsonName}.Count*/); foreach(JSONNode __e in {tempJsonName}.Children) {{ {type.ElementType.CsUnderingDefineType()} __v;  {type.ElementType.Apply(this, "__e", "__v")}  {x}.Add(__v); }}   }}";
+            Flag++;
+            string __e = $"__e{Flag}";
+            string __v = $"__v{Flag}";
+            string __json = $"__json{Flag}";
+            string tempJsonName = __json;
+            return $"{{ var {tempJsonName} = {json}; if(!{tempJsonName}.IsArray) {{ throw new SerializationException(); }} {x} = new {type.CsUnderingDefineType()}(/*{tempJsonName}.Count*/); foreach(JSONNode {__e} in {tempJsonName}.Children) {{ {type.ElementType.CsUnderingDefineType()} {__v};  {type.ElementType.Apply(this, __e, __v)}  {x}.Add({__v}); }}   }}";
         }
 
         public string Accept(TMap type, string json, string x)

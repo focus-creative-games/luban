@@ -8,7 +8,7 @@ namespace Luban.Job.Cfg.TypeVisitors
     class CsJsonDeserialize : ITypeFuncVisitor<string, string, string>
     {
         public static CsJsonDeserialize Ins { get; } = new();
-
+        public int Flag { get; set; }
         public string Accept(TBool type, string json, string x)
         {
             return $"{x} = {json}.GetBoolean();";
@@ -86,17 +86,33 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TArray type, string json, string x)
         {
-            return $"{{ var _json0 = {json}; int _n = _json0.GetArrayLength(); {x} = new {type.ElementType.CsUnderingDefineType()}[_n]; int _index=0; foreach(JsonElement __e in _json0.EnumerateArray()) {{ {type.ElementType.CsUnderingDefineType()} __v;  {type.ElementType.Apply(this, "__e", "__v")}  {x}[_index++] = __v; }}   }}";
+            Flag++;
+            string _n = $"_n{Flag}";
+            string __e = $"__e{Flag}";
+            string __v = $"__v{Flag}";
+            string __json = $"__json{Flag}";
+            string __index = $"__index{Flag}";
+            return $"{{ var {__json} = {json}; int {_n} = {__json}.GetArrayLength(); {x} = new {type.ElementType.CsUnderingDefineType()}[{_n}]; int {__index}=0; foreach(JsonElement {__e} in {__json}.EnumerateArray()) {{ {type.ElementType.CsUnderingDefineType()} {__v};  {type.ElementType.Apply(this, $"{__e}", $"{__v}")}  {x}[{__index}++] = {__v}; }}   }}";
         }
 
         public string Accept(TList type, string json, string x)
         {
-            return $"{{ var _json0 = {json}; {x} = new {type.CsUnderingDefineType()}(_json0.GetArrayLength()); foreach(JsonElement __e in _json0.EnumerateArray()) {{ {type.ElementType.CsUnderingDefineType()} __v;  {type.ElementType.Apply(this, "__e", "__v")}  {x}.Add(__v); }}   }}";
+            Flag++;
+            string _n = $"_n{Flag}";
+            string __e = $"__e{Flag}";
+            string __v = $"__v{Flag}";
+            string __json = $"__json{Flag}";
+            return $"{{ var {__json} = {json}; {x} = new {type.CsUnderingDefineType()}({__json}.GetArrayLength()); foreach(JsonElement {__e} in {__json}.EnumerateArray()) {{ {type.ElementType.CsUnderingDefineType()} {__v};  {type.ElementType.Apply(this, $"{__e}", $"{__v}")}  {x}.Add({__v}); }}   }}";
         }
 
         public string Accept(TSet type, string json, string x)
         {
-            return $"{{ var _json0 = {json}; {x} = new {type.CsUnderingDefineType()}(_json0.GetArrayLength()); foreach(JsonElement __e in _json0.EnumerateArray()) {{ {type.ElementType.CsUnderingDefineType()} __v;  {type.ElementType.Apply(this, "__e", "__v")}  {x}.Add(__v); }}   }}";
+            Flag++;
+            string _n = $"_n{Flag}";
+            string __e = $"__e{Flag}";
+            string __v = $"__v{Flag}";
+            string __json = $"__json{Flag}";
+            return $"{{ var {__json} = {json}; {x} = new {type.CsUnderingDefineType()}({__json}.GetArrayLength()); foreach(JsonElement {__e} in {__json}.EnumerateArray()) {{ {type.ElementType.CsUnderingDefineType()} {__v};  {type.ElementType.Apply(this, $"{__e}", $"{__v}")}  {x}.Add({__v}); }}   }}";
         }
 
         public string Accept(TMap type, string json, string x)

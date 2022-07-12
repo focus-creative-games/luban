@@ -136,7 +136,7 @@ namespace Luban.Job.Common.Utils
             return -1;
         }
 
-        public static string TrimBracePairs(string rawType)
+        public static string TrimBracePairs(string rawType, bool soft = false)
         {
             while (rawType.Length > 0 && rawType[0] == '(')
             {
@@ -146,7 +146,14 @@ namespace Luban.Job.Common.Utils
                 }
                 else
                 {
-                    throw new Exception($"type:{rawType} brace not match");
+                    if (soft)
+                    {
+                        return rawType;
+                    }
+                    else
+                    {
+                        throw new Exception($"type:{rawType} brace not match");
+                    }
                 }
             }
             return rawType;
@@ -200,7 +207,7 @@ namespace Luban.Job.Common.Utils
             return (typeStr, attrs);
         }
 
-            public static bool ParseOrientation(string value)
+        public static bool ParseOrientation(string value)
         {
             switch (value.Trim())
             {
@@ -210,9 +217,9 @@ namespace Luban.Job.Common.Utils
                 case "c":
                 case "column": return false;
                 default:
-                {
-                    throw new Exception($"orientation 属性值只能为row|r|column|c");
-                }
+                    {
+                        throw new Exception($"orientation 属性值只能为row|r|column|c");
+                    }
             }
         }
 
