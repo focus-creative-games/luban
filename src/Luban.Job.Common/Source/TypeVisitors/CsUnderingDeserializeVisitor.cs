@@ -88,10 +88,23 @@ namespace Luban.Job.Common.TypeVisitors
         public string Accept(TArray type, string bufName, string fieldName)
         {
             Flag++;
-            string n = $"n{Flag}";
-            string _e = $"_e{Flag}";
-            string i = $"i{Flag}";
-            return $"{{int {n} = System.Math.Min({bufName}.ReadSize(), {bufName}.Size);{fieldName} = new {type.ElementType.Apply(CsDefineTypeName.Ins)}[{n}];for(var {i} = 0 ; {i} < {n} ; {i}++) {{ {type.ElementType.Apply(CsDefineTypeName.Ins)} {_e};{type.ElementType.Apply(this, bufName, $"{_e}")} {fieldName}[{i}] = {_e};}}}}";
+            string __n = $"__n{Flag}";
+            string __e = $"__e{Flag}";
+            string __index = $"__index{Flag}";
+            string typeStr = $"{type.ElementType.Apply(CsDefineTypeName.Ins)}[{__n}]";
+            if (type.Dimension > 1)
+            {
+                if (type.FinalElementType == null)
+                {
+                    throw new System.Exception("多维数组没有元素类型");
+                }
+                typeStr = $"{type.FinalElementType.Apply(CsUnderingDefineTypeName.Ins)}[{__n}]";
+                for (int i = 0; i < type.Dimension - 1; i++)
+                {
+                    typeStr += "[]";
+                }
+            }
+            return $"{{int {__n} = System.Math.Min({bufName}.ReadSize(), {bufName}.Size);{fieldName} = new {typeStr};for(var {__index} = 0 ; {__index} < {__n} ; {__index}++) {{ {type.ElementType.Apply(CsDefineTypeName.Ins)} {__e};{type.ElementType.Apply(this, bufName, $"{__e}")} {fieldName}[{__index}] = {__e};}}}}";
         }
 
         public string Accept(TList type, string bufName, string fieldName)

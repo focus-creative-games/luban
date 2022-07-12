@@ -15,10 +15,21 @@ namespace Luban.Job.Common.Types
         public override TType ElementType { get; }
 
         public override string TypeName => "array";
+        public int Dimension { get; } = 1;
+        public TType FinalElementType { get; }
 
         private TArray(bool isNullable, Dictionary<string, string> tags, TType elementType) : base(isNullable, tags)
         {
             ElementType = elementType;
+            if (!elementType.IsCollection)
+            {
+                FinalElementType = ElementType;
+            }
+            if (ElementType.TypeName == "array")
+            {
+                Dimension = (ElementType as TArray).Dimension + 1;
+                FinalElementType = (ElementType as TArray).FinalElementType;
+            }
         }
 
         public override bool TryParseFrom(string s)

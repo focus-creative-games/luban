@@ -373,12 +373,7 @@ namespace Luban.Job.Common.Defs
             {
                 case "array":
                     {
-                        TType type = CreateType(module, elementType);
-                        if (type.TypeName == "array")
-                        {
-                            throw new Exception("不支持多维数组，请改为嵌套list");
-                        }
-                        return TArray.Create(false, containerTags, type);
+                        return TArray.Create(false, containerTags, CreateType(module, elementType));
                     }
                 case "list": return TList.Create(false, containerTags, CreateType(module, elementType), true);
                 case "set":

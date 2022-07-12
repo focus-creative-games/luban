@@ -92,7 +92,20 @@ namespace Luban.Job.Cfg.TypeVisitors
             string __v = $"__v{Flag}";
             string __json = $"__json{Flag}";
             string __index = $"__index{Flag}";
-            return $"{{ var {__json} = {json}; int {_n} = {__json}.GetArrayLength(); {x} = new {type.ElementType.CsUnderingDefineType()}[{_n}]; int {__index}=0; foreach(JsonElement {__e} in {__json}.EnumerateArray()) {{ {type.ElementType.CsUnderingDefineType()} {__v};  {type.ElementType.Apply(this, $"{__e}", $"{__v}")}  {x}[{__index}++] = {__v}; }}   }}";
+            string typeStr = $"{type.ElementType.Apply(CsDefineTypeName.Ins)}[{_n}]";
+            if (type.Dimension > 1)
+            {
+                if (type.FinalElementType == null)
+                {
+                    throw new System.Exception("多维数组没有元素类型");
+                }
+                typeStr = $"{type.FinalElementType.Apply(CsUnderingDefineTypeName.Ins)}[{_n}]";
+                for (int i = 0; i < type.Dimension - 1; i++)
+                {
+                    typeStr += "[]";
+                }
+            }
+            return $"{{ var {__json} = {json}; int {_n} = {__json}.GetArrayLength(); {x} = new {typeStr}; int {__index}=0; foreach(JsonElement {__e} in {__json}.EnumerateArray()) {{ {type.ElementType.CsUnderingDefineType()} {__v};  {type.ElementType.Apply(this, $"{__e}", $"{__v}")}  {x}[{__index}++] = {__v}; }}   }}";
         }
 
         public string Accept(TList type, string json, string x)
