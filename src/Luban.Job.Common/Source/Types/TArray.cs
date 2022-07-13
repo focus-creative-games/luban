@@ -16,7 +16,6 @@ namespace Luban.Job.Common.Types
 
         public override string TypeName => "array";
         public int Dimension { get; } = 1;
-        public TType FinalElementType { get; }
 
         private TArray(bool isNullable, Dictionary<string, string> tags, TType elementType) : base(isNullable, tags)
         {
@@ -24,11 +23,16 @@ namespace Luban.Job.Common.Types
             if (!elementType.IsCollection)
             {
                 FinalElementType = ElementType;
+                CollectionLevel = 0;
+            }
+            else
+            {
+                CollectionLevel = ElementType.CollectionLevel + 1;
+                FinalElementType = ElementType.FinalElementType;
             }
             if (ElementType.TypeName == "array")
             {
                 Dimension = (ElementType as TArray).Dimension + 1;
-                FinalElementType = (ElementType as TArray).FinalElementType;
             }
         }
 

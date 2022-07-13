@@ -22,6 +22,16 @@ namespace Luban.Job.Common.Types
         {
             ElementType = elementType;
             IsArrayList = isArrayList;
+            if (!elementType.IsCollection)
+            {
+                FinalElementType = ElementType;
+                CollectionLevel = 0;
+            }
+            else
+            {
+                CollectionLevel = ElementType.CollectionLevel + 1;
+                FinalElementType = ElementType.FinalElementType;
+            }
         }
 
         public override bool TryParseFrom(string s)

@@ -19,6 +19,8 @@ namespace Luban.Job.Common.Types
         }
 
         public abstract string TypeName { get; }
+        public TType FinalElementType { get; protected set; }
+        public int CollectionLevel { get; protected set; }
 
         public bool HasTag(string attrName)
         {

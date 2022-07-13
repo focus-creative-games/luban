@@ -7,7 +7,6 @@ namespace Luban.Job.Common.TypeVisitors
     class CsUnderingDeserializeVisitor : ITypeFuncVisitor<string, string, string>
     {
         public static CsUnderingDeserializeVisitor Ins { get; } = new CsUnderingDeserializeVisitor();
-        public int Flag { get; set; }
 
         public string Accept(TBool type, string bufName, string fieldName)
         {
@@ -87,10 +86,10 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TArray type, string bufName, string fieldName)
         {
-            Flag++;
-            string __n = $"__n{Flag}";
-            string __e = $"__e{Flag}";
-            string __index = $"__index{Flag}";
+            int level = type.CollectionLevel;
+            string __n = $"__n{level}";
+            string __e = $"__e{level}";
+            string __index = $"__index{level}";
             string typeStr = $"{type.ElementType.Apply(CsDefineTypeName.Ins)}[{__n}]";
             if (type.Dimension > 1)
             {
@@ -109,19 +108,19 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TList type, string bufName, string fieldName)
         {
-            Flag++;
-            string n = $"n{Flag}";
-            string _e = $"_e{Flag}";
-            string i = $"i{Flag}";
+            int level = type.CollectionLevel;
+            string n = $"n{level}";
+            string _e = $"_e{level}";
+            string i = $"i{level}";
             return $"{{int {n} = System.Math.Min({bufName}.ReadSize(), {bufName}.Size);{fieldName} = new {type.Apply(CsDefineTypeName.Ins)}({n});for(var {i} = 0 ; {i} < {n} ; {i}++) {{ {type.ElementType.Apply(CsDefineTypeName.Ins)} {_e};  {type.ElementType.Apply(this, bufName, $"{_e}")} {fieldName}.Add({_e});}}}}";
         }
 
         public string Accept(TSet type, string bufName, string fieldName)
         {
-            Flag++;
-            string n = $"n{Flag}";
-            string _e = $"_e{Flag}";
-            string i = $"i{Flag}";
+            int level = type.CollectionLevel;
+            string n = $"n{level}";
+            string _e = $"_e{level}";
+            string i = $"i{level}";
             return $"{{int {n} = System.Math.Min({bufName}.ReadSize(), {bufName}.Size);{fieldName} = new {type.Apply(CsDefineTypeName.Ins)}(/*{n} * 3 / 2*/);for(var {i} = 0 ; {i} < {n} ; {i}++) {{ {type.ElementType.Apply(CsDefineTypeName.Ins)} {_e};  {type.ElementType.Apply(this, bufName, $"{_e}")} {fieldName}.Add({_e});}}}}";
         }
 

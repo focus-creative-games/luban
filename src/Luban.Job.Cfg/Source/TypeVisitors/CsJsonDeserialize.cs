@@ -8,7 +8,6 @@ namespace Luban.Job.Cfg.TypeVisitors
     class CsJsonDeserialize : ITypeFuncVisitor<string, string, string>
     {
         public static CsJsonDeserialize Ins { get; } = new();
-        public int Flag { get; set; }
         public string Accept(TBool type, string json, string x)
         {
             return $"{x} = {json}.GetBoolean();";
@@ -86,12 +85,12 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TArray type, string json, string x)
         {
-            Flag++;
-            string _n = $"_n{Flag}";
-            string __e = $"__e{Flag}";
-            string __v = $"__v{Flag}";
-            string __json = $"__json{Flag}";
-            string __index = $"__index{Flag}";
+            int level = type.CollectionLevel;
+            string _n = $"_n{level}";
+            string __e = $"__e{level}";
+            string __v = $"__v{level}";
+            string __json = $"__json{level}";
+            string __index = $"__index{level}";
             string typeStr = $"{type.ElementType.Apply(CsDefineTypeName.Ins)}[{_n}]";
             if (type.Dimension > 1)
             {
@@ -110,21 +109,19 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TList type, string json, string x)
         {
-            Flag++;
-            string _n = $"_n{Flag}";
-            string __e = $"__e{Flag}";
-            string __v = $"__v{Flag}";
-            string __json = $"__json{Flag}";
+            int level = type.CollectionLevel;
+            string __e = $"__e{level}";
+            string __v = $"__v{level}";
+            string __json = $"__json{level}";
             return $"{{ var {__json} = {json}; {x} = new {type.CsUnderingDefineType()}({__json}.GetArrayLength()); foreach(JsonElement {__e} in {__json}.EnumerateArray()) {{ {type.ElementType.CsUnderingDefineType()} {__v};  {type.ElementType.Apply(this, $"{__e}", $"{__v}")}  {x}.Add({__v}); }}   }}";
         }
 
         public string Accept(TSet type, string json, string x)
         {
-            Flag++;
-            string _n = $"_n{Flag}";
-            string __e = $"__e{Flag}";
-            string __v = $"__v{Flag}";
-            string __json = $"__json{Flag}";
+            int level = type.CollectionLevel;
+            string __e = $"__e{level}";
+            string __v = $"__v{level}";
+            string __json = $"__json{level}";
             return $"{{ var {__json} = {json}; {x} = new {type.CsUnderingDefineType()}({__json}.GetArrayLength()); foreach(JsonElement {__e} in {__json}.EnumerateArray()) {{ {type.ElementType.CsUnderingDefineType()} {__v};  {type.ElementType.Apply(this, $"{__e}", $"{__v}")}  {x}.Add({__v}); }}   }}";
         }
 
