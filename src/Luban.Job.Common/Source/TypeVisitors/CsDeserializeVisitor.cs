@@ -9,11 +9,11 @@ namespace Luban.Job.Common.TypeVisitors
         {
             if (type.IsNullable)
             {
-                return $"if({bufName}.ReadBool()){{ {type.Apply(CsUnderingDeserializeVisitor.Ins, bufName, fieldName)} }} else {{ {fieldName} = null; }}";
+                return $"if({bufName}.ReadBool()){{ {type.Apply(CsUnderingDeserializeVisitor.Ins, bufName, fieldName, 0)} }} else {{ {fieldName} = null; }}";
             }
             else
             {
-                return type.Apply(CsUnderingDeserializeVisitor.Ins, bufName, fieldName);
+                return type.Apply(CsUnderingDeserializeVisitor.Ins, bufName, fieldName, 0);
             }
         }
 

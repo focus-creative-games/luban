@@ -364,7 +364,7 @@ namespace Luban.Job.Common.Defs
             }
             return TMap.Create(false, tags,
                 CreateNotContainerType(module, keyValueType.Substring(0, typeSepIndex).Trim()),
-                CreateNotContainerType(module, keyValueType.Substring(typeSepIndex + 1).Trim()), isTreeMap);
+                CreateType(module, keyValueType.Substring(typeSepIndex + 1).Trim()), isTreeMap);
         }
 
         protected TType CreateContainerType(string module, string containerType, Dictionary<string, string> containerTags, string elementType)
@@ -381,7 +381,7 @@ namespace Luban.Job.Common.Defs
                         TType type = CreateType(module, elementType);
                         if (type.IsCollection)
                         {
-                            throw new Exception("set的元素不支持容器类型，请改为嵌套list");
+                            throw new Exception("set的元素不支持容器类型");
                         }
                         return TSet.Create(false, containerTags, type, false);
                     }
