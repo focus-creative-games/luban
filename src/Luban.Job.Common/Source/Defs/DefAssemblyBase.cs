@@ -275,7 +275,7 @@ namespace Luban.Job.Common.Defs
 
         public TType CreateType(string module, string type)
         {
-            type = DefUtil.TrimBracePairs(type, true);
+            type = DefUtil.TrimBracePairs(type);
             int sepIndex = DefUtil.IndexOfBaseTypeEnd(type);
             if (sepIndex > 0)
             {

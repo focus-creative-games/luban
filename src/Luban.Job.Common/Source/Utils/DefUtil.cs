@@ -136,7 +136,45 @@ namespace Luban.Job.Common.Utils
             return -1;
         }
 
-        public static string TrimBracePairs(string rawType, bool soft = false)
+        public static string TrimBracePairs(string rawType)
+        {
+            while (rawType.Length > 0 && rawType[0] == '(')
+            {
+                int braceDepth = 0;
+                int level1Left = -1;
+                int level1Right = -1;
+                for (int i = 0; i < rawType.Length; i++)
+                {
+                    if (rawType[i] == '(')
+                    {
+                        braceDepth++;
+                        if (level1Left < 0)
+                        {
+                            level1Left = i;
+                        }
+                    }
+                    if (rawType[i] == ')')
+                    {
+                        braceDepth--;
+                        if (level1Right < 0 && braceDepth == 0)
+                        {
+                            level1Right = i;
+                            break;
+                        }
+                    }
+                }
+                if (level1Left >= 0 && level1Right == rawType.Length - 1)
+                {
+                    rawType = rawType.Substring(1, rawType.Length - 2);
+                }
+                else
+                {
+                    break;
+                }
+            }
+            return rawType;
+        }
+        public static string TrimBracePairs2(string rawType, bool soft = false)
         {
             while (rawType.Length > 0 && rawType[0] == '(')
             {
