@@ -20,6 +20,8 @@ namespace Luban.Job.Common.Types
 
         public abstract string TypeName { get; }
 
+        public int CollectionLevel { get; set; }
+
         public bool HasTag(string attrName)
         {
             return Tags != null && Tags.ContainsKey(attrName);

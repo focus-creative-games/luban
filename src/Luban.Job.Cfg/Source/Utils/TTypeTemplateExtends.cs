@@ -29,11 +29,11 @@ namespace Luban.Job.Cfg.Utils
         {
             if (type.IsNullable)
             {
-                return $"{{ if ({bufName}.TryGetProperty(\"{jsonFieldName}\", out var _j) && _j.ValueKind != JsonValueKind.Null) {{ {type.Apply(TypeVisitors.CsJsonDeserialize.Ins, "_j", fieldName)} }} else {{ {fieldName} = null; }} }}";
+                return $"{{ if ({bufName}.TryGetProperty(\"{jsonFieldName}\", out var _j) && _j.ValueKind != JsonValueKind.Null) {{ {type.Apply(TypeVisitors.CsJsonDeserialize.Ins, "_j", fieldName, 0)} }} else {{ {fieldName} = null; }} }}";
             }
             else
             {
-                return type.Apply(TypeVisitors.CsJsonDeserialize.Ins, $"{bufName}.GetProperty(\"{jsonFieldName}\")", fieldName);
+                return type.Apply(TypeVisitors.CsJsonDeserialize.Ins, $"{bufName}.GetProperty(\"{jsonFieldName}\")", fieldName, 0);
             }
         }
 
@@ -46,11 +46,11 @@ namespace Luban.Job.Cfg.Utils
         {
             if (type.IsNullable)
             {
-                return $"{{ var _j = {bufName}[\"{jsonFieldName}\"]; if (_j.Tag != JSONNodeType.None && _j.Tag != JSONNodeType.NullValue) {{ {type.Apply(TypeVisitors.CsUnityJsonDeserialize.Ins, "_j", fieldName)} }} else {{ {fieldName} = null; }} }}";
+                return $"{{ var _j = {bufName}[\"{jsonFieldName}\"]; if (_j.Tag != JSONNodeType.None && _j.Tag != JSONNodeType.NullValue) {{ {type.Apply(TypeVisitors.CsUnityJsonDeserialize.Ins, "_j", fieldName, 0)} }} else {{ {fieldName} = null; }} }}";
             }
             else
             {
-                return type.Apply(TypeVisitors.CsUnityJsonDeserialize.Ins, $"{bufName}[\"{jsonFieldName}\"]", fieldName);
+                return type.Apply(TypeVisitors.CsUnityJsonDeserialize.Ins, $"{bufName}[\"{jsonFieldName}\"]", fieldName, 0);
             }
         }
 

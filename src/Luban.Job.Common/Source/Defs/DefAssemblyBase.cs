@@ -34,7 +34,7 @@ namespace Luban.Job.Common.Defs
 
         public Dictionary<string, DefTypeBase> Types { get; } = new Dictionary<string, DefTypeBase>();
 
-        private readonly Dictionary<string, DefTypeBase> _notCaseSenseTypes = new ();
+        private readonly Dictionary<string, DefTypeBase> _notCaseSenseTypes = new();
 
         private readonly HashSet<string> _namespaces = new();
 
@@ -275,6 +275,7 @@ namespace Luban.Job.Common.Defs
 
         public TType CreateType(string module, string type)
         {
+            type = DefUtil.TrimBracePairs(type);
             int sepIndex = DefUtil.IndexOfBaseTypeEnd(type);
             if (sepIndex > 0)
             {
@@ -340,17 +341,17 @@ namespace Luban.Job.Common.Defs
                 case "time":
                 case "datetime": return SupportDatetimeType ? TDateTime.Create(nullable, tags) : throw new NotSupportedException($"只有配置支持datetime数据类型");
                 default:
-                {
-                    var dtype = GetDefTType(module, type, nullable, tags);
-                    if (dtype != null)
                     {
-                        return dtype;
+                        var dtype = GetDefTType(module, type, nullable, tags);
+                        if (dtype != null)
+                        {
+                            return dtype;
+                        }
+                        else
+                        {
+                            throw new ArgumentException($"invalid type. module:'{module}' type:'{type}'");
+                        }
                     }
-                    else
-                    {
-                        throw new ArgumentException($"invalid type. module:'{module}' type:'{type}'");
-                    }
-                }
             }
         }
 
@@ -363,21 +364,32 @@ namespace Luban.Job.Common.Defs
             }
             return TMap.Create(false, tags,
                 CreateNotContainerType(module, keyValueType.Substring(0, typeSepIndex).Trim()),
-                CreateNotContainerType(module, keyValueType.Substring(typeSepIndex + 1).Trim()), isTreeMap);
+                CreateType(module, keyValueType.Substring(typeSepIndex + 1).Trim()), isTreeMap);
         }
 
         protected TType CreateContainerType(string module, string containerType, Dictionary<string, string> containerTags, string elementType)
         {
             switch (containerType)
             {
-                case "array": return TArray.Create(false, containerTags, CreateNotContainerType(module, elementType));
-                case "list": return TList.Create(false, containerTags, CreateNotContainerType(module, elementType), true);
-                case "set": return TSet.Create(false, containerTags, CreateNotContainerType(module, elementType), false);
+                case "array":
+                    {
+                        return TArray.Create(false, containerTags, CreateType(module, elementType));
+                    }
+                case "list": return TList.Create(false, containerTags, CreateType(module, elementType), true);
+                case "set":
+                    {
+                        TType type = CreateType(module, elementType);
+                        if (type.IsCollection)
+                        {
+                            throw new Exception("set的元素不支持容器类型");
+                        }
+                        return TSet.Create(false, containerTags, type, false);
+                    }
                 case "map": return CreateMapType(module, containerTags, elementType, false);
                 default:
-                {
-                    throw new ArgumentException($"invalid container type. module:'{module}' container:'{containerType}' element:'{elementType}'");
-                }
+                    {
+                        throw new ArgumentException($"invalid container type. module:'{module}' container:'{containerType}' element:'{elementType}'");
+                    }
             }
         }
     }

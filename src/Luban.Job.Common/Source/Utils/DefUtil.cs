@@ -140,13 +140,58 @@ namespace Luban.Job.Common.Utils
         {
             while (rawType.Length > 0 && rawType[0] == '(')
             {
+                int braceDepth = 0;
+                int level1Left = -1;
+                int level1Right = -1;
+                for (int i = 0; i < rawType.Length; i++)
+                {
+                    if (rawType[i] == '(')
+                    {
+                        braceDepth++;
+                        if (level1Left < 0)
+                        {
+                            level1Left = i;
+                        }
+                    }
+                    if (rawType[i] == ')')
+                    {
+                        braceDepth--;
+                        if (level1Right < 0 && braceDepth == 0)
+                        {
+                            level1Right = i;
+                            break;
+                        }
+                    }
+                }
+                if (level1Left >= 0 && level1Right == rawType.Length - 1)
+                {
+                    rawType = rawType.Substring(1, rawType.Length - 2);
+                }
+                else
+                {
+                    break;
+                }
+            }
+            return rawType;
+        }
+        public static string TrimBracePairs2(string rawType, bool soft = false)
+        {
+            while (rawType.Length > 0 && rawType[0] == '(')
+            {
                 if (rawType[rawType.Length - 1] == ')')
                 {
                     rawType = rawType.Substring(1, rawType.Length - 2);
                 }
                 else
                 {
-                    throw new Exception($"type:{rawType} brace not match");
+                    if (soft)
+                    {
+                        return rawType;
+                    }
+                    else
+                    {
+                        throw new Exception($"type:{rawType} brace not match");
+                    }
                 }
             }
             return rawType;
@@ -200,7 +245,7 @@ namespace Luban.Job.Common.Utils
             return (typeStr, attrs);
         }
 
-            public static bool ParseOrientation(string value)
+        public static bool ParseOrientation(string value)
         {
             switch (value.Trim())
             {
@@ -210,9 +255,9 @@ namespace Luban.Job.Common.Utils
                 case "c":
                 case "column": return false;
                 default:
-                {
-                    throw new Exception($"orientation 属性值只能为row|r|column|c");
-                }
+                    {
+                        throw new Exception($"orientation 属性值只能为row|r|column|c");
+                    }
             }
         }
 
