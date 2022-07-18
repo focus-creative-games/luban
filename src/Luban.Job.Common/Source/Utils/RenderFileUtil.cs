@@ -111,6 +111,7 @@ namespace Luban.Job.Common.Utils
         private static readonly Dictionary<string, string> s_name2Suxxifx = new()
         {
             { "json", "json" },
+            {"bson", "bson" },
             { "lua", "lua" },
             { "bin", "bytes" },
             { "xml", "xml" },

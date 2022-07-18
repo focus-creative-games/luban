@@ -11,6 +11,7 @@ using Luban.Job.Common.Tpl;
 using Luban.Job.Common.Types;
 using Luban.Job.Common.Utils;
 using MessagePack;
+using Newtonsoft.Json.Bson;
 using Scriban;
 using System;
 using System.Collections.Generic;
@@ -78,6 +79,14 @@ namespace Luban.Job.Cfg.Utils
                     ys.Save(tw, false);
                     tw.Flush();
                     return DataUtil.StreamToBytes(ms);
+                }
+                case "data_bson":
+                {
+                    var ss = new MemoryStream();
+                    var bsonWriter = new BsonDataWriter(ss);
+                    BsonExportor.Ins.WriteAsArray(records, bsonWriter);
+                    bsonWriter.Flush();
+                    return DataUtil.StreamToBytes(ss);
                 }
                 case "data_xml":
                 {

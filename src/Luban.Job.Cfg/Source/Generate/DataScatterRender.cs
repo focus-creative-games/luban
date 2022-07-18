@@ -10,6 +10,7 @@ namespace Luban.Job.Cfg.Generate
     [Render("data_bin")]
     [Render("data_json")]
     [Render("data_json2")]
+    [Render("data_bson")]
     [Render("data_lua")]
     [Render("data_xml")]
     [Render("data_yaml")]
