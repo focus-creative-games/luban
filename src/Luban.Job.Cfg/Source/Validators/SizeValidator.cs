@@ -12,16 +12,16 @@ namespace Luban.Job.Cfg.Validators
     [Validator("size")]
     internal class SizeValidator : IValidator
     {
-        private readonly int _size;
+        private Range _range;
 
         public SizeValidator(TType type, string rule)
         {
-            this._size = int.Parse(rule);
+            _range = new Range(rule);
         }
 
         public void Compile(DefFieldBase def)
         {
-
+            _range.Compile();
         }
 
         private static string Source => ValidatorContext.CurrentVisitor.CurrentValidateRecord.Source;
@@ -31,7 +31,7 @@ namespace Luban.Job.Cfg.Validators
             var assembly = ctx.Assembly;
             void LogError(int size)
             {
-                assembly.Agent.Error("记录 {0}:{1} (来自文件:{2}) size:{3},但要求为 {4} ", ValidatorContext.CurrentRecordPath, data, Source, size, _size);
+                assembly.Agent.Error("记录 {0}:{1} (来自文件:{2}) size:{3},但要求为 {4} ", ValidatorContext.CurrentRecordPath, data, Source, size, _range.RawStr);
             }
 
             if (type.IsNullable && data == null)
@@ -43,7 +43,7 @@ namespace Luban.Job.Cfg.Validators
             {
                 case DArray b:
                 {
-                    if (b.Datas.Count != _size)
+                    if (!_range.CheckInLongRange(b.Datas.Count))
                     {
                         LogError(b.Datas.Count);
                         return;
@@ -52,7 +52,7 @@ namespace Luban.Job.Cfg.Validators
                 }
                 case DList b:
                 {
-                    if (b.Datas.Count != _size)
+                    if (!_range.CheckInLongRange(b.Datas.Count))
                     {
                         LogError(b.Datas.Count);
                         return;
@@ -61,7 +61,7 @@ namespace Luban.Job.Cfg.Validators
                 }
                 case DSet b:
                 {
-                    if (b.Datas.Count != _size)
+                    if (!_range.CheckInLongRange(b.Datas.Count))
                     {
                         LogError(b.Datas.Count);
                         return;
@@ -70,7 +70,7 @@ namespace Luban.Job.Cfg.Validators
                 }
                 case DMap b:
                 {
-                    if (b.Datas.Count != _size)
+                    if (!_range.CheckInLongRange(b.Datas.Count))
                     {
                         LogError(b.Datas.Count);
                         return;

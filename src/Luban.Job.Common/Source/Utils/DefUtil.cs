@@ -81,7 +81,7 @@ namespace Luban.Job.Common.Utils
                 {
                     ++braceDepth;
                 }
-                else if (c == ')' || c == ')' || c == '}')
+                else if (c == ')' || c == ']' || c == '}')
                 {
                     --braceDepth;
                 }
@@ -119,7 +119,7 @@ namespace Luban.Job.Common.Utils
                 {
                     ++braceDepth;
                 }
-                else if (c == ')' || c == ')' || c == '}')
+                else if (c == ')' || c == ']' || c == '}')
                 {
                     --braceDepth;
                 }
