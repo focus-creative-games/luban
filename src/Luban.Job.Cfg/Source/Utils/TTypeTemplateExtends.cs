@@ -5,6 +5,7 @@ using Luban.Job.Common.Types;
 using Luban.Job.Common.TypeVisitors;
 using System;
 using System.Linq;
+using System.Text;
 
 namespace Luban.Job.Cfg.Utils
 {
@@ -281,6 +282,30 @@ namespace Luban.Job.Cfg.Utils
         public static string CsTableGetParamNameList(DefTable table)
         {
             return string.Join(", ", table.IndexList.Select(idx => $"{idx.IndexField.Name}"));
+        }
+        public static string CsTableGetParamValues(DefTable defTable, string bufName, string keyName)
+        {
+            int count = 0;
+            StringBuilder sb = new StringBuilder();
+            foreach (var info in defTable.IndexList)
+            {
+                string filedName = $"item{count}";
+                sb.AppendLine($"\t\t\t{info.Type.Apply(CsUnderingDefineTypeName.Ins)} {filedName};");
+                string keyVal = info.Type.Apply(CsDeserializeVisitor.Ins, bufName, filedName);
+                sb.AppendLine($"\t\t\t{keyVal}");
+                count++;
+            }
+            sb.Append($"\t\t\t({CsTableGetParamDefList(defTable)}) {keyName} = (");
+            for (int i = 0; i < count; i++)
+            {
+                sb.Append($"item{i}");
+                if (i < count - 1)
+                {
+                    sb.Append(',');
+                }
+            }
+            sb.AppendLine(");");
+            return sb.ToString();
         }
 
         public static string CsEditorDefineType(TType type)
