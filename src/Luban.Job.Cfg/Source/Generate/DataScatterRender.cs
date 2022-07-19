@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 namespace Luban.Job.Cfg.Generate
 {
     [Render("data_bin")]
+    [Render("data_bidx")]
     [Render("data_json")]
     [Render("data_json2")]
     [Render("data_bson")]

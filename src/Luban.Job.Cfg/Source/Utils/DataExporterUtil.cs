@@ -44,6 +44,14 @@ namespace Luban.Job.Cfg.Utils
                     ThreadLocalTemporalByteBufPool.Free(buf);
                     return bytes;
                 }
+                case "data_bidx":
+                {
+                    var buf = ThreadLocalTemporalByteBufPool.Alloc(1024 * 1024);
+                    BinaryIndexExportor.Ins.WriteList(table, records, buf);
+                    var bytes = buf.CopyData();
+                    ThreadLocalTemporalByteBufPool.Free(buf);
+                    return bytes;
+                }
                 case "data_json":
                 case "data_json2":
                 {
