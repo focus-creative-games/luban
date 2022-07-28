@@ -24,6 +24,7 @@ namespace Luban.Job.Cfg.Defs
         public Service CfgTargetService { get; private set; }
 
         private readonly string _patchName;
+
         private readonly List<string> _excludeTags;
 
         public Patch TargetPatch { get; private set; }
@@ -33,6 +34,8 @@ namespace Luban.Job.Cfg.Defs
         public bool OutputCompactJson { get; set; }
 
         public string TableManagerName => CfgTargetService.Manager;
+
+        public List<string> ExcludeTags => _excludeTags;
 
         public DefAssembly(string patchName, TimeZoneInfo timezone, List<string> excludeTags, IAgent agent)
         {

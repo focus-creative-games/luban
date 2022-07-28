@@ -1,4 +1,5 @@
 using Luban.Job.Cfg.Datas;
+using Luban.Job.Cfg.DataSources;
 using Luban.Job.Cfg.DataVisitors;
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Cfg.RawDefs;
@@ -58,8 +59,14 @@ namespace Luban.Job.Cfg.Validators
                     case ETableMode.MAP:
                     {
                         var recordMap = assembly.GetTableDataInfo(defTable).FinalRecordMap;
-                        if (recordMap.ContainsKey(key))
+                        if (recordMap.TryGetValue(key, out Record rec))
                         {
+                            if (!rec.IsNotFiltered(assembly.ExcludeTags))
+                            {
+                                string locationFile = ValidatorContext.CurrentVisitor.CurrentValidateRecord.Source;
+                                assembly.Agent.Error("记录 {0} = {1} (来自文件:{2}) 在引用表:{3} 中存在，但导出时被过滤了",
+                                    ValidatorContext.CurrentRecordPath, key, locationFile, defTable.FullName);
+                            }
                             return;
                         }
                         break;
@@ -67,8 +74,14 @@ namespace Luban.Job.Cfg.Validators
                     case ETableMode.LIST:
                     {
                         var recordMap = assembly.GetTableDataInfo(defTable).FinalRecordMapByIndexs[field];
-                        if (recordMap.ContainsKey(key))
+                        if (recordMap.TryGetValue(key, out Record rec))
                         {
+                            if (!rec.IsNotFiltered(assembly.ExcludeTags))
+                            {
+                                string locationFile = ValidatorContext.CurrentVisitor.CurrentValidateRecord.Source;
+                                assembly.Agent.Error("记录 {0} = {1} (来自文件:{2}) 在引用表:{3} 中存在，但导出时被过滤了",
+                                    ValidatorContext.CurrentRecordPath, key, locationFile, defTable.FullName);
+                            }
                             return;
                         }
                         break;
