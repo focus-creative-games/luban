@@ -39,7 +39,7 @@ luban统一了游戏配置开发工作流，极大提升了策划和程序的工
 - **通用型生成和缓存工具**。也可以用于生成协议、数据库之类的代码，甚至可以用作对象缓存服务
 - **良好支持主流引擎、全平台、主流热更新方案、主流前后端框架**。支持Unity、Unreal、Cocos2x、Godot、微信小游戏等主流引擎。工具自身跨平台，能在Win,Linux,Mac平台良好工作。
 
-完整特性请参见 [feature](https://focus-creative-games.github.io/luban/generate_code_data/)
+完整特性请参见 [feature](https://focus-creative-games.github.io/luban/traits)
 
 ## 文档
 
@@ -49,7 +49,7 @@ luban统一了游戏配置开发工作流，极大提升了策划和程序的工
 - [版本变更记录](https://focus-creative-games.github.io/luban/changelog/)
 - 支持与联系
   - QQ群: 692890842 （Luban开发交流群）。有使用方面的疑问请及时加QQ群询问，随时有人帮助解决。
-  - 邮箱: taojingjian#gmail.com
+  - 邮箱: luban@focus-creative-games.com
 
 ## excel格式速览
 
