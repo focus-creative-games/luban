@@ -40,7 +40,7 @@ namespace Luban.Job.Db.Defs
 
             ass.AddDbTable(this);
 
-            if ((KeyTType = ass.CreateType(Namespace, KeyType)) == null)
+            if ((KeyTType = ass.CreateType(Namespace, KeyType, false)) == null)
             {
                 throw new Exception($"table:{FullName} key:{KeyType} 类型不合法");
             }
@@ -50,7 +50,7 @@ namespace Luban.Job.Db.Defs
                 throw new Exception($"table:{FullName} key:{KeyTType} 不支持。只支持long与string类型");
             }
 
-            if ((ValueTType = (TBean)ass.CreateType(Namespace, ValueType)) == null)
+            if ((ValueTType = (TBean)ass.CreateType(Namespace, ValueType, false)) == null)
             {
                 throw new Exception($"table:{FullName} value:{ValueType} 类型不合法");
             }

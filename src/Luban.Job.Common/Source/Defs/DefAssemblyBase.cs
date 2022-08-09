@@ -273,7 +273,7 @@ namespace Luban.Job.Common.Defs
             return Types.Values.Where(v => typeof(T).IsAssignableFrom(v.GetType())).Select(v => (T)v).ToList();
         }
 
-        public TType CreateType(string module, string type)
+        public TType CreateType(string module, string type, bool containerElementType)
         {
             type = DefUtil.TrimBracePairs(type);
             int sepIndex = DefUtil.IndexOfBaseTypeEnd(type);
@@ -286,11 +286,11 @@ namespace Luban.Job.Common.Defs
             }
             else
             {
-                return CreateNotContainerType(module, type);
+                return CreateNotContainerType(module, type, containerElementType);
             }
         }
 
-        protected TType CreateNotContainerType(string module, string rawType)
+        protected TType CreateNotContainerType(string module, string rawType, bool containerElementType)
         {
             bool nullable;
             // 去掉 rawType 两侧的匹配的 ()
@@ -302,6 +302,10 @@ namespace Luban.Job.Common.Defs
                 if (!SupportNullable)
                 {
                     throw new Exception($"not support nullable type:'{module}.{type}'");
+                }
+                if (containerElementType)
+                {
+                    throw new Exception($"container element type can't be nullable type:'{module}.{type}'");
                 }
                 nullable = true;
                 type = type.Substring(0, type.Length - 1);
@@ -363,8 +367,8 @@ namespace Luban.Job.Common.Defs
                 throw new ArgumentException($"invalid map element type:'{keyValueType}'");
             }
             return TMap.Create(false, tags,
-                CreateNotContainerType(module, keyValueType.Substring(0, typeSepIndex).Trim()),
-                CreateType(module, keyValueType.Substring(typeSepIndex + 1).Trim()), isTreeMap);
+                CreateNotContainerType(module, keyValueType.Substring(0, typeSepIndex).Trim(), true),
+                CreateType(module, keyValueType.Substring(typeSepIndex + 1).Trim(), true), isTreeMap);
         }
 
         protected TType CreateContainerType(string module, string containerType, Dictionary<string, string> containerTags, string elementType)
@@ -373,12 +377,12 @@ namespace Luban.Job.Common.Defs
             {
                 case "array":
                     {
-                        return TArray.Create(false, containerTags, CreateType(module, elementType));
+                        return TArray.Create(false, containerTags, CreateType(module, elementType, true));
                     }
-                case "list": return TList.Create(false, containerTags, CreateType(module, elementType), true);
+                case "list": return TList.Create(false, containerTags, CreateType(module, elementType, true), true);
                 case "set":
                     {
-                        TType type = CreateType(module, elementType);
+                        TType type = CreateType(module, elementType, true);
                         if (type.IsCollection)
                         {
                             throw new Exception("set的元素不支持容器类型");

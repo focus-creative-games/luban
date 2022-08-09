@@ -92,7 +92,7 @@ namespace Luban.Job.Cfg.Defs
                 }
             }
 
-            if ((ValueTType = (TBean)ass.CreateType(Namespace, ValueType)) == null)
+            if ((ValueTType = (TBean)ass.CreateType(Namespace, ValueType, false)) == null)
             {
                 throw new Exception($"table:'{FullName}' 的 value类型:'{ValueType}' 不存在");
             }

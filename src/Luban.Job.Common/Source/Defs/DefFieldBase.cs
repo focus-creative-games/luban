@@ -117,7 +117,7 @@ namespace Luban.Job.Common.Defs
 
             try
             {
-                CType = AssemblyBase.CreateType(HostType.Namespace, Type);
+                CType = AssemblyBase.CreateType(HostType.Namespace, Type, false);
             }
             catch (Exception e)
             {
