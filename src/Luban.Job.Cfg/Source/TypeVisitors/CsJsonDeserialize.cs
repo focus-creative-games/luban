@@ -1,6 +1,7 @@
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Common.Types;
 using Luban.Job.Common.TypeVisitors;
+using Luban.Job.Common.Utils;
 using System;
 
 namespace Luban.Job.Cfg.TypeVisitors
@@ -80,7 +81,8 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TBean type, string json, string x, int depth)
         {
-            return $"{x} =  {type.CsUnderingDefineType()}.Deserialize{type.Bean.Name}({json});";
+            string src = $"{type.Bean.FullName}.Deserialize{type.Bean.Name}({json});";
+            return $"{x} = {ExternalTypeUtil.CsCloneToExternal(type.Bean.FullName, src)};";
         }
 
         public string Accept(TArray type, string json, string x, int depth)
