@@ -1,5 +1,8 @@
 using Luban.Job.Cfg.DataCreators;
+using Luban.Job.Cfg.DataSources.Excel;
+using Luban.Job.Cfg.Defs;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Luban.Job.Cfg.DataSources
@@ -18,7 +21,35 @@ namespace Luban.Job.Cfg.DataSources
             ".asset",
         };
 
-        public static AbstractDataSource Create(string url, string sheetName, Stream stream)
+        private static string GetSheetParserMode(Dictionary<string, string> options)
+        {
+            if (options != null && options.TryGetValue("parser_mode", out var modeStr))
+            {
+                return modeStr;
+            }
+            //options = DefAssembly.LocalAssebmly.Options;
+            //if (options != null && options.TryGetValue("sheet.parser_mode", out modeStr))
+            //{
+            //    return modeStr;
+            //}
+            return "";
+        }
+
+        private static bool IsColumnMode(string mode)
+        {
+            if (string.IsNullOrEmpty(mode))
+            {
+                return true;
+            }
+            switch(mode.ToLowerInvariant())
+            {
+                case "column": return true;
+                case "stream": return false;
+                default: throw new Exception($"unknown parser_mode:{mode}");
+            }
+        }
+
+        public static AbstractDataSource Create(string url, string sheetName, Dictionary<string, string> options, Stream stream)
         {
             try
             {
@@ -29,7 +60,11 @@ namespace Luban.Job.Cfg.DataSources
                     case "csv":
                     case "xls":
                     case "xlsx":
-                    case "xlsm": source = new Excel.ExcelDataSource(); break;
+                    case "xlsm":
+                    {
+                        source = IsColumnMode(GetSheetParserMode(options)) ? new ExcelRowColumnDataSource() : new ExcelStreamDataSource();
+                        break;
+                    }
                     case "xml": source = new Xml.XmlDataSource(); break;
                     case "lua": source = new Lua.LuaDataSource(); break;
                     case "json": source = new Json.JsonDataSource(); break;

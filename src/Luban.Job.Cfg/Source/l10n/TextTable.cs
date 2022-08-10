@@ -1,4 +1,5 @@
 ﻿using Luban.Job.Cfg.Datas;
+using Luban.Job.Cfg.DataSources.Excel;
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Cfg.RawDefs;
 using Luban.Job.Cfg.Utils;
@@ -65,7 +66,7 @@ namespace Luban.Job.Cfg.l10n
 
         public void LoadFromFile(string fileName, byte[] bytes)
         {
-            var records = DataLoaderUtil.LoadCfgRecords(_textRowType, fileName, null, bytes, true);
+            var records = DataLoaderUtil.LoadCfgRecords(_textRowType, fileName, null, bytes, true, null);
             foreach (var r in records)
             {
                 //s_logger.Info("== read text:{}", r.Data);

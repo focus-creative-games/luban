@@ -236,7 +236,7 @@ namespace Luban.Job.Cfg.Defs
             return mode;
         }
 
-        private readonly List<string> _tableOptionalAttrs = new List<string> { "index", "mode", "group", "patch_input", "comment", "define_from_file", "output" };
+        private readonly List<string> _tableOptionalAttrs = new List<string> { "index", "mode", "group", "patch_input", "comment", "define_from_file", "output", "parser_mode" };
         private readonly List<string> _tableRequireAttrs = new List<string> { "name", "value", "input" };
 
         private void AddTable(string defineFile, XElement e)
@@ -254,11 +254,12 @@ namespace Luban.Job.Cfg.Defs
             string mode = XmlUtil.GetOptionalAttribute(e, "mode");
             string tags = XmlUtil.GetOptionalAttribute(e, "tags");
             string output = XmlUtil.GetOptionalAttribute(e, "output");
-            AddTable(defineFile, name, module, valueType, index, mode, group, comment, defineFromFile, input, patchInput, tags, output);
+            string options = XmlUtil.GetOptionalAttribute(e, "options");
+            AddTable(defineFile, name, module, valueType, index, mode, group, comment, defineFromFile, input, patchInput, tags, output, options);
         }
 
         private void AddTable(string defineFile, string name, string module, string valueType, string index, string mode, string group,
-            string comment, bool defineFromExcel, string input, string patchInput, string tags, string outputFileName)
+            string comment, bool defineFromExcel, string input, string patchInput, string tags, string outputFileName, string options)
         {
             var p = new Table()
             {
@@ -272,6 +273,7 @@ namespace Luban.Job.Cfg.Defs
                 Mode = ConvertMode(defineFile, name, mode, index),
                 Tags = tags,
                 OutputFile = outputFileName,
+                Options = options,
             };
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -318,7 +320,7 @@ namespace Luban.Job.Cfg.Defs
             RawSheetTableDefInfo tableDefInfo;
             if (!ExcelTableValueTypeDefInfoCacheManager.Instance.TryGetTableDefInfo(file.MD5, file.SheetName, out tableDefInfo))
             {
-                var source = new ExcelDataSource();
+                var source = new ExcelRowColumnDataSource();
                 var stream = new MemoryStream(await this.Agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5));
                 tableDefInfo = source.LoadTableDefInfo(file.OriginFile, file.SheetName, stream);
                 ExcelTableValueTypeDefInfoCacheManager.Instance.AddTableDefInfoToCache(file.MD5, file.SheetName, tableDefInfo);
@@ -436,6 +438,7 @@ namespace Luban.Job.Cfg.Defs
                     new CfgField() { Name = "output", Type = "string" },
                     new CfgField() { Name = "patch_input", Type = "string" },
                     new CfgField() { Name = "tags", Type = "string" },
+                    new CfgField() { Name = "options", Type = "string" },
                 }
             })
             {
@@ -448,10 +451,10 @@ namespace Luban.Job.Cfg.Defs
 
             foreach (var file in inputFileInfos)
             {
-                var source = new ExcelDataSource();
+                var source = new ExcelRowColumnDataSource();
                 var bytes = await this.Agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5);
                 (var actualFile, var sheetName) = FileUtil.SplitFileAndSheetName(FileUtil.Standardize(file.OriginFile));
-                var records = DataLoaderUtil.LoadCfgRecords(tableRecordType, actualFile, sheetName, bytes, true);
+                var records = DataLoaderUtil.LoadCfgRecords(tableRecordType, actualFile, sheetName, bytes, true, null);
                 foreach (var r in records)
                 {
                     DBean data = r.Data;
@@ -473,7 +476,8 @@ namespace Luban.Job.Cfg.Defs
                     string patchInput = (data.GetField("patch_input") as DString).Value.Trim();
                     string tags = (data.GetField("tags") as DString).Value.Trim();
                     string outputFile = (data.GetField("output") as DString).Value.Trim();
-                    AddTable(file.OriginFile, name, module, valueType, index, mode, group, comment, isDefineFromExcel, inputFile, patchInput, tags, outputFile);
+                    string options = (data.GetField("options") as DString).Value.Trim();
+                    AddTable(file.OriginFile, name, module, valueType, index, mode, group, comment, isDefineFromExcel, inputFile, patchInput, tags, outputFile, options);
                 };
             }
         }
@@ -547,10 +551,10 @@ namespace Luban.Job.Cfg.Defs
 
             foreach (var file in inputFileInfos)
             {
-                var source = new ExcelDataSource();
+                var source = new ExcelRowColumnDataSource();
                 var bytes = await this.Agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5);
                 (var actualFile, var sheetName) = FileUtil.SplitFileAndSheetName(FileUtil.Standardize(file.OriginFile));
-                var records = DataLoaderUtil.LoadCfgRecords(tableRecordType, actualFile, sheetName, bytes, true);
+                var records = DataLoaderUtil.LoadCfgRecords(tableRecordType, actualFile, sheetName, bytes, true, null);
 
                 foreach (var r in records)
                 {
@@ -659,9 +663,9 @@ namespace Luban.Job.Cfg.Defs
 
             foreach (var file in inputFileInfos)
             {
-                var source = new ExcelDataSource();
+                var source = new ExcelRowColumnDataSource();
                 var bytes = await this.Agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5);
-                var records = DataLoaderUtil.LoadCfgRecords(tableRecordType, file.OriginFile, null, bytes, true);
+                var records = DataLoaderUtil.LoadCfgRecords(tableRecordType, file.OriginFile, null, bytes, true, null);
 
                 foreach (var r in records)
                 {

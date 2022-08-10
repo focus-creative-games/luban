@@ -4,6 +4,7 @@ using Luban.Job.Cfg.Cache;
 using Luban.Job.Cfg.DataCreators;
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.DataSources;
+using Luban.Job.Cfg.DataSources.Excel;
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Common.Types;
 using Luban.Job.Common.Utils;
@@ -95,7 +96,7 @@ namespace Luban.Job.Cfg.Utils
                         file.OriginFile,
                         file.SheetName,
                         await agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5),
-                        IsMultiRecordFile(file.ActualFile, file.SheetName));
+                        IsMultiRecordFile(file.ActualFile, file.SheetName), table.Options);
 
                     FileRecordCacheManager.Ins.AddCacheLoadedRecords(table, file.MD5, file.SheetName, res);
 
@@ -188,10 +189,10 @@ namespace Luban.Job.Cfg.Utils
             await Task.WhenAll(genDataTasks.ToArray());
         }
 
-        public static List<Record> LoadCfgRecords(TBean recordType, string originFile, string sheetName, byte[] content, bool multiRecord)
+        public static List<Record> LoadCfgRecords(TBean recordType, string originFile, string sheetName, byte[] content, bool multiRecord, Dictionary<string, string> options)
         {
             // (md5,sheet,multiRecord,exportTestData) -> (valuetype, List<(datas)>)
-            var dataSource = DataSourceFactory.Create(originFile, sheetName, new MemoryStream(content));
+            var dataSource = DataSourceFactory.Create(originFile, sheetName, options, new MemoryStream(content));
             try
             {
                 if (multiRecord)

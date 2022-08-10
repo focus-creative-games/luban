@@ -62,7 +62,8 @@ namespace Luban.Job.Cfg.Defs
 
         private readonly ConcurrentDictionary<string, TableDataInfo> _recordsByTables = new();
 
-        public Dictionary<string, DefTable> CfgTablesByName = new();
+        public Dictionary<string, DefTable> CfgTablesByName { get; } = new();
+
         public Dictionary<string, DefTable> CfgTablesByFullName { get; } = new Dictionary<string, DefTable>();
 
         public RawTextTable RawTextTable { get; } = new RawTextTable();

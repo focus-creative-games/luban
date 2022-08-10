@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Luban.Job.Cfg.DataCreators
 {
-    class SheetDataCreator : ITypeFuncVisitor<Sheet, TitleRow, DType>
+    class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
     {
         public static SheetDataCreator Ins { get; } = new();
 
@@ -37,7 +37,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
         }
 
-        public DType Accept(TBool type, Sheet sheet, TitleRow row)
+        public DType Accept(TBool type, RowColumnSheet sheet, TitleRow row)
         {
             object x = row.Current;
             if (CheckNull(type.IsNullable, x))
@@ -56,7 +56,7 @@ namespace Luban.Job.Cfg.DataCreators
             return DBool.ValueOf(bool.Parse(x.ToString()));
         }
 
-        public DType Accept(TByte type, Sheet sheet, TitleRow row)
+        public DType Accept(TByte type, RowColumnSheet sheet, TitleRow row)
         {
             object x = row.Current;
             if (CheckNull(type.IsNullable, x))
@@ -70,7 +70,7 @@ namespace Luban.Job.Cfg.DataCreators
             return DByte.ValueOf(byte.Parse(x.ToString()));
         }
 
-        public DType Accept(TShort type, Sheet sheet, TitleRow row)
+        public DType Accept(TShort type, RowColumnSheet sheet, TitleRow row)
         {
             object x = row.Current;
             if (CheckNull(type.IsNullable, x))
@@ -85,7 +85,7 @@ namespace Luban.Job.Cfg.DataCreators
             return DShort.ValueOf(short.Parse(x.ToString()));
         }
 
-        public DType Accept(TFshort type, Sheet sheet, TitleRow row)
+        public DType Accept(TFshort type, RowColumnSheet sheet, TitleRow row)
         {
             object x = row.Current;
             if (CheckNull(type.IsNullable, x))
@@ -99,7 +99,7 @@ namespace Luban.Job.Cfg.DataCreators
             return DFshort.ValueOf(short.Parse(x.ToString()));
         }
 
-        public DType Accept(TInt type, Sheet sheet, TitleRow row)
+        public DType Accept(TInt type, RowColumnSheet sheet, TitleRow row)
         {
             object x = row.Current;
             if (CheckNull(type.IsNullable, x))
@@ -114,7 +114,7 @@ namespace Luban.Job.Cfg.DataCreators
             return DInt.ValueOf(int.Parse(x.ToString()));
         }
 
-        public DType Accept(TFint type, Sheet sheet, TitleRow row)
+        public DType Accept(TFint type, RowColumnSheet sheet, TitleRow row)
         {
             object x = row.Current;
             if (CheckNull(type.IsNullable, x))
@@ -129,7 +129,7 @@ namespace Luban.Job.Cfg.DataCreators
             return DFint.ValueOf(int.Parse(x.ToString()));
         }
 
-        public DType Accept(TLong type, Sheet sheet, TitleRow row)
+        public DType Accept(TLong type, RowColumnSheet sheet, TitleRow row)
         {
             object x = row.Current;
             if (CheckNull(type.IsNullable, x))
@@ -144,7 +144,7 @@ namespace Luban.Job.Cfg.DataCreators
             return DLong.ValueOf(long.Parse(x.ToString()));
         }
 
-        public DType Accept(TFlong type, Sheet sheet, TitleRow row)
+        public DType Accept(TFlong type, RowColumnSheet sheet, TitleRow row)
         {
             object x = row.Current;
             if (CheckNull(type.IsNullable, x))
@@ -159,7 +159,7 @@ namespace Luban.Job.Cfg.DataCreators
             return DFlong.ValueOf(long.Parse(x.ToString()));
         }
 
-        public DType Accept(TFloat type, Sheet sheet, TitleRow row)
+        public DType Accept(TFloat type, RowColumnSheet sheet, TitleRow row)
         {
             object x = row.Current;
             if (CheckNull(type.IsNullable, x))
@@ -174,7 +174,7 @@ namespace Luban.Job.Cfg.DataCreators
             return DFloat.ValueOf(float.Parse(x.ToString()));
         }
 
-        public DType Accept(TDouble type, Sheet sheet, TitleRow row)
+        public DType Accept(TDouble type, RowColumnSheet sheet, TitleRow row)
         {
             object x = row.Current;
             if (CheckNull(type.IsNullable, x))
@@ -189,7 +189,7 @@ namespace Luban.Job.Cfg.DataCreators
             return DDouble.ValueOf(double.Parse(x.ToString()));
         }
 
-        public DType Accept(TEnum type, Sheet sheet, TitleRow row)
+        public DType Accept(TEnum type, RowColumnSheet sheet, TitleRow row)
         {
             object x = row.Current;
             if (CheckNull(type.IsNullable, x))
@@ -227,7 +227,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
         }
 
-        public DType Accept(TString type, Sheet sheet, TitleRow row)
+        public DType Accept(TString type, RowColumnSheet sheet, TitleRow row)
         {
             object x = row.Current;
             if (CheckDefault(x))
@@ -249,12 +249,12 @@ namespace Luban.Job.Cfg.DataCreators
             return DString.ValueOf(s);
         }
 
-        public DType Accept(TBytes type, Sheet sheet, TitleRow row)
+        public DType Accept(TBytes type, RowColumnSheet sheet, TitleRow row)
         {
             throw new NotSupportedException();
         }
 
-        public DType Accept(TText type, Sheet sheet, TitleRow row)
+        public DType Accept(TText type, RowColumnSheet sheet, TitleRow row)
         {
             if (string.IsNullOrEmpty(row.SelfTitle.SepOr(type.GetTag("sep"))))
             {
@@ -279,7 +279,7 @@ namespace Luban.Job.Cfg.DataCreators
             }
         }
 
-        public DType Accept(TDateTime type, Sheet sheet, TitleRow row)
+        public DType Accept(TDateTime type, RowColumnSheet sheet, TitleRow row)
         {
             var d = row.Current;
             if (CheckNull(type.IsNullable, d))
@@ -293,7 +293,7 @@ namespace Luban.Job.Cfg.DataCreators
             return DataUtil.CreateDateTime(d.ToString());
         }
 
-        public DType Accept(TVector2 type, Sheet sheet, TitleRow row)
+        public DType Accept(TVector2 type, RowColumnSheet sheet, TitleRow row)
         {
             var d = row.Current;
             if (CheckNull(type.IsNullable, d))
@@ -308,7 +308,7 @@ namespace Luban.Job.Cfg.DataCreators
             return DataUtil.CreateVector(type, d.ToString());
         }
 
-        public DType Accept(TVector3 type, Sheet sheet, TitleRow row)
+        public DType Accept(TVector3 type, RowColumnSheet sheet, TitleRow row)
         {
             var d = row.Current;
             if (CheckNull(type.IsNullable, d))
@@ -323,7 +323,7 @@ namespace Luban.Job.Cfg.DataCreators
             return DataUtil.CreateVector(type, d.ToString());
         }
 
-        public DType Accept(TVector4 type, Sheet sheet, TitleRow row)
+        public DType Accept(TVector4 type, RowColumnSheet sheet, TitleRow row)
         {
             var d = row.Current;
             if (CheckNull(type.IsNullable, d))
@@ -338,7 +338,7 @@ namespace Luban.Job.Cfg.DataCreators
             return DataUtil.CreateVector(type, d.ToString());
         }
 
-        private List<DType> CreateBeanFields(DefBean bean, Sheet sheet, TitleRow row)
+        private List<DType> CreateBeanFields(DefBean bean, RowColumnSheet sheet, TitleRow row)
         {
             var list = new List<DType>();
             foreach (DefField f in bean.HierarchyFields)
@@ -369,7 +369,7 @@ namespace Luban.Job.Cfg.DataCreators
             return list;
         }
 
-        public DType Accept(TBean type, Sheet sheet, TitleRow row)
+        public DType Accept(TBean type, RowColumnSheet sheet, TitleRow row)
         {
             string sep = row.SelfTitle.Sep;// type.GetBeanAs<DefBean>().Sep;
 
@@ -479,7 +479,7 @@ namespace Luban.Job.Cfg.DataCreators
             return datas;
         }
 
-        private List<DType> ReadCollectionDatas(TType type, TType elementType, Sheet sheet, TitleRow row)
+        private List<DType> ReadCollectionDatas(TType type, TType elementType, RowColumnSheet sheet, TitleRow row)
         {
             if (row.Row != null)
             {
@@ -518,23 +518,23 @@ namespace Luban.Job.Cfg.DataCreators
             }
         }
 
-        public DType Accept(TArray type, Sheet sheet, TitleRow row)
+        public DType Accept(TArray type, RowColumnSheet sheet, TitleRow row)
         {
             //string sep = DataUtil.GetSep(type);
             return new DArray(type, ReadCollectionDatas(type, type.ElementType, sheet, row));
         }
 
-        public DType Accept(TList type, Sheet sheet, TitleRow row)
+        public DType Accept(TList type, RowColumnSheet sheet, TitleRow row)
         {
             return new DList(type, ReadCollectionDatas(type, type.ElementType, sheet, row));
         }
 
-        public DType Accept(TSet type, Sheet sheet, TitleRow row)
+        public DType Accept(TSet type, RowColumnSheet sheet, TitleRow row)
         {
             return new DSet(type, ReadCollectionDatas(type, type.ElementType, sheet, row));
         }
 
-        public DType Accept(TMap type, Sheet sheet, TitleRow row)
+        public DType Accept(TMap type, RowColumnSheet sheet, TitleRow row)
         {
             string sep = row.SelfTitle.Sep;
 
@@ -563,7 +563,7 @@ namespace Luban.Job.Cfg.DataCreators
                 foreach (var e in row.Fields)
                 {
                     var keyData = type.KeyType.Apply(StringDataCreator.Ins, e.Key);
-                    if (Sheet.IsBlankRow(e.Value.Row, e.Value.SelfTitle.FromIndex, e.Value.SelfTitle.ToIndex))
+                    if (RowColumnSheet.IsBlankRow(e.Value.Row, e.Value.SelfTitle.FromIndex, e.Value.SelfTitle.ToIndex))
                     {
                         continue;
                     }

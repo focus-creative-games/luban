@@ -1,3 +1,4 @@
+using Luban.Job.Cfg.DataSources.Excel;
 using System.Collections.Generic;
 
 namespace Luban.Job.Cfg.RawDefs
@@ -33,6 +34,8 @@ namespace Luban.Job.Cfg.RawDefs
         public bool LoadDefineFromFile { get; set; }
 
         public ETableMode Mode { get; set; }
+
+        public string Options { get; set; }
 
         public string Comment { get; set; }
 

@@ -12,7 +12,7 @@ using System.Linq;
 namespace Luban.Job.Cfg.DataSources.Excel
 {
 
-    class Sheet
+    class RowColumnSheet
     {
         private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -22,7 +22,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
         public List<(string Tag, TitleRow Row)> Rows { get; } = new();
 
-        public Sheet(string rawUrl, string name)
+        public RowColumnSheet(string rawUrl, string name)
         {
             this.RawUrl = rawUrl;
             this.Name = name;

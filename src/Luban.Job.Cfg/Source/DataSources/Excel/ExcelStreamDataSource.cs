@@ -10,11 +10,11 @@ using System.IO;
 namespace Luban.Job.Cfg.DataSources.Excel
 {
 
-    class ExcelDataSource : AbstractDataSource
+    class ExcelStreamDataSource : AbstractDataSource
     {
         private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private readonly List<Sheet> _sheets = new List<Sheet>();
+        private readonly List<StreamSheet> _sheets = new List<StreamSheet>();
 
 
         public override void Load(string rawUrl, string sheetName, Stream stream)
@@ -25,7 +25,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
 
             foreach (RawSheet rawSheet in SheetLoadUtil.LoadRawSheets(rawUrl, sheetName, stream))
             {
-                var sheet = new Sheet(rawUrl, sheetName);
+                var sheet = new StreamSheet(rawUrl, sheetName);
                 sheet.Load(rawSheet);
                 _sheets.Add(sheet);
             }
@@ -33,16 +33,6 @@ namespace Luban.Job.Cfg.DataSources.Excel
             if (_sheets.Count == 0)
             {
                 throw new Exception($"excel:{rawUrl} 不包含有效的单元薄(有效单元薄的A0单元格必须是##).");
-            }
-        }
-
-        public void Load(params RawSheet[] rawSheets)
-        {
-            foreach (RawSheet rawSheet in rawSheets)
-            {
-                var sheet = new Sheet("__intern__", rawSheet.TableName);
-                sheet.Load(rawSheet);
-                _sheets.Add(sheet);
             }
         }
 
@@ -58,16 +48,11 @@ namespace Luban.Job.Cfg.DataSources.Excel
             {
                 try
                 {
-                    foreach (var r in sheet.GetRows())
+                    var stream = sheet.Stream;
+                    while(!stream.TryReadEOF())
                     {
-                        TitleRow row = r.Row;
-                        string tagStr = r.Tag;
-                        if (DataUtil.IsIgnoreTag(tagStr))
-                        {
-                            continue;
-                        }
-                        var data = (DBean)type.Apply(SheetDataCreator.Ins, sheet, row);
-                        datas.Add(new Record(data, sheet.RawUrl, DataUtil.ParseTags(tagStr)));
+                        var data = (DBean)type.Apply(ExcelStreamDataCreator.Ins, stream);
+                        datas.Add(new Record(data, sheet.RawUrl, null));
                     }
                 }
                 catch (DataCreateException dce)

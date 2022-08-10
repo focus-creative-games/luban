@@ -75,11 +75,11 @@ namespace Luban.Job.Cfg.DataSources.Excel
             {
                 if (Row != null)
                 {
-                    return Sheet.IsBlankRow(Row, SelfTitle.FromIndex, SelfTitle.ToIndex);
+                    return RowColumnSheet.IsBlankRow(Row, SelfTitle.FromIndex, SelfTitle.ToIndex);
                 }
                 if (Rows != null)
                 {
-                    return Sheet.IsBlankRow(Rows[0], SelfTitle.FromIndex, SelfTitle.ToIndex);
+                    return RowColumnSheet.IsBlankRow(Rows[0], SelfTitle.FromIndex, SelfTitle.ToIndex);
                 }
                 if (Fields != null)
                 {

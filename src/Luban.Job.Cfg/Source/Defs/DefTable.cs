@@ -1,4 +1,5 @@
 using Bright.Collections;
+using Luban.Job.Cfg.DataSources.Excel;
 using Luban.Job.Cfg.RawDefs;
 using Luban.Job.Cfg.TypeVisitors;
 using Luban.Job.Common.Types;
@@ -28,14 +29,34 @@ namespace Luban.Job.Cfg.Defs
             Comment = b.Comment;
             Tags = DefUtil.ParseAttrs(b.Tags);
             _outputFile = b.OutputFile;
+
+            ParseOptions(b.Options);
         }
 
+        private void ParseOptions(string optionsStr)
+        {
+            foreach(var kvStr in optionsStr.Split('|', ';', ','))
+            {
+                if (string.IsNullOrWhiteSpace(kvStr))
+                {
+                    continue;
+                }
+                string[] entry = kvStr.Split('=');
+                if (entry.Length != 2)
+                {
+                    throw new Exception($"table:{FullName} options:'{optionsStr}' invalid");
+                }
+                Options[entry[0]] = entry[1];
+            }
+        }
 
         public string Index { get; private set; }
 
         public string ValueType { get; }
 
         public ETableMode Mode { get; }
+
+        public Dictionary<string, string> Options { get; } = new Dictionary<string, string>();
 
         public bool IsMapTable => Mode == ETableMode.MAP;
 
