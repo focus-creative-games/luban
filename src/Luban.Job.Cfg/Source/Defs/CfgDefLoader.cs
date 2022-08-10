@@ -236,7 +236,7 @@ namespace Luban.Job.Cfg.Defs
             return mode;
         }
 
-        private readonly List<string> _tableOptionalAttrs = new List<string> { "index", "mode", "group", "patch_input", "comment", "define_from_file", "output", "parser_mode" };
+        private readonly List<string> _tableOptionalAttrs = new List<string> { "index", "mode", "group", "patch_input", "comment", "define_from_file", "output", "options" };
         private readonly List<string> _tableRequireAttrs = new List<string> { "name", "value", "input" };
 
         private void AddTable(string defineFile, XElement e)
