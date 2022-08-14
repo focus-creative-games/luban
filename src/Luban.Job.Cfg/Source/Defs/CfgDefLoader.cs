@@ -647,6 +647,7 @@ namespace Luban.Job.Cfg.Defs
                     new CfgField() { Name = "full_name", Type = "string" },
                     new CfgField() {Name =  "parent", Type = "string" },
                     new CfgField() { Name = "sep", Type = "string" },
+                    new CfgField() { Name = "alias", Type = "string" },
                     new CfgField() { Name = "comment", Type = "string" },
                     new CfgField() { Name = "tags", Type = "string" },
                     new CfgField() { Name = "fields", Type = "list,__FieldInfo__" },
@@ -681,6 +682,7 @@ namespace Luban.Job.Cfg.Defs
 
                     string parent = (data.GetField("parent") as DString).Value.Trim();
                     string sep = (data.GetField("sep") as DString).Value.Trim();
+                    string alias = (data.GetField("alias") as DString).Value.Trim();
                     string comment = (data.GetField("comment") as DString).Value.Trim();
                     string tags = (data.GetField("tags") as DString).Value.Trim();
                     DList fields = data.GetField("fields") as DList;
@@ -689,6 +691,7 @@ namespace Luban.Job.Cfg.Defs
                         Name = name,
                         Namespace = module,
                         Sep = sep,
+                        Alias = alias,
                         Comment = comment,
                         Tags = tags,
                         Parent = parent,
