@@ -353,7 +353,7 @@ namespace Luban.Job.Cfg.Defs
 
             foreach (var (name, f) in tableDefInfo.FieldInfos)
             {
-                if (parentBean.Fields.Any(x => x.Name == name && x.Type == f.Type))
+                if (parentBean != null && parentBean.Fields.Any(x => x.Name == name && x.Type == f.Type))
                 {
                     continue;
                 }
