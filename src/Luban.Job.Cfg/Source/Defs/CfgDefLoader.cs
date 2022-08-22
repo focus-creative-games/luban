@@ -326,14 +326,37 @@ namespace Luban.Job.Cfg.Defs
                 ExcelTableValueTypeDefInfoCacheManager.Instance.AddTableDefInfoToCache(file.MD5, file.SheetName, tableDefInfo);
             }
 
-            var ns = TypeUtil.GetNamespace(table.ValueType);
-
+            var (valueType, tags) = DefUtil.ParseType(table.ValueType);
+            var ns = TypeUtil.GetNamespace(valueType);
             string valueTypeNamespace = string.IsNullOrEmpty(ns) ? table.Namespace : ns;
-            string valueTypeName = TypeUtil.GetName(table.ValueType);
+            string valueTypeName = TypeUtil.GetName(valueType);
+            Bean parentBean = null;
+            if (tags.TryGetValue("parent", out string parentType))
+            {
+                var parentNs = TypeUtil.GetNamespace(parentType);
+                string parentNamespace = string.IsNullOrEmpty(parentNs) ? table.Namespace : parentNs;
+                string parentName = TypeUtil.GetName(parentType);
+                parentType = string.Join(".", parentNamespace, parentName);
+                parentBean = _beans.FirstOrDefault(x => x.FullName == parentType);
+            }
+            var cb = new CfgBean() { Namespace = valueTypeNamespace, Name = valueTypeName, Comment = "", Parent = parentType };
+            if (parentBean != null)
+            {
+                foreach (var parentField in parentBean.Fields)
+                {
+                    if (!tableDefInfo.FieldInfos.Any(x => x.Key == parentField.Name && x.Value.Type == parentField.Type))
+                    {
+                        throw new Exception($"table:'{table.Name}' file:{file.OriginFile} title:缺失父类字段：'{parentField.Type} {parentField.Name}'");
+                    }
+                }
+            }
 
-            var cb = new CfgBean() { Namespace = valueTypeNamespace, Name = valueTypeName, Comment = "" };
             foreach (var (name, f) in tableDefInfo.FieldInfos)
             {
+                if (parentBean != null && parentBean.Fields.Any(x => x.Name == name && x.Type == f.Type))
+                {
+                    continue;
+                }
                 var cf = new CfgField() { Name = name, Id = 0 };
 
                 string[] attrs = f.Type.Trim().Split('&').Select(s => s.Trim()).ToArray();
