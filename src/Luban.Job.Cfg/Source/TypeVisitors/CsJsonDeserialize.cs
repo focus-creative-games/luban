@@ -81,7 +81,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TBean type, string json, string x, int depth)
         {
-            string src = $"{type.Bean.FullName}.Deserialize{type.Bean.Name}({json});";
+            string src = $"{type.Bean.FullName}.Deserialize{type.Bean.Name}({json})";
             return $"{x} = {ExternalTypeUtil.CsCloneToExternal(type.Bean.FullName, src)};";
         }
 
