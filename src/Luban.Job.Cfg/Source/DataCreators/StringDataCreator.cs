@@ -158,21 +158,37 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TArray type, string x)
         {
+            if (string.IsNullOrEmpty(x))
+            {
+                return new DArray(type, new System.Collections.Generic.List<DType>());
+            }
             throw new NotSupportedException();
         }
 
         public DType Accept(TList type, string x)
         {
+            if (string.IsNullOrEmpty(x))
+            {
+                return new DList(type, new System.Collections.Generic.List<DType>());
+            }
             throw new NotSupportedException();
         }
 
         public DType Accept(TSet type, string x)
         {
+            if (string.IsNullOrEmpty(x))
+            {
+                return new DSet(type, new System.Collections.Generic.List<DType>());
+            }
             throw new NotSupportedException();
         }
 
         public DType Accept(TMap type, string x)
         {
+            if (string.IsNullOrEmpty(x))
+            {
+                return new DMap(type, new System.Collections.Generic.Dictionary<DType, DType>());
+            }
             throw new NotSupportedException();
         }
 

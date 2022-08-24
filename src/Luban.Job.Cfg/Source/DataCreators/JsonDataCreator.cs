@@ -166,15 +166,13 @@ namespace Luban.Job.Cfg.DataCreators
                 }
                 else if (ass.OutputJsonUseFallback)
                 {
-                    if (f.CType.Fallback == null)
+                    string valueStr = string.Empty;
+                    if (f.CType.Fallback != null)
                     {
-                        fields.Add(null);
+                        valueStr = f.CType.Fallback.ToString();
                     }
-                    else
-                    {
-                        
-                        fields.Add(f.CType.Apply(StringDataCreator.Ins, f.CType.Fallback.ToString()));
-                    }
+
+                    fields.Add(f.CType.Apply(StringDataCreator.Ins, valueStr));
                 }
                 else
                 {
