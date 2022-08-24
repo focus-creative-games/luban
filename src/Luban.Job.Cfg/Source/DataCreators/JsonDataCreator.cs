@@ -164,7 +164,7 @@ namespace Luban.Job.Cfg.DataCreators
                 {
                     fields.Add(null);
                 }
-                else if (ass.OutputJsonUseFallback)
+                else if (f.HasTag("json_use_fallback"))
                 {
                     string valueStr = string.Empty;
                     if (f.CType.Fallback != null)
