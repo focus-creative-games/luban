@@ -13,6 +13,7 @@ namespace Luban.Job.Common.Types
 
         public override string TypeName => "bytes";
 
+        public override object Fallback => Array.Empty<byte>();
         private TBytes(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)
         {
         }

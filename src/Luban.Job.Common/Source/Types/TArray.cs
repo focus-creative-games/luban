@@ -35,6 +35,8 @@ namespace Luban.Job.Common.Types
 
         public override bool IsCollection => true;
 
+        public override object Fallback => null;
+
         public override void PostCompile(DefFieldBase field)
         {
             base.PostCompile(field);

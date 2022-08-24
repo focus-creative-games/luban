@@ -15,6 +15,20 @@ namespace Luban.Job.Common.Types
         }
 
         public DefBeanBase Bean { get; set; }
+        public override object Fallback
+        {
+            get
+            {
+                if (IsNullable)
+                {
+                    return null;
+                }
+                else
+                {
+                    return base.Fallback;
+                }
+            }
+        }
 
         public T GetBeanAs<T>() where T : DefBeanBase => (T)Bean;
 

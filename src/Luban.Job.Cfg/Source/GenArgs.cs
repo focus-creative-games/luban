@@ -46,6 +46,8 @@ namespace Luban.Job.Cfg
 
         [Option("output:exclude_tags", Required = false, HelpText = "export exclude tags. default export all tags")]
         public string OutputExcludeTags { get; set; } = "";
+        [Option("output:json_use_fallback", Required = false, HelpText = "use fallback value if json data source lacks of some fields.")]
+        public bool OutputJsonUseFallback { get; set; } = false;
 
         [Option("template:data:file", Required = false, HelpText = "template name. use with gen_types=data_template")]
         public string TemplateDataFile { get; set; }

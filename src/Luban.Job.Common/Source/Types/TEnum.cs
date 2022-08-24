@@ -16,6 +16,8 @@ namespace Luban.Job.Common.Types
         public override string TypeName => "enum";
 
         public bool IsEnum => true;
+        
+        public override object Fallback => throw new Exception("枚举值不能留空");
 
         public DefEnum DefineEnum { get; }
 

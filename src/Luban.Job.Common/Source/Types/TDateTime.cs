@@ -12,6 +12,7 @@ namespace Luban.Job.Common.Types
         }
 
         public override string TypeName => "datetime";
+        public override object Fallback => new DateTime(0);
 
         private TDateTime(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)
         {

@@ -1,4 +1,5 @@
 using Bright.Collections;
+using Google.Protobuf.WellKnownTypes;
 using Luban.Common.Utils;
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.Defs;
@@ -162,6 +163,18 @@ namespace Luban.Job.Cfg.DataCreators
                 else if (f.CType.IsNullable)
                 {
                     fields.Add(null);
+                }
+                else if (ass.OutputJsonUseFallback)
+                {
+                    if (f.CType.Fallback == null)
+                    {
+                        fields.Add(null);
+                    }
+                    else
+                    {
+                        
+                        fields.Add(f.CType.Apply(StringDataCreator.Ins, f.CType.Fallback.ToString()));
+                    }
                 }
                 else
                 {

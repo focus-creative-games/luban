@@ -11,6 +11,7 @@ namespace Luban.Job.Common.Types
         }
 
         public override string TypeName => "short";
+        public override object Fallback => (short)0;
 
         private TShort(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)
         {

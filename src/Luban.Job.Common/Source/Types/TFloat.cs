@@ -13,6 +13,7 @@ namespace Luban.Job.Common.Types
         }
 
         public override string TypeName => "float";
+        public override object Fallback => 0f;
 
         private TFloat(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)
         {

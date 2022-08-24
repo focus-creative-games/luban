@@ -11,6 +11,7 @@ namespace Luban.Job.Common.Types
         }
 
         public override string TypeName => "string";
+        public override object Fallback => string.Empty;
 
         private TString(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)
         {

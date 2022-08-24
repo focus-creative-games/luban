@@ -15,6 +15,7 @@ namespace Luban.Job.Common.Types
         public override string TypeName => "set";
 
         public override TType ElementType { get; }
+        public override object Fallback => null;
 
         public bool IsOrderSet { get; }
 

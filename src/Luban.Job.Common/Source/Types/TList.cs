@@ -13,6 +13,7 @@ namespace Luban.Job.Common.Types
         }
 
         public override string TypeName => "list";
+        public override object Fallback => null;
 
         public override TType ElementType { get; }
 

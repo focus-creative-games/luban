@@ -11,6 +11,7 @@ namespace Luban.Job.Common.Types
         }
 
         public override string TypeName => "int";
+        public override object Fallback => 0;
 
         private TInt(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)
         {

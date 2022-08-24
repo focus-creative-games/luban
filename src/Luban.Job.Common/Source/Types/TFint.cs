@@ -15,6 +15,7 @@ namespace Luban.Job.Common.Types
         }
 
         public override string TypeName => "fint";
+        public override object Fallback => 0;
 
         public override bool TryParseFrom(string s)
         {

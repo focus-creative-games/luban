@@ -32,6 +32,7 @@ namespace Luban.Job.Cfg.Defs
         public TimeZoneInfo TimeZone { get; }
 
         public bool OutputCompactJson { get; set; }
+        public bool OutputJsonUseFallback { get; set; }
 
         public string TableManagerName => CfgTargetService.Manager;
 
@@ -233,6 +234,7 @@ namespace Luban.Job.Cfg.Defs
             LoadCommon(defines, agent, args);
 
             OutputCompactJson = args.OutputDataCompactJson;
+            OutputJsonUseFallback = args.OutputJsonUseFallback;
 
             SupportDatetimeType = true;
 

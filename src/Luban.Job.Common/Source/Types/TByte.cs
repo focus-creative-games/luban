@@ -11,6 +11,7 @@ namespace Luban.Job.Common.Types
         }
 
         public override string TypeName => "byte";
+        public override object Fallback => 0;
 
         private TByte(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)
         {

@@ -15,6 +15,7 @@ namespace Luban.Job.Common.Types
         }
 
         public bool IsBool => true;
+        public override object Fallback => false;
 
         public override string TypeName => "bool";
 

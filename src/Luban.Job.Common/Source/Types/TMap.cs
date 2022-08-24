@@ -13,6 +13,7 @@ namespace Luban.Job.Common.Types
         }
 
         public override string TypeName => "map";
+        public override object Fallback => null;
 
         public bool IsMap => true;
 

@@ -12,6 +12,7 @@ namespace Luban.Job.Common.Types
 
         public override string TypeName => "long";
 
+        public override object Fallback => 0L;
         public bool IsBigInt { get; }
 
         private TLong(bool isNullable, Dictionary<string, string> tags, bool isBigInt) : base(isNullable, tags)

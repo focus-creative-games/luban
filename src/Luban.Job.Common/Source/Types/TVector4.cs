@@ -1,6 +1,7 @@
 using Luban.Job.Common.TypeVisitors;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace Luban.Job.Common.Types
 {
@@ -12,6 +13,7 @@ namespace Luban.Job.Common.Types
         }
 
         public override string TypeName => "vector4";
+        public override object Fallback => Vector4.Zero;
 
         private TVector4(bool isNullable, Dictionary<string, string> tags) : base(isNullable, tags)
         {
