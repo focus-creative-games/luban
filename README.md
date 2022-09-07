@@ -44,6 +44,7 @@ luban统一了游戏配置开发工作流，极大提升了策划和程序的工
 ## 文档
 
 - [快速上手](https://focus-creative-games.github.io/luban/start_up/)
+- [技术论坛](https://forum.focus-creative-games.com/topics)
 - [Document](https://focus-creative-games.github.io/luban/) ，比较完善，有使用疑问，请先查看此文档。
 - **示例项目** ([github](https://github.com/focus-creative-games/luban_examples)) ([gitee](https://gitee.com/focus-creative-games/luban_examples))
 - [版本变更记录](https://focus-creative-games.github.io/luban/changelog/)

@@ -8,57 +8,57 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TBool type)
         {
-            return "bool";
+            return "boolean";
         }
 
         public string Accept(TByte type)
         {
-            return "byte";
+            return "integer";
         }
 
         public string Accept(TShort type)
         {
-            return "short";
+            return "integer";
         }
 
         public string Accept(TFshort type)
         {
-            return "short";
+            return "integer";
         }
 
         public string Accept(TInt type)
         {
-            return "int";
+            return "integer";
         }
 
         public string Accept(TFint type)
         {
-            return "int";
+            return "integer";
         }
 
         public string Accept(TLong type)
         {
-            return "long";
+            return "integer";
         }
 
         public string Accept(TFlong type)
         {
-            return "long";
+            return "integer";
         }
 
         public string Accept(TFloat type)
         {
-            return "float";
+            return "number";
         }
 
         public string Accept(TDouble type)
         {
-            return "double";
+            return "number";
         }
 
         public string Accept(TEnum type)
         {
-            return type.DefineEnum.FullName;
+            return "integer";
         }
 
         public string Accept(TString type)
@@ -103,22 +103,22 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TVector2 type)
         {
-            return "vector2";
+            return "{x:number,y:number}";
         }
 
         public string Accept(TVector3 type)
         {
-            return "vector3";
+            return "{x:number,y:number,z:number}";
         }
 
         public string Accept(TVector4 type)
         {
-            return "vector4";
+            return "{x:number,y:number,z:number,w:number}";
         }
 
         public string Accept(TDateTime type)
         {
-            return "int";
+            return "integer";
         }
     }
 }
