@@ -10,8 +10,7 @@ using SimpleJSON;
     fields = x.fields
 }}
 
-namespace {{x.namespace_with_editor_top_module}}
-{
+{{cs_start_name_space_grace x.namespace_with_editor_top_module}}
 
 {{~if x.comment != '' ~}}
 /// <summary>
@@ -108,3 +107,5 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
     {{~end~}}
 }
 }
+
+{{cs_end_name_space_grace x.namespace_with_editor_top_module}}

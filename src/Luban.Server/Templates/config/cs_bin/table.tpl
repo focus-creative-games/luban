@@ -1,8 +1,8 @@
 using Bright.Serialization;
 using System.Collections.Generic;
 
-namespace {{x.namespace_with_top_module}}
-{
+
+{{cs_start_name_space_grace x.namespace_with_top_module}}
    {{ 
         name = x.name
         key_type = x.key_ttype
@@ -170,4 +170,4 @@ public partial class {{name}}
     partial void PostResolve();
 }
 
-}
+{{cs_end_name_space_grace x.namespace_with_top_module}}
