@@ -191,23 +191,80 @@ namespace Luban.Job.Cfg.DataCreators
 
         public DType Accept(TEnum type, RowColumnSheet sheet, TitleRow row)
         {
-            object x = row.Current;
-            if (CheckNull(type.IsNullable, x))
+            if (row.Row != null)
             {
-                return null;
+                object x = row.Current;
+                if (CheckNull(type.IsNullable, x))
+                {
+                    return null;
+                }
+                if (CheckDefault(x))
+                {
+                    if (type.DefineEnum.IsFlags || type.DefineEnum.HasZeroValueItem)
+                    {
+                        return new DEnum(type, "0");
+                    }
+                    else
+                    {
+                        throw new InvalidExcelDataException($"枚举类:'{type.DefineEnum.FullName}' 没有value为0的枚举项, 不支持默认值");
+                    }
+                }
+                return new DEnum(type, x.ToString());
             }
-            if (CheckDefault(x))
+            else if (row.Rows != null)
             {
-                if (type.DefineEnum.HasZeroValueItem)
-                {
-                    return new DEnum(type, "0");
-                }
-                else
-                {
-                    throw new InvalidExcelDataException($"枚举类:'{type.DefineEnum.FullName}' 没有value为0的枚举项, 不支持默认值");
-                }
+                throw new Exception($"{type.DefineEnum.FullName} 不支持多行格式");
             }
-            return new DEnum(type, x.ToString());
+            else if (row.Fields != null)
+            {
+                //throw new Exception($"array 不支持 子字段. 忘记将字段设为多行模式?  {row.SelfTitle.Name} => *{row.SelfTitle.Name}");
+
+                var items = new List<string>();
+                var sortedFields = row.Fields.Values.ToList();
+                sortedFields.Sort((a, b) => a.SelfTitle.FromIndex - b.SelfTitle.FromIndex);
+                foreach (var field in sortedFields)
+                {
+                    string itemName = field.SelfTitle.Name;
+                    if (!type.DefineEnum.TryValueByNameOrAlias(itemName, out _))
+                    {
+                        throw new Exception($"列名:{itemName} 不是枚举类型'{type.DefineEnum.FullName}'的有效枚举项");
+                    }
+                    if (field.IsBlank)
+                    {
+                        continue;
+                    }
+                    string cur = field.Current.ToString().ToLower();
+                    if (cur != "0" && cur != "false")
+                    {
+                        items.Add(itemName);
+                    }
+                }
+                if (items.Count == 0)
+                {
+                    if (type.IsNullable)
+                    {
+                        return null;
+                    }
+
+                    if (type.DefineEnum.IsFlags || type.DefineEnum.HasZeroValueItem)
+                    {
+                        return new DEnum(type, "0");
+                    }
+                    else
+                    {
+                        throw new InvalidExcelDataException($"枚举类:'{type.DefineEnum.FullName}' 没有value为0的枚举项, 不支持默认值");
+                    }
+                }
+                return new DEnum(type, string.Join('|', items));
+            }
+            else if (row.Elements != null)
+            {
+                throw new Exception($"{type.DefineEnum.FullName} 不支持多行子字段格式");
+            }
+            else
+            {
+                throw new Exception();
+            }
         }
 
 
