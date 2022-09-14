@@ -73,7 +73,7 @@ namespace Luban.Job.Cfg.Defs
         }
 
         public bool HasRecursiveRef => (CType is TBean tb && HostType.AssemblyBase.GetExternalTypeMapper(tb) == null)
-            || CType.ElementType?.IsBean == true;
+            || (CType.ElementType is TBean eb && HostType.AssemblyBase.GetExternalTypeMapper(eb) == null);
 
         public string CsRefTypeName => RefType.Apply(CsDefineTypeName.Ins);
 
