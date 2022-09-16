@@ -320,7 +320,7 @@ namespace Luban.Job.Cfg.Utils
             }
             else
             {
-                return $"namespace {np}\r\n{{";
+                return $"namespace {np}\n{{";
             }
         }
         public static string CsEndNameSpaceGrace(string np)

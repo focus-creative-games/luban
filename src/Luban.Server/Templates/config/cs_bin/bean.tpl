@@ -1,4 +1,4 @@
-using Bright.Serialization;
+ï»¿using Bright.Serialization;
 using System.Collections.Generic;
 {{
     name = x.name
@@ -8,7 +8,6 @@ using System.Collections.Generic;
 }}
 
 {{cs_start_name_space_grace x.namespace_with_top_module}}
-//ÃüÃû¿Õ¼ä{{x.namespace_with_top_module}}
 {{~if x.comment != '' ~}}
 /// <summary>
 /// {{x.escape_comment}}
