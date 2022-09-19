@@ -1,4 +1,4 @@
-using Bright.Serialization;
+﻿using Bright.Serialization;
 using System.Collections.Generic;
 {{
     name = x.name
@@ -7,10 +7,7 @@ using System.Collections.Generic;
     hierarchy_export_fields = x.hierarchy_export_fields
 }}
 
-
-namespace {{x.namespace_with_top_module}}
-{
-
+{{cs_start_name_space_grace x.namespace_with_top_module}}
 {{~if x.comment != '' ~}}
 /// <summary>
 /// {{x.escape_comment}}
@@ -115,4 +112,4 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
     partial void PostResolve();
 }
 
-}
+{{cs_end_name_space_grace x.namespace_with_top_module}}

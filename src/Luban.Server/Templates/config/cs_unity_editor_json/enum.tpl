@@ -5,9 +5,7 @@
     itemType = 'Bright.Config.EditorEnumItemInfo'
 ~}}
 
-namespace {{x.namespace_with_editor_top_module}}
-{
-
+{{cs_start_name_space_grace x.namespace_with_editor_top_module}}
 {{~if comment != '' ~}}
     /// <summary>
     /// {{comment | html.escape}}
@@ -58,4 +56,5 @@ namespace {{x.namespace_with_editor_top_module}}
             return __items.Find(c => c.Value == value);
         }
     }
-}
+
+{{cs_end_name_space_grace x.namespace_with_editor_top_module}}

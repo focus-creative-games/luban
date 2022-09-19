@@ -5,8 +5,8 @@
     items = x.items
 ~}}
 
-namespace {{namespace_with_top_module}}
-{
+
+{{cs_start_name_space_grace x.namespace_with_top_module}} 
 {{~if comment != '' ~}}
     /// <summary>
     /// {{comment | html.escape}}
@@ -26,4 +26,5 @@ namespace {{namespace_with_top_module}}
         {{item.name}} = {{item.value}},
         {{~end~}}
     }
-}
+
+{{cs_end_name_space_grace x.namespace_with_top_module}} 
