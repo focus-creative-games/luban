@@ -5,8 +5,8 @@ using SimpleJSON;
     namespace = x.namespace
     tables = x.tables
 }}
-namespace {{namespace}}
-{
+
+{{cs_start_name_space_grace x.namespace}} 
    
 public sealed partial class {{name}}
 {
@@ -45,4 +45,4 @@ public sealed partial class {{name}}
     partial void PostResolve();
 }
 
-}
+{{cs_end_name_space_grace x.namespace}}

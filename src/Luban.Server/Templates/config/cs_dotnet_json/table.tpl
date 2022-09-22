@@ -10,8 +10,8 @@ using System.Text.Json;
     value_type =  x.value_ttype
 }}
 
-namespace {{x.namespace_with_top_module}}
-{
+{{cs_start_name_space_grace x.namespace_with_top_module}}
+
 
 {{~if x.comment != '' ~}}
 /// <summary>
@@ -170,4 +170,4 @@ public sealed partial class {{name}}
     partial void PostResolve();
 }
 
-}
+{{cs_end_name_space_grace x.namespace_with_top_module}}
