@@ -26,6 +26,10 @@ namespace Luban.Job.Common.Types
                 Dimension = (ElementType as TArray).Dimension + 1;
                 FinalElementType = (ElementType as TArray).FinalElementType;
             }
+            else
+            {
+                FinalElementType = elementType;
+            }
         }
 
         public override bool TryParseFrom(string s)

@@ -10,8 +10,7 @@ using System.Text.Json;
     hierarchy_export_fields = x.hierarchy_export_fields
 }}
 
-namespace {{x.namespace_with_top_module}}
-{
+{{cs_start_name_space_grace x.namespace_with_top_module}}
 
 {{~if x.comment != '' ~}}
 /// <summary>
@@ -124,4 +123,4 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
     partial void PostInit();
     partial void PostResolve();
 }
-}
+{{cs_end_name_space_grace x.namespace_with_top_module}}

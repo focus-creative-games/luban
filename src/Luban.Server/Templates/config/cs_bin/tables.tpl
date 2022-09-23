@@ -7,7 +7,7 @@ using Bright.Serialization;
 
 }}
 
-{{cs_start_name_space_grace x.namespace_with_top_module}} 
+{{cs_start_name_space_grace x.namespace}} 
 public partial class {{name}}
 {
     {{~for table in tables ~}}
@@ -45,4 +45,4 @@ public partial class {{name}}
     partial void PostResolve();
 }
 
-{{cs_end_name_space_grace x.namespace_with_top_module}}
+{{cs_end_name_space_grace x.namespace}}
