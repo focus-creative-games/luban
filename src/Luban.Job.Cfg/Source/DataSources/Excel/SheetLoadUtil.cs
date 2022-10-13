@@ -88,7 +88,6 @@ namespace Luban.Job.Cfg.DataSources.Excel
             "comment",
             "column",
             "group",
-            "groups",
         };
 
         private const char s_sep = '#';
@@ -454,7 +453,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
         }
         private static bool IsGroupRow(List<Cell> row)
         {
-            return IsRowTagEqual(row, "##group") || IsRowTagEqual(row, "##groups");
+            return IsRowTagEqual(row, "##group");
         }
 
         private static bool IsHeaderRow(List<Cell> row)
