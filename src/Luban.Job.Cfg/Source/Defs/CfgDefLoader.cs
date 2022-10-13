@@ -367,9 +367,7 @@ namespace Luban.Job.Cfg.Defs
                 }
 
                 cf.Comment = f.Desc;
-
                 cf.Type = attrs[0];
-
                 for (int i = 1; i < attrs.Length; i++)
                 {
                     var pair = attrs[i].Split('=', 2);
@@ -409,6 +407,11 @@ namespace Luban.Job.Cfg.Defs
                             throw new Exception($"table:'{table.Name}' file:{file.OriginFile} title:'{name}' attr:'{attrs[i]}' is invalid!");
                         }
                     }
+                }
+
+                if (!string.IsNullOrEmpty(f.Groups))
+                {
+                    cf.Groups = f.Groups.Split(',').Select(s => s.Trim()).Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
                 }
 
                 cb.Fields.Add(cf);

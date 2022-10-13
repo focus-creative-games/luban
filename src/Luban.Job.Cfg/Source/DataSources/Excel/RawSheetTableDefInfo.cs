@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DocumentFormat.OpenXml.EMMA;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
         public string Type { get; set; }
 
         public string Desc { get; set; }
+        public string Groups { get; set; }
     }
 
     class RawSheetTableDefInfo

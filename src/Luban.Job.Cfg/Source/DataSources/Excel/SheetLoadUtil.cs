@@ -87,6 +87,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
             "desc",
             "comment",
             "column",
+            "group",
         };
 
         private const char s_sep = '#';
@@ -450,6 +451,10 @@ namespace Luban.Job.Cfg.DataSources.Excel
         {
             return IsRowTagEqual(row, "##type");
         }
+        private static bool IsGroupRow(List<Cell> row)
+        {
+            return IsRowTagEqual(row, "##group");
+        }
 
         private static bool IsHeaderRow(List<Cell> row)
         {
@@ -577,7 +582,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
             {
                 descRow = cells.Count > 1 ? cells.Skip(1).FirstOrDefault(row => IsRowTagEqual(row, "##")) : null;
             }
-
+            List<Cell> groupRow = cells.Find(row => IsGroupRow(row));
             var fields = new Dictionary<string, FieldInfo>();
             foreach (var subTitle in title.SubTitleList)
             {
@@ -617,6 +622,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
                     Name = subTitle.Name,
                     Tags = subTitle.Tags,
                     Type = typeRow[subTitle.FromIndex].Value?.ToString() ?? "",
+                    Groups = groupRow?[subTitle.FromIndex].Value?.ToString() ?? "",
                     Desc = desc,
                 });
             }
