@@ -106,6 +106,5 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
 
     {{~end~}}
 }
-}
 
 {{cs_end_name_space_grace x.namespace_with_editor_top_module}}
