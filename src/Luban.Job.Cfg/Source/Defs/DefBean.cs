@@ -23,6 +23,7 @@ namespace Luban.Job.Cfg.Defs
         public const string LUA_TYPE_NAME_KEY = "_type_";
 
         public const string EXCEL_TYPE_NAME_KEY = "$type";
+        public const string EXCEL_VALUE_NAME_KEY = "$value";
 
         public string JsonTypeNameKey => JSON_TYPE_NAME_KEY;
 
