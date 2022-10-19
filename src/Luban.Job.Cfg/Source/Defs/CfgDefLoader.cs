@@ -692,7 +692,7 @@ namespace Luban.Job.Cfg.Defs
             {
                 var source = new ExcelRowColumnDataSource();
                 var bytes = await this.Agent.GetFromCacheOrReadAllBytesAsync(file.ActualFile, file.MD5);
-                var records = DataLoaderUtil.LoadCfgRecords(tableRecordType, file.OriginFile, null, bytes, true, null);
+                var records = DataLoaderUtil.LoadCfgRecords(tableRecordType, file.OriginFile, file.SheetName, bytes, true, null);
 
                 foreach (var r in records)
                 {
