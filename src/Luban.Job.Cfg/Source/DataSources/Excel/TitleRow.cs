@@ -104,19 +104,6 @@ namespace Luban.Job.Cfg.DataSources.Excel
                 return new ExcelStream(Row, SelfTitle.FromIndex, SelfTitle.ToIndex, sep, SelfTitle.Default);
             }
         }
-        
-        public ExcelStream AsTypeValueStream(string sep)
-        {
-            if (string.IsNullOrEmpty(sep))
-            {
-                return new ExcelStream(Row, SelfTitle.FromIndex + 1, SelfTitle.ToIndex, "", SelfTitle.Default);
-            }
-            else
-            {
-                return new ExcelStream(Row, SelfTitle.FromIndex + 1, SelfTitle.ToIndex, sep, SelfTitle.Default);
-            }
-        }
-
 
         public bool HasSubFields => Fields != null || Elements != null;
 
