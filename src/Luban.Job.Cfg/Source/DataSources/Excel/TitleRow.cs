@@ -105,7 +105,6 @@ namespace Luban.Job.Cfg.DataSources.Excel
             }
         }
 
-
         public bool HasSubFields => Fields != null || Elements != null;
 
         public TitleRow(Title selfTitle, List<Cell> row)
