@@ -429,7 +429,6 @@ namespace Luban.Job.Cfg.DataCreators
         public DType Accept(TBean type, RowColumnSheet sheet, TitleRow row)
         {
             string sep = row.SelfTitle.Sep;// type.GetBeanAs<DefBean>().Sep;
-
             if (row.Row != null)
             {
                 var s = row.AsStream(sep);
@@ -460,6 +459,8 @@ namespace Luban.Job.Cfg.DataCreators
                         throw new Exception($"type:'{originBean.FullName}' 是多态类型,需要定义'{DefBean.EXCEL_TYPE_NAME_KEY}'列来指定具体子类型");
                     }
                     TitleRow valueTitle = row.GetSubTitleNamedRow(DefBean.EXCEL_VALUE_NAME_KEY);
+                    sep += valueTitle.SelfTitle.Sep;
+                    sep += type.GetTag("sep");
                     string subType = typeTitle.Current?.ToString()?.Trim();
                     if (subType == null || subType == DefBean.BEAN_NULL_STR)
                     {
