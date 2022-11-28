@@ -67,33 +67,33 @@ namespace Luban.Job.Cfg
                     }
                     if (genTypes.Contains("data_resources") && string.IsNullOrWhiteSpace(options.OutputDataResourceListFile))
                     {
-                        errMsg = "--output_data_resource_list_file missing";
+                        errMsg = "--output:data:resource_list_file missing";
                         return false;
                     }
-                    if (genTypes.Contains("output_data_json_monolithic_file") && string.IsNullOrWhiteSpace(options.OutputDataJsonMonolithicFile))
+                    if (genTypes.Contains("data_json_monolithic") && string.IsNullOrWhiteSpace(options.OutputDataJsonMonolithicFile))
                     {
-                        errMsg = "--output_data_json_monolithic_file missing";
+                        errMsg = "--output:data:json_monolithic_file missing";
                         return false;
                     }
 
                     if (string.IsNullOrWhiteSpace(options.L10nInputTextTableFiles) ^ string.IsNullOrWhiteSpace(options.L10nOutputNotTranslatedTextFile))
                     {
-                        errMsg = "--input_l10n_text_files must be provided with --output_l10n_not_translated_text_file";
+                        errMsg = "--l10n:input_text_files should be used with --l10n:output_not_translated_text_file";
                         return false;
                     }
                     if (genTypes.Contains("data_template") ^ !string.IsNullOrWhiteSpace(options.TemplateDataFile))
                     {
-                        errMsg = "gen_types data_template should use with --template:data:file";
+                        errMsg = "gen_types data_template should be used with --template:data:file";
                         return false;
                     }
                     if (genTypes.Contains("convert_template") ^ !string.IsNullOrWhiteSpace(options.TemplateConvertFile))
                     {
-                        errMsg = "gen_types convert_template should use with --template:convert:file";
+                        errMsg = "gen_types convert_template should be used with --template:convert:file";
                         return false;
                     }
                     if (genTypes.Contains("code_template") ^ !string.IsNullOrWhiteSpace(options.TemplateCodeDir))
                     {
-                        errMsg = "gen_types code_template should use with --template:code:dir";
+                        errMsg = "gen_types code_template should be used with --template:code:dir";
                         return false;
                     }
                 }

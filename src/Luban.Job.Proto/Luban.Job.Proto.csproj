@@ -9,12 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Source\TypeVisitors\**" />
-    <EmbeddedResource Remove="Source\TypeVisitors\**" />
-    <None Remove="Source\TypeVisitors\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="..\..\README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>

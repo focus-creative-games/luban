@@ -5,6 +5,7 @@ using Luban.Job.Common.Types;
 using Luban.Job.Common.TypeVisitors;
 using System;
 using System.Linq;
+using JavaDeserializeVisitor = Luban.Job.Cfg.TypeVisitors.JavaDeserializeVisitor;
 
 namespace Luban.Job.Cfg.Utils
 {
