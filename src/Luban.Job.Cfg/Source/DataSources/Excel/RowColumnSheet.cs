@@ -42,7 +42,7 @@ namespace Luban.Job.Cfg.DataSources.Excel
             {
                 foreach (var row in cells)
                 {
-                    if (IsBlankRow(row, title.FromIndex, title.ToIndex))
+                    if (IsBlankRow(row, title))
                     {
                         continue;
                     }
@@ -186,6 +186,15 @@ namespace Luban.Job.Cfg.DataSources.Excel
         public IEnumerable<(string Tag, TitleRow Row)> GetRows()
         {
             return Rows;
+        }
+
+        public static bool IsBlankRow(List<Cell> row, Title title)
+        {
+            if (title.SubTitleList.Count == 0)
+            {
+                return IsBlankRow(row, title.FromIndex, title.ToIndex);
+            }
+            return title.SubTitleList.All(t => IsBlankRow(row, t));
         }
 
         public static bool IsBlankRow(List<Cell> row, int fromIndex, int toIndex)
