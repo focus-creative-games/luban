@@ -14,7 +14,7 @@ namespace Luban.Common.Utils
 
         public static string GetApplicationDirectory()
         {
-            return Path.GetDirectoryName(System.Reflection.Assembly.GetCallingAssembly().Location);
+            return AppContext.BaseDirectory;
         }
 
         public static string GetPathRelateApplicationDirectory(string relatePath)
