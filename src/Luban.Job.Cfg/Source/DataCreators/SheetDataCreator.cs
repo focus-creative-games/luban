@@ -52,6 +52,11 @@ namespace Luban.Job.Cfg.DataCreators
             if (x is bool v)
             {
                 return DBool.ValueOf(v);
+            }            
+            //C#的Parse和Convert都不支持直接把字符串"0"和"1"转换成bool类型，所以就先转换成double然后再Conver.ToBoolean
+            if (double.TryParse(x.ToString(), out var doubleValue))
+            {
+                return DBool.ValueOf(Convert.ToBoolean(doubleValue));
             }
             return DBool.ValueOf(bool.Parse(x.ToString()));
         }
