@@ -1,4 +1,5 @@
 using Luban.Common.Utils;
+using Luban.Job.Cfg.DataCreators;
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.DataSources;
 using Luban.Job.Cfg.Defs;
@@ -255,6 +256,25 @@ namespace Luban.Job.Cfg.Utils
                 throw new Exception($"module:'{bean.Namespace}' type:'{subType}' 是抽象类. 不能创建实例");
             }
             return defType;
+        }
+
+        public static bool ParseExcelBool(string s)
+        {
+            s = s.ToLower().Trim();
+            switch (s)
+            {
+                case "true":
+                case "是":
+                case "1":
+                case "y":
+                case "yes": return true;
+                case "false":
+                case "否":
+                case "0":
+                case "n":
+                case "no": return false;
+                default: throw new InvalidExcelDataException($"{s} 不是 bool 类型的值 (true|是|1|y|yes 或 false|否|0|n|no)");
+            }
         }
 
         //public static string Data2String(DType data)

@@ -53,7 +53,7 @@ namespace Luban.Job.Cfg.DataCreators
             {
                 return DBool.ValueOf(v);
             }
-            return DBool.ValueOf(bool.Parse(x.ToString()));
+            return DBool.ValueOf(DataUtil.ParseExcelBool(x.ToString()));
         }
 
         public DType Accept(TByte type, RowColumnSheet sheet, TitleRow row)

@@ -29,14 +29,7 @@ namespace Luban.Job.Cfg.DataCreators
                 return b;
             }
             var s = x.ToString().ToLower().Trim();
-            switch (s)
-            {
-                case "true":
-                case "是": return true;
-                case "false":
-                case "否": return false;
-                default: throw new InvalidExcelDataException($"{s} 不是 bool 类型的值 (true 或 false)");
-            }
+            return DataUtil.ParseExcelBool(s);
         }
 
         public DType Accept(TBool type, ExcelStream x)
