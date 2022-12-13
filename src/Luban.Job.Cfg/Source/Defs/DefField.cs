@@ -63,8 +63,9 @@ namespace Luban.Job.Cfg.Defs
                 {
                     return Ref.GenRef;
                 }
-                // 特殊处理, 目前只有c#支持.而这个属性已经被多种语言模板引用了，故单独处理一下
-                if (DefAssemblyBase.LocalAssebmly.CurrentLanguage != Common.ELanguage.CS)
+                // 特殊处理, 目前只有c#和java支持.而这个属性已经被多种语言模板引用了，故单独处理一下
+                if (DefAssemblyBase.LocalAssebmly.CurrentLanguage != Common.ELanguage.CS
+                    && DefAssemblyBase.LocalAssebmly.CurrentLanguage != Common.ELanguage.JAVA)
                 {
                     return false;
                 }
@@ -109,8 +110,18 @@ namespace Luban.Job.Cfg.Defs
         {
             get
             {
-                var table = Assembly.GetCfgTable(Ref.FirstTable);
-                return $"{table.ValueTType.Apply(JavaDefineTypeName.Ins)} {RefVarName};";
+                if (Ref != null)
+                {
+                    return $"{RefType.Apply(JavaDefineTypeName.Ins)} {RefVarName};";
+                }
+                else if (ElementRef != null)
+                {
+                    return $"{ElementRefType.Apply(JavaDefineTypeName.Ins)} {RefVarName};";
+                }
+                else
+                {
+                    throw new NotSupportedException();
+                }
             }
         }
 

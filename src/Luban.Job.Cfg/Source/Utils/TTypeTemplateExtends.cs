@@ -86,16 +86,16 @@ namespace Luban.Job.Cfg.Utils
                 {
                     case TArray:
                     {
-                        return $@"{{ int __n = {name}.Length; {table.FullName} __table = ({table.FullName})_tables[""{ tableName}""]; this.{refVarName} = new {table.ValueTType.Apply(CsDefineTypeName.Ins)}[__n]; for(int i = 0 ; i < __n ; i++) {{ this.{refVarName}[i] =  __table.GetOrDefault({name}[i]); }} }}";
+                        return $@"{{ int __n = {name}.Length; {table.FullName} __table = ({table.FullName})_tables[""{tableName}""]; this.{refVarName} = new {table.ValueTType.Apply(CsDefineTypeName.Ins)}[__n]; for(int i = 0 ; i < __n ; i++) {{ this.{refVarName}[i] =  __table.GetOrDefault({name}[i]); }} }}";
                     }
                     case TList:
                     case TSet:
                     {
-                        return $@"{{ {table.FullName} __table = ({table.FullName})_tables[""{ tableName}""]; this.{refVarName} = new {field.ElementRefType.Apply(CsDefineTypeName.Ins)}(); foreach(var __e in {name}) {{ this.{refVarName}.Add(__table.GetOrDefault(__e)); }} }}";
+                        return $@"{{ {table.FullName} __table = ({table.FullName})_tables[""{tableName}""]; this.{refVarName} = new {field.ElementRefType.Apply(CsDefineTypeName.Ins)}(); foreach(var __e in {name}) {{ this.{refVarName}.Add(__table.GetOrDefault(__e)); }} }}";
                     }
                     case TMap:
                     {
-                        return $@"{{ {table.FullName} __table = ({table.FullName})_tables[""{ tableName}""]; this.{refVarName} = new {field.ElementRefType.Apply(CsDefineTypeName.Ins)}(); foreach(var __e in {name}) {{ this.{refVarName}.Add(__e.Key, __table.GetOrDefault(__e.Value)); }} }}";
+                        return $@"{{ {table.FullName} __table = ({table.FullName})_tables[""{tableName}""]; this.{refVarName} = new {field.ElementRefType.Apply(CsDefineTypeName.Ins)}(); foreach(var __e in {name}) {{ this.{refVarName}.Add(__e.Key, __table.GetOrDefault(__e.Value)); }} }}";
                     }
                     default: throw new NotSupportedException($"type:'{field.CType.TypeName}' not support ref");
                 }
@@ -128,15 +128,41 @@ namespace Luban.Job.Cfg.Utils
         {
             var refVarName = field.RefVarName;
             var name = field.ConventionName;
-            var tableName = field.Ref.FirstTable;
-            var table = field.Assembly.GetCfgTable(field.Ref.FirstTable);
-            if (field.IsNullable)
+
+            if (field.Ref != null)
             {
-                return $"this.{refVarName} = this.{name} != null ? (({table.FullNameWithTopModule})_tables.get(\"{tableName}\")).get({name}) : null;";
+                var tableName = field.Ref.FirstTable;
+                var table = field.Assembly.GetCfgTable(tableName);
+                if (field.IsNullable)
+                {
+                    return $"this.{refVarName} = this.{name} != null ? (({table.FullNameWithTopModule})_tables.get(\"{tableName}\")).get({name}) : null;";
+                }
+                else
+                {
+                    return $"this.{refVarName} = (({table.FullNameWithTopModule})_tables.get(\"{tableName}\")).get({name});";
+                }
             }
             else
             {
-                return $"this.{refVarName} = (({table.FullNameWithTopModule})_tables.get(\"{tableName}\")).get({name});";
+                var tableName = field.ElementRef.FirstTable;
+                var table = field.Assembly.GetCfgTable(tableName);
+                switch (field.CType)
+                {
+                    case TArray:
+                    {
+                        return $@"{{ int __n = {name}.length; {table.FullName} __table = ({table.FullName})_tables.get(""{tableName}""); this.{refVarName} = new {table.ValueTType.Apply(JavaDefineTypeName.Ins)}[__n]; for(int i = 0 ; i < __n ; i++) {{ this.{refVarName}[i] =  __table.get({name}[i]); }} }}";
+                    }
+                    case TList:
+                    case TSet:
+                    {
+                        return $@"{{ {table.FullName} __table = ({table.FullName})_tables.get(""{tableName}""); this.{refVarName} = new {field.ElementRefType.Apply(JavaDefineTypeName.Ins)}(); for({field.CType.ElementType.TypeName} __e : {name}) {{ this.{refVarName}.add(__table.get(__e)); }} }}";
+                    }
+                    case TMap map:
+                    {
+                        return $@"{{ {table.FullName} __table = ({table.FullName})_tables.get(""{tableName}""); this.{refVarName} = new {field.ElementRefType.Apply(JavaDefineTypeName.Ins)}(); for(Map.Entry<{map.KeyType.TypeName},{map.ValueType.TypeName}> __e : {name}.entrySet()) {{ {map.KeyType.TypeName} __eKey = entry.getKey(); {map.ValueType.TypeName} __eValue = entry.getValue(); this.{refVarName}.add(__eKey, __table.get(__eValue)); }} }}";
+                    }
+                    default: throw new NotSupportedException($"type:'{field.CType.TypeName}' not support ref");
+                }
             }
         }
 
