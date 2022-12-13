@@ -150,16 +150,16 @@ namespace Luban.Job.Cfg.Utils
                 {
                     case TArray:
                     {
-                        return $@"{{ int __n = {name}.length; {table.FullName} __table = ({table.FullName})_tables.get(""{tableName}""); this.{refVarName} = new {table.ValueTType.Apply(JavaDefineTypeName.Ins)}[__n]; for(int i = 0 ; i < __n ; i++) {{ this.{refVarName}[i] =  __table.get({name}[i]); }} }}";
+                        return $@"{{ int __n = {name}.length; {table.FullNameWithTopModule} __table = ({table.FullNameWithTopModule})_tables.get(""{tableName}""); this.{refVarName} = new {table.ValueTType.Apply(JavaDefineTypeName.Ins)}[__n]; for(int i = 0 ; i < __n ; i++) {{ this.{refVarName}[i] =  __table.get({name}[i]); }} }}";
                     }
                     case TList:
                     case TSet:
                     {
-                        return $@"{{ {table.FullName} __table = ({table.FullName})_tables.get(""{tableName}""); this.{refVarName} = new {field.ElementRefType.Apply(JavaDefineTypeName.Ins)}(); for({field.CType.ElementType.TypeName} __e : {name}) {{ this.{refVarName}.add(__table.get(__e)); }} }}";
+                        return $@"{{ {table.FullNameWithTopModule} __table = ({table.FullNameWithTopModule})_tables.get(""{tableName}""); this.{refVarName} = new {field.ElementRefType.Apply(JavaDefineTypeName.Ins)}(); for({field.CType.ElementType.TypeName} __e : {name}) {{ this.{refVarName}.add(__table.get(__e)); }} }}";
                     }
                     case TMap map:
                     {
-                        return $@"{{ {table.FullName} __table = ({table.FullName})_tables.get(""{tableName}""); this.{refVarName} = new {field.ElementRefType.Apply(JavaDefineTypeName.Ins)}(); for(Map.Entry<{map.KeyType.TypeName},{map.ValueType.TypeName}> __e : {name}.entrySet()) {{ {map.KeyType.TypeName} __eKey = entry.getKey(); {map.ValueType.TypeName} __eValue = entry.getValue(); this.{refVarName}.add(__eKey, __table.get(__eValue)); }} }}";
+                        return $@"{{ {table.FullNameWithTopModule} __table = ({table.FullNameWithTopModule})_tables.get(""{tableName}""); this.{refVarName} = new {field.ElementRefType.Apply(JavaDefineTypeName.Ins)}(); for(Map.Entry<{map.KeyType.TypeName},{map.ValueType.TypeName}> __e : {name}.entrySet()) {{ {map.KeyType.TypeName} __eKey = entry.getKey(); {map.ValueType.TypeName} __eValue = entry.getValue(); this.{refVarName}.add(__eKey, __table.get(__eValue)); }} }}";
                     }
                     default: throw new NotSupportedException($"type:'{field.CType.TypeName}' not support ref");
                 }
