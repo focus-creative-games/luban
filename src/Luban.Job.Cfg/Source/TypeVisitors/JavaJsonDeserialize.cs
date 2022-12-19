@@ -137,17 +137,17 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TVector2 type, string json, string x, int depth)
         {
-            return $"{{ com.google.gson.JsonObject _json{depth}_ = {json}.getAsJsonObject(); float __x; {TFloat.Ins.Apply(this, "_json{depth}_.get(\"x\")", "__x", depth)} float __y; {TFloat.Ins.Apply(this, "_json{depth}_.get(\"y\")", "__y", depth)} {x} = new {type.Apply(JavaDefineTypeName.Ins)}(__x, __y); }}";
+            return $"{{ com.google.gson.JsonObject _json{depth}_ = {json}.getAsJsonObject(); float __x; {TFloat.Ins.Apply(this, $"_json{depth}_.get(\"x\")", "__x", depth)} float __y; {TFloat.Ins.Apply(this, $"_json{depth}_.get(\"y\")", "__y", depth)} {x} = new {type.Apply(JavaDefineTypeName.Ins)}(__x, __y); }}";
         }
 
         public string Accept(TVector3 type, string json, string x, int depth)
         {
-            return $"{{ com.google.gson.JsonObject _json{depth}_ = {json}.getAsJsonObject(); float __x; {TFloat.Ins.Apply(this, "_json{depth}_.get(\"x\")", "__x", depth)} float __y; {TFloat.Ins.Apply(this, "_json{depth}_.get(\"y\")", "__y", depth)} float __z; {TFloat.Ins.Apply(this, "_json{depth}_.get(\"z\")", "__z", depth)}  {x} = new {type.Apply(JavaDefineTypeName.Ins)}(__x, __y,__z); }}";
+            return $"{{ com.google.gson.JsonObject _json{depth}_ = {json}.getAsJsonObject(); float __x; {TFloat.Ins.Apply(this, $"_json{depth}_.get(\"x\")", "__x", depth)} float __y; {TFloat.Ins.Apply(this, $"_json{depth}_.get(\"y\")", "__y", depth)} float __z; {TFloat.Ins.Apply(this, $"_json{depth}_.get(\"z\")", "__z", depth)}  {x} = new {type.Apply(JavaDefineTypeName.Ins)}(__x, __y,__z); }}";
         }
 
         public string Accept(TVector4 type, string json, string x, int depth)
         {
-            return $"{{ com.google.gson.JsonObject _json{depth}_ = {json}.getAsJsonObject(); float __x; {TFloat.Ins.Apply(this, "_json{depth}_.get(\"x\")", "__x", depth)} float __y; {TFloat.Ins.Apply(this, "_json{depth}_.get(\"y\")", "__y", depth)} float __z; {TFloat.Ins.Apply(this, "_json{depth}_.get(\"z\")", "__z", depth)}  float __w; {TFloat.Ins.Apply(this, "_json{depth}_.get(\"w\")", "__w", depth)} {x} = new {type.Apply(JavaDefineTypeName.Ins)}(__x, __y, __z, __w); }}";
+            return $"{{ com.google.gson.JsonObject _json{depth}_ = {json}.getAsJsonObject(); float __x; {TFloat.Ins.Apply(this, $"_json{depth}_.get(\"x\")", "__x", depth)} float __y; {TFloat.Ins.Apply(this, $"_json{depth}_.get(\"y\")", "__y", depth)} float __z; {TFloat.Ins.Apply(this, $"_json{depth}_.get(\"z\")", "__z", depth)}  float __w; {TFloat.Ins.Apply(this, $"_json{depth}_.get(\"w\")", "__w", depth)} {x} = new {type.Apply(JavaDefineTypeName.Ins)}(__x, __y, __z, __w); }}";
         }
 
         public string Accept(TDateTime type, string json, string x, int depth)
