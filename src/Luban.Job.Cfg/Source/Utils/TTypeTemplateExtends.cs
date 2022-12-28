@@ -111,11 +111,11 @@ namespace Luban.Job.Cfg.Utils
         {
             if (type.IsNullable)
             {
-                return $"{{ if ({jsonName}.has(\"{jsonFieldName}\") && !{jsonName}.get(\"{jsonFieldName}\").isJsonNull()) {{ {type.Apply(TypeVisitors.JavaJsonDeserialize.Ins, $"{jsonName}.get(\"{jsonFieldName}\")", fieldName)} }} else {{ {fieldName} = null; }} }}";
+                return $"{{ if ({jsonName}.has(\"{jsonFieldName}\") && !{jsonName}.get(\"{jsonFieldName}\").isJsonNull()) {{ {type.Apply(TypeVisitors.JavaJsonDeserialize.Ins, $"{jsonName}.get(\"{jsonFieldName}\")", fieldName, 0)} }} else {{ {fieldName} = null; }} }}";
             }
             else
             {
-                return type.Apply(TypeVisitors.JavaJsonDeserialize.Ins, $"{jsonName}.get(\"{jsonFieldName}\")", fieldName);
+                return type.Apply(TypeVisitors.JavaJsonDeserialize.Ins, $"{jsonName}.get(\"{jsonFieldName}\")", fieldName, 0);
             }
         }
 
