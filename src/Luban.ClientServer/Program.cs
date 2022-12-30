@@ -10,6 +10,7 @@ using Luban.Job.Common.Utils;
 using Luban.Server;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -137,7 +138,15 @@ Options:
                         case "-t":
                         case "--template_search_path":
                         {
-                            ops.TemplateSearchPath = args[++i];
+                            var dirName = args[++i];
+                            if (Directory.Exists(dirName))
+                            {
+                                ops.TemplateSearchPath = dirName;
+                            }
+                            else
+                            {
+                                Console.WriteLine("[WARN] 对于Luban.ClientServer，参数 {0} {1} 路径不存在，忽略。", arg, dirName);
+                            }
                             break;
                         }
                         case "--":
