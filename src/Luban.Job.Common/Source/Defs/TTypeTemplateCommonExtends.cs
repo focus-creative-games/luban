@@ -318,5 +318,28 @@ namespace Luban.Job.Common.Defs
         {
             return type is TDateTime && !type.IsNullable && ExternalTypeUtil.GetExternalTypeMappfer("datetime") == null;
         }
+
+        public static string CsStartNameSpaceGrace(string np)
+        {
+            if (string.IsNullOrEmpty(np))
+            {
+                return string.Empty;
+            }
+            else
+            {
+                return $"namespace {np}\n{{";
+            }
+        }
+        public static string CsEndNameSpaceGrace(string np)
+        {
+            if (string.IsNullOrEmpty(np))
+            {
+                return string.Empty;
+            }
+            else
+            {
+                return "}";
+            }
+        }
     }
 }

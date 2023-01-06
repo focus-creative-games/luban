@@ -112,7 +112,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
          public {{db_cs_define_type ctype}} {{field.convention_name}} => {{field.internal_name}};
         {{~end~}}
 
-        {{~if ctype.bean || ctype.element_type ~}}
+        {{~if ctype.bean || (ctype.element_type && !ctype.is_map) ~}}
 {{~if field.comment != '' ~}}
         /// <summary>
         /// {{field.escape_comment}}

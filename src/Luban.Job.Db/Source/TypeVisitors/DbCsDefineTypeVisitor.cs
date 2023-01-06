@@ -25,7 +25,7 @@ namespace Luban.Job.Db.TypeVisitors
 
         public override string Accept(TMap type)
         {
-            return $"BrightDB.Transaction.Collections.{(type.ValueType is TBean ? " PMap2" : "PMap1")}<{type.KeyType.Apply(this)}, {type.ValueType.Apply(this)}>";
+            return $"BrightDB.Transaction.Collections.{(type.ValueType is TBean ? "PMap2" : "PMap1")}<{type.KeyType.Apply(this)}, {type.ValueType.Apply(this)}>";
         }
     }
 }
