@@ -118,7 +118,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TDateTime type)
         {
-            return "i32";
+            return "i64";
         }
     }
 }

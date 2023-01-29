@@ -58,7 +58,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public override string Accept(TDateTime type)
         {
-            return "Integer";
+            return "Long";
         }
 
         public override string Accept(TEnum type)

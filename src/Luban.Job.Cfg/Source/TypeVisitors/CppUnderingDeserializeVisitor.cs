@@ -120,7 +120,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TDateTime type, string bufName, string fieldName)
         {
-            return $"if(!{bufName}.readInt({fieldName})) return false;";
+            return $"if(!{bufName}.readLong({fieldName})) return false;";
         }
     }
 }

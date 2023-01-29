@@ -130,9 +130,10 @@ namespace Luban.Job.Db.TypeVisitors
             return $"{fieldName} = new Vector4()";
         }
 
-        public string Accept(TDateTime type, string x, string y)
+        public string Accept(TDateTime type, string fieldName, string logType
+            )
         {
-            throw new NotSupportedException();
+            return $"{fieldName} = 0";
         }
     }
 }

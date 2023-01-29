@@ -150,9 +150,9 @@ namespace Luban.Job.Db.TypeVisitors
             return $"{bufName}.WriteVector4({fieldName});";
         }
 
-        public string Accept(TDateTime type, string x, string y)
+        public string Accept(TDateTime type, string bufName, string fieldName)
         {
-            throw new NotImplementedException();
+            return $"{bufName}.WriteLong({fieldName});";
         }
     }
 }

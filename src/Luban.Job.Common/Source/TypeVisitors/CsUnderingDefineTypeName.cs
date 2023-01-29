@@ -152,7 +152,7 @@ namespace Luban.Job.Common.TypeVisitors
             {
                 return mapper.TargetTypeName;
             }
-            return "int";
+            return "long";
         }
     }
 }

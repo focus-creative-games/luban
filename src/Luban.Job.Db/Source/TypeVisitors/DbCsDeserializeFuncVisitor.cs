@@ -128,7 +128,7 @@ namespace Luban.Job.Db.TypeVisitors
 
         public string Accept(TDateTime type)
         {
-            return "Bright.Common.SerializationUtil.DeserializeInt";
+            return "Bright.Common.SerializationUtil.DeserializeLong";
         }
     }
 }

@@ -149,7 +149,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TDateTime type, string bufName, string fieldName, int depth)
         {
-            return $"{fieldName} = {bufName}.readInt();";
+            return $"{fieldName} = {bufName}.readLong();";
         }
     }
 }

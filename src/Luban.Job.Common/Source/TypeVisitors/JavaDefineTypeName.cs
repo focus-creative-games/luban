@@ -119,7 +119,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public virtual string Accept(TDateTime type)
         {
-            return type.IsNullable ? "Integer" : "int";
+            return type.IsNullable ? "Long" : "long";
         }
     }
 }
