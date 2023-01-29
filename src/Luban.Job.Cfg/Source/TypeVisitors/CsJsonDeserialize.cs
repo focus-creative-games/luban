@@ -150,7 +150,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TDateTime type, string json, string x, int depth)
         {
-            return $"{x} = {json}.GetInt32();";
+            return $"{x} = {json}.GetInt64();";
         }
     }
 }

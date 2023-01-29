@@ -179,7 +179,7 @@ namespace Luban.Job.Cfg.DataExporters
 
         public void Accept(DDateTime type, ByteBuf x)
         {
-            x.WriteInt(type.UnixTimeOfCurrentAssembly);
+            x.WriteLong(type.UnixTimeOfCurrentAssembly);
         }
     }
 }

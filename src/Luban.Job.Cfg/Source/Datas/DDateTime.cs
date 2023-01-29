@@ -11,7 +11,7 @@ namespace Luban.Job.Cfg.Datas
         public DateTime Time { get; }
 
         //public int UnixTime { get; }
-        private readonly int _localTime;
+        private readonly long _localTime;
 
         public override string TypeName => "datetime";
 
@@ -21,7 +21,7 @@ namespace Luban.Job.Cfg.Datas
             this.Time = time;
             // time.Kind == DateTimeKind.Unspecified
             // DateTimeOffset把它当作Local处理
-            this._localTime = (int)new DateTimeOffset(TimeZoneInfo.ConvertTime(time, TimeZoneUtil.DefaultTimeZone, TimeZoneInfo.Utc)).ToUnixTimeSeconds();
+            this._localTime = (long)new DateTimeOffset(TimeZoneInfo.ConvertTime(time, TimeZoneUtil.DefaultTimeZone, TimeZoneInfo.Utc)).ToUnixTimeSeconds();
         }
 
         public override bool Equals(object obj)
@@ -48,7 +48,7 @@ namespace Luban.Job.Cfg.Datas
             return DataUtil.FormatDateTime(Time);
         }
 
-        public int GetUnixTime(TimeZoneInfo asTimeZone)
+        public long GetUnixTime(TimeZoneInfo asTimeZone)
         {
             if (asTimeZone == null || asTimeZone == TimeZoneInfo.Local)
             {
@@ -57,11 +57,11 @@ namespace Luban.Job.Cfg.Datas
             else
             {
                 var destDateTime = TimeZoneInfo.ConvertTime(Time, asTimeZone, TimeZoneInfo.Utc);
-                return (int)new DateTimeOffset(destDateTime).ToUnixTimeSeconds();
+                return (long)new DateTimeOffset(destDateTime).ToUnixTimeSeconds();
             }
         }
 
-        public int UnixTimeOfCurrentAssembly => GetUnixTime(DefAssembly.LocalAssebmly.TimeZone);
+        public long UnixTimeOfCurrentAssembly => GetUnixTime(DefAssembly.LocalAssebmly.TimeZone);
 
         public override void Apply<T>(IDataActionVisitor<T> visitor, T x)
         {

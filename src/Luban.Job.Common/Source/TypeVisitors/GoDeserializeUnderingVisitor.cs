@@ -94,7 +94,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TDateTime type, string fieldName, string bufName, string err)
         {
-            return $"{{ if {fieldName}, {err} = {bufName}.ReadInt(); {err} != nil {{ {err} = errors.New(\"{fieldName} error\"); return }} }}";
+            return $"{{ if {fieldName}, {err} = {bufName}.ReadLong(); {err} != nil {{ {err} = errors.New(\"{fieldName} error\"); return }} }}";
         }
 
         public string Accept(TBean type, string fieldName, string bufName, string err)

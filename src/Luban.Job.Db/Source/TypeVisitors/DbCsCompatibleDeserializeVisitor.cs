@@ -151,7 +151,7 @@ namespace Luban.Job.Db.TypeVisitors
 
         public string Accept(TDateTime type, string bufName, string fieldName)
         {
-            return $"{fieldName} = {bufName}.ReadInt();";
+            return $"{fieldName} = {bufName}.ReadLong();";
         }
     }
 }

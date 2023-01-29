@@ -122,7 +122,7 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TDateTime type, string bufName, string fieldName)
         {
-            return $"{bufName}.writeInt({fieldName});";
+            return $"{bufName}.writeLong({fieldName});";
         }
     }
 }

@@ -87,7 +87,7 @@ namespace Luban.Job.Cfg.DataExporters
 
         public void Accept(DDateTime type, CodedOutputStream x)
         {
-            x.WriteInt32(type.UnixTimeOfCurrentAssembly);
+            x.WriteInt64(type.UnixTimeOfCurrentAssembly);
         }
 
         public void Accept(DString type, CodedOutputStream x)

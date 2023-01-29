@@ -152,7 +152,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TDateTime type, string json, string x, int depth)
         {
-            return $"{x} = {json}.getAsInt();";
+            return $"{x} = {json}.getAsLong();";
         }
     }
 }

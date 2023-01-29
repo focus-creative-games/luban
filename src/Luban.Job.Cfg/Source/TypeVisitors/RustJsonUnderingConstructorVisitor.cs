@@ -125,7 +125,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TDateTime type, string jsonVarName)
         {
-            return AsType(jsonVarName, "i32");
+            return AsType(jsonVarName, "i64");
         }
     }
 }

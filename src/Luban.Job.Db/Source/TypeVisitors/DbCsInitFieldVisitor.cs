@@ -131,7 +131,7 @@ namespace Luban.Job.Db.TypeVisitors
 
         public string Accept(TDateTime type, string fieldName)
         {
-            throw new NotSupportedException();
+            return $"{fieldName} = default;";
         }
     }
 }
