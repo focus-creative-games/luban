@@ -180,7 +180,7 @@ public {{x.cs_class_modifier}} class {{name}} : {{if parent_def_type}} {{x.paren
     public override int GetTypeId() => __ID__;
     {{~end~}}
 
-    protected override void InitChildrenRoot(Bright.Storage.TKey root)
+    protected override void InitChildrenRoot(BrightDB.Storage.TKey root)
     {
         {{~ for field in hierarchy_fields~}}
         {{~if need_set_children_root field.ctype~}}
