@@ -264,16 +264,14 @@ namespace Luban.Job.Cfg.Utils
             switch (s)
             {
                 case "true":
-                case "是":
                 case "1":
                 case "y":
                 case "yes": return true;
                 case "false":
-                case "否":
                 case "0":
                 case "n":
                 case "no": return false;
-                default: throw new InvalidExcelDataException($"{s} 不是 bool 类型的值 (true|是|1|y|yes 或 false|否|0|n|no)");
+                default: throw new InvalidExcelDataException($"{s} 不是 bool 类型的值 (true|1|y|yes 或 false|0|n|no)");
             }
         }
 
