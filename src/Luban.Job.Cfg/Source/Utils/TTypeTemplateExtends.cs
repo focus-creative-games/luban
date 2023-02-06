@@ -159,7 +159,7 @@ namespace Luban.Job.Cfg.Utils
                     }
                     case TMap map:
                     {
-                        return $@"{{ {table.FullNameWithTopModule} __table = ({table.FullNameWithTopModule})_tables.get(""{tableName}""); this.{refVarName} = new {field.ElementRefType.Apply(JavaDefineTypeName.Ins)}(); for(Map.Entry<{map.KeyType.TypeName},{map.ValueType.TypeName}> __e : {name}.entrySet()) {{ {map.KeyType.TypeName} __eKey = entry.getKey(); {map.ValueType.TypeName} __eValue = entry.getValue(); this.{refVarName}.add(__eKey, __table.get(__eValue)); }} }}";
+                        return $@"{{ {table.FullNameWithTopModule} __table = ({table.FullNameWithTopModule})_tables.get(""{tableName}""); this.{refVarName} = new {field.ElementRefType.Apply(JavaDefineTypeName.Ins)}(); for(java.util.Map.Entry<{map.KeyType.Apply(JavaBoxDefineTypeName.Ins)}, {map.ValueType.Apply(JavaBoxDefineTypeName.Ins)}> __e : {name}.entrySet()) {{ {map.KeyType.TypeName} __eKey = __e.getKey(); {map.ValueType.TypeName} __eValue = __e.getValue(); this.{refVarName}.put(__eKey, __table.get(__eValue)); }} }}";
                     }
                     default: throw new NotSupportedException($"type:'{field.CType.TypeName}' not support ref");
                 }
