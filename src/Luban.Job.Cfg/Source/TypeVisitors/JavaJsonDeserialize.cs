@@ -97,14 +97,14 @@ namespace Luban.Job.Cfg.TypeVisitors
             string __e = $"__e{depth}";
             string __v = $"__v{depth}";
             string __index = $"__index{depth}";
-            string typeStr = $"{type.ElementType.Apply(CsDefineTypeName.Ins)}[{__n}]";
+            string typeStr = $"{type.ElementType.Apply(JavaDefineTypeName.Ins)}[{__n}]";
             if (type.Dimension > 1)
             {
                 if (type.FinalElementType == null)
                 {
                     throw new System.Exception("多维数组没有元素类型");
                 }
-                typeStr = $"{type.FinalElementType.Apply(CsUnderingDefineTypeName.Ins)}[{__n}]";
+                typeStr = $"{type.FinalElementType.Apply(JavaDefineTypeName.Ins)}[{__n}]";
                 for (int i = 0; i < type.Dimension - 1; i++)
                 {
                     typeStr += "[]";
