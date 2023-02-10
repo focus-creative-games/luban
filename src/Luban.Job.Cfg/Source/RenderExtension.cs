@@ -1,6 +1,7 @@
 using Luban.Job.Cfg.Datas;
 using Luban.Job.Cfg.Defs;
 using Luban.Job.Cfg.Utils;
+using Luban.Job.Common.Utils;
 using Scriban;
 using System.Collections.Generic;
 
@@ -10,7 +11,7 @@ namespace Luban.Job.Cfg
     {
         public static string RenderCode(this Template template, object model, Dictionary<string, object> extraModels = null)
         {
-            var ctx = new TemplateContext();
+            var ctx = TemplateUtil.CreateDefaultTemplateContext();
             var env = new TTypeTemplateExtends
             {
                 ["x"] = model,
@@ -29,8 +30,7 @@ namespace Luban.Job.Cfg
 
         public static string RenderDatas(this Template template, DefTable table, List<DBean> exportDatas, Dictionary<string, object> extraModels = null)
         {
-            var ctx = new TemplateContext();
-
+            var ctx = TemplateUtil.CreateDefaultTemplateContext();
             var env = new DTypeTemplateExtends
             {
                 ["table"] = table,
@@ -51,8 +51,7 @@ namespace Luban.Job.Cfg
 
         public static string RenderData(this Template template, DefTable table, DBean data, Dictionary<string, object> extraModels = null)
         {
-            var ctx = new TemplateContext();
-
+            var ctx = TemplateUtil.CreateDefaultTemplateContext();
             var env = new DTypeTemplateExtends
             {
                 ["table"] = table,
