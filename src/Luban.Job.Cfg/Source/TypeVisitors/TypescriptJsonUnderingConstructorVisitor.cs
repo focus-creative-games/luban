@@ -75,7 +75,7 @@ namespace Luban.Job.Cfg.TypeVisitors
 
         public string Accept(TText type, string jsonVarName, string fieldName)
         {
-            return $"{fieldName} = {jsonVarName}['{DText.TEXT_NAME}']";
+            return $"{fieldName} = {jsonVarName}['{DText.TEXT_NAME}']; {fieldName}{TText.L10N_FIELD_SUFFIX} = {jsonVarName}['{DText.KEY_NAME}'];";
         }
 
         public string Accept(TBean type, string jsonVarName, string fieldName)

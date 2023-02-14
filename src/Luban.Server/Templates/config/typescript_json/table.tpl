@@ -36,7 +36,16 @@ export class {{name}}{
             v.resolve(_tables)
         }
     }
+
+    translateText(translator: any)
+    {
+        for(var v of this._dataList) {
+            v.translateText(translator)
+        }
+    }
+
     {{~else if x.is_list_table ~}}
+
     private _dataList: {{ts_define_type value_type}}[]
     
     constructor(_json_: any) {
@@ -58,9 +67,16 @@ export class {{name}}{
         }
     }
 
+    translateText(translator: any)
+    {
+        for(var v of this._dataList) {
+            v.translateText(translator)
+        }
+    }
+
     {{~else~}}
 
-     private _data: {{ts_define_type value_type}}
+    private _data: {{ts_define_type value_type}}
     constructor(_json_: any) {
         if (_json_.length != 1) throw new Error('table mode=one, but size != 1')
         {{ts_json_constructor 'this._data' '_json_[0]' value_type}}
@@ -79,6 +95,11 @@ export class {{name}}{
 
     resolve(_tables: Map<string, any>) {
         this._data.resolve(_tables)
+    }
+
+    translateText(translator: any)
+    {
+        this._data.translateText(translator)
     }
 
     {{end}}

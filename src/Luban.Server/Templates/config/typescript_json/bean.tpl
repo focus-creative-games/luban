@@ -42,9 +42,16 @@ export {{if x.is_abstract_type}}abstract {{end}}class {{name}}{{if parent_def_ty
      * {{field.escape_comment}}
      */
 {{~end~}}
+    {{~if field.gen_text_key~}}
+    {{field.convention_name}}: {{ts_define_type field.ctype}}
+    {{~else~}}
     readonly {{field.convention_name}}: {{ts_define_type field.ctype}}
+    {{~end~}}
     {{~if field.gen_ref~}}
     {{field.ts_ref_validator_define}}
+    {{~end~}}
+    {{~if field.gen_text_key~}}
+    readonly {{ts_define_text_key_field field}}: {{ts_define_type field.ctype}}
     {{~end~}}
     {{~end~}}
 
@@ -60,6 +67,21 @@ export {{if x.is_abstract_type}}abstract {{end}}class {{name}}{{if parent_def_ty
         {{~end~}}
         {{~end~}}
     }
+
+    translateText(translator: any)
+    {
+        {{~if parent_def_type~}}
+        base.translateText(translator);
+        {{~end~}}
+        {{~ for field in export_fields ~}}
+        {{~if field.gen_text_key~}}
+        {{ts_translate_text field 'translator'}}
+        {{~else if field.has_recursive_text~}}
+        {{ts_recursive_translate_text field 'translator'}}
+        {{~end~}}
+        {{~end~}}
+    }
+
 }
 
 {{x.typescript_namespace_end}}

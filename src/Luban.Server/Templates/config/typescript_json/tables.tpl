@@ -29,4 +29,11 @@ export class {{name}} {
         this._{{table.name}}.resolve(tables)
         {{~end~}}
     }
+
+    translateText(translator: any)
+    {
+        {{~for table in tables ~}}
+        this._{{table.name}}.translateText(translator); 
+        {{~end~}}
+    }
 }

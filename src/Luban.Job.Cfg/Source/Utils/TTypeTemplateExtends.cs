@@ -23,7 +23,7 @@ namespace Luban.Job.Cfg.Utils
 
         public static string CsRecursiveTranslateText(DefField field, string translatorName)
         {
-            return field.CType.Apply(CsRecursiveTranslateVisitor.Ins, field.ConventionName, translatorName);
+            return field.CType.Apply(TypescriptRecursiveTranslateVisitor.Ins, field.ConventionName, translatorName);
         }
 
         public static string CsJsonDeserialize(string bufName, string fieldName, string jsonFieldName, TType type)
@@ -205,6 +205,21 @@ namespace Luban.Job.Cfg.Utils
         public static string TsBinConstructor(string fieldName, string byteBufName, TType type)
         {
             return type.Apply(TypescriptBinConstructorVisitor.Ins, byteBufName, fieldName);
+        }
+
+        public static string TsDefineTextKeyField(DefField field)
+        {
+            return $"{field.GetTextKeyName(field.ConventionName)}";
+        }
+
+        public static string TsTranslateText(DefField field, string translatorName)
+        {
+            return $"this.{field.ConventionName} = {translatorName}(this.{field.GetTextKeyName(field.ConventionName)}, this.{field.ConventionName});";
+        }
+
+        public static string TsRecursiveTranslateText(DefField field, string translatorName)
+        {
+            return field.CType.Apply(TypescriptRecursiveTranslateVisitor.Ins, field.ConventionName, translatorName);
         }
 
         public static string TsRecursiveResolve(DefField field, string tables)
