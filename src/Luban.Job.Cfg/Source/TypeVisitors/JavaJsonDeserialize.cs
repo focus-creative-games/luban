@@ -117,14 +117,14 @@ namespace Luban.Job.Cfg.TypeVisitors
         {
             string __e = $"_e{depth}";
             string __v = $"_v{depth}";
-            return $"{{ com.google.gson.JsonArray _json{depth}_ = {json}.getAsJsonArray(); {x} = new {type.Apply(JavaDefineTypeName.Ins)}(_json{depth}_.size()); for(JsonElement {__e} : _json{depth}_) {{ {type.ElementType.Apply(JavaDefineTypeName.Ins)} {__v};  {type.ElementType.Apply(this, __e, __v, depth + 1)}  {x}.add({__v}); }}   }}";
+            return $"{{ com.google.gson.JsonArray _json{depth}_ = {json}.getAsJsonArray(); {type.Apply(JavaDefineTypeName.Ins)} _tmp_{x} = new java.util.ArrayList(_json{depth}_.size()); for(JsonElement {__e} : _json{depth}_) {{ {type.ElementType.Apply(JavaDefineTypeName.Ins)} {__v};  {type.ElementType.Apply(this, __e, __v, depth + 1)}  _tmp_{x}.add({__v}); }} {x} = Collections.unmodifiableList(_tmp_{x});  }}";
         }
 
         public string Accept(TSet type, string json, string x, int depth)
         {
             string __e = $"_e{depth}";
             string __v = $"_v{depth}";
-            return $"{{ com.google.gson.JsonArray _json{depth}_ = {json}.getAsJsonArray(); {x} = new {type.Apply(JavaDefineTypeName.Ins)}(_json{depth}_.size()); for(JsonElement {__e} : _json{depth}_) {{ {type.ElementType.Apply(JavaDefineTypeName.Ins)} {__v};  {type.ElementType.Apply(this, __e, __v, depth + 1)}  {x}.add({__v}); }}   }}";
+            return $"{{ com.google.gson.JsonArray _json{depth}_ = {json}.getAsJsonArray(); {type.Apply(JavaDefineTypeName.Ins)} _tmp_{x} = new java.util.HashSet(_json{depth}_.size()); for(JsonElement {__e} : _json{depth}_) {{ {type.ElementType.Apply(JavaDefineTypeName.Ins)} {__v};  {type.ElementType.Apply(this, __e, __v, depth + 1)}  _tmp_{x}.add({__v}); }} {x} = Collections.unmodifiableSet(_tmp_{x});  }}";
         }
 
         public string Accept(TMap type, string json, string x, int depth)
@@ -132,7 +132,7 @@ namespace Luban.Job.Cfg.TypeVisitors
             string __e = $"_e{depth}";
             string __k = $"_k{depth}";
             string __v = $"_v{depth}";
-            return @$"{{ com.google.gson.JsonArray _json{depth}_ = {json}.getAsJsonArray(); {x} = new {type.Apply(JavaDefineTypeName.Ins)}(_json{depth}_.size()); for(JsonElement {__e} : _json{depth}_) {{ {type.KeyType.Apply(JavaDefineTypeName.Ins)} {__k};  {type.KeyType.Apply(this, $"{__e}.getAsJsonArray().get(0)", __k, depth + 1)} {type.ValueType.Apply(JavaDefineTypeName.Ins)} {__v};  {type.ValueType.Apply(this, $"{__e}.getAsJsonArray().get(1)", __v, depth + 1)}  {x}.put({__k}, {__v}); }}   }}";
+            return @$"{{ com.google.gson.JsonArray _json{depth}_ = {json}.getAsJsonArray(); {type.Apply(JavaDefineTypeName.Ins)} _tmp_{x} = new java.util.HashMap(_json{depth}_.size()); for(JsonElement {__e} : _json{depth}_) {{ {type.KeyType.Apply(JavaDefineTypeName.Ins)} {__k};  {type.KeyType.Apply(this, $"{__e}.getAsJsonArray().get(0)", __k, depth + 1)} {type.ValueType.Apply(JavaDefineTypeName.Ins)} {__v};  {type.ValueType.Apply(this, $"{__e}.getAsJsonArray().get(1)", __v, depth + 1)}  _tmp_{x}.put({__k}, {__v}); }} {x} = Collections.unmodifiableMap(_tmp_{x});  }}";
         }
 
         public string Accept(TVector2 type, string json, string x, int depth)

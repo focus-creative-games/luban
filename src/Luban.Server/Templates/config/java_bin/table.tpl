@@ -17,8 +17,8 @@ import bright.serialization.*;
 {{~end~}}
 public final class {{name}} {
     {{~if x.is_map_table ~}}
-    private final java.util.HashMap<{{java_box_define_type key_type}}, {{java_box_define_type value_type}}> _dataMap;
-    private final java.util.ArrayList<{{java_box_define_type value_type}}> _dataList;
+    private final java.util.Map<{{java_box_define_type key_type}}, {{java_box_define_type value_type}}> _dataMap;
+    private final java.util.List<{{java_box_define_type value_type}}> _dataList;
     
     public {{name}}(ByteBuf _buf) {
         _dataMap = new java.util.HashMap<{{java_box_define_type key_type}}, {{java_box_define_type value_type}}>();
@@ -32,8 +32,8 @@ public final class {{name}} {
         }
     }
 
-    public java.util.HashMap<{{java_box_define_type key_type}}, {{java_box_define_type value_type}}> getDataMap() { return _dataMap; }
-    public java.util.ArrayList<{{java_box_define_type value_type}}> getDataList() { return _dataList; }
+    public java.util.Map<{{java_box_define_type key_type}}, {{java_box_define_type value_type}}> getDataMap() { return _dataMap; }
+    public java.util.List<{{java_box_define_type value_type}}> getDataList() { return _dataList; }
 
 {{~if value_type.is_dynamic~}}
     @SuppressWarnings("unchecked")
@@ -41,29 +41,30 @@ public final class {{name}} {
 {{~end~}}
     public {{java_box_define_type value_type}} get({{java_define_type key_type}} key) { return _dataMap.get(key); }
 
-    public void resolve(java.util.HashMap<String, Object> _tables) {
+    public void resolve(java.util.Map<String, Object> _tables) {
         for({{java_box_define_type value_type}} v : _dataList) {
             v.resolve(_tables);
         }
     }
     {{~else if x.is_list_table ~}}
-    private final java.util.ArrayList<{{java_box_define_type value_type}}> _dataList;
+    private final java.util.List<{{java_box_define_type value_type}}> _dataList;
     
     public {{name}}(ByteBuf _buf) {
-        _dataList = new java.util.ArrayList<{{java_box_define_type value_type}}>();
+        java.util.List<{{java_box_define_type value_type}}> _tmpDataList = new java.util.ArrayList<{{java_box_define_type value_type}}>();
         
         for(int n = _buf.readSize() ; n > 0 ; --n) {
             {{java_box_define_type value_type}} _v;
             {{java_deserialize '_buf' '_v' value_type}}
-            _dataList.add(_v);
+            _tmpDataList.add(_v);
         }
+        _dataList = Collections.unmodifiableList(_tmpDataList);
     }
 
-    public java.util.ArrayList<{{java_box_define_type value_type}}> getDataList() { return _dataList; }
+    public java.util.List<{{java_box_define_type value_type}}> getDataList() { return _dataList; }
 
     public {{java_box_define_type value_type}} get(int index) { return _dataList.get(index); }
 
-    public void resolve(java.util.HashMap<String, Object> _tables) {
+    public void resolve(java.util.Map<String, Object> _tables) {
         for({{java_box_define_type value_type}} v : _dataList) {
             v.resolve(_tables);
         }
@@ -90,7 +91,7 @@ public final class {{name}} {
      public {{java_define_type field.ctype}} {{field.convention_getter_name}}() { return _data.{{field.convention_name}}; }
     {{~end~}}
 
-    public void resolve(java.util.HashMap<String, Object> _tables) {
+    public void resolve(java.util.Map<String, Object> _tables) {
         _data.resolve(_tables);
     }
     {{~end~}}

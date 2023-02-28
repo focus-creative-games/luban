@@ -89,17 +89,17 @@ namespace Luban.Job.Common.TypeVisitors
 
         public string Accept(TList type)
         {
-            return $"java.util.ArrayList<{type.ElementType.Apply(JavaBoxDefineTypeName.Ins)}>";
+            return $"java.util.List<{type.ElementType.Apply(JavaBoxDefineTypeName.Ins)}>";
         }
 
         public string Accept(TSet type)
         {
-            return $"java.util.HashSet<{type.ElementType.Apply(JavaBoxDefineTypeName.Ins)}>";
+            return $"java.util.Set<{type.ElementType.Apply(JavaBoxDefineTypeName.Ins)}>";
         }
 
         public string Accept(TMap type)
         {
-            return $"java.util.HashMap<{type.KeyType.Apply(JavaBoxDefineTypeName.Ins)}, {type.ValueType.Apply(JavaBoxDefineTypeName.Ins)}>";
+            return $"java.util.Map<{type.KeyType.Apply(JavaBoxDefineTypeName.Ins)}, {type.ValueType.Apply(JavaBoxDefineTypeName.Ins)}>";
         }
 
         public string Accept(TVector2 type)
