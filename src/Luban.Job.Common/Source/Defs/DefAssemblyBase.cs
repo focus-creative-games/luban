@@ -34,6 +34,8 @@ namespace Luban.Job.Common.Defs
 
         public Dictionary<string, DefTypeBase> Types { get; } = new Dictionary<string, DefTypeBase>();
 
+        public List<DefTypeBase> TypeList { get; } = new List<DefTypeBase>();
+
         private readonly Dictionary<string, DefTypeBase> _notCaseSenseTypes = new();
 
         private readonly HashSet<string> _namespaces = new();
@@ -194,6 +196,7 @@ namespace Luban.Job.Common.Defs
             }
 
             Types.Add(fullName, type);
+            TypeList.Add(type);
         }
 
         public DefTypeBase GetDefType(string fullName)

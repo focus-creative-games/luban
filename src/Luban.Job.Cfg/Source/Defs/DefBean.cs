@@ -158,29 +158,9 @@ namespace Luban.Job.Cfg.Defs
             return null;
         }
 
-        private void SetUpParent()
-        {
-            if (ParentDefType == null && !string.IsNullOrEmpty(Parent))
-            {
-                if ((ParentDefType = (DefBean)AssemblyBase.GetDefType(Namespace, Parent)) == null)
-                {
-                    throw new Exception($"bean:'{FullName}' parent:'{Parent}' not exist");
-                }
-                if (ParentDefType.Children == null)
-                {
-                    ParentDefType.Children = new List<DefBeanBase>();
-                }
-                ParentDefType.Children.Add(this);
-                ((DefBean)ParentDefType).SetUpParent();
-            }
-        }
-
         public override void PreCompile()
         {
-            SetUpParent();
-
-            CollectHierarchyFields(HierarchyFields);
-
+            base.PreCompile();
             this.ExportFields = this.Fields.Select(f => (DefField)f).Where(f => f.NeedExport).ToList();
             this.HierarchyExportFields = this.HierarchyFields.Select(f => (DefField)f).Where(f => f.NeedExport).ToList();
         }

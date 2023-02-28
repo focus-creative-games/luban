@@ -50,12 +50,12 @@ namespace Luban.Job.Proto.Defs
                 AddType(new DefRpc(r));
             }
 
-            foreach (var type in Types.Values)
+            foreach (var type in TypeList)
             {
                 type.AssemblyBase = this;
             }
 
-            foreach (var type in Types.Values)
+            foreach (var type in TypeList)
             {
                 try
                 {
@@ -69,7 +69,7 @@ namespace Luban.Job.Proto.Defs
                     throw;
                 }
             }
-            foreach (var type in Types.Values)
+            foreach (var type in TypeList)
             {
                 try
                 {
@@ -84,7 +84,7 @@ namespace Luban.Job.Proto.Defs
                     throw;
                 }
             }
-            foreach (var type in Types.Values)
+            foreach (var type in TypeList)
             {
                 try
                 {
@@ -104,7 +104,7 @@ namespace Luban.Job.Proto.Defs
 
         public List<DefTypeBase> GetExportTypes()
         {
-            return Types.Values.ToList();
+            return TypeList;
         }
     }
 }

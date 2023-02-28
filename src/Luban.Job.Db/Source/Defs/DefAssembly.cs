@@ -48,12 +48,12 @@ namespace Luban.Job.Db.Defs
                 AddType(new DefTable(p));
             }
 
-            foreach (var type in Types.Values)
+            foreach (var type in TypeList)
             {
                 type.AssemblyBase = this;
             }
 
-            foreach (var type in Types.Values)
+            foreach (var type in TypeList)
             {
                 try
                 {
@@ -67,7 +67,7 @@ namespace Luban.Job.Db.Defs
                     throw;
                 }
             }
-            foreach (var type in Types.Values)
+            foreach (var type in TypeList)
             {
                 try
                 {
@@ -82,7 +82,7 @@ namespace Luban.Job.Db.Defs
                     throw;
                 }
             }
-            foreach (var type in Types.Values)
+            foreach (var type in TypeList)
             {
                 try
                 {
@@ -101,7 +101,7 @@ namespace Luban.Job.Db.Defs
 
         public List<DefTypeBase> GetExportTypes()
         {
-            return Types.Values.ToList();
+            return TypeList;
         }
     }
 }

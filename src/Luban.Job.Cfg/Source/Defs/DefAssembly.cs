@@ -166,12 +166,12 @@ namespace Luban.Job.Cfg.Defs
 
         public List<DefTable> GetAllTables()
         {
-            return Types.Values.Where(t => t is DefTable).Cast<DefTable>().ToList();
+            return TypeList.Where(t => t is DefTable).Cast<DefTable>().ToList();
         }
 
         public List<DefTable> GetExportTables()
         {
-            return Types.Values.Where(t => t is DefTable ct
+            return TypeList.Where(t => t is DefTable ct
             && !_outputExcludeTables.Contains(t.FullName)
             && (_outputIncludeTables.Contains(t.FullName) || (_overrideOutputTables == null ? ct.NeedExport : _overrideOutputTables.Contains(ct.FullName)))
             ).Select(t => (DefTable)t).ToList();
@@ -313,12 +313,12 @@ namespace Luban.Job.Cfg.Defs
 
             _cfgServices.AddRange(defines.Services);
 
-            foreach (var type in Types.Values)
+            foreach (var type in TypeList)
             {
                 type.AssemblyBase = this;
             }
 
-            foreach (var type in Types.Values)
+            foreach (var type in TypeList)
             {
                 try
                 {
@@ -332,7 +332,7 @@ namespace Luban.Job.Cfg.Defs
                     throw;
                 }
             }
-            foreach (var type in Types.Values)
+            foreach (var type in TypeList)
             {
                 try
                 {
@@ -348,7 +348,7 @@ namespace Luban.Job.Cfg.Defs
                 }
             }
 
-            foreach (var type in Types.Values)
+            foreach (var type in TypeList)
             {
                 try
                 {
