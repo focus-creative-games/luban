@@ -158,9 +158,9 @@ namespace Luban.Job.Cfg.Defs
             return null;
         }
 
-        public override void PreCompile()
+        private void SetUpParent()
         {
-            if (!string.IsNullOrEmpty(Parent))
+            if (ParentDefType == null && !string.IsNullOrEmpty(Parent))
             {
                 if ((ParentDefType = (DefBean)AssemblyBase.GetDefType(Namespace, Parent)) == null)
                 {
@@ -171,7 +171,13 @@ namespace Luban.Job.Cfg.Defs
                     ParentDefType.Children = new List<DefBeanBase>();
                 }
                 ParentDefType.Children.Add(this);
+                ((DefBean)ParentDefType).SetUpParent();
             }
+        }
+
+        public override void PreCompile()
+        {
+            SetUpParent();
 
             CollectHierarchyFields(HierarchyFields);
 
