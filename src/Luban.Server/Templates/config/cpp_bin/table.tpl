@@ -14,38 +14,6 @@
  */
 {{~end~}}
 
-{{~if x.is_list_table ~}}
-{{~if x.is_union_index~}}
-typedef struct t_{{name}}_MultiKey
-{
-{{~for idx in x.index_list~}}
-     {{cpp_define_type idx.type}} {{idx.index_field.name}};
-{{~end~}}
-    bool operator==(const t_{{name}}_MultiKey& stOther) const
-	{
-        bool bEqual = true;
-        {{~for idx in x.index_list~}}
-        bEqual = bEqual && (stOther.{{idx.index_field.name}} == {{idx.index_field.name}});
-        {{~end~}}
-        return bEqual;
-    }
-}t_{{name}}_MultiKey;
-
-typedef struct t_{{name}}_MultiKey_HashFunc
-{
-	std::size_t operator()(const t_{{name}}_MultiKey& stMK) const
-	{
-        std::size_t sHash = 0;
-        {{~for idx in x.index_list~}}            
-        sHash ^= std::hash<{{cpp_define_type idx.type}}>()(stMK.{{idx.index_field.name}});            
-        {{~end~}}
-		return sHash;
-	}
-}t_{{name}}_MultiKey_HashFunc;
-{{~end~}}
-{{~end~}}
-
-
 class {{name}}
 {
     {{~if x.is_map_table ~}}
@@ -95,7 +63,7 @@ class {{name}}
     private:
         ::bright::Vector<{{cpp_define_type value_type}}> _dataList;
     {{~if x.is_union_index~}}
-        ::bright::HashMapMultiKey<t_{{name}}_MultiKey, {{cpp_define_type value_type}}, t_{{name}}_MultiKey_HashFunc> _dataMap;
+
     {{~else if !x.index_list.empty?~}}
         {{~for idx in x.index_list~}}
         ::bright::HashMap<{{cpp_define_type idx.type}}, {{cpp_define_type value_type}}> _dataMap_{{idx.index_field.name}};
@@ -114,11 +82,7 @@ class {{name}}
                 {{cpp_deserialize '_buf' '_v' value_type}}
                 _dataList.push_back(_v);
                 {{~if x.is_union_index~}}
-                t_{{name}}_MultiKey stKey;
-                {{~for idx in x.index_list~}}
-                stKey.{{idx.index_field.name}} = _v->{{idx.index_field.name}};
-                {{~end~}}
-                _dataMap[stKey] = _v;
+
                 {{~else if !x.index_list.empty?~}}
                 {{~for idx in x.index_list~}}
                 _dataMap_{{idx.index_field.name}}[_v->{{idx.index_field.name}}] = _v;
@@ -132,20 +96,7 @@ class {{name}}
         const ::bright::Vector<{{cpp_define_type value_type}}>& getDataList() const { return _dataList; }
 
         {{~if x.is_union_index~}}
-        ::bright::HashMapMultiKey<t_{{name}}_MultiKey, {{cpp_define_type value_type}}, t_{{name}}_MultiKey_HashFunc>& getDataMap()
-        {
-            return _dataMap;
-        }
-        {{value_type.bean.cpp_full_name}}* getRaw(t_{{name}}_MultiKey& key)
-        {
-            auto it = _dataMap.find(key);
-            return it != _dataMap.end() ? it->second.get() : nullptr;
-        }
-        {{cpp_define_type value_type}} get(t_{{name}}_MultiKey& key)
-        {
-            auto it = _dataMap.find(key);
-            return it != _dataMap.end() ? it->second : nullptr;
-        }
+
         {{~else if !x.index_list.empty?~}}
         {{~for idx in x.index_list~}}
         ::bright::HashMap<{{cpp_define_type idx.type}}, {{cpp_define_type value_type}}>& getDataMapBy{{idx.index_field.name}}()
