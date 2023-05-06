@@ -194,23 +194,23 @@ namespace Luban.Job.Cfg.Validators
             //}
             if (ct.IsOneValueTable)
             {
-                if (string.IsNullOrEmpty(fieldName))
+                if (string.IsNullOrEmpty(indexName))
                 {
                     throw new Exception($"结构:{hostTypeName} 字段:{fieldName} ref:{actualTable} 是singleton表，索引字段不能为空");
                 }
                 else
                 {
-                    if (!ct.ValueTType.Bean.TryGetField(fieldName, out var indexField, out _))
+                    if (!ct.ValueTType.Bean.TryGetField(indexName, out var indexField, out _))
                     {
-                        throw new Exception($"结构:{hostTypeName} 字段:{fieldName} ref:{actualTable} value_type:{ct.ValueTType.Bean.FullName} 未包含索引字段:{fieldName}");
+                        throw new Exception($"结构:{hostTypeName} 字段:{fieldName} ref:{actualTable} value_type:{ct.ValueTType.Bean.FullName} 未包含索引字段:{indexName}");
                     }
                     if (!(indexField.CType is TMap tmap))
                     {
-                        throw new Exception($"结构:{hostTypeName} 字段:{fieldName} ref:{actualTable} value_type:{ct.ValueTType.Bean.FullName} 索引字段:{fieldName} type:{indexField.CType.TypeName} 不是map类型");
+                        throw new Exception($"结构:{hostTypeName} 字段:{fieldName} ref:{actualTable} value_type:{ct.ValueTType.Bean.FullName} 索引字段:{indexName} type:{indexField.CType.TypeName} 不是map类型");
                     }
                     if (tmap.KeyType.TypeName != Type.TypeName)
                     {
-                        throw new Exception($"结构:{hostTypeName} 字段:{fieldName} 类型:'{Type.TypeName}' 与被引用的表:{actualTable} value_type:{ct.ValueTType.Bean.FullName} 索引字段:{fieldName} key_type:{tmap.KeyType.TypeName} 不一致");
+                        throw new Exception($"结构:{hostTypeName} 字段:{fieldName} 类型:'{Type.TypeName}' 与被引用的表:{actualTable} value_type:{ct.ValueTType.Bean.FullName} 索引字段:{indexName} key_type:{tmap.KeyType.TypeName} 不一致");
                     }
                 }
             }
