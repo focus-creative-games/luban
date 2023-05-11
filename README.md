@@ -39,22 +39,19 @@ luban统一了游戏配置开发工作流，极大提升了策划和程序的工
 - **通用型生成和缓存工具**。也可以用于生成协议、数据库之类的代码，甚至可以用作对象缓存服务
 - **良好支持主流引擎、全平台、主流热更新方案、主流前后端框架**。支持Unity、Unreal、Cocos2x、Godot、微信小游戏等主流引擎。工具自身跨平台，能在Win,Linux,Mac平台良好工作。
 
-完整特性请参见 [feature](https://focus-creative-games.github.io/luban/traits)
+完整特性请参见 [feature](https://focus-creative-games.github.io/luban-doc/#/manual/traits)
 
 ## 文档
 
-- [快速上手](https://focus-creative-games.github.io/luban/start_up/)
-- [技术论坛](https://forum.focus-creative-games.com/topics)
-- [Document](https://focus-creative-games.github.io/luban/) ，比较完善，有使用疑问，请先查看此文档。
+- [官方文档](https://focus-creative-games.github.io/luban-doc/)
+- [快速上手](https://focus-creative-games.github.io/luban-doc/#/beginner/quickstart)
 - **示例项目** ([github](https://github.com/focus-creative-games/luban_examples)) ([gitee](https://gitee.com/focus-creative-games/luban_examples))
-- [版本变更记录](https://focus-creative-games.github.io/luban/changelog/)
+- [版本变更记录](https://focus-creative-games.github.io/luban-doc/#/changelog)
 - 支持与联系
   - QQ群: 692890842 （Luban开发交流群）。有使用方面的疑问请及时加QQ群询问，随时有人帮助解决。
-  - 邮箱: luban@focus-creative-games.com
+  - 邮箱: luban@code-philosophy.com
 
 ## excel格式速览
-
-完整示例请详见 [excel格式介绍](https://focus-creative-games.github.io/luban/excel/)
 
 ### 普通表
 
@@ -393,16 +390,6 @@ Reward为包含 "int item_id; int count; string desc; " 这三个字段的子结
 </tr>
 </table>
 
-### map 类型的多级子标题
-
-<table border="1">
-<tr align="center"><td>##var</td><td>id</td><td colspan="4">lans</td></tr>
-<tr align="center"><td>##type</td><td>int</td><td colspan="4">map,string,string</td></tr>
-<tr align="center"><td>##var</td><td/><td>ch-zn</td><td>en</td><td>jp</td><td>fr</td></tr>
-<tr align="center"><td/><td>1</td><td>苹果</td><td>apple</td><td>aaa</td><td>aaa</td></tr>
-<tr align="center"><td/><td>2</td><td>香蕉</td><td>banana</td><td>bbb</td><td>bbb</td></tr>
-</table>
-
 ### 类型继承（适合技能、buff相关配置）
 
 <table border="1">
@@ -476,7 +463,7 @@ Reward为包含 "int item_id; int count; string desc; " 这三个字段的子结
 
 ## json、lua、xml、yaml 格式速览
 
-以行为树为例，展示json格式下如何配置行为树配置。xml、lua、yaml等等格式请参见 [详细文档](https://focus-creative-games.github.io/luban/data_source/)。
+以行为树为例，展示json格式下如何配置行为树配置。xml、lua、yaml等等格式请参见 [详细文档](https://focus-creative-games.github.io/luban-doc/#/manual/datasource)。
 
 ```json
 {

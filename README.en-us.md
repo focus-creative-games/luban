@@ -1,4 +1,4 @@
-#Luban
+# Luban
 
 [![license](http://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://travis-ci.com/focus-creative-games/luban.svg?branch=main)](https://travis-ci.com/focus-creative-games/luban )
@@ -21,35 +21,34 @@
 
 luban is your **best game configuration solution**.
 
-Luban efficiently handles data such as excel, json, and xml that are common in game development, checks for data errors, generates code in various languages ​​such as c#, and exports it to various formats such as bytes or json.
+Luban efficiently processes data such as excel, json, and xml common in game development, checks data errors, generates codes in various languages such as c#, and exports them into various formats such as bytes or json.
 
-Luban unifies the game configuration development workflow, greatly improving the efficiency of planning and programming.
+luban unifies the game configuration development workflow, greatly improving the efficiency of planning and programming.
 
-## Core Features
+## Core features
 
-- Powerful data parsing and conversion capabilities {excel(csv,xls,xlsx), json, bson, xml, yaml, lua, unity ScriptableObject} => {binary, json, bson, xml, lua, yaml, erlang, custom format }
-- Enhanced excel format that can be easily configured like simple lists, substructures, structured lists, and arbitrarily complex deeply nested structures.
-- Complete type system, **support OOP type inheritance**, with data in excel, json, lua, xml and other formats **flexibly and elegantly** to express complex GamePlay data such as behavior trees, skills, plots, and copies
-- Support to generate c#, java, go, c++, lua, python, javascript, typescript, erlang, rust code
+- Powerful data analysis and conversion capabilities {excel(csv,xls,xlsx), json, bson, xml, yaml, lua, unity ScriptableObject} => {binary, json, bson, xml, lua, yaml, erlang, custom format }
+- Enhanced excel format, which can succinctly configure simple lists, substructures, structured lists, and arbitrarily complex deep nested structures.
+- Complete type system, **Support OOP type inheritance**, with data in excel, json, lua, xml and other formats **Flexible and elegant** Express complex GamePlay data such as behavior trees, skills, plots, and copies
+- Supports generating c#, java, go, c++, lua, python, javascript, typescript, erlang, rust, gdscript code
 - Support generating protobuf(schema + binary + json), flatbuffers(schema + json), msgpack(binary)
-- Powerful data verification capabilities. ref reference check, path resource path, range range check, etc.
+- Powerful data verification capability. ref reference check, path resource path, range range check, etc.
 - Perfect localization support. Static text value localization, dynamic text value localization, time localization, main-patch multi-region version
 - Powerful and flexible customization capabilities, support for custom code templates and data templates
-- **Generic generation and caching tool**. Can also be used to generate code like protocols, databases, or even as an object caching service
-- **Good support for mainstream engines, all platforms, mainstream hot update solutions, mainstream front-end and back-end frameworks**. Support mainstream engines such as unity, unreal, cocos2x, and WeChat mini-games. The tool itself is cross-platform and can work well on Win, Linux, and Mac platforms.
+- **Universal generation and caching tool**. It can also be used to generate code such as protocols, databases, and even as an object caching service
+- **Good support for mainstream engines, all platforms, mainstream hot update solutions, and mainstream front-end and back-end frameworks**. Supports mainstream engines such as Unity, Unreal, Cocos2x, Godot, and WeChat games. The tool itself is cross-platform and can work well on Win, Linux, and Mac platforms.
 
-See [feature](https://focus-creative-games.github.io/luban/feature/) for full features
+See [feature](https://focus-creative-games.github.io/luban-doc/#/manual/traits) for complete features
 
 ## Documentation
 
-- [Quick Start](https://focus-creative-games.github.io/luban/start_up/)
-- [Document](https://focus-creative-games.github.io/luban/), it is relatively complete, if you have any questions, please check this document first.
+- [Official Documentation](https://focus-creative-games.github.io/luban-doc/)
+- [Quickstart](https://focus-creative-games.github.io/luban-doc/#/beginner/quickstart)
 - **Example Project** ([github](https://github.com/focus-creative-games/luban_examples)) ([gitee](https://gitee.com/focus-creative-games/luban_examples) )
-- [Version Changelog](https://focus-creative-games.github.io/luban/changelog/)
-
-- Support and Contact
-  - QQ group: 692890842 (Luban development exchange group). If you have any questions about use, please add the QQ group to ask in time, and someone will help you at any time.
-  - Email: taojingjian#gmail.com
+- [Version Change Log](https://focus-creative-games.github.io/luban-doc/#/changelog)
+- Support and contact
+   - QQ group: 692890842 (Luban development exchange group). If you have any questions about usage, please join the QQ group to ask in time, and someone will help you solve it at any time.
+   - Email: luban@code-philosophy.com
 
 ## Excel format overview
 
