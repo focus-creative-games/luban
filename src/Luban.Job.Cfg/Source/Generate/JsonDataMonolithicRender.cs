@@ -23,7 +23,7 @@ namespace Luban.Job.Cfg.Generate
             {
                 allJsonTask.Add(Task.Run(() =>
                 {
-                    return (string)DataExporterUtil.ToOutputData(c, ctx.Assembly.GetTableExportDataList(c), "data_json2");
+                    return System.Text.Encoding.UTF8.GetString((byte[])DataExporterUtil.ToOutputData(c, ctx.Assembly.GetTableExportDataList(c), "data_json2"));
                 }));
             }
 
