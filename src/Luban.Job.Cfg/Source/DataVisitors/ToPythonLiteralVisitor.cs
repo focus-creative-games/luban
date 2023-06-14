@@ -94,7 +94,7 @@ namespace Luban.Job.Cfg.DataVisitors
                     x.Append(',');
                 }
                 ++index;
-                x.Append('"').Append(e.Key.ToString()).Append('"');
+                x.Append(e.Key.Apply(this));
                 x.Append(':');
                 x.Append(e.Value.Apply(this));
             }
