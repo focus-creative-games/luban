@@ -112,6 +112,10 @@ namespace Luban.Job.Cfg.Utils
         {
             return s.Replace("\\", "\\\\").Replace("\"", "\\\"");
         }
+        public static string UnEscapeString(string s)
+        {
+            return s.Replace("\\\"", "\"").Replace("\\\"", "\"");
+        }
 
         public static string EscapeLuaStringWithQuote(string s)
         {

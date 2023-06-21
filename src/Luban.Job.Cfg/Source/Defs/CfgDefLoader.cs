@@ -384,6 +384,7 @@ namespace Luban.Job.Cfg.Defs
                         case "path":
                         case "range":
                         case "sep":
+                        case "regex":
                         {
                             throw new Exception($"table:'{table.Name}' file:{file.OriginFile} title:'{name}' attr:'{attrName}' 属于type的属性，必须用#分割，尝试'{cf.Type}#{attrs[i]}'");
                         }
