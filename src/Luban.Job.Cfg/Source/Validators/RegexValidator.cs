@@ -108,7 +108,6 @@ namespace Luban.Job.Cfg.Validators
                 }
                 case DText dText:
                 {
-                    ;
                     Check(dText.RawValue);
                     break;
                 }
