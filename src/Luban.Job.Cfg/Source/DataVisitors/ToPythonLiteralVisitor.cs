@@ -10,6 +10,11 @@ namespace Luban.Job.Cfg.DataVisitors
     {
         public static ToPythonLiteralVisitor Ins { get; } = new();
 
+        public override string Accept(DBool type)
+        {
+            return type.Value ? "True" : "False";
+        }
+        
         public override string Accept(DText type)
         {
             return $"{{\"{DText.KEY_NAME}\":\"{type.Key}\",\"{DText.TEXT_NAME}\":\"{DataUtil.EscapeString(type.TextOfCurrentAssembly)}\"}}";
