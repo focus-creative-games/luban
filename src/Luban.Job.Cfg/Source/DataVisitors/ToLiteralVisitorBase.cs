@@ -7,7 +7,7 @@ namespace Luban.Job.Cfg.DataVisitors
 {
     abstract class ToLiteralVisitorBase : IDataFuncVisitor<string>
     {
-        public string Accept(DBool type)
+        public virtual string Accept(DBool type)
         {
             return type.Value ? "true" : "false";
         }
