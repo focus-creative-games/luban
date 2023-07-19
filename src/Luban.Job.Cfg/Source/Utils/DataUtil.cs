@@ -126,7 +126,8 @@ namespace Luban.Job.Cfg.Utils
 
             var multiEqaulChars = new StringBuilder();
             var result = new StringBuilder();
-            for(int i = 0; i < 100 ;i++)
+            var startIndex = s.EndsWith(']') ? 1 : 0;
+            for(int i = startIndex; i < 100 ;i++)
             {
                 if (i > 0)
                 {
