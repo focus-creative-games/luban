@@ -13,7 +13,7 @@ public abstract class TemplateCodeTargetBase : CodeTargetBase
 
     protected virtual ICodeStyle DefaultCodeStyle => CodeFormatManager.Ins.NoneCodeStyle;
 
-    protected virtual ICodeStyle CodeStyle => GenerationContext.Ins.GetCodeStyle(Name) ?? DefaultCodeStyle;
+    protected virtual ICodeStyle CodeStyle => GenerationContext.Current.GetCodeStyle(Name) ?? DefaultCodeStyle;
     
     private TemplateContext CreateTemplateContext(Template template)
     {

@@ -3,11 +3,11 @@ using Luban.Core.Utils;
 
 namespace Luban.Core.Schema;
 
-public class SchemaLoaderFactory
+public class SchemaLoaderManager
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
     
-    public static SchemaLoaderFactory Ins { get; } = new ();
+    public static SchemaLoaderManager Ins { get; } = new ();
 
     private class LoaderInfo
     {
@@ -48,7 +48,7 @@ public class SchemaLoaderFactory
     public void RegisterSchemaLoaderCreator(string type, string[] extNames, int priority, Func<string, ISchemaLoader> creator)
     {
         _schemaLoaders.Add(new LoaderInfo(){ Type = type, ExtNames = extNames, Priority = priority, Creator = creator});
-        s_logger.Info("add schema loader creator. type:{} priority:{} extNames:{}", type, priority, StringUtil.CollectionToString(extNames));
+        s_logger.Debug("add schema loader creator. type:{} priority:{} extNames:{}", type, priority, StringUtil.CollectionToString(extNames));
     }
     
     public void ScanRegisterSchemaLoaderCreator(Assembly assembly)

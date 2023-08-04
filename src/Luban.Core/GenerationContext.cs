@@ -14,11 +14,11 @@ public class GenerationContext
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
-    public static GenerationContext Ins { get; set; }
+    public static GenerationContext Current { get; private set; }
+    
+    public static GenerationArguments CurrentArguments { get; set; }
 
     public DefAssembly Assembly { get; set; }
-    
-    public GenerationArguments Arguments { get; set; }
 
     public RawTarget Target { get; set; }
 
@@ -65,15 +65,14 @@ public class GenerationContext
         s_logger.Info("load datas end");
     }
 
-    public GenerationContext(DefAssembly assembly, GenerationArguments args)
+    public GenerationContext(DefAssembly assembly)
     {
-        Ins = this;
+        Current = this;
         Assembly = assembly;
-        Arguments = args;
         
-        Target = assembly.GetTarget(args.Target);
+        Target = assembly.GetTarget(CurrentArguments.Target);
 
-        InitTables(args);
+        InitTables(CurrentArguments);
         ExportTables = CalculateExportTables();
         ExportTypes = CalculateExportTypes();
         ExportBeans = ExportTypes.OfType<DefBean>().ToList();
@@ -190,13 +189,13 @@ public class GenerationContext
     public List<Record> GetTableExportDataList(DefTable table)
     {
         var tableDataInfo = _recordsByTables[table.FullName];
-        if (Arguments.ExcludeTags.Count == 0)
+        if (CurrentArguments.ExcludeTags.Count == 0)
         {
             return tableDataInfo.FinalRecords;
         }
         else
         {
-            var finalRecords = tableDataInfo.FinalRecords.Where(r => r.IsNotFiltered(Arguments.ExcludeTags)).ToList();
+            var finalRecords = tableDataInfo.FinalRecords.Where(r => r.IsNotFiltered(CurrentArguments.ExcludeTags)).ToList();
             if (table.IsOneValueTable && finalRecords.Count != 1)
             {
                 throw new Exception($"配置表 {table.FullName} 是单值表 mode=one,但数据个数:{finalRecords.Count} != 1");
@@ -235,37 +234,37 @@ public class GenerationContext
 
     public string GetInputDataPath()
     {
-        return Arguments.GetOption("", "inputDataDir", true);
+        return CurrentArguments.GetOption("", "inputDataDir", true);
     }
     
     public string GetOutputCodePath(string family)
     {
-        return Arguments.GetOption(family, "outputCodeDir", true);
+        return CurrentArguments.GetOption(family, "outputCodeDir", true);
     }
     
     public string GetOutputDataPath(string family)
     {
-        return Arguments.GetOption(family, "outputDataDir", true);
+        return CurrentArguments.GetOption(family, "outputDataDir", true);
     }
     
     public string GetOption(string family, string name, bool useGlobalIfNotExits)
     {
-        return Arguments.GetOption(family, name, useGlobalIfNotExits);
+        return CurrentArguments.GetOption(family, name, useGlobalIfNotExits);
     }
     
     public bool TryGetOption(string family, string name, bool useGlobalIfNotExits, out string value)
     {
-        return Arguments.TryGetOption(family, name, useGlobalIfNotExits, out value);
+        return CurrentArguments.TryGetOption(family, name, useGlobalIfNotExits, out value);
     }
     
     public string GetOptionOrDefault(string family, string name, bool useGlobalIfNotExits, string defaultValue)
     {
-        return Arguments.TryGetOption(family, name, useGlobalIfNotExits, out string value) ? value : defaultValue;
+        return CurrentArguments.TryGetOption(family, name, useGlobalIfNotExits, out string value) ? value : defaultValue;
     }
     
     public bool GetBoolOptionOrDefault(string family, string name, bool useGlobalIfNotExits, bool defaultValue)
     {
-        if (Arguments.TryGetOption(family, name, useGlobalIfNotExits, out string value))
+        if (CurrentArguments.TryGetOption(family, name, useGlobalIfNotExits, out string value))
         {
             switch (value.ToLowerInvariant())
             {
@@ -281,7 +280,7 @@ public class GenerationContext
 
     public ICodeStyle GetCodeStyle(string family)
     {
-        if (Arguments.TryGetOption(family, "codeStyle", true, out var codeStyleName))
+        if (CurrentArguments.TryGetOption(family, "codeStyle", true, out var codeStyleName))
         {
             return CodeFormatManager.Ins.GetCodeStyle(codeStyleName);
         }

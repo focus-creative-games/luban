@@ -12,9 +12,9 @@ public abstract class DefTypeBase
 
     public string FullName => TypeUtil.MakeFullName(Namespace, Name);
     
-    public string NamespaceWithTopModule => TypeUtil.MakeNamespace(GenerationContext.Ins.TopModule, Namespace);
+    public string NamespaceWithTopModule => TypeUtil.MakeNamespace(GenerationContext.Current.TopModule, Namespace);
     
-    public string FullNameWithTopModule => TypeUtil.MakeNamespace(GenerationContext.Ins.TopModule, FullName);
+    public string FullNameWithTopModule => TypeUtil.MakeNamespace(GenerationContext.Current.TopModule, FullName);
     
     public List<string> Groups { get; set; }
 

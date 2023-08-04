@@ -15,16 +15,16 @@ public class Pipeline
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
     private readonly GenerationArguments _genArgs;
-
+    
     private RawAssembly _rawAssembly;
     
     private DefAssembly _defAssembly;
 
     private GenerationContext _genCtx;
 
-    public Pipeline(GenerationArguments genArgs)
+    public Pipeline()
     {
-        _genArgs = genArgs;
+        _genArgs = GenerationContext.CurrentArguments;
     }
 
     public void Run()
@@ -32,19 +32,13 @@ public class Pipeline
         LoadSchema();
         PrepareGenerationContext();
         ProcessTargets();
-        CleanUp();
-    }
-
-    private void CleanUp()
-    {
-        GenerationContext.Ins = null;
     }
 
     private void LoadSchema()
     {
         string schemaCollectorName = _genArgs.SchemaCollector;
         s_logger.Info("load schema. collector: {}  path:{}", schemaCollectorName, _genArgs.SchemaPath);
-        var schemaCollector = SchemaCollectorFactory.Ins.CreateSchemaCollector(schemaCollectorName);
+        var schemaCollector = SchemaCollectorManager.Ins.CreateSchemaCollector(schemaCollectorName);
         schemaCollector.Load(_genArgs.SchemaPath);
         _rawAssembly = schemaCollector.CreateRawAssembly();
     }
@@ -53,7 +47,7 @@ public class Pipeline
     {
         s_logger.Info("prepare generation context");
         _defAssembly = new DefAssembly(_rawAssembly);
-        _genCtx = new GenerationContext(_defAssembly, _genArgs);
+        _genCtx = new GenerationContext(_defAssembly);
     }
 
     private void ProcessTargets()

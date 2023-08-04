@@ -2,9 +2,9 @@ using System.Reflection;
 
 namespace Luban.Core.Schema;
 
-public class SchemaCollectorFactory
+public class SchemaCollectorManager
 {
-    public static SchemaCollectorFactory Ins { get; } = new ();
+    public static SchemaCollectorManager Ins { get; } = new ();
     
     private readonly Dictionary<string, Func<ISchemaCollector>> _collectors = new();
 

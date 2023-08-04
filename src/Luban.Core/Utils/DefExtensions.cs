@@ -6,7 +6,7 @@ public static class DefExtensions
 {
     public static bool NeedExport(this DefField field)
     {
-        return GenerationContext.Ins.NeedExport(field.Groups);
+        return GenerationContext.Current.NeedExport(field.Groups);
     }
     
     public static List<DefField> GetExportFields(this DefBean bean)
@@ -21,6 +21,6 @@ public static class DefExtensions
     
     public static bool NeedExport(this DefTable table)
     {
-        return GenerationContext.Ins.NeedExport(table.Groups);
+        return GenerationContext.Current.NeedExport(table.Groups);
     }
 }

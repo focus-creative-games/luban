@@ -60,6 +60,17 @@ internal static class Program
     
     private static ILogger s_logger;
 
+    private static void Main(string[] args)
+    {
+        SetupApp();
+        GenerationContext.CurrentArguments = ParseArgs(args);
+        InitManagers();
+        ScanRegisterBuiltinAssemblies();
+        ScanRegisterPlugins();
+        LaunchPipeline();
+        s_logger.Info("bye~");
+    }
+
     private static GenerationArguments ParseArgs(string[] args)
     {
         var helpWriter = new StringWriter();
@@ -95,34 +106,45 @@ internal static class Program
         };
     }
 
-    private static void Main(string[] args)
+    private static void SetupApp()
     {
         ConsoleUtil.EnableQuickEditMode(false);
         Console.OutputEncoding = Encoding.UTF8;
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
+        int processorCount = Environment.ProcessorCount;
+        ThreadPool.SetMinThreads(Math.Max(4, processorCount), 5);
+        ThreadPool.SetMaxThreads(Math.Max(16, processorCount * 4), 10);
+
         InitSimpleNLogConfigure(LogLevel.Info);
         s_logger = LogManager.GetCurrentClassLogger();
-        s_logger.Info("init logger success");
+        PrintCopyRight();
+    }
 
+    private static void PrintCopyRight()
+    {
+        s_logger.Info("// =============================================================================================");
+        s_logger.Info("// ");
+        s_logger.Info("//    Luban is developed by Code Philosophy Technology Co., LTD. (https://code-philosophy.com/)");
+        s_logger.Info("// ");
+        s_logger.Info("// =============================================================================================");
+    }
 
-        var genArgs = ParseArgs(args);
-
-        string curDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        TemplateManager templateManager = TemplateManager.Ins;
-        templateManager.Init();
-        templateManager.AddTemplateSearchPath($"{curDir}/Templates", true);
-        
+    private static void InitManagers()
+    {
+        TemplateManager.Ins.Init();
         CodeFormatManager.Ins.Init();
         CodeTargetManager.Ins.Init();
         PostProcessManager.Ins.Init();
         OutputSaverManager.Ins.Init();
         DataLoaderManager.Ins.Init();
         DataTargetManager.Ins.Init();
-        
-        PluginManager.Ins.Init(new DefaultPluginCollector($"{curDir}/Plugins"));
-        
-        var scanAssemblies = new List<Assembly>()
+        PluginManager.Ins.Init();
+    }
+
+    private static void ScanRegisterBuiltinAssemblies()
+    {
+        var builtinAssemblies = new List<Assembly>()
         {
             typeof(CsharpBinCodeTarget).Assembly,
             typeof(DefaultSchemaCollector).Assembly,
@@ -130,33 +152,16 @@ internal static class Program
             typeof(DefaultDataExporter).Assembly,
         };
 
-        foreach (var assembly in scanAssemblies)
+        foreach (var assembly in builtinAssemblies)
         {
             ScanRegisterAssembly(assembly);
         }
-
-        foreach (var plugin in PluginManager.Ins.Plugins)
-        {
-            templateManager.AddTemplateSearchPath($"{plugin.Location}/Templates", false);
-            ScanRegisterAssembly(plugin.GetType().Assembly);
-        }
-
-        int processorCount = Environment.ProcessorCount;
-        ThreadPool.SetMinThreads(Math.Max(4, processorCount), 5);
-        ThreadPool.SetMaxThreads(Math.Max(16, processorCount * 4), 10);
-        
-        s_logger.Info("start");
-
-        var pipeline = new Pipeline(genArgs);
-        pipeline.Run();
-        
-        s_logger.Info("bye~");
     }
 
     private static void ScanRegisterAssembly(Assembly assembly)
     {
-        SchemaCollectorFactory.Ins.ScanRegisterCollectorCreator(assembly);
-        SchemaLoaderFactory.Ins.ScanRegisterSchemaLoaderCreator(assembly);
+        SchemaCollectorManager.Ins.ScanRegisterCollectorCreator(assembly);
+        SchemaLoaderManager.Ins.ScanRegisterSchemaLoaderCreator(assembly);
         CodeFormatManager.Ins.ScanRegisterFormatters(assembly);
         CodeFormatManager.Ins.ScanRegisterCodeStyle(assembly);
         CodeTargetManager.Ins.ScanResisterCodeTarget(assembly);
@@ -165,6 +170,21 @@ internal static class Program
         DataLoaderManager.Ins.ScanRegisterDataLoader(assembly);
         DataTargetManager.Ins.ScanRegisterDataExporter(assembly);
         DataTargetManager.Ins.ScanRegisterTableExporter(assembly);
+    }
+
+    private static void ScanRegisterPlugins()
+    {
+        foreach (var plugin in PluginManager.Ins.Plugins)
+        {
+            TemplateManager.Ins.AddTemplateSearchPath($"{plugin.Location}/Templates", false);
+            ScanRegisterAssembly(plugin.GetType().Assembly);
+        }
+    }
+    
+    private static void LaunchPipeline()
+    {
+        var pipeline = new Pipeline();
+        pipeline.Run();
     }
     
     private static void InitSimpleNLogConfigure(NLog.LogLevel minConsoleLogLevel)

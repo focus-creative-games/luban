@@ -20,7 +20,7 @@ public class DDateTime : DType
         this._localTime = (long)new DateTimeOffset(TimeZoneInfo.ConvertTime(time, TimeZoneUtil.DefaultTimeZone, TimeZoneInfo.Utc)).ToUnixTimeSeconds();
     }
 
-    public long UnixTimeOfCurrentContext => GetUnixTime(GenerationContext.Ins.Arguments.TimeZone);
+    public long UnixTimeOfCurrentContext => GetUnixTime(GenerationContext.CurrentArguments.TimeZone);
 
     public override bool Equals(object obj)
     {

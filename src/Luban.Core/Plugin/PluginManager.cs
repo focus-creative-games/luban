@@ -14,8 +14,10 @@ public class PluginManager
 
     public IReadOnlyList<IPlugin> Plugins => _plugins;
 
-    public void Init(IPluginCollector pluginCollector)
+    public void Init()
     {
+        string curDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        IPluginCollector pluginCollector = new DefaultPluginCollector($"{curDir}/Plugins");
         foreach (string pluginPath in pluginCollector.GetPluginPaths())
         {
             if (LoadPlugin(pluginPath, out var plugin))

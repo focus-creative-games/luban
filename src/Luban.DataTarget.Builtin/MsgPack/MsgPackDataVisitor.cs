@@ -87,7 +87,7 @@ class MsgPackDataVisitor
 
     public void Accept(DDateTime type, ref MessagePackWriter writer)
     {
-        writer.Write(type.GetUnixTime(GenerationContext.Ins.Arguments.TimeZone));
+        writer.Write(type.UnixTimeOfCurrentContext);
     }
 
     public void Accept(DBean type, ref MessagePackWriter writer)

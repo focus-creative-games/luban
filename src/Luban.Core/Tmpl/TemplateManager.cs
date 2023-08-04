@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Reflection;
 using System.Text;
 using Scriban;
 
@@ -19,6 +20,8 @@ public class TemplateManager
 
     public void Init()
     {
+        string curDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        AddTemplateSearchPath($"{curDir}/Templates", true);
     }
 
     public void AddTemplateSearchPath(string templateSearchPath, bool sureExists = false)

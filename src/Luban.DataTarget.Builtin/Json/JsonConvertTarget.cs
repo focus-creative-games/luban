@@ -15,7 +15,7 @@ public class JsonConvertTarget : DataTargetBase
 {
     protected override string OutputFileExt => "json";
 
-    public static bool UseCompactJson => GenerationContext.Ins.GetBoolOptionOrDefault($"{FamilyPrefix}.json", "compact", true, false);
+    public static bool UseCompactJson => GenerationContext.Current.GetBoolOptionOrDefault($"{FamilyPrefix}.json", "compact", true, false);
     
     protected virtual JsonDataVisitor ImplJsonDataVisitor => JsonConvertor.Ins;
 

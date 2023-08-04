@@ -63,7 +63,7 @@ public class BinaryDataVisitor : IDataActionVisitor<ByteBuf>
 
     public void Accept(DDateTime type, ByteBuf x)
     {
-        x.WriteLong(type.GetUnixTime(GenerationContext.Ins.Arguments.TimeZone));
+        x.WriteLong(type.UnixTimeOfCurrentContext);
     }
 
     public void Accept(DBean type, ByteBuf x)
