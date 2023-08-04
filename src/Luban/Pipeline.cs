@@ -11,7 +11,7 @@ namespace Luban;
 
 public class Pipeline
 {
-    private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
+    private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
     private readonly GenerationArguments _genArgs;
     

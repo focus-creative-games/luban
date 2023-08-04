@@ -66,10 +66,19 @@ internal static class Program
     {
         GenerationContext.CurrentArguments = ParseArgs(args);
         SetupApp();
-        InitManagers();
-        ScanRegisterBuiltinAssemblies();
-        ScanRegisterPlugins();
-        LaunchPipeline();
+        
+        var builtinAssemblies = new List<Assembly>
+        {
+            typeof(CsharpBinCodeTarget).Assembly,
+            typeof(DefaultSchemaCollector).Assembly,
+            typeof(FieldNames).Assembly,
+            typeof(DefaultDataExporter).Assembly,
+        };
+        var launcher = new SimpleLauncher();
+        launcher.Start(builtinAssemblies);
+        
+        var pipeline = new Pipeline();
+        pipeline.Run();
         s_logger.Info("bye~");
     }
 
@@ -126,68 +135,11 @@ internal static class Program
 
     private static void PrintCopyRight()
     {
-        s_logger.Info("// =============================================================================================");
-        s_logger.Info("// ");
-        s_logger.Info("//    Luban is developed by Code Philosophy Technology Co., LTD. (https://code-philosophy.com/)");
-        s_logger.Info("// ");
-        s_logger.Info("// =============================================================================================");
-    }
-
-    private static void InitManagers()
-    {
-        TemplateManager.Ins.Init();
-        CodeFormatManager.Ins.Init();
-        CodeTargetManager.Ins.Init();
-        PostProcessManager.Ins.Init();
-        OutputSaverManager.Ins.Init();
-        DataLoaderManager.Ins.Init();
-        DataTargetManager.Ins.Init();
-        PluginManager.Ins.Init();
-    }
-
-    private static void ScanRegisterBuiltinAssemblies()
-    {
-        var builtinAssemblies = new List<Assembly>()
-        {
-            typeof(CsharpBinCodeTarget).Assembly,
-            typeof(DefaultSchemaCollector).Assembly,
-            typeof(FieldNames).Assembly,
-            typeof(DefaultDataExporter).Assembly,
-        };
-
-        foreach (var assembly in builtinAssemblies)
-        {
-            ScanRegisterAssembly(assembly);
-        }
-    }
-
-    private static void ScanRegisterAssembly(Assembly assembly)
-    {
-        SchemaCollectorManager.Ins.ScanRegisterCollectorCreator(assembly);
-        SchemaLoaderManager.Ins.ScanRegisterSchemaLoaderCreator(assembly);
-        CodeFormatManager.Ins.ScanRegisterFormatters(assembly);
-        CodeFormatManager.Ins.ScanRegisterCodeStyle(assembly);
-        CodeTargetManager.Ins.ScanResisterCodeTarget(assembly);
-        PostProcessManager.Ins.ScanRegisterPostProcess(assembly);
-        OutputSaverManager.Ins.ScanRegisterOutputSaver(assembly);
-        DataLoaderManager.Ins.ScanRegisterDataLoader(assembly);
-        DataTargetManager.Ins.ScanRegisterDataExporter(assembly);
-        DataTargetManager.Ins.ScanRegisterTableExporter(assembly);
-    }
-
-    private static void ScanRegisterPlugins()
-    {
-        foreach (var plugin in PluginManager.Ins.Plugins)
-        {
-            TemplateManager.Ins.AddTemplateSearchPath($"{plugin.Location}/Templates", false);
-            ScanRegisterAssembly(plugin.GetType().Assembly);
-        }
-    }
-    
-    private static void LaunchPipeline()
-    {
-        var pipeline = new Pipeline();
-        pipeline.Run();
+        s_logger.Info(" =============================================================================================");
+        s_logger.Info(" ");
+        s_logger.Info("    Luban is developed by Code Philosophy Technology Co., LTD. (https://code-philosophy.com/)");
+        s_logger.Info(" ");
+        s_logger.Info(" =============================================================================================");
     }
     
     private static void InitSimpleNLogConfigure(NLog.LogLevel minConsoleLogLevel)
