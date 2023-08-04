@@ -39,7 +39,7 @@ public class RootXmlSchemaLoader : IRootSchemaLoader
 
     public void Load(string fileName, ISchemaCollector collector)
     {
-        s_logger.Info("load root xml schema file:{}", fileName);
+        s_logger.Debug("load root xml schema file:{}", fileName);
         _xmlFileName = fileName;
         _schemaCollector = collector;
         _curDir = Directory.GetParent(fileName).FullName;

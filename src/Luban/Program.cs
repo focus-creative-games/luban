@@ -56,14 +56,19 @@ internal static class Program
         
         [Option('x', "xargs", Required = false, HelpText = "args like -x a=1 -x b=2")]
         public IEnumerable<string> Xargs { get; set; }
+        
+        [Option('v', "verbose", Required = false, HelpText = "verbose")]
+        public bool Verbose { get; set; }
     }
     
     private static ILogger s_logger;
 
+    private static CommandOptions s_commandOptions;
+
     private static void Main(string[] args)
     {
-        SetupApp();
         GenerationContext.CurrentArguments = ParseArgs(args);
+        SetupApp();
         InitManagers();
         ScanRegisterBuiltinAssemblies();
         ScanRegisterPlugins();
@@ -87,6 +92,7 @@ internal static class Program
             Environment.Exit(1);
         }
         var opts = ((Parsed<CommandOptions>)result).Value;
+        s_commandOptions = opts;
 
         return new GenerationArguments()
         {
@@ -113,10 +119,10 @@ internal static class Program
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
         int processorCount = Environment.ProcessorCount;
-        ThreadPool.SetMinThreads(Math.Max(4, processorCount), 5);
-        ThreadPool.SetMaxThreads(Math.Max(16, processorCount * 4), 10);
+        ThreadPool.SetMinThreads(Math.Max(4, processorCount), 0);
+        ThreadPool.SetMaxThreads(Math.Max(16, processorCount * 2), 2);
 
-        InitSimpleNLogConfigure(LogLevel.Info);
+        InitSimpleNLogConfigure(s_commandOptions.Verbose ? LogLevel.Trace : LogLevel.Info);
         s_logger = LogManager.GetCurrentClassLogger();
         PrintCopyRight();
     }

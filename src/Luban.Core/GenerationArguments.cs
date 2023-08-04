@@ -20,7 +20,6 @@ public class GenerationArguments
     
     public string SchemaCollector { get; set; }
     
-    
     public string SchemaPath { get; set; }
 
     public List<string> Tables { get; set; }

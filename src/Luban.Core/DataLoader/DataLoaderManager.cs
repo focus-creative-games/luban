@@ -29,11 +29,12 @@ public class DataLoaderManager
         var tasks = new List<Task<List<Record>>>();
         foreach (var inputFile in table.InputFiles)
         {
+            s_logger.Trace("load table:{} file:{}", table.FullName, inputFile);
             (var actualFile, var subAssetName) = FileUtil.SplitFileAndSheetName(FileUtil.Standardize(inputFile));
             var options = new Dictionary<string, string>();
             foreach (var atomFile in FileUtil.GetFileOrDirectory(Path.Combine(inputDataDir, actualFile)))
             {
-                tasks.Add(Task.Run(() => LoadTableFile(ctx, table, atomFile, subAssetName, options)));
+                tasks.Add(Task.Run(() => LoadTableFile(table, atomFile, subAssetName, options)));
             }
         }
 
@@ -45,8 +46,9 @@ public class DataLoaderManager
         ctx.AddDataTable(table, records, null);
     }
     
-    private List<Record> LoadTableFile(GenerationContext ctx, DefTable table, string file, string subAssetName, Dictionary<string, string> options)
+    private List<Record> LoadTableFile(DefTable table, string file, string subAssetName, Dictionary<string, string> options)
     {
+        s_logger.Trace("load table:{} file:{}", table.FullName, file);
         string loaderName = options.TryGetValue("loader", out var name) ? name : FileUtil.GetExtensionWithDot(file);
         var loader = CreateDataLoader(loaderName);
         using var stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);

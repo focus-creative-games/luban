@@ -45,7 +45,7 @@ public class Pipeline
 
     private void PrepareGenerationContext()
     {
-        s_logger.Info("prepare generation context");
+        s_logger.Debug("prepare generation context");
         _defAssembly = new DefAssembly(_rawAssembly);
         _genCtx = new GenerationContext(_defAssembly);
     }
@@ -63,7 +63,7 @@ public class Pipeline
         {
             _genCtx.LoadDatas();
             string dataExporterName = _genCtx.GetOptionOrDefault("global", "dataExporter", true, "default");
-            s_logger.Info("dataExporter: {}", dataExporterName);
+            s_logger.Debug("dataExporter: {}", dataExporterName);
             IDataExporter dataExporter = DataTargetManager.Ins.GetDataExporter(dataExporterName);
             foreach (string mission in _genArgs.DataTargets)
             {
