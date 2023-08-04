@@ -8,6 +8,10 @@ public class DefaultPluginCollector : IPluginCollector
     {
         foreach (string rootDir in rootDirs)
         {
+            if (!Directory.Exists(rootDir))
+            {
+                continue;
+            }
             string[] candidateDirs = Directory.GetDirectories(rootDir, "*", SearchOption.AllDirectories);
             foreach (string candidateDir in candidateDirs)
             {

@@ -67,8 +67,6 @@ public class DefTable : DefTypeBase
 
     private readonly string _outputFile;
 
-    public List<string> Groups { get; }
-
     public TType KeyTType { get; private set; }
 
     public DefField IndexField { get; private set; }
