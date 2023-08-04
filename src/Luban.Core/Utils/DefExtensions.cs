@@ -1,6 +1,6 @@
-using Luban.Core.Defs;
+using Luban.Defs;
 
-namespace Luban.Core.Utils;
+namespace Luban.Utils;
 
 public static class DefExtensions
 {

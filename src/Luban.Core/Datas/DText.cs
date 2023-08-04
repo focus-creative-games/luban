@@ -1,7 +1,6 @@
-using Luban.Core.DataVisitors;
-using Luban.Core.Defs;
+using Luban.DataVisitors;
 
-namespace Luban.Core.Datas;
+namespace Luban.Datas;
 
 public class DText : DType
 {

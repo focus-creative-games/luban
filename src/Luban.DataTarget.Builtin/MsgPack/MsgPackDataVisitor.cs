@@ -1,8 +1,7 @@
-﻿using Luban.Core;
-using Luban.Core.Datas;
-using Luban.Core.Defs;
-using Luban.Core.Utils;
-using Luban.DataLoader.Builtin;
+﻿using Luban.DataLoader.Builtin;
+using Luban.Datas;
+using Luban.Defs;
+using Luban.Utils;
 using MessagePack;
 
 namespace Luban.DataExporter.Builtin.MsgPack;

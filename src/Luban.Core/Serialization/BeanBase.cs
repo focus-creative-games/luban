@@ -1,4 +1,4 @@
-namespace Luban.Core.Serialization;
+namespace Luban.Serialization;
 
 public abstract class BeanBase : ITypeId, ISerializable
 {

@@ -1,4 +1,4 @@
-namespace Luban.Core.Utils;
+namespace Luban.Utils;
 
 public class FileCleaner
 {

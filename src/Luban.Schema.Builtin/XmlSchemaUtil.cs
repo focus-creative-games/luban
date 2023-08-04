@@ -1,7 +1,7 @@
 using System.Xml.Linq;
-using Luban.Core.Defs;
-using Luban.Core.RawDefs;
-using Luban.Core.Utils;
+using Luban.Defs;
+using Luban.RawDefs;
+using Luban.Utils;
 
 namespace Luban.Schema.Default;
 

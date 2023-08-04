@@ -1,6 +1,6 @@
 using System.Runtime.Serialization;
 
-namespace Luban.Core.Utils;
+namespace Luban.Utils;
 
 public class LoadXmlException : Exception
 {

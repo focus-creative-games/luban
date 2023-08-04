@@ -1,11 +1,10 @@
-using Luban.Core;
-using Luban.Core.CodeTarget;
-using Luban.Core.DataTarget;
-using Luban.Core.Defs;
-using Luban.Core.OutputSaver;
-using Luban.Core.PostProcess;
-using Luban.Core.RawDefs;
-using Luban.Core.Schema;
+using Luban.CodeTarget;
+using Luban.DataTarget;
+using Luban.Defs;
+using Luban.OutputSaver;
+using Luban.PostProcess;
+using Luban.RawDefs;
+using Luban.Schema;
 using NLog;
 
 namespace Luban;

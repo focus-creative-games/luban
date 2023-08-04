@@ -1,9 +1,9 @@
-using Luban.Core.DataVisitors;
-using Luban.Core.Defs;
-using Luban.Core.Types;
-using Luban.Core.Utils;
+using Luban.DataVisitors;
+using Luban.Defs;
+using Luban.Types;
+using Luban.Utils;
 
-namespace Luban.Core.Datas;
+namespace Luban.Datas;
 
 public class DBean : DType
 {

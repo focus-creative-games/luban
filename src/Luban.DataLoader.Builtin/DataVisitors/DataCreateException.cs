@@ -1,4 +1,4 @@
-﻿using Luban.Core.Defs;
+﻿using Luban.Defs;
 
 namespace Luban.DataLoader.Builtin.DataVisitors;
 

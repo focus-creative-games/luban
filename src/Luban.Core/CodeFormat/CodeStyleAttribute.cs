@@ -1,4 +1,4 @@
-namespace Luban.Core.CodeFormat;
+namespace Luban.CodeFormat;
 
 [AttributeUsage(AttributeTargets.Class)]
 public class CodeStyleAttribute : Attribute

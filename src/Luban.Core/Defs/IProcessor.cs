@@ -1,4 +1,4 @@
-﻿namespace Luban.Core.Defs;
+﻿namespace Luban.Defs;
 
 public interface IProcessor
 {

@@ -1,8 +1,8 @@
+using Luban.CodeFormat;
 using Luban.CodeTarget.CSharp.TypeVisitors;
-using Luban.Core.CodeFormat;
-using Luban.Core.Defs;
-using Luban.Core.Types;
-using Luban.Core.Utils;
+using Luban.Defs;
+using Luban.Types;
+using Luban.Utils;
 using Scriban.Runtime;
 
 namespace Luban.CodeTarget.CSharp.TemplateExtensions;

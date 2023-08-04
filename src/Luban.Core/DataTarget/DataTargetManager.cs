@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace Luban.Core.DataTarget;
+namespace Luban.DataTarget;
 
 public class DataTargetManager
 {

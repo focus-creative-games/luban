@@ -1,8 +1,7 @@
+using Luban.Datas;
+using Luban.Utils;
 
-using Luban.Core.Datas;
-using Luban.Core.Utils;
-
-namespace Luban.Core.DataVisitors;
+namespace Luban.DataVisitors;
 
 public abstract class ToLiteralVisitorBase : IDataFuncVisitor<string>
 {

@@ -1,8 +1,8 @@
 using System.Reflection;
-using Luban.Core.CodeFormat.CodeStyles;
+using Luban.CodeFormat.CodeStyles;
 using NLog;
 
-namespace Luban.Core.CodeFormat;
+namespace Luban.CodeFormat;
 
 public class CodeFormatManager
 {

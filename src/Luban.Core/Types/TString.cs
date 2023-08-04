@@ -1,6 +1,6 @@
-using Luban.Core.TypeVisitors;
+using Luban.TypeVisitors;
 
-namespace Luban.Core.Types;
+namespace Luban.Types;
 
 public class TString : TType
 {

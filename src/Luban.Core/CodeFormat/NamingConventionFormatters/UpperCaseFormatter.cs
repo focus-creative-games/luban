@@ -1,6 +1,4 @@
-using Luban.Core.Utils;
-
-namespace Luban.Core.CodeFormat.NamingConventionFormatters;
+namespace Luban.CodeFormat.NamingConventionFormatters;
 
 [NamingConvention("upper")]
 public class UpperCaseFormatter : INamingConventionFormatter

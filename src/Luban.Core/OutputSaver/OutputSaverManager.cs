@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace Luban.Core.OutputSaver;
+namespace Luban.OutputSaver;
 
 public class OutputSaverManager
 {

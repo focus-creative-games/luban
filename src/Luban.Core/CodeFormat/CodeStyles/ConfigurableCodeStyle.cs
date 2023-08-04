@@ -1,4 +1,4 @@
-namespace Luban.Core.CodeFormat.CodeStyles;
+namespace Luban.CodeFormat.CodeStyles;
 
 public class ConfigurableCodeStyle : CodeStyleBase
 {

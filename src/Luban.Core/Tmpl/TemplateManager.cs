@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Text;
 using Scriban;
 
-namespace Luban.Core.Tmpl;
+namespace Luban.Tmpl;
 
 public class TemplateManager
 {

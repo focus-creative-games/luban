@@ -1,6 +1,6 @@
-﻿using Luban.Core.Datas;
+﻿using Luban.Datas;
 
-namespace Luban.Core.Defs;
+namespace Luban.Defs;
 
 public class Record
 {

@@ -1,4 +1,4 @@
-namespace Luban.Core.DataTarget;
+namespace Luban.DataTarget;
 
 [AttributeUsage(AttributeTargets.Class)]
 public class DataExporterAttribute : System.Attribute

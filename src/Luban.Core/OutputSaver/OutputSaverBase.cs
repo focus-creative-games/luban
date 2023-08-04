@@ -1,4 +1,4 @@
-namespace Luban.Core.OutputSaver;
+namespace Luban.OutputSaver;
 
 public abstract class OutputSaverBase : IOutputSaver
 {

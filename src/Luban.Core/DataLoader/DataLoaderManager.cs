@@ -1,8 +1,8 @@
 using System.Reflection;
-using Luban.Core.Defs;
-using Luban.Core.Utils;
+using Luban.Defs;
+using Luban.Utils;
 
-namespace Luban.Core.DataLoader;
+namespace Luban.DataLoader;
 
 public class DataLoaderManager
 {
@@ -30,7 +30,7 @@ public class DataLoaderManager
         foreach (var inputFile in table.InputFiles)
         {
             s_logger.Trace("load table:{} file:{}", table.FullName, inputFile);
-            (var actualFile, var subAssetName) = FileUtil.SplitFileAndSheetName(FileUtil.Standardize(inputFile));
+            var (actualFile, subAssetName) = FileUtil.SplitFileAndSheetName(FileUtil.Standardize(inputFile));
             var options = new Dictionary<string, string>();
             foreach (var atomFile in FileUtil.GetFileOrDirectory(Path.Combine(inputDataDir, actualFile)))
             {
@@ -46,7 +46,7 @@ public class DataLoaderManager
         ctx.AddDataTable(table, records, null);
     }
     
-    private List<Record> LoadTableFile(DefTable table, string file, string subAssetName, Dictionary<string, string> options)
+    public List<Record> LoadTableFile(DefTable table, string file, string subAssetName, Dictionary<string, string> options)
     {
         s_logger.Trace("load table:{} file:{}", table.FullName, file);
         string loaderName = options.TryGetValue("loader", out var name) ? name : FileUtil.GetExtensionWithDot(file);

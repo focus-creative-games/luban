@@ -1,9 +1,9 @@
 using System.Text;
-using Luban.Core.Datas;
-using Luban.Core.Defs;
-using Luban.Core.Types;
+using Luban.Datas;
+using Luban.Defs;
+using Luban.Types;
 
-namespace Luban.Core.Utils;
+namespace Luban.Utils;
 
 public static class DataUtil
 {

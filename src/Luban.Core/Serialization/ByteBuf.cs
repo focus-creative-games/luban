@@ -2,7 +2,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace Luban.Core.Serialization;
+namespace Luban.Serialization;
 
 public readonly struct SegmentSaveState
 {

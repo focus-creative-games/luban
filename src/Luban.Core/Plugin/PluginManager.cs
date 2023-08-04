@@ -3,7 +3,7 @@ using System.Text;
 using System.Text.Json;
 using NLog;
 
-namespace Luban.Core.Plugin;
+namespace Luban.Plugin;
 
 public class PluginManager
 {

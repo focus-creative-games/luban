@@ -1,6 +1,6 @@
-using Luban.Core.Datas;
-using Luban.Core.Types;
-using Luban.Core.TypeVisitors;
+using Luban.Datas;
+using Luban.Types;
+using Luban.TypeVisitors;
 
 namespace Luban.DataLoader.Builtin.DataVisitors;
 

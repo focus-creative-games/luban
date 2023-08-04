@@ -1,6 +1,6 @@
-using Luban.Core.Utils;
+using Luban.Utils;
 
-namespace Luban.Core.OutputSaver;
+namespace Luban.OutputSaver;
 
 [OutputSaver("local")]
 public class LocalFileSaver : OutputSaverBase

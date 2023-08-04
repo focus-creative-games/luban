@@ -1,7 +1,7 @@
-﻿using Luban.Core.Datas;
-using Luban.Core.Utils;
+﻿using Luban.Datas;
+using Luban.Utils;
 
-namespace Luban.Core.Defs;
+namespace Luban.Defs;
 
 public class TableDataInfo
 {

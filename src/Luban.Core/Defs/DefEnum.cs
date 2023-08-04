@@ -1,7 +1,7 @@
-using Luban.Core.RawDefs;
-using Luban.Core.Utils;
+using Luban.RawDefs;
+using Luban.Utils;
 
-namespace Luban.Core.Defs;
+namespace Luban.Defs;
 
 public class DefEnum : DefTypeBase
 {

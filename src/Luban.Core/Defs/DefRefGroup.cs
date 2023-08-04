@@ -1,6 +1,6 @@
-﻿using Luban.Core.RawDefs;
+﻿using Luban.RawDefs;
 
-namespace Luban.Core.Defs;
+namespace Luban.Defs;
 
 public class DefRefGroup
 {

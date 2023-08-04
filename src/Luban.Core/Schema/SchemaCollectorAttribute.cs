@@ -1,4 +1,4 @@
-namespace Luban.Core.Schema;
+namespace Luban.Schema;
 
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
 public class SchemaCollectorAttribute : System.Attribute

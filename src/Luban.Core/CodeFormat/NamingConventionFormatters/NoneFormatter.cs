@@ -1,4 +1,4 @@
-namespace Luban.Core.CodeFormat.NamingConventionFormatters;
+namespace Luban.CodeFormat.NamingConventionFormatters;
 
 [NamingConvention("none")]
 public class NoneFormatter : INamingConventionFormatter

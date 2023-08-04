@@ -1,8 +1,7 @@
-using System.Reflection;
-using Luban.Core.Defs;
-using Luban.Core.Types;
+using Luban.Defs;
+using Luban.Types;
 
-namespace Luban.Core.DataLoader;
+namespace Luban.DataLoader;
 
 public abstract class DataLoaderBase : IDataLoader
 {

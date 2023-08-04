@@ -1,5 +1,4 @@
 using Luban.CodeTarget.CSharp.TemplateExtensions;
-using Luban.Core.CodeTarget;
 using Scriban;
 
 namespace Luban.CodeTarget.CSharp;

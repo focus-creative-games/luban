@@ -1,4 +1,4 @@
-namespace Luban.Core.PostProcess;
+namespace Luban.PostProcess;
 
 [Flags]
 public enum TargetFileType

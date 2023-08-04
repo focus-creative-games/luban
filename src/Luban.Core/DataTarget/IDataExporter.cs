@@ -1,5 +1,5 @@
 
-namespace Luban.Core.DataTarget;
+namespace Luban.DataTarget;
 
 public interface IDataExporter
 {

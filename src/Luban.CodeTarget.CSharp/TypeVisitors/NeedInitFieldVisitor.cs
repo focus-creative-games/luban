@@ -1,5 +1,5 @@
-﻿using Luban.Core.Types;
-using Luban.Core.TypeVisitors;
+﻿using Luban.Types;
+using Luban.TypeVisitors;
 
 namespace Luban.CodeTarget.CSharp.TypeVisitors;
 

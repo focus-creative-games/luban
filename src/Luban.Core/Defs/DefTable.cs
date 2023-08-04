@@ -1,9 +1,9 @@
-using Luban.Core.RawDefs;
-using Luban.Core.Types;
-using Luban.Core.TypeVisitors;
-using Luban.Core.Utils;
+using Luban.RawDefs;
+using Luban.Types;
+using Luban.TypeVisitors;
+using Luban.Utils;
 
-namespace Luban.Core.Defs;
+namespace Luban.Defs;
 
 public record class IndexInfo(TType Type, DefField IndexField, int IndexFieldIdIndex);
 

@@ -1,4 +1,4 @@
-namespace Luban.Core.Serialization;
+namespace Luban.Serialization;
 
 /// <summary>
 /// 非兼容binary序列化

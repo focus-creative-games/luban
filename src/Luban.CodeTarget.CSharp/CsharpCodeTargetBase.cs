@@ -1,6 +1,5 @@
+using Luban.CodeFormat;
 using Luban.CodeTarget.CSharp.TemplateExtensions;
-using Luban.Core.CodeFormat;
-using Luban.Core.CodeTarget;
 using Scriban;
 
 namespace Luban.CodeTarget.CSharp;

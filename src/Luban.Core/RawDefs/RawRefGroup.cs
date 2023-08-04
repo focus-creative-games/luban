@@ -1,4 +1,4 @@
-﻿namespace Luban.Core.RawDefs;
+﻿namespace Luban.RawDefs;
 
 public class RawRefGroup
 {

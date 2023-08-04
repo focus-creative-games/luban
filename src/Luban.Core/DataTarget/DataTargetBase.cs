@@ -1,7 +1,6 @@
-using System.Reflection;
-using Luban.Core.Defs;
+using Luban.Defs;
 
-namespace Luban.Core.DataTarget;
+namespace Luban.DataTarget;
 
 public abstract class DataTargetBase : IDataTarget
 {

@@ -1,5 +1,5 @@
 
-namespace Luban.Core.Plugin;
+namespace Luban.Plugin;
 
 public interface IPlugin
 {

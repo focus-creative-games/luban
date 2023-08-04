@@ -1,6 +1,4 @@
-using System.Collections;
-
-namespace Luban.Core.Utils;
+namespace Luban.Utils;
 
 public static class StringUtil
 {

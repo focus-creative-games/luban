@@ -1,4 +1,4 @@
-namespace Luban.Core.OutputSaver;
+namespace Luban.OutputSaver;
 
 [AttributeUsage(AttributeTargets.Class)]
 public class OutputSaverAttribute : Attribute

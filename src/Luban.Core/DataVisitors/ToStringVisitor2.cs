@@ -1,7 +1,7 @@
-using Luban.Core.Datas;
-using Luban.Core.Utils;
+using Luban.Datas;
+using Luban.Utils;
 
-namespace Luban.Core.DataVisitors;
+namespace Luban.DataVisitors;
 
 public class ToStringVisitor2 : ToStringVisitor
 {

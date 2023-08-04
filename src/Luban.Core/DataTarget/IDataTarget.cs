@@ -1,6 +1,6 @@
-using Luban.Core.Defs;
+using Luban.Defs;
 
-namespace Luban.Core.DataTarget;
+namespace Luban.DataTarget;
 
 public enum AggregationType
 {

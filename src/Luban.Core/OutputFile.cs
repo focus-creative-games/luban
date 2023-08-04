@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Luban.Core;
+namespace Luban;
 
 public class OutputFile
 {

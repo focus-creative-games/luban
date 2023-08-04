@@ -1,6 +1,6 @@
-using Luban.Core.Defs;
+using Luban.Defs;
 
-namespace Luban.Core.RawDefs;
+namespace Luban.RawDefs;
 
 public class RawTable
 {

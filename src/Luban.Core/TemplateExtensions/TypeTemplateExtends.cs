@@ -1,7 +1,7 @@
-using Luban.Core.Types;
+using Luban.Types;
 using Scriban.Runtime;
 
-namespace Luban.Core.TemplateExtensions;
+namespace Luban.TemplateExtensions;
 
 public class TypeTemplateExtends : ScriptObject
 {

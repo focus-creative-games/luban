@@ -1,6 +1,6 @@
-using Luban.Core.Defs;
+using Luban.Defs;
 
-namespace Luban.Core.CodeTarget;
+namespace Luban.CodeTarget;
 
 public interface ICodeTarget
 {

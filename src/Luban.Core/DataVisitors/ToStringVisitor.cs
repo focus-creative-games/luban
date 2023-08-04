@@ -1,7 +1,7 @@
 using System.Text;
-using Luban.Core.Datas;
+using Luban.Datas;
 
-namespace Luban.Core.DataVisitors;
+namespace Luban.DataVisitors;
 
 public class ToStringVisitor : ToLiteralVisitorBase
 {

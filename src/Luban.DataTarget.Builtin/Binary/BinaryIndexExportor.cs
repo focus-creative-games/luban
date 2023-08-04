@@ -1,6 +1,6 @@
-using Luban.Core.Datas;
-using Luban.Core.Defs;
-using Luban.Core.Serialization;
+using Luban.Datas;
+using Luban.Defs;
+using Luban.Serialization;
 
 namespace Luban.DataExporter.Builtin.Binary;
 

@@ -1,4 +1,4 @@
-namespace Luban.Core.DataLoader;
+namespace Luban.DataLoader;
 
 [AttributeUsage(AttributeTargets.Class)]
 public class DataLoaderAttribute : Attribute

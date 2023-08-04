@@ -1,7 +1,4 @@
-﻿using Luban.Core.Defs;
-using Luban.Core.RawDefs;
-
-namespace Luban.Core.Utils;
+﻿namespace Luban.Utils;
 
 public static class ExternalTypeUtil
 {

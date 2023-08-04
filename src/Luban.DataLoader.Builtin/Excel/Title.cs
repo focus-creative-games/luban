@@ -1,4 +1,4 @@
-﻿using Luban.Core.Utils;
+﻿using Luban.Utils;
 
 namespace Luban.DataLoader.Builtin.Excel;
 

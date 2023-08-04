@@ -1,6 +1,6 @@
-﻿using Luban.Core.Types;
-using Luban.Core.TypeVisitors;
-using Luban.Core.Utils;
+﻿using Luban.Types;
+using Luban.TypeVisitors;
+using Luban.Utils;
 
 namespace Luban.DataExporter.Builtin.Protobuf;
 

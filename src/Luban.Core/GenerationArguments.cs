@@ -1,4 +1,4 @@
-namespace Luban.Core;
+namespace Luban;
 
 public class GenerationArguments
 {

@@ -1,10 +1,9 @@
 using System.Text.Json;
 using System.Xml;
-using Luban.Core;
-using Luban.Core.DataTarget;
-using Luban.Core.Defs;
-using Luban.Core.Utils;
 using Luban.DataExporter.Builtin.Json;
+using Luban.DataTarget;
+using Luban.Defs;
+using Luban.Utils;
 
 namespace Luban.DataExporter.Builtin.Xml;
 

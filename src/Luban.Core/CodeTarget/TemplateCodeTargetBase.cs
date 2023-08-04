@@ -1,11 +1,11 @@
-using Luban.Core.CodeFormat;
-using Luban.Core.Defs;
-using Luban.Core.TemplateExtensions;
-using Luban.Core.Tmpl;
+using Luban.CodeFormat;
+using Luban.Defs;
+using Luban.TemplateExtensions;
+using Luban.Tmpl;
 using Scriban;
 using Scriban.Runtime;
 
-namespace Luban.Core.CodeTarget;
+namespace Luban.CodeTarget;
 
 public abstract class TemplateCodeTargetBase : CodeTargetBase
 {

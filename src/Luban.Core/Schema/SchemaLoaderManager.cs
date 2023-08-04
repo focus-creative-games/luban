@@ -1,7 +1,7 @@
 using System.Reflection;
-using Luban.Core.Utils;
+using Luban.Utils;
 
-namespace Luban.Core.Schema;
+namespace Luban.Schema;
 
 public class SchemaLoaderManager
 {

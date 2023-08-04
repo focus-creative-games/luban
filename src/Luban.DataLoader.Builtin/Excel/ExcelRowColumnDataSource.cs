@@ -1,9 +1,8 @@
-using Luban.Core.DataLoader;
-using Luban.Core.Datas;
-using Luban.Core.Defs;
-using Luban.Core.Types;
-using Luban.Core.Utils;
 using Luban.DataLoader.Builtin.DataVisitors;
+using Luban.Datas;
+using Luban.Defs;
+using Luban.Types;
+using Luban.Utils;
 
 namespace Luban.DataLoader.Builtin.Excel;
 
@@ -12,15 +11,14 @@ public class ExcelRowColumnDataSource : DataLoaderBase
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
-    private readonly List<RowColumnSheet> _sheets = new List<RowColumnSheet>();
+    private readonly List<RowColumnSheet> _sheets = new();
 
 
     public override void Load(DefTable table, string rawUrl, string sheetName, Stream stream)
     {
-        s_logger.Trace("{filename} {sheet}", rawUrl, sheetName);
+        s_logger.Trace("{} {}", rawUrl, sheetName);
         RawUrl = rawUrl;
-
-
+        
         foreach (RawSheet rawSheet in SheetLoadUtil.LoadRawSheets(rawUrl, sheetName, stream))
         {
             var sheet = new RowColumnSheet(rawUrl, sheetName);

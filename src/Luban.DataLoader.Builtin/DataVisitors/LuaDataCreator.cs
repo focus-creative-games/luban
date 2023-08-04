@@ -1,9 +1,9 @@
 using System.Numerics;
-using Luban.Core.Datas;
-using Luban.Core.Defs;
-using Luban.Core.Types;
-using Luban.Core.TypeVisitors;
-using Luban.Core.Utils;
+using Luban.Datas;
+using Luban.Defs;
+using Luban.Types;
+using Luban.TypeVisitors;
+using Luban.Utils;
 using Neo.IronLua;
 
 namespace Luban.DataLoader.Builtin.DataVisitors;

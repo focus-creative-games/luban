@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Luban.Core.Utils;
+namespace Luban.Utils;
 
 public static class TypeUtil
 {

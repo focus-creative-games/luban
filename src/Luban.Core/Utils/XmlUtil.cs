@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace Luban.Core.Utils;
+namespace Luban.Utils;
 
 public static class XmlUtil
 {

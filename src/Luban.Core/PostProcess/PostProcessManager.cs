@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace Luban.Core.PostProcess;
+namespace Luban.PostProcess;
 
 public class PostProcessManager
 {

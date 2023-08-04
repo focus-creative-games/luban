@@ -1,6 +1,5 @@
 ﻿using ExcelDataReader;
-using Luban.Core.Defs;
-using Luban.Core.Utils;
+using Luban.Utils;
 
 namespace Luban.DataLoader.Builtin.Excel;
 

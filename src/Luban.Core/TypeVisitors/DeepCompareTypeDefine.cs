@@ -1,8 +1,8 @@
-using Luban.Core.Defs;
-using Luban.Core.Types;
-using Luban.Core.Utils;
+using Luban.Defs;
+using Luban.Types;
+using Luban.Utils;
 
-namespace Luban.Core.TypeVisitors;
+namespace Luban.TypeVisitors;
 
 class DeepCompareTypeDefine : ITypeFuncVisitor<TType, Dictionary<DefTypeBase, bool>, HashSet<DefTypeBase>, bool>
 {

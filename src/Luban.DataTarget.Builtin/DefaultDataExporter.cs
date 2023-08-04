@@ -1,6 +1,4 @@
-﻿using Luban.Core;
-using Luban.Core.DataTarget;
-using Luban.Core.Defs;
+﻿using Luban.DataTarget;
 
 namespace Luban.DataExporter.Builtin;
 

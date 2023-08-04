@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
-using Luban.Core.Datas;
-using Luban.Core.Defs;
 using Luban.DataLoader.Builtin;
+using Luban.Datas;
+using Luban.Defs;
 
 namespace Luban.DataExporter.Builtin.Json;
 

@@ -1,4 +1,4 @@
-namespace Luban.Core.PostProcess;
+namespace Luban.PostProcess;
 
 [PostProcess("nop", TargetFileType.Code)]
 public class NopPostProcess : PostProcessBase

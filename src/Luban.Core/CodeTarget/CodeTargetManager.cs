@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace Luban.Core.CodeTarget;
+namespace Luban.CodeTarget;
 
 public class CodeTargetManager
 {

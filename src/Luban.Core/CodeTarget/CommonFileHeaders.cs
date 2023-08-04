@@ -1,4 +1,4 @@
-namespace Luban.Core.CodeTarget;
+namespace Luban.CodeTarget;
 
 public class CommonFileHeaders
 {

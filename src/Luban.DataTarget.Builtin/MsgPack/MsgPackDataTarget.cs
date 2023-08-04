@@ -1,9 +1,7 @@
 using System.Text;
-using Luban.Core;
-using Luban.Core.Datas;
-using Luban.Core.DataTarget;
-using Luban.Core.Defs;
 using Luban.DataExporter.Builtin.Lua;
+using Luban.DataTarget;
+using Luban.Defs;
 using MessagePack;
 
 namespace Luban.DataExporter.Builtin.MsgPack;

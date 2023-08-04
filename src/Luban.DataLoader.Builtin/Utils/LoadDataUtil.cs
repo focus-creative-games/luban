@@ -1,8 +1,8 @@
 using System.Text;
-using Luban.Core.Datas;
-using Luban.Core.Defs;
-using Luban.Core.Types;
 using Luban.DataLoader.Builtin.DataVisitors;
+using Luban.Datas;
+using Luban.Defs;
+using Luban.Types;
 
 namespace Luban.DataLoader.Builtin.Utils;
 

@@ -1,4 +1,4 @@
-namespace Luban.Core.PostProcess;
+namespace Luban.PostProcess;
 
 public abstract class PostProcessBase : IPostProcess
 {

@@ -1,8 +1,8 @@
-using Luban.Core.DataVisitors;
-using Luban.Core.Types;
-using Luban.Core.Utils;
+using Luban.DataVisitors;
+using Luban.Types;
+using Luban.Utils;
 
-namespace Luban.Core.Datas;
+namespace Luban.Datas;
 
 public class DSet : DType
 {

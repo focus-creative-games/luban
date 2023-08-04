@@ -1,8 +1,8 @@
-using Luban.Core.Defs;
-using Luban.Core.TypeVisitors;
-using Luban.Core.Utils;
+using Luban.Defs;
+using Luban.TypeVisitors;
+using Luban.Utils;
 
-namespace Luban.Core.Types;
+namespace Luban.Types;
 
 public class TEnum : TType
 {

@@ -1,8 +1,7 @@
-using Luban.Core.DataVisitors;
-using Luban.Core.Defs;
-using Luban.Core.Utils;
+using Luban.DataVisitors;
+using Luban.Utils;
 
-namespace Luban.Core.Datas;
+namespace Luban.Datas;
 
 public class DDateTime : DType
 {

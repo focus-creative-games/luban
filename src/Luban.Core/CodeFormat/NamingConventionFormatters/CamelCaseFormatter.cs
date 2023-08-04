@@ -1,6 +1,6 @@
-using Luban.Core.Utils;
+using Luban.Utils;
 
-namespace Luban.Core.CodeFormat.NamingConventionFormatters;
+namespace Luban.CodeFormat.NamingConventionFormatters;
 
 [NamingConvention("camel")]
 public class CamelCaseFormatter : INamingConventionFormatter

@@ -1,7 +1,7 @@
-using Luban.Core.DataVisitors;
-using Luban.Core.Types;
+using Luban.DataVisitors;
+using Luban.Types;
 
-namespace Luban.Core.Datas;
+namespace Luban.Datas;
 
 public class DEnum : DType
 {

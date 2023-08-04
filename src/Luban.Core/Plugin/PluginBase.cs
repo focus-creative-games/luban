@@ -1,4 +1,4 @@
-namespace Luban.Core.Plugin;
+namespace Luban.Plugin;
 
 public abstract class PluginBase : IPlugin
 {

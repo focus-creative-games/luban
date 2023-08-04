@@ -1,7 +1,7 @@
 using System.Text;
-using Luban.Core.Datas;
-using Luban.Core.DataVisitors;
-using Luban.Core.Utils;
+using Luban.Datas;
+using Luban.DataVisitors;
+using Luban.Utils;
 
 namespace Luban.DataExporter.Builtin.Erlang;
 

@@ -1,4 +1,4 @@
-namespace Luban.Core.CodeTarget;
+namespace Luban.CodeTarget;
 
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
 public class CodeTargetAttribute : Attribute

@@ -1,4 +1,4 @@
-namespace Luban.Core.Schema;
+namespace Luban.Schema;
 
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
 public class SchemaLoaderAttribute : System.Attribute

@@ -1,6 +1,6 @@
-using Luban.Core.RawDefs;
+using Luban.RawDefs;
 
-namespace Luban.Core.Schema;
+namespace Luban.Schema;
 
 public abstract class SchemaCollectorBase : ISchemaCollector
 {

@@ -1,4 +1,4 @@
-namespace Luban.Core.Schema;
+namespace Luban.Schema;
 
 public interface IRootSchemaLoader : ISchemaLoader
 {

@@ -1,4 +1,4 @@
-﻿namespace Luban.Core.Serialization;
+﻿namespace Luban.Serialization;
 
 // 把 int,long,string,bool 调整到最小
 // 这样 marshal compatible write(field_id << tag_shift | tag_id) < 2^7 能在一个字节

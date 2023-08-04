@@ -1,4 +1,4 @@
-namespace Luban.Core.CodeFormat;
+namespace Luban.CodeFormat;
 
 public interface ICodeStyle
 {

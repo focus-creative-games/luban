@@ -1,6 +1,6 @@
-using Luban.Core.Datas;
+using Luban.Datas;
 
-namespace Luban.Core.DataVisitors;
+namespace Luban.DataVisitors;
 
 public interface IDataFuncVisitor<TR>
 {

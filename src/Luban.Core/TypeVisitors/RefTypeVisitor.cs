@@ -1,7 +1,7 @@
-using Luban.Core.Defs;
-using Luban.Core.Types;
+using Luban.Defs;
+using Luban.Types;
 
-namespace Luban.Core.TypeVisitors;
+namespace Luban.TypeVisitors;
 
 class RefTypeVisitor : ITypeActionVisitor<Dictionary<string, DefTypeBase>>
 {

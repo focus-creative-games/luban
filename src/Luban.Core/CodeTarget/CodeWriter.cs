@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Luban.Core.CodeTarget;
+namespace Luban.CodeTarget;
 
 public class CodeWriter
 {

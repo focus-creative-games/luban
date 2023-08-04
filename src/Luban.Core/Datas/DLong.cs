@@ -1,6 +1,6 @@
-using Luban.Core.DataVisitors;
+using Luban.DataVisitors;
 
-namespace Luban.Core.Datas;
+namespace Luban.Datas;
 
 public class DLong : DType<long>
 {

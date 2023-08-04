@@ -1,14 +1,14 @@
 ﻿using System.Collections.Concurrent;
-using Luban.Core.CodeFormat;
-using Luban.Core.DataLoader;
-using Luban.Core.Datas;
-using Luban.Core.Defs;
-using Luban.Core.RawDefs;
-using Luban.Core.Types;
-using Luban.Core.TypeVisitors;
-using Luban.Core.Utils;
+using Luban.CodeFormat;
+using Luban.DataLoader;
+using Luban.Datas;
+using Luban.Defs;
+using Luban.RawDefs;
+using Luban.Types;
+using Luban.TypeVisitors;
+using Luban.Utils;
 
-namespace Luban.Core;
+namespace Luban;
 
 public class GenerationContext
 {

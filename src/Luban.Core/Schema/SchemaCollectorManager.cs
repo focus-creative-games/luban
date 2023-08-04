@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace Luban.Core.Schema;
+namespace Luban.Schema;
 
 public class SchemaCollectorManager
 {

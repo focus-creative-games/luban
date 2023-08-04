@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Luban.Core.Utils;
+namespace Luban.Utils;
 
 public class ListEqualityComparer<T> : IEqualityComparer<List<T>>
 {
