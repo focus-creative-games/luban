@@ -3,7 +3,7 @@ using Luban.Utils;
 
 namespace Luban.DataLoader.Builtin.Excel;
 
-static class SheetLoadUtil
+public static class SheetLoadUtil
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 

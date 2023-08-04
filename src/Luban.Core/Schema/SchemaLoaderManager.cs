@@ -17,12 +17,12 @@ public class SchemaLoaderManager
         
         public int Priority { get; init; }
         
-        public Func<string, ISchemaLoader> Creator { get; init; }
+        public Func<ISchemaLoader> Creator { get; init; }
     }
     
     private readonly List<LoaderInfo> _schemaLoaders = new();
 
-    public ISchemaLoader Create(string extName, string type)
+    public ISchemaLoader Create(string extName, string type, ISchemaCollector collector, object args)
     {
         LoaderInfo loader = null;
         
@@ -42,10 +42,14 @@ public class SchemaLoaderManager
             throw new Exception($"can't find schema loader for type:{type} extName:{extName}");
         }
 
-        return loader.Creator(type);
+        ISchemaLoader schemaLoader = loader.Creator();
+        schemaLoader.Type = type;
+        schemaLoader.Collector = collector;
+        schemaLoader.Arguments = args;
+        return schemaLoader;
     }
     
-    public void RegisterSchemaLoaderCreator(string type, string[] extNames, int priority, Func<string, ISchemaLoader> creator)
+    public void RegisterSchemaLoaderCreator(string type, string[] extNames, int priority, Func<ISchemaLoader> creator)
     {
         _schemaLoaders.Add(new LoaderInfo(){ Type = type, ExtNames = extNames, Priority = priority, Creator = creator});
         s_logger.Debug("add schema loader creator. type:{} priority:{} extNames:{}", type, priority, StringUtil.CollectionToString(extNames));
@@ -58,7 +62,7 @@ public class SchemaLoaderManager
             if (t.IsDefined(typeof(SchemaLoaderAttribute), false))
             {
                 var attr = t.GetCustomAttribute<SchemaLoaderAttribute>();
-                var creator = (Func<string, ISchemaLoader>)Delegate.CreateDelegate(typeof(Func<string, ISchemaLoader>), t, "Create");
+                var creator = () => (ISchemaLoader)Activator.CreateInstance(t);
                 RegisterSchemaLoaderCreator(attr.Type, attr.ExtNames, attr.Priority, creator);
             }
         }

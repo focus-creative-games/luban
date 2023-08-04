@@ -7,9 +7,9 @@ public interface IDataLoader
 {
     string RawUrl { get; }
 
-    Record ReadOne(DefTable table, TBean type);
+    Record ReadOne(TBean type);
 
-    List<Record> ReadMulti(DefTable table, TBean type);
+    List<Record> ReadMulti(TBean type);
 
-    void Load(DefTable table, string rawUrl, string subAsset, Stream stream);
+    void Load(string rawUrl, string subAsset, Stream stream);
 }

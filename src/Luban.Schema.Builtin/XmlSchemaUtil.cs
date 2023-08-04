@@ -3,7 +3,7 @@ using Luban.Defs;
 using Luban.RawDefs;
 using Luban.Utils;
 
-namespace Luban.Schema.Default;
+namespace Luban.Schema.Builtin;
 
 public static class XmlSchemaUtil
 {
@@ -37,11 +37,5 @@ public static class XmlSchemaUtil
             Name = XmlUtil.GetRequiredAttribute(e, "name"),
             Refs = XmlUtil.GetRequiredAttribute(e, "ref").Split(',').Select(s => s.Trim()).ToList(),
         };
-    }
-    
-    
-    public static List<string> CreateGroups(string s)
-    {
-        return s.Split(',', ';').Select(x => x.Trim()).Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
     }
 }

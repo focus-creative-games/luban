@@ -1,5 +1,6 @@
 using System.Reflection;
 using Luban.Defs;
+using Luban.Types;
 using Luban.Utils;
 
 namespace Luban.DataLoader;
@@ -52,12 +53,25 @@ public class DataLoaderManager
         string loaderName = options.TryGetValue("loader", out var name) ? name : FileUtil.GetExtensionWithDot(file);
         var loader = CreateDataLoader(loaderName);
         using var stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-        loader.Load(table, file, subAssetName, stream);
+        loader.Load(file, subAssetName, stream);
         if (IsMultiRecordFile(file, subAssetName))
         {
-            return loader.ReadMulti(table, table.ValueTType);
+            return loader.ReadMulti(table.ValueTType);
         }
-        return new List<Record> { loader.ReadOne(table, table.ValueTType) };
+        return new List<Record> { loader.ReadOne(table.ValueTType) };
+    }
+    
+    public List<Record> LoadTableFile(TBean valueType, string file, string subAssetName, Dictionary<string, string> options)
+    {
+        string loaderName = options.TryGetValue("loader", out var name) ? name : FileUtil.GetExtensionWithDot(file);
+        var loader = CreateDataLoader(loaderName);
+        using var stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+        loader.Load(file, subAssetName, stream);
+        if (IsMultiRecordFile(file, subAssetName))
+        {
+            return loader.ReadMulti(valueType);
+        }
+        return new List<Record> { loader.ReadOne(valueType) };
     }
     
     

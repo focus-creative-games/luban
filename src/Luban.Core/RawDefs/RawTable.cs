@@ -12,11 +12,9 @@ public class RawTable
 
     public string ValueType { get; set; }
 
-    public bool LoadDefineFromFile { get; set; }
+    public bool ReadSchemaFromFile { get; set; }
 
     public TableMode Mode { get; set; }
-
-    public string Options { get; set; }
 
     public string Comment { get; set; }
 
@@ -27,6 +25,4 @@ public class RawTable
     public List<string> InputFiles { get; set; } = new List<string>();
 
     public string OutputFile { get; set; }
-
-    public Dictionary<string, List<string>> PatchInputFiles { get; set; } = new Dictionary<string, List<string>>();
 }

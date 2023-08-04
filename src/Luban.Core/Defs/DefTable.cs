@@ -20,29 +20,10 @@ public class DefTable : DefTypeBase
         Mode = b.Mode;
         InputFiles = b.InputFiles;
         Groups = b.Groups;
-        _patchInputFiles = b.PatchInputFiles;
         Comment = b.Comment;
+        ReadSchemaFromFile = b.ReadSchemaFromFile;
         Tags = DefUtil.ParseAttrs(b.Tags);
         _outputFile = b.OutputFile;
-
-        ParseOptions(b.Options);
-    }
-
-    private void ParseOptions(string optionsStr)
-    {
-        foreach(var kvStr in optionsStr.Split('|', ';', ','))
-        {
-            if (string.IsNullOrWhiteSpace(kvStr))
-            {
-                continue;
-            }
-            string[] entry = kvStr.Split('=');
-            if (entry.Length != 2)
-            {
-                throw new Exception($"table:{FullName} options:'{optionsStr}' invalid");
-            }
-            Options[entry[0]] = entry[1];
-        }
     }
 
     public string Index { get; private set; }
@@ -50,8 +31,8 @@ public class DefTable : DefTypeBase
     public string ValueType { get; }
 
     public TableMode Mode { get; }
-
-    public Dictionary<string, string> Options { get; } = new Dictionary<string, string>();
+    
+    public bool ReadSchemaFromFile { get; }
 
     public bool IsMapTable => Mode == TableMode.MAP;
 
@@ -62,8 +43,6 @@ public class DefTable : DefTypeBase
     public bool IsListTable => Mode == TableMode.LIST;
 
     public List<string> InputFiles { get; }
-
-    private readonly Dictionary<string, List<string>> _patchInputFiles;
 
     private readonly string _outputFile;
 
@@ -86,8 +65,6 @@ public class DefTable : DefTypeBase
     // public bool NeedExport => Assembly.NeedExport(this.Groups);
 
     public string OutputDataFile => string.IsNullOrWhiteSpace(_outputFile) ? FullName.Replace('.', '_').ToLower() : _outputFile;
-
-    public string InnerName => "_" + this.Name;
 
     // public List<string> GetPatchInputFiles(string patchName)
     // {

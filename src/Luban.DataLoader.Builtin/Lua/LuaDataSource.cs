@@ -16,7 +16,7 @@ public class LuaDataSource : DataLoaderBase
     private LuaGlobal _env;
     private LuaTable _dataTable;
 
-    public override void Load(DefTable table, string rawUrl, string sheetName, Stream stream)
+    public override void Load(string rawUrl, string sheetName, Stream stream)
     {
         RawUrl = rawUrl;
         _env = LuaManager.CreateEnvironment();
@@ -38,7 +38,7 @@ public class LuaDataSource : DataLoaderBase
         }
     }
 
-    public override List<Record> ReadMulti(DefTable table, TBean type)
+    public override List<Record> ReadMulti(TBean type)
     {
         var records = new List<Record>();
 
@@ -54,7 +54,7 @@ public class LuaDataSource : DataLoaderBase
         return records;
     }
 
-    public override Record ReadOne(DefTable table, TBean type)
+    public override Record ReadOne(TBean type)
     {
         return ReadRecord(_dataTable, type);
     }

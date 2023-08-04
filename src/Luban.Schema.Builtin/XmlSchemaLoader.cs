@@ -3,23 +3,16 @@ using Luban.Defs;
 using Luban.RawDefs;
 using Luban.Utils;
 
-namespace Luban.Schema.Default;
+namespace Luban.Schema.Builtin;
 
 [SchemaLoader("", "xml")]
-public class XmlSchemaLoader : ISchemaLoader
+public class XmlSchemaLoader : SchemaLoaderBase
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
-
-    public static ISchemaLoader Create(string type)
-    {
-        return new XmlSchemaLoader();
-    }
 
     private readonly Dictionary<string, Action<XElement>> _tagHandlers = new();
 
     private string _fileName;
-
-    private ISchemaCollector _schemaCollector;
 
     private readonly Stack<string> _namespaceStack = new();
 
@@ -36,11 +29,9 @@ public class XmlSchemaLoader : ISchemaLoader
         _tagHandlers.Add("refgroup", AddRefGroup);
     }
 
-    public void Load(string fileName, ISchemaCollector collector)
+    public override void Load(string fileName)
     {
         _fileName = fileName;
-        _schemaCollector = collector;
-        
         XElement doc = XmlUtil.Open(fileName);
         AddModule(doc);
     }
@@ -91,11 +82,6 @@ public class XmlSchemaLoader : ISchemaLoader
         }
     }
 
-    static string CreateType(XElement e, string key)
-    {
-        return XmlUtil.GetRequiredAttribute(e, key);
-    }
-
     private static readonly List<string> _enumOptionalAttrs = new List<string> { "flags", "comment", "tags", "unique", "group" };
     private static readonly List<string> _enumRequiredAttrs = new List<string> { "name" };
     
@@ -113,7 +99,7 @@ public class XmlSchemaLoader : ISchemaLoader
             IsFlags = XmlUtil.GetOptionBoolAttribute(e, "flags"),
             Tags = XmlUtil.GetOptionalAttribute(e, "tags"),
             IsUniqueItemId = XmlUtil.GetOptionBoolAttribute(e, "unique", true),
-            Groups = XmlSchemaUtil.CreateGroups(XmlUtil.GetOptionalAttribute(e, "group")),
+            Groups = SchemaLoaderUtil.CreateGroups(XmlUtil.GetOptionalAttribute(e, "group")),
             Items = new (),
         };
 
@@ -130,7 +116,7 @@ public class XmlSchemaLoader : ISchemaLoader
             });
         }
         s_logger.Trace("add enum:{@}", en);
-        _schemaCollector.Add(en);
+        Collector.Add(en);
     }
     
     private static readonly List<string> _externalRequiredAttrs = new List<string> { "name", "origin_type_name" };
@@ -204,57 +190,6 @@ public class XmlSchemaLoader : ISchemaLoader
         return m;
     }
     
-    
-    private TableMode ConvertMode(string tableName, string modeStr, string indexStr)
-    {
-        TableMode mode;
-        string[] indexs = indexStr.Split(',', '+');
-        switch (modeStr)
-        {
-            case "one":
-            case "single":
-            case "singleton":
-            {
-                if (!string.IsNullOrWhiteSpace(indexStr))
-                {
-                    throw new Exception($"定义文件:{_fileName} table:'{tableName}' mode={modeStr} 是单例表，不支持定义index属性");
-                }
-                mode = TableMode.ONE;
-                break;
-            }
-            case "map":
-            {
-                if (!string.IsNullOrWhiteSpace(indexStr) && indexs.Length > 1)
-                {
-                    throw new Exception($"定义文件:'{_fileName}' table:'{tableName}' 是单主键表，index:'{indexStr}'不能包含多个key");
-                }
-                mode = TableMode.MAP;
-                break;
-            }
-            case "list":
-            {
-                mode = TableMode.LIST;
-                break;
-            }
-            case "":
-            {
-                if (string.IsNullOrWhiteSpace(indexStr) || indexs.Length == 1)
-                {
-                    mode = TableMode.MAP;
-                }
-                else
-                {
-                    mode = TableMode.LIST;
-                }
-                break;
-            }
-            default:
-            {
-                throw new ArgumentException($"不支持的 mode:{modeStr}");
-            }
-        }
-        return mode;
-    }
 
     private readonly List<string> _tableOptionalAttrs = new List<string> { "index", "mode", "group", "patch_input", "comment", "define_from_file", "output", "options" };
     private readonly List<string> _tableRequireAttrs = new List<string> { "name", "value", "input" };
@@ -270,61 +205,13 @@ public class XmlSchemaLoader : ISchemaLoader
         string group = XmlUtil.GetOptionalAttribute(e, "group");
         string comment = XmlUtil.GetOptionalAttribute(e, "comment");
         string input = XmlUtil.GetRequiredAttribute(e, "input");
-        string patchInput = XmlUtil.GetOptionalAttribute(e, "patch_input");
+        // string patchInput = XmlUtil.GetOptionalAttribute(e, "patch_input");
         string mode = XmlUtil.GetOptionalAttribute(e, "mode");
         string tags = XmlUtil.GetOptionalAttribute(e, "tags");
         string output = XmlUtil.GetOptionalAttribute(e, "output");
-        string options = XmlUtil.GetOptionalAttribute(e, "options");
-        AddTable(name, module, valueType, index, mode, group, comment, defineFromFile, input, patchInput, tags, output, options);
+        // string options = XmlUtil.GetOptionalAttribute(e, "options");
+        Collector.Add(SchemaLoaderUtil.CreateTable( _fileName, name, module, valueType, index, mode, group, comment, defineFromFile, input, tags, output));
     }
-
-    private void AddTable(string name, string module, string valueType, string index, string mode, string group,
-        string comment, bool defineFromExcel, string input, string patchInput, string tags, string outputFileName, string options)
-    {
-        var p = new RawTable()
-        {
-            Name = name,
-            Namespace = module,
-            ValueType = valueType,
-            LoadDefineFromFile = defineFromExcel,
-            Index = index,
-            Groups = XmlSchemaUtil.CreateGroups(group),
-            Comment = comment,
-            Mode = ConvertMode(name, mode, index),
-            Tags = tags,
-            OutputFile = outputFileName,
-            Options = options,
-        };
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new Exception($"定义文件:{_fileName} table:'{p.Name}' name:'{p.Name}' 不能为空");
-        }
-        if (string.IsNullOrWhiteSpace(valueType))
-        {
-            throw new Exception($"定义文件:{_fileName} table:'{p.Name}' value_type:'{valueType}' 不能为空");
-        }
-        p.InputFiles.AddRange(input.Split(',').Select(s => s.Trim()).Where(s => !string.IsNullOrWhiteSpace(s)));
-
-        if (!string.IsNullOrWhiteSpace(patchInput))
-        {
-            foreach (var subPatchStr in patchInput.Split('|').Select(s => s.Trim()).Where(s => !string.IsNullOrWhiteSpace(s)))
-            {
-                var nameAndDirs = subPatchStr.Split(':');
-                if (nameAndDirs.Length != 2)
-                {
-                    throw new Exception($"定义文件:{_fileName} table:'{p.Name}' patch_input:'{subPatchStr}' 定义不合法");
-                }
-                var patchDirs = nameAndDirs[1].Split(',', ';').ToList();
-                if (!p.PatchInputFiles.TryAdd(nameAndDirs[0], patchDirs))
-                {
-                    throw new Exception($"定义文件:{_fileName} table:'{p.Name}' patch_input:'{subPatchStr}' 子patch:'{nameAndDirs[0]}' 重复");
-                }
-            }
-        }
-
-        _schemaCollector.Add(p);
-    }
-
     
     private static readonly List<string> _fieldOptionalAttrs = new()
     {
@@ -354,38 +241,13 @@ public class XmlSchemaLoader : ISchemaLoader
             typeStr = typeStr + "#(path=" + pathStr + ")";
         }
 
-        return CreateField(XmlUtil.GetRequiredAttribute(e, "name"),
+        return SchemaLoaderUtil.CreateField(_fileName, XmlUtil.GetRequiredAttribute(e, "name"),
             typeStr,
             XmlUtil.GetOptionalAttribute(e, "group"),
             XmlUtil.GetOptionalAttribute(e, "comment"),
             XmlUtil.GetOptionalAttribute(e, "tags"),
             false
         );
-    }
-
-    private RawField CreateField(string name, string type, string group,
-        string comment, string tags,
-        bool ignoreNameValidation)
-    {
-        var f = new RawField()
-        {
-            Name = name,
-            Groups = XmlSchemaUtil.CreateGroups(group),
-            Comment = comment,
-            Tags = tags,
-            IgnoreNameValidation = ignoreNameValidation,
-        };
-        
-        f.Type = type;
-        
-        //FillValueValidator(f, refs, "ref");
-        //FillValueValidator(f, path, "path"); // (ue4|unity|normal|regex);xxx;xxx
-        //FillValueValidator(f, range, "range");
-
-        //FillValidators(defileFile, "key_validator", keyValidator, f.KeyValidators);
-        //FillValidators(defileFile, "value_validator", valueValidator, f.ValueValidators);
-        //FillValidators(defileFile, "validator", validator, f.Validators);
-        return f;
     }
 
     private static readonly List<string> _beanOptinsAttrs = new List<string> { "parent", "value_type", "alias", "sep", "comment", "tags", "group", "externaltype" };
@@ -405,7 +267,7 @@ public class XmlSchemaLoader : ISchemaLoader
             Sep = XmlUtil.GetOptionalAttribute(e, "sep"),
             Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
             Tags = XmlUtil.GetOptionalAttribute(e, "tags"),
-            Groups = XmlSchemaUtil.CreateGroups(XmlUtil.GetOptionalAttribute(e, "group")),
+            Groups = SchemaLoaderUtil.CreateGroups(XmlUtil.GetOptionalAttribute(e, "group")),
             Fields = new(),
         };
         var childBeans = new List<XElement>();
@@ -437,7 +299,7 @@ public class XmlSchemaLoader : ISchemaLoader
             }
         }
         s_logger.Trace("add bean:{@bean}", b);
-        _schemaCollector.Add(b);
+        Collector.Add(b);
 
         var fullname = b.FullName;
         foreach (var cb in childBeans)
@@ -448,6 +310,6 @@ public class XmlSchemaLoader : ISchemaLoader
 
     private void AddRefGroup(XElement e)
     {
-        _schemaCollector.Add(XmlSchemaUtil.CreateRefGroup(_fileName, e));
+        Collector.Add(XmlSchemaUtil.CreateRefGroup(_fileName, e));
     }
 }

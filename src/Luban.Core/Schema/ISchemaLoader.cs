@@ -2,5 +2,11 @@ namespace Luban.Schema;
 
 public interface ISchemaLoader
 {
-    void Load(string fileName, ISchemaCollector collector);
+    string Type { get; set; }
+    
+    object Arguments { get; set; }
+
+    ISchemaCollector Collector { get; set; }
+    
+    void Load(string fileName);
 }

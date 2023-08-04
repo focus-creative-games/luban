@@ -12,7 +12,7 @@ public class JsonDataSource : DataLoaderBase
 {
     private JsonElement _data;
 
-    public override void Load(DefTable table, string rawUrl, string sheetOrFieldName, Stream stream)
+    public override void Load(string rawUrl, string sheetOrFieldName, Stream stream)
     {
         RawUrl = rawUrl;
         this._data = JsonDocument.Parse(stream).RootElement;
@@ -33,7 +33,7 @@ public class JsonDataSource : DataLoaderBase
         }
     }
 
-    public override List<Record> ReadMulti(DefTable table, TBean type)
+    public override List<Record> ReadMulti(TBean type)
     {
         var records = new List<Record>();
         foreach (var ele in _data.EnumerateArray())
@@ -68,7 +68,7 @@ public class JsonDataSource : DataLoaderBase
         return new Record(data, RawUrl, tags);
     }
 
-    public override Record ReadOne(DefTable table, TBean type)
+    public override Record ReadOne(TBean type)
     {
         return ReadRecord(_data, type);
     }

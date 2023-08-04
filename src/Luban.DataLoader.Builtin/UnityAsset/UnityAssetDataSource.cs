@@ -11,7 +11,7 @@ namespace Luban.DataLoader.Builtin.UnityAsset;
 public class UnityAssetDataSource : DataLoaderBase
 {
     private YamlNode _root;
-    public override void Load(DefTable table, string rawUrl, string sheetOrFieldName, Stream stream)
+    public override void Load(string rawUrl, string sheetOrFieldName, Stream stream)
     {
         var ys = new YamlStream();
         ys.Load(new StreamReader(stream));
@@ -42,7 +42,7 @@ public class UnityAssetDataSource : DataLoaderBase
         }
     }
 
-    public override List<Record> ReadMulti(DefTable table, TBean type)
+    public override List<Record> ReadMulti(TBean type)
     {
         var records = new List<Record>();
         foreach (var ele in (YamlSequenceNode)_root)
@@ -58,7 +58,7 @@ public class UnityAssetDataSource : DataLoaderBase
 
     private static readonly YamlScalarNode s_tagNameNode = new(FieldNames.TAG_KEY);
 
-    public override Record ReadOne(DefTable table, TBean type)
+    public override Record ReadOne(TBean type)
     {
         return ReadRecord(_root, type);
     }

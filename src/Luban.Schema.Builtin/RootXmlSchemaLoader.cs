@@ -3,18 +3,13 @@ using Luban.Defs;
 using Luban.RawDefs;
 using Luban.Utils;
 
-namespace Luban.Schema.Default;
+namespace Luban.Schema.Builtin;
 
 [SchemaLoader("root", "xml")]
-public class RootXmlSchemaLoader : IRootSchemaLoader
+public class RootXmlSchemaLoader : SchemaLoaderBase, IRootSchemaLoader
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
     
-    public static ISchemaLoader Create(string type)
-    {
-        return new RootXmlSchemaLoader();
-    }
-
     private readonly Dictionary<string, Action<XElement>> _tagHandlers = new();
     
     private readonly List<SchemaFileInfo> _importFiles = new();
@@ -23,7 +18,6 @@ public class RootXmlSchemaLoader : IRootSchemaLoader
 
     private string _xmlFileName;
     private string _curDir;
-    private ISchemaCollector _schemaCollector;
 
     public RootXmlSchemaLoader()
     {
@@ -36,11 +30,10 @@ public class RootXmlSchemaLoader : IRootSchemaLoader
         _tagHandlers.Add("refgroup", AddRefGroup);
     }
 
-    public void Load(string fileName, ISchemaCollector collector)
+    public override void Load(string fileName)
     {
         s_logger.Debug("load root xml schema file:{}", fileName);
         _xmlFileName = fileName;
-        _schemaCollector = collector;
         _curDir = Directory.GetParent(fileName).FullName;
         XElement doc = XmlUtil.Open(fileName);
 
@@ -64,7 +57,7 @@ public class RootXmlSchemaLoader : IRootSchemaLoader
     {
         XmlSchemaUtil.ValidAttrKeys(_xmlFileName, e, null, _envRequireAttrs);
         string name = XmlUtil.GetRequiredAttribute(e, "name");
-        _schemaCollector.AddEnv(name, XmlUtil.GetRequiredAttribute(e, "value"));
+        Collector.AddEnv(name, XmlUtil.GetRequiredAttribute(e, "value"));
     }
     
      private static readonly List<string> _ImportRequireAttrs = new List<string> { "name" };
@@ -98,7 +91,7 @@ public class RootXmlSchemaLoader : IRootSchemaLoader
         {
             throw new Exception("patch 属性name不能为空");
         }
-        _schemaCollector.Add(new RawPatch(patchName));
+        Collector.Add(new RawPatch(patchName));
     }
 
     private static readonly List<string> _groupOptionalAttrs = new List<string> { "default" };
@@ -107,9 +100,9 @@ public class RootXmlSchemaLoader : IRootSchemaLoader
     private void AddGroup(XElement e)
     {
         XmlSchemaUtil.ValidAttrKeys(_xmlFileName, e, _groupOptionalAttrs, _groupRequireAttrs);
-        List<string> groupNames = XmlSchemaUtil.CreateGroups(XmlUtil.GetRequiredAttribute(e, "name"));
+        List<string> groupNames = SchemaLoaderUtil.CreateGroups(XmlUtil.GetRequiredAttribute(e, "name"));
         bool isDefault = XmlUtil.GetOptionBoolAttribute(e, "default");
-        _schemaCollector.Add(new RawGroup(){ Names = groupNames, IsDefault = isDefault});
+        Collector.Add(new RawGroup(){ Names = groupNames, IsDefault = isDefault});
     }
 
     private readonly List<string> _targetAttrs = new List<string> { "name", "manager", "group", "topModule" };
@@ -119,14 +112,14 @@ public class RootXmlSchemaLoader : IRootSchemaLoader
         var name = XmlUtil.GetRequiredAttribute(e, "name");
         var manager = XmlUtil.GetRequiredAttribute(e, "manager");
         var topModule = XmlUtil.GetRequiredAttribute(e, "topModule");
-        List<string> groups = XmlSchemaUtil.CreateGroups(XmlUtil.GetOptionalAttribute(e, "group"));
+        List<string> groups = SchemaLoaderUtil.CreateGroups(XmlUtil.GetOptionalAttribute(e, "group"));
         XmlSchemaUtil.ValidAttrKeys(_xmlFileName, e, _targetAttrs, _targetAttrs);
-        _schemaCollector.Add(new RawTarget() { Name = name, Manager = manager, Groups = groups, TopModule = topModule});
+        Collector.Add(new RawTarget() { Name = name, Manager = manager, Groups = groups, TopModule = topModule});
     }
 
     private void AddRefGroup(XElement e)
     {
-        _schemaCollector.Add(XmlSchemaUtil.CreateRefGroup(_xmlFileName, e));
+        Collector.Add(XmlSchemaUtil.CreateRefGroup(_xmlFileName, e));
     }
     
     private static readonly List<string> _selectorRequiredAttrs = new List<string> { "name" };

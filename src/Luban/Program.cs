@@ -10,7 +10,7 @@ using Luban.OutputSaver;
 using Luban.Plugin;
 using Luban.PostProcess;
 using Luban.Schema;
-using Luban.Schema.Default;
+using Luban.Schema.Builtin;
 using Luban.Tmpl;
 using Luban.Utils;
 using NLog;

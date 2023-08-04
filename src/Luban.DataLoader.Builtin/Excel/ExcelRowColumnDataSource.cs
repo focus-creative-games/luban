@@ -14,7 +14,7 @@ public class ExcelRowColumnDataSource : DataLoaderBase
     private readonly List<RowColumnSheet> _sheets = new();
 
 
-    public override void Load(DefTable table, string rawUrl, string sheetName, Stream stream)
+    public override void Load(string rawUrl, string sheetName, Stream stream)
     {
         s_logger.Trace("{} {}", rawUrl, sheetName);
         RawUrl = rawUrl;
@@ -47,7 +47,7 @@ public class ExcelRowColumnDataSource : DataLoaderBase
         return SheetLoadUtil.LoadSheetTableDefInfo(rawUrl, sheetName, stream);
     }
 
-    public override List<Record> ReadMulti(DefTable table, TBean type)
+    public override List<Record> ReadMulti(TBean type)
     {
         var datas = new List<Record>();
         foreach (var sheet in _sheets)
@@ -79,7 +79,7 @@ public class ExcelRowColumnDataSource : DataLoaderBase
         return datas;
     }
 
-    public override Record ReadOne(DefTable table, TBean type)
+    public override Record ReadOne(TBean type)
     {
         throw new Exception($"excel不支持单例读取模式");
     }

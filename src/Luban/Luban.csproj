@@ -14,6 +14,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Luban.CodeTarget.CSharp\Luban.CodeTarget.CSharp.csproj" />
+      <ProjectReference Include="..\Luban.Core\Luban.Core.csproj" />
       <ProjectReference Include="..\Luban.DataTarget.Builtin\Luban.DataTarget.Builtin.csproj" />
       <ProjectReference Include="..\Luban.DataLoader.Builtin\Luban.DataLoader.Builtin.csproj" />
       <ProjectReference Include="..\Luban.Schema.Builtin\Luban.Schema.Builtin.csproj" />
