@@ -1,4 +1,4 @@
-namespace Luban.Plugin;
+namespace Luban.Core.Plugin;
 
 public class PluginLoadException : Exception
 {

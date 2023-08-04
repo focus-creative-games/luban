@@ -1,7 +1,7 @@
 using System.Reflection;
 using System.Runtime.Loader;
 
-namespace Luban.Plugin;
+namespace Luban.Core.Plugin;
 
 internal class PluginLoadContext : AssemblyLoadContext
 {

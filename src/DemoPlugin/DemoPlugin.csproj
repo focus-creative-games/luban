@@ -13,11 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Luban.Core\Luban.Core.csproj" >
-          <Private>false</Private>
-          <ExcludeAssets>runtime</ExcludeAssets>
-      </ProjectReference>
-      <ProjectReference Include="..\Luban.Plugin\Luban.Plugin.csproj" >
+      <ProjectReference Include="..\Luban.Core\Luban.Core.csproj">
           <Private>false</Private>
           <ExcludeAssets>runtime</ExcludeAssets>
       </ProjectReference>

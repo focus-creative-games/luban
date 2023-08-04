@@ -13,8 +13,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Luban.Plugin\Luban.Plugin.csproj">
-      </ProjectReference>
         <ProjectReference Include="..\Luban.Core\Luban.Core.csproj">
         </ProjectReference>
     </ItemGroup>

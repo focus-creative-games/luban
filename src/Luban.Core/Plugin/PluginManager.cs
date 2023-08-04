@@ -1,9 +1,9 @@
-using NLog;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
+using NLog;
 
-namespace Luban.Plugin;
+namespace Luban.Core.Plugin;
 
 public class PluginManager
 {

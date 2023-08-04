@@ -1,4 +1,4 @@
-﻿using Luban.Plugin;
+﻿using Luban.Core.Plugin;
 using NLog;
 
 namespace DemoPlugin;

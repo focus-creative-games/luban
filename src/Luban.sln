@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.29418.71
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban", "Luban\Luban.csproj", "{26003D67-6228-4848-8B8F-985992800237}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Plugin", "Luban.Plugin\Luban.Plugin.csproj", "{89DF5137-96A1-4ACA-8C81-DC5108E220AA}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Any", "Luban.Any\Luban.Any.csproj", "{D407324C-D638-4B51-86CE-D06BF926E710}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.DataLoader.Builtin", "Luban.DataLoader.Builtin\Luban.DataLoader.Builtin.csproj", "{2200760D-A03B-46F8-8968-6818FB0984CD}"
@@ -31,10 +29,6 @@ Global
 		{26003D67-6228-4848-8B8F-985992800237}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26003D67-6228-4848-8B8F-985992800237}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26003D67-6228-4848-8B8F-985992800237}.Release|Any CPU.Build.0 = Release|Any CPU
-		{89DF5137-96A1-4ACA-8C81-DC5108E220AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{89DF5137-96A1-4ACA-8C81-DC5108E220AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{89DF5137-96A1-4ACA-8C81-DC5108E220AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{89DF5137-96A1-4ACA-8C81-DC5108E220AA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D407324C-D638-4B51-86CE-D06BF926E710}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D407324C-D638-4B51-86CE-D06BF926E710}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D407324C-D638-4B51-86CE-D06BF926E710}.Release|Any CPU.ActiveCfg = Release|Any CPU
