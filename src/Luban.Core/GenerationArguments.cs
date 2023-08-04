@@ -58,4 +58,19 @@ public class GenerationArguments
 
         return false;
     }
+    
+    public string GetInputDataPath()
+    {
+        return GetOption("", "inputDataDir", true);
+    }
+    
+    public string GetOutputCodePath(string family)
+    {
+        return GetOption(family, "outputCodeDir", true);
+    }
+    
+    public string GetOutputDataPath(string family)
+    {
+        return GetOption(family, "outputDataDir", true);
+    }
 }

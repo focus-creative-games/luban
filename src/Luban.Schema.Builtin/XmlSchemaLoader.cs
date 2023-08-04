@@ -18,9 +18,8 @@ public class XmlSchemaLoader : SchemaLoaderBase
 
     private string CurNamespace => _namespaceStack.TryPeek(out var ns) ? ns : "";
 
-    private XmlSchemaLoader()
+    public XmlSchemaLoader()
     {
-
         _tagHandlers.Add("module", AddModule);
         _tagHandlers.Add("enum", AddEnum);
         _tagHandlers.Add("bean", AddBean);

@@ -46,7 +46,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
                 new RawField() { Name = "mode", Type = "string" },
                 new RawField() { Name = "group", Type = "string" },
                 new RawField() { Name = "comment", Type = "string" },
-                new RawField() { Name = "define_from_file", Type = "bool" },
+                new RawField() { Name = "read_schema_from_file", Type = "bool" },
                 new RawField() { Name = "input", Type = "string" },
                 new RawField() { Name = "output", Type = "string" },
                 // new RawField() { Name = "patch_input", Type = "string" },
@@ -235,6 +235,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
                 new RawField() { Name = "alias", Type = "string" },
                 new RawField() { Name = "comment", Type = "string" },
                 new RawField() { Name = "tags", Type = "string" },
+                new RawField() { Name = "group", Type = "string" },
                 new RawField() { Name = "fields", Type = "list,__FieldInfo__" },
             }
         })
@@ -266,6 +267,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
             string alias = (data.GetField("alias") as DString).Value.Trim();
             string comment = (data.GetField("comment") as DString).Value.Trim();
             string tags = (data.GetField("tags") as DString).Value.Trim();
+            string group = (data.GetField("group") as DString).Value.Trim();
             DList fields = data.GetField("fields") as DList;
             var curBean = new RawBean()
             {
@@ -275,6 +277,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
                 Alias = alias,
                 Comment = comment,
                 Tags = tags,
+                Groups = SchemaLoaderUtil.CreateGroups(group),
                 Parent = parent,
                 Fields = fields.Datas.Select(d => (DBean)d).Select(b => SchemaLoaderUtil.CreateField(
                     fileName,

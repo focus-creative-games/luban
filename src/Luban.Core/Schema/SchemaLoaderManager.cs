@@ -61,9 +61,11 @@ public class SchemaLoaderManager
         {
             if (t.IsDefined(typeof(SchemaLoaderAttribute), false))
             {
-                var attr = t.GetCustomAttribute<SchemaLoaderAttribute>();
-                var creator = () => (ISchemaLoader)Activator.CreateInstance(t);
-                RegisterSchemaLoaderCreator(attr.Type, attr.ExtNames, attr.Priority, creator);
+                foreach (var attr in t.GetCustomAttributes<SchemaLoaderAttribute>())
+                {
+                    var creator = () => (ISchemaLoader)Activator.CreateInstance(t);
+                    RegisterSchemaLoaderCreator(attr.Type, attr.ExtNames, attr.Priority, creator);
+                }
             }
         }
     }

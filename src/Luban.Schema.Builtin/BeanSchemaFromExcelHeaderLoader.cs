@@ -17,7 +17,15 @@ public class BeanSchemaFromExcelHeaderLoader : SchemaLoaderBase
         string valueTypeFullName = (string)Arguments;
         var valueTypeNamespace = TypeUtil.GetNamespace(valueTypeFullName);
         string valueTypeName = TypeUtil.GetName(valueTypeFullName);
-        var cb = new RawBean() { Namespace = valueTypeNamespace, Name = valueTypeName, Comment = "", Parent = "" };
+        var cb = new RawBean()
+        {
+            Namespace = valueTypeNamespace,
+            Name = valueTypeName,
+            Comment = "",
+            Parent = "",
+            Groups = new(),
+            Fields = new(),
+        };
         
         (var actualFile, var sheetName) = FileUtil.SplitFileAndSheetName(FileUtil.Standardize(fileName));
         using var inputStream = new FileStream(actualFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
@@ -25,7 +33,11 @@ public class BeanSchemaFromExcelHeaderLoader : SchemaLoaderBase
 
         foreach (var (name, f) in tableDefInfo.FieldInfos)
         {
-            var cf = new RawField() { Name = name, Id = 0 };
+            var cf = new RawField()
+            {
+                Name = name,
+                Groups = new List<string>(),
+            };
 
             string[] attrs = f.Type.Trim().Split('&').Select(s => s.Trim()).ToArray();
 

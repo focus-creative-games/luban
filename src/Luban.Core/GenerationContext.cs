@@ -137,7 +137,6 @@ public class GenerationContext
                 if (t is DefBean bean && NeedExportNotDefault(t.Groups))
                 {
                     TBean.Create(false, bean, null).Apply(RefTypeVisitor.Ins, refTypes);
-                    refTypes.Add(t.FullName, t);
                 }
                 else if (t is DefEnum)
                 {
@@ -234,17 +233,17 @@ public class GenerationContext
 
     public string GetInputDataPath()
     {
-        return CurrentArguments.GetOption("", "inputDataDir", true);
+        return CurrentArguments.GetInputDataPath();
     }
     
     public string GetOutputCodePath(string family)
     {
-        return CurrentArguments.GetOption(family, "outputCodeDir", true);
+        return CurrentArguments.GetOutputCodePath(family);
     }
     
     public string GetOutputDataPath(string family)
     {
-        return CurrentArguments.GetOption(family, "outputDataDir", true);
+        return CurrentArguments.GetOutputDataPath(family);
     }
     
     public string GetOption(string family, string name, bool useGlobalIfNotExits)
