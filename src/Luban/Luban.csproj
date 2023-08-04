@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+        <OutputType>Exe</OutputType>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="CommandLineParser" Version="2.9.1" />
+      <PackageReference Include="YamlDotNet.NetCore" Version="1.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Luban.CodeTarget.CSharp\Luban.CodeTarget.CSharp.csproj" />
+      <ProjectReference Include="..\Luban.DataTarget.Builtin\Luban.DataTarget.Builtin.csproj" />
+      <ProjectReference Include="..\Luban.DataLoader.Builtin\Luban.DataLoader.Builtin.csproj" />
+      <ProjectReference Include="..\Luban.Plugin\Luban.Plugin.csproj" />
+      <ProjectReference Include="..\Luban.Schema.Builtin\Luban.Schema.Builtin.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Plugin\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="Templates\common\cs\enum.sbn">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Templates\common\flatbuffers\enum.sbn">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Templates\common\go\enum.tpl">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Templates\common\java\enum.tpl">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+</Project>

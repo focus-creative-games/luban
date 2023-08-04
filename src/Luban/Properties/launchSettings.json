@@ -1,0 +1,81 @@
+{
+  "profiles": {
+    "Luban.Client": {
+      "commandName": "Project",
+      "commandLineArgs": "-h %LUBAN_SERVER_IP% -j cfg  -- -d ..\\..\\DesignerConfigs\\Defines\\__root__.xml --input_data_dir ..\\..\\DesignerConfigs\\Datas  --output_code_dir Assets/Gen  --output_data_dir ..\\GenerateDatas\\json --gen_types code_cs_unity_json,data_json  -s all  --validate_root_dir .",
+      "workingDirectory": "D:\\workspace\\luban_examples\\Projects\\Csharp_Unity_json"
+    },
+    "Luban.Client-db": {
+      "commandName": "Project",
+      "commandLineArgs": "-h 127.0.0.1 -p 8899 -j db -d ../../../../Test/root.db.xml -c F:\\workspace\\perfect_core\\BaseDemo\\Gen\\Db2 -t server -l cs"
+    },
+    "gen_gate_proto": {
+      "commandName": "Project",
+      "commandLineArgs": "-h 127.0.0.1 -p 8899 -j proto -d F:\\workspace\\all_server\\ProtoDefines\\gate.xml -c F:\\workspace\\all_server\\Gate\\Source\\Gen\\Proto -t server -l cs"
+    },
+    "gen_client_proto": {
+      "commandName": "Project",
+      "commandLineArgs": "-h 127.0.0.1 -p 8899 -j proto -d F:\\workspace\\all_server\\ProtoDefines\\client.xml -c F:\\workspace\\all_server\\DemoClient\\Source\\Gen\\Proto -t server -l cs"
+    },
+    "gen_base_db": {
+      "commandName": "Project",
+      "commandLineArgs": "-h 127.0.0.1 -p 8899 -j db -d F:\\workspace\\all_server\\DbDefines\\base.xml -c F:\\workspace\\all_server\\Base\\Source\\Gen\\Db -t server -l cs"
+    },
+    "gen_base_proto": {
+      "commandName": "Project",
+      "commandLineArgs": "-h 127.0.0.1 -p 8899 -j proto -d F:\\workspace\\all_server\\ProtoDefines\\base.xml -c F:\\workspace\\all_server\\Base\\Source\\Gen\\Proto -t server -l cs"
+    },
+    "gen_base_proto_remote": {
+      "commandName": "Project",
+      "commandLineArgs": " -j proto -d F:\\workspace\\all_server\\ProtoDefines\\base.xml -c F:\\workspace\\all_server\\Base\\Source\\Gen\\Proto -t server -l cs"
+    },
+    "gen_base_db_remote": {
+      "commandName": "Project",
+      "commandLineArgs": " -j db -d F:\\workspace\\all_server\\DbDefines\\base.xml -c F:\\workspace\\all_server\\Base\\Source\\Gen\\Db -t server -l cs"
+    },
+    "gen_client_proto_lua": {
+      "commandName": "Project",
+      "commandLineArgs": "-h 127.0.0.1 -p 8899 -j proto -d F:\\workspace\\all_server\\ProtoDefines\\client.xml -c F:\\workspace\\x6p4\\X6Game\\Content\\Script\\Gen\\Proto -t client -l lua"
+    },
+    "gen_proto_lua_test": {
+      "commandName": "Project",
+      "commandLineArgs": "-h 127.0.0.1 -p 8899 -j proto -d ../../../../Test/root.proto.xml -c F:\\Gen\\Proto -t server -l lua"
+    },
+    "gen_client_proto_app_code_data": {
+      "commandName": "Project",
+      "commandLineArgs": "-h 127.0.0.1 -p 8899 -j config -d F:\\workspace\\perfect_gen_cs\\Test\\csv\\root.xml --outputappcodedir F:\\workspace\\all_server\\DemoClient\\Source\\Gen\\Cfg  --outputappdatadir F:\\workspace\\all_server\\DemoClient\\Config -t server -l cs"
+    },
+    "gen_client_cfg_lua": {
+      "commandName": "Project",
+      "commandLineArgs": "-h 127.0.0.1 -p 8899 -j config -d D:\\NikkiP4_D\\DesignerConfig\\root.xml --outputappcodedir D:\\NikkiP4_D\\X6Game\\Content\\Script\\Gen\\Cfg --outputappdatadir D:\\NikkiP4_D\\X6Game\\Content\\Config  -t server -l lua"
+    },
+    "gen_base_cfg_code_data": {
+      "commandName": "Project",
+      "commandLineArgs": "-h 127.0.0.1 -p 8899 -j config -d F:\\workspace\\perfect_gen_cs\\Test\\csv\\root.xml --outputappcodedir F:\\workspace\\all_server\\Base\\Source\\Gen\\Cfg  --outputappdatadir F:\\workspace\\all_server\\Base\\Config -t server -l cs"
+    },
+    "gen_base_cfg_code_data_remote": {
+      "commandName": "Project",
+      "commandLineArgs": "-j config -d F:\\workspace\\perfect_gen_cs\\Test\\csv\\root.xml --outputappcodedir F:\\workspace\\all_server\\Base\\Source\\Gen\\Cfg  --outputappdatadir F:\\workspace\\all_server\\Base\\Config -t server -l cs"
+    },
+    "gen_x6_base_db": {
+      "commandName": "Project",
+      "commandLineArgs": "-h 127.0.0.1 -p 8899 -j db -d D:\\NikkiP4_D\\X6Server\\DbDefines\\base.xml -c D:\\NikkiP4_D\\X6Server\\Online\\Source\\Gen\\Db -t server -l cs"
+    },
+    "gen_x6_base_proto": {
+      "commandName": "Project",
+      "commandLineArgs": " -j proto -d e:\\workspace\\x6_server\\ProtoDefines\\base.xml -c e:\\workspace\\x6_server\\GenShare\\Source\\Gen\\Proto --outputsynccodedir e:\\workspace\\x6_server\\Map\\Source\\Gen\\Objects  -t server -l cs"
+    },
+    "gen_x6_client_proto": {
+      "commandName": "Project",
+      "commandLineArgs": "-h 127.0.0.1 -p 8899 -j proto -d  D:\\workspace\\x6_server\\ProtoDefines\\client.xml -c D:\\NikkiP4_D\\X6Game\\Content\\Script\\Gen\\Proto --outputsynccodedir D:\\NikkiP4_D\\X6Game\\Content\\Script\\Gen\\Proto -t client -l lua"
+    },
+    "gen_x6_client_cfg_lua": {
+      "commandName": "Project",
+      "commandLineArgs": "-h 127.0.0.1 -p 8899 -j config -d D:\\NikkiP4_D\\X6Game\\DesignerConfigs\\root.xml --outputappcodedir D:\\NikkiP4_D\\X6Game\\Content\\Script\\Gen\\Cfg --outputappdatadir D:\\NikkiP4_D\\X6Game\\Content\\Config  -t server -l lua"
+    },
+    "gen_cfg_export_debug": {
+      "commandName": "Project",
+      "commandLineArgs": "-h 127.0.0.1 -p 8899 -j config -d D:\\NikkiP4_D\\DesignerConfig\\root.xml   --outputdatadir ./config  -t server --outputdatatype json --exporttestdata"
+    }
+  }
+}

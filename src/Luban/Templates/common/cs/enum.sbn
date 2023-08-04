@@ -1,0 +1,28 @@
+{{~
+    comment = __enum.comment
+    items = __enum.items
+~}}
+
+
+{{namespace_with_grace_begin __namespace_with_top_module}} 
+{{~if comment != '' ~}}
+    /// <summary>
+    /// {{escape_comment comment}}
+    /// </summary>
+{{~end~}}
+    {{~if __enum.is_flags~}}
+    [System.Flags]
+    {{~end~}}
+    public enum {{__name}}
+    {
+        {{~ for item in items ~}}
+{{~if item.comment != '' ~}}
+        /// <summary>
+        /// {{item.escape_comment}}
+        /// </summary>
+{{~end~}}
+        {{format_enum_item_name __code_style item.name}} = {{item.value}},
+        {{~end~}}
+    }
+
+{{namespace_with_grace_end __namespace_with_top_module}} 

@@ -1,0 +1,22 @@
+﻿using System.Runtime.Serialization;
+
+namespace Luban.Core.Defs;
+
+public class LoadDefException : Exception
+{
+    public LoadDefException()
+    {
+    }
+
+    public LoadDefException(string message) : base(message)
+    {
+    }
+
+    public LoadDefException(string message, Exception innerException) : base(message, innerException)
+    {
+    }
+
+    protected LoadDefException(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
+    }
+}

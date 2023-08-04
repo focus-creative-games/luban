@@ -1,0 +1,38 @@
+# This is a basic workflow to help you get started with Actions
+
+name: sync-gitee-mirror
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  sync:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: sync-gitee-mirror
+        uses: wangchucheng/git-repo-sync@v0.1.0
+        with:
+          # Target Repo URL
+          target-url: https://gitee.com/focus-creative-games/luban.git
+          # Target Repo Username
+          target-username: ${{ secrets.GITEE_USERNAME }}
+          # Target Token
+          target-token: ${{ secrets.GITEE_PASSWORD }}
+
+
+
+
