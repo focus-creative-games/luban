@@ -7,6 +7,7 @@ using Luban.DataLoader;
 using Luban.DataLoader.Builtin;
 using Luban.DataTarget;
 using Luban.OutputSaver;
+using Luban.Pipeline;
 using Luban.Plugin;
 using Luban.PostProcess;
 using Luban.Schema;
@@ -24,6 +25,13 @@ internal static class Program
 
     private class CommandOptions
     {
+        
+        [Option('s', "schemaCollector", Required = false, HelpText = "schema collector name")]
+        public string SchemaCollector { get; set; } = "default";
+        
+        [Option("schemaPath", Required = true, HelpText = "schema path")]
+        public string SchemaPath { get; set; }
+        
         [Option('t', "target", Required = true, HelpText = "target name")]
         public string Target { get; set; }
         
@@ -32,15 +40,12 @@ internal static class Program
         
         [Option('d', "dataTarget", Required = false, HelpText = "data target name")]
         public IEnumerable<string> DataTargets { get; set; }
+
+        [Option('p', "pipeline", Required = false, HelpText = "pipeline name")]
+        public string Pipeline { get; set; } = "default";
         
         [Option('e', "excludeTag", Required = false, HelpText = "exclude tag")]
         public IEnumerable<string> ExcludeTags { get; set; }
-        
-        [Option('s', "schemaCollector", Required = false, HelpText = "schema collector name")]
-        public string SchemaCollector { get; set; } = "default";
-        
-        [Option("schemaPath", Required = true, HelpText = "schema path")]
-        public string SchemaPath { get; set; }
         
         [Option("tables", Required = false, HelpText = "tables")]
         public IEnumerable<string> Tables { get; set; }
@@ -77,7 +82,7 @@ internal static class Program
         var launcher = new SimpleLauncher();
         launcher.Start(builtinAssemblies);
         
-        var pipeline = new Pipeline();
+        var pipeline = PipelineManager.Ins.CreatePipeline(s_commandOptions.Pipeline);
         pipeline.Run();
         s_logger.Info("bye~");
     }

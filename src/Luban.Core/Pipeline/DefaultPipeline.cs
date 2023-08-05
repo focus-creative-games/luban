@@ -7,9 +7,10 @@ using Luban.RawDefs;
 using Luban.Schema;
 using NLog;
 
-namespace Luban;
+namespace Luban.Pipeline;
 
-public class Pipeline
+[Pipeline("default")]
+public class DefaultPipeline : IPipeline
 {
     private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
@@ -21,7 +22,7 @@ public class Pipeline
 
     private GenerationContext _genCtx;
 
-    public Pipeline()
+    public DefaultPipeline()
     {
         _genArgs = GenerationContext.CurrentArguments;
     }
@@ -33,7 +34,7 @@ public class Pipeline
         ProcessTargets();
     }
 
-    private void LoadSchema()
+    protected void LoadSchema()
     {
         string schemaCollectorName = _genArgs.SchemaCollector;
         s_logger.Info("load schema. collector: {}  path:{}", schemaCollectorName, _genArgs.SchemaPath);
@@ -42,14 +43,14 @@ public class Pipeline
         _rawAssembly = schemaCollector.CreateRawAssembly();
     }
 
-    private void PrepareGenerationContext()
+    protected void PrepareGenerationContext()
     {
         s_logger.Debug("prepare generation context");
         _defAssembly = new DefAssembly(_rawAssembly);
         _genCtx = new GenerationContext(_defAssembly);
     }
 
-    private void ProcessTargets()
+    protected void ProcessTargets()
     {
         var tasks = new List<Task>();
         foreach (string target in _genArgs.CodeTargets)
@@ -73,7 +74,7 @@ public class Pipeline
         Task.WaitAll(tasks.ToArray());
     }
 
-    private void ProcessCodeTarget(string name, ICodeTarget codeTarget)
+    protected void ProcessCodeTarget(string name, ICodeTarget codeTarget)
     {
         s_logger.Info("process code target:{} begin", name);
         var outputManifest = new OutputFileManifest();
@@ -95,7 +96,7 @@ public class Pipeline
         s_logger.Info("process code target:{} end", name);
     }
     
-    private void ProcessDataTarget(string name, IDataExporter mission, IDataTarget dataTarget)
+    protected void ProcessDataTarget(string name, IDataExporter mission, IDataTarget dataTarget)
     {
         s_logger.Info("process data target:{} begin", name);
         var outputManifest = new OutputFileManifest();
@@ -116,4 +117,5 @@ public class Pipeline
         saver.Save(outputManifest, outputDir);
         s_logger.Info("process data target:{} end", name);
     }
+    
 }

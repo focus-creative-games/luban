@@ -4,6 +4,7 @@ using Luban.CodeTarget;
 using Luban.DataLoader;
 using Luban.DataTarget;
 using Luban.OutputSaver;
+using Luban.Pipeline;
 using Luban.Plugin;
 using Luban.PostProcess;
 using Luban.Schema;
@@ -31,6 +32,7 @@ public class SimpleLauncher
         DataLoaderManager.Ins.Init();
         DataTargetManager.Ins.Init();
         PluginManager.Ins.Init();
+        PipelineManager.Ins.Init();
     }
 
     private void ScanRegisterBuiltinAssemblies(List<Assembly> builtinAssemblies)
@@ -50,6 +52,7 @@ public class SimpleLauncher
         OutputSaverManager.Ins.ScanRegisterOutputSaver(assembly);
         DataLoaderManager.Ins.ScanRegisterDataLoader(assembly);
         DataTargetManager.Ins.ScanRegisterAll(assembly);
+        PipelineManager.Ins.ScanRegisterPipeline(assembly);
     }
 
     private void ScanRegisterPlugins()
