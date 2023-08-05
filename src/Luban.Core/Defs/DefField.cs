@@ -1,6 +1,7 @@
 using Luban.RawDefs;
 using Luban.Types;
 using Luban.Utils;
+using Luban.Validator;
 
 namespace Luban.Defs;
 
@@ -100,18 +101,13 @@ public class DefField
             }
         }
 
-        // ValidatorUtil.CreateValidators(CType);
-        // var selfRef = this.CType.Processors.Find(v => v is RefValidator);
-        // if (selfRef != null)
-        // {
-        //     this.Ref = (RefValidator)selfRef;
-        // }
-        //
-        // var eleType = CType.ElementType;
-        // if (eleType != null)
-        // {
-        //     ElementRef = (RefValidator)eleType.Processors.Find(p => p is RefValidator);
-        // }
+        foreach (var (tagName, tagValue) in CType.Tags)
+        {
+            if (ValidatorManager.Ins.TryCreateDataValidator(tagName, tagValue, out var validator))
+            {
+                CType.Validators.Add(validator);
+            }
+        }
     }
 
     private void ValidateIndex()

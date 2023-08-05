@@ -6,6 +6,7 @@ using Luban.DataExporter.Builtin;
 using Luban.DataLoader;
 using Luban.DataLoader.Builtin;
 using Luban.DataTarget;
+using Luban.DataValidator.Builtin.Collection;
 using Luban.OutputSaver;
 using Luban.Pipeline;
 using Luban.Plugin;
@@ -78,6 +79,7 @@ internal static class Program
             typeof(DefaultSchemaCollector).Assembly,
             typeof(FieldNames).Assembly,
             typeof(DefaultDataExporter).Assembly,
+            typeof(SizeValidator).Assembly,
         };
         var launcher = new SimpleLauncher();
         launcher.Start(builtinAssemblies);

@@ -1,4 +1,6 @@
-﻿namespace Luban.Any.TypeVisitors;
+﻿using Luban.Types;
+
+namespace Luban.TypeVisitors;
 
 public abstract class TypeActionVisitorAdaptor<T> : ITypeActionVisitor<T>
 {
@@ -17,27 +19,12 @@ public abstract class TypeActionVisitorAdaptor<T> : ITypeActionVisitor<T>
 
     }
 
-    public virtual void Accept(TFshort type, T x)
-    {
-
-    }
-
     public virtual void Accept(TInt type, T x)
     {
 
     }
 
-    public virtual void Accept(TFint type, T x)
-    {
-
-    }
-
     public virtual void Accept(TLong type, T x)
-    {
-
-    }
-
-    public virtual void Accept(TFlong type, T x)
     {
 
     }
@@ -58,11 +45,6 @@ public abstract class TypeActionVisitorAdaptor<T> : ITypeActionVisitor<T>
     }
 
     public virtual void Accept(TString type, T x)
-    {
-
-    }
-
-    public virtual void Accept(TBytes type, T x)
     {
 
     }
@@ -93,21 +75,6 @@ public abstract class TypeActionVisitorAdaptor<T> : ITypeActionVisitor<T>
     }
 
     public virtual void Accept(TMap type, T x)
-    {
-
-    }
-
-    public virtual void Accept(TVector2 type, T x)
-    {
-
-    }
-
-    public virtual void Accept(TVector3 type, T x)
-    {
-
-    }
-
-    public virtual void Accept(TVector4 type, T x)
     {
 
     }

@@ -1,5 +1,6 @@
 using Luban.Defs;
 using Luban.TypeVisitors;
+using Luban.Validator;
 
 namespace Luban.Types;
 
@@ -9,7 +10,7 @@ public abstract class TType
 
     public Dictionary<string, string> Tags { get; }
 
-    public List<IProcessor> Processors { get; } = new List<IProcessor>();
+    public List<IDataValidator> Validators { get; } = new List<IDataValidator>();
 
     protected TType(bool isNullable, Dictionary<string, string> tags)
     {
@@ -18,8 +19,6 @@ public abstract class TType
     }
 
     public abstract string TypeName { get; }
-
-    public int CollectionLevel { get; set; }
 
     public bool HasTag(string attrName)
     {
@@ -31,7 +30,7 @@ public abstract class TType
         return Tags != null && Tags.TryGetValue(attrName, out var value) ? value : null;
     }
 
-    public string OrTag(string attrName, string defaultValue)
+    public string GetTagOrDefault(string attrName, string defaultValue)
     {
         return Tags != null && Tags.TryGetValue(attrName, out var value) ? value : defaultValue;
     }
@@ -40,7 +39,7 @@ public abstract class TType
 
     public virtual void PostCompile(DefField field)
     {
-        foreach (var p in Processors)
+        foreach (var p in Validators)
         {
             p.Compile(field);
         }
@@ -53,9 +52,14 @@ public abstract class TType
     public virtual TType ElementType => null;
 
     public abstract void Apply<T>(ITypeActionVisitor<T> visitor, T x);
+    
     public abstract void Apply<T1, T2>(ITypeActionVisitor<T1, T2> visitor, T1 x, T2 y);
+    
     public abstract TR Apply<TR>(ITypeFuncVisitor<TR> visitor);
+    
     public abstract TR Apply<T, TR>(ITypeFuncVisitor<T, TR> visitor, T x);
+    
     public abstract TR Apply<T1, T2, TR>(ITypeFuncVisitor<T1, T2, TR> visitor, T1 x, T2 y);
+    
     public abstract TR Apply<T1, T2, T3, TR>(ITypeFuncVisitor<T1, T2, T3, TR> visitor, T1 x, T2 y, T3 z);
 }

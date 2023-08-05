@@ -58,7 +58,7 @@ public class JsonDataVisitor : IDataActionVisitor<Utf8JsonWriter>
 
     public virtual void Accept(DText type, Utf8JsonWriter x)
     {
-        x.WriteStringValue(type.Key);
+        x.WriteStringValue(type.Value);
     }
 
     public virtual void Accept(DDateTime type, Utf8JsonWriter x)

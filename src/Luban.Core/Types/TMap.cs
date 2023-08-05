@@ -40,12 +40,12 @@ public class TMap : TType
     {
         base.PostCompile(field);
 
-        foreach (var p in KeyType.Processors)
+        foreach (var p in KeyType.Validators)
         {
             p.Compile(field);
         }
 
-        foreach (var p in ValueType.Processors)
+        foreach (var p in ValueType.Validators)
         {
             p.Compile(field);
         }

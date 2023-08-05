@@ -81,7 +81,7 @@ class MsgPackDataVisitor
 
     public void Accept(DText type, ref MessagePackWriter writer)
     {
-        writer.Write(type.Key);
+        writer.Write(type.Value);
     }
 
     public void Accept(DDateTime type, ref MessagePackWriter writer)

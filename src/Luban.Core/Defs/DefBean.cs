@@ -89,7 +89,7 @@ public class DefBean : DefTypeBase
         return HierarchyFields.Where(f => f.Name == index).FirstOrDefault();
     }
 
-    internal bool TryGetField(string index, out DefField field, out int fieldIndexId)
+    public bool TryGetField(string index, out DefField field, out int fieldIndexId)
     {
         for (int i = 0; i < HierarchyFields.Count; i++)
         {

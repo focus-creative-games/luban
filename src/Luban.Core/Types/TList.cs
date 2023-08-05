@@ -33,7 +33,7 @@ public class TList : TType
     {
         base.PostCompile(field);
 
-        foreach (var p in ElementType.Processors)
+        foreach (var p in ElementType.Validators)
         {
             p.Compile(field);
         }

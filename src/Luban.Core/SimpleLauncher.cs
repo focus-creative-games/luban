@@ -9,6 +9,7 @@ using Luban.Plugin;
 using Luban.PostProcess;
 using Luban.Schema;
 using Luban.Tmpl;
+using Luban.Validator;
 
 namespace Luban;
 
@@ -30,6 +31,7 @@ public class SimpleLauncher
         PostProcessManager.Ins.Init();
         OutputSaverManager.Ins.Init();
         DataLoaderManager.Ins.Init();
+        ValidatorManager.Ins.Init();
         DataTargetManager.Ins.Init();
         PluginManager.Ins.Init();
         PipelineManager.Ins.Init();
@@ -51,6 +53,7 @@ public class SimpleLauncher
         PostProcessManager.Ins.ScanRegisterPostProcess(assembly);
         OutputSaverManager.Ins.ScanRegisterOutputSaver(assembly);
         DataLoaderManager.Ins.ScanRegisterDataLoader(assembly);
+        ValidatorManager.Ins.ScanRegisterValidators(assembly);
         DataTargetManager.Ins.ScanRegisterAll(assembly);
         PipelineManager.Ins.ScanRegisterPipeline(assembly);
     }

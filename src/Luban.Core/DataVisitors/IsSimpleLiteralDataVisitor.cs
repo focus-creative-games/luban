@@ -1,6 +1,8 @@
-namespace Luban.Any.DataVisitors;
+using Luban.Datas;
 
-class IsSimpleLiteralDataVisitor : IDataFuncVisitor<bool>
+namespace Luban.DataVisitors;
+
+public class IsSimpleLiteralDataVisitor : IDataFuncVisitor<bool>
 {
     public static IsSimpleLiteralDataVisitor Ins { get; } = new();
 
@@ -19,27 +21,12 @@ class IsSimpleLiteralDataVisitor : IDataFuncVisitor<bool>
         return true;
     }
 
-    public bool Accept(DFshort type)
-    {
-        return true;
-    }
-
     public bool Accept(DInt type)
     {
         return true;
     }
 
-    public bool Accept(DFint type)
-    {
-        return true;
-    }
-
     public bool Accept(DLong type)
-    {
-        return true;
-    }
-
-    public bool Accept(DFlong type)
     {
         return true;
     }
@@ -64,14 +51,14 @@ class IsSimpleLiteralDataVisitor : IDataFuncVisitor<bool>
         return true;
     }
 
-    public bool Accept(DBytes type)
-    {
-        throw new NotSupportedException();
-    }
-
     public bool Accept(DText type)
     {
-        return false;
+        return true;
+    }
+
+    public bool Accept(DDateTime type)
+    {
+        return true;
     }
 
     public bool Accept(DBean type)
@@ -97,25 +84,5 @@ class IsSimpleLiteralDataVisitor : IDataFuncVisitor<bool>
     public bool Accept(DMap type)
     {
         return false;
-    }
-
-    public bool Accept(DVector2 type)
-    {
-        return false;
-    }
-
-    public bool Accept(DVector3 type)
-    {
-        return false;
-    }
-
-    public bool Accept(DVector4 type)
-    {
-        return false;
-    }
-
-    public bool Accept(DDateTime type)
-    {
-        return true;
     }
 }

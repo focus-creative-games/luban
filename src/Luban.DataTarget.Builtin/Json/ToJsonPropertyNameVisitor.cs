@@ -54,7 +54,7 @@ public class ToJsonPropertyNameVisitor : IDataFuncVisitor<string>
 
     public string Accept(DText type)
     {
-        return type.Key;
+        return type.Value;
     }
 
     public string Accept(DDateTime type)

@@ -2,10 +2,8 @@ using Luban.DataVisitors;
 
 namespace Luban.Datas;
 
-public class DText : DType
+public class DText : DType<string>
 {
-    public string Key { get; }
-
     public override string TypeName => "text";
 
     public static DText ValueOf(string key)
@@ -13,9 +11,9 @@ public class DText : DType
         return new DText(key);
     }
 
-    private DText(string key)
+    private DText(string key) : base(key)
     {
-        Key = key;
+
     }
 
     public override void Apply<T>(IDataActionVisitor<T> visitor, T x)
@@ -45,11 +43,11 @@ public class DText : DType
 
     public override bool Equals(object obj)
     {
-        return obj is DText o && o.Key == this.Key;
+        return obj is DText o && o.Value == this.Value;
     }
 
     public override int GetHashCode()
     {
-        return Key.GetHashCode();
+        return Value.GetHashCode();
     }
 }

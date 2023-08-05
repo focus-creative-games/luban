@@ -69,7 +69,7 @@ public class YamlDataVisitor : IDataFuncVisitor<YamlNode>
 
     public YamlNode Accept(DText type)
     {
-        return ToText(type.Key);
+        return ToText(type.Value);
     }
 
     public YamlNode Accept(DDateTime type)

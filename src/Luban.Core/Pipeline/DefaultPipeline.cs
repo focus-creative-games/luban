@@ -5,6 +5,7 @@ using Luban.OutputSaver;
 using Luban.PostProcess;
 using Luban.RawDefs;
 using Luban.Schema;
+using Luban.Validator;
 using NLog;
 
 namespace Luban.Pipeline;
@@ -50,6 +51,18 @@ public class DefaultPipeline : IPipeline
         _genCtx = new GenerationContext(_defAssembly);
     }
 
+    protected void LoadDatas()
+    {
+        _genCtx.LoadDatas();
+        DoValidate();
+    }
+
+    protected void DoValidate()
+    {
+        var v = new DataValidatorContext(_defAssembly);
+        v.ValidateTables(_genCtx.Tables);
+    }
+
     protected void ProcessTargets()
     {
         var tasks = new List<Task>();
@@ -61,7 +74,7 @@ public class DefaultPipeline : IPipeline
 
         if (_genArgs.DataTargets.Count > 0)
         {
-            _genCtx.LoadDatas();
+            LoadDatas();
             string dataExporterName = _genCtx.GetOptionOrDefault("global", "dataExporter", true, "default");
             s_logger.Debug("dataExporter: {}", dataExporterName);
             IDataExporter dataExporter = DataTargetManager.Ins.GetDataExporter(dataExporterName);

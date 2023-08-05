@@ -57,7 +57,7 @@ public abstract class ToLiteralVisitorBase : IDataFuncVisitor<string>
 
     public virtual string Accept(DText type)
     {
-        return type.Key;
+        return type.Value;
     }
 
     public abstract string Accept(DBean type);

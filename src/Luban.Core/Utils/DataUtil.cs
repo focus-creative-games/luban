@@ -153,7 +153,7 @@ public static class DataUtil
         {
             throw new Exception($"module:'{bean.Namespace}' 多态数据type不能为空");
         }
-        DefBean defType = bean.GetHierarchyChildren().Cast<DefBean>().Where(c => c.Alias == subType || c.Name == subType || c.FullName == subType).FirstOrDefault();
+        DefBean defType = bean.GetHierarchyChildren().FirstOrDefault(c => c.Alias == subType || c.Name == subType || c.FullName == subType);
         if (defType == null)
         {
             throw new Exception($"module:'{bean.Namespace}' type:'{subType}' 不是合法类型");
@@ -164,11 +164,11 @@ public static class DataUtil
         }
         return defType;
     }
+    
+    private const string TAG_UNCHECKED = "unchecked";
 
-    //public static string Data2String(DType data)
-    //{
-    //    var s = new StringBuilder();
-    //    data.Apply(VisitorToString.Ins, s);
-    //    return s.ToString();
-    //}
+    public static bool IsUnchecked(Record rec)
+    {
+        return rec.Tags != null && rec.Tags.Count > 0 && rec.Tags.Contains(TAG_UNCHECKED);
+    }
 }

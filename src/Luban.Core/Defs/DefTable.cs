@@ -2,6 +2,7 @@ using Luban.RawDefs;
 using Luban.Types;
 using Luban.TypeVisitors;
 using Luban.Utils;
+using Luban.Validator;
 
 namespace Luban.Defs;
 
@@ -62,26 +63,13 @@ public class DefTable : DefTypeBase
 
     public List<IndexInfo> IndexList { get; } = new();
 
-    // public bool NeedExport => Assembly.NeedExport(this.Groups);
+    public List<ITableValidator> Validators { get; } = new();
 
     public string OutputDataFile => string.IsNullOrWhiteSpace(_outputFile) ? FullName.Replace('.', '_').ToLower() : _outputFile;
-
-    // public List<string> GetPatchInputFiles(string patchName)
-    // {
-    //     return _patchInputFiles.GetValueOrDefault(patchName);
-    // }
 
     public override void Compile()
     {
         var ass = Assembly;
-
-        // foreach (var patchName in _patchInputFiles.Keys)
-        // {
-        //     if (ass.GetPatch(patchName) == null)
-        //     {
-        //         throw new Exception($"table:'{FullName}' patch_input patch:'{patchName}' 不存在");
-        //     }
-        // }
 
         if ((ValueTType = (TBean)ass.CreateType(Namespace, ValueType, false)) == null)
         {
@@ -118,7 +106,7 @@ public class DefTable : DefTypeBase
                 }
                 else
                 {
-                    IndexField = (DefField)ValueTType.DefBean.HierarchyFields[0];
+                    IndexField = ValueTType.DefBean.HierarchyFields[0];
                     Index = IndexField.Name;
                     IndexFieldIdIndex = 0;
                 }

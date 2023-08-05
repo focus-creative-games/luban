@@ -17,7 +17,7 @@ public class ToPythonLiteralVisitor : ToLiteralVisitorBase
         
     public override string Accept(DText type)
     {
-        return DataUtil.EscapeString(type.Key);
+        return DataUtil.EscapeString(type.Value);
     }
 
     public override string Accept(DBean type)

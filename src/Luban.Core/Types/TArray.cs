@@ -13,7 +13,9 @@ public class TArray : TType
     public override TType ElementType { get; }
 
     public override string TypeName => "array";
+    
     public int Dimension { get; } = 1;
+    
     public TType FinalElementType { get; protected set; }
 
     private TArray(bool isNullable, Dictionary<string, string> tags, TType elementType) : base(isNullable, tags)
@@ -41,7 +43,7 @@ public class TArray : TType
     {
         base.PostCompile(field);
 
-        foreach (var p in ElementType.Processors)
+        foreach (var p in ElementType.Validators)
         {
             p.Compile(field);
         }

@@ -59,7 +59,7 @@ public class XmlDataVisitor : IDataActionVisitor<XmlWriter>
 
     public void Accept(DText type, XmlWriter w)
     {
-        w.WriteValue(type.Key);
+        w.WriteValue(type.Value);
     }
 
     public void Accept(DDateTime type, XmlWriter w)

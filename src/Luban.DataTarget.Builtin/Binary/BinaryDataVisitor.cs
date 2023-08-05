@@ -57,7 +57,7 @@ public class BinaryDataVisitor : IDataActionVisitor<ByteBuf>
 
     public void Accept(DText type, ByteBuf x)
     {
-        x.WriteString(type.Key);
+        x.WriteString(type.Value);
     }
 
     public void Accept(DDateTime type, ByteBuf x)

@@ -1,19 +1,22 @@
-using Luban.Any.Validators;
+using Luban.Datas;
+using Luban.Defs;
+using Luban.Types;
+using Luban.TypeVisitors;
+using Luban.Utils;
 
-namespace Luban.Any.DataVisitors;
+namespace Luban.Validator;
 
-public class ValidatorVisitor : TypeActionVisitorAdaptor<DType>
+public class DataValidatorVisitor : TypeActionVisitorAdaptor<DType>
 {
-
-    private readonly Stack<object> _path = new Stack<object>();
+    private readonly Stack<object> _path = new();
 
     public Stack<object> Path => _path;
 
-    public ValidatorContext Ctx { get; }
+    public DataValidatorContext Ctx { get; }
 
     public Record CurrentValidateRecord { get; set; }
 
-    public ValidatorVisitor(ValidatorContext ctx)
+    public DataValidatorVisitor(DataValidatorContext ctx)
     {
         Ctx = ctx;
     }
@@ -36,14 +39,11 @@ public class ValidatorVisitor : TypeActionVisitorAdaptor<DType>
             {
                 _path.Push(data.Fields[keyIndex]);
             }
-            if (table.ValueTType.Processors.Count > 0)
+            if (table.ValueTType.Validators.Count > 0)
             {
-                foreach (var p in table.ValueTType.Processors)
+                foreach (var p in table.ValueTType.Validators)
                 {
-                    if (p is IValidator v)
-                    {
-                        v.Validate(Ctx, table.ValueTType, data);
-                    }
+                    p.Validate(Ctx, table.ValueTType, data);
                 }
             }
             table.ValueTType.Apply(this, data);
@@ -52,21 +52,18 @@ public class ValidatorVisitor : TypeActionVisitorAdaptor<DType>
 
     private void AcceptListLike(TType elementType, List<DType> eles)
     {
-        if (elementType.Processors.Count > 0)
+        if (elementType.Validators.Count > 0)
         {
             int index = 0;
             foreach (var value in eles)
             {
                 _path.Push(index++);
-                foreach (var v in elementType.Processors)
+                foreach (var v in elementType.Validators)
                 {
-                    if (v is IValidator eleVal)
+                    v.Validate(Ctx, elementType, value);
+                    if (value != null)
                     {
-                        eleVal.Validate(Ctx, elementType, value);
-                        if (value != null)
-                        {
-                            elementType.Apply(this, value);
-                        }
+                        elementType.Apply(this, value);
                     }
                 }
                 _path.Pop();
@@ -91,7 +88,7 @@ public class ValidatorVisitor : TypeActionVisitorAdaptor<DType>
     public override void Accept(TBean type, DType x)
     {
         var beanData = (DBean)x;
-        var defFields = ((DefBean)type.Bean.Assembly.GetDefType(beanData.ImplType.FullName)).HierarchyFields;// beanData.ImplType.HierarchyFields;
+        var defFields = ((DefBean)type.DefBean.Assembly.GetDefType(beanData.ImplType.FullName)).HierarchyFields;// beanData.ImplType.HierarchyFields;
         int i = 0;
         foreach (var fieldValue in beanData.Fields)
         {
@@ -100,14 +97,11 @@ public class ValidatorVisitor : TypeActionVisitorAdaptor<DType>
 
             var fieldType = defField.CType;
 
-            if (fieldType.Processors.Count > 0)
+            if (fieldType.Validators.Count > 0)
             {
-                foreach (var p in fieldType.Processors)
+                foreach (var p in fieldType.Validators)
                 {
-                    if (p is IValidator val)
-                    {
-                        val.Validate(Ctx, fieldType, fieldValue);
-                    }
+                    p.Validate(Ctx, fieldType, fieldValue);
                 }
             }
             if (fieldValue != null)
@@ -137,33 +131,27 @@ public class ValidatorVisitor : TypeActionVisitorAdaptor<DType>
     {
         var keyType = type.KeyType;
         var valueType = type.ValueType;
-        if (keyType.Processors.Count > 0 || valueType.Processors.Count > 0)
+        if (keyType.Validators.Count > 0 || valueType.Validators.Count > 0)
         {
             foreach (var e in ((DMap)x).Datas)
             {
                 _path.Push(e.Key);
-                if (keyType.Processors.Count > 0)
+                if (keyType.Validators.Count > 0)
                 {
-                    foreach (var v in keyType.Processors)
+                    foreach (var v in keyType.Validators)
                     {
-                        if (v is IValidator eleVal)
-                        {
-                            eleVal.Validate(Ctx, keyType, e.Key);
-                            keyType.Apply(this, e.Key);
-                        }
+                        v.Validate(Ctx, keyType, e.Key);
+                        keyType.Apply(this, e.Key);
                     }
                 }
-                if (valueType.Processors.Count > 0)
+                if (valueType.Validators.Count > 0)
                 {
-                    foreach (var v in valueType.Processors)
+                    foreach (var v in valueType.Validators)
                     {
-                        if (v is IValidator eleVal)
+                        v.Validate(Ctx, valueType, e.Value);
+                        if (e.Value != null)
                         {
-                            eleVal.Validate(Ctx, valueType, e.Value);
-                            if (e.Value != null)
-                            {
-                                valueType.Apply(this, e.Value);
-                            }
+                            valueType.Apply(this, e.Value);
                         }
                     }
                 }
