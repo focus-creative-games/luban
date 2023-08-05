@@ -13,6 +13,12 @@ public class DataTargetManager
     {
         
     }
+
+    public void ScanRegisterAll(Assembly assembly)
+    {
+        ScanRegisterDataExporter(assembly);
+        ScanRegisterTableExporter(assembly);
+    }
     
     public IDataExporter GetDataExporter(string name)
     {

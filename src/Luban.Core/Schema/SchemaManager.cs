@@ -3,12 +3,14 @@ using Luban.Utils;
 
 namespace Luban.Schema;
 
-public class SchemaLoaderManager
+public class SchemaManager
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
     
-    public static SchemaLoaderManager Ins { get; } = new ();
-
+    public static SchemaManager Ins { get; } = new ();
+    
+    private readonly Dictionary<string, Func<ISchemaCollector>> _collectors = new();
+    
     private class LoaderInfo
     {
         public string Type { get; init; }
@@ -24,7 +26,48 @@ public class SchemaLoaderManager
 
     private readonly Dictionary<string, Func<IBeanSchemaLoader>> _beanSchemaLoaders = new();
 
-    public ISchemaLoader Create(string extName, string type, ISchemaCollector collector)
+    public void Init()
+    {
+        
+    }
+    
+    public void ScanRegisterAll(Assembly assembly)
+    {
+        ScanRegisterCollectorCreator(assembly);
+        ScanRegisterSchemaLoaderCreator(assembly);
+        ScanRegisterBeanSchemaLoaderCreator(assembly);
+    }
+    
+    public ISchemaCollector CreateSchemaCollector(string name)
+    {
+        if (_collectors.TryGetValue(name, out var creator))
+        {
+            return creator();
+        }
+        throw new Exception($"can't find schema collector:{name}");
+    }
+    
+    public void RegisterCollectorCreator(string name, Func<ISchemaCollector> creator)
+    {
+        if (!_collectors.TryAdd(name, creator))
+        {
+            throw new Exception($"duplicate register schema collector:{name}");
+        }
+    }
+
+    public void ScanRegisterCollectorCreator(Assembly assembly)
+    {
+        foreach (var type in assembly.GetTypes())
+        {
+            if (type.IsDefined(typeof(SchemaCollectorAttribute), false))
+            {
+                var attr = type.GetCustomAttribute<SchemaCollectorAttribute>();
+                RegisterCollectorCreator(attr.Name, () => (ISchemaCollector)Activator.CreateInstance(type));
+            }
+        }
+    }
+
+    public ISchemaLoader CreateSchemaLoader(string extName, string type, ISchemaCollector collector)
     {
         LoaderInfo loader = null;
         

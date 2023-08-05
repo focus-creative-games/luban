@@ -10,13 +10,13 @@ public class DefaultSchemaCollector : SchemaCollectorBase
 
     public override void Load(string schemaPath)
     {
-        var rootLoader = (IRootSchemaLoader)SchemaLoaderManager.Ins.Create(FileUtil.GetExtensionWithDot(schemaPath), "root", this);
+        var rootLoader = (IRootSchemaLoader)SchemaManager.Ins.CreateSchemaLoader(FileUtil.GetExtensionWithDot(schemaPath), "root", this);
         rootLoader.Load(schemaPath);
 
         foreach (var importFile in rootLoader.ImportFiles)
         {
             s_logger.Debug("import schema file:{} type:{}", importFile.FileName, importFile.Type);
-            var schemaLoader = SchemaLoaderManager.Ins.Create(FileUtil.GetExtensionWithDot(importFile.FileName), importFile.Type, this);
+            var schemaLoader = SchemaManager.Ins.CreateSchemaLoader(FileUtil.GetExtensionWithDot(importFile.FileName), importFile.Type, this);
             schemaLoader.Load(importFile.FileName);
         }
         
@@ -36,7 +36,7 @@ public class DefaultSchemaCollector : SchemaCollectorBase
             tasks.Add(Task.Run(() =>
             {
                 string fileName = table.InputFiles[0];
-                IBeanSchemaLoader schemaLoader = SchemaLoaderManager.Ins.CreateBeanSchemaLoader(beanSchemaLoaderName);
+                IBeanSchemaLoader schemaLoader = SchemaManager.Ins.CreateBeanSchemaLoader(beanSchemaLoaderName);
                 string fullPath = $"{GenerationContext.CurrentArguments.GetInputDataPath()}/{fileName}";
                 RawBean bean = schemaLoader.Load(fullPath, table.ValueType);
                 Add(bean);

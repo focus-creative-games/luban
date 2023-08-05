@@ -22,6 +22,7 @@ public class SimpleLauncher
     
     private void InitManagers()
     {
+        SchemaManager.Ins.Init();
         TemplateManager.Ins.Init();
         CodeFormatManager.Ins.Init();
         CodeTargetManager.Ins.Init();
@@ -42,17 +43,13 @@ public class SimpleLauncher
 
     private void ScanRegisterAssembly(Assembly assembly)
     {
-        SchemaCollectorManager.Ins.ScanRegisterCollectorCreator(assembly);
-        SchemaLoaderManager.Ins.ScanRegisterSchemaLoaderCreator(assembly);
-        SchemaLoaderManager.Ins.ScanRegisterBeanSchemaLoaderCreator(assembly);
-        CodeFormatManager.Ins.ScanRegisterFormatters(assembly);
-        CodeFormatManager.Ins.ScanRegisterCodeStyle(assembly);
+        SchemaManager.Ins.ScanRegisterAll(assembly);
+        CodeFormatManager.Ins.ScanRegisterAll(assembly);
         CodeTargetManager.Ins.ScanResisterCodeTarget(assembly);
         PostProcessManager.Ins.ScanRegisterPostProcess(assembly);
         OutputSaverManager.Ins.ScanRegisterOutputSaver(assembly);
         DataLoaderManager.Ins.ScanRegisterDataLoader(assembly);
-        DataTargetManager.Ins.ScanRegisterDataExporter(assembly);
-        DataTargetManager.Ins.ScanRegisterTableExporter(assembly);
+        DataTargetManager.Ins.ScanRegisterAll(assembly);
     }
 
     private void ScanRegisterPlugins()

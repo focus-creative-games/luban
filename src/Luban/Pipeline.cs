@@ -37,7 +37,7 @@ public class Pipeline
     {
         string schemaCollectorName = _genArgs.SchemaCollector;
         s_logger.Info("load schema. collector: {}  path:{}", schemaCollectorName, _genArgs.SchemaPath);
-        var schemaCollector = SchemaCollectorManager.Ins.CreateSchemaCollector(schemaCollectorName);
+        var schemaCollector = SchemaManager.Ins.CreateSchemaCollector(schemaCollectorName);
         schemaCollector.Load(_genArgs.SchemaPath);
         _rawAssembly = schemaCollector.CreateRawAssembly();
     }

@@ -56,6 +56,12 @@ public class CodeFormatManager
         CppDefaultCodeStyle = RegisterCodeStyle("cpp-default", "snake", "pascal", "pascal", "pascal", "camel", "upper");
         PythonDefaultCodeStyle = RegisterCodeStyle("python-default", "snake", "pascal", "snake", "snake", "snake", "upper");
     }
+
+    public void ScanRegisterAll(Assembly assembly)
+    {
+        ScanRegisterFormatters(assembly);
+        ScanRegisterCodeStyle(assembly);
+    }
     
     public void RegisterFormatter(string name, INamingConventionFormatter formatter)
     {
