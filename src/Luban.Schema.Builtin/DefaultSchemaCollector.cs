@@ -10,13 +10,13 @@ public class DefaultSchemaCollector : SchemaCollectorBase
 
     public override void Load(string schemaPath)
     {
-        var rootLoader = (IRootSchemaLoader)SchemaLoaderManager.Ins.Create(FileUtil.GetExtensionWithDot(schemaPath), "root", this, null);
+        var rootLoader = (IRootSchemaLoader)SchemaLoaderManager.Ins.Create(FileUtil.GetExtensionWithDot(schemaPath), "root", this);
         rootLoader.Load(schemaPath);
 
         foreach (var importFile in rootLoader.ImportFiles)
         {
             s_logger.Debug("import schema file:{} type:{}", importFile.FileName, importFile.Type);
-            var schemaLoader = SchemaLoaderManager.Ins.Create(FileUtil.GetExtensionWithDot(importFile.FileName), importFile.Type, this, null);
+            var schemaLoader = SchemaLoaderManager.Ins.Create(FileUtil.GetExtensionWithDot(importFile.FileName), importFile.Type, this);
             schemaLoader.Load(importFile.FileName);
         }
         
@@ -25,13 +25,22 @@ public class DefaultSchemaCollector : SchemaCollectorBase
     
     private void LoadTableValueTypeSchemasFromFile()
     {
-        var tasks = new List<Task<RawBean>>();
+        var tasks = new List<Task>();
+        string beanSchemaLoaderName =
+            GenerationContext.CurrentArguments.TryGetOption("schemaCollector", "beanSchemaLoader", true,
+                out var loaderName)
+                ? loaderName
+                : "default";
         foreach (var table in Tables.Where(t => t.ReadSchemaFromFile))
         {
-            string fileName = table.InputFiles[0];
-            ISchemaLoader schemaLoader = SchemaLoaderManager.Ins.Create(FileUtil.GetExtensionWithDot(fileName), "table-valueType", this, table.ValueType);
-            string fullPath = $"{GenerationContext.CurrentArguments.GetInputDataPath()}/{fileName}";
-            schemaLoader.Load(fullPath);
+            tasks.Add(Task.Run(() =>
+            {
+                string fileName = table.InputFiles[0];
+                IBeanSchemaLoader schemaLoader = SchemaLoaderManager.Ins.CreateBeanSchemaLoader(beanSchemaLoaderName);
+                string fullPath = $"{GenerationContext.CurrentArguments.GetInputDataPath()}/{fileName}";
+                RawBean bean = schemaLoader.Load(fullPath, table.ValueType);
+                Add(bean);
+            }));
         }
         Task.WaitAll(tasks.ToArray());
     }

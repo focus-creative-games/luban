@@ -22,7 +22,9 @@ public class SchemaLoaderManager
     
     private readonly List<LoaderInfo> _schemaLoaders = new();
 
-    public ISchemaLoader Create(string extName, string type, ISchemaCollector collector, object args)
+    private readonly Dictionary<string, Func<IBeanSchemaLoader>> _beanSchemaLoaders = new();
+
+    public ISchemaLoader Create(string extName, string type, ISchemaCollector collector)
     {
         LoaderInfo loader = null;
         
@@ -45,7 +47,6 @@ public class SchemaLoaderManager
         ISchemaLoader schemaLoader = loader.Creator();
         schemaLoader.Type = type;
         schemaLoader.Collector = collector;
-        schemaLoader.Arguments = args;
         return schemaLoader;
     }
     
@@ -66,6 +67,37 @@ public class SchemaLoaderManager
                     var creator = () => (ISchemaLoader)Activator.CreateInstance(t);
                     RegisterSchemaLoaderCreator(attr.Type, attr.ExtNames, attr.Priority, creator);
                 }
+            }
+        }
+    }
+    
+    public IBeanSchemaLoader CreateBeanSchemaLoader(string type)
+    {
+        if (_beanSchemaLoaders.TryGetValue(type, out var creator))
+        {
+            return creator();
+        }
+        else
+        {
+            throw new Exception($"can't find bean schema loader for type:{type}");
+        }
+    }
+    
+    public void RegisterBeanSchemaLoaderCreator(string type, Func<IBeanSchemaLoader> creator)
+    {
+        _beanSchemaLoaders.Add(type, creator);
+        s_logger.Debug("add bean schema loader creator. type:{}", type);
+    }
+    
+    public void ScanRegisterBeanSchemaLoaderCreator(Assembly assembly)
+    {
+        foreach (var t in assembly.GetTypes())
+        {
+            var attr = t.GetCustomAttribute<BeanSchemaLoaderAttribute>();
+            if (attr != null)
+            {
+                var creator = () => (IBeanSchemaLoader)Activator.CreateInstance(t);
+                RegisterBeanSchemaLoaderCreator(attr.Name, creator);
             }
         }
     }

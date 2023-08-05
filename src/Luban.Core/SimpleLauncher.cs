@@ -44,6 +44,7 @@ public class SimpleLauncher
     {
         SchemaCollectorManager.Ins.ScanRegisterCollectorCreator(assembly);
         SchemaLoaderManager.Ins.ScanRegisterSchemaLoaderCreator(assembly);
+        SchemaLoaderManager.Ins.ScanRegisterBeanSchemaLoaderCreator(assembly);
         CodeFormatManager.Ins.ScanRegisterFormatters(assembly);
         CodeFormatManager.Ins.ScanRegisterCodeStyle(assembly);
         CodeTargetManager.Ins.ScanResisterCodeTarget(assembly);

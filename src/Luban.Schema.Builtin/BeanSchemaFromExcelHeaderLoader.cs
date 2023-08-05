@@ -4,17 +4,16 @@ using Luban.Utils;
 
 namespace Luban.Schema.Builtin;
 
-[SchemaLoader("table-valueType", "xls", "xlsx", "csv", "xlsm")]
-public class BeanSchemaFromExcelHeaderLoader : SchemaLoaderBase
+[BeanSchemaLoader("default")]
+public class BeanSchemaFromExcelHeaderLoader : IBeanSchemaLoader
 {
-    public override void Load(string fileName)
+    public RawBean Load(string fileName, string beanFullName)
     {
-        Collector.Add(LoadTableValueTypeDefineFromFile(fileName));
+        return LoadTableValueTypeDefineFromFile(fileName, beanFullName);
     }
     
-    private RawBean LoadTableValueTypeDefineFromFile(string fileName)
+    public static RawBean LoadTableValueTypeDefineFromFile(string fileName, string valueTypeFullName)
     {
-        string valueTypeFullName = (string)Arguments;
         var valueTypeNamespace = TypeUtil.GetNamespace(valueTypeFullName);
         string valueTypeName = TypeUtil.GetName(valueTypeFullName);
         var cb = new RawBean()
