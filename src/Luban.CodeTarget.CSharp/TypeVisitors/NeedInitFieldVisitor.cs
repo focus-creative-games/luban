@@ -12,11 +12,6 @@ public class NeedInitFieldVisitor : AllFalseVisitor
         return true;
     }
 
-    public override bool Accept(TText type)
-    {
-        return true;
-    }
-
     public override bool Accept(TArray type)
     {
         return true;

@@ -186,24 +186,6 @@ class ExcelStreamDataCreator : ITypeFuncVisitor<ExcelStream, DType>
         }
     }
 
-    public DType Accept(TText type, ExcelStream x)
-    {
-        var d = x.Read();
-        var s = ParseString(d);
-        if (s == null)
-        {
-            if (type.IsNullable)
-            {
-                return null;
-            }
-            else
-            {
-                throw new InvalidExcelDataException("字段不是nullable类型，不能为null");
-            }
-        }
-        return DText.ValueOf(s);
-    }
-
     public DType Accept(TDateTime type, ExcelStream x)
     {
         var d = x.Read();

@@ -49,15 +49,6 @@ public class TMap : TType
         {
             p.Compile(field);
         }
-
-        if (KeyType is TText)
-        {
-            throw new Exception($"bean:{field.HostType.FullName} field:{field.Name} container key type can't be text");
-        }
-        if (ValueType is TText)
-        {
-            throw new Exception($"bean:{field.HostType.FullName} field:{field.Name} container value type can't be text");
-        }
     }
 
     public override void Apply<T>(ITypeActionVisitor<T> visitor, T x)

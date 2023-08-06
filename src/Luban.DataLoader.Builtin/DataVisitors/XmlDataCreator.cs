@@ -56,11 +56,6 @@ class XmlDataCreator : ITypeFuncVisitor<XElement, DefAssembly, DType>
         return DString.ValueOf(x.Value);
     }
 
-    public DType Accept(TText type, XElement x, DefAssembly ass)
-    {
-        return DText.ValueOf(x.Value);
-    }
-
     public DType Accept(TBean type, XElement x, DefAssembly ass)
     {
         var bean = type.DefBean;

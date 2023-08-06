@@ -42,10 +42,6 @@ public class TSet : TType
         {
             throw new Exception($"bean:{field.HostType.FullName} field:{field.Name} element type can't be bean:{beanType.DefBean.FullName}");
         }
-        if (ElementType is TText)
-        {
-            throw new Exception($"bean:{field.HostType.FullName} field:{field.Name} container element type can't be text");
-        }
     }
 
     public override void Apply<T>(ITypeActionVisitor<T> visitor, T x)

@@ -30,11 +30,6 @@ public class RegexValidator : DataValidatorBase
                 _stringGetter = d => ((DString) d).Value;
                 break;
             }
-            case TText:
-            {
-                _stringGetter = d => ((DText) d).Value;
-                break;
-            }
             default:
             {
                 throw new Exception($"type:{field.CType} not support regex validator");

@@ -52,11 +52,6 @@ public class ConstValueVisitor : ITypeFuncVisitor<string, string>
         return "\"" + x + "\"";
     }
 
-    public string Accept(TText type, string x)
-    {
-        return "\"" + x + "\"";
-    }
-
     public string Accept(TDateTime type, string x)
     {
         throw new NotImplementedException();

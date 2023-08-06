@@ -6,11 +6,6 @@ class IsValidTableKeyTypeVisitor : AllTrueVisitor
 {
     public static IsValidTableKeyTypeVisitor Ins { get; } = new();
 
-    public override bool Accept(TText type)
-    {
-        return false;
-    }
-
     public override bool Accept(TDateTime type)
     {
         return false;

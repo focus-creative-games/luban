@@ -51,11 +51,6 @@ public class DotNetJsonDeserializeVisitor : ITypeFuncVisitor<string, string, int
         return $"{x} = {json}.GetString();";
     }
 
-    public string Accept(TText type, string json, string x, int depth)
-    {
-        return $"{x} = {json}.GetString();";
-    }
-
     public string Accept(TDateTime type, string json, string x, int depth)
     {
         return $"{x} = {json}.GetInt64();";

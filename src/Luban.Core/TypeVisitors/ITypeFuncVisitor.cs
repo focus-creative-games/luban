@@ -22,8 +22,6 @@ public interface ITypeFuncVisitor<TR>
 
     TR Accept(TString type);
 
-    TR Accept(TText type);
-
     TR Accept(TDateTime type);
 
     TR Accept(TBean type);
@@ -56,8 +54,6 @@ public interface ITypeFuncVisitor<T, TR>
     TR Accept(TEnum type, T x);
 
     TR Accept(TString type, T x);
-
-    TR Accept(TText type, T x);
 
     TR Accept(TDateTime type, T x);
 
@@ -92,8 +88,6 @@ public interface ITypeFuncVisitor<T, T2, TR>
 
     TR Accept(TString type, T x, T2 y);
 
-    TR Accept(TText type, T x, T2 y);
-
     TR Accept(TDateTime type, T x, T2 y);
 
     TR Accept(TBean type, T x, T2 y);
@@ -126,8 +120,6 @@ public interface ITypeFuncVisitor<T, T2, T3, TR>
     TR Accept(TEnum type, T x, T2 y, T3 z);
 
     TR Accept(TString type, T x, T2 y, T3 z);
-
-    TR Accept(TText type, T x, T2 y, T3 z);
 
     TR Accept(TDateTime type, T x, T2 y, T3 z);
 

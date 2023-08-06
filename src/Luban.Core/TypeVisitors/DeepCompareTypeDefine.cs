@@ -208,11 +208,6 @@ class DeepCompareTypeDefine : ITypeFuncVisitor<TType, Dictionary<DefTypeBase, bo
         return true;
     }
 
-    public bool Accept(TText type, TType x, Dictionary<DefTypeBase, bool> y, HashSet<DefTypeBase> z)
-    {
-        return true;
-    }
-
     public bool Accept(TDateTime type, TType x, Dictionary<DefTypeBase, bool> y, HashSet<DefTypeBase> z)
     {
         return true;

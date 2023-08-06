@@ -52,11 +52,6 @@ public class SimpleJsonDeserializeVisitor : ITypeFuncVisitor<string, string, int
         return $"{{ if(!{json}.IsString) {{ throw new SerializationException(); }}  {x} = {json}; }}";
     }
 
-    public string Accept(TText type, string json, string x, int depth)
-    {
-        return $"{{ if(!{json}.IsString) {{ throw new SerializationException(); }}  {x} = {json}; }}";
-    }
-
     public string Accept(TDateTime type, string json, string x, int depth)
     {
         return $"{{ if(!{json}.IsNumber) {{ throw new SerializationException(); }}  {x} = {json}; }}";

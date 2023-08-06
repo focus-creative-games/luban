@@ -100,18 +100,6 @@ class LuaDataCreator : ITypeFuncVisitor<object, DefAssembly, DType>
         }
     }
 
-    public DType Accept(TText type, object x, DefAssembly ass)
-    {
-        if (x is string s)
-        {
-            return DText.ValueOf(s);
-        }
-        else
-        {
-            throw new Exception($"{x} 不是 string 类型数据");
-        }
-    }
-
     public DType Accept(TBean type, object x, DefAssembly ass)
     {
         var table = (LuaTable)x;

@@ -49,11 +49,6 @@ public abstract class TypeActionVisitorAdaptor<T> : ITypeActionVisitor<T>
 
     }
 
-    public virtual void Accept(TText type, T x)
-    {
-
-    }
-
     public virtual void Accept(TBean type, T x)
     {
 

@@ -53,11 +53,6 @@ public class UnderlyingDeclaringTypeNameVisitor : ITypeFuncVisitor<string>
         return "string";
     }
 
-    public virtual string Accept(TText type)
-    {
-        return "string";
-    }
-
     public string Accept(TBean type)
     {
         // return ExternalTypeUtil.CsMapperToExternalType(type.Bean);

@@ -102,13 +102,6 @@ class StringDataCreator : ITypeFuncVisitor<string, DType>
         return DString.ValueOf(x);
     }
 
-    public DType Accept(TText type, string x)
-    {
-        //var (key, text) = DataUtil.ExtractText(x);
-        //return new DText(key, text);
-        throw new NotSupportedException();
-    }
-
     public DType Accept(TBean type, string x)
     {
         throw new NotSupportedException();

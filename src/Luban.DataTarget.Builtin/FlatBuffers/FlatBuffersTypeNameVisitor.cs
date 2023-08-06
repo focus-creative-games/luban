@@ -53,11 +53,6 @@ public class FlatBuffersTypeNameVisitor : ITypeFuncVisitor<string>
         return "string";
     }
 
-    public string Accept(TText type)
-    {
-        return "string";
-    }
-
     public string Accept(TDateTime type)
     {
         return "int64";

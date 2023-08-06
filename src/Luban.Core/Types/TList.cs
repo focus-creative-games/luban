@@ -42,10 +42,6 @@ public class TList : TType
         {
             throw new Exception($"container element type:'{e.DefBean.FullName}' can't be empty bean");
         }
-        if (ElementType is TText)
-        {
-            throw new Exception($"bean:{field.HostType.FullName} field:{field.Name} container element type can't be text");
-        }
     }
 
     public override void Apply<T>(ITypeActionVisitor<T> visitor, T x)

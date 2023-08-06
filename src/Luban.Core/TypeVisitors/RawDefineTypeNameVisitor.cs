@@ -51,11 +51,6 @@ public class RawDefineTypeNameVisitor : ITypeFuncVisitor<string>
         return "string";
     }
 
-    public string Accept(TText type)
-    {
-        return "string";
-    }
-
     public virtual string Accept(TDateTime type)
     {
         return "datetime";

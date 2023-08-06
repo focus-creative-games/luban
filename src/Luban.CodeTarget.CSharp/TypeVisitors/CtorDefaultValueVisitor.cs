@@ -17,11 +17,6 @@ public class CtorDefaultValueVisitor : DecoratorFuncVisitor<string>
         return "\"\"";
     }
 
-    public override string Accept(TText type)
-    {
-        return "\"\"";
-    }
-
     public override string Accept(TBean type)
     {
         return type.DefBean.IsAbstractType ? "default" : $"new {type.Apply(DeclaringTypeNameVisitor.Ins)}()";

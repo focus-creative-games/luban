@@ -22,8 +22,6 @@ public interface ITypeActionVisitor<T>
 
     void Accept(TString type, T x);
 
-    void Accept(TText type, T x);
-
     void Accept(TDateTime type, T x);
 
     void Accept(TBean type, T x);
@@ -56,8 +54,6 @@ public interface ITypeActionVisitor<T1, T2>
     void Accept(TEnum type, T1 x, T2 y);
 
     void Accept(TString type, T1 x, T2 y);
-
-    void Accept(TText type, T1 x, T2 y);
 
     void Accept(TDateTime type, T1 x, T2 y);
 

@@ -52,11 +52,6 @@ class RefTypeVisitor : ITypeActionVisitor<Dictionary<string, DefTypeBase>>
 
     }
 
-    public void Accept(TText type, Dictionary<string, DefTypeBase> x)
-    {
-
-    }
-
     public void Accept(TDateTime type, Dictionary<string, DefTypeBase> x)
     {
 

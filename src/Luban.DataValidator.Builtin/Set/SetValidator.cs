@@ -64,12 +64,6 @@ public class SetValidator : DataValidatorBase
                 _stringGetter = d => ((DString) d).Value;
                 break;
             }
-            case TText:
-            {
-                _stringSet = new StringDataSet(Args);
-                _stringGetter = d => ((DText) d).Value;
-                break;
-            }
             default:
             {
                 throw new Exception($"set not support type:{field.CType}");

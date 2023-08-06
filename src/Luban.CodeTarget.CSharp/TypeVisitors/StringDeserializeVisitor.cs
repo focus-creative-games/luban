@@ -52,11 +52,6 @@ public class StringDeserializeVisitor : ITypeFuncVisitor<string, string, string>
         return $"{varName} = {strName};";
     }
 
-    public string Accept(TText type, string strName, string varName)
-    {
-        throw new NotSupportedException();
-    }
-
     public string Accept(TDateTime type, string strName, string varName)
     {
         throw new NotSupportedException();

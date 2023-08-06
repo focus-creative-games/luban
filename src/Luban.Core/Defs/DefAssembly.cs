@@ -355,7 +355,7 @@ public class DefAssembly
             case "float64":
             case "double": return TDouble.Create(nullable, tags);
             case "string": return TString.Create(nullable, tags);
-            case "text": return TText.Create(nullable, tags);
+            case "text": tags.Add("text", "1"); return TString.Create(nullable, tags);
             case "time":
             case "datetime": return TDateTime.Create(nullable, tags);
             default:

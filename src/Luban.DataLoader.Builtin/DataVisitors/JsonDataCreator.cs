@@ -56,11 +56,6 @@ public class JsonDataCreator : ITypeFuncVisitor<JsonElement, DefAssembly, DType>
         return DString.ValueOf(x.GetString());
     }
 
-    public DType Accept(TText type, JsonElement x, DefAssembly ass)
-    {
-        return DText.ValueOf(x.GetString());
-    }
-
     public DType Accept(TBean type, JsonElement x, DefAssembly ass)
     {
         var bean = type.DefBean;

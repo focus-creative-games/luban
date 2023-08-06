@@ -254,28 +254,6 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
         return DString.ValueOf(s);
     }
 
-    public DType Accept(TText type, RowColumnSheet sheet, TitleRow row)
-    {
-        object x = row.Current;
-        if (CheckDefault(x))
-        {
-            ThrowIfNonEmpty(row);
-        }
-        var s = ParseString(x);
-        if (s == null)
-        {
-            if (type.IsNullable)
-            {
-                return null;
-            }
-            else
-            {
-                throw new InvalidExcelDataException("字段不是nullable类型，不能为null");
-            }
-        }
-        return DText.ValueOf(s);
-    }
-
     public DType Accept(TDateTime type, RowColumnSheet sheet, TitleRow row)
     {
         var d = row.Current;
