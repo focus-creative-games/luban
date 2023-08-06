@@ -24,7 +24,6 @@ public class RootXmlSchemaLoader : SchemaLoaderBase, IRootSchemaLoader
         _tagHandlers.Add("env", AddEnv);
         _tagHandlers.Add("externalselector", AddExternalSelector);
         _tagHandlers.Add("import", AddImport);
-        _tagHandlers.Add("patch", AddPatch);
         _tagHandlers.Add("target", AddTarget);
         _tagHandlers.Add("group", AddGroup);
         _tagHandlers.Add("refgroup", AddRefGroup);
@@ -80,18 +79,6 @@ public class RootXmlSchemaLoader : SchemaLoaderBase, IRootSchemaLoader
                 _importFiles.Add(new SchemaFileInfo(){ FileName = subFile, Type = type});
             }
         }
-    }
-
-    private static readonly List<string> _patchRequireAttrs = new List<string> { "name" };
-    private void AddPatch(XElement e)
-    {
-        XmlSchemaUtil.ValidAttrKeys(_xmlFileName, e, null, _patchRequireAttrs);
-        var patchName = XmlUtil.GetRequiredAttribute(e, "name");
-        if (string.IsNullOrWhiteSpace(patchName))
-        {
-            throw new Exception("patch 属性name不能为空");
-        }
-        Collector.Add(new RawPatch(patchName));
     }
 
     private static readonly List<string> _groupOptionalAttrs = new List<string> { "default" };

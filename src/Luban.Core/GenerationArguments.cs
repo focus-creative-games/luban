@@ -3,14 +3,10 @@ namespace Luban;
 public class GenerationArguments
 {
     public string Target { get; set; }
-    
-    public string OutputTables { get; set; }
-
-    public string OutputIncludeTables { get; set; }
-    
-    public string OutputExcludeTables { get; set; }
 
     public TimeZoneInfo TimeZone { get; set; }
+    
+    public List<string> IncludeTags { get; set; }
 
     public List<string> ExcludeTags { get; set; }
     
@@ -22,11 +18,7 @@ public class GenerationArguments
     
     public string SchemaPath { get; set; }
 
-    public List<string> Tables { get; set; }
-    
-    public List<string> IncludedTables { get; set; }
-    
-    public List<string> ExcludedTables { get; set; }
+    public List<string> OutputTables { get; set; }
 
     public Dictionary<string, string> GeneralArgs { get; set; }
 

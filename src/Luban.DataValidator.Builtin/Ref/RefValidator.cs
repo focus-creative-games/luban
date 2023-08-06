@@ -32,7 +32,6 @@ public class RefValidator : DataValidatorBase
         }
 
         var assembly = field.Assembly;
-        bool anyRefGroup = false;
         foreach (var table in _tables)
         {
             var (actualTable, indexName, ignoreDefault) = ParseRefString(table);
@@ -58,19 +57,12 @@ public class RefValidator : DataValidatorBase
                     }
                     CompileTable(field, subTable, refIndex, ignoreDefault || refIgnoreDefault);
                 }
-                anyRefGroup = true;
             }
             else
             {
                 throw new Exception($"结构:'{hostTypeName}' 字段:'{fieldName}' ref:'{actualTable}' 不存在");
             }
         }
-        // if (!anyRefGroup && _compiledTables.Count == 1 && (_compiledTables[0].Table is DefTable t && t.IsMapTable && t.NeedExport()))
-        // {
-        //     // 只引用一个表时才生成ref代码。
-        //     // 如果被引用的表没有导出，生成ref没有意义，还会产生编译错误
-        //     GenRef = true;
-        // }
     }
 
     public override void Validate(DataValidatorContext ctx, TType type, DType key)
@@ -177,11 +169,11 @@ public class RefValidator : DataValidatorBase
         string fieldName = field.Name;
         string fieldTypeName = field.CType.TypeName;
         string valueTypeName = table.ValueTType.DefBean.FullName;
-        //if (!ct.NeedExport)
-        //{
-        //    throw new Exception($"type:'{hostTypeName}' field:'{fieldName}' ref 引用的表:'{actualTable}' 没有导出");
-        //}
-        if (table.IsOneValueTable)
+        if (!table.NeedExport())
+        {
+            throw new Exception($"type:'{hostTypeName}' field:'{fieldName}' ref 引用的表:'{actualTable}' 没有导出");
+        }
+        if (table.IsSingletonTable)
         {
             if (string.IsNullOrEmpty(indexName))
             {

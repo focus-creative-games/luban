@@ -57,8 +57,8 @@ public class ExcelSchemaLoader : SchemaLoaderBase
         {
             Assembly = new DefAssembly(new RawAssembly()
             {
-                
-            }),
+                Targets = new List<RawTarget>{new RawTarget() { Name = "default", Manager = "Tables"}},
+            }, "default", new List<string>()),
         };
         defTableRecordType.PreCompile();
         defTableRecordType.Compile();
@@ -96,7 +96,10 @@ public class ExcelSchemaLoader : SchemaLoaderBase
 
     private void LoadEnumListFromFile(string fileName)
     {
-        var ass = new DefAssembly(new RawAssembly());
+        var ass = new DefAssembly(new RawAssembly()
+        {
+            Targets = new List<RawTarget>{new RawTarget() { Name = "default", Manager = "Tables"}},
+        }, "default", new List<string>());
 
         var enumItemType = new DefBean(new RawBean()
         {
@@ -190,7 +193,10 @@ public class ExcelSchemaLoader : SchemaLoaderBase
 
     private void LoadBeanListFromFile(string fileName)
     {
-        var ass = new DefAssembly(new RawAssembly());
+        var ass = new DefAssembly(new RawAssembly()
+        {
+            Targets = new List<RawTarget>{new RawTarget() { Name = "default", Manager = "Tables"}},
+        }, "default", new List<string>());
 
         var defBeanFieldType = new DefBean(new RawBean()
         {

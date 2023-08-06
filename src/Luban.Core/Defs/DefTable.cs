@@ -35,13 +35,13 @@ public class DefTable : DefTypeBase
     
     public bool ReadSchemaFromFile { get; }
 
-    public bool IsMapTable => Mode == TableMode.MAP;
-
-    public bool IsOneValueTable => Mode == TableMode.ONE;
-
     public bool IsSingletonTable => Mode == TableMode.ONE;
 
+    public bool IsMapTable => Mode == TableMode.MAP;
+
     public bool IsListTable => Mode == TableMode.LIST;
+    
+    public bool IsExported { get; set; }
 
     public List<string> InputFiles { get; }
 

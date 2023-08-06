@@ -17,8 +17,7 @@ public class DefAssembly
     private readonly HashSet<string> _namespaces = new();
 
     private readonly Dictionary<string, DefTypeBase> _notCaseSenseNamespaces = new();
-
-    public string CurrentLanguage { get; set; }
+    
 
     public HashSet<string> ExternalSelectors { get; private set; }
 
@@ -27,33 +26,32 @@ public class DefAssembly
     private readonly Dictionary<string, RawExternalType> _externalTypesByTypeName = new();
 
     public Dictionary<string, string> Envs { get; }
-
-
-    private readonly List<RawPatch> _patches;
+    
 
     private readonly List<RawTarget> _targets;
 
+    
+    public RawTarget Target { get; }
+    
     public IReadOnlyList<RawTarget> Targets => _targets;
 
     public RawTarget GetTarget(string targetName)
     {
         return _targets.Find(t => t.Name == targetName);
     }
-    
-    public RawPatch GetPatch(string name)
-    {
-        return _patches.Find(b => b.Name == name);
-    }
 
-    public DefAssembly(RawAssembly assembly)
+    private readonly List<DefTable> _exportTables;
+
+    public List<DefTable> ExportTables => _exportTables;
+
+    public DefAssembly(RawAssembly assembly, string target, List<string> outputTables)
     {
         this.ExternalSelectors = assembly.ExternalSelectors;
         this.ExternalTypes = assembly.ExternalTypes;
         this.Envs = assembly.Envs;
 
         _targets = assembly.Targets;
-
-        _patches = assembly.Patches;
+        Target = GetTarget(target);
 
         foreach (var g in assembly.RefGroups)
         {
@@ -78,6 +76,33 @@ public class DefAssembly
         }
 
         _targets.AddRange(assembly.Targets);
+
+        List<DefTable> originTables = GetAllTables();
+        if (outputTables.Count == 0)
+        {
+            _exportTables = originTables.Where(t => NeedExport(t.Groups)).ToList();
+        }
+        else
+        {
+            _exportTables = new List<DefTable>();
+            foreach (var tableName in outputTables)
+            {
+                DefTable table = GetCfgTable(tableName);
+                if (table != null)
+                {
+                    _exportTables.Add(table);
+                }
+                else
+                {
+                    throw new Exception($"outputTable:{tableName} not found");
+                }
+            }
+        }
+
+        foreach (var table in _exportTables)
+        {
+            table.IsExported = true;
+        }
 
         foreach (var type in TypeList)
         {
@@ -104,6 +129,14 @@ public class DefAssembly
         }
     }
     
+    public bool NeedExport(List<string> groups)
+    {
+        if (groups.Count == 0)
+        {
+            return true;
+        }
+        return groups.Any(g => Target.Groups.Contains(g));
+    }
 
     public bool ContainsOption(string optionName)
     {
@@ -152,8 +185,6 @@ public class DefAssembly
     {
         return TypeList.Where(t => t is DefTable).Cast<DefTable>().ToList();
     }
-
-
 
     private void AddRefGroup(RawRefGroup g)
     {

@@ -47,7 +47,7 @@ public class DefaultPipeline : IPipeline
     protected void PrepareGenerationContext()
     {
         s_logger.Debug("prepare generation context");
-        _defAssembly = new DefAssembly(_rawAssembly);
+        _defAssembly = new DefAssembly(_rawAssembly, _genArgs.Target, _genArgs.OutputTables);
         _genCtx = new GenerationContext(_defAssembly);
     }
 

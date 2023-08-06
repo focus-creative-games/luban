@@ -19,8 +19,6 @@ public interface ISchemaCollector
     
     void Add(RawRefGroup refGroup);
     
-    void Add(RawPatch patch);
-    
     void Add(RawTarget target);
 
     void AddSelector(string selector);

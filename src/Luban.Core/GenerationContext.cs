@@ -20,24 +20,18 @@ public class GenerationContext
 
     public DefAssembly Assembly { get; set; }
 
-    public RawTarget Target { get; set; }
-
-    private HashSet<string> _overrideOutputTables;
-
-    private readonly HashSet<string> _outputIncludeTables = new();
-
-    private readonly HashSet<string> _outputExcludeTables = new();
+    public RawTarget Target => Assembly.Target;
     
     private readonly ConcurrentDictionary<string, TableDataInfo> _recordsByTables = new();
     
-    public bool NeedExport(List<string> groups)
-    {
-        if (groups.Count == 0)
-        {
-            return true;
-        }
-        return groups.Any(g => Target.Groups.Contains(g));
-    }
+    // public bool NeedExport(List<string> groups)
+    // {
+    //     if (groups.Count == 0)
+    //     {
+    //         return true;
+    //     }
+    //     return groups.Any(g => Target.Groups.Contains(g));
+    // }
     
     public bool NeedExportNotDefault(List<string> groups)
     {
@@ -70,62 +64,12 @@ public class GenerationContext
         Current = this;
         Assembly = assembly;
         
-        Target = assembly.GetTarget(CurrentArguments.Target);
-
-        InitTables(CurrentArguments);
-        ExportTables = CalculateExportTables();
+        ExportTables = assembly.ExportTables;
         ExportTypes = CalculateExportTypes();
         ExportBeans = ExportTypes.OfType<DefBean>().ToList();
         ExportEnums = ExportTypes.OfType<DefEnum>().ToList();
     }
 
-    private void InitTables(GenerationArguments args)
-    {
-        if (!string.IsNullOrWhiteSpace(args.OutputTables))
-        {
-            foreach (var tableFullName in SplitTableList(args.OutputTables))
-            {
-                if (Assembly.GetCfgTable(tableFullName) == null)
-                {
-                    throw new Exception($"--output:tables 参数中 table:'{tableFullName}' 不存在");
-                }
-                _overrideOutputTables ??= new HashSet<string>();
-                _overrideOutputTables.Add(tableFullName);
-            }
-        }
-        if (!string.IsNullOrWhiteSpace(args.OutputIncludeTables))
-        {
-            foreach (var tableFullName in SplitTableList(args.OutputIncludeTables))
-            {
-                if (Assembly.GetCfgTable(tableFullName) == null)
-                {
-                    throw new Exception($"--output:include_tables 参数中 table:'{tableFullName}' 不存在");
-                }
-                _outputIncludeTables.Add(tableFullName);
-            }
-        }
-        if (!string.IsNullOrWhiteSpace(args.OutputExcludeTables))
-        {
-            foreach (var tableFullName in SplitTableList(args.OutputExcludeTables))
-            {
-                if (Assembly.GetCfgTable(tableFullName) == null)
-                {
-                    throw new Exception($"--output:exclude_tables 参数中 table:'{tableFullName}' 不存在");
-                }
-                _outputExcludeTables.Add(tableFullName);
-            }
-        }
-    }
-    
-    
-    private List<DefTable> CalculateExportTables()
-    {
-        return Assembly.TypeList.Where(t => t is DefTable ct
-                                            && !_outputExcludeTables.Contains(t.FullName)
-                                            && (_outputIncludeTables.Contains(t.FullName) || (_overrideOutputTables == null ? ct.NeedExport() : _overrideOutputTables.Contains(ct.FullName)))
-        ).Select(t => (DefTable)t).ToList();
-    }
-    
     private List<DefTypeBase> CalculateExportTypes()
     {
         var refTypes = new Dictionary<string, DefTypeBase>();
@@ -195,7 +139,7 @@ public class GenerationContext
         else
         {
             var finalRecords = tableDataInfo.FinalRecords.Where(r => r.IsNotFiltered(CurrentArguments.ExcludeTags)).ToList();
-            if (table.IsOneValueTable && finalRecords.Count != 1)
+            if (table.IsSingletonTable && finalRecords.Count != 1)
             {
                 throw new Exception($"配置表 {table.FullName} 是单值表 mode=one,但数据个数:{finalRecords.Count} != 1");
             }

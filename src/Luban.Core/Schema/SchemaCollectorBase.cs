@@ -12,8 +12,6 @@ public abstract class SchemaCollectorBase : ISchemaCollector
     private readonly List<RawExternalType> _externalTypes = new();
 
     private readonly Dictionary<string, string> _envs = new();
-    
-    private readonly List<RawPatch> _patches = new();
 
     private readonly List<RawTable> _tables = new List<RawTable>();
 
@@ -31,7 +29,6 @@ public abstract class SchemaCollectorBase : ISchemaCollector
     {
         return new RawAssembly()
         {
-            Patches = _patches,
             Tables = _tables,
             Targets = _targets,
             Groups = _groups,
@@ -67,11 +64,6 @@ public abstract class SchemaCollectorBase : ISchemaCollector
     public void Add(RawRefGroup refGroup)
     {
         _refGroups.Add(refGroup);
-    }
-
-    public void Add(RawPatch patch)
-    {
-        _patches.Add(patch);
     }
 
     public void Add(RawTarget target)

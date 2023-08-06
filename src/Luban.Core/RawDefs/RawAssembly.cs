@@ -11,8 +11,6 @@ public class RawAssembly
     public List<RawBean> Beans { get; set; } = new();
 
     public List<RawEnum> Enums { get; set; } = new();
-    
-    public List<RawPatch> Patches { get; set; } = new();
 
     public List<RawTable> Tables { get; set; } = new();
 

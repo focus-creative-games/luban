@@ -45,17 +45,14 @@ internal static class Program
         [Option('p', "pipeline", Required = false, HelpText = "pipeline name")]
         public string Pipeline { get; set; } = "default";
         
+        [Option('i', "includeTag", Required = false, HelpText = "include tag")]
+        public IEnumerable<string> IncludeTags { get; set; }
+
         [Option('e', "excludeTag", Required = false, HelpText = "exclude tag")]
         public IEnumerable<string> ExcludeTags { get; set; }
         
-        [Option("tables", Required = false, HelpText = "tables")]
-        public IEnumerable<string> Tables { get; set; }
-        
-        [Option("includedTables", Required = false, HelpText = "included tables")]
-        public IEnumerable<string> IncludedTables { get; set; }
-        
-        [Option("excludedTables", Required = false, HelpText = "excluded tables")]
-        public IEnumerable<string> ExcludedTables { get; set; }
+        [Option("outputTable", Required = false, HelpText = "output table")]
+        public IEnumerable<string> OutputTables { get; set; }
         
         [Option('x', "xargs", Required = false, HelpText = "args like -x a=1 -x b=2")]
         public IEnumerable<string> Xargs { get; set; }
@@ -110,13 +107,13 @@ internal static class Program
         return new GenerationArguments()
         {
             Target = opts.Target,
-            CodeTargets = opts.CodeTargets?.ToList() ?? new List<string>(),
-            DataTargets = opts.DataTargets?.ToList() ?? new List<string>(),
-            ExcludeTags = opts.ExcludeTags?.ToList() ?? new List<string>(),
             SchemaCollector = opts.SchemaCollector,
             SchemaPath = opts.SchemaPath,
-            Tables = opts.Tables?.ToList() ?? new List<string>(),
-            IncludedTables = opts.IncludedTables?.ToList() ?? new List<string>(),
+            OutputTables = opts.OutputTables?.ToList() ?? new List<string>(),
+            CodeTargets = opts.CodeTargets?.ToList() ?? new List<string>(),
+            DataTargets = opts.DataTargets?.ToList() ?? new List<string>(),
+            IncludeTags = opts.IncludeTags?.ToList() ?? new List<string>(),
+            ExcludeTags = opts.ExcludeTags?.ToList() ?? new List<string>(),
             GeneralArgs = opts.Xargs.Select(s =>
             {
                 string[] pair = s.Split('=', 2);

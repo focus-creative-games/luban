@@ -66,12 +66,6 @@ public class RangeValidator : DataValidatorBase
 
     public override void Validate(DataValidatorContext ctx, TType type, DType data)
     {
-        var assembly = ctx.Assembly;
-        void LogError()
-        {
-            s_logger.Error("记录 {}:{} (来自文件:{}) 不在范围:{}内", DataValidatorContext.CurrentRecordPath, data, Source, _longRange.RawStr);
-        }
-
         if (type.IsNullable && data == null)
         {
             return;

@@ -17,7 +17,7 @@ public class SetValidator : DataValidatorBase
     private Func<DType, long> _longGetter;
     private Func<DType, string> _stringGetter;
 
-    private readonly string _valueSetStr;
+    private string _valueSetStr;
 
     public SetValidator()
     {
@@ -25,6 +25,7 @@ public class SetValidator : DataValidatorBase
 
     public override void Compile(DefField field)
     {
+        _valueSetStr = Args;
         switch (field.CType)
         {
             case TByte:
