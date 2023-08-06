@@ -10,33 +10,32 @@ using Luban.Utils;
 
 namespace Luban;
 
+public class GenerationContextBuilder
+{
+    public DefAssembly Assembly { get; set; }
+
+    public List<string> IncludeTags { get; set; }
+    
+    public List<string> ExcludeTags { get; set; }
+    
+    public TimeZoneInfo TimeZone { get; set; }
+}
+
 public class GenerationContext
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
     public static GenerationContext Current { get; private set; }
-    
-    public static GenerationArguments CurrentArguments { get; set; }
 
     public DefAssembly Assembly { get; set; }
 
     public RawTarget Target => Assembly.Target;
+
+    public List<string> IncludeTags { get; }
+    
+    public List<string> ExcludeTags { get; }
     
     private readonly ConcurrentDictionary<string, TableDataInfo> _recordsByTables = new();
-    
-    // public bool NeedExport(List<string> groups)
-    // {
-    //     if (groups.Count == 0)
-    //     {
-    //         return true;
-    //     }
-    //     return groups.Any(g => Target.Groups.Contains(g));
-    // }
-    
-    public bool NeedExportNotDefault(List<string> groups)
-    {
-        return groups.Any(g => Target.Groups.Contains(g));
-    }
     
     public string TopModule => Target.TopModule;
 
@@ -51,6 +50,8 @@ public class GenerationContext
     public List<DefEnum> ExportEnums { get; }
     
     private readonly Dictionary<string, RawExternalType> _externalTypesByTypeName = new();
+    
+    public TimeZoneInfo TimeZone { get; }
 
     public void LoadDatas()
     {
@@ -59,17 +60,25 @@ public class GenerationContext
         s_logger.Info("load datas end");
     }
 
-    public GenerationContext(DefAssembly assembly)
+    public GenerationContext(GenerationContextBuilder builder)
     {
         Current = this;
-        Assembly = assembly;
+        Assembly = builder.Assembly;
+        IncludeTags = builder.IncludeTags;
+        ExcludeTags = builder.ExcludeTags;
+        TimeZone = builder.TimeZone;
         
-        ExportTables = assembly.ExportTables;
+        ExportTables = Assembly.ExportTables;
         ExportTypes = CalculateExportTypes();
         ExportBeans = ExportTypes.OfType<DefBean>().ToList();
         ExportEnums = ExportTypes.OfType<DefEnum>().ToList();
     }
-
+    
+    private bool NeedExportNotDefault(List<string> groups)
+    {
+        return groups.Any(g => Target.Groups.Contains(g));
+    }
+    
     private List<DefTypeBase> CalculateExportTypes()
     {
         var refTypes = new Dictionary<string, DefTypeBase>();
@@ -97,25 +106,20 @@ public class GenerationContext
 
         return refTypes.Values.ToList();
     }
-
-    public bool HasEnv(string name)
+    
+    public static string GetInputDataPath()
     {
-        return Assembly.Envs.ContainsKey(name);
+        return EnvManager.Current.GetOption("", "inputDataDir", true);
     }
     
-    public string GetEnv(string name)
+    public static string GetOutputCodePath(string family)
     {
-        return Assembly.Envs[name];
+        return EnvManager.Current.GetOption(family, "outputCodeDir", true);
     }
     
-    public string GetEnvOrDefault(string name, string defaultValue)
+    public static string GetOutputDataPath(string family)
     {
-        return Assembly.Envs.TryGetValue(name, out var value) ? value : defaultValue;
-    }
-
-    private static IEnumerable<string> SplitTableList(string tables)
-    {
-        return tables.Split(',').Select(t => t.Trim());
+        return EnvManager.Current.GetOption(family, "outputDataDir", true);
     }
     
     public void AddDataTable(DefTable table, List<Record> mainRecords, List<Record> patchRecords)
@@ -132,13 +136,13 @@ public class GenerationContext
     public List<Record> GetTableExportDataList(DefTable table)
     {
         var tableDataInfo = _recordsByTables[table.FullName];
-        if (CurrentArguments.ExcludeTags.Count == 0)
+        if (ExcludeTags.Count == 0)
         {
             return tableDataInfo.FinalRecords;
         }
         else
         {
-            var finalRecords = tableDataInfo.FinalRecords.Where(r => r.IsNotFiltered(CurrentArguments.ExcludeTags)).ToList();
+            var finalRecords = tableDataInfo.FinalRecords.Where(r => r.IsNotFiltered(ExcludeTags)).ToList();
             if (table.IsSingletonTable && finalRecords.Count != 1)
             {
                 throw new Exception($"配置表 {table.FullName} 是单值表 mode=one,但数据个数:{finalRecords.Count} != 1");
@@ -175,55 +179,9 @@ public class GenerationContext
         return _recordsByTables[table.FullName];
     }
 
-    public string GetInputDataPath()
-    {
-        return CurrentArguments.GetInputDataPath();
-    }
-    
-    public string GetOutputCodePath(string family)
-    {
-        return CurrentArguments.GetOutputCodePath(family);
-    }
-    
-    public string GetOutputDataPath(string family)
-    {
-        return CurrentArguments.GetOutputDataPath(family);
-    }
-    
-    public string GetOption(string family, string name, bool useGlobalIfNotExits)
-    {
-        return CurrentArguments.GetOption(family, name, useGlobalIfNotExits);
-    }
-    
-    public bool TryGetOption(string family, string name, bool useGlobalIfNotExits, out string value)
-    {
-        return CurrentArguments.TryGetOption(family, name, useGlobalIfNotExits, out value);
-    }
-    
-    public string GetOptionOrDefault(string family, string name, bool useGlobalIfNotExits, string defaultValue)
-    {
-        return CurrentArguments.TryGetOption(family, name, useGlobalIfNotExits, out string value) ? value : defaultValue;
-    }
-    
-    public bool GetBoolOptionOrDefault(string family, string name, bool useGlobalIfNotExits, bool defaultValue)
-    {
-        if (CurrentArguments.TryGetOption(family, name, useGlobalIfNotExits, out string value))
-        {
-            switch (value.ToLowerInvariant())
-            {
-                case "0":
-                case "false": return false;
-                case "1":
-                case "true": return true;
-                default: throw new Exception($"invalid bool option value:{value}");
-            }   
-        }
-        return defaultValue;
-    }
-
     public ICodeStyle GetCodeStyle(string family)
     {
-        if (CurrentArguments.TryGetOption(family, "codeStyle", true, out var codeStyleName))
+        if (EnvManager.Current.TryGetOption(family, "codeStyle", true, out var codeStyleName))
         {
             return CodeFormatManager.Ins.GetCodeStyle(codeStyleName);
         }

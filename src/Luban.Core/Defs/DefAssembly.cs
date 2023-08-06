@@ -137,21 +137,6 @@ public class DefAssembly
         }
         return groups.Any(g => Target.Groups.Contains(g));
     }
-
-    public bool ContainsOption(string optionName)
-    {
-        return Envs.ContainsKey(optionName);
-    }
-
-    public string GetOption(string optionName)
-    {
-        return Envs.TryGetValue(optionName, out var value) ? value : null;
-    }
-
-    public string GetOptionOr(string optionName, string defaultValue)
-    {
-        return Envs.TryGetValue(optionName, out var value) ? value : defaultValue;
-    }
     
 
     private readonly Dictionary<string, DefRefGroup> _refGroups = new();

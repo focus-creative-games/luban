@@ -15,8 +15,9 @@ namespace Luban;
 
 public class SimpleLauncher
 {
-    public void Start(List<Assembly> builtinAssemblies)
+    public void Start(List<Assembly> builtinAssemblies, Dictionary<string, string> options)
     {
+        EnvManager.Current = new EnvManager(options);
         InitManagers();
         ScanRegisterBuiltinAssemblies(builtinAssemblies);
         ScanRegisterPlugins();

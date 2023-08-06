@@ -26,7 +26,7 @@ public class DataLoaderManager
 
     private void LoadTable(GenerationContext ctx, DefTable table)
     {
-        string inputDataDir = ctx.GetInputDataPath();
+        string inputDataDir = GenerationContext.GetInputDataPath();
         var tasks = new List<Task<List<Record>>>();
         foreach (var inputFile in table.InputFiles)
         {

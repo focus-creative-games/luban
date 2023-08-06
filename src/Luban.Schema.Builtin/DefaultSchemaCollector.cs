@@ -26,8 +26,7 @@ public class DefaultSchemaCollector : SchemaCollectorBase
     private void LoadTableValueTypeSchemasFromFile()
     {
         var tasks = new List<Task>();
-        string beanSchemaLoaderName =
-            GenerationContext.CurrentArguments.TryGetOption("schemaCollector", "beanSchemaLoader", true,
+        string beanSchemaLoaderName = EnvManager.Current.TryGetOption("schemaCollector", "beanSchemaLoader", true,
                 out var loaderName)
                 ? loaderName
                 : "default";
@@ -37,7 +36,7 @@ public class DefaultSchemaCollector : SchemaCollectorBase
             {
                 string fileName = table.InputFiles[0];
                 IBeanSchemaLoader schemaLoader = SchemaManager.Ins.CreateBeanSchemaLoader(beanSchemaLoaderName);
-                string fullPath = $"{GenerationContext.CurrentArguments.GetInputDataPath()}/{fileName}";
+                string fullPath = $"{GenerationContext.GetInputDataPath()}/{fileName}";
                 RawBean bean = schemaLoader.Load(fullPath, table.ValueType);
                 Add(bean);
             }));

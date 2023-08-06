@@ -15,7 +15,7 @@ public class DefaultPipeline : IPipeline
 {
     private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
-    private readonly GenerationArguments _genArgs;
+    private PipelineArguments _args;
     
     private RawAssembly _rawAssembly;
     
@@ -25,11 +25,11 @@ public class DefaultPipeline : IPipeline
 
     public DefaultPipeline()
     {
-        _genArgs = GenerationContext.CurrentArguments;
     }
 
-    public void Run()
+    public void Run(PipelineArguments args)
     {
+        _args = args;
         LoadSchema();
         PrepareGenerationContext();
         ProcessTargets();
@@ -37,18 +37,26 @@ public class DefaultPipeline : IPipeline
 
     protected void LoadSchema()
     {
-        string schemaCollectorName = _genArgs.SchemaCollector;
-        s_logger.Info("load schema. collector: {}  path:{}", schemaCollectorName, _genArgs.SchemaPath);
+        string schemaCollectorName = _args.SchemaCollector;
+        s_logger.Info("load schema. collector: {}  path:{}", schemaCollectorName, _args.SchemaPath);
         var schemaCollector = SchemaManager.Ins.CreateSchemaCollector(schemaCollectorName);
-        schemaCollector.Load(_genArgs.SchemaPath);
+        schemaCollector.Load(_args.SchemaPath);
         _rawAssembly = schemaCollector.CreateRawAssembly();
     }
 
     protected void PrepareGenerationContext()
     {
         s_logger.Debug("prepare generation context");
-        _defAssembly = new DefAssembly(_rawAssembly, _genArgs.Target, _genArgs.OutputTables);
-        _genCtx = new GenerationContext(_defAssembly);
+        _defAssembly = new DefAssembly(_rawAssembly, _args.Target, _args.OutputTables);
+        
+        var generationCtxBuilder = new GenerationContextBuilder
+        {
+            Assembly = _defAssembly,
+            IncludeTags = _args.IncludeTags,
+            ExcludeTags = _args.ExcludeTags,
+            TimeZone = _args.TimeZone,
+        };
+        _genCtx = new GenerationContext(generationCtxBuilder);
     }
 
     protected void LoadDatas()
@@ -66,19 +74,19 @@ public class DefaultPipeline : IPipeline
     protected void ProcessTargets()
     {
         var tasks = new List<Task>();
-        foreach (string target in _genArgs.CodeTargets)
+        foreach (string target in _args.CodeTargets)
         {
             ICodeTarget m = CodeTargetManager.Ins.GetCodeTarget(target);
             tasks.Add(Task.Run(() => ProcessCodeTarget(target, m)));
         }
 
-        if (_genArgs.DataTargets.Count > 0)
+        if (_args.DataTargets.Count > 0)
         {
             LoadDatas();
-            string dataExporterName = _genCtx.GetOptionOrDefault("global", "dataExporter", true, "default");
+            string dataExporterName = EnvManager.Current.GetOptionOrDefault("global", "dataExporter", true, "default");
             s_logger.Debug("dataExporter: {}", dataExporterName);
             IDataExporter dataExporter = DataTargetManager.Ins.GetDataExporter(dataExporterName);
-            foreach (string mission in _genArgs.DataTargets)
+            foreach (string mission in _args.DataTargets)
             {
                 IDataTarget dataTarget = DataTargetManager.Ins.GetTableExporter(mission);
                 tasks.Add(Task.Run(() => ProcessDataTarget(mission, dataExporter, dataTarget)));
@@ -93,18 +101,18 @@ public class DefaultPipeline : IPipeline
         var outputManifest = new OutputFileManifest();
         codeTarget.Handle(_genCtx, outputManifest);
         
-        if (_genArgs.TryGetOption(name, "postprocess", true, out string postProcessName))
+        if (EnvManager.Current.TryGetOption(name, "postprocess", true, out string postProcessName))
         {
             var oldManifest = outputManifest;
             outputManifest = new OutputFileManifest();
             PostProcessManager.Ins.GetPostProcess(postProcessName).PostProcess(oldManifest, outputManifest);
         }
 
-        string outputSaverName = _genArgs.TryGetOption(name, "outputSaver", true, out string outputSaver)
+        string outputSaverName = EnvManager.Current.TryGetOption(name, "outputSaver", true, out string outputSaver)
             ? outputSaver
             : "local";
         var saver = OutputSaverManager.Ins.GetOutputSaver(outputSaverName);
-        string outputDir = _genArgs.GetOption($"{CodeTargetBase.FamilyPrefix}.{name}", "outputCodeDir", true);
+        string outputDir = EnvManager.Current.GetOption($"{CodeTargetBase.FamilyPrefix}.{name}", "outputCodeDir", true);
         saver.Save(outputManifest, outputDir);
         s_logger.Info("process code target:{} end", name);
     }
@@ -115,18 +123,18 @@ public class DefaultPipeline : IPipeline
         var outputManifest = new OutputFileManifest();
         mission.Handle(_genCtx, dataTarget, outputManifest);
         
-        if (_genArgs.TryGetOption(name, "postprocess", true, out string postProcessName))
+        if (EnvManager.Current.TryGetOption(name, "postprocess", true, out string postProcessName))
         {
             var oldManifest = outputManifest;
             outputManifest = new OutputFileManifest();
             PostProcessManager.Ins.GetPostProcess(postProcessName).PostProcess(oldManifest, outputManifest);
         }
 
-        string outputSaverName = _genArgs.TryGetOption(name, "outputSaver", true, out string outputSaver)
+        string outputSaverName = EnvManager.Current.TryGetOption(name, "outputSaver", true, out string outputSaver)
             ? outputSaver
             : "local";
         var saver = OutputSaverManager.Ins.GetOutputSaver(outputSaverName);
-        string outputDir = _genArgs.GetOption($"{DataExporterBase.FamilyPrefix}.{name}", "outputDataDir", true);
+        string outputDir = EnvManager.Current.GetOption($"{DataExporterBase.FamilyPrefix}.{name}", "outputDataDir", true);
         saver.Save(outputManifest, outputDir);
         s_logger.Info("process data target:{} end", name);
     }

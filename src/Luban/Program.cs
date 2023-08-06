@@ -63,13 +63,12 @@ internal static class Program
     
     private static ILogger s_logger;
 
-    private static CommandOptions s_commandOptions;
-
     private static void Main(string[] args)
     {
-        GenerationContext.CurrentArguments = ParseArgs(args);
-        SetupApp();
+        CommandOptions opts = ParseArgs(args);
+        SetupApp(opts);
         
+        var launcher = new SimpleLauncher();
         var builtinAssemblies = new List<Assembly>
         {
             typeof(CsharpBinCodeTarget).Assembly,
@@ -78,15 +77,14 @@ internal static class Program
             typeof(DefaultDataExporter).Assembly,
             typeof(SizeValidator).Assembly,
         };
-        var launcher = new SimpleLauncher();
-        launcher.Start(builtinAssemblies);
+        launcher.Start(builtinAssemblies, ParseXargs(opts.Xargs));
         
-        var pipeline = PipelineManager.Ins.CreatePipeline(s_commandOptions.Pipeline);
-        pipeline.Run();
+        var pipeline = PipelineManager.Ins.CreatePipeline(opts.Pipeline);
+        pipeline.Run(CreatePipelineArgs(opts));
         s_logger.Info("bye~");
     }
 
-    private static GenerationArguments ParseArgs(string[] args)
+    private static CommandOptions ParseArgs(string[] args)
     {
         var helpWriter = new StringWriter();
         var parser = new Parser(settings =>
@@ -101,10 +99,23 @@ internal static class Program
             Console.Error.WriteLine(helpWriter.ToString());
             Environment.Exit(1);
         }
-        var opts = ((Parsed<CommandOptions>)result).Value;
-        s_commandOptions = opts;
+        return ((Parsed<CommandOptions>)result).Value;
+    }
+    
+    private static Dictionary<string, string> ParseXargs(IEnumerable<string> xargs)
+    {
+        var result = new Dictionary<string, string>();
+        foreach (var xarg in xargs)
+        {
+            string[] pair = xarg.Split('=', 2);
+            result.Add(pair[0], pair[1]);
+        }
+        return result;
+    }
 
-        return new GenerationArguments()
+    private static PipelineArguments CreatePipelineArgs(CommandOptions opts)
+    {
+        return new PipelineArguments()
         {
             Target = opts.Target,
             SchemaCollector = opts.SchemaCollector,
@@ -114,15 +125,10 @@ internal static class Program
             DataTargets = opts.DataTargets?.ToList() ?? new List<string>(),
             IncludeTags = opts.IncludeTags?.ToList() ?? new List<string>(),
             ExcludeTags = opts.ExcludeTags?.ToList() ?? new List<string>(),
-            GeneralArgs = opts.Xargs.Select(s =>
-            {
-                string[] pair = s.Split('=', 2);
-                return (pair[0], pair[1]);
-            }).ToDictionary(p => p.Item1, p => p.Item2),
         };
     }
 
-    private static void SetupApp()
+    private static void SetupApp(CommandOptions opts)
     {
         ConsoleUtil.EnableQuickEditMode(false);
         Console.OutputEncoding = Encoding.UTF8;
@@ -132,7 +138,7 @@ internal static class Program
         ThreadPool.SetMinThreads(Math.Max(4, processorCount), 0);
         ThreadPool.SetMaxThreads(Math.Max(16, processorCount * 2), 2);
 
-        InitSimpleNLogConfigure(s_commandOptions.Verbose ? LogLevel.Trace : LogLevel.Info);
+        InitSimpleNLogConfigure(opts.Verbose ? LogLevel.Trace : LogLevel.Info);
         s_logger = LogManager.GetCurrentClassLogger();
         PrintCopyRight();
     }

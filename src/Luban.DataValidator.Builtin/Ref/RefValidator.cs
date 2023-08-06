@@ -73,7 +73,7 @@ public class RefValidator : DataValidatorBase
             return;
         }
         var genCtx = GenerationContext.Current;
-        var excludeTags = GenerationContext.CurrentArguments.ExcludeTags;
+        var excludeTags = genCtx.ExcludeTags;
 
         foreach (var tableInfo in _compiledTables)
         {

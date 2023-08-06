@@ -5,5 +5,5 @@ namespace Luban.Pipeline;
 
 public interface IPipeline
 {
-    void Run();
+    void Run(PipelineArguments args);
 }

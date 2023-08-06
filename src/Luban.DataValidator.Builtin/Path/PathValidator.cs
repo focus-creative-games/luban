@@ -99,7 +99,7 @@ public class PathValidator : DataValidatorBase
             return;
         }
 
-        string rootDir = GenerationContext.Current.GetOption("validator", "rootDir", false);
+        string rootDir = EnvManager.Current.GetOption("validator", "rootDir", false);
 
         if (!_pathPattern.ExistPath(rootDir, value))
         {

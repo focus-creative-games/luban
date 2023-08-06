@@ -16,18 +16,18 @@ public class ContextTemplateExtends : ScriptObject
         return obj.GetTag(attrName);
     }
 
-    public static bool HasEnv(string name)
+    public static bool HasOption(string name)
     {
-        return GenerationContext.Current.HasEnv(name);
+        return EnvManager.Current.HasOption(name);
     }
 
-    public static string GetEnv(string name)
+    public static string GetOption(string name)
     {
-        return GenerationContext.Current.GetEnv(name);
+        return EnvManager.Current.GetOption(name);
     }
 
-    public static string GetEnvOr(string name, string defaultValue)
+    public static string GetOptionOrDefault(string name, string defaultValue)
     {
-        return GenerationContext.Current.GetEnvOrDefault(name, defaultValue);
+        return EnvManager.Current.GetOptionOrDefault(name, defaultValue);
     }
 }
