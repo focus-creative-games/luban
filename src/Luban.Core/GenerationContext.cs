@@ -109,17 +109,7 @@ public class GenerationContext
     
     public static string GetInputDataPath()
     {
-        return EnvManager.Current.GetOption("", "inputDataDir", true);
-    }
-    
-    public static string GetOutputCodePath(string family)
-    {
-        return EnvManager.Current.GetOption(family, "outputCodeDir", true);
-    }
-    
-    public static string GetOutputDataPath(string family)
-    {
-        return EnvManager.Current.GetOption(family, "outputDataDir", true);
+        return EnvManager.Current.GetOption("", BuiltinOptionNames.InputDataDir, true);
     }
     
     public void AddDataTable(DefTable table, List<Record> mainRecords, List<Record> patchRecords)
@@ -181,7 +171,7 @@ public class GenerationContext
 
     public ICodeStyle GetCodeStyle(string family)
     {
-        if (EnvManager.Current.TryGetOption(family, "codeStyle", true, out var codeStyleName))
+        if (EnvManager.Current.TryGetOption(family, BuiltinOptionNames.CodeStyle, true, out var codeStyleName))
         {
             return CodeFormatManager.Ins.GetCodeStyle(codeStyleName);
         }

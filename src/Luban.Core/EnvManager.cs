@@ -48,7 +48,7 @@ public class EnvManager
         {
             return true;
         }
-        if (useGlobalIfNotExits && _options.TryGetValue("global." + name, out value))
+        if (useGlobalIfNotExits && _options.TryGetValue(name, out value))
         {
             return true;
         }

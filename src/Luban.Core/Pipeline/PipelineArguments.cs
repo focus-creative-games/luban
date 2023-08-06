@@ -19,4 +19,6 @@ public class PipelineArguments
     public List<string> OutputTables { get; set; }
     
     public string TimeZone { get; set; }
+    
+    public Dictionary<string, object> CustomArgs { get; set; }
 }

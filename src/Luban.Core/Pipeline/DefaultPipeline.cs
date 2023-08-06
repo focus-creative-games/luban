@@ -83,7 +83,7 @@ public class DefaultPipeline : IPipeline
         if (_args.DataTargets.Count > 0)
         {
             LoadDatas();
-            string dataExporterName = EnvManager.Current.GetOptionOrDefault("global", "dataExporter", true, "default");
+            string dataExporterName = EnvManager.Current.GetOptionOrDefault("", BuiltinOptionNames.DataExporter, true, "default");
             s_logger.Debug("dataExporter: {}", dataExporterName);
             IDataExporter dataExporter = DataTargetManager.Ins.GetDataExporter(dataExporterName);
             foreach (string mission in _args.DataTargets)
@@ -101,18 +101,16 @@ public class DefaultPipeline : IPipeline
         var outputManifest = new OutputFileManifest();
         codeTarget.Handle(_genCtx, outputManifest);
         
-        if (EnvManager.Current.TryGetOption(name, "postprocess", true, out string postProcessName))
+        if (EnvManager.Current.TryGetOption(name, BuiltinOptionNames.Postprocess, true, out string postProcessName))
         {
             var oldManifest = outputManifest;
             outputManifest = new OutputFileManifest();
             PostProcessManager.Ins.GetPostProcess(postProcessName).PostProcess(oldManifest, outputManifest);
         }
 
-        string outputSaverName = EnvManager.Current.TryGetOption(name, "outputSaver", true, out string outputSaver)
-            ? outputSaver
-            : "local";
+        string outputSaverName = EnvManager.Current.GetOptionOrDefault(name, BuiltinOptionNames.OutputSaver, true, "local");
         var saver = OutputSaverManager.Ins.GetOutputSaver(outputSaverName);
-        string outputDir = EnvManager.Current.GetOption($"{CodeTargetBase.FamilyPrefix}.{name}", "outputCodeDir", true);
+        string outputDir = EnvManager.Current.GetOption($"{CodeTargetBase.FamilyPrefix}.{name}", BuiltinOptionNames.OutputCodeDir, true);
         saver.Save(outputManifest, outputDir);
         s_logger.Info("process code target:{} end", name);
     }
@@ -123,18 +121,16 @@ public class DefaultPipeline : IPipeline
         var outputManifest = new OutputFileManifest();
         mission.Handle(_genCtx, dataTarget, outputManifest);
         
-        if (EnvManager.Current.TryGetOption(name, "postprocess", true, out string postProcessName))
+        if (EnvManager.Current.TryGetOption(name, BuiltinOptionNames.Postprocess, true, out string postProcessName))
         {
             var oldManifest = outputManifest;
             outputManifest = new OutputFileManifest();
             PostProcessManager.Ins.GetPostProcess(postProcessName).PostProcess(oldManifest, outputManifest);
         }
 
-        string outputSaverName = EnvManager.Current.TryGetOption(name, "outputSaver", true, out string outputSaver)
-            ? outputSaver
-            : "local";
+        string outputSaverName = EnvManager.Current.GetOptionOrDefault(name, BuiltinOptionNames.OutputSaver, true, "local");
         var saver = OutputSaverManager.Ins.GetOutputSaver(outputSaverName);
-        string outputDir = EnvManager.Current.GetOption($"{DataExporterBase.FamilyPrefix}.{name}", "outputDataDir", true);
+        string outputDir = EnvManager.Current.GetOption($"{DataExporterBase.FamilyPrefix}.{name}", BuiltinOptionNames.OutputDataDir, true);
         saver.Save(outputManifest, outputDir);
         s_logger.Info("process data target:{} end", name);
     }

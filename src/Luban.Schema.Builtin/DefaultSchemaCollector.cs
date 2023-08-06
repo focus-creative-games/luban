@@ -26,10 +26,7 @@ public class DefaultSchemaCollector : SchemaCollectorBase
     private void LoadTableValueTypeSchemasFromFile()
     {
         var tasks = new List<Task>();
-        string beanSchemaLoaderName = EnvManager.Current.TryGetOption("schemaCollector", "beanSchemaLoader", true,
-                out var loaderName)
-                ? loaderName
-                : "default";
+        string beanSchemaLoaderName = EnvManager.Current.GetOptionOrDefault(BuiltinOptionNames.SchemaCollectorFamily, "beanSchemaLoader", true, "default");
         foreach (var table in Tables.Where(t => t.ReadSchemaFromFile))
         {
             tasks.Add(Task.Run(() =>
