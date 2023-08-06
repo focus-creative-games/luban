@@ -8,7 +8,6 @@ public class PipelineArguments
     
     public List<string> ExcludeTags { get; set; }
     
-    
     public List<string> CodeTargets { get; set; }
     
     public List<string> DataTargets { get; set; }
@@ -19,5 +18,5 @@ public class PipelineArguments
 
     public List<string> OutputTables { get; set; }
     
-    public TimeZoneInfo TimeZone { get; set; }
+    public string TimeZone { get; set; }
 }

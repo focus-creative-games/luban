@@ -54,6 +54,9 @@ internal static class Program
         [Option("outputTable", Required = false, HelpText = "output table")]
         public IEnumerable<string> OutputTables { get; set; }
         
+        [Option("timeZone", Required = false, HelpText = "time zone")]
+        public string TimeZone { get; set; }
+        
         [Option('x', "xargs", Required = false, HelpText = "args like -x a=1 -x b=2")]
         public IEnumerable<string> Xargs { get; set; }
         
@@ -125,6 +128,7 @@ internal static class Program
             DataTargets = opts.DataTargets?.ToList() ?? new List<string>(),
             IncludeTags = opts.IncludeTags?.ToList() ?? new List<string>(),
             ExcludeTags = opts.ExcludeTags?.ToList() ?? new List<string>(),
+            TimeZone = opts.TimeZone,
         };
     }
 

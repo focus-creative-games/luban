@@ -7,16 +7,12 @@ public class DDateTime : DType
 {
     public DateTime Time { get; }
 
-    //public int UnixTime { get; }
-    private readonly long _localTime;
-
     public override string TypeName => "datetime";
 
     public DDateTime(DateTime time)
     {
 
         this.Time = time;
-        this._localTime = (long)new DateTimeOffset(TimeZoneInfo.ConvertTime(time, TimeZoneUtil.DefaultTimeZone, TimeZoneInfo.Utc)).ToUnixTimeSeconds();
     }
 
     public long UnixTimeOfCurrentContext => GetUnixTime(GenerationContext.Current.TimeZone);
@@ -28,14 +24,14 @@ public class DDateTime : DType
 
     public override int GetHashCode()
     {
-        return _localTime.GetHashCode();
+        return Time.GetHashCode();
     }
 
     public override int CompareTo(DType other)
     {
         if (other is DDateTime d)
         {
-            return this._localTime.CompareTo(d._localTime);
+            return this.Time.CompareTo(d.Time);
         }
         throw new System.NotSupportedException();
     }
@@ -47,15 +43,8 @@ public class DDateTime : DType
 
     public long GetUnixTime(TimeZoneInfo asTimeZone)
     {
-        if (asTimeZone == null || asTimeZone == TimeZoneInfo.Local)
-        {
-            return this._localTime;
-        }
-        else
-        {
-            var destDateTime = TimeZoneInfo.ConvertTime(Time, asTimeZone, TimeZoneInfo.Utc);
-            return (long)new DateTimeOffset(destDateTime).ToUnixTimeSeconds();
-        }
+        var destDateTime = TimeZoneInfo.ConvertTime(Time, asTimeZone, TimeZoneInfo.Utc);
+        return (long)new DateTimeOffset(destDateTime).ToUnixTimeSeconds();
     }
 
     public override void Apply<T>(IDataActionVisitor<T> visitor, T x)

@@ -18,7 +18,7 @@ public class GenerationContextBuilder
     
     public List<string> ExcludeTags { get; set; }
     
-    public TimeZoneInfo TimeZone { get; set; }
+    public string TimeZone { get; set; }
 }
 
 public class GenerationContext
@@ -66,7 +66,7 @@ public class GenerationContext
         Assembly = builder.Assembly;
         IncludeTags = builder.IncludeTags;
         ExcludeTags = builder.ExcludeTags;
-        TimeZone = builder.TimeZone;
+        TimeZone = TimeZoneUtil.GetTimeZone(builder.TimeZone);
         
         ExportTables = Assembly.ExportTables;
         ExportTypes = CalculateExportTypes();
