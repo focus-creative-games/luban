@@ -8,7 +8,7 @@ public interface IDataValidator
 {
     string Args { get; set; }
     
-    void Compile(DefField field);
+    void Compile(DefField owner, TType type);
     
     void Validate(DataValidatorContext ctx, TType type, DType data);
 }

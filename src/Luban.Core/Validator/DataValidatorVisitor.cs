@@ -60,11 +60,12 @@ public class DataValidatorVisitor : TypeActionVisitorAdaptor<DType>
                 _path.Push(index++);
                 foreach (var v in elementType.Validators)
                 {
-                    v.Validate(Ctx, elementType, value);
-                    if (value != null)
+                    if (value == null)
                     {
-                        elementType.Apply(this, value);
+                        continue;
                     }
+                    v.Validate(Ctx, elementType, value);
+                    elementType.Apply(this, value);
                 }
                 _path.Pop();
             }
@@ -75,11 +76,12 @@ public class DataValidatorVisitor : TypeActionVisitorAdaptor<DType>
             int index = 0;
             foreach (var value in eles)
             {
-                _path.Push(index++);
-                if (value != null)
+                if (value == null)
                 {
-                    elementType.Apply(this, value);
+                    continue;
                 }
+                _path.Push(index++);
+                elementType.Apply(this, value);
                 _path.Pop();
             }
         }
@@ -92,7 +94,12 @@ public class DataValidatorVisitor : TypeActionVisitorAdaptor<DType>
         int i = 0;
         foreach (var fieldValue in beanData.Fields)
         {
-            var defField = (DefField)defFields[i++];
+            if (fieldValue == null)
+            {
+                i++;
+                continue;
+            }
+            var defField = defFields[i++];
             _path.Push(defField.Name);
 
             var fieldType = defField.CType;
@@ -104,10 +111,7 @@ public class DataValidatorVisitor : TypeActionVisitorAdaptor<DType>
                     p.Validate(Ctx, fieldType, fieldValue);
                 }
             }
-            if (fieldValue != null)
-            {
-                fieldType.Apply(this, fieldValue);
-            }
+            fieldType.Apply(this, fieldValue);
             _path.Pop();
         }
     }
@@ -136,7 +140,7 @@ public class DataValidatorVisitor : TypeActionVisitorAdaptor<DType>
             foreach (var e in ((DMap)x).Datas)
             {
                 _path.Push(e.Key);
-                if (keyType.Validators.Count > 0)
+                if (e.Key != null && keyType.Validators.Count > 0)
                 {
                     foreach (var v in keyType.Validators)
                     {
@@ -144,7 +148,7 @@ public class DataValidatorVisitor : TypeActionVisitorAdaptor<DType>
                         keyType.Apply(this, e.Key);
                     }
                 }
-                if (valueType.Validators.Count > 0)
+                if (valueType != null && valueType.Validators.Count > 0)
                 {
                     foreach (var v in valueType.Validators)
                     {

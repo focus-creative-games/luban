@@ -169,8 +169,8 @@ class DeepCompareTypeDefine : ITypeFuncVisitor<TType, Dictionary<DefTypeBase, bo
 
     public bool Accept(TEnum type, TType x, Dictionary<DefTypeBase, bool> y, HashSet<DefTypeBase> z)
     {
-        var a = type.DefineEnum;
-        var b = ((TEnum)x).DefineEnum;
+        var a = type.DefEnum;
+        var b = ((TEnum)x).DefEnum;
         if (y.TryGetValue(a, out var v))
         {
             return v;

@@ -52,6 +52,8 @@ public class GenerationContext
     private readonly Dictionary<string, RawExternalType> _externalTypesByTypeName = new();
     
     public TimeZoneInfo TimeZone { get; }
+    
+    private Dictionary<string, object> _uniqueObjects = new();
 
     public void LoadDatas()
     {
@@ -176,5 +178,30 @@ public class GenerationContext
             return CodeFormatManager.Ins.GetCodeStyle(codeStyleName);
         }
         return null;
+    }
+    
+    public object GetUniqueObject(string key)
+    {
+        lock (this)
+        {
+            return _uniqueObjects[key];
+        }
+    }
+    
+    public object GetOrAddUniqueObject(string key, Func<object> factory)
+    {
+        lock (this)
+        {
+            if (_uniqueObjects.TryGetValue(key, out var obj))
+            {
+                return obj;
+            }
+            else
+            {
+                obj = factory();
+                _uniqueObjects.Add(key, obj);
+                return obj;
+            }
+        }
     }
 }

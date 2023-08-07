@@ -15,11 +15,11 @@ public class TEnum : TType
 
     public bool IsEnum => true;
 
-    public DefEnum DefineEnum { get; }
+    public DefEnum DefEnum { get; }
 
     private TEnum(bool isNullable, Dictionary<string, string> tags, DefEnum defEnum) : base(isNullable, tags)
     {
-        this.DefineEnum = defEnum;
+        this.DefEnum = defEnum;
     }
 
     public override bool TryParseFrom(string s)

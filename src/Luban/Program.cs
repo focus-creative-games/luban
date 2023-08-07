@@ -3,6 +3,7 @@ using Luban.CodeTarget.CSharp;
 using Luban.DataExporter.Builtin;
 using Luban.DataLoader.Builtin;
 using Luban.DataValidator.Builtin.Collection;
+using Luban.L10N;
 using Luban.Pipeline;
 using Luban.Schema.Builtin;
 using Luban.Utils;
@@ -70,6 +71,7 @@ internal static class Program
             typeof(FieldNames).Assembly,
             typeof(DefaultDataExporter).Assembly,
             typeof(SizeValidator).Assembly,
+            typeof(DefaultTextProvider).Assembly,
         };
         launcher.Start(builtinAssemblies, ParseXargs(opts.Xargs));
         

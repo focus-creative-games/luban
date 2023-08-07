@@ -4,6 +4,7 @@ using Luban.CodeTarget;
 using Luban.CustomBehaviour;
 using Luban.DataLoader;
 using Luban.DataTarget;
+using Luban.L10N;
 using Luban.OutputSaver;
 using Luban.Pipeline;
 using Luban.Plugin;
@@ -37,6 +38,7 @@ public class SimpleLauncher
         DataTargetManager.Ins.Init();
         PluginManager.Ins.Init();
         PipelineManager.Ins.Init();
+        L10NManager.Ins.Init();
         CustomBehaviourManager.Ins.Init();
         CodeFormatManager.Ins.PostInit();
     }

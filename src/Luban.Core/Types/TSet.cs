@@ -33,11 +33,6 @@ public class TSet : TType
     {
         base.PostCompile(field);
 
-        foreach (var p in ElementType.Validators)
-        {
-            p.Compile(field);
-        }
-
         if (ElementType is TBean beanType)
         {
             throw new Exception($"bean:{field.HostType.FullName} field:{field.Name} element type can't be bean:{beanType.DefBean.FullName}");

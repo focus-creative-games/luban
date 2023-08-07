@@ -45,7 +45,7 @@ public class UnderlyingDeclaringTypeNameVisitor : ITypeFuncVisitor<string>
     public virtual string Accept(TEnum type)
     {
         // return ExternalTypeUtil.CsMapperToExternalType(type.DefineEnum);
-        return type.DefineEnum.FullName;
+        return type.DefEnum.FullName;
     }
 
     public string Accept(TString type)

@@ -9,6 +9,11 @@ public class LongDataSet
         _values = args.Split(',').Select(long.Parse).ToHashSet();
     }
 
+    public LongDataSet(IEnumerable<long> args)
+    {
+        _values = args.ToHashSet();
+    }
+
     public bool Contains(long value)
     {
         return _values.Contains(value);

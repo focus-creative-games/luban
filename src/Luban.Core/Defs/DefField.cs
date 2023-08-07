@@ -60,6 +60,11 @@ public class DefField
         this.RawField = f;
     }
 
+    public override string ToString()
+    {
+        return $"{HostType.FullName}.{Name}";
+    }
+
     public void Compile()
     {
         if (!IgnoreNameValidation && !TypeUtil.IsValidName(Name))
@@ -101,13 +106,7 @@ public class DefField
             }
         }
 
-        foreach (var (tagName, tagValue) in CType.Tags)
-        {
-            if (ValidatorManager.Ins.TryCreateDataValidator(tagName, tagValue, out var validator))
-            {
-                CType.Validators.Add(validator);
-            }
-        }
+        ValidatorManager.Ins.InitValidatorsRecursive(CType);
     }
 
     private void ValidateIndex()
@@ -141,6 +140,7 @@ public class DefField
     {
         CType.PostCompile(this);
         ValidateIndex();
+        ValidatorManager.Ins.CompileValidatorsRecursive(CType, this);
     }
 
     public static void CompileFields<T>(DefTypeBase hostType, List<T> fields) where T : DefField

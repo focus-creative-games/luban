@@ -18,7 +18,7 @@ public class DEnum : DType
         Type = type;
         StrValue = value;
 
-        Value = type.DefineEnum.GetValueByNameOrAlias(value);
+        Value = type.DefEnum.GetValueByNameOrAlias(value);
     }
 
     public override void Apply<T>(IDataActionVisitor<T> visitor, T x)

@@ -39,10 +39,7 @@ public abstract class TType
 
     public virtual void PostCompile(DefField field)
     {
-        foreach (var p in Validators)
-        {
-            p.Compile(field);
-        }
+
     }
 
     public virtual bool IsCollection => false;

@@ -20,26 +20,21 @@ public class SizeValidator : DataValidatorBase
 
     }
 
-    public override void Compile(DefField field)
+    public override void Compile(DefField field, TType type)
     {
         _range = new LongRange(Args);
-        _sizeGetter = field.CType switch
+        _sizeGetter = type switch
         {
             TList => d => ((DList)d).Datas.Count,
             TSet => d => ((DSet)d).Datas.Count,
             TMap => d => ((DMap)d).Datas.Count,
             TArray => d => ((DArray)d).Datas.Count,
-            _ => throw new Exception($"type:{field.CType} not support size validator"),
+            _ => throw new Exception($"type:{type} field:{field} not support size validator"),
         };
     }
 
     public override void Validate(DataValidatorContext ctx, TType type, DType data)
     {
-        if (type.IsNullable && data == null)
-        {
-            return;
-        }
-
         long size = _sizeGetter(data);
         if (!_range.CheckInRange(size))
         {

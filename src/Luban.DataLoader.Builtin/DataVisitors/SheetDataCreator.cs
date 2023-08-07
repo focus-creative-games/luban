@@ -148,20 +148,20 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
             }
             if (CheckDefault(x))
             {
-                if (type.DefineEnum.IsFlags || type.DefineEnum.HasZeroValueItem)
+                if (type.DefEnum.IsFlags || type.DefEnum.HasZeroValueItem)
                 {
                     return new DEnum(type, "0");
                 }
                 else
                 {
-                    throw new InvalidExcelDataException($"枚举类:'{type.DefineEnum.FullName}' 没有value为0的枚举项, 不支持默认值");
+                    throw new InvalidExcelDataException($"枚举类:'{type.DefEnum.FullName}' 没有value为0的枚举项, 不支持默认值");
                 }
             }
             return new DEnum(type, x.ToString());
         }
         else if (row.Rows != null)
         {
-            throw new Exception($"{type.DefineEnum.FullName} 不支持多行格式");
+            throw new Exception($"{type.DefEnum.FullName} 不支持多行格式");
         }
         else if (row.Fields != null)
         {
@@ -173,9 +173,9 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
             foreach (var field in sortedFields)
             {
                 string itemName = field.SelfTitle.Name;
-                if (!type.DefineEnum.TryValueByNameOrAlias(itemName, out _))
+                if (!type.DefEnum.TryValueByNameOrAlias(itemName, out _))
                 {
-                    throw new Exception($"列名:{itemName} 不是枚举类型'{type.DefineEnum.FullName}'的有效枚举项");
+                    throw new Exception($"列名:{itemName} 不是枚举类型'{type.DefEnum.FullName}'的有效枚举项");
                 }
                 if (field.IsBlank)
                 {
@@ -194,20 +194,20 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
                     return null;
                 }
 
-                if (type.DefineEnum.IsFlags || type.DefineEnum.HasZeroValueItem)
+                if (type.DefEnum.IsFlags || type.DefEnum.HasZeroValueItem)
                 {
                     return new DEnum(type, "0");
                 }
                 else
                 {
-                    throw new InvalidExcelDataException($"枚举类:'{type.DefineEnum.FullName}' 没有value为0的枚举项, 不支持默认值");
+                    throw new InvalidExcelDataException($"枚举类:'{type.DefEnum.FullName}' 没有value为0的枚举项, 不支持默认值");
                 }
             }
             return new DEnum(type, string.Join('|', items));
         }
         else if (row.Elements != null)
         {
-            throw new Exception($"{type.DefineEnum.FullName} 不支持多行子字段格式");
+            throw new Exception($"{type.DefEnum.FullName} 不支持多行子字段格式");
         }
         else
         {

@@ -21,14 +21,12 @@ public class RefValidator : DataValidatorBase
 
     }
 
-    public override void Compile(DefField field)
+    public override void Compile(DefField field, TType type)
     {
         this._tables = DefUtil.TrimBracePairs(Args).Split(',').Select(s => s.Trim()).ToList();
-        string hostTypeName = field.HostType.FullName;
-        string fieldName = field.Name;
         if (_tables.Count == 0)
         {
-            throw new Exception($"结构:'{hostTypeName}' 字段: '{fieldName}' ref 不能为空");
+            throw new Exception($"field:{field} ref 不能为空");
         }
 
         var assembly = field.Assembly;
@@ -39,7 +37,7 @@ public class RefValidator : DataValidatorBase
             DefRefGroup refGroup;
             if ((ct = assembly.GetCfgTable(actualTable)) != null)
             {
-                CompileTable(field, ct, indexName, ignoreDefault);
+                CompileTable(field, type, ct, indexName, ignoreDefault);
             }
             else if ((refGroup = assembly.GetRefGroup(actualTable)) != null)
             {
@@ -53,25 +51,20 @@ public class RefValidator : DataValidatorBase
                     DefTable subTable = assembly.GetCfgTable(actualRefTableName);
                     if (subTable == null)
                     {
-                        throw new Exception($"结构:'{hostTypeName}' 字段:'{fieldName}' refgroup:'{actualTable}' ref:'{actualRefTableName}' 不存在");
+                        throw new Exception($"field:{field} refgroup:'{actualTable}' ref:'{actualRefTableName}' 不存在");
                     }
-                    CompileTable(field, subTable, refIndex, ignoreDefault || refIgnoreDefault);
+                    CompileTable(field, type, subTable, refIndex, ignoreDefault || refIgnoreDefault);
                 }
             }
             else
             {
-                throw new Exception($"结构:'{hostTypeName}' 字段:'{fieldName}' ref:'{actualTable}' 不存在");
+                throw new Exception($"field:{field} ref:'{actualTable}' 不存在");
             }
         }
     }
 
     public override void Validate(DataValidatorContext ctx, TType type, DType key)
     {
-        // 对于可空字段，跳过检查
-        if (type.IsNullable && key == null)
-        {
-            return;
-        }
         var genCtx = GenerationContext.Current;
         var excludeTags = genCtx.ExcludeTags;
 
@@ -127,13 +120,6 @@ public class RefValidator : DataValidatorBase
         }
     }
 
-
-    private static string GetActualTableName(string table)
-    {
-        var (actualTable, _, _) = ParseRefString(table);
-        return actualTable;
-    }
-
     private static (string TableName, string FieldName, bool IgnoreDefault) ParseRefString(string refStr)
     {
         bool ignoreDefault = false;
@@ -160,36 +146,34 @@ public class RefValidator : DataValidatorBase
         return (tableName, fieldName, ignoreDefault);
     }
 
-    private void CompileTable(DefField field, DefTable table, string indexName, bool ignoreDefault)
+    private void CompileTable(DefField field, TType type, DefTable table, string indexName, bool ignoreDefault)
     {
         _compiledTables.Add((table, indexName, ignoreDefault));
 
         string actualTable = table.FullName;
-        string hostTypeName = field.HostType.FullName;
-        string fieldName = field.Name;
-        string fieldTypeName = field.CType.TypeName;
+        string fieldTypeName = type.TypeName;
         string valueTypeName = table.ValueTType.DefBean.FullName;
         if (!table.NeedExport())
         {
-            throw new Exception($"type:'{hostTypeName}' field:'{fieldName}' ref 引用的表:'{actualTable}' 没有导出");
+            throw new Exception($"field:'{field}' ref 引用的表:'{actualTable}' 没有导出");
         }
         if (table.IsSingletonTable)
         {
             if (string.IsNullOrEmpty(indexName))
             {
-                throw new Exception($"结构:{hostTypeName} 字段:{fieldName} ref:{actualTable} 是singleton表，索引字段不能为空");
+                throw new Exception($"field:'{field}' ref:{actualTable} 是singleton表，索引字段不能为空");
             }
             if (!table.ValueTType.DefBean.TryGetField(indexName, out var indexField, out _))
             {
-                throw new Exception($"结构:{hostTypeName} 字段:{fieldName} ref:{actualTable} value_type:{valueTypeName} 未包含索引字段:{indexName}");
+                throw new Exception($"field:'{field}' ref:{actualTable} value_type:{valueTypeName} 未包含索引字段:{indexName}");
             }
             if (!(indexField.CType is TMap tmap))
             {
-                throw new Exception($"结构:{hostTypeName} 字段:{fieldName} ref:{actualTable} value_type:{valueTypeName} 索引字段:{indexName} type:{indexField.CType.TypeName} 不是map类型");
+                throw new Exception($"field:'{field}' ref:{actualTable} value_type:{valueTypeName} 索引字段:{indexName} type:{indexField.CType.TypeName} 不是map类型");
             }
             if (tmap.KeyType.TypeName != fieldTypeName)
             {
-                throw new Exception($"结构:{hostTypeName} 字段:{fieldName} 类型:'{field.CType.TypeName}' 与被引用的表:{actualTable} value_type:{valueTypeName} 索引字段:{indexName} key_type:{tmap.KeyType.TypeName} 不一致");
+                throw new Exception($"field:'{field}' 类型:'{type.TypeName}' 与被引用的表:{actualTable} value_type:{valueTypeName} 索引字段:{indexName} key_type:{tmap.KeyType.TypeName} 不一致");
             }
             
         }
@@ -197,28 +181,28 @@ public class RefValidator : DataValidatorBase
         {
             if (!string.IsNullOrEmpty(indexName))
             {
-                throw new Exception($"结构:{hostTypeName} 字段:{fieldName} ref:{actualTable} 是map表，不能索引子字段");
+                throw new Exception($"field:'{field}' ref:{actualTable} 是map表，不能索引子字段");
             }
             var keyType = table.KeyTType;
             if (keyType.TypeName != fieldTypeName)
             {
-                throw new Exception($"type:'{hostTypeName}' field:'{fieldName}' 类型:'{fieldTypeName}' 与 被引用的map表:'{actualTable}' key类型:'{keyType.TypeName}' 不一致");
+                throw new Exception($"field:'{field}' 类型:'{fieldTypeName}' 与 被引用的map表:'{actualTable}' key类型:'{keyType.TypeName}' 不一致");
             }
         }
         else
         {
             if (string.IsNullOrEmpty(indexName))
             {
-                throw new Exception($"结构:{hostTypeName} 字段:{fieldName} ref:{actualTable} 是list表，必须显式指定索引字段");
+                throw new Exception($"field:'{field}' ref:{actualTable} 是list表，必须显式指定索引字段");
             }
             var indexField = table.IndexList.Find(k => k.IndexField.Name == indexName);
             if (indexField.Type == null)
             {
-                throw new Exception($"结构:{hostTypeName} 字段:{fieldName} 索引字段:{indexName} 不是被引用的list表:{actualTable} 的索引字段，合法值为'{table.Index}'之一");
+                throw new Exception($"field:'{field}' 索引字段:{indexName} 不是被引用的list表:{actualTable} 的索引字段，合法值为'{table.Index}'之一");
             }
             if (indexField.Type.TypeName != fieldTypeName)
             {
-                throw new Exception($"type:'{hostTypeName}' field:'{fieldName}' 类型:'{fieldTypeName}' 与 被引用的list表:'{actualTable}' key:{indexName} 类型:'{indexField.Type.TypeName}' 不一致");
+                throw new Exception($"field:'{field}' 类型:'{fieldTypeName}' 与 被引用的list表:'{actualTable}' key:{indexName} 类型:'{indexField.Type.TypeName}' 不一致");
             }
         }
     }

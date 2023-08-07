@@ -44,7 +44,7 @@ class RefTypeVisitor : ITypeActionVisitor<Dictionary<string, DefTypeBase>>
 
     public void Accept(TEnum type, Dictionary<string, DefTypeBase> x)
     {
-        x.TryAdd(type.DefineEnum.FullName, type.DefineEnum);
+        x.TryAdd(type.DefEnum.FullName, type.DefEnum);
     }
 
     public void Accept(TString type, Dictionary<string, DefTypeBase> x)

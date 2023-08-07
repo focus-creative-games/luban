@@ -45,7 +45,7 @@ public class FlatBuffersTypeNameVisitor : ITypeFuncVisitor<string>
 
     public string Accept(TEnum type)
     {
-        return TypeUtil.MakeFlatBuffersFullName(type.DefineEnum.Namespace, type.DefineEnum.Name);
+        return TypeUtil.MakeFlatBuffersFullName(type.DefEnum.Namespace, type.DefEnum.Name);
     }
 
     public string Accept(TString type)

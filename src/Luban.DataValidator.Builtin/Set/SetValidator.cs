@@ -23,10 +23,10 @@ public class SetValidator : DataValidatorBase
     {
     }
 
-    public override void Compile(DefField field)
+    public override void Compile(DefField field, TType type)
     {
         _valueSetStr = Args;
-        switch (field.CType)
+        switch (type)
         {
             case TByte:
             {
@@ -52,9 +52,10 @@ public class SetValidator : DataValidatorBase
                 _longGetter = d => ((DLong) d).Value;
                 break;
             }
-            case TEnum:
+            case TEnum etype:
             {
-                _longSet = new LongDataSet(Args);
+                DefEnum enumType = etype.DefEnum;
+                _longSet = new LongDataSet(Args.Split(',').Select(s => (long)enumType.GetValueByNameOrAlias(s)));
                 _longGetter = d => ((DEnum) d).Value;
                 break;
             }
@@ -66,17 +67,13 @@ public class SetValidator : DataValidatorBase
             }
             default:
             {
-                throw new Exception($"set not support type:{field.CType}");
+                throw new Exception($"set not support type:{type} field:{field}");
             }
         }
     }
 
     public override void Validate(DataValidatorContext ctx, TType type, DType data)
     {
-        if (type.IsNullable && data == null)
-        {
-            return;
-        }
         if ((_longSet != null && !_longSet.Contains(_longGetter(data))) || (_stringSet != null && !_stringSet.Contains(_stringGetter(data))))
         {
             s_logger.Error("记录 {}:{} (来自文件:{}) 值不在set:{}中", RecordPath, data, Source, _valueSetStr);

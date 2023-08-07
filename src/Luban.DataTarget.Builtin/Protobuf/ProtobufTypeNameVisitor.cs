@@ -45,7 +45,7 @@ public class ProtobufTypeNameVisitor : ITypeFuncVisitor<string>
 
     public string Accept(TEnum type)
     {
-        return TypeUtil.MakePbFullName(type.DefineEnum.Namespace, type.DefineEnum.Name);
+        return TypeUtil.MakePbFullName(type.DefEnum.Namespace, type.DefEnum.Name);
     }
 
     public string Accept(TString type)

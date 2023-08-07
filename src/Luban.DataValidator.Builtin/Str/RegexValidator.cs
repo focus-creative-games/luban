@@ -20,10 +20,10 @@ public class RegexValidator : DataValidatorBase
     {
     }
 
-    public override void Compile(DefField field)
+    public override void Compile(DefField field, TType type)
     {
         _regex = new Regex(Args, RegexOptions.Compiled);
-        switch (field.CType)
+        switch (type)
         {
             case TString:
             {
@@ -32,7 +32,7 @@ public class RegexValidator : DataValidatorBase
             }
             default:
             {
-                throw new Exception($"type:{field.CType} not support regex validator");
+                throw new Exception($"type:{field.CType} field:{field} not support regex validator");
             }
         }
     }
@@ -45,11 +45,6 @@ public class RegexValidator : DataValidatorBase
 
     private void Validate(DataValidatorContext ctx, bool nullable, DType data)
     {
-        if (nullable && data == null)
-        {
-            return;
-        }
-
         if (!_regex.IsMatch(_stringGetter(data)))
         {
             s_logger.Error($"记录 {RecordPath}:{data} (来自文件:{Source}) 不符合正则表达式：'{_regex}'");

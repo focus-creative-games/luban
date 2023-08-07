@@ -8,7 +8,7 @@ public abstract class DataValidatorBase : IDataValidator
 {
     public string Args { get; set; }
     
-    public abstract void Compile(DefField field);
+    public abstract void Compile(DefField field, TType type);
     
     public abstract void Validate(DataValidatorContext ctx, TType type, DType data);
     

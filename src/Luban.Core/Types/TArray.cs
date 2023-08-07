@@ -42,12 +42,7 @@ public class TArray : TType
     public override void PostCompile(DefField field)
     {
         base.PostCompile(field);
-
-        foreach (var p in ElementType.Validators)
-        {
-            p.Compile(field);
-        }
-
+        
         if (ElementType is TBean e && !e.IsDynamic && e.DefBean.HierarchyFields.Count == 0)
         {
             throw new Exception($"container element type:'{e.DefBean.FullName}' can't be empty bean");

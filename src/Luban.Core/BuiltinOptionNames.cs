@@ -17,4 +17,12 @@ public static class BuiltinOptionNames
     public const string OutputSaver = "outputSaver";
 
     public const string SchemaCollectorFamily = "schemaCollector";
+
+    public const string L10NFamily = "l10n";
+
+    public const string TextProviderName = "textProviderName";
+
+    public const string TextProviderFile = "textProviderFile";
+
+    public const string TextKeyFieldName = "key";
 }

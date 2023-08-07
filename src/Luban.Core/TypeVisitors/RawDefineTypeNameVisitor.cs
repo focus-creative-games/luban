@@ -43,7 +43,7 @@ public class RawDefineTypeNameVisitor : ITypeFuncVisitor<string>
 
     public string Accept(TEnum type)
     {
-        return type.DefineEnum.FullName;
+        return type.DefEnum.FullName;
     }
 
     public string Accept(TString type)

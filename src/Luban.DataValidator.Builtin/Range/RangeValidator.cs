@@ -20,9 +20,9 @@ public class RangeValidator : DataValidatorBase
     {
     }
 
-    public override void Compile(DefField field)
+    public override void Compile(DefField field, TType type)
     {
-        switch (field.CType)
+        switch (type)
         {
             case TByte:
             {
@@ -60,20 +60,15 @@ public class RangeValidator : DataValidatorBase
                 _doubleGetter = d => ((DDouble)d).Value;
                 break;
             }
-            default: throw new Exception($"range not support type:{field.CType}");
+            default: throw new Exception($"range not support type:{type} field:{field}");
         }
     }
 
     public override void Validate(DataValidatorContext ctx, TType type, DType data)
     {
-        if (type.IsNullable && data == null)
-        {
-            return;
-        }
-
         if ((_longRange != null && !_longRange.CheckInRange(_longGetter(data))) || (_doubleRange != null && !_doubleRange.CheckInRange(_doubleGetter(data))))
         {
-            s_logger.Error("记录 {}:{} (来自文件:{}) 不在范围:{}内", DataValidatorContext.CurrentRecordPath, data, Source, _longRange.RawStr);
+            s_logger.Error("记录 {}:{} (来自文件:{}) 不在范围:{}内", DataValidatorContext.CurrentRecordPath, data, Source, Args);
         }
     }
 }

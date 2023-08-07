@@ -40,14 +40,9 @@ public class TMap : TType
     {
         base.PostCompile(field);
 
-        foreach (var p in KeyType.Validators)
+        if (ElementType is TBean e && !e.IsDynamic && e.DefBean.HierarchyFields.Count == 0)
         {
-            p.Compile(field);
-        }
-
-        foreach (var p in ValueType.Validators)
-        {
-            p.Compile(field);
+            throw new Exception($"container element type:'{e.DefBean.FullName}' can't be empty bean");
         }
     }
 

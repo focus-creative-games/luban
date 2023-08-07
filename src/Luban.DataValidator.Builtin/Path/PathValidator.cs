@@ -19,11 +19,11 @@ public class PathValidator : DataValidatorBase
     {
     }
 
-    public override void Compile(DefField field)
+    public override void Compile(DefField field, TType type)
     {
         this._rawPattern = DefUtil.TrimBracePairs(Args);
 
-        if (field.CType is not TString)
+        if (type is not TString)
         {
             ThrowCompileError(field, "只支持string类型");
         }
@@ -89,10 +89,6 @@ public class PathValidator : DataValidatorBase
 
     public override void Validate(DataValidatorContext ctx, TType type, DType data)
     {
-        if (type.IsNullable && data == null)
-        {
-            return;
-        }
         string value = ((DString)data).Value;
         if (value == "" && _pathPattern.EmptyAble)
         {
@@ -109,6 +105,6 @@ public class PathValidator : DataValidatorBase
 
     private void ThrowCompileError(DefField def, string err)
     {
-        throw new System.ArgumentException($"{def.HostType.FullName} 字段:{def.Name} {_rawPattern} 定义不合法. {err}");
+        throw new System.ArgumentException($"field:{def} {_rawPattern} 定义不合法. {err}");
     }
 }

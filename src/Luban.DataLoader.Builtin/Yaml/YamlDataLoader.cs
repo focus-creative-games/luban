@@ -13,6 +13,7 @@ public class YamlDataLoader : DataLoaderBase
     private YamlNode _root;
     public override void Load(string rawUrl, string sheetOrFieldName, Stream stream)
     {
+        RawUrl = rawUrl;
         var ys = new YamlStream();
         ys.Load(new StreamReader(stream));
         var rootNode = ys.Documents[0].RootNode;
