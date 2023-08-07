@@ -23,7 +23,6 @@ public class XmlSchemaLoader : SchemaLoaderBase
         _tagHandlers.Add("module", AddModule);
         _tagHandlers.Add("enum", AddEnum);
         _tagHandlers.Add("bean", AddBean);
-        _tagHandlers.Add("externaltype", AddExternalType);
         _tagHandlers.Add("table", AddTable);
         _tagHandlers.Add("refgroup", AddRefGroup);
     }
@@ -55,19 +54,7 @@ public class XmlSchemaLoader : SchemaLoaderBase
         }
         _namespaceStack.Pop();
     }
-
-    protected void AddBean(XElement e)
-    {
-        AddBean(e, "");
-    }
-
-    private static readonly List<string> _beanOptinsAttrs1 = new List<string> { "compatible", "value_type", "comment", "tags", "externaltype" };
-    private static readonly List<string> _beanRequireAttrs1 = new List<string> { "id", "name" };
-
-    private static readonly List<string> _beanOptinsAttrs2 = new List<string> { "id", "parent", "compatible", "value_type", "comment", "tags"};
-    private static readonly List<string> _beanRequireAttrs2 = new List<string> { "name" };
-
-
+    
     protected void TryGetUpdateParent(XElement e, ref string parent)
     {
         string selfDefParent = XmlUtil.GetOptionalAttribute(e, "parent");
@@ -100,97 +87,42 @@ public class XmlSchemaLoader : SchemaLoaderBase
             IsUniqueItemId = XmlUtil.GetOptionBoolAttribute(e, "unique", true),
             Groups = SchemaLoaderUtil.CreateGroups(XmlUtil.GetOptionalAttribute(e, "group")),
             Items = new (),
+            TypeMappers = new(),
         };
 
         foreach (XElement item in e.Elements())
         {
-            XmlSchemaUtil.ValidAttrKeys(_fileName, item, _enumItemOptionalAttrs, _enumItemRequiredAttrs);
-            en.Items.Add(new EnumItem()
+            switch (item.Name.LocalName)
             {
-                Name = XmlUtil.GetRequiredAttribute(item, "name"),
-                Alias = XmlUtil.GetOptionalAttribute(item, "alias"),
-                Value = XmlUtil.GetOptionalAttribute(item, "value"),
-                Comment = XmlUtil.GetOptionalAttribute(item, "comment"),
-                Tags = XmlUtil.GetOptionalAttribute(item, "tags"),
-            });
+                case "var":
+                {
+                    XmlSchemaUtil.ValidAttrKeys(_fileName, item, _enumItemOptionalAttrs, _enumItemRequiredAttrs);
+                    en.Items.Add(new EnumItem()
+                    {
+                        Name = XmlUtil.GetRequiredAttribute(item, "name"),
+                        Alias = XmlUtil.GetOptionalAttribute(item, "alias"),
+                        Value = XmlUtil.GetOptionalAttribute(item, "value"),
+                        Comment = XmlUtil.GetOptionalAttribute(item, "comment"),
+                        Tags = XmlUtil.GetOptionalAttribute(item, "tags"),
+                    });
+                    break;
+                }
+                case "mapper":
+                {
+                    en.TypeMappers.Add(CreateTypeMapper(item, en.FullName));
+                    break;
+                }
+                default:
+                {
+                    throw new Exception($"不支持的enum子节点:{item.Name.LocalName}");
+                }
+            }
         }
         s_logger.Trace("add enum:{@}", en);
         Collector.Add(en);
     }
     
-    private static readonly List<string> _externalRequiredAttrs = new List<string> { "name", "origin_type_name" };
-    
-    private void AddExternalType(XElement e)
-    {
-        // XmlSchemaUtil.ValidAttrKeys(_fileName, e, null, _externalRequiredAttrs);
-        // string name = XmlUtil.GetRequiredAttribute(e, "name");
-        //
-        // var et = new RawExternalType()
-        // {
-        //     Name = name,
-        //     OriginTypeName = XmlUtil.GetRequiredAttribute(e, "origin_type_name"),
-        // };
-        // var mappers = new Dictionary<string, ExternalTypeMapper>();
-        // foreach (XElement mapperEle in e.Elements())
-        // {
-        //     var tagName = mapperEle.Name.LocalName;
-        //     if (tagName == "mapper")
-        //     {
-        //         var mapper = CreateMapper(name, mapperEle);
-        //         string uniqKey = $"{mapper.Language}##{mapper.Selector}";
-        //         if (mappers.ContainsKey(uniqKey))
-        //         {
-        //             throw new LoadDefException($"定义文件:{_fileName} externaltype name:{name} mapper(lan='{mapper.Language}',selector='{mapper.Selector}') 重复");
-        //         }
-        //         mappers.Add(uniqKey, mapper);
-        //         et.Mappers.Add(mapper);
-        //         s_logger.Trace("add mapper. externaltype:{} mapper:{@}", name, mapper);
-        //     }
-        //     else
-        //     {
-        //         throw new LoadDefException($"定义文件:{_fileName} externaltype:{name} 非法 tag:'{tagName}'");
-        //     }
-        // }
-        // _schemaCollector.Add(et);
-    }
-
-    private static readonly List<string> _mapperOptionalAttrs = new List<string> { };
-    private static readonly List<string> _mapperRequiredAttrs = new List<string> { "lan", "selector" };
-    private ExternalTypeMapper CreateMapper(string externalType, XElement e)
-    {
-        XmlSchemaUtil.ValidAttrKeys(_fileName, e, _mapperOptionalAttrs, _mapperRequiredAttrs);
-        var m = new ExternalTypeMapper()
-        {
-            Language = XmlUtil.GetRequiredAttribute(e, "lan"),
-            Selector = XmlUtil.GetRequiredAttribute(e, "selector"),
-        };
-        foreach (XElement attrEle in e.Elements())
-        {
-            var tagName = attrEle.Name.LocalName;
-            switch (tagName)
-            {
-                case "target_type_name":
-                {
-                    m.TargetTypeName = attrEle.Value;
-                    break;
-                }
-                case "create_function":
-                {
-                    m.CreateFunction = attrEle.Value;
-                    break;
-                }
-                default: throw new LoadDefException($"定义文件:{_fileName} external type:{externalType} 非法 tag:{tagName}");
-            }
-        }
-        if (string.IsNullOrWhiteSpace(m.TargetTypeName))
-        {
-            throw new LoadDefException($"定义文件:{_fileName} external type:{externalType} lan:{m.Language} selector:{m.Selector} 没有定义 'target_type_name'");
-        }
-        return m;
-    }
-    
-
-    private readonly List<string> _tableOptionalAttrs = new List<string> { "index", "mode", "group", "patch_input", "comment", "define_from_file", "output", "options" };
+    private readonly List<string> _tableOptionalAttrs = new List<string> { "index", "mode", "group", "patch_input", "comment", "readSchemaFromFile", "output", "options" };
     private readonly List<string> _tableRequireAttrs = new List<string> { "name", "value", "input" };
 
     private void AddTable(XElement e)
@@ -199,7 +131,7 @@ public class XmlSchemaLoader : SchemaLoaderBase
         string name = XmlUtil.GetRequiredAttribute(e, "name");
         string module = CurNamespace;
         string valueType = XmlUtil.GetRequiredAttribute(e, "value");
-        bool defineFromFile = XmlUtil.GetOptionBoolAttribute(e, "define_from_file");
+        bool defineFromFile = XmlUtil.GetOptionBoolAttribute(e, "readSchemaFromFile");
         string index = XmlUtil.GetOptionalAttribute(e, "index");
         string group = XmlUtil.GetOptionalAttribute(e, "group");
         string comment = XmlUtil.GetOptionalAttribute(e, "comment");
@@ -249,25 +181,53 @@ public class XmlSchemaLoader : SchemaLoaderBase
         );
     }
 
-    private static readonly List<string> _beanOptinsAttrs = new List<string> { "parent", "value_type", "alias", "sep", "comment", "tags", "group", "externaltype" };
+    private static readonly List<string> _beanOptionsAttrs = new List<string> { "parent", "valueType", "alias", "sep", "comment", "tags", "group" };
     private static readonly List<string> _beanRequireAttrs = new List<string> { "name" };
 
+    private TypeMapper CreateTypeMapper(XElement e, string fullName)
+    {
+        var opts = new Dictionary<string, string>();
+        foreach (XElement optionEle in e.Elements())
+        {
+            string key = XmlUtil.GetRequiredAttribute(optionEle, "name");
+            string value = XmlUtil.GetRequiredAttribute(optionEle, "value");
+            if (!opts.TryAdd(key, value))
+            {
+                throw new Exception($"CreateTypeMapper {fullName} option:{key} 重复定义");
+            }
+        }
+        var mapper = new TypeMapper()
+        {
+            Targets = XmlUtil.GetRequiredAttribute(e, "target").Split(',', ';', '|').ToList(),
+            CodeTargets = XmlUtil.GetRequiredAttribute(e, "codeTarget").Split(',', ';', '|').ToList(),
+            Options = opts,
+        };
+        return mapper;
+    }
+    
+
+    protected void AddBean(XElement e)
+    {
+        AddBean(e, "");
+    }
+    
     protected void AddBean(XElement e, string parent)
     {
-        XmlSchemaUtil.ValidAttrKeys(_fileName, e, _beanOptinsAttrs, _beanRequireAttrs);
+        XmlSchemaUtil.ValidAttrKeys(_fileName, e, _beanOptionsAttrs, _beanRequireAttrs);
         TryGetUpdateParent(e, ref parent);
         var b = new RawBean()
         {
             Name = XmlUtil.GetRequiredAttribute(e, "name"),
             Namespace = CurNamespace,
             Parent = parent,
-            IsValueType = XmlUtil.GetOptionBoolAttribute(e, "value_type"),
+            IsValueType = XmlUtil.GetOptionBoolAttribute(e, "valueType"),
             Alias = XmlUtil.GetOptionalAttribute(e, "alias"),
             Sep = XmlUtil.GetOptionalAttribute(e, "sep"),
             Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
             Tags = XmlUtil.GetOptionalAttribute(e, "tags"),
             Groups = SchemaLoaderUtil.CreateGroups(XmlUtil.GetOptionalAttribute(e, "group")),
             Fields = new(),
+            TypeMappers = new (),
         };
         var childBeans = new List<XElement>();
 
@@ -283,6 +243,11 @@ public class XmlSchemaLoader : SchemaLoaderBase
                         throw new LoadDefException($"定义文件:{_fileName} 类型:{b.FullName} 的多态子bean必须在所有成员字段 <var> 之后定义");
                     }
                     b.Fields.Add(CreateField(fe)); ;
+                    break;
+                }
+                case "mapper":
+                {
+                    b.TypeMappers.Add(CreateTypeMapper(fe, b.FullName));
                     break;
                 }
                 case "bean":

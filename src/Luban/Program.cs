@@ -109,9 +109,9 @@ internal static class Program
     private static Dictionary<string, string> ParseXargs(IEnumerable<string> xargs)
     {
         var result = new Dictionary<string, string>();
-        foreach (var xarg in xargs)
+        foreach (var arg in xargs)
         {
-            string[] pair = xarg.Split('=', 2);
+            string[] pair = arg.Split('=', 2);
             result.Add(pair[0], pair[1]);
         }
         return result;

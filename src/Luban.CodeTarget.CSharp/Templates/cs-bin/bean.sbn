@@ -11,7 +11,11 @@
 /// {{escape_comment __bean.comment}}
 /// </summary>
 {{~end~}}
-public {{class_modifier __bean}} partial class {{__name}} : {{if parent_def_type}} {{__bean.parent}} {{else}} Luban.BeanBase {{end}}
+{{~if __bean.is_value_type~}}
+public partial struct {{__name}}
+{{~else~}}
+public {{class_modifier __bean}} partial class {{__name}} : {{if parent_def_type}}{{__bean.parent}}{{else}}Luban.BeanBase{{end}}
+{{~end~}}
 {
     public {{__name}}(ByteBuf _buf) {{if parent_def_type}} : base(_buf) {{end}}
     {
@@ -44,7 +48,7 @@ public {{class_modifier __bean}} partial class {{__name}} : {{if parent_def_type
     public readonly {{declaring_type_name field.ctype}} {{format_property_name __code_style field.name}};
     {{~end~}}
 
-{{~if !__bean.is_abstract_type~}}
+{{~if !__bean.is_abstract_type && !__bean.is_value_type~}}
     public const int __ID__ = {{__bean.id}};
     public override int GetTypeId() => __ID__;
 {{~end~}}

@@ -34,8 +34,6 @@ public class DefBean : DefTypeBase
         }
     }
 
-    public bool IsNotAbstractType => Children == null;
-
     public bool IsAbstractType => Children != null;
 
     public List<DefField> HierarchyFields { get; private set; } = new List<DefField>();
@@ -47,6 +45,8 @@ public class DefBean : DefTypeBase
     public bool IsMultiRow { get; set; }
 
     public string Sep { get; }
+    
+    public bool IsValueType { get; }
 
 
     private List<DefField> _hierarchyExportFields;
@@ -76,7 +76,9 @@ public class DefBean : DefTypeBase
         }
         Alias = b.Alias;
         Sep = b.Sep;
+        IsValueType = b.IsValueType;
         Groups = b.Groups;
+        TypeMappers = b.TypeMappers is { Count: > 0 } ? b.TypeMappers : null;
     }
 
     protected DefField CreateField(RawField f, int idOffset)

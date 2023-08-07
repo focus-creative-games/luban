@@ -71,16 +71,6 @@ public abstract class SchemaCollectorBase : ISchemaCollector
         _targets.Add(target);
     }
 
-    public void AddSelector(string selector)
-    {
-        _externalSelectors.Add(selector);
-    }
-
-    public void Add(RawExternalType externalType)
-    {
-        _externalTypes.Add(externalType);
-    }
-
     public void AddEnv(string key, string value)
     {
         if (!_envs.TryAdd(key, value))

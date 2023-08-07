@@ -21,9 +21,5 @@ public interface ISchemaCollector
     
     void Add(RawTarget target);
 
-    void AddSelector(string selector);
-    
-    void Add(RawExternalType externalType);
-
     void AddEnv(string key, string value);
 }

@@ -23,4 +23,6 @@ public class RawBean
     public List<string> Groups { get; set; }
 
     public List<RawField> Fields { get; set; }
+    
+    public List<TypeMapper> TypeMappers { get; set; }
 }

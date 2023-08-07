@@ -95,6 +95,7 @@ public class DefEnum : DefTypeBase
         Comment = e.Comment;
         Tags = DefUtil.ParseAttrs(e.Tags);
         Groups = e.Groups;
+        TypeMappers = e.TypeMappers is { Count: > 0 } ? e.TypeMappers : null;
         foreach (var item in e.Items)
         {
             Items.Add(new Item
