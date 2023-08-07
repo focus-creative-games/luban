@@ -100,6 +100,7 @@ public class PathValidator : DataValidatorBase
         if (!_pathPattern.ExistPath(rootDir, value))
         {
             s_logger.Error("{}:{} (来自文件:{}) 找不到对应文件", RecordPath, value, Source);
+            GenerationContext.Current.LogValidatorFail(this);
         }
     }
 

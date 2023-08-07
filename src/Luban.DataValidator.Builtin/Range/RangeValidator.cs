@@ -69,6 +69,7 @@ public class RangeValidator : DataValidatorBase
         if ((_longRange != null && !_longRange.CheckInRange(_longGetter(data))) || (_doubleRange != null && !_doubleRange.CheckInRange(_doubleGetter(data))))
         {
             s_logger.Error("记录 {}:{} (来自文件:{}) 不在范围:{}内", DataValidatorContext.CurrentRecordPath, data, Source, Args);
+            GenerationContext.Current.LogValidatorFail(this);
         }
     }
 }

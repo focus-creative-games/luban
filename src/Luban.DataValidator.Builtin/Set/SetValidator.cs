@@ -77,6 +77,7 @@ public class SetValidator : DataValidatorBase
         if ((_longSet != null && !_longSet.Contains(_longGetter(data))) || (_stringSet != null && !_stringSet.Contains(_stringGetter(data))))
         {
             s_logger.Error("记录 {}:{} (来自文件:{}) 值不在set:{}中", RecordPath, data, Source, _valueSetStr);
+            GenerationContext.Current.LogValidatorFail(this);
         }
     }
 }

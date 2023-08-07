@@ -118,6 +118,7 @@ public class RefValidator : DataValidatorBase
         {
             s_logger.Error("记录 {} = {} (来自文件:{}) 在引用表:{} 中不存在", RecordPath, key, Source, table.Table.FullName);
         }
+        GenerationContext.Current.LogValidatorFail(this);
     }
 
     private static (string TableName, string FieldName, bool IgnoreDefault) ParseRefString(string refStr)

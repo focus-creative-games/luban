@@ -37,9 +37,14 @@ public class TextValidator : DataValidatorBase
     public override void Validate(DataValidatorContext ctx, TType type, DType data)
     {
         string key = ((DString)data).Value;
+        if (string.IsNullOrEmpty(key))
+        {
+            return;
+        }
         if (!Provider.IsValidKey(key))
         {
-            s_logger.Error("记录 {}:{} (来自文件:{}) 不是一个有效的文本key", DataValidatorContext.CurrentRecordPath, data, Source);   
+            s_logger.Error("记录 {}:{} (来自文件:{}) 不是一个有效的文本key", DataValidatorContext.CurrentRecordPath, data, Source);
+            GenerationContext.Current.LogValidatorFail(this); 
         }
     }
 }

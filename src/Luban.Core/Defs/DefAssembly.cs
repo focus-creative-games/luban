@@ -320,24 +320,39 @@ public class DefAssembly
 
     protected TType CreateNotContainerType(string module, string rawType, bool containerElementType)
     {
-        bool nullable;
+        bool defaultAble = true;
+        bool nullable = false;
         // 去掉 rawType 两侧的匹配的 ()
         rawType = DefUtil.TrimBracePairs(rawType);
         var (type, tags) = DefUtil.ParseTypeAndVaildAttrs(rawType);
 
-        if (type.EndsWith('?'))
+        while (true)
         {
-            if (containerElementType)
+            if (type.EndsWith('?'))
             {
-                throw new Exception($"container element type can't be nullable type:'{module}.{type}'");
+                if (containerElementType)
+                {
+                    throw new Exception($"container element type can't be nullable type:'{module}.{type}'");
+                }
+                nullable = true;
+                type = type[..^1];
+                continue;
             }
-            nullable = true;
-            type = type.Substring(0, type.Length - 1);
+
+            if (type.EndsWith("!"))
+            {
+                defaultAble = false;
+                type = type[..^1];
+                continue;
+            }
+            break;
         }
-        else
+
+        if (!defaultAble)
         {
-            nullable = false;
+            tags.TryAdd("not-default", "1");
         }
+
         switch (type)
         {
             case "bool": return TBool.Create(nullable, tags);

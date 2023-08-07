@@ -48,6 +48,7 @@ public class RegexValidator : DataValidatorBase
         if (!_regex.IsMatch(_stringGetter(data)))
         {
             s_logger.Error($"记录 {RecordPath}:{data} (来自文件:{Source}) 不符合正则表达式：'{_regex}'");
+            GenerationContext.Current.LogValidatorFail(this);
         }
     }
 }

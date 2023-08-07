@@ -7,6 +7,7 @@ using Luban.RawDefs;
 using Luban.Types;
 using Luban.TypeVisitors;
 using Luban.Utils;
+using Luban.Validator;
 
 namespace Luban;
 
@@ -53,7 +54,9 @@ public class GenerationContext
     
     public TimeZoneInfo TimeZone { get; }
     
-    private Dictionary<string, object> _uniqueObjects = new();
+    private readonly Dictionary<string, object> _uniqueObjects = new();
+    
+    private readonly HashSet<Type> _failedValidatorTypes = new();
 
     public void LoadDatas()
     {
@@ -202,6 +205,22 @@ public class GenerationContext
                 _uniqueObjects.Add(key, obj);
                 return obj;
             }
+        }
+    }
+
+    public void LogValidatorFail(IDataValidator validator)
+    {
+        lock (this)
+        {
+            _failedValidatorTypes.Add(validator.GetType());
+        }
+    }
+    
+    public bool AnyValidatorFail()
+    {
+        lock (this)
+        {
+            return _failedValidatorTypes.Count > 0;
         }
     }
 }

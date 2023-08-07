@@ -39,6 +39,7 @@ public class SizeValidator : DataValidatorBase
         if (!_range.CheckInRange(size))
         {
             s_logger.Error("记录 {}:{} (来自文件:{}) size:{},但要求为 {} ", DataValidatorContext.CurrentRecordPath, data, Source, size, _range.RawStr);
+            GenerationContext.Current.LogValidatorFail(this);
         }
     }
 }
