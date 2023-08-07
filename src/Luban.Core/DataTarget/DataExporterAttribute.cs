@@ -1,13 +1,12 @@
+using Luban.CustomBehaviour;
+
 namespace Luban.DataTarget;
 
 [AttributeUsage(AttributeTargets.Class)]
-public class DataExporterAttribute : System.Attribute
+public class DataExporterAttribute : BehaviourBaseAttribute
 {
-    public string Name { get; }
-    
-    
-    public DataExporterAttribute(string name)
+
+    public DataExporterAttribute(string name) : base(name)
     {
-        Name = name;
     }
 }

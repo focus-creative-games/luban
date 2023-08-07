@@ -1,12 +1,11 @@
+using Luban.CustomBehaviour;
+
 namespace Luban.DataLoader;
 
-[AttributeUsage(AttributeTargets.Class)]
-public class DataLoaderAttribute : Attribute
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+public class DataLoaderAttribute : BehaviourBaseAttribute
 {
-    public string[] LoaderNames { get; }
-
-    public DataLoaderAttribute(params string[] loaderNames)
+    public DataLoaderAttribute(string name) : base(name)
     {
-        LoaderNames = loaderNames;
     }
 }

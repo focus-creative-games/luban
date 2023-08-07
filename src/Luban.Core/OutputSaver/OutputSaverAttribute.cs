@@ -1,12 +1,11 @@
+using Luban.CustomBehaviour;
+
 namespace Luban.OutputSaver;
 
 [AttributeUsage(AttributeTargets.Class)]
-public class OutputSaverAttribute : Attribute
+public class OutputSaverAttribute : BehaviourBaseAttribute
 {
-    public string Name { get; }
-    
-    public OutputSaverAttribute(string name)
+    public OutputSaverAttribute(string name) : base(name)
     {
-        Name = name;
     }
 }

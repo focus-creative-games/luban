@@ -1,12 +1,12 @@
+using Luban.CustomBehaviour;
+
 namespace Luban.Pipeline;
 
 [AttributeUsage(AttributeTargets.Class)]
-public class PipelineAttribute : Attribute
+public class PipelineAttribute : BehaviourBaseAttribute
 {
-    public string Name { get; }
-    
-    public PipelineAttribute(string name)
+    public PipelineAttribute(string name) : base(name)
     {
-        Name = name;
+
     }
 }

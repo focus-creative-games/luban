@@ -12,12 +12,12 @@ public class ConfigurableCodeStyle : CodeStyleBase
     public ConfigurableCodeStyle(string namespaceFormatterName, string typeFormatterName, string methodFormatterName,
         string propertyFormatterName, string fieldFormatterName, string enumItemFormatterName)
     {
-        _namespaceFormatter = CodeFormatManager.Ins.GetFormatter(namespaceFormatterName);
-        _typeFormatter = CodeFormatManager.Ins.GetFormatter(typeFormatterName);
-        _methodFormatter = CodeFormatManager.Ins.GetFormatter(methodFormatterName);
-        _propertyFormatter = CodeFormatManager.Ins.GetFormatter(propertyFormatterName);
-        _fieldFormatter = CodeFormatManager.Ins.GetFormatter(fieldFormatterName);
-        _enumItemFormatter = CodeFormatManager.Ins.GetFormatter(enumItemFormatterName);
+        _namespaceFormatter = CodeFormatManager.Ins.CreateFormatter(namespaceFormatterName);
+        _typeFormatter = CodeFormatManager.Ins.CreateFormatter(typeFormatterName);
+        _methodFormatter = CodeFormatManager.Ins.CreateFormatter(methodFormatterName);
+        _propertyFormatter = CodeFormatManager.Ins.CreateFormatter(propertyFormatterName);
+        _fieldFormatter = CodeFormatManager.Ins.CreateFormatter(fieldFormatterName);
+        _enumItemFormatter = CodeFormatManager.Ins.CreateFormatter(enumItemFormatterName);
     }
 
     public override string FormatNamespace(string ns)

@@ -1,12 +1,11 @@
+using Luban.CustomBehaviour;
+
 namespace Luban.CodeFormat;
 
 [AttributeUsage(AttributeTargets.Class)]
-public class NamingConventionAttribute : Attribute
+public class NamingConventionAttribute : BehaviourBaseAttribute
 {
-    public string Name { get; }
-    
-    public NamingConventionAttribute(string name)
+    public NamingConventionAttribute(string name) : base(name)
     {
-        Name = name;
     }
 }

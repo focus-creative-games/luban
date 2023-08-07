@@ -76,7 +76,7 @@ public class DefaultPipeline : IPipeline
         var tasks = new List<Task>();
         foreach (string target in _args.CodeTargets)
         {
-            ICodeTarget m = CodeTargetManager.Ins.GetCodeTarget(target);
+            ICodeTarget m = CodeTargetManager.Ins.CreateCodeTarget(target);
             tasks.Add(Task.Run(() => ProcessCodeTarget(target, m)));
         }
 
@@ -85,10 +85,10 @@ public class DefaultPipeline : IPipeline
             LoadDatas();
             string dataExporterName = EnvManager.Current.GetOptionOrDefault("", BuiltinOptionNames.DataExporter, true, "default");
             s_logger.Debug("dataExporter: {}", dataExporterName);
-            IDataExporter dataExporter = DataTargetManager.Ins.GetDataExporter(dataExporterName);
+            IDataExporter dataExporter = DataTargetManager.Ins.CreateDataExporter(dataExporterName);
             foreach (string mission in _args.DataTargets)
             {
-                IDataTarget dataTarget = DataTargetManager.Ins.GetTableExporter(mission);
+                IDataTarget dataTarget = DataTargetManager.Ins.CreateDataTarget(mission);
                 tasks.Add(Task.Run(() => ProcessDataTarget(mission, dataExporter, dataTarget)));
             }
         }

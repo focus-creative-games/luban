@@ -1,12 +1,11 @@
+using Luban.CustomBehaviour;
+
 namespace Luban.CodeTarget;
 
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-public class CodeTargetAttribute : Attribute
+public class CodeTargetAttribute : BehaviourBaseAttribute
 {
-    public string Name { get; }
-    
-    public CodeTargetAttribute(string name)
+    public CodeTargetAttribute(string name) : base(name)
     {
-        Name = name;
     }
 }

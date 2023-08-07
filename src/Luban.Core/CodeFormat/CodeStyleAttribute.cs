@@ -1,12 +1,11 @@
+using Luban.CustomBehaviour;
+
 namespace Luban.CodeFormat;
 
 [AttributeUsage(AttributeTargets.Class)]
-public class CodeStyleAttribute : Attribute
+public class CodeStyleAttribute : BehaviourBaseAttribute
 {
-    public string Name { get; }
-    
-    public CodeStyleAttribute(string name)
+    public CodeStyleAttribute(string name) : base(name)
     {
-        Name = name;
     }
 }

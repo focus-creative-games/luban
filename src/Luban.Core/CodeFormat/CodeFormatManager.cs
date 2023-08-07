@@ -1,5 +1,6 @@
 using System.Reflection;
 using Luban.CodeFormat.CodeStyles;
+using Luban.CustomBehaviour;
 using NLog;
 
 namespace Luban.CodeFormat;
@@ -10,17 +11,8 @@ public class CodeFormatManager
     
     public static CodeFormatManager Ins { get; } = new ();
 
-    private readonly Dictionary<string, INamingConventionFormatter> _formatters = new();
-
     private readonly Dictionary<string, ICodeStyle> _codeStyles = new();
-
-    public INamingConventionFormatter NoneFormatter { get; private set; }
     
-    public INamingConventionFormatter CamelCaseFormatter { get; private set; }
-    
-    public INamingConventionFormatter PascalCaseFormatter { get; private set; }
-    
-    public INamingConventionFormatter SnakeCaseFormatter { get; private set; }
     
     public ICodeStyle NoneCodeStyle { get; private set; }
     
@@ -40,13 +32,10 @@ public class CodeFormatManager
 
     public void Init()
     {
-        ScanRegisterFormatters(GetType().Assembly);
-        NoneFormatter = GetFormatter("none");
-        CamelCaseFormatter = GetFormatter("camel");
-        PascalCaseFormatter = GetFormatter("pascal");
-        SnakeCaseFormatter = GetFormatter("snake");
-        
-        ScanRegisterCodeStyle(GetType().Assembly);
+    }
+
+    public void PostInit()
+    {
         NoneCodeStyle = RegisterCodeStyle("none", "none", "none", "none", "none", "none", "none");
         CsharpDefaultCodeStyle = RegisterCodeStyle("csharp-default", "pascal", "pascal", "pascal", "pascal", "camel", "pascal");
         JavaDefaultCodeStyle = RegisterCodeStyle("java-default", "pascal", "pascal", "camel", "camel", "camel", "upper");
@@ -55,50 +44,17 @@ public class CodeFormatManager
         TypescriptDefaultCodeStyle = RegisterCodeStyle("typescript-default", "pascal", "pascal", "camel", "camel", "camel", "pascal");
         CppDefaultCodeStyle = RegisterCodeStyle("cpp-default", "snake", "pascal", "pascal", "pascal", "camel", "upper");
         PythonDefaultCodeStyle = RegisterCodeStyle("python-default", "snake", "pascal", "snake", "snake", "snake", "upper");
+
     }
 
-    public void ScanRegisterAll(Assembly assembly)
+    public INamingConventionFormatter CreateFormatter(string formatterName)
     {
-        ScanRegisterFormatters(assembly);
-        ScanRegisterCodeStyle(assembly);
-    }
-    
-    public void RegisterFormatter(string name, INamingConventionFormatter formatter)
-    {
-        if (!_formatters.TryAdd(name, formatter))
-        {
-            s_logger.Error("formatter:{} already exists", name);
-        }
+        return CustomBehaviourManager.Ins.CreateBehaviour<INamingConventionFormatter, NamingConventionAttribute>(formatterName);
     }
 
-    public INamingConventionFormatter GetFormatter(string formatterName)
-    {
-        return _formatters.TryGetValue(formatterName, out var formatter)
-            ? formatter
-            : throw new Exception($"formatter:{formatterName} not exists");
-    }
-
-    public void ScanRegisterFormatters(Assembly assembly)
-    {
-        foreach (var type in assembly.GetTypes())
-        {
-            if (type.GetCustomAttribute<NamingConventionAttribute>() is { } attr)
-            {
-                if (!typeof(INamingConventionFormatter).IsAssignableFrom(type))
-                {
-                    throw new Exception($"type:{type.FullName} not implement interface:{typeof(INamingConventionFormatter).FullName}");
-                }
-                var formatter = (INamingConventionFormatter)Activator.CreateInstance(type);
-                RegisterFormatter(attr.Name, formatter);
-            }
-        }
-    }
-    
     public ICodeStyle GetCodeStyle(string codeStyleName)
     {
-        return _codeStyles.TryGetValue(codeStyleName, out var codeStyle)
-            ? codeStyle
-            : throw new Exception($"code style:{codeStyleName} not exists");
+        return CustomBehaviourManager.Ins.CreateBehaviour<ICodeStyle, CodeStyleAttribute>(codeStyleName);
     }
 
     public void RegisterCodeStyle(string name, ICodeStyle codeStyle)

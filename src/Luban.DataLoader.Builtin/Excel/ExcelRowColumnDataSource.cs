@@ -6,7 +6,11 @@ using Luban.Utils;
 
 namespace Luban.DataLoader.Builtin.Excel;
 
-[DataLoader("xls", "xlsx", "xlm", "xlsm", "csv")]
+[DataLoader("xls")]
+[DataLoader("xlsx")]
+[DataLoader("xlsm")]
+[DataLoader("xlm")]
+[DataLoader("csv")]
 public class ExcelRowColumnDataSource : DataLoaderBase
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();

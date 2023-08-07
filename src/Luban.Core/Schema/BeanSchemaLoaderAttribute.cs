@@ -1,12 +1,11 @@
+using Luban.CustomBehaviour;
+
 namespace Luban.Schema;
 
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-public class BeanSchemaLoaderAttribute : Attribute
+public class BeanSchemaLoaderAttribute : BehaviourBaseAttribute
 {
-    public string Name { get; }
-    
-    public BeanSchemaLoaderAttribute(string name)
+    public BeanSchemaLoaderAttribute(string name) : base(name)
     {
-        Name = name;
     }
 }

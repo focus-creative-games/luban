@@ -1,4 +1,5 @@
 using System.Reflection;
+using Luban.CustomBehaviour;
 using Luban.Defs;
 using Luban.Types;
 using Luban.Utils;
@@ -10,8 +11,6 @@ public class DataLoaderManager
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
     
     public static DataLoaderManager Ins { get; } = new();
-
-    private readonly Dictionary<string, Func<IDataLoader>> _dataLoaderCreator = new();
 
     public void Init()
     {
@@ -87,46 +86,6 @@ public class DataLoaderManager
 
     public IDataLoader CreateDataLoader(string loaderName)
     {
-        if (_dataLoaderCreator.TryGetValue(loaderName, out var loaderCreator))
-        {
-            return loaderCreator();
-        }
-        throw new Exception($"data loader:{loaderName} not exists");
-    }
-    
-    public void RegisterDataLoader(string loaderName, Func<IDataLoader> creator)
-    {
-        if (!_dataLoaderCreator.TryAdd(loaderName, creator))
-        {
-            s_logger.Error("duplicate data source loader:{loaderName}", loaderName);
-            return;
-        }
-    }
-
-    public void ScanRegisterDataLoader(Assembly assembly)
-    {
-        foreach (var type in assembly.GetTypes())
-        {
-            if (type.IsAbstract || type.IsInterface)
-            {
-                continue;
-            }
-            if (typeof(IDataLoader).IsAssignableFrom(type))
-            {
-                var attr = type.GetCustomAttribute<DataLoaderAttribute>();
-                if (attr == null)
-                {
-                    continue;
-                }
-
-                foreach (var loaderName in attr.LoaderNames)
-                {
-                    if (!_dataLoaderCreator.TryAdd(loaderName, () => (IDataLoader)Activator.CreateInstance(type)))
-                    {
-                        s_logger.Error("duplicate data source loader:{loaderName}", loaderName);
-                    }
-                }
-            }
-        }
+        return CustomBehaviourManager.Ins.CreateBehaviour<IDataLoader, DataLoaderAttribute>(loaderName);
     }
 }

@@ -1,4 +1,5 @@
 using System.Reflection;
+using Luban.CustomBehaviour;
 using Luban.Utils;
 
 namespace Luban.Schema;
@@ -9,22 +10,18 @@ public class SchemaManager
     
     public static SchemaManager Ins { get; } = new ();
     
-    private readonly Dictionary<string, Func<ISchemaCollector>> _collectors = new();
-    
     private class LoaderInfo
     {
         public string Type { get; init; }
         
-        public string[] ExtNames { get; init; }
+        public string ExtName { get; init; }
         
         public int Priority { get; init; }
         
         public Func<ISchemaLoader> Creator { get; init; }
     }
     
-    private readonly List<LoaderInfo> _schemaLoaders = new();
-
-    private readonly Dictionary<string, Func<IBeanSchemaLoader>> _beanSchemaLoaders = new();
+    private readonly Dictionary<(string, string), LoaderInfo> _schemaLoaders = new();
 
     public void Init()
     {
@@ -33,56 +30,17 @@ public class SchemaManager
     
     public void ScanRegisterAll(Assembly assembly)
     {
-        ScanRegisterCollectorCreator(assembly);
         ScanRegisterSchemaLoaderCreator(assembly);
-        ScanRegisterBeanSchemaLoaderCreator(assembly);
     }
     
     public ISchemaCollector CreateSchemaCollector(string name)
     {
-        if (_collectors.TryGetValue(name, out var creator))
-        {
-            return creator();
-        }
-        throw new Exception($"can't find schema collector:{name}");
-    }
-    
-    public void RegisterCollectorCreator(string name, Func<ISchemaCollector> creator)
-    {
-        if (!_collectors.TryAdd(name, creator))
-        {
-            throw new Exception($"duplicate register schema collector:{name}");
-        }
-    }
-
-    public void ScanRegisterCollectorCreator(Assembly assembly)
-    {
-        foreach (var type in assembly.GetTypes())
-        {
-            if (type.IsDefined(typeof(SchemaCollectorAttribute), false))
-            {
-                var attr = type.GetCustomAttribute<SchemaCollectorAttribute>();
-                RegisterCollectorCreator(attr.Name, () => (ISchemaCollector)Activator.CreateInstance(type));
-            }
-        }
+        return CustomBehaviourManager.Ins.CreateBehaviour<ISchemaCollector, SchemaCollectorAttribute>(name);
     }
 
     public ISchemaLoader CreateSchemaLoader(string extName, string type, ISchemaCollector collector)
     {
-        LoaderInfo loader = null;
-        
-        foreach (var l in _schemaLoaders)
-        {
-            if (l.Type == type && l.ExtNames.Contains(extName))
-            {
-                if (loader == null || loader.Priority < l.Priority)
-                {
-                    loader = l;
-                }
-            }
-        }
-
-        if (loader == null)
+        if (!_schemaLoaders.TryGetValue((extName, type), out var loader))
         {
             throw new Exception($"can't find schema loader for type:{type} extName:{extName}");
         }
@@ -93,10 +51,18 @@ public class SchemaManager
         return schemaLoader;
     }
     
-    public void RegisterSchemaLoaderCreator(string type, string[] extNames, int priority, Func<ISchemaLoader> creator)
+    public void RegisterSchemaLoaderCreator(string type, string extName, int priority, Func<ISchemaLoader> creator)
     {
-        _schemaLoaders.Add(new LoaderInfo(){ Type = type, ExtNames = extNames, Priority = priority, Creator = creator});
-        s_logger.Debug("add schema loader creator. type:{} priority:{} extNames:{}", type, priority, StringUtil.CollectionToString(extNames));
+        if (_schemaLoaders.TryGetValue((extName, type), out var loader))
+        {
+            if (loader.Priority >= priority)
+            {
+                s_logger.Warn("schema loader creator already exist. type:{} priority:{} extName:{}", type, priority, extName);
+                return;
+            }
+        }
+        s_logger.Trace("add schema loader creator. type:{} priority:{} extName:{}", type, priority, extName);
+        _schemaLoaders[(extName, type)] = new LoaderInfo(){ Type = type, ExtName = extName, Priority = priority, Creator = creator};
     }
     
     public void ScanRegisterSchemaLoaderCreator(Assembly assembly)
@@ -108,7 +74,10 @@ public class SchemaManager
                 foreach (var attr in t.GetCustomAttributes<SchemaLoaderAttribute>())
                 {
                     var creator = () => (ISchemaLoader)Activator.CreateInstance(t);
-                    RegisterSchemaLoaderCreator(attr.Type, attr.ExtNames, attr.Priority, creator);
+                    foreach (var extName in attr.ExtNames)
+                    {
+                        RegisterSchemaLoaderCreator(attr.Type, extName, attr.Priority, creator);
+                    }
                 }
             }
         }
@@ -116,32 +85,6 @@ public class SchemaManager
     
     public IBeanSchemaLoader CreateBeanSchemaLoader(string type)
     {
-        if (_beanSchemaLoaders.TryGetValue(type, out var creator))
-        {
-            return creator();
-        }
-        else
-        {
-            throw new Exception($"can't find bean schema loader for type:{type}");
-        }
-    }
-    
-    public void RegisterBeanSchemaLoaderCreator(string type, Func<IBeanSchemaLoader> creator)
-    {
-        _beanSchemaLoaders.Add(type, creator);
-        s_logger.Debug("add bean schema loader creator. type:{}", type);
-    }
-    
-    public void ScanRegisterBeanSchemaLoaderCreator(Assembly assembly)
-    {
-        foreach (var t in assembly.GetTypes())
-        {
-            var attr = t.GetCustomAttribute<BeanSchemaLoaderAttribute>();
-            if (attr != null)
-            {
-                var creator = () => (IBeanSchemaLoader)Activator.CreateInstance(t);
-                RegisterBeanSchemaLoaderCreator(attr.Name, creator);
-            }
-        }
+        return CustomBehaviourManager.Ins.CreateBehaviour<IBeanSchemaLoader, BeanSchemaLoaderAttribute>(type);
     }
 }

@@ -1,12 +1,11 @@
+using Luban.CustomBehaviour;
+
 namespace Luban.DataTarget;
 
 [AttributeUsage(AttributeTargets.Class)]
-public class DataTargetAttribute : System.Attribute
+public class DataTargetAttribute : BehaviourBaseAttribute
 {
-    public string Name { get; }
-    
-    public DataTargetAttribute(string name)
+    public DataTargetAttribute(string name) : base(name)
     {
-        Name = name;
     }
 }

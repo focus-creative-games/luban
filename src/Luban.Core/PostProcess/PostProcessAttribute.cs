@@ -1,3 +1,5 @@
+using Luban.CustomBehaviour;
+
 namespace Luban.PostProcess;
 
 [Flags]
@@ -9,15 +11,12 @@ public enum TargetFileType
     DataConvert = 0x4,
 }
 
-public class PostProcessAttribute : Attribute
+public class PostProcessAttribute : BehaviourBaseAttribute
 {
-    public string Name { get; }
-    
     public TargetFileType TargetFileType { get; }
     
-    public PostProcessAttribute(string name, TargetFileType targetFileType)
+    public PostProcessAttribute(string name, TargetFileType targetFileType) : base(name)
     {
-        Name = name;
         TargetFileType = targetFileType;
     }
 }

@@ -1,12 +1,11 @@
+using Luban.CustomBehaviour;
+
 namespace Luban.Schema;
 
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-public class SchemaCollectorAttribute : System.Attribute
+[AttributeUsage(AttributeTargets.Class)]
+public class SchemaCollectorAttribute : BehaviourBaseAttribute
 {
-    public string Name { get; }
-    
-    public SchemaCollectorAttribute(string name)
+    public SchemaCollectorAttribute(string name) : base(name)
     {
-        Name = name;
     }
 }

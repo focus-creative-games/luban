@@ -1,6 +1,7 @@
 using System.Reflection;
 using Luban.CodeFormat;
 using Luban.CodeTarget;
+using Luban.CustomBehaviour;
 using Luban.DataLoader;
 using Luban.DataTarget;
 using Luban.OutputSaver;
@@ -36,6 +37,8 @@ public class SimpleLauncher
         DataTargetManager.Ins.Init();
         PluginManager.Ins.Init();
         PipelineManager.Ins.Init();
+        CustomBehaviourManager.Ins.Init();
+        CodeFormatManager.Ins.PostInit();
     }
 
     private void ScanRegisterBuiltinAssemblies(List<Assembly> builtinAssemblies)
@@ -48,15 +51,8 @@ public class SimpleLauncher
 
     private void ScanRegisterAssembly(Assembly assembly)
     {
+        CustomBehaviourManager.Ins.ScanRegisterBehaviour(assembly);
         SchemaManager.Ins.ScanRegisterAll(assembly);
-        CodeFormatManager.Ins.ScanRegisterAll(assembly);
-        CodeTargetManager.Ins.ScanResisterCodeTarget(assembly);
-        PostProcessManager.Ins.ScanRegisterPostProcess(assembly);
-        OutputSaverManager.Ins.ScanRegisterOutputSaver(assembly);
-        DataLoaderManager.Ins.ScanRegisterDataLoader(assembly);
-        ValidatorManager.Ins.ScanRegisterValidators(assembly);
-        DataTargetManager.Ins.ScanRegisterAll(assembly);
-        PipelineManager.Ins.ScanRegisterPipeline(assembly);
     }
 
     private void ScanRegisterPlugins()
