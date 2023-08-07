@@ -216,11 +216,14 @@ public class GenerationContext
         }
     }
     
-    public bool AnyValidatorFail()
+    public bool AnyValidatorFail
     {
-        lock (this)
+        get
         {
-            return _failedValidatorTypes.Count > 0;
+            lock (this)
+            {
+                return _failedValidatorTypes.Count > 0;
+            }
         }
     }
 }

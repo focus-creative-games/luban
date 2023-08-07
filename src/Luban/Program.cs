@@ -49,6 +49,9 @@ internal static class Program
         [Option("timeZone", Required = false, HelpText = "time zone")]
         public string TimeZone { get; set; }
         
+        [Option("validationFailAsError", Required = false, HelpText = "validation fail as error")]
+        public bool ValidationFailAsError { get; set; }
+        
         [Option('x', "xargs", Required = false, HelpText = "args like -x a=1 -x b=2")]
         public IEnumerable<string> Xargs { get; set; }
         
@@ -77,6 +80,11 @@ internal static class Program
         
         var pipeline = PipelineManager.Ins.CreatePipeline(opts.Pipeline);
         pipeline.Run(CreatePipelineArgs(opts));
+        if (opts.ValidationFailAsError && GenerationContext.Current.AnyValidatorFail)
+        {
+            s_logger.Error("have some validation failure. exit code: 1");
+            Environment.Exit(1);
+        }
         s_logger.Info("bye~");
     }
 
