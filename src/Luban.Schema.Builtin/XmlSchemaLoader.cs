@@ -122,7 +122,7 @@ public class XmlSchemaLoader : SchemaLoaderBase
         Collector.Add(en);
     }
     
-    private readonly List<string> _tableOptionalAttrs = new() { "index", "mode", "group", "patch_input", "comment", "readSchemaFromFile", "output", "options" };
+    private readonly List<string> _tableOptionalAttrs = new() { "index", "mode", "group", "comment", "readSchemaFromFile", "output", "tags" };
     private readonly List<string> _tableRequireAttrs = new() { "name", "value", "input" };
 
     private void AddTable(XElement e)
@@ -136,11 +136,9 @@ public class XmlSchemaLoader : SchemaLoaderBase
         string group = XmlUtil.GetOptionalAttribute(e, "group");
         string comment = XmlUtil.GetOptionalAttribute(e, "comment");
         string input = XmlUtil.GetRequiredAttribute(e, "input");
-        // string patchInput = XmlUtil.GetOptionalAttribute(e, "patch_input");
         string mode = XmlUtil.GetOptionalAttribute(e, "mode");
         string tags = XmlUtil.GetOptionalAttribute(e, "tags");
         string output = XmlUtil.GetOptionalAttribute(e, "output");
-        // string options = XmlUtil.GetOptionalAttribute(e, "options");
         Collector.Add(SchemaLoaderUtil.CreateTable( _fileName, name, module, valueType, index, mode, group, comment, defineFromFile, input, tags, output));
     }
     

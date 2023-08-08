@@ -22,8 +22,8 @@ public abstract class TemplateCodeTargetBase : CodeTargetBase
             LoopLimit = 0,
             NewLine = "\n",
         };
-        ctx.PushGlobal(new ContextTemplateExtends());
-        ctx.PushGlobal(new TypeTemplateExtends());
+        ctx.PushGlobal(new ContextTemplateExtension());
+        ctx.PushGlobal(new TypeTemplateExtension());
         OnCreateTemplateContext(ctx);
         return ctx;
     }

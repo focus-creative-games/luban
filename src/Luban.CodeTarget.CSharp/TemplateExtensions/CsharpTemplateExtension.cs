@@ -66,19 +66,13 @@ public class CsharpTemplateExtension : ScriptObject
     {
         return type.Apply(DataToStringVisitor.Ins, name);
     }
-
-    public static string FormatFieldName(ICodeStyle codeStyle, string name)
+    
+    public static string RefTypeName(DefField field)
     {
-        return codeStyle.FormatField(name);
-    }
-
-    public static string FormatPropertyName(ICodeStyle codeStyle, string name)
-    {
-        return codeStyle.FormatProperty(name);
-    }
-
-    public static string FormatEnumItemName(ICodeStyle codeStyle, string name)
-    {
-        return codeStyle.FormatEnumItemName(name);
+        if (field.CType.GetTag("ref") is { } value && GenerationContext.Current.Assembly.GetCfgTable(value) is { } cfgTable)
+        {
+            return cfgTable.ValueTType.Apply(DeclaringTypeNameVisitor.Ins);
+        }
+        return string.Empty;
     }
 }

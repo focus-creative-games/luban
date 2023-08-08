@@ -106,7 +106,7 @@ public class DefaultPipeline : IPipeline
         GenerationContext.CurrentCodeTarget = codeTarget;
         codeTarget.Handle(_genCtx, outputManifest);
         
-        if (EnvManager.Current.TryGetOption(name, BuiltinOptionNames.Postprocess, true, out string postProcessName))
+        if (EnvManager.Current.TryGetOption(name, BuiltinOptionNames.CodePostprocess, true, out string postProcessName))
         {
             var oldManifest = outputManifest;
             outputManifest = new OutputFileManifest();
@@ -126,7 +126,7 @@ public class DefaultPipeline : IPipeline
         var outputManifest = new OutputFileManifest();
         mission.Handle(_genCtx, dataTarget, outputManifest);
         
-        if (EnvManager.Current.TryGetOption(name, BuiltinOptionNames.Postprocess, true, out string postProcessName))
+        if (EnvManager.Current.TryGetOption(name, BuiltinOptionNames.DataPostprocess, true, out string postProcessName))
         {
             var oldManifest = outputManifest;
             outputManifest = new OutputFileManifest();

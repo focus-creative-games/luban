@@ -15,7 +15,7 @@ public class DefField
 
     public string Type { get; }
 
-    public TType CType { get; protected set; }
+    public TType CType { get; private set; }
 
     public bool IsNullable => CType.IsNullable;
 
@@ -38,12 +38,8 @@ public class DefField
     {
         return Tags != null && Tags.TryGetValue(attrName, out var value) ? value : null;
     }
-    
-    public string Index { get; private set; }
 
     public List<string> Groups { get; }
-
-    public DefField IndexField { get; private set; }
 
     public RawField RawField { get; }
 
@@ -109,37 +105,9 @@ public class DefField
         ValidatorManager.Ins.InitValidatorsRecursive(CType);
     }
 
-    private void ValidateIndex()
-    {
-        Index = CType.GetTag("index");
-
-        if (!string.IsNullOrEmpty(Index))
-        {
-            if ((CType is TArray tarray) && (tarray.ElementType is TBean b))
-            {
-                if ((IndexField = b.DefBean.GetField(Index)) == null)
-                {
-                    throw new Exception($"type:'{HostType.FullName}' field:'{Name}' index:'{Index}'. index not exist");
-                }
-            }
-            else if ((CType is TList tlist) && (tlist.ElementType is TBean tb))
-            {
-                if ((IndexField = tb.DefBean.GetField(Index)) == null)
-                {
-                    throw new Exception($"type:'{HostType.FullName}' field:'{Name}' index:'{Index}'. index not exist");
-                }
-            }
-            else
-            {
-                throw new Exception($"type:'{HostType.FullName}' field:'{Name}' index:'{Index}'. only array:bean or list:bean support index");
-            }
-        }
-    }
-
     public void PostCompile()
     {
         CType.PostCompile(this);
-        ValidateIndex();
         ValidatorManager.Ins.CompileValidatorsRecursive(CType, this);
     }
 

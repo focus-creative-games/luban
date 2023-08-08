@@ -49,9 +49,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
                 new() { Name = "read_schema_from_file", Type = "bool" },
                 new() { Name = "input", Type = "string" },
                 new() { Name = "output", Type = "string" },
-                // new RawField() { Name = "patch_input", Type = "string" },
                 new() { Name = "tags", Type = "string" },
-                // new RawField() { Name = "options", Type = "string" },
             }
         })
         {

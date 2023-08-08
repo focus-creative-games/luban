@@ -12,7 +12,9 @@ public static class BuiltinOptionNames
     
     public const string DataExporter = "dataExporter";
 
-    public const string Postprocess = "postprocess";
+    public const string CodePostprocess = "codePostprocess";
+
+    public const string DataPostprocess = "dataPostprocess";
     
     public const string OutputSaver = "outputSaver";
 

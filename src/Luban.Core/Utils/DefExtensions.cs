@@ -37,7 +37,7 @@ public static class DefExtensions
             {
                 if (typeMapper.Targets.Contains(targetName) && typeMapper.CodeTargets.Contains(codeTargetName))
                 {
-                    return typeMapper.Options.TryGetValue(BuiltinOptionNames.TypeMapperType, out var typeName) ? typeName : throw new Exception($"option type not found in type mapper of type {type.FullName}");
+                    return typeMapper.Options.TryGetValue(BuiltinOptionNames.TypeMapperType, out var typeName) ? typeName : throw new Exception($"option 'type' not found in type mapper of type {type.FullName} target:{targetName} codeTarget:{codeTargetName}");
                 }
             }
         }
@@ -54,7 +54,24 @@ public static class DefExtensions
             {
                 if (typeMapper.Targets.Contains(targetName) && typeMapper.CodeTargets.Contains(codeTargetName))
                 {
-                    return typeMapper.Options.TryGetValue(BuiltinOptionNames.TypeMapperConstructor, out var typeName) ? typeName : throw new Exception($"option type not found in type mapper of type {type.FullName}");
+                    return typeMapper.Options.TryGetValue(BuiltinOptionNames.TypeMapperConstructor, out var typeName) ? typeName : throw new Exception($"option 'constructor' not found in type mapper of type {type.FullName} target:{targetName} codeTarget:{codeTargetName}");
+                }
+            }
+        }
+        return null;
+    }
+
+    public static string GetTypeMapperOption(this DefTypeBase type, string option)
+    {
+        if (type.TypeMappers != null)
+        {
+            string targetName = GenerationContext.Current.Target.Name;
+            string codeTargetName = GenerationContext.CurrentCodeTarget.Name;
+            foreach (var typeMapper in type.TypeMappers)
+            {
+                if (typeMapper.Targets.Contains(targetName) && typeMapper.CodeTargets.Contains(codeTargetName))
+                {
+                    return typeMapper.Options.TryGetValue(option, out var typeName) ? typeName : throw new Exception($"option '{option}' not found in type mapper of type {type.FullName} target:{targetName} codeTarget:{codeTargetName}");
                 }
             }
         }

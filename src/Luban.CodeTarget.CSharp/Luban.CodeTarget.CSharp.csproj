@@ -44,6 +44,7 @@
             <Private>false</Private>
             <ExcludeAssets>runtime</ExcludeAssets>
         </ProjectReference>
+        <ProjectReference Include="..\Luban.DataValidator.Builtin\Luban.DataValidator.Builtin.csproj" />
     </ItemGroup>
 
     <ItemGroup>

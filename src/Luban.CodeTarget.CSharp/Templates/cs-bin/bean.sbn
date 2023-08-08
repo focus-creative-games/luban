@@ -11,6 +11,11 @@
 /// {{escape_comment __bean.comment}}
 /// </summary>
 {{~end~}}
+{{~
+func getRefName 
+    ret (format_property_name __code_style $0.name) + '_Ref'
+end
+~}}
 {{~if __bean.is_value_type~}}
 public partial struct {{__name}}
 {{~else~}}
@@ -21,6 +26,9 @@ public {{class_modifier __bean}} partial class {{__name}} : {{if parent_def_type
     {
         {{~ for field in export_fields ~}}
         {{deserialize '_buf' (format_property_name __code_style field.name) field.ctype}}
+            {{~if can_generate_ref field~}}
+        {{getRefName field}} = null;
+            {{~end~}}
         {{~end~}}
     }
 
@@ -46,6 +54,9 @@ public {{class_modifier __bean}} partial class {{__name}} : {{if parent_def_type
     /// </summary>
 {{~end~}}
     public readonly {{declaring_type_name field.ctype}} {{format_property_name __code_style field.name}};
+    {{~if can_generate_ref field~}}
+    public {{ref_type_name field}} {{getRefName field}};
+    {{~end~}}
     {{~end~}}
 
 {{~if !__bean.is_abstract_type && !__bean.is_value_type~}}

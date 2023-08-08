@@ -2,7 +2,7 @@ using Scriban.Runtime;
 
 namespace Luban.TemplateExtensions;
 
-public class ContextTemplateExtends : ScriptObject
+public class ContextTemplateExtension : ScriptObject
 {
     
 
