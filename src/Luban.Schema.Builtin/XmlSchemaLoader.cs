@@ -144,8 +144,8 @@ public class XmlSchemaLoader : SchemaLoaderBase
     
     private static readonly List<string> _fieldOptionalAttrs = new()
     {
-        "ref",
-        "path",
+        // "ref",
+        // "path",
         "group",
         "comment",
         "tags",
@@ -159,16 +159,16 @@ public class XmlSchemaLoader : SchemaLoaderBase
 
         string typeStr = XmlUtil.GetRequiredAttribute(e, "type");
 
-        string refStr = XmlUtil.GetOptionalAttribute(e, "ref");
-        if (!string.IsNullOrWhiteSpace(refStr))
-        {
-            typeStr = typeStr + "#(ref=" + refStr + ")";
-        }
-        string pathStr = XmlUtil.GetOptionalAttribute(e, "path");
-        if (!string.IsNullOrWhiteSpace(pathStr))
-        {
-            typeStr = typeStr + "#(path=" + pathStr + ")";
-        }
+        // string refStr = XmlUtil.GetOptionalAttribute(e, "ref");
+        // if (!string.IsNullOrWhiteSpace(refStr))
+        // {
+        //     typeStr = typeStr + "#(ref=" + refStr + ")";
+        // }
+        // string pathStr = XmlUtil.GetOptionalAttribute(e, "path");
+        // if (!string.IsNullOrWhiteSpace(pathStr))
+        // {
+        //     typeStr = typeStr + "#(path=" + pathStr + ")";
+        // }
 
         return SchemaLoaderUtil.CreateField(_fileName, XmlUtil.GetRequiredAttribute(e, "name"),
             typeStr,
