@@ -88,7 +88,7 @@ public class DefBean : DefTypeBase
 
     public DefField GetField(string index)
     {
-        return HierarchyFields.Where(f => f.Name == index).FirstOrDefault();
+        return HierarchyFields.FirstOrDefault(f => f.Name == index);
     }
 
     public bool TryGetField(string index, out DefField field, out int fieldIndexId)
@@ -97,7 +97,7 @@ public class DefBean : DefTypeBase
         {
             if (HierarchyFields[i].Name == index)
             {
-                field = (DefField)HierarchyFields[i];
+                field = HierarchyFields[i];
                 fieldIndexId = i;
                 return true;
             }
