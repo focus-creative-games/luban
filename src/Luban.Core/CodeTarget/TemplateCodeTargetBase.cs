@@ -67,6 +67,7 @@ public abstract class TemplateCodeTargetBase : CodeTargetBase
         var extraEnvs = new ScriptObject
         {
             { "__ctx", ctx},
+            { "__manager_name", ctx.Target.Manager },
             { "__name", table.Name },
             { "__namespace", table.Namespace },
             { "__namespace_with_top_module", table.NamespaceWithTopModule },
@@ -85,6 +86,7 @@ public abstract class TemplateCodeTargetBase : CodeTargetBase
         var extraEnvs = new ScriptObject
         {
             { "__ctx", ctx},
+            { "__manager_name", ctx.Target.Manager },
             { "__name", bean.Name },
             { "__namespace", bean.Namespace },
             { "__namespace_with_top_module", bean.NamespaceWithTopModule },

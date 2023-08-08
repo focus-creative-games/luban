@@ -66,13 +66,18 @@ public class CsharpTemplateExtension : ScriptObject
     {
         return type.Apply(DataToStringVisitor.Ins, name);
     }
-    
-    public static string RefTypeName(DefField field)
+
+    public static string GetValueOfNullableType(TType type, string varName)
     {
-        if (field.CType.GetTag("ref") is { } value && GenerationContext.Current.Assembly.GetCfgTable(value) is { } cfgTable)
-        {
-            return cfgTable.ValueTType.Apply(DeclaringTypeNameVisitor.Ins);
-        }
-        return string.Empty;
+        return type.Apply(IsRawNullableTypeVisitor.Ins) ? varName : $"{varName}.Value";
     }
+    
+    // public static string RefTypeName(DefField field)
+    // {
+    //     if (field.CType.GetTag("ref") is { } value && GenerationContext.Current.Assembly.GetCfgTable(value) is { } cfgTable)
+    //     {
+    //         return cfgTable.ValueTType.Apply(DeclaringTypeNameVisitor.Ins);
+    //     }
+    //     return string.Empty;
+    // }
 }

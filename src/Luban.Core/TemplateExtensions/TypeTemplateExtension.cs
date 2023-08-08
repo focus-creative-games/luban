@@ -33,10 +33,36 @@ public class TypeTemplateExtension : ScriptObject
         {
             return false;
         }
+
+        return GetRefTable(field) != null;
+    }
+    
+    public static DefTable GetRefTable(DefField field)
+    {
         if (field.CType.GetTag("ref") is { } value && GenerationContext.Current.Assembly.GetCfgTable(value) is { } cfgTable)
         {
-            return true;
+            return cfgTable;
         }
-        return false;
+        return null;
+    }
+    
+    public static TType GetRefType(DefField field)
+    {
+        return GetRefTable(field)?.ValueTType;
+    }
+    
+    public static bool IsFieldBeanNeedResolveRef(DefField field)
+    {
+        return field.CType is TBean bean && bean.DefBean.TypeMappers == null && !bean.DefBean.IsValueType;
+    }
+    
+    public static bool IsFieldArrayLikeNeedResolveRef(DefField field)
+    {
+        return field.CType.ElementType is TBean bean && bean.DefBean.TypeMappers == null && !bean.DefBean.IsValueType && field.CType is not TMap;
+    }
+
+    public static bool IsFieldMapNeedResolveRef(DefField field)
+    {
+        return field.CType is TMap { ValueType: TBean bean } && bean.DefBean.TypeMappers == null && !bean.DefBean.IsValueType;
     }
 }

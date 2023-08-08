@@ -65,6 +65,14 @@ public partial class {{__name}}
     public {{declaring_type_name value_type}} Get({{declaring_type_name key_type}} key) => _dataMap[key];
     public {{declaring_type_name value_type}} this[{{declaring_type_name key_type}} key] => _dataMap[key];
 
+    public void ResolveRef({{__manager_name}} tables)
+    {
+        foreach(var _v in _dataList)
+        {
+            _v.ResolveRef(tables);
+        }
+    }
+
         {{~else if __table.is_list_table ~}}
     private readonly System.Collections.Generic.List<{{declaring_type_name value_type}}> _dataList;
 
@@ -114,6 +122,14 @@ public partial class {{__name}}
     public {{declaring_type_name value_type}} GetBy{{format_property_name __code_style idx.index_field.name}}({{declaring_type_name idx.type}} key) => _dataMap_{{idx.index_field.name}}.TryGetValue(key, out {{declaring_type_name value_type}} __v) ? __v : null;
         {{~end~}}
     {{~end~}}
+    
+    public void ResolveRef({{__manager_name}} tables)
+    {
+        foreach(var _v in _dataList)
+        {
+            _v.ResolveRef(tables);
+        }
+    }
     {{~else~}}
 
      private readonly {{declaring_type_name value_type}} _data;
@@ -134,7 +150,11 @@ public partial class {{__name}}
 {{~end~}}
      public {{declaring_type_name field.ctype}} {{format_property_name __code_style field.name}} => _data.{{format_property_name __code_style field.name}};
     {{~end~}}
-
+    
+    public void ResolveRef({{__manager_name}} tables)
+    {
+        _data.ResolveRef(tables);
+    }
     {{~end~}}
 }
 
