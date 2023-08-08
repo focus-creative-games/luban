@@ -2,7 +2,7 @@
 
 public class CsEditorInitValueVisitor : CsCtorValueVisitor
 {
-    public static new CsEditorInitValueVisitor Ins { get; } = new CsEditorInitValueVisitor();
+    public static new CsEditorInitValueVisitor Ins { get; } = new();
 
     public override string Accept(TEnum type)
     {

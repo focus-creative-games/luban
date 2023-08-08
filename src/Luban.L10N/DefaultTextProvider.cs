@@ -40,7 +40,7 @@ public class DefaultTextProvider : ITextProvider
     {
         var ass = new DefAssembly(new RawAssembly()
         {
-            Targets = new List<RawTarget>{new RawTarget() { Name = "default", Manager = "Tables"}},
+            Targets = new List<RawTarget>{new() { Name = "default", Manager = "Tables"}},
         }, "default", new List<string>());
         
         var defTableRecordType = new DefBean(new RawBean()
@@ -53,7 +53,7 @@ public class DefaultTextProvider : ITextProvider
             Sep = "",
             Fields = new List<RawField>
             {
-                new RawField() { Name = _keyFieldName, Type = "string" },
+                new() { Name = _keyFieldName, Type = "string" },
             }
         })
         {

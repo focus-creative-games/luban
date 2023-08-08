@@ -2,7 +2,7 @@ namespace Luban.Any.TypeVisitors;
 
 class TypescriptRecursiveResolveVisitor : ITypeFuncVisitor<string, string, string>
 {
-    public static TypescriptRecursiveResolveVisitor Ins { get; } = new TypescriptRecursiveResolveVisitor();
+    public static TypescriptRecursiveResolveVisitor Ins { get; } = new();
 
     public string Accept(TBool type, string fieldName, string tablesName)
     {

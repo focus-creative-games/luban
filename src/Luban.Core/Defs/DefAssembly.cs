@@ -8,9 +8,9 @@ public class DefAssembly
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
     
-    public Dictionary<string, DefTypeBase> Types { get; } = new Dictionary<string, DefTypeBase>();
+    public Dictionary<string, DefTypeBase> Types { get; } = new();
 
-    public List<DefTypeBase> TypeList { get; } = new List<DefTypeBase>();
+    public List<DefTypeBase> TypeList { get; } = new();
 
     private readonly Dictionary<string, DefTypeBase> _notCaseSenseTypes = new();
 
@@ -143,10 +143,10 @@ public class DefAssembly
 
     public Dictionary<string, DefTable> TablesByName { get; } = new();
 
-    public Dictionary<string, DefTable> TablesByFullName { get; } = new Dictionary<string, DefTable>();
+    public Dictionary<string, DefTable> TablesByFullName { get; } = new();
 
 
-    private readonly Dictionary<(DefTypeBase, bool), TType> _cacheDefTTypes = new Dictionary<(DefTypeBase, bool), TType>();
+    private readonly Dictionary<(DefTypeBase, bool), TType> _cacheDefTTypes = new();
 
     public void AddCfgTable(DefTable table)
     {
@@ -190,7 +190,7 @@ public class DefAssembly
         return _externalTypesByTypeName.GetValueOrDefault(typeName);
     }
 
-    private static readonly HashSet<string> s_internalOriginTypes = new HashSet<string>
+    private static readonly HashSet<string> s_internalOriginTypes = new()
     {
         "datetime",
     };

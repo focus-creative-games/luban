@@ -10,7 +10,7 @@ namespace Luban.DataLoader.Builtin.DataVisitors;
 
 class LuaDataCreator : ITypeFuncVisitor<object, DefAssembly, DType>
 {
-    public static LuaDataCreator Ins { get; } = new LuaDataCreator();
+    public static LuaDataCreator Ins { get; } = new();
 
     public DType Accept(TBool type, object x, DefAssembly ass)
     {

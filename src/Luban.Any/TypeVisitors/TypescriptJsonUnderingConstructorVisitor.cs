@@ -2,7 +2,7 @@ namespace Luban.Any.TypeVisitors;
 
 class TypescriptJsonUnderingConstructorVisitor : ITypeFuncVisitor<string, string, string>
 {
-    public static TypescriptJsonUnderingConstructorVisitor Ins { get; } = new TypescriptJsonUnderingConstructorVisitor();
+    public static TypescriptJsonUnderingConstructorVisitor Ins { get; } = new();
 
     public string Accept(TBool type, string jsonVarName, string fieldName)
     {

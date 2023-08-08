@@ -2,7 +2,7 @@
 
 class TypescriptBinSerializeVisitor : DecoratorFuncVisitor<string, string, string>
 {
-    public static TypescriptBinSerializeVisitor Ins { get; } = new TypescriptBinSerializeVisitor();
+    public static TypescriptBinSerializeVisitor Ins { get; } = new();
 
     public override string DoAccept(TType type, string bytebufName, string fieldName)
     {

@@ -9,7 +9,7 @@ public class ResDataVisitor : IDataActionVisitor<TType, List<ResourceInfo>>
 {
     public const string ResTagName = "res";
 
-    public static ResDataVisitor Ins { get; } = new ResDataVisitor();
+    public static ResDataVisitor Ins { get; } = new();
 
     public void Accept(DBool type, TType x, List<ResourceInfo> y)
     {

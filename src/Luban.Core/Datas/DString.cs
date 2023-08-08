@@ -4,7 +4,7 @@ namespace Luban.Datas;
 
 public class DString : DType<string>
 {
-    private static readonly DString s_empty = new DString("");
+    private static readonly DString s_empty = new("");
 
     public static DString ValueOf(string s)
     {

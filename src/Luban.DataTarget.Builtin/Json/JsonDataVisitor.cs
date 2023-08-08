@@ -9,7 +9,7 @@ namespace Luban.DataExporter.Builtin.Json;
 
 public class JsonDataVisitor : IDataActionVisitor<Utf8JsonWriter>
 {
-    public static JsonDataVisitor Ins { get; } = new JsonDataVisitor();
+    public static JsonDataVisitor Ins { get; } = new();
 
     public void Accept(DBool type, Utf8JsonWriter x)
     {

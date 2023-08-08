@@ -10,7 +10,7 @@ namespace Luban.DataExporter.Builtin.Xml;
 
 public class XmlDataVisitor : IDataActionVisitor<XmlWriter>
 {
-    public static XmlDataVisitor Ins { get; } = new XmlDataVisitor();
+    public static XmlDataVisitor Ins { get; } = new();
 
     public void Accept(DBool type, XmlWriter w)
     {

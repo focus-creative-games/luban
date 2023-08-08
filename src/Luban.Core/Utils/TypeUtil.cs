@@ -181,7 +181,7 @@ public static class TypeUtil
         return id;
     }
 
-    private static readonly HashSet<string> s_reserveNames = new HashSet<string>()
+    private static readonly HashSet<string> s_reserveNames = new()
     {
         "end",
         "base",

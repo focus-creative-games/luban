@@ -4,7 +4,7 @@ namespace Luban.Datas;
 
 public class DFloat : DType<float>
 {
-    public static DFloat Default { get; } = new DFloat(0);
+    public static DFloat Default { get; } = new(0);
 
     public override string TypeName => "float";
 

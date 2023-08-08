@@ -2,7 +2,7 @@ namespace Luban.Any.TypeVisitors;
 
 class EditorUeCppTypeJsonValueTypeNameVisitor : ITypeFuncVisitor<string>
 {
-    public static EditorUeCppTypeJsonValueTypeNameVisitor Ins { get; } = new EditorUeCppTypeJsonValueTypeNameVisitor();
+    public static EditorUeCppTypeJsonValueTypeNameVisitor Ins { get; } = new();
 
     public string Accept(TBool type)
     {

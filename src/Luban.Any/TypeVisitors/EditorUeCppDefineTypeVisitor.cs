@@ -2,7 +2,7 @@ namespace Luban.Any.TypeVisitors;
 
 class EditorUeCppDefineTypeVisitor : UeBpCppDefineTypeVisitor
 {
-    public static new EditorUeCppDefineTypeVisitor Ins { get; } = new EditorUeCppDefineTypeVisitor();
+    public static new EditorUeCppDefineTypeVisitor Ins { get; } = new();
 
 
     public override string Accept(TEnum type)

@@ -5,7 +5,7 @@ namespace Luban.CodeTarget.CSharp.TypeVisitors;
 
 public class CtorDefaultValueVisitor : DecoratorFuncVisitor<string>
 {
-    public static CtorDefaultValueVisitor Ins { get; } = new CtorDefaultValueVisitor();
+    public static CtorDefaultValueVisitor Ins { get; } = new();
 
     public override string DoAccept(TType type)
     {

@@ -8,9 +8,9 @@ namespace Luban.Plugin;
 public class PluginManager
 {
     private static readonly ILogger s_logger = LogManager.GetCurrentClassLogger();
-    public static PluginManager Ins { get; } = new PluginManager();
+    public static PluginManager Ins { get; } = new();
     
-    private readonly List<IPlugin> _plugins = new List<IPlugin>();
+    private readonly List<IPlugin> _plugins = new();
 
     public IReadOnlyList<IPlugin> Plugins => _plugins;
 

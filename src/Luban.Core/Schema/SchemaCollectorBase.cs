@@ -6,18 +6,18 @@ public abstract class SchemaCollectorBase : ISchemaCollector
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
-    private readonly List<RawEnum> _enums = new List<RawEnum>();
-    private readonly List<RawBean> _beans = new List<RawBean>();
+    private readonly List<RawEnum> _enums = new();
+    private readonly List<RawBean> _beans = new();
     private readonly HashSet<string> _externalSelectors = new();
     private readonly List<RawExternalType> _externalTypes = new();
 
     private readonly Dictionary<string, string> _envs = new();
 
-    private readonly List<RawTable> _tables = new List<RawTable>();
+    private readonly List<RawTable> _tables = new();
 
-    private readonly List<RawTarget> _targets = new List<RawTarget>();
+    private readonly List<RawTarget> _targets = new();
 
-    private readonly List<RawGroup> _groups = new List<RawGroup>();
+    private readonly List<RawGroup> _groups = new();
 
     private readonly List<RawRefGroup> _refGroups = new();
     

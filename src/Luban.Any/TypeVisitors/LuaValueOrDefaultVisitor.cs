@@ -2,7 +2,7 @@ namespace Luban.Any.TypeVisitors;
 
 public class LuaValueOrDefaultVisitor : ITypeFuncVisitor<string, string>
 {
-    public static LuaValueOrDefaultVisitor Ins { get; } = new LuaValueOrDefaultVisitor();
+    public static LuaValueOrDefaultVisitor Ins { get; } = new();
 
     public string Accept(TBool type, string x)
     {

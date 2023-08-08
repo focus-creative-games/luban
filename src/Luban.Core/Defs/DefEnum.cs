@@ -38,7 +38,7 @@ public class DefEnum : DefTypeBase
 
     public bool IsUniqueItemId { get; }
 
-    public List<Item> Items { get; } = new List<Item>();
+    public List<Item> Items { get; } = new();
 
     private readonly Dictionary<string, int> _nameOrAlias2Value = new();
 

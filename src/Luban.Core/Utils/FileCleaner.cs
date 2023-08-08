@@ -4,9 +4,9 @@ public class FileCleaner
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
-    private readonly HashSet<string> _outputDirs = new HashSet<string>();
-    private readonly HashSet<string> _savedFileOrDirs = new HashSet<string>();
-    private readonly HashSet<string> _ignoreFileExtensions = new HashSet<string>();
+    private readonly HashSet<string> _outputDirs = new();
+    private readonly HashSet<string> _savedFileOrDirs = new();
+    private readonly HashSet<string> _ignoreFileExtensions = new();
 
 
     public void AddIgnoreExtension(string ext)

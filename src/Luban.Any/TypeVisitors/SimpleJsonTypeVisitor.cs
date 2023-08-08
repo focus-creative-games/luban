@@ -2,7 +2,7 @@ namespace Luban.Any.TypeVisitors;
 
 class SimpleJsonTypeVisitor : AllTrueVisitor
 {
-    public static SimpleJsonTypeVisitor Ins { get; } = new SimpleJsonTypeVisitor();
+    public static SimpleJsonTypeVisitor Ins { get; } = new();
 
     public override bool Accept(TEnum type)
     {

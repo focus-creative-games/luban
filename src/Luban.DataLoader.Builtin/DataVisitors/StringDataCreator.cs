@@ -6,7 +6,7 @@ namespace Luban.DataLoader.Builtin.DataVisitors;
 
 class StringDataCreator : ITypeFuncVisitor<string, DType>
 {
-    public static StringDataCreator Ins { get; } = new StringDataCreator();
+    public static StringDataCreator Ins { get; } = new();
 
     public DType Accept(TBool type, string x)
     {

@@ -2,7 +2,7 @@ namespace Luban.Any.TypeVisitors;
 
 public class CppDefineTypeName : DecoratorFuncVisitor<string>
 {
-    public static CppDefineTypeName Ins { get; } = new CppDefineTypeName();
+    public static CppDefineTypeName Ins { get; } = new();
 
     public override string DoAccept(TType type)
     {

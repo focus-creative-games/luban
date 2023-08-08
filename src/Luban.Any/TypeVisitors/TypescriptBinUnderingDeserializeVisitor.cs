@@ -2,7 +2,7 @@ namespace Luban.Any.TypeVisitors;
 
 public class TypescriptBinUnderingDeserializeVisitor : TypescriptBinUnderingDeserializeVisitorBase
 {
-    public static TypescriptBinUnderingDeserializeVisitor Ins { get; } = new TypescriptBinUnderingDeserializeVisitor();
+    public static TypescriptBinUnderingDeserializeVisitor Ins { get; } = new();
 
     public override string Accept(TBean type, string bufVarName, string fieldName)
     {

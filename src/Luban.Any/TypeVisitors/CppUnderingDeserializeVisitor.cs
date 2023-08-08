@@ -2,7 +2,7 @@ namespace Luban.Any.TypeVisitors;
 
 class CppUnderingDeserializeVisitor : ITypeFuncVisitor<string, string, string>
 {
-    public static CppUnderingDeserializeVisitor Ins { get; } = new CppUnderingDeserializeVisitor();
+    public static CppUnderingDeserializeVisitor Ins { get; } = new();
 
     public string Accept(TBool type, string bufName, string fieldName)
     {

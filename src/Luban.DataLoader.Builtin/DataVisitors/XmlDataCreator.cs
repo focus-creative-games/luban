@@ -9,7 +9,7 @@ namespace Luban.DataLoader.Builtin.DataVisitors;
 
 class XmlDataCreator : ITypeFuncVisitor<XElement, DefAssembly, DType>
 {
-    public static XmlDataCreator Ins { get; } = new XmlDataCreator();
+    public static XmlDataCreator Ins { get; } = new();
 
     public DType Accept(TBool type, XElement x, DefAssembly ass)
     {

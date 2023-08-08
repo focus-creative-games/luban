@@ -2,7 +2,7 @@
 
 public class CsEditorUnderlyingDefineTypeName : CsUnderingDefineTypeName
 {
-    public static new CsEditorUnderlyingDefineTypeName Ins { get; } = new CsEditorUnderlyingDefineTypeName();
+    public static new CsEditorUnderlyingDefineTypeName Ins { get; } = new();
 
     public override string Accept(TText type)
     {

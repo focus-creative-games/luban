@@ -71,7 +71,7 @@ public static class SheetLoadUtil
     }
 
 
-    private static readonly HashSet<string> s_knownSpecialTags = new HashSet<string>
+    private static readonly HashSet<string> s_knownSpecialTags = new()
     {
         "var",
         "+",

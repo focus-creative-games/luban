@@ -10,7 +10,7 @@ public abstract class TType
 
     public Dictionary<string, string> Tags { get; }
 
-    public List<IDataValidator> Validators { get; } = new List<IDataValidator>();
+    public List<IDataValidator> Validators { get; } = new();
 
     protected TType(bool isNullable, Dictionary<string, string> tags)
     {

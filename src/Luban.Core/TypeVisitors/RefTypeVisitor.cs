@@ -5,7 +5,7 @@ namespace Luban.TypeVisitors;
 
 class RefTypeVisitor : ITypeActionVisitor<Dictionary<string, DefTypeBase>>
 {
-    public static RefTypeVisitor Ins { get; } = new RefTypeVisitor();
+    public static RefTypeVisitor Ins { get; } = new();
 
     public void Accept(TBool type, Dictionary<string, DefTypeBase> x)
     {

@@ -2,7 +2,7 @@ namespace Luban.Serialization;
 
 public class ByteBufPool
 {
-    private readonly Stack<ByteBuf> _bufs = new Stack<ByteBuf>();
+    private readonly Stack<ByteBuf> _bufs = new();
     private readonly int _maxCacheNum;
 
     private readonly Action<ByteBuf> _freeAction;

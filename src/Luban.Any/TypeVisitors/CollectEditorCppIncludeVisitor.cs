@@ -2,7 +2,7 @@ namespace Luban.Any.TypeVisitors;
 
 class CollectEditorCppIncludeVisitor : ITypeActionVisitor<HashSet<DefTypeBase>>
 {
-    public static CollectEditorCppIncludeVisitor Ins { get; } = new CollectEditorCppIncludeVisitor();
+    public static CollectEditorCppIncludeVisitor Ins { get; } = new();
 
 
     public void Collect(DefBean bean, HashSet<DefTypeBase> x)

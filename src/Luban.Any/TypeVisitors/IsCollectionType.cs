@@ -2,7 +2,7 @@ namespace Luban.Any.TypeVisitors;
 
 public class IsCollectionType : AllFalseVisitor
 {
-    public static IsCollectionType Ins { get; } = new IsCollectionType();
+    public static IsCollectionType Ins { get; } = new();
 
 
     public override bool Accept(TArray type)

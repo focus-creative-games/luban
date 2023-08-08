@@ -4,7 +4,7 @@ namespace Luban.PostProcess;
 
 public class PostProcessManager
 {
-    public static PostProcessManager Ins { get; } = new PostProcessManager();
+    public static PostProcessManager Ins { get; } = new();
     
     public void Init()
     {

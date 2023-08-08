@@ -9,7 +9,7 @@ public abstract class CodeTargetBase : ICodeTarget
     
     public virtual void Handle(GenerationContext ctx, OutputFileManifest manifest)
     {
-        List<Task<OutputFile>> tasks = new();
+        var tasks = new List<Task<OutputFile>>();
         tasks.Add(Task.Run(() =>
         {
             var writer = new CodeWriter();

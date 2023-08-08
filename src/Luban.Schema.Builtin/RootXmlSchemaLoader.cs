@@ -50,7 +50,7 @@ public class RootXmlSchemaLoader : SchemaLoaderBase, IRootSchemaLoader
         }
     }
 
-    private static readonly List<string> _envRequireAttrs = new List<string> { "name", "value", };
+    private static readonly List<string> _envRequireAttrs = new() { "name", "value", };
 
     private void AddEnv(XElement e)
     {
@@ -59,8 +59,8 @@ public class RootXmlSchemaLoader : SchemaLoaderBase, IRootSchemaLoader
         Collector.AddEnv(name, XmlUtil.GetRequiredAttribute(e, "value"));
     }
     
-     private static readonly List<string> _ImportRequireAttrs = new List<string> { "name" };
-     private static readonly List<string> _ImportOptinalAttrs = new List<string> { "type" };
+     private static readonly List<string> _ImportRequireAttrs = new() { "name" };
+     private static readonly List<string> _ImportOptinalAttrs = new() { "type" };
      
     private void AddImport(XElement e)
     {
@@ -81,8 +81,8 @@ public class RootXmlSchemaLoader : SchemaLoaderBase, IRootSchemaLoader
         }
     }
 
-    private static readonly List<string> _groupOptionalAttrs = new List<string> { "default" };
-    private static readonly List<string> _groupRequireAttrs = new List<string> { "name" };
+    private static readonly List<string> _groupOptionalAttrs = new() { "default" };
+    private static readonly List<string> _groupRequireAttrs = new() { "name" };
 
     private void AddGroup(XElement e)
     {
@@ -92,7 +92,7 @@ public class RootXmlSchemaLoader : SchemaLoaderBase, IRootSchemaLoader
         Collector.Add(new RawGroup(){ Names = groupNames, IsDefault = isDefault});
     }
 
-    private readonly List<string> _targetAttrs = new List<string> { "name", "manager", "group", "topModule" };
+    private readonly List<string> _targetAttrs = new() { "name", "manager", "group", "topModule" };
 
     private void AddTarget(XElement e)
     {
@@ -109,7 +109,7 @@ public class RootXmlSchemaLoader : SchemaLoaderBase, IRootSchemaLoader
         Collector.Add(XmlSchemaUtil.CreateRefGroup(_xmlFileName, e));
     }
     
-    private static readonly List<string> _selectorRequiredAttrs = new List<string> { "name" };
+    private static readonly List<string> _selectorRequiredAttrs = new() { "name" };
     private void AddExternalSelector(XElement e)
     {
         // ValidAttrKeys(_rootXml, e, null, _selectorRequiredAttrs);

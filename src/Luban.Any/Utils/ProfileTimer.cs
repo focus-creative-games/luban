@@ -15,7 +15,7 @@ public class ProfileTimer
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
-    private readonly Stack<Phase> phaseStack = new Stack<Phase>();
+    private readonly Stack<Phase> phaseStack = new();
 
     public void StartPhase(string name)
     {

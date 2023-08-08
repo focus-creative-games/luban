@@ -4,7 +4,7 @@ namespace Luban.Datas;
 
 public class DByte : DType<byte>
 {
-    public static DByte Default { get; } = new DByte(0);
+    public static DByte Default { get; } = new(0);
 
     public static DByte ValueOf(byte x)
     {

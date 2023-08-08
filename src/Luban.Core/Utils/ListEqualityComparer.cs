@@ -4,7 +4,7 @@ namespace Luban.Utils;
 
 public class ListEqualityComparer<T> : IEqualityComparer<List<T>>
 {
-    public static ListEqualityComparer<T> Default { get; } = new ListEqualityComparer<T>();
+    public static ListEqualityComparer<T> Default { get; } = new();
 
     public bool Equals(List<T> x, List<T> y)
     {

@@ -68,11 +68,11 @@ public class XmlSchemaLoader : SchemaLoaderBase
         }
     }
 
-    private static readonly List<string> _enumOptionalAttrs = new List<string> { "flags", "comment", "tags", "unique", "group" };
-    private static readonly List<string> _enumRequiredAttrs = new List<string> { "name" };
+    private static readonly List<string> _enumOptionalAttrs = new() { "flags", "comment", "tags", "unique", "group" };
+    private static readonly List<string> _enumRequiredAttrs = new() { "name" };
     
-    private static readonly List<string> _enumItemOptionalAttrs = new List<string> { "value", "alias", "comment", "tags" };
-    private static readonly List<string> _enumItemRequiredAttrs = new List<string> { "name" };
+    private static readonly List<string> _enumItemOptionalAttrs = new() { "value", "alias", "comment", "tags" };
+    private static readonly List<string> _enumItemRequiredAttrs = new() { "name" };
 
     private void AddEnum(XElement e)
     {
@@ -122,8 +122,8 @@ public class XmlSchemaLoader : SchemaLoaderBase
         Collector.Add(en);
     }
     
-    private readonly List<string> _tableOptionalAttrs = new List<string> { "index", "mode", "group", "patch_input", "comment", "readSchemaFromFile", "output", "options" };
-    private readonly List<string> _tableRequireAttrs = new List<string> { "name", "value", "input" };
+    private readonly List<string> _tableOptionalAttrs = new() { "index", "mode", "group", "patch_input", "comment", "readSchemaFromFile", "output", "options" };
+    private readonly List<string> _tableRequireAttrs = new() { "name", "value", "input" };
 
     private void AddTable(XElement e)
     {
@@ -153,7 +153,7 @@ public class XmlSchemaLoader : SchemaLoaderBase
         "tags",
     };
 
-    private static readonly List<string> _fieldRequireAttrs = new List<string> { "name", "type" };
+    private static readonly List<string> _fieldRequireAttrs = new() { "name", "type" };
 
     protected RawField CreateField(XElement e)
     {
@@ -181,8 +181,8 @@ public class XmlSchemaLoader : SchemaLoaderBase
         );
     }
 
-    private static readonly List<string> _beanOptionsAttrs = new List<string> { "parent", "valueType", "alias", "sep", "comment", "tags", "group" };
-    private static readonly List<string> _beanRequireAttrs = new List<string> { "name" };
+    private static readonly List<string> _beanOptionsAttrs = new() { "parent", "valueType", "alias", "sep", "comment", "tags", "group" };
+    private static readonly List<string> _beanRequireAttrs = new() { "name" };
 
     private TypeMapper CreateTypeMapper(XElement e, string fullName)
     {

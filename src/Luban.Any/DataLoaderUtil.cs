@@ -32,7 +32,7 @@ public static class DataLoaderUtil
             }
             else
             {
-                return new List<InputFileInfo> { new InputFileInfo() { OriginFile = file, ActualFile = actualFullPath, SheetName = sheetName, MD5 = fileOrDirContent.Md5 } };
+                return new List<InputFileInfo> { new() { OriginFile = file, ActualFile = actualFullPath, SheetName = sheetName, MD5 = fileOrDirContent.Md5 } };
             }
 
             collectTasks.Add(Task.Run(async () =>

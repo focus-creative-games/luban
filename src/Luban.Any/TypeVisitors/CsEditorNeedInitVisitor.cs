@@ -2,7 +2,7 @@
 
 public class CsEditorNeedInitVisitor : CsNeedInitVisitor
 {
-    public static new CsEditorNeedInitVisitor Ins { get; } = new CsEditorNeedInitVisitor();
+    public static new CsEditorNeedInitVisitor Ins { get; } = new();
 
     public override bool Accept(TEnum type)
     {

@@ -2,7 +2,7 @@ namespace Luban.Any.TypeVisitors;
 
 class UeBpCppDefineTypeVisitor : ITypeFuncVisitor<string>
 {
-    public static UeBpCppDefineTypeVisitor Ins { get; } = new UeBpCppDefineTypeVisitor();
+    public static UeBpCppDefineTypeVisitor Ins { get; } = new();
 
     public string Accept(TBool type)
     {

@@ -2,7 +2,7 @@ namespace Luban.Any.TypeVisitors;
 
 public class LuaConstValueVisitor : CsConstValueVisitor
 {
-    public static new LuaConstValueVisitor Ins { get; } = new LuaConstValueVisitor();
+    public static new LuaConstValueVisitor Ins { get; } = new();
 
     public override string Accept(TLong type, string x)
     {

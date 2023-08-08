@@ -4,11 +4,11 @@ public class MultiFileWatcher
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
-    private readonly List<FileSystemWatcher> _watchers = new List<FileSystemWatcher>();
+    private readonly List<FileSystemWatcher> _watchers = new();
 
     private readonly Action _onChange;
 
-    private readonly object _watchLocker = new object();
+    private readonly object _watchLocker = new();
     private bool _watchDirChange = false;
 
     public MultiFileWatcher(string[] files, Action onChange)
@@ -43,7 +43,7 @@ public class MultiFileWatcher
         }
     }
 
-    private static readonly List<string> _filterSuffixs = new List<string>
+    private static readonly List<string> _filterSuffixs = new()
     {
         ".xlsx",
         ".csv",

@@ -14,9 +14,9 @@ public class Title
 
     public Dictionary<string, string> Tags { get; set; }
 
-    public Dictionary<string, Title> SubTitles { get; set; } = new Dictionary<string, Title>();
+    public Dictionary<string, Title> SubTitles { get; set; } = new();
 
-    public List<Title> SubTitleList { get; set; } = new List<Title>();
+    public List<Title> SubTitleList { get; set; } = new();
 
     public bool HasSubTitle => SubTitleList.Count > 0;
 
@@ -58,7 +58,7 @@ public class Title
         }
     }
 
-    private static HashSet<string> s_validTags = new HashSet<string>()
+    private static HashSet<string> s_validTags = new()
     {
         "sep",
         "non_empty",

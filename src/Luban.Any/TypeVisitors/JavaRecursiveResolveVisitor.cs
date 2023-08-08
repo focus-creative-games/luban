@@ -2,7 +2,7 @@ namespace Luban.Any.TypeVisitors;
 
 class JavaRecursiveResolveVisitor : ITypeFuncVisitor<string, string, string>
 {
-    public static JavaRecursiveResolveVisitor Ins { get; } = new JavaRecursiveResolveVisitor();
+    public static JavaRecursiveResolveVisitor Ins { get; } = new();
 
     public string Accept(TBool type, string fieldName, string tablesName)
     {

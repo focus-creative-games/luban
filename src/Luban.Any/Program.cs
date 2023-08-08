@@ -6,7 +6,7 @@ internal class Program
 {
     public class AllCommandLineOptions
     {
-        public List<string> JobArguments { get; set; } = new List<string>();
+        public List<string> JobArguments { get; set; } = new();
 
         public bool Verbose { get; set; }
 

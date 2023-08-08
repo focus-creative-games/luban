@@ -5,8 +5,8 @@ namespace Luban.Datas;
 public class DBool : DType<bool>
 {
 
-    private static readonly DBool s_false = new DBool(false);
-    private static readonly DBool s_true = new DBool(true);
+    private static readonly DBool s_false = new(false);
+    private static readonly DBool s_true = new(true);
 
     public static DBool ValueOf(bool x)
     {

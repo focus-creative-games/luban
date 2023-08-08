@@ -5,7 +5,7 @@ namespace Luban.DataVisitors;
 
 public class ToStringVisitor : ToLiteralVisitorBase
 {
-    public static ToStringVisitor Ins { get; } = new ToStringVisitor();
+    public static ToStringVisitor Ins { get; } = new();
 
     public override string Accept(DBean type)
     {

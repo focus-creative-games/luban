@@ -2,7 +2,7 @@ namespace Luban.Any.TypeVisitors;
 
 class JavaDeserializeVisitor : DecoratorFuncVisitor<string, string, string>
 {
-    public static JavaDeserializeVisitor Ins { get; } = new JavaDeserializeVisitor();
+    public static JavaDeserializeVisitor Ins { get; } = new();
 
     public override string DoAccept(TType type, string bufName, string fieldName)
     {

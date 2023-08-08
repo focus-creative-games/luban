@@ -2,7 +2,7 @@ namespace Luban.Any.TypeVisitors;
 
 public class JavaDefineTypeName : ITypeFuncVisitor<string>
 {
-    public static JavaDefineTypeName Ins { get; } = new JavaDefineTypeName();
+    public static JavaDefineTypeName Ins { get; } = new();
 
     public virtual string Accept(TBool type)
     {

@@ -4,7 +4,7 @@ namespace Luban.Datas;
 
 public class DLong : DType<long>
 {
-    public static DLong Default { get; } = new DLong(0);
+    public static DLong Default { get; } = new(0);
     private const int POOL_SIZE = 128;
     private static readonly DLong[] s_pool = new DLong[POOL_SIZE];
 

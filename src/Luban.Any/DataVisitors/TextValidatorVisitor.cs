@@ -7,7 +7,7 @@ namespace Luban.Any.DataVisitors;
 /// </summary>
 class TextValidatorVisitor : IDataActionVisitor<RawTextTable>
 {
-    public static TextValidatorVisitor Ins { get; } = new TextValidatorVisitor();
+    public static TextValidatorVisitor Ins { get; } = new();
 
     public void Accept(DBool type, RawTextTable x)
     {

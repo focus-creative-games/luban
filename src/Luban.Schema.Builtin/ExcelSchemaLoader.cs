@@ -40,24 +40,24 @@ public class ExcelSchemaLoader : SchemaLoaderBase
             Sep = "",
             Fields = new List<RawField>
             {
-                new RawField() { Name = "full_name", Type = "string" },
-                new RawField() { Name = "value_type", Type = "string" },
-                new RawField() { Name = "index", Type = "string" },
-                new RawField() { Name = "mode", Type = "string" },
-                new RawField() { Name = "group", Type = "string" },
-                new RawField() { Name = "comment", Type = "string" },
-                new RawField() { Name = "read_schema_from_file", Type = "bool" },
-                new RawField() { Name = "input", Type = "string" },
-                new RawField() { Name = "output", Type = "string" },
+                new() { Name = "full_name", Type = "string" },
+                new() { Name = "value_type", Type = "string" },
+                new() { Name = "index", Type = "string" },
+                new() { Name = "mode", Type = "string" },
+                new() { Name = "group", Type = "string" },
+                new() { Name = "comment", Type = "string" },
+                new() { Name = "read_schema_from_file", Type = "bool" },
+                new() { Name = "input", Type = "string" },
+                new() { Name = "output", Type = "string" },
                 // new RawField() { Name = "patch_input", Type = "string" },
-                new RawField() { Name = "tags", Type = "string" },
+                new() { Name = "tags", Type = "string" },
                 // new RawField() { Name = "options", Type = "string" },
             }
         })
         {
             Assembly = new DefAssembly(new RawAssembly()
             {
-                Targets = new List<RawTarget>{new RawTarget() { Name = "default", Manager = "Tables"}},
+                Targets = new List<RawTarget>{new() { Name = "default", Manager = "Tables"}},
             }, "default", new List<string>()),
         };
         defTableRecordType.PreCompile();
@@ -98,7 +98,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
     {
         var ass = new DefAssembly(new RawAssembly()
         {
-            Targets = new List<RawTarget>{new RawTarget() { Name = "default", Manager = "Tables"}},
+            Targets = new List<RawTarget>{new() { Name = "default", Manager = "Tables"}},
         }, "default", new List<string>());
 
         var enumItemType = new DefBean(new RawBean()
@@ -111,11 +111,11 @@ public class ExcelSchemaLoader : SchemaLoaderBase
             Sep = "",
             Fields = new List<RawField>
             {
-                new RawField() { Name = "name", Type = "string" },
-                new RawField() { Name = "alias", Type = "string" },
-                new RawField() { Name = "value", Type = "string" },
-                new RawField() { Name = "comment", Type = "string" },
-                new RawField() { Name = "tags", Type = "string" },
+                new() { Name = "name", Type = "string" },
+                new() { Name = "alias", Type = "string" },
+                new() { Name = "value", Type = "string" },
+                new() { Name = "comment", Type = "string" },
+                new() { Name = "tags", Type = "string" },
             }
         })
         {
@@ -136,12 +136,12 @@ public class ExcelSchemaLoader : SchemaLoaderBase
             Sep = "",
             Fields = new List<RawField>
             {
-                new RawField() { Name = "full_name", Type = "string" },
-                new RawField() { Name = "comment", Type = "string" },
-                new RawField() { Name = "flags", Type = "bool" },
-                new RawField() { Name = "tags", Type = "string" },
-                new RawField() { Name = "unique", Type = "bool" },
-                new RawField() { Name = "items", Type = "list,__EnumItem__" },
+                new() { Name = "full_name", Type = "string" },
+                new() { Name = "comment", Type = "string" },
+                new() { Name = "flags", Type = "bool" },
+                new() { Name = "tags", Type = "string" },
+                new() { Name = "unique", Type = "bool" },
+                new() { Name = "items", Type = "list,__EnumItem__" },
             }
         })
         {
@@ -195,7 +195,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
     {
         var ass = new DefAssembly(new RawAssembly()
         {
-            Targets = new List<RawTarget>{new RawTarget() { Name = "default", Manager = "Tables"}},
+            Targets = new List<RawTarget>{new() { Name = "default", Manager = "Tables"}},
         }, "default", new List<string>());
 
         var defBeanFieldType = new DefBean(new RawBean()
@@ -208,11 +208,11 @@ public class ExcelSchemaLoader : SchemaLoaderBase
             Sep = "",
             Fields = new List<RawField>
             {
-                new RawField() { Name = "name", Type = "string" },
-                new RawField() { Name = "type", Type = "string" },
-                new RawField() { Name = "group", Type = "string" },
-                new RawField() { Name = "comment", Type = "string" },
-                new RawField() { Name = "tags", Type = "string" },
+                new() { Name = "name", Type = "string" },
+                new() { Name = "type", Type = "string" },
+                new() { Name = "group", Type = "string" },
+                new() { Name = "comment", Type = "string" },
+                new() { Name = "tags", Type = "string" },
             }
         })
         {
@@ -235,14 +235,14 @@ public class ExcelSchemaLoader : SchemaLoaderBase
             Sep = "",
             Fields = new List<RawField>
             {
-                new RawField() { Name = "full_name", Type = "string" },
-                new RawField() {Name =  "parent", Type = "string" },
-                new RawField() { Name = "sep", Type = "string" },
-                new RawField() { Name = "alias", Type = "string" },
-                new RawField() { Name = "comment", Type = "string" },
-                new RawField() { Name = "tags", Type = "string" },
-                new RawField() { Name = "group", Type = "string" },
-                new RawField() { Name = "fields", Type = "list,__FieldInfo__" },
+                new() { Name = "full_name", Type = "string" },
+                new() {Name =  "parent", Type = "string" },
+                new() { Name = "sep", Type = "string" },
+                new() { Name = "alias", Type = "string" },
+                new() { Name = "comment", Type = "string" },
+                new() { Name = "tags", Type = "string" },
+                new() { Name = "group", Type = "string" },
+                new() { Name = "fields", Type = "list,__FieldInfo__" },
             }
         })
         {

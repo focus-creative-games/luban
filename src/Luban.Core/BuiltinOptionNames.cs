@@ -25,4 +25,8 @@ public static class BuiltinOptionNames
     public const string TextProviderFile = "textProviderFile";
 
     public const string TextKeyFieldName = "key";
+
+    public const string TypeMapperType = "type";
+    
+    public const string TypeMapperConstructor = "constructor";
 }

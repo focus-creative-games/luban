@@ -74,11 +74,15 @@ public class DefaultPipeline : IPipeline
     protected void ProcessTargets()
     {
         var tasks = new List<Task>();
-        foreach (string target in _args.CodeTargets)
+        tasks.Add(Task.Run(() =>
         {
-            ICodeTarget m = CodeTargetManager.Ins.CreateCodeTarget(target);
-            tasks.Add(Task.Run(() => ProcessCodeTarget(target, m)));
-        }
+            foreach (string target in _args.CodeTargets)
+            {
+                // code target doesn't support run in parallel
+                ICodeTarget m = CodeTargetManager.Ins.CreateCodeTarget(target);
+                ProcessCodeTarget(target, m);
+            }
+        }));
 
         if (_args.DataTargets.Count > 0)
         {
@@ -99,6 +103,7 @@ public class DefaultPipeline : IPipeline
     {
         s_logger.Info("process code target:{} begin", name);
         var outputManifest = new OutputFileManifest();
+        GenerationContext.CurrentCodeTarget = codeTarget;
         codeTarget.Handle(_genCtx, outputManifest);
         
         if (EnvManager.Current.TryGetOption(name, BuiltinOptionNames.Postprocess, true, out string postProcessName))

@@ -2,7 +2,7 @@ namespace Luban.Any.TypeVisitors;
 
 public class GoTypeNameVisitor : DecoratorFuncVisitor<string>
 {
-    public static GoTypeNameVisitor Ins { get; } = new GoTypeNameVisitor();
+    public static GoTypeNameVisitor Ins { get; } = new();
 
     public override string DoAccept(TType type)
     {

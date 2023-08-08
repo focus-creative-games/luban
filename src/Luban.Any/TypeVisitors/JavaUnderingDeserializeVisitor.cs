@@ -2,7 +2,7 @@ namespace Luban.Any.TypeVisitors;
 
 class JavaUnderingDeserializeVisitor : ITypeFuncVisitor<string, string, string>
 {
-    public static JavaUnderingDeserializeVisitor Ins { get; } = new JavaUnderingDeserializeVisitor();
+    public static JavaUnderingDeserializeVisitor Ins { get; } = new();
 
     public string Accept(TBool type, string bufName, string fieldName)
     {

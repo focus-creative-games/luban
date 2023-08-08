@@ -5,7 +5,7 @@ namespace Luban.CodeTarget.CSharp.TypeVisitors;
 
 public class DeclaringTypeNameVisitor : DecoratorFuncVisitor<string>
 {
-    public static DeclaringTypeNameVisitor Ins { get; } = new DeclaringTypeNameVisitor();
+    public static DeclaringTypeNameVisitor Ins { get; } = new();
 
     protected virtual ITypeFuncVisitor<string> UnderlyingVisitor => UnderlyingDeclaringTypeNameVisitor.Ins;
 

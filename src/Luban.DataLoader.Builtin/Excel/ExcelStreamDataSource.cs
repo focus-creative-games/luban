@@ -9,7 +9,7 @@ public class ExcelStreamDataSource : DataLoaderBase
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
-    private readonly List<StreamSheet> _sheets = new List<StreamSheet>();
+    private readonly List<StreamSheet> _sheets = new();
 
 
     public override void Load(string rawUrl, string sheetName, Stream stream)

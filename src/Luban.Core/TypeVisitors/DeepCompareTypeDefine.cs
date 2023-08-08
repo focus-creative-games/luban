@@ -6,7 +6,7 @@ namespace Luban.TypeVisitors;
 
 class DeepCompareTypeDefine : ITypeFuncVisitor<TType, Dictionary<DefTypeBase, bool>, HashSet<DefTypeBase>, bool>
 {
-    public static DeepCompareTypeDefine Ins { get; } = new DeepCompareTypeDefine();
+    public static DeepCompareTypeDefine Ins { get; } = new();
 
     private bool IsBaseDefineEqual(DefBean a, DefBean b)
     {

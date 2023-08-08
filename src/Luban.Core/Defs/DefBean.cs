@@ -36,9 +36,9 @@ public class DefBean : DefTypeBase
 
     public bool IsAbstractType => Children != null;
 
-    public List<DefField> HierarchyFields { get; private set; } = new List<DefField>();
+    public List<DefField> HierarchyFields { get; private set; } = new();
 
-    public List<DefField> Fields { get; } = new List<DefField>();
+    public List<DefField> Fields { get; } = new();
 
     public string Alias { get; }
 

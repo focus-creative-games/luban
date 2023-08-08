@@ -26,7 +26,7 @@ public static class XmlSchemaUtil
         }
     }
 
-    private static readonly List<string> _refGroupRequireAttrs = new List<string> { "name", "ref" };
+    private static readonly List<string> _refGroupRequireAttrs = new() { "name", "ref" };
 
     public static RawRefGroup CreateRefGroup(string fileName, XElement e)
     {

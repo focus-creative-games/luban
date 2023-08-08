@@ -4,6 +4,8 @@ namespace Luban.CodeTarget;
 
 public interface ICodeTarget
 {
+    string Name { get; }
+    
     void Handle(GenerationContext ctx, OutputFileManifest manifest);
     
     string FileHeader { get; }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using Luban.CodeFormat;
+using Luban.CodeTarget;
 using Luban.DataLoader;
 using Luban.Datas;
 using Luban.Defs;
@@ -27,6 +28,8 @@ public class GenerationContext
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
     public static GenerationContext Current { get; private set; }
+    
+    public static ICodeTarget CurrentCodeTarget { get; set; }
 
     public DefAssembly Assembly { get; set; }
 

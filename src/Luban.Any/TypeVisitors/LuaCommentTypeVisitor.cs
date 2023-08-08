@@ -2,7 +2,7 @@ namespace Luban.Any.TypeVisitors;
 
 public class LuaCommentTypeVisitor : ITypeFuncVisitor<string>
 {
-    public static LuaCommentTypeVisitor Ins { get; } = new LuaCommentTypeVisitor();
+    public static LuaCommentTypeVisitor Ins { get; } = new();
 
     public string Accept(TBool type)
     {

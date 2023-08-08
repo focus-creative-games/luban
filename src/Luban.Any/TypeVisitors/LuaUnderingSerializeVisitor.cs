@@ -2,7 +2,7 @@
 
 class LuaUnderingSerializeVisitor : DecoratorFuncVisitor<string, string, string>
 {
-    public static LuaUnderingSerializeVisitor Ins { get; } = new LuaUnderingSerializeVisitor();
+    public static LuaUnderingSerializeVisitor Ins { get; } = new();
 
     public override string DoAccept(TType type, string bufName, string fieldName)
     {

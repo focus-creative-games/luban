@@ -2,7 +2,7 @@
 
 public class GDScriptDefineTypeName : DecoratorFuncVisitor<string>
 {
-    public static PyDefineTypeName Ins { get; } = new PyDefineTypeName();
+    public static PyDefineTypeName Ins { get; } = new();
 
     public override string DoAccept(TType type)
     {

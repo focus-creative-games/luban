@@ -31,7 +31,7 @@ public class ValidatorContext
 
     public string RootDir { get; }
 
-    private readonly List<PathQuery> _pathQuerys = new List<PathQuery>(1000);
+    private readonly List<PathQuery> _pathQuerys = new(1000);
 
     public void AddPathQuery(PathQuery query)
     {

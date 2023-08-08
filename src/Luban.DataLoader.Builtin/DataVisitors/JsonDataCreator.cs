@@ -9,7 +9,7 @@ namespace Luban.DataLoader.Builtin.DataVisitors;
 
 public class JsonDataCreator : ITypeFuncVisitor<JsonElement, DefAssembly, DType>
 {
-    public static JsonDataCreator Ins { get; } = new JsonDataCreator();
+    public static JsonDataCreator Ins { get; } = new();
 
     public DType Accept(TBool type, JsonElement x, DefAssembly ass)
     {

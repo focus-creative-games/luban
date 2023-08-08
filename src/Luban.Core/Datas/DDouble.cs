@@ -4,7 +4,7 @@ namespace Luban.Datas;
 
 public class DDouble : DType<double>
 {
-    public static DDouble Default { get; } = new DDouble(0);
+    public static DDouble Default { get; } = new(0);
 
     public static DDouble ValueOf(double x)
     {

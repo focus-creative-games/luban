@@ -2,7 +2,7 @@ namespace Luban.Any.TypeVisitors;
 
 class TypescriptJsonConstructorVisitor : DecoratorFuncVisitor<string, string, string>
 {
-    public static TypescriptJsonConstructorVisitor Ins { get; } = new TypescriptJsonConstructorVisitor();
+    public static TypescriptJsonConstructorVisitor Ins { get; } = new();
 
     public override string DoAccept(TType type, string jsonFieldName, string fieldName)
     {

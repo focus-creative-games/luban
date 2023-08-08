@@ -10,7 +10,7 @@ namespace Luban.DataLoader.Builtin.DataVisitors;
 
 class ExcelStreamDataCreator : ITypeFuncVisitor<ExcelStream, DType>
 {
-    public static ExcelStreamDataCreator Ins { get; } = new ExcelStreamDataCreator();
+    public static ExcelStreamDataCreator Ins { get; } = new();
 
     private bool CheckNull(bool nullable, object o)
     {

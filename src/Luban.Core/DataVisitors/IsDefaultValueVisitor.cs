@@ -5,7 +5,7 @@ namespace Luban.DataVisitors;
 
 public class IsDefaultValueVisitor : IDataFuncVisitor<bool>
 {
-    public static IsDefaultValueVisitor Ins { get; } = new IsDefaultValueVisitor();
+    public static IsDefaultValueVisitor Ins { get; } = new();
 
     public bool Accept(DBool type)
     {

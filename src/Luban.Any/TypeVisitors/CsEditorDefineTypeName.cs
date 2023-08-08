@@ -2,7 +2,7 @@
 
 public class CsEditorDefineTypeName : CsDefineTypeName
 {
-    public static new CsEditorDefineTypeName Ins { get; } = new CsEditorDefineTypeName();
+    public static new CsEditorDefineTypeName Ins { get; } = new();
 
     protected override ITypeFuncVisitor<string> UnderlyingVisitor => CsEditorUnderlyingDefineTypeName.Ins;
 

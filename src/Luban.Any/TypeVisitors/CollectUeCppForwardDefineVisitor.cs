@@ -2,7 +2,7 @@ namespace Luban.Any.TypeVisitors;
 
 class CollectUeCppForwardDefineVisitor : ITypeActionVisitor<HashSet<DefTypeBase>>
 {
-    public static CollectUeCppForwardDefineVisitor Ins { get; } = new CollectUeCppForwardDefineVisitor();
+    public static CollectUeCppForwardDefineVisitor Ins { get; } = new();
 
     public void Accept(TBool type, HashSet<DefTypeBase> x)
     {

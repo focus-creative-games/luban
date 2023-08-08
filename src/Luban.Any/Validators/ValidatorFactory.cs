@@ -14,9 +14,9 @@ static class ValidatorFactory
         }
     }
 
-    private static readonly Dictionary<string, Type> s_validators = new Dictionary<string, Type>();
+    private static readonly Dictionary<string, Type> s_validators = new();
 
-    private static readonly List<string> s_validatorNames = new List<string>();
+    private static readonly List<string> s_validatorNames = new();
 
     public static List<string> ValidatorNames => s_validatorNames;
 

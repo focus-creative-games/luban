@@ -2,7 +2,7 @@ namespace Luban.Any.TypeVisitors;
 
 class EditorUeCppLoadVisitor : ITypeFuncVisitor<string, string, string>
 {
-    public static EditorUeCppLoadVisitor Ins { get; } = new EditorUeCppLoadVisitor();
+    public static EditorUeCppLoadVisitor Ins { get; } = new();
 
 
     private string DefaultLoad(string json, string field)

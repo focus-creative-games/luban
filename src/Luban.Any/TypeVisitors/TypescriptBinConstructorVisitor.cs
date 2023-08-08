@@ -2,7 +2,7 @@ namespace Luban.Any.TypeVisitors;
 
 class TypescriptBinConstructorVisitor : DecoratorFuncVisitor<string, string, string>
 {
-    public static TypescriptBinConstructorVisitor Ins { get; } = new TypescriptBinConstructorVisitor();
+    public static TypescriptBinConstructorVisitor Ins { get; } = new();
 
     public override string DoAccept(TType type, string byteBufName, string fieldName)
     {

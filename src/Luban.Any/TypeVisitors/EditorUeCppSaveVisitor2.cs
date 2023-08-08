@@ -3,7 +3,7 @@ namespace Luban.Any.TypeVisitors;
 class EditorUeCppSaveVisitor2 : ITypeFuncVisitor<string, string, string>
 {
 
-    public static EditorUeCppSaveVisitor2 Ins { get; } = new EditorUeCppSaveVisitor2();
+    public static EditorUeCppSaveVisitor2 Ins { get; } = new();
 
     private string DefaultSave(string json, string field)
     {

@@ -2,7 +2,7 @@ namespace Luban.Any.TypeVisitors;
 
 public class JavaBoxDefineTypeName : JavaDefineTypeName
 {
-    public static new JavaBoxDefineTypeName Ins { get; } = new JavaBoxDefineTypeName();
+    public static new JavaBoxDefineTypeName Ins { get; } = new();
 
     public override string Accept(TBool type)
     {

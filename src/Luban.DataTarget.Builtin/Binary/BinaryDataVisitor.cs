@@ -8,7 +8,7 @@ namespace Luban.DataExporter.Builtin.Binary;
 
 public class BinaryDataVisitor : IDataActionVisitor<ByteBuf>
 {
-    public static BinaryDataVisitor Ins { get; } = new BinaryDataVisitor();
+    public static BinaryDataVisitor Ins { get; } = new();
 
     public void Accept(DBool type, ByteBuf x)
     {

@@ -2,7 +2,7 @@ namespace Luban.Any.TypeVisitors;
 
 public class GoTypeUnderingNameVisitor : ITypeFuncVisitor<string>
 {
-    public static GoTypeUnderingNameVisitor Ins { get; } = new GoTypeUnderingNameVisitor();
+    public static GoTypeUnderingNameVisitor Ins { get; } = new();
 
     public string Accept(TBool type)
     {

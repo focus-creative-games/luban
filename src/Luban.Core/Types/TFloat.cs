@@ -4,7 +4,7 @@ namespace Luban.Types;
 
 public class TFloat : TType
 {
-    public static TFloat Ins { get; } = new TFloat(false, null);
+    public static TFloat Ins { get; } = new(false, null);
 
     public static TFloat Create(bool isNullable, Dictionary<string, string> tags)
     {

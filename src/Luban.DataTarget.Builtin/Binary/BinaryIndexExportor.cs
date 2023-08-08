@@ -6,7 +6,7 @@ namespace Luban.DataExporter.Builtin.Binary;
 
 class BinaryIndexExportor
 {
-    public static BinaryIndexExportor Ins { get; } = new BinaryIndexExportor();
+    public static BinaryIndexExportor Ins { get; } = new();
 
     public void WriteList(DefTable table, List<Record> datas, ByteBuf x)
     {

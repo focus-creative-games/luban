@@ -9,7 +9,7 @@ namespace Luban.DataExporter.Builtin.Bson;
 
 public class BsonDataVisitor : IDataActionVisitor<BsonDataWriter>
 {
-    public static BsonDataVisitor Ins { get; } = new BsonDataVisitor();
+    public static BsonDataVisitor Ins { get; } = new();
 
     public void Accept(DBool type, BsonDataWriter x)
     {

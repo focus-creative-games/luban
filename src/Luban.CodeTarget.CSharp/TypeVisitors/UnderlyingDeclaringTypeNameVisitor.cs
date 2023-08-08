@@ -1,5 +1,6 @@
 using Luban.Types;
 using Luban.TypeVisitors;
+using Luban.Utils;
 
 namespace Luban.CodeTarget.CSharp.TypeVisitors;
 
@@ -44,8 +45,7 @@ public class UnderlyingDeclaringTypeNameVisitor : ITypeFuncVisitor<string>
 
     public virtual string Accept(TEnum type)
     {
-        // return ExternalTypeUtil.CsMapperToExternalType(type.DefineEnum);
-        return type.DefEnum.FullName;
+        return type.DefEnum.TypeNameWithTypeMapper() ?? type.DefEnum.FullName;
     }
 
     public string Accept(TString type)
@@ -55,8 +55,7 @@ public class UnderlyingDeclaringTypeNameVisitor : ITypeFuncVisitor<string>
 
     public string Accept(TBean type)
     {
-        // return ExternalTypeUtil.CsMapperToExternalType(type.Bean);
-        return type.DefBean.FullName;
+        return type.DefBean.TypeNameWithTypeMapper() ?? type.DefBean.FullName;
     }
 
     public string Accept(TArray type)
@@ -81,11 +80,6 @@ public class UnderlyingDeclaringTypeNameVisitor : ITypeFuncVisitor<string>
 
     public virtual string Accept(TDateTime type)
     {
-        // var mapper = ExternalTypeUtil.GetExternalTypeMappfer("datetime");
-        // if (mapper != null)
-        // {
-        //     return mapper.TargetTypeName;
-        // }
         return "long";
     }
 }

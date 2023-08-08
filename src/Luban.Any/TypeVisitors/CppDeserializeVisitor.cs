@@ -2,7 +2,7 @@ namespace Luban.Any.TypeVisitors;
 
 class CppDeserializeVisitor : DecoratorFuncVisitor<string, string, string>
 {
-    public static CppDeserializeVisitor Ins { get; } = new CppDeserializeVisitor();
+    public static CppDeserializeVisitor Ins { get; } = new();
 
     public override string DoAccept(TType type, string bufName, string fieldName)
     {

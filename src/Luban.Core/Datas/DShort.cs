@@ -4,7 +4,7 @@ namespace Luban.Datas;
 
 public class DShort : DType<short>
 {
-    public static DShort Default { get; } = new DShort(0);
+    public static DShort Default { get; } = new(0);
 
     public static DShort ValueOf(short x)
     {

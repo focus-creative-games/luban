@@ -2,7 +2,7 @@ namespace Luban.Any.TypeVisitors;
 
 public class LuaUnderingDeserializeVisitor : DecoratorFuncVisitor<string, string>
 {
-    public static LuaUnderingDeserializeVisitor Ins { get; } = new LuaUnderingDeserializeVisitor();
+    public static LuaUnderingDeserializeVisitor Ins { get; } = new();
 
     public override string DoAccept(TType type, string x)
     {

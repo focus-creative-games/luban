@@ -10,7 +10,7 @@ namespace Luban.DataExporter.Builtin.Yaml;
 
 public class YamlDataVisitor : IDataFuncVisitor<YamlNode>
 {
-    public static YamlDataVisitor Ins { get; } = new YamlDataVisitor();
+    public static YamlDataVisitor Ins { get; } = new();
     
     private static YamlScalarNode ToPlainNode(string x)
     {

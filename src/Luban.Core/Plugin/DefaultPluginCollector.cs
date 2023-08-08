@@ -2,7 +2,7 @@ namespace Luban.Plugin;
 
 public class DefaultPluginCollector : IPluginCollector
 {
-    private readonly List<string> _pluginPaths = new List<string>();
+    private readonly List<string> _pluginPaths = new();
     
     public DefaultPluginCollector(params string[] rootDirs)
     {

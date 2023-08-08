@@ -2,7 +2,7 @@ namespace Luban.Any.TypeVisitors;
 
 public class GoDeserializeBinVisitor : DecoratorFuncVisitor<string, string, string, string>
 {
-    public static GoDeserializeBinVisitor Ins { get; } = new GoDeserializeBinVisitor();
+    public static GoDeserializeBinVisitor Ins { get; } = new();
 
     public override string DoAccept(TType type, string fieldName, string bufName, string err)
     {
