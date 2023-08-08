@@ -19,7 +19,7 @@ public static class TimeZoneUtil
                 {
                     return TimeZoneInfo.FindSystemTimeZoneById("China Standard Time");
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     throw new ArgumentException("The default timezone ID 'Asia/Shanghai' and 'China Standard Time' was not found on local computer. please set valid timezone manually.");
                 }

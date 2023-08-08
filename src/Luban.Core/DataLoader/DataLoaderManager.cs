@@ -34,6 +34,7 @@ public class DataLoaderManager
             var options = new Dictionary<string, string>();
             foreach (var atomFile in FileUtil.GetFileOrDirectory(Path.Combine(inputDataDir, actualFile)))
             {
+                s_logger.Trace("load table:{} atomfile:{}", table.FullName, atomFile);
                 tasks.Add(Task.Run(() => LoadTableFile(table, atomFile, subAssetName, options)));
             }
         }

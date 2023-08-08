@@ -233,7 +233,8 @@ public static class FileUtil
         {
             foreach (var file in Directory.GetFiles(fileOrDirectory, "*", SearchOption.AllDirectories))
             {
-                if (file.StartsWith(".") || file.StartsWith("_") || file.StartsWith("~"))
+                string fileName = Path.GetFileName(file);
+                if (fileName.StartsWith(".") || fileName.StartsWith("_") || fileName.StartsWith("~"))
                 {
                     continue;
                 }

@@ -12,7 +12,7 @@ public static class XmlSchemaUtil
         foreach (var k in e.Attributes())
         {
             var name = k.Name.LocalName;
-            if (!requireKeys.Contains(name) && (optionKeys != null && !optionKeys.Contains(name)))
+            if (!requireKeys.Contains(name) && optionKeys != null && !optionKeys.Contains(name))
             {
                 throw new LoadDefException($"定义文件:{defineFile} 定义:{e} 包含未知属性 attr:{name}");
             }
