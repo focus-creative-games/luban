@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.MsgPack", "Luban.MsgP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Bson", "Luban.Bson\Luban.Bson.csproj", "{DB041AE2-4AB0-4BA1-BA6E-611BC9AC3848}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Lua", "Luban.Lua\Luban.Lua.csproj", "{6FCDA8CB-5483-48A9-9BAF-DAAB12CF27E8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{DB041AE2-4AB0-4BA1-BA6E-611BC9AC3848}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB041AE2-4AB0-4BA1-BA6E-611BC9AC3848}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB041AE2-4AB0-4BA1-BA6E-611BC9AC3848}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FCDA8CB-5483-48A9-9BAF-DAAB12CF27E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FCDA8CB-5483-48A9-9BAF-DAAB12CF27E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FCDA8CB-5483-48A9-9BAF-DAAB12CF27E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FCDA8CB-5483-48A9-9BAF-DAAB12CF27E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -36,8 +36,4 @@
       <ProjectReference Include="..\Luban.DataLoader.Builtin\Luban.DataLoader.Builtin.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Bson\" />
-    </ItemGroup>
-
 </Project>

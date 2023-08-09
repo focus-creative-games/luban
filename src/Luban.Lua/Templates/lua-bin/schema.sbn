@@ -1,0 +1,41 @@
+syntax = "{{__syntax}}";
+
+package {{__namespace}};
+
+{{~for enum in __enums
+    typeName = full_name enum
+ ~}}
+enum {{typeName}} {
+    {{~for item in enum.items ~}}
+    {{typeName}}_{{item.name}} = {{item.int_value}};
+    {{~end~}}
+    {{~if enum.items.empty?}}
+    {{typeName}}_EMPTY_PLACEHOLDER = 0;
+    {{~end~}}
+}
+{{~end~}}
+
+{{~for bean in __beans
+    typeName = full_name bean
+~}}
+message {{typeName}} {
+{{~if bean.is_abstract_type ~}}
+    oneof value {
+        {{~for c in bean.hierarchy_not_abstract_children~}}
+        {{full_name c}} {{c.name}} = {{c.auto_id}};
+        {{~end~}}
+    }
+{{~else~}}
+    {{~for f in bean.hierarchy_export_fields ~}}
+    {{pre_decorator f.ctype}} {{declaring_type_name f.ctype}} {{f.name}} = {{f.auto_id}} {{suffix_options f.ctype}};
+    {{~end~}}
+{{~end~}}
+}
+{{~end~}}
+
+{{~for table in __tables~}}
+message {{full_name table}} {
+    repeated {{declaring_type_name table.value_ttype}} data_list = 1 [packed = false];
+}
+{{~end~}}
+

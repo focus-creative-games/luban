@@ -1,12 +1,11 @@
 using System.Text;
 using Luban.DataLoader;
-using Luban.DataLoader.Builtin;
 using Luban.Datas;
 using Luban.DataVisitors;
 using Luban.Defs;
 using Luban.Utils;
 
-namespace Luban.DataExporter.Builtin.Lua;
+namespace Luban.Lua.DataVisitors;
 
 public class ToLuaLiteralVisitor : ToLiteralVisitorBase
 {

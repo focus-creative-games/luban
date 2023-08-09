@@ -45,6 +45,7 @@
       <ProjectReference Include="..\Luban.DataValidator.Builtin\Luban.DataValidator.Builtin.csproj" />
       <ProjectReference Include="..\Luban.FlatBuffers\Luban.FlatBuffers.csproj" />
       <ProjectReference Include="..\Luban.L10N\Luban.L10N.csproj" />
+      <ProjectReference Include="..\Luban.Lua\Luban.Lua.csproj" />
       <ProjectReference Include="..\Luban.MsgPack\Luban.MsgPack.csproj" />
       <ProjectReference Include="..\Luban.Protobuf\Luban.Protobuf.csproj" />
       <ProjectReference Include="..\Luban.Schema.Builtin\Luban.Schema.Builtin.csproj" />

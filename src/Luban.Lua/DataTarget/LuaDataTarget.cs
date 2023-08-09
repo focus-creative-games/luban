@@ -2,8 +2,9 @@ using System.Text;
 using Luban.Datas;
 using Luban.DataTarget;
 using Luban.Defs;
+using Luban.Lua.DataVisitors;
 
-namespace Luban.DataExporter.Builtin.Lua;
+namespace Luban.Lua.DataTarget;
 
 [DataTarget("lua")]
 public class LuaDataTarget : DataTargetBase
