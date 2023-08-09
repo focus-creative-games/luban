@@ -6,7 +6,7 @@ using Luban.Protobuf.TypeVisitors;
 using Luban.Types;
 using Luban.Utils;
 
-namespace Luban.Protobuf.DataTarget;
+namespace Luban.Protobuf.DataVisitors;
 
 public class ProtobufBinDataVisitor : IDataActionVisitor<CodedOutputStream>
 {

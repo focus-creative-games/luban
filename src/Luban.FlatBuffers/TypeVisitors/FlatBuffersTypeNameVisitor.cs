@@ -2,7 +2,7 @@
 using Luban.TypeVisitors;
 using Luban.Utils;
 
-namespace Luban.DataExporter.Builtin.FlatBuffers;
+namespace Luban.FlatBuffers.TypeVisitors;
 
 public class FlatBuffersTypeNameVisitor : ITypeFuncVisitor<string>
 {

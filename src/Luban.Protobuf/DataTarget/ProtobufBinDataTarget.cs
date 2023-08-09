@@ -1,6 +1,7 @@
 using Google.Protobuf;
 using Luban.DataTarget;
 using Luban.Defs;
+using Luban.Protobuf.DataVisitors;
 using Luban.Utils;
 
 namespace Luban.Protobuf.DataTarget;

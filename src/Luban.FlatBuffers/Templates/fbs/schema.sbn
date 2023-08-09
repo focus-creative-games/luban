@@ -1,0 +1,42 @@
+namespace {{__namespace}};
+
+{{~for enum in __enums
+    typeName = full_name enum
+ ~}}
+enum {{typeName}}:int {
+    {{~if !enum.has_zero_value_item~}}
+    __GENERATE_DEFAULT_VALUE = 0,
+    {{~end~}}
+    {{~for item in enum.items ~}}
+    {{typeName}}_{{item.name}} = {{item.int_value}},
+    {{~end~}}
+}
+{{~end~}}
+
+{{~for bean in __beans
+    typeName = full_name bean
+~}}
+{{~if bean.is_abstract_type ~}}
+union {{full_name bean}} {
+    {{~for c in bean.hierarchy_not_abstract_children~}}
+    {{full_name c}},
+    {{~end~}}
+}
+{{~else~}}
+table {{full_name bean}} {
+    {{~for f in bean.hierarchy_export_fields ~}}
+    {{f.name}}:{{declaring_type_name f.ctype}}{{type_metadata f.ctype}};
+    {{~end~}}
+}
+{{~end~}}
+{{~end~}}
+
+{{~for table in __tables~}}
+table {{full_name table}} {
+    // WARN! The name 'data_list' is used by FlatBuffersJsonExporter. don't modify it!
+    data_list:[{{declaring_type_name table.value_ttype}}](required);
+}
+
+root_type {{full_name table}};
+{{~end~}}
+

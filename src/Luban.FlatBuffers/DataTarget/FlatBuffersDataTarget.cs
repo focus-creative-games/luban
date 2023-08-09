@@ -1,11 +1,11 @@
 using System.Text.Json;
-using Luban.DataExporter.Builtin.Binary;
 using Luban.DataExporter.Builtin.Json;
 using Luban.DataTarget;
 using Luban.Defs;
+using Luban.FlatBuffers.DataVisitors;
 using Luban.Utils;
 
-namespace Luban.DataExporter.Builtin.FlatBuffers;
+namespace Luban.FlatBuffers.DataTarget;
 
 [DataTarget("flatbuffers-json")]
 public class FlatBuffersDataTarget : DataTargetBase

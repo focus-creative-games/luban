@@ -12,12 +12,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Google.Protobuf" Version="3.24.0" />
-    </ItemGroup>
-
-    <ItemGroup>
       <None Update="Templates\pb\schema.sbn">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Templates\fbs\schema.sbn">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>
 

@@ -1,15 +1,14 @@
 using System.Text.Json;
-using Luban.DataExporter.Builtin.FlatBuffers;
 using Luban.DataExporter.Builtin.Json;
 using Luban.Datas;
 using Luban.Defs;
-using Luban.Protobuf.TypeVisitors;
+using Luban.FlatBuffers.TypeVisitors;
 using Luban.Types;
 using Luban.Utils;
 
-namespace Luban.Protobuf.DataTarget;
+namespace Luban.FlatBuffers.DataVisitors;
 
-public class ProtobufJsonDataVisitor : JsonDataVisitor
+public class FlatBuffersJsonDataVisitor : JsonDataVisitor
 {
     public static new FlatBuffersJsonDataVisitor Ins { get; } = new();
 
@@ -17,12 +16,12 @@ public class ProtobufJsonDataVisitor : JsonDataVisitor
     {
         x.WriteStartObject();
 
-        if (type.Type.IsAbstractType)
-        {
-            // protobuf oneof 用 @type来识别类型
-            x.WritePropertyName("@type");
-            x.WriteStringValue(TBean.Create(false, type.ImplType, null).Apply(ProtobufTypeNameVisitor.Ins));
-        }
+        // flatc 不允许有多余字段
+        //if (type.Type.IsAbstractType)
+        //{
+        //    x.WritePropertyName(FieldNames.TYPE_NAME_KEY);
+        //    x.WriteStringValue(type.ImplType.Name);
+        //}
 
         var defFields = type.ImplType.HierarchyFields;
         int index = 0;
@@ -38,6 +37,14 @@ public class ProtobufJsonDataVisitor : JsonDataVisitor
             }
             else
             {
+                // flatbuffers的union类型的json格式,会额外产生一个 xx_type字段。
+                // 另外，json格式不支持union出现在容器类型上。
+                if (d is DBean beanField && beanField.Type.IsAbstractType)
+                {
+                    x.WritePropertyName($"{defField.Name}_type");
+                    x.WriteStringValue(TBean.Create(defField.CType.IsNullable, beanField.ImplType, null).Apply(FlatBuffersTypeNameVisitor.Ins));
+                }
+
                 x.WritePropertyName(defField.Name);
                 d.Apply(this, x);
             }
@@ -45,16 +52,17 @@ public class ProtobufJsonDataVisitor : JsonDataVisitor
         x.WriteEndObject();
     }
 
-
     public override void Accept(DMap type, Utf8JsonWriter x)
     {
         x.WriteStartArray();
         foreach (var d in type.Datas)
         {
-            x.WriteStartArray();
-            x.WriteStringValue(d.Key.Apply(ToJsonLiteralVisitor.Ins));
+            x.WriteStartObject();
+            x.WritePropertyName("key");
+            d.Key.Apply(this, x);
+            x.WritePropertyName("value");
             d.Value.Apply(this, x);
-            x.WriteEndArray();
+            x.WriteEndObject();
         }
         x.WriteEndArray();
     }

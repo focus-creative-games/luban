@@ -1,25 +1,24 @@
 using Luban.CodeFormat;
 using Luban.CodeTarget;
-using Luban.Protobuf.TemplateExtensions;
+using Luban.FlatBuffers.TemplateExtensions;
 using Luban.Tmpl;
 using Scriban;
 using Scriban.Runtime;
 
-namespace Luban.Protobuf.CodeTarget;
+namespace Luban.FlatBuffers.CodeTarget;
 
-public abstract class ProtobufSchemaTargetBase : TemplateCodeTargetBase
+[CodeTarget("flatbuffers")]
+public class FlatBuffersSchemaTarget : TemplateCodeTargetBase
 {
     public override string FileHeader => "";
 
-    protected override string FileSuffixName => "pb";
-    
-    protected abstract string Syntax { get; }
+    protected override string FileSuffixName => "fbs";
     
     protected override ICodeStyle CodeStyle => CodeFormatManager.Ins.NoneCodeStyle;
     
     public override void Handle(GenerationContext ctx, OutputFileManifest manifest)
     {
-        string outputSchemaFileName = EnvManager.Current.GetOptionOrDefault(Name, "outputFile", true, "schema.proto");
+        string outputSchemaFileName = EnvManager.Current.GetOptionOrDefault(Name, "outputFile", true, "schema.fbs");
         manifest.AddFile(new OutputFile()
         {
             File = $"{outputSchemaFileName}",
@@ -29,7 +28,7 @@ public abstract class ProtobufSchemaTargetBase : TemplateCodeTargetBase
     
     protected override Template GetTemplate(string name)
     {
-        if (TemplateManager.Ins.TryGetTemplate($"pb/{name}", out var template))
+        if (TemplateManager.Ins.TryGetTemplate($"fbs/{name}", out var template))
         {
             return template;
         }
@@ -40,13 +39,18 @@ public abstract class ProtobufSchemaTargetBase : TemplateCodeTargetBase
         }
         throw new Exception($"template:{name} not found");
     }
-    
+
+    protected override void OnCreateTemplateContext(TemplateContext ctx)
+    {
+        
+    }
+
     protected virtual string GenerateSchema(GenerationContext ctx)
     {
         var writer = new CodeWriter();
         var template = GetTemplate($"schema");
         var tplCtx = CreateTemplateContext(template);
-        tplCtx.PushGlobal(new ProtobufCommonTemplateExtension());
+        tplCtx.PushGlobal(new FlatBuffersTemplateExtension());
         OnCreateTemplateContext(tplCtx);
         var extraEnvs = new ScriptObject
         {
@@ -57,7 +61,6 @@ public abstract class ProtobufSchemaTargetBase : TemplateCodeTargetBase
             { "__beans", ctx.ExportBeans},
             { "__enums", ctx.ExportEnums},
             { "__code_style", CodeStyle},
-            { "__syntax", Syntax},
         };
         tplCtx.PushGlobal(extraEnvs);
         writer.Write(template.Render(tplCtx));

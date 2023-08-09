@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "{{__syntax}}";
 
 package {{__namespace}};
 
