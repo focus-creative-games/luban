@@ -12,4 +12,9 @@ public class LuaCommonTemplateExtension : ScriptObject
     {
         return type.Apply(LuaCommentTypeVisitor.Ins);
     }
+    
+    public static string Deserialize(string bufName, TType type)
+    {
+        return type.Apply(LuaUnderlyingDeserializeVisitor.Ins, bufName);
+    }
 }

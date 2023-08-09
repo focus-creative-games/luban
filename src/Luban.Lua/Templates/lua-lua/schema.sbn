@@ -19,7 +19,7 @@ local beans = {}
     {{~end~}}
         local class = {
             {{~ for field in bean.export_fields~}}
-            { name:'{{field.name}}', type:'{{comment_type field.ctype}}'},
+            { name='{{field.name}}', type='{{comment_type field.ctype}}'},
             {{~end~}}
         }
         beans['{{bean.full_name}}'] = class
