@@ -2,7 +2,7 @@
 using Luban.Types;
 using Luban.TypeVisitors;
 
-namespace Luban.DataExporter.Builtin.Protobuf;
+namespace Luban.Protobuf.DataTarget;
 
 public class ProtobufWireTypeVisitor : ITypeFuncVisitor<WireFormat.WireType>
 {

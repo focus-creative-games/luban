@@ -1,10 +1,9 @@
 using Google.Protobuf;
-using Luban.DataExporter.Builtin.Binary;
 using Luban.DataTarget;
 using Luban.Defs;
 using Luban.Utils;
 
-namespace Luban.DataExporter.Builtin.Protobuf;
+namespace Luban.Protobuf.DataTarget;
 
 [DataTarget("protobuf-bin")]
 public class ProtobufBinDataTarget : DataTargetBase

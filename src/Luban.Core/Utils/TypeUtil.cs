@@ -157,7 +157,7 @@ public static class TypeUtil
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
-    public static uint ComputProtoHashIdByName(string name)
+    public static uint ComputeProtoHashIdByName(string name)
     {
         uint id = 0;
         foreach (char c in name)
@@ -170,7 +170,7 @@ public static class TypeUtil
         return id % (maxId - offset) + offset;
     }
 
-    public static int ComputCfgHashIdByName(string name)
+    public static int ComputeCfgHashIdByName(string name)
     {
         int id = 0;
         foreach (char c in name)

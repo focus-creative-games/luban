@@ -17,6 +17,8 @@ namespace Luban;
 
 public class SimpleLauncher
 {
+    private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
+    
     public void Start(Dictionary<string, string> options)
     {
         EnvManager.Current = new EnvManager(options);
@@ -50,6 +52,18 @@ public class SimpleLauncher
 
     private void ScanRegisterAssemblyBehaviours()
     {
+        string dllDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        var loadedAssemblyNames = AppDomain.CurrentDomain.GetAssemblies().Select(a => a.GetName().Name).ToHashSet();
+        foreach (var dllFile in Directory.GetFiles(dllDir, "*.dll", SearchOption.TopDirectoryOnly))
+        {
+            string dllName = Path.GetFileNameWithoutExtension(dllFile);
+            if (!loadedAssemblyNames.Contains(dllName))
+            {
+                s_logger.Info("load dll:{dll}", dllFile);
+                Assembly.LoadFile(dllFile);
+            }
+        }
+        
         foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
         {
             if (assembly.GetCustomAttribute<RegisterBehaviourAttribute>() != null)
@@ -59,7 +73,7 @@ public class SimpleLauncher
         }
     }
 
-    private void ScanRegisterAssembly(Assembly assembly)
+    public void ScanRegisterAssembly(Assembly assembly)
     {
         CustomBehaviourManager.Ins.ScanRegisterBehaviour(assembly);
         SchemaManager.Ins.ScanRegisterAll(assembly);

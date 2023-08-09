@@ -3,10 +3,11 @@ using Luban.DataExporter.Builtin.FlatBuffers;
 using Luban.DataExporter.Builtin.Json;
 using Luban.Datas;
 using Luban.Defs;
+using Luban.Protobuf.TypeVisitors;
 using Luban.Types;
 using Luban.Utils;
 
-namespace Luban.DataExporter.Builtin.Protobuf;
+namespace Luban.Protobuf.DataTarget;
 
 public class ProtobufJsonDataVisitor : JsonDataVisitor
 {

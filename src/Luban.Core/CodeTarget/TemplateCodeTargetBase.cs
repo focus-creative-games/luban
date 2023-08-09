@@ -15,7 +15,7 @@ public abstract class TemplateCodeTargetBase : CodeTargetBase
 
     protected virtual ICodeStyle CodeStyle => GenerationContext.Current.GetCodeStyle(Name) ?? DefaultCodeStyle;
     
-    private TemplateContext CreateTemplateContext(Template template)
+    protected TemplateContext CreateTemplateContext(Template template)
     {
         var ctx = new TemplateContext()
         {

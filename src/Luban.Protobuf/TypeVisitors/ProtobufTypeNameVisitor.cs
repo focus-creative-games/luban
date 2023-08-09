@@ -2,7 +2,7 @@
 using Luban.TypeVisitors;
 using Luban.Utils;
 
-namespace Luban.DataExporter.Builtin.Protobuf;
+namespace Luban.Protobuf.TypeVisitors;
 
 public class ProtobufTypeNameVisitor : ITypeFuncVisitor<string>
 {

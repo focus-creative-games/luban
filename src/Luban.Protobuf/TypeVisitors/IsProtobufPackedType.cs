@@ -1,7 +1,7 @@
 using Luban.Types;
 using Luban.TypeVisitors;
 
-namespace Luban.DataExporter.Builtin.Protobuf;
+namespace Luban.Protobuf.TypeVisitors;
 
 public class IsProtobufPackedType : AllTrueVisitor
 {

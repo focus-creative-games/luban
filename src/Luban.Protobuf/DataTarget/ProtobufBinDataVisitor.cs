@@ -2,10 +2,11 @@
 using Luban.Datas;
 using Luban.DataVisitors;
 using Luban.Defs;
+using Luban.Protobuf.TypeVisitors;
 using Luban.Types;
 using Luban.Utils;
 
-namespace Luban.DataExporter.Builtin.Protobuf;
+namespace Luban.Protobuf.DataTarget;
 
 public class ProtobufBinDataVisitor : IDataActionVisitor<CodedOutputStream>
 {

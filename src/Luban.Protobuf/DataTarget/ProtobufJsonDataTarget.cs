@@ -1,12 +1,10 @@
 using System.Text.Json;
-using Google.Protobuf;
-using Luban.DataExporter.Builtin.Binary;
 using Luban.DataExporter.Builtin.Json;
 using Luban.DataTarget;
 using Luban.Defs;
 using Luban.Utils;
 
-namespace Luban.DataExporter.Builtin.Protobuf;
+namespace Luban.Protobuf.DataTarget;
 
 [DataTarget("protobuf-json")]
 public class ProtobufJsonDataTarget : JsonDataTarget

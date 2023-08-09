@@ -5,6 +5,7 @@ using Luban.DataLoader.Builtin;
 using Luban.DataValidator.Builtin.Collection;
 using Luban.L10N;
 using Luban.Pipeline;
+using Luban.Protobuf.TypeVisitors;
 using Luban.Schema.Builtin;
 using Luban.Utils;
 using NLog;
@@ -67,15 +68,6 @@ internal static class Program
         SetupApp(opts);
         
         var launcher = new SimpleLauncher();
-        var builtinAssemblies = new List<Assembly>
-        {
-            typeof(CsharpBinCodeTarget).Assembly,
-            typeof(DefaultSchemaCollector).Assembly,
-            typeof(FieldNames).Assembly,
-            typeof(DefaultDataExporter).Assembly,
-            typeof(SizeValidator).Assembly,
-            typeof(DefaultTextProvider).Assembly,
-        };
         launcher.Start(ParseXargs(opts.Xargs));
         
         var pipeline = PipelineManager.Ins.CreatePipeline(opts.Pipeline);

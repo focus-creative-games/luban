@@ -67,7 +67,7 @@ public class DefBean : DefTypeBase
         Name = b.Name;
         Namespace = b.Namespace;
         Parent = b.Parent;
-        Id = TypeUtil.ComputCfgHashIdByName(FullName);
+        Id = TypeUtil.ComputeCfgHashIdByName(FullName);
         Comment = b.Comment;
         Tags = DefUtil.ParseAttrs(b.Tags);
         foreach (var field in b.Fields)
