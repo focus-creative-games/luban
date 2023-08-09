@@ -1,7 +1,7 @@
 using Luban.Types;
 using Luban.TypeVisitors;
 
-namespace Luban.CodeTarget.CSharp.TypeVisitors;
+namespace Luban.CSharp.TypeVisitors;
 
 public class DeclaringTypeNameVisitor : DecoratorFuncVisitor<string>
 {

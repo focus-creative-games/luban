@@ -1,8 +1,8 @@
-using Luban.CodeTarget.CSharp.TypeVisitors;
+using Luban.CSharp.TypeVisitors;
 using Luban.Types;
 using Scriban.Runtime;
 
-namespace Luban.CodeTarget.CSharp.TemplateExtensions;
+namespace Luban.CSharp.TemplateExtensions;
 
 public class CsharpBinTemplateExtension : ScriptObject
 {

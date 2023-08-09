@@ -1,7 +1,8 @@
-using Luban.CodeTarget.CSharp.TemplateExtensions;
+using Luban.CodeTarget;
+using Luban.CSharp.TemplateExtensions;
 using Scriban;
 
-namespace Luban.CodeTarget.CSharp;
+namespace Luban.CSharp;
 
 [CodeTarget("cs-dotnet-json")]
 public class CsharpDotnetJsonCodeTarget : CsharpCodeTargetBase

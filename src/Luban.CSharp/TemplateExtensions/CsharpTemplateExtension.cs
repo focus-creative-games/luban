@@ -1,11 +1,11 @@
 using Luban.CodeFormat;
-using Luban.CodeTarget.CSharp.TypeVisitors;
+using Luban.CSharp.TypeVisitors;
 using Luban.Defs;
 using Luban.Types;
 using Luban.Utils;
 using Scriban.Runtime;
 
-namespace Luban.CodeTarget.CSharp.TemplateExtensions;
+namespace Luban.CSharp.TemplateExtensions;
 
 public class CsharpTemplateExtension : ScriptObject
 {

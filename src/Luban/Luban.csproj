@@ -38,7 +38,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Luban.Bson\Luban.Bson.csproj" />
-      <ProjectReference Include="..\Luban.CodeTarget.CSharp\Luban.CodeTarget.CSharp.csproj" />
+      <ProjectReference Include="..\Luban.CSharp\Luban.CSharp.csproj" />
       <ProjectReference Include="..\Luban.Core\Luban.Core.csproj" />
       <ProjectReference Include="..\Luban.DataTarget.Builtin\Luban.DataTarget.Builtin.csproj" />
       <ProjectReference Include="..\Luban.DataLoader.Builtin\Luban.DataLoader.Builtin.csproj" />

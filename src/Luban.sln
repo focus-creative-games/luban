@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.DataLoader.Builtin", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Core", "Luban.Core\Luban.Core.csproj", "{C89F41B6-D378-4558-A8F8-AEE4A68600DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.CodeTarget.CSharp", "Luban.CodeTarget.CSharp\Luban.CodeTarget.CSharp.csproj", "{EDEA1339-94A4-4A2D-8C09-707296306F60}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.CSharp", "Luban.CSharp\Luban.CSharp.csproj", "{EDEA1339-94A4-4A2D-8C09-707296306F60}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Schema.Builtin", "Luban.Schema.Builtin\Luban.Schema.Builtin.csproj", "{701EA9C0-C680-4FA3-B51B-CEC79BCFE56B}"
 EndProject

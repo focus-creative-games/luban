@@ -2,7 +2,7 @@ using Luban.Types;
 using Luban.TypeVisitors;
 using Luban.Utils;
 
-namespace Luban.CodeTarget.CSharp.TypeVisitors;
+namespace Luban.CSharp.TypeVisitors;
 
 public class BinaryUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string, int, string>
 {
