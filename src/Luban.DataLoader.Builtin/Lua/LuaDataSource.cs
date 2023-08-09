@@ -61,7 +61,7 @@ public class LuaDataSource : DataLoaderBase
 
     private Record ReadRecord(LuaTable table, TBean type)
     {
-        string tagName = table.GetValue(FieldNames.TAG_KEY)?.ToString();
+        string tagName = table.GetValue(FieldNames.TagKey)?.ToString();
         if (DataUtil.IsIgnoreTag(tagName))
         {
             return null;

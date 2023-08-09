@@ -63,9 +63,9 @@ public class JsonDataCreator : ITypeFuncVisitor<JsonElement, DefAssembly, DType>
         DefBean implBean;
         if (bean.IsAbstractType)
         {
-            if (!x.TryGetProperty(FieldNames.JSON_TYPE_NAME_KEY, out var typeNameProp) && !x.TryGetProperty(FieldNames.FALLBACK_TYPE_NAME_KEY, out typeNameProp))
+            if (!x.TryGetProperty(FieldNames.JsonTypeNameKey, out var typeNameProp) && !x.TryGetProperty(FieldNames.FallbackTypeNameKey, out typeNameProp))
             {
-                throw new Exception($"结构:'{bean.FullName}' 是多态类型，必须用 '{FieldNames.JSON_TYPE_NAME_KEY}' 字段指定 子类名");
+                throw new Exception($"结构:'{bean.FullName}' 是多态类型，必须用 '{FieldNames.JsonTypeNameKey}' 字段指定 子类名");
             }
             string subType = typeNameProp.GetString();
             implBean = DataUtil.GetImplTypeByNameOrAlias(bean, subType);

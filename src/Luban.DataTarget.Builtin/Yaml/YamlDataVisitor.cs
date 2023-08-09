@@ -83,7 +83,7 @@ public class YamlDataVisitor : IDataFuncVisitor<YamlNode>
 
         if (type.Type.IsAbstractType)
         {
-            m.Add(FieldNames.JSON_TYPE_NAME_KEY, ToText(DataUtil.GetImplTypeName(type)));
+            m.Add(FieldNames.JsonTypeNameKey, ToText(DataUtil.GetImplTypeName(type)));
         }
         var defFields = type.ImplType.HierarchyFields;
         int index = 0;

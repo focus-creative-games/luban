@@ -72,7 +72,7 @@ public class JsonDataVisitor : IDataActionVisitor<Utf8JsonWriter>
 
         if (type.Type.IsAbstractType)
         {
-            x.WritePropertyName(FieldNames.JSON_TYPE_NAME_KEY);
+            x.WritePropertyName(FieldNames.JsonTypeNameKey);
             x.WriteStringValue(DataUtil.GetImplTypeName(type));
         }
 

@@ -25,7 +25,7 @@ public class XmlDataSource : DataLoaderBase
 
     public override Record ReadOne(TBean type)
     {
-        string tagName = _doc.Element(FieldNames.TAG_KEY)?.Value;
+        string tagName = _doc.Element(FieldNames.TagKey)?.Value;
         if (DataUtil.IsIgnoreTag(tagName))
         {
             return null;

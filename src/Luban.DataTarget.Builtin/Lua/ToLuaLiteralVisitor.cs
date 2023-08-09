@@ -26,7 +26,7 @@ public class ToLuaLiteralVisitor : ToLiteralVisitorBase
         var x = new StringBuilder();
         if (type.Type.IsAbstractType)
         {
-            x.Append($"{{ {FieldNames.LUA_TYPE_NAME_KEY}='{DataUtil.GetImplTypeName(type)}',");
+            x.Append($"{{ {FieldNames.LuaTypeNameKey}='{DataUtil.GetImplTypeName(type)}',");
         }
         else
         {

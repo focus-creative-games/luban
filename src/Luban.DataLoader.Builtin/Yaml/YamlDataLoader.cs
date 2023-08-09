@@ -50,7 +50,7 @@ public class YamlDataLoader : DataLoaderBase
         return records;
     }
 
-    private static readonly YamlScalarNode s_tagNameNode = new(FieldNames.TAG_KEY);
+    private static readonly YamlScalarNode s_tagNameNode = new(FieldNames.TagKey);
 
     public override Record ReadOne(TBean type)
     {

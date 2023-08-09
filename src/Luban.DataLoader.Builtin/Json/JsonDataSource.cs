@@ -50,7 +50,7 @@ public class JsonDataSource : DataLoaderBase
     private Record ReadRecord(JsonElement ele, TBean type)
     {
         List<string> tags;
-        if (ele.TryGetProperty(FieldNames.TAG_KEY, out var tagEle))
+        if (ele.TryGetProperty(FieldNames.TagKey, out var tagEle))
         {
             var tagName = tagEle.GetString();
             if (DataUtil.IsIgnoreTag(tagName))

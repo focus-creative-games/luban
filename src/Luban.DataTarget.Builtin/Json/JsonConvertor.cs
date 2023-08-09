@@ -20,7 +20,7 @@ public class JsonConvertor : JsonDataVisitor
 
         if (type.Type.IsAbstractType)
         {
-            x.WritePropertyName(FieldNames.JSON_TYPE_NAME_KEY);
+            x.WritePropertyName(FieldNames.JsonTypeNameKey);
             x.WriteStringValue(type.ImplType.Name);
         }
 

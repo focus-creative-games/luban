@@ -109,17 +109,17 @@ class LuaDataCreator : ITypeFuncVisitor<object, DefAssembly, DType>
         if (bean.IsAbstractType)
         {
             string subType;
-            if(table.ContainsKey(FieldNames.LUA_TYPE_NAME_KEY))
+            if(table.ContainsKey(FieldNames.LuaTypeNameKey))
             {
-                subType = (string)(table[FieldNames.LUA_TYPE_NAME_KEY]);
+                subType = (string)(table[FieldNames.LuaTypeNameKey]);
             }
-            else if (table.ContainsKey(FieldNames.FALLBACK_TYPE_NAME_KEY))
+            else if (table.ContainsKey(FieldNames.FallbackTypeNameKey))
             {
-                subType = (string)table[FieldNames.FALLBACK_TYPE_NAME_KEY];
+                subType = (string)table[FieldNames.FallbackTypeNameKey];
             }
             else
             {
-                throw new Exception($"结构:{bean.FullName} 是多态类型，必须用 {FieldNames.LUA_TYPE_NAME_KEY} 字段指定 子类名");
+                throw new Exception($"结构:{bean.FullName} 是多态类型，必须用 {FieldNames.LuaTypeNameKey} 字段指定 子类名");
             }
             implBean = DataUtil.GetImplTypeByNameOrAlias(bean, subType);
         }

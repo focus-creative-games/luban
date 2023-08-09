@@ -247,7 +247,7 @@ class ExcelStreamDataCreator : ITypeFuncVisitor<ExcelStream, DType>
         if (originBean.IsAbstractType)
         {
             string subType = x.Read().ToString();
-            if (subType.ToLower().Trim() == FieldNames.BEAN_NULL_STR)
+            if (subType.ToLower().Trim() == FieldNames.BeanNullType)
             {
                 if (!type.IsNullable)
                 {
@@ -263,13 +263,13 @@ class ExcelStreamDataCreator : ITypeFuncVisitor<ExcelStream, DType>
             if (type.IsNullable)
             {
                 string subType = x.Read().ToString().Trim();
-                if (subType == FieldNames.BEAN_NULL_STR)
+                if (subType == FieldNames.BeanNullType)
                 {
                     return null;
                 }
-                else if (subType != FieldNames.BEAN_NOT_NULL_STR && subType != originBean.Name)
+                else if (subType != FieldNames.BeanNotNullType && subType != originBean.Name)
                 {
-                    throw new Exception($"type:'{originBean.FullName}' 可空标识:'{subType}' 不合法（只能为{FieldNames.BEAN_NOT_NULL_STR}或{FieldNames.BEAN_NULL_STR}或{originBean.Name})");
+                    throw new Exception($"type:'{originBean.FullName}' 可空标识:'{subType}' 不合法（只能为{FieldNames.BeanNotNullType}或{FieldNames.BeanNullType}或{originBean.Name})");
                 }
             }
             return new DBean(type, originBean, CreateBeanFields(originBean, x));

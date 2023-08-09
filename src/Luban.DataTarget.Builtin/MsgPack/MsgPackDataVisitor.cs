@@ -114,7 +114,7 @@ class MsgPackDataVisitor
         writer.WriteMapHeader(exportCount);
         if (type.Type.IsAbstractType)
         {
-            writer.Write(FieldNames.JSON_TYPE_NAME_KEY);
+            writer.Write(FieldNames.JsonTypeNameKey);
             writer.Write(DataUtil.GetImplTypeName(type));
         }
 

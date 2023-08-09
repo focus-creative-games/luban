@@ -326,15 +326,15 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
             var originBean = type.DefBean;
             if (originBean.IsAbstractType)
             {
-                TitleRow typeTitle = row.GetSubTitleNamedRow(FieldNames.EXCEL_TYPE_NAME_KEY) ?? row.GetSubTitleNamedRow(FieldNames.FALLBACK_TYPE_NAME_KEY);
+                TitleRow typeTitle = row.GetSubTitleNamedRow(FieldNames.ExcelTypeNameKey) ?? row.GetSubTitleNamedRow(FieldNames.FallbackTypeNameKey);
                 if (typeTitle == null)
                 {
-                    throw new Exception($"type:'{originBean.FullName}' 是多态类型,需要定义'{FieldNames.EXCEL_TYPE_NAME_KEY}'列来指定具体子类型");
+                    throw new Exception($"type:'{originBean.FullName}' 是多态类型,需要定义'{FieldNames.ExcelTypeNameKey}'列来指定具体子类型");
                 }
-                TitleRow valueTitle = row.GetSubTitleNamedRow(FieldNames.EXCEL_VALUE_NAME_KEY);
+                TitleRow valueTitle = row.GetSubTitleNamedRow(FieldNames.ExcelValueNameKey);
                 sep += type.GetTag("sep");
                 string subType = typeTitle.Current?.ToString()?.Trim();
-                if (subType == null || subType == FieldNames.BEAN_NULL_STR)
+                if (subType == null || subType == FieldNames.BeanNullType)
                 {
                     if (!type.IsNullable)
                     {
@@ -378,19 +378,19 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
             {
                 if (type.IsNullable)
                 {
-                    TitleRow typeTitle = row.GetSubTitleNamedRow(FieldNames.EXCEL_TYPE_NAME_KEY) ?? row.GetSubTitleNamedRow(FieldNames.FALLBACK_TYPE_NAME_KEY);
+                    TitleRow typeTitle = row.GetSubTitleNamedRow(FieldNames.ExcelTypeNameKey) ?? row.GetSubTitleNamedRow(FieldNames.FallbackTypeNameKey);
                     if (typeTitle == null)
                     {
-                        throw new Exception($"type:'{originBean.FullName}' 是可空类型,需要定义'{FieldNames.EXCEL_TYPE_NAME_KEY}'列来指明是否可空");
+                        throw new Exception($"type:'{originBean.FullName}' 是可空类型,需要定义'{FieldNames.ExcelTypeNameKey}'列来指明是否可空");
                     }
                     string subType = typeTitle.Current?.ToString()?.Trim();
-                    if (subType == null || subType == FieldNames.BEAN_NULL_STR)
+                    if (subType == null || subType == FieldNames.BeanNullType)
                     {
                         return null;
                     }
-                    else if (subType != FieldNames.BEAN_NOT_NULL_STR && subType != originBean.Name)
+                    else if (subType != FieldNames.BeanNotNullType && subType != originBean.Name)
                     {
-                        throw new Exception($"type:'{originBean.FullName}' 可空标识:'{subType}' 不合法（只能为'{FieldNames.BEAN_NULL_STR}'或'{FieldNames.BEAN_NOT_NULL_STR}'或'{originBean.Name}')");
+                        throw new Exception($"type:'{originBean.FullName}' 可空标识:'{subType}' 不合法（只能为'{FieldNames.BeanNullType}'或'{FieldNames.BeanNotNullType}'或'{originBean.Name}')");
                     }
                 }
 

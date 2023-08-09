@@ -63,14 +63,14 @@ class XmlDataCreator : ITypeFuncVisitor<XElement, DefAssembly, DType>
         DefBean implBean;
         if (bean.IsAbstractType)
         {
-            string subType = x.Attribute(FieldNames.XML_TYPE_NAME_KEY)?.Value;
+            string subType = x.Attribute(FieldNames.XmlTypeNameKey)?.Value;
             if (string.IsNullOrEmpty(subType))
             {
-                subType = x.Attribute(FieldNames.FALLBACK_TYPE_NAME_KEY)?.Value;
+                subType = x.Attribute(FieldNames.FallbackTypeNameKey)?.Value;
             }
             if (string.IsNullOrWhiteSpace(subType))
             {
-                throw new Exception($"bean:'{bean.FullName}'是多态，需要指定{FieldNames.XML_TYPE_NAME_KEY}属性.\n xml:{x}");
+                throw new Exception($"bean:'{bean.FullName}'是多态，需要指定{FieldNames.XmlTypeNameKey}属性.\n xml:{x}");
             }
             implBean = DataUtil.GetImplTypeByNameOrAlias(bean, subType);
         }

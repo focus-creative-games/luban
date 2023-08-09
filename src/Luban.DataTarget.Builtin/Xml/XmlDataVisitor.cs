@@ -71,7 +71,7 @@ public class XmlDataVisitor : IDataActionVisitor<XmlWriter>
     {
         if (type.Type.IsAbstractType)
         {
-            w.WriteAttributeString(FieldNames.XML_TYPE_NAME_KEY, DataUtil.GetImplTypeName(type));
+            w.WriteAttributeString(FieldNames.XmlTypeNameKey, DataUtil.GetImplTypeName(type));
         }
 
         var defFields = type.ImplType.HierarchyFields;
