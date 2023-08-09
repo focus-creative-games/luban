@@ -4,7 +4,7 @@ using Luban.Defs;
 using Luban.Utils;
 using MessagePack;
 
-namespace Luban.DataExporter.Builtin.MsgPack;
+namespace Luban.MsgPack;
 
 class MsgPackDataVisitor
 {

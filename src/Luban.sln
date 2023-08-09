@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Protobuf", "Luban.Pro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.FlatBuffers", "Luban.FlatBuffers\Luban.FlatBuffers.csproj", "{0E6A7105-D241-4D13-A0B7-3AC6CC6E091D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.MsgPack", "Luban.MsgPack\Luban.MsgPack.csproj", "{EAE81827-B4AB-4FFD-ADFA-8D1DD8C3F8EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{0E6A7105-D241-4D13-A0B7-3AC6CC6E091D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E6A7105-D241-4D13-A0B7-3AC6CC6E091D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E6A7105-D241-4D13-A0B7-3AC6CC6E091D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAE81827-B4AB-4FFD-ADFA-8D1DD8C3F8EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAE81827-B4AB-4FFD-ADFA-8D1DD8C3F8EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAE81827-B4AB-4FFD-ADFA-8D1DD8C3F8EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAE81827-B4AB-4FFD-ADFA-8D1DD8C3F8EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

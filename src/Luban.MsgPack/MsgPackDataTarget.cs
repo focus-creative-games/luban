@@ -1,10 +1,9 @@
 using System.Text;
-using Luban.DataExporter.Builtin.Lua;
 using Luban.DataTarget;
 using Luban.Defs;
 using MessagePack;
 
-namespace Luban.DataExporter.Builtin.MsgPack;
+namespace Luban.MsgPack;
 
 [DataTarget("msgpack")]
 public class MsgPackDataTarget : DataTargetBase
