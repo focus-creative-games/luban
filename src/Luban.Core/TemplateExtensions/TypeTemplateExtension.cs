@@ -65,4 +65,27 @@ public class TypeTemplateExtension : ScriptObject
     {
         return field.CType is TMap { ValueType: TBean bean } && bean.DefBean.TypeMappers == null && !bean.DefBean.IsValueType;
     }
+    
+    public static bool HasIndex(DefField field)
+    {
+        TType type = field.CType;
+        return type.HasTag("index") && type is TArray or TList;
+    }
+
+    public static string GetIndexName(DefField field)
+    {
+        return field.CType.GetTag("index");
+    }
+
+    public static DefField GetIndexField(DefField field)
+    {
+        string indexName = GetIndexName(field);
+        return ((TBean)field.CType.ElementType).DefBean.GetField(indexName);
+    }
+
+    public static TMap GetIndexMapType(DefField field)
+    {
+        DefField indexField = GetIndexField(field);
+        return TMap.Create(false, null, indexField.CType, field.CType.ElementType, false);
+    }
 }
