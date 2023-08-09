@@ -17,12 +17,13 @@ namespace Luban;
 
 public class SimpleLauncher
 {
-    public void Start(List<Assembly> builtinAssemblies, Dictionary<string, string> options)
+    public void Start(Dictionary<string, string> options)
     {
         EnvManager.Current = new EnvManager(options);
         InitManagers();
-        ScanRegisterBuiltinAssemblies(builtinAssemblies);
+        ScanRegisterAssemblyBehaviours();
         ScanRegisterPlugins();
+        PostInitManagers();
     }
     
     private void InitManagers()
@@ -40,14 +41,21 @@ public class SimpleLauncher
         PipelineManager.Ins.Init();
         L10NManager.Ins.Init();
         CustomBehaviourManager.Ins.Init();
+    }
+
+    private void PostInitManagers()
+    {
         CodeFormatManager.Ins.PostInit();
     }
 
-    private void ScanRegisterBuiltinAssemblies(List<Assembly> builtinAssemblies)
+    private void ScanRegisterAssemblyBehaviours()
     {
-        foreach (var assembly in builtinAssemblies)
+        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
         {
-            ScanRegisterAssembly(assembly);
+            if (assembly.GetCustomAttribute<RegisterBehaviourAttribute>() != null)
+            {
+                ScanRegisterAssembly(assembly);
+            }
         }
     }
 
@@ -62,7 +70,6 @@ public class SimpleLauncher
         foreach (var plugin in PluginManager.Ins.Plugins)
         {
             TemplateManager.Ins.AddTemplateSearchPath($"{plugin.Location}/Templates", false);
-            ScanRegisterAssembly(plugin.GetType().Assembly);
         }
     }
 }

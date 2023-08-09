@@ -76,7 +76,7 @@ internal static class Program
             typeof(SizeValidator).Assembly,
             typeof(DefaultTextProvider).Assembly,
         };
-        launcher.Start(builtinAssemblies, ParseXargs(opts.Xargs));
+        launcher.Start(ParseXargs(opts.Xargs));
         
         var pipeline = PipelineManager.Ins.CreatePipeline(opts.Pipeline);
         pipeline.Run(CreatePipelineArgs(opts));
@@ -151,9 +151,9 @@ internal static class Program
     private static void PrintCopyRight()
     {
         s_logger.Info(" =============================================================================================");
-        s_logger.Info(" ");
-        s_logger.Info("    Luban is developed by Code Philosophy Technology Co., LTD. (https://code-philosophy.com/)");
-        s_logger.Info(" ");
+        s_logger.Info("");
+        s_logger.Info("    Luban is developed by Code Philosophy Technology Co., LTD. github: https://github.com/focus-creative-games");
+        s_logger.Info("");
         s_logger.Info(" =============================================================================================");
     }
     
