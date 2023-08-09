@@ -7,41 +7,21 @@ using Scriban.Runtime;
 
 namespace Luban.Protobuf.CodeTarget;
 
-public abstract class ProtobufSchemaTargetBase : TemplateCodeTargetBase
+public abstract class ProtobufSchemaTargetBase : AllInOneTemplateCodeTargetBase
 {
     public override string FileHeader => "";
 
     protected override string FileSuffixName => "pb";
     
     protected abstract string Syntax { get; }
-    
-    protected override ICodeStyle CodeStyle => CodeFormatManager.Ins.NoneCodeStyle;
-    
-    public override void Handle(GenerationContext ctx, OutputFileManifest manifest)
-    {
-        string outputSchemaFileName = EnvManager.Current.GetOptionOrDefault(Name, "outputFile", true, "schema.proto");
-        manifest.AddFile(new OutputFile()
-        {
-            File = $"{outputSchemaFileName}",
-            Content = GenerateSchema(ctx),
-        });
-    }
-    
-    protected override Template GetTemplate(string name)
-    {
-        if (TemplateManager.Ins.TryGetTemplate($"pb/{name}", out var template))
-        {
-            return template;
-        }
 
-        if (!string.IsNullOrWhiteSpace(CommonTemplateSearchPath) && TemplateManager.Ins.TryGetTemplate($"{CommonTemplateSearchPath}/{name}", out template))
-        {
-            return template;
-        }
-        throw new Exception($"template:{name} not found");
-    }
-    
-    protected virtual string GenerateSchema(GenerationContext ctx)
+    protected override string TemplateDir => "pb";
+
+    protected override ICodeStyle CodeStyle => CodeFormatManager.Ins.NoneCodeStyle;
+
+    protected override string DefaultOutputFileName => "schema.proto";
+
+    protected override string GenerateSchema(GenerationContext ctx)
     {
         var writer = new CodeWriter();
         var template = GetTemplate($"schema");

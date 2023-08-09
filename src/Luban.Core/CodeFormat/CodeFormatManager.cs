@@ -44,7 +44,6 @@ public class CodeFormatManager
         TypescriptDefaultCodeStyle = RegisterCodeStyle("typescript-default", "pascal", "pascal", "camel", "camel", "camel", "pascal");
         CppDefaultCodeStyle = RegisterCodeStyle("cpp-default", "snake", "pascal", "pascal", "pascal", "camel", "upper");
         PythonDefaultCodeStyle = RegisterCodeStyle("python-default", "snake", "pascal", "snake", "snake", "snake", "upper");
-
     }
 
     public INamingConventionFormatter CreateFormatter(string formatterName)

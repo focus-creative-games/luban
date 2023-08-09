@@ -4,7 +4,7 @@ using Luban.DataVisitors;
 using Luban.Defs;
 using Luban.Utils;
 
-namespace Luban.DataExporter.Builtin.Python;
+namespace Luban.Python.DataVisitors;
 
 public class ToPythonLiteralVisitor : ToLiteralVisitorBase
 {

@@ -1,6 +1,7 @@
 using Luban.CodeFormat;
 using Luban.Defs;
 using Luban.Types;
+using Luban.Utils;
 using Scriban.Runtime;
 
 namespace Luban.TemplateExtensions;
@@ -10,6 +11,11 @@ public class TypeTemplateExtension : ScriptObject
     public static bool NeedMarshalBoolPrefix(TType type)
     {
         return type.IsNullable;
+    }
+    
+    public static string FormatMethodName(ICodeStyle codeStyle, string name)
+    {
+        return codeStyle.FormatMethod(name);
     }
     
     public static string FormatFieldName(ICodeStyle codeStyle, string name)
@@ -87,5 +93,10 @@ public class TypeTemplateExtension : ScriptObject
     {
         DefField indexField = GetIndexField(field);
         return TMap.Create(false, null, indexField.CType, field.CType.ElementType, false);
+    }
+
+    public static string ImplDataType(DefBean type, DefBean parent)
+    {
+        return DataUtil.GetImplTypeName(type, parent);
     }
 }

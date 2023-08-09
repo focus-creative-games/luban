@@ -14,6 +14,8 @@ public abstract class TemplateCodeTargetBase : CodeTargetBase
     protected virtual ICodeStyle DefaultCodeStyle => CodeFormatManager.Ins.NoneCodeStyle;
 
     protected virtual ICodeStyle CodeStyle => GenerationContext.Current.GetCodeStyle(Name) ?? DefaultCodeStyle;
+
+    protected virtual string TemplateDir => Name;
     
     protected TemplateContext CreateTemplateContext(Template template)
     {
@@ -32,7 +34,7 @@ public abstract class TemplateCodeTargetBase : CodeTargetBase
     
     protected virtual Scriban.Template GetTemplate(string name)
     {
-        if (TemplateManager.Ins.TryGetTemplate($"{Name}/{name}", out var template))
+        if (TemplateManager.Ins.TryGetTemplate($"{TemplateDir}/{name}", out var template))
         {
             return template;
         }

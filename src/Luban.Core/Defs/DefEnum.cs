@@ -19,7 +19,7 @@ public class DefEnum : DefTypeBase
 
         public string Comment { get; set; }
 
-        // public string EscapeComment => DefUtil.EscapeCommentByCurrentLanguage(Comment);
+        public string CommentOrAlias => string.IsNullOrEmpty(Comment) ? Alias : Comment;
 
         public Dictionary<string, string> Tags { get; set; }
 

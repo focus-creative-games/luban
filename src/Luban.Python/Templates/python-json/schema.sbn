@@ -1,0 +1,118 @@
+from enum import Enum
+
+{{~for enum in __enums~}}
+{{~if enum.comment != '' ~}}
+'''
+{{enum.comment | html.escape}}
+'''
+{{~end~}}
+class {{full_name enum}}(Enum):
+    {{~ for item in enum.items ~}}
+{{~if item.comment_or_alias != '' ~}}
+    '''
+    {{item.comment_or_alias | html.escape}}
+    '''
+{{~end~}}
+    {{item.name}} = {{item.value}}
+    {{~end~}}
+    {{~if enum.items.empty?~}}
+    pass
+    {{~end~}}
+
+{{~end~}}
+
+{{~for bean in __beans
+    name = (full_name bean)
+~}}
+class {{name}} {{if bean.parent_def_type}}({{full_name bean.parent_def_type}}){{end}}:
+{{~if bean.is_abstract_type~}}
+    _childrenTypes = None
+    @staticmethod
+    def fromJson(_json_):
+        childrenTypes = {{name}}._childrenTypes
+        if not childrenTypes:
+            childrenTypes = {{name}}._childrenTypes = {
+        {{~ for child in bean.hierarchy_not_abstract_children~}}
+            '{{impl_data_type child bean}}': {{name}},
+        {{~end~}}
+    }
+        type = _json_['$type']
+        child = {{name}}._childrenTypes.get(type)
+        if child != None:
+            return  child(_json_)
+        else:
+            raise Exception()
+{{~end~}}
+    def __init__(self, _json_):
+        {{~if bean.parent_def_type~}}
+        {{full_name bean.parent_def_type}}.__init__(self, _json_)
+        {{~end~}}
+        {{~ for field in bean.export_fields ~}}
+        {{deserialize_field ('self.' + (format_field_name __code_style field.name)) '_json_' field.name field.ctype}}
+        {{~end~}}
+        {{~if bean.export_fields.empty?}}
+        pass
+        {{~end~}}
+
+{{~end~}}
+
+{{~for table in __tables
+    value_type = table.value_ttype
+~}}
+class {{full_name table}}:
+    {{~if table.is_map_table ~}}
+
+    def __init__(self, _json_ ):
+        self._dataMap = {}
+        self._dataList = []
+        
+        for _json2_ in _json_:
+            {{deserialize '_v' '_json2_' value_type}}
+            self._dataList.append(_v)
+            self._dataMap[_v.{{format_field_name __code_style table.index_field.name}}] = _v
+
+    def getDataMap(self) : return self._dataMap
+    def getDataList(self) : return self._dataList
+
+    def get(self, key) : return self._dataMap.get(key)
+    {{~else if table.is_list_table ~}}
+
+    def __init__(self, _json_ ):
+        self._dataList = []
+        
+        for _json2_ in _json_:
+            {{deserialize '_v' '_json2_' value_type}}
+            self._dataList.append(_v)
+
+    def getDataList(self) : return self._dataList
+
+    def get(self, index) : return self._dataList[index]
+
+    {{~else~}}
+
+    def __init__(self, _json_):
+        if (len(_json_) != 1): raise Exception('table mode=one, but size != 1')
+        {{deserialize 'self._data' '_json_[0]' value_type}}
+
+    def getData(self) : return self._data
+
+    {{~ for field in value_type.def_bean.hierarchy_export_fields ~}}
+{{~if field.comment != '' 
+    name = format_field_name __code_style field.name
+~}}
+    '''
+    {{field.escape_comment}}
+    '''
+{{~end~}}
+    def {{name}}(self) : return self._data.{{name}}
+    {{~end~}}
+    {{~end~}}
+
+{{~end~}}
+
+
+class {{str_full_name __full_name}}:
+    def __init__(self, loader):
+        {{~for table in __tables ~}}
+        self.{{format_method_name __code_style table.name}} = {{full_name table}}(loader('{{table.output_data_file}}')); 
+        {{~end~}}
