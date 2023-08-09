@@ -37,7 +37,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.3-beta1" />
+      <Folder Include="Bson\" />
     </ItemGroup>
 
 </Project>

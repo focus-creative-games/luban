@@ -1,11 +1,11 @@
-using Luban.DataLoader.Builtin;
+using Luban.DataLoader;
 using Luban.Datas;
 using Luban.DataVisitors;
 using Luban.Defs;
 using Luban.Utils;
 using Newtonsoft.Json.Bson;
 
-namespace Luban.DataExporter.Builtin.Bson;
+namespace Luban.Bson;
 
 public class BsonDataVisitor : IDataActionVisitor<BsonDataWriter>
 {
@@ -80,7 +80,7 @@ public class BsonDataVisitor : IDataActionVisitor<BsonDataWriter>
         int index = 0;
         foreach (var d in type.Fields)
         {
-            var defField = (DefField)defFields[index++];
+            var defField = defFields[index++];
 
             // 特殊处理 bean 多态类型
             // 另外，不生成  xxx:null 这样

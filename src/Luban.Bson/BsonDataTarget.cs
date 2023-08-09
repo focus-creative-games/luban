@@ -3,12 +3,12 @@ using Luban.Defs;
 using Luban.Utils;
 using Newtonsoft.Json.Bson;
 
-namespace Luban.DataExporter.Builtin.Bson;
+namespace Luban.Bson;
 
 [DataTarget("bson")]
 public class BsonDataTarget : DataTargetBase
 {
-    protected override string OutputFileExt => "json";
+    protected override string OutputFileExt => "bson";
     
 
     private void WriteAsArray(List<Record> datas, BsonDataWriter x)

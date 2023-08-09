@@ -11,7 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="MessagePack" Version="2.6.100-alpha" />
+      <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
     </ItemGroup>
 
 </Project>

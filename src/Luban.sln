@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.FlatBuffers", "Luban.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.MsgPack", "Luban.MsgPack\Luban.MsgPack.csproj", "{EAE81827-B4AB-4FFD-ADFA-8D1DD8C3F8EE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Bson", "Luban.Bson\Luban.Bson.csproj", "{DB041AE2-4AB0-4BA1-BA6E-611BC9AC3848}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,10 @@ Global
 		{EAE81827-B4AB-4FFD-ADFA-8D1DD8C3F8EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAE81827-B4AB-4FFD-ADFA-8D1DD8C3F8EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAE81827-B4AB-4FFD-ADFA-8D1DD8C3F8EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB041AE2-4AB0-4BA1-BA6E-611BC9AC3848}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB041AE2-4AB0-4BA1-BA6E-611BC9AC3848}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB041AE2-4AB0-4BA1-BA6E-611BC9AC3848}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB041AE2-4AB0-4BA1-BA6E-611BC9AC3848}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

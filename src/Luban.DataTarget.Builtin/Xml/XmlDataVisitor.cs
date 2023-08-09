@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using System.Xml;
+using Luban.DataLoader;
 using Luban.DataLoader.Builtin;
 using Luban.Datas;
 using Luban.DataVisitors;

@@ -1,4 +1,4 @@
-namespace Luban.DataLoader.Builtin;
+namespace Luban.DataLoader;
 
 public static class FieldNames
 {
