@@ -3,9 +3,9 @@ using Luban.TypeVisitors;
 
 namespace Luban.Golang.TypeVisitors;
 
-public class GoIsPointerTypeVisitor : DecoratorFuncVisitor<bool>
+public class IsPointerTypeVisitor : DecoratorFuncVisitor<bool>
 {
-    public static GoIsPointerTypeVisitor Ins { get; } = new();
+    public static IsPointerTypeVisitor Ins { get; } = new();
 
     public override bool DoAccept(TType type)
     {

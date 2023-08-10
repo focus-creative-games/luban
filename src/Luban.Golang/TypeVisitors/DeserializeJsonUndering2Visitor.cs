@@ -5,9 +5,9 @@ using Luban.TypeVisitors;
 
 namespace Luban.Golang.TypeVisitors;
 
-class GoDeserializeJsonUndering2Visitor : ITypeFuncVisitor<string, string, string>
+class DeserializeJsonUndering2Visitor : ITypeFuncVisitor<string, string, string>
 {
-    public static GoDeserializeJsonUndering2Visitor Ins { get; } = new();
+    public static DeserializeJsonUndering2Visitor Ins { get; } = new();
 
     public string Accept(TBool type, string varName, string bufName)
     {
@@ -16,7 +16,7 @@ class GoDeserializeJsonUndering2Visitor : ITypeFuncVisitor<string, string, strin
 
     private string DeserializeNumber(TType type, string varName, string bufName)
     {
-        return $"{{ var _ok_ bool; var _x_ float64; if _x_, _ok_ = {bufName}.(float64); !_ok_ {{ err = errors.New(\"{varName} error\"); return }}; {varName} = {type.Apply(GoUnderlyingDeclaringTypeNameVisitor.Ins)}(_x_) }}";
+        return $"{{ var _ok_ bool; var _x_ float64; if _x_, _ok_ = {bufName}.(float64); !_ok_ {{ err = errors.New(\"{varName} error\"); return }}; {varName} = {type.Apply(UnderlyingDeclaringTypeNameVisitor.Ins)}(_x_) }}";
     }
 
     public string Accept(TByte type, string varName, string bufName)

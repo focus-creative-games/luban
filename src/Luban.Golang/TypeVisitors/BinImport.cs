@@ -3,9 +3,9 @@ using Luban.TypeVisitors;
 
 namespace Luban.Golang.TypeVisitors;
 
-public class GoBinImport : DecoratorActionVisitor<HashSet<string>>
+public class BinImport : DecoratorActionVisitor<HashSet<string>>
 {
-    public static GoBinImport Ins { get; } = new();
+    public static BinImport Ins { get; } = new();
 
     public override void DoAccept(TType type, HashSet<string> x)
     {

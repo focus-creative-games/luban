@@ -28,17 +28,7 @@ public class CsharpTemplateExtension : ScriptObject
     {
         return bean.ParentDefType != null ? "override" : (bean.IsAbstractType ? "virtual" : "");
     }
-
-    public static string ImplDataType(DefBean type, DefBean parent)
-    {
-        return DataUtil.GetImplTypeName(type, parent);
-    }
-
-    public static string RecursiveResolve(DefField field, string tables, ICodeStyle codeStyle)
-    {
-        return field.CType.Apply(RecursiveResolveVisitor.Ins,  codeStyle.FormatField(field.Name), tables);
-    }
-
+    
     public static string NamespaceWithGraceBegin(string ns)
     {
         if (string.IsNullOrEmpty(ns))
@@ -55,11 +45,6 @@ public class CsharpTemplateExtension : ScriptObject
             return string.Empty;
         }
         return "}";
-    }
-    
-    public static string EscapeComment(string comment)
-    {
-        return System.Web.HttpUtility.HtmlEncode(comment).Replace("\n", "<br/>");
     }
 
     public static string ToPrettyString(string name, TType type)

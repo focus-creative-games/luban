@@ -14,7 +14,7 @@ public class GoJsonTemplateExtension : ScriptObject
     
     public static string DeserializeField(TType type, string varName, string fieldName, string bufName)
     {
-        return type.Apply(GoDeserializeJsonFieldVisitor.Ins, varName, fieldName, bufName);
+        return type.Apply(DeserializeJsonFieldVisitor.Ins, varName, fieldName, bufName);
     }
     
     public static string CollectImport(DefBean bean)
@@ -27,7 +27,7 @@ public class GoJsonTemplateExtension : ScriptObject
         
         foreach (var f in bean.HierarchyExportFields)
         {
-            f.CType.Apply(TypeVisitors.GoJsonImport.Ins, imports);
+            f.CType.Apply(TypeVisitors.JsonImport.Ins, imports);
         }
         return string.Join('\n', imports.Select(im => $"import \"{im}\""));
     }

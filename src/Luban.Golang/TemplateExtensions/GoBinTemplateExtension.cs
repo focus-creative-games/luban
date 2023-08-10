@@ -14,7 +14,7 @@ public class GoBinTemplateExtension : ScriptObject
     
     public static string DeserializeField(TType type, string name, string bufName, string err)
     {
-        return type.Apply(GoDeserializeBinVisitor.Ins, name, bufName, err);
+        return type.Apply(DeserializeBinVisitor.Ins, name, bufName, err);
     }
     
     public static string CollectImport(DefBean bean)

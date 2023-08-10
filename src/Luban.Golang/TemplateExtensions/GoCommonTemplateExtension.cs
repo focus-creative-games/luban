@@ -19,7 +19,7 @@ public class GoCommonTemplateExtension : ScriptObject
     
     public static string DeclaringTypeName(TType type)
     {
-        return type.Apply(GoDeclaringTypeNameVisitor.Ins);
+        return type.Apply(DeclaringTypeNameVisitor.Ins);
     }
     
 }

@@ -4,9 +4,9 @@ using Luban.TypeVisitors;
 
 namespace Luban.Golang.TypeVisitors;
 
-public class GoBinUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string, string, string>
+public class BinUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string, string, string>
 {
-    public static GoBinUnderlyingDeserializeVisitor Ins { get; } = new();
+    public static BinUnderlyingDeserializeVisitor Ins { get; } = new();
 
     public string Accept(TBool type, string fieldName, string bufName, string err)
     {
@@ -65,7 +65,7 @@ public class GoBinUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string
 
     private string GenList(TType elementType, string fieldName, string bufName, string err)
     {
-        return $@"{{{fieldName} = make([]{elementType.Apply(GoDeclaringTypeNameVisitor.Ins)}, 0); var _n_ int; if _n_, {err} = {bufName}.ReadSize(); {err} != nil {{ {err} = errors.New(""error""); return}}; for i := 0 ; i < _n_ ; i++ {{ var _e_ {elementType.Apply(GoDeclaringTypeNameVisitor.Ins)}; {elementType.Apply(GoDeserializeBinVisitor.Ins, "_e_", bufName, err)}; {fieldName} = append({fieldName}, _e_) }} }}";
+        return $@"{{{fieldName} = make([]{elementType.Apply(DeclaringTypeNameVisitor.Ins)}, 0); var _n_ int; if _n_, {err} = {bufName}.ReadSize(); {err} != nil {{ {err} = errors.New(""error""); return}}; for i := 0 ; i < _n_ ; i++ {{ var _e_ {elementType.Apply(DeclaringTypeNameVisitor.Ins)}; {elementType.Apply(DeserializeBinVisitor.Ins, "_e_", bufName, err)}; {fieldName} = append({fieldName}, _e_) }} }}";
     }
 
     public string Accept(TArray type, string fieldName, string bufName, string err)
@@ -85,6 +85,6 @@ public class GoBinUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string
 
     public string Accept(TMap type, string fieldName, string bufName, string err)
     {
-        return $@"{{ {fieldName} = make({type.Apply(GoDeclaringTypeNameVisitor.Ins)}); var _n_ int; if _n_, {err} = {bufName}.ReadSize(); {err} != nil {{ {err} = errors.New(""error""); return}}; for i := 0 ; i < _n_ ; i++ {{ var _key_ {type.KeyType.Apply(GoDeclaringTypeNameVisitor.Ins)}; {type.KeyType.Apply(GoDeserializeBinVisitor.Ins, "_key_", bufName, err)}; var _value_ {type.ValueType.Apply(GoDeclaringTypeNameVisitor.Ins)}; {type.ValueType.Apply(GoDeserializeBinVisitor.Ins, "_value_", bufName, err)}; {fieldName}[_key_] = _value_}} }}";
+        return $@"{{ {fieldName} = make({type.Apply(DeclaringTypeNameVisitor.Ins)}); var _n_ int; if _n_, {err} = {bufName}.ReadSize(); {err} != nil {{ {err} = errors.New(""error""); return}}; for i := 0 ; i < _n_ ; i++ {{ var _key_ {type.KeyType.Apply(DeclaringTypeNameVisitor.Ins)}; {type.KeyType.Apply(DeserializeBinVisitor.Ins, "_key_", bufName, err)}; var _value_ {type.ValueType.Apply(DeclaringTypeNameVisitor.Ins)}; {type.ValueType.Apply(DeserializeBinVisitor.Ins, "_value_", bufName, err)}; {fieldName}[_key_] = _value_}} }}";
     }
 }

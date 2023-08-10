@@ -18,12 +18,7 @@ public class PythonCommonTemplateExtension : ScriptObject
     {
         return fullName.Replace(".", "_");
     }
-    
-    public static string EscapeComment(string comment)
-    {
-        return System.Web.HttpUtility.HtmlEncode(comment).Replace("\n", "<br/>");
-    }
-    
+
     public static string Deserialize(string fieldName, string jsonVarName, TType type)
     {
         if (type.IsNullable)

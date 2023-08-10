@@ -4,9 +4,9 @@ using Luban.TypeVisitors;
 
 namespace Luban.Golang.TypeVisitors;
 
-class GoJsonImport : DecoratorActionVisitor<HashSet<string>>
+class JsonImport : DecoratorActionVisitor<HashSet<string>>
 {
-    public static GoJsonImport Ins { get; } = new();
+    public static JsonImport Ins { get; } = new();
 
     public override void DoAccept(TType type, HashSet<string> x)
     {

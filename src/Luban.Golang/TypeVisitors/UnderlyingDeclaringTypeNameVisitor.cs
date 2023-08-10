@@ -5,9 +5,9 @@ using Luban.Utils;
 
 namespace Luban.Golang.TypeVisitors;
 
-public class GoUnderlyingDeclaringTypeNameVisitor : ITypeFuncVisitor<string>
+public class UnderlyingDeclaringTypeNameVisitor : ITypeFuncVisitor<string>
 {
-    public static GoUnderlyingDeclaringTypeNameVisitor Ins { get; } = new GoUnderlyingDeclaringTypeNameVisitor();
+    public static UnderlyingDeclaringTypeNameVisitor Ins { get; } = new UnderlyingDeclaringTypeNameVisitor();
 
     public string Accept(TBool type)
     {

@@ -1,0 +1,6 @@
+﻿
+{{
+    parent_def_type = __this.parent_def_type
+    export_fields = __this.export_fields
+    hierarchy_export_fields = __this.hierarchy_export_fields
+}}
