@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Lua", "Luban.Lua\Luba
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Python", "Luban.Python\Luban.Python.csproj", "{37900AA3-7B17-47D6-9318-74E71C0E04B7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Java", "Luban.Java\Luban.Java.csproj", "{4195E08B-F834-4D28-9A2C-32866862B549}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -99,6 +101,10 @@ Global
 		{37900AA3-7B17-47D6-9318-74E71C0E04B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37900AA3-7B17-47D6-9318-74E71C0E04B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{37900AA3-7B17-47D6-9318-74E71C0E04B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4195E08B-F834-4D28-9A2C-32866862B549}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4195E08B-F834-4D28-9A2C-32866862B549}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4195E08B-F834-4D28-9A2C-32866862B549}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4195E08B-F834-4D28-9A2C-32866862B549}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

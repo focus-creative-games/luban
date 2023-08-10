@@ -2,6 +2,7 @@ using Luban.CodeFormat;
 using Luban.Defs;
 using Luban.TemplateExtensions;
 using Luban.Tmpl;
+using Luban.Utils;
 using Scriban;
 using Scriban.Runtime;
 
@@ -70,11 +71,13 @@ public abstract class TemplateCodeTargetBase : CodeTargetBase
         {
             { "__ctx", ctx},
             { "__manager_name", ctx.Target.Manager },
+            { "__manager_name_with_top_module", TypeUtil.MakeFullName(ctx.TopModule, ctx.Target.Manager) },
             { "__name", table.Name },
             { "__namespace", table.Namespace },
             { "__namespace_with_top_module", table.NamespaceWithTopModule },
             { "__full_name_with_top_module", table.FullNameWithTopModule },
             { "__table", table },
+            { "__this", table },
             { "__key_type", table.KeyTType},
             { "__value_type", table.ValueTType},
             { "__code_style", CodeStyle},
@@ -91,11 +94,13 @@ public abstract class TemplateCodeTargetBase : CodeTargetBase
         {
             { "__ctx", ctx},
             { "__manager_name", ctx.Target.Manager },
+            { "__manager_name_with_top_module", TypeUtil.MakeFullName(ctx.TopModule, ctx.Target.Manager) },
             { "__name", bean.Name },
             { "__namespace", bean.Namespace },
             { "__namespace_with_top_module", bean.NamespaceWithTopModule },
             { "__full_name_with_top_module", bean.FullNameWithTopModule },
             { "__bean", bean },
+            { "__this", bean },
             { "__code_style", CodeStyle},
         };
         tplCtx.PushGlobal(extraEnvs);
@@ -114,6 +119,7 @@ public abstract class TemplateCodeTargetBase : CodeTargetBase
             { "__namespace_with_top_module", @enum.NamespaceWithTopModule },
             { "__full_name_with_top_module", @enum.FullNameWithTopModule },
             { "__enum", @enum },
+            { "__this", @enum },
             { "__code_style", CodeStyle},
         };
         tplCtx.PushGlobal(extraEnvs);

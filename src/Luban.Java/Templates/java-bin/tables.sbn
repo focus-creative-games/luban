@@ -1,0 +1,37 @@
+{{~if __namespace != ''~}}
+package {{__namespace}};
+{{~end~}}
+
+import luban.*;
+{{~
+func get_table_inner_name
+    ret '_' + ($0 | string.downcase)
+end
+~}}
+
+public final class {{__name}}
+{
+    public  static interface  IByteBufLoader {
+        ByteBuf load(String file) throws java.io.IOException;
+    }
+
+    {{~for table in __tables
+        inner_name = get_table_inner_name table.name
+     ~}}
+{{~if table.comment != '' ~}}
+    /**
+     * {{escape_comment table.comment}}
+     */
+{{~end~}}
+    private final {{table.full_name_with_top_module}} {{inner_name}};
+    public {{table.full_name_with_top_module}} get{{table.name}}() { return {{inner_name}}; }
+    {{~end~}}
+
+    public {{__name}}(IByteBufLoader loader) throws java.io.IOException {
+        {{~for table in __tables
+            inner_name = get_table_inner_name table.name
+        ~}}
+        {{inner_name}} = new {{table.full_name_with_top_module}}(loader.load("{{table.output_data_file}}")); 
+        {{~end~}}
+    }
+}

@@ -5,7 +5,7 @@ namespace Luban.DataExporter.Builtin.Json;
 
 public class SimpleJsonTypeVisitor : AllTrueVisitor
 {
-    public static SimpleJsonTypeVisitor Ins { get; } = new SimpleJsonTypeVisitor();
+    public static SimpleJsonTypeVisitor Ins { get; } = new();
 
     public override bool Accept(TEnum type)
     {

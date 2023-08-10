@@ -48,7 +48,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Templates\" />
+      <Folder Include="Templates\common\" />
     </ItemGroup>
 
     <ItemGroup>

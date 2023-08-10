@@ -1,0 +1,19 @@
+{{~if __namespace_with_top_module != ''~}}
+package {{__namespace_with_top_module}};
+{{~end~}}
+
+{{~if __this.comment != '' ~}}
+/**
+ * {{escape_comment __this.comment}}
+ */
+{{~end~}}
+public final class {{__name}} {
+    {{~ for item in __this.items ~}}
+{{~if item.comment_or_alias != '' ~}}
+    /**
+     * {{escape_comment item.comment_or_alias}}
+     */
+{{~end~}}
+    public static final int {{item.name}} = {{item.int_value}};
+    {{~end~}}
+}

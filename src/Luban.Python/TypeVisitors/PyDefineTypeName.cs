@@ -6,7 +6,7 @@ namespace Luban.Python.TypeVisitors;
 
 public class PyDefineTypeName : DecoratorFuncVisitor<string>
 {
-    public static PyDefineTypeName Ins { get; } = new PyDefineTypeName();
+    public static PyDefineTypeName Ins { get; } = new();
 
     public override string DoAccept(TType type)
     {

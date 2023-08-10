@@ -99,4 +99,9 @@ public class TypeTemplateExtension : ScriptObject
     {
         return DataUtil.GetImplTypeName(type, parent);
     }
+
+    public static string EscapeComment(string comment)
+    {
+        return System.Web.HttpUtility.HtmlEncode(comment).Replace("\n", "<br/>");
+    }
 }
