@@ -1,59 +1,86 @@
-using Bright.Serialization;
-using System.Collections.Generic;
+﻿using Luban;
 using SimpleJSON;
-
 {{
-    name = x.name
-    parent_def_type = x.parent_def_type
-    parent = x.parent
-    export_fields = x.export_fields
-    hierarchy_export_fields = x.hierarchy_export_fields
+    parent_def_type = __bean.parent_def_type
+    export_fields = __bean.export_fields
+    hierarchy_export_fields = __bean.hierarchy_export_fields
 }}
 
-{{cs_start_name_space_grace x.namespace_with_top_module}} 
-
-{{~if x.comment != '' ~}}
+{{namespace_with_grace_begin __namespace_with_top_module}}
+{{~if __bean.comment != '' ~}}
 /// <summary>
-/// {{x.escape_comment}}
+/// {{escape_comment __bean.comment}}
 /// </summary>
 {{~end~}}
-public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {{parent}} {{else}} Bright.Config.BeanBase {{end}}
+{{~
+func get_ref_name 
+    ret (format_property_name __code_style $0.name) + '_Ref'
+end
+
+func get_index_var_name
+    ret (format_property_name __code_style $0.name) + '_Index'
+end
+
+func generate_resolve_field_ref
+    field = $0
+    fieldName = format_property_name __code_style field.name
+    refTable = get_ref_table field
+    if can_generate_ref field
+        tableName = format_property_name __code_style refTable.name
+        if field.is_nullable
+            ret (get_ref_name field) + ' = ' + fieldName + '!= null ? tables.' + tableName + '.GetOrDefault(' + (get_value_of_nullable_type field.ctype fieldName) + ') : null;'
+        else
+            ret (get_ref_name field) + ' = tables.' + tableName + '.GetOrDefault(' + fieldName + ');'
+        end
+    else
+        if (is_field_bean_need_resolve_ref field)
+            ret fieldName + '?.ResolveRef(tables);'
+        else if (is_field_array_like_need_resolve_ref field)
+            ret 'foreach (var _e in ' + fieldName + ') { _e?.ResolveRef(tables); }'
+        else if (is_field_map_need_resolve_ref field)
+            ret 'foreach (var _e in ' + fieldName + '.Values) { _e?.ResolveRef(tables); }'
+        else
+            ret ''
+        end
+    end
+end
+~}}
+{{~if __bean.is_value_type~}}
+public partial struct {{__name}}
+{{~else~}}
+public {{class_modifier __bean}} partial class {{__name}} : {{if parent_def_type}}{{__bean.parent}}{{else}}Luban.BeanBase{{end}}
+{{~end~}}
 {
-    public {{name}}(JSONNode _json) {{if parent_def_type}} : base(_json) {{end}}
+    public {{__name}}(JSONNode _buf) {{if parent_def_type}} : base(_buf) {{end}}
     {
-        {{~ for field in export_fields ~}}
-        {{cs_unity_json_deserialize '_json' field.convention_name field.name field.ctype}}
-        {{~if field.index_field~}}
-        foreach(var _v in {{field.convention_name}}) { {{field.convention_name}}_Index.Add(_v.{{field.index_field.convention_name}}, _v); }
+        {{~ for field in export_fields
+            fieldName = format_property_name __code_style field.name
+         ~}}
+        {{deserialize_field fieldName '_buf' field.name field.ctype}}
+            {{~if can_generate_ref field~}}
+        {{get_ref_name field}} = null;
+            {{~end~}}
+            {{~if has_index field~}}
+        foreach(var _v in {{fieldName}})
+        { 
+            {{get_index_var_name field}}.Add(_v.{{format_property_name __code_style (get_index_field field).name}}, _v);
+        }
+            {{~end~}}
         {{~end~}}
-        {{~end~}}
-        PostInit();
     }
 
-    public {{name}}({{~for field in hierarchy_export_fields }}{{cs_define_type field.ctype}} {{field.name}}{{if !for.last}},{{end}} {{end}}) {{if parent_def_type}} : base({{- for field in parent_def_type.hierarchy_export_fields }}{{field.name}}{{if !for.last}},{{end}}{{end}}) {{end}}
+    public static {{__name}} Deserialize{{__name}}(JSONNode _buf)
     {
-        {{~ for field in export_fields ~}}
-        this.{{field.convention_name}} = {{field.name}};
-        {{~if field.index_field~}}
-        foreach(var _v in {{field.convention_name}}) { {{field.convention_name}}_Index.Add(_v.{{field.index_field.convention_name}}, _v); }
-        {{~end~}}
-        {{~end~}}
-        PostInit();
-    }
-
-    public static {{name}} Deserialize{{name}}(JSONNode _json)
-    {
-    {{~if x.is_abstract_type~}}
-        string type = _json["{{x.json_type_name_key}}"];
-        switch (type)
+    {{~if __bean.is_abstract_type~}}
+        switch ((string)_buf["$type"])
         {
-        {{~for child in x.hierarchy_not_abstract_children~}}
-            case "{{cs_impl_data_type child x}}": return new {{child.full_name}}(_json);
+        {{~for child in __bean.hierarchy_not_abstract_children~}}
+            case "{{impl_data_type child __bean}}": return new {{child.full_name}}(_buf);
         {{~end~}}
             default: throw new SerializationException();
         }
     {{~else~}}
-        return new {{x.full_name}}(_json);
+        return new {{__bean.full_name}}(_buf);
     {{~end~}}
     }
 
@@ -63,65 +90,40 @@ public {{x.cs_class_modifier}} partial class {{name}} : {{if parent_def_type}} {
     /// {{field.escape_comment}}
     /// </summary>
 {{~end~}}
-    public {{cs_define_type field.ctype}} {{field.convention_name}} { get; private set; }
-    {{~if field.index_field~}} 
-    public readonly Dictionary<{{cs_define_type field.index_field.ctype}}, {{cs_define_type field.ctype.element_type}}> {{field.convention_name}}_Index = new Dictionary<{{cs_define_type field.index_field.ctype}}, {{cs_define_type field.ctype.element_type}}>();
+    public readonly {{declaring_type_name field.ctype}} {{format_property_name __code_style field.name}};
+    {{~if can_generate_ref field~}}
+    public {{declaring_type_name (get_ref_type field)}} {{get_ref_name field}};
     {{~end~}}
-    {{~if field.gen_ref~}}
-    public {{field.cs_ref_validator_define}}
-    {{~end~}}
-    {{~if (gen_datetime_mills field.ctype) ~}}
-    public long {{field.convention_name}}_Millis => {{field.convention_name}} * 1000L;
-    {{~end~}}
-    {{~if field.gen_text_key~}}
-    public {{cs_define_text_key_field field}} { get; }
-    {{~end~}}
-    {{~end~}}
-
-{{~if !x.is_abstract_type~}}
-    public const int __ID__ = {{x.id}};
+   {{~if has_index field
+        indexMapType = get_index_map_type field
+   ~}}
+    public readonly {{declaring_type_name indexMapType}} {{get_index_var_name field}} = new {{declaring_type_name indexMapType}}();
+   {{~end~}}
+   {{~end~}}
+   
+{{~if !__bean.is_abstract_type && !__bean.is_value_type~}}
+    public const int __ID__ = {{__bean.id}};
     public override int GetTypeId() => __ID__;
 {{~end~}}
 
-    public {{x.cs_method_modifier}} void Resolve(Dictionary<string, object> _tables)
+    public {{method_modifier __bean}} void ResolveRef({{__manager_name}} tables)
     {
         {{~if parent_def_type~}}
-        base.Resolve(_tables);
+        base.ResolveRef(tables);
         {{~end~}}
-        {{~ for field in export_fields ~}}
-        {{~if field.gen_ref~}}
-        {{cs_ref_validator_resolve field}}
-        {{~else if field.has_recursive_ref~}}
-        {{cs_recursive_resolve field '_tables'}}
-        {{~end~}}
-        {{~end~}}
-        PostResolve();
-    }
-
-    public {{x.cs_method_modifier}} void TranslateText(System.Func<string, string, string> translator)
-    {
-        {{~if parent_def_type~}}
-        base.TranslateText(translator);
-        {{~end~}}
-        {{~ for field in export_fields ~}}
-        {{~if field.gen_text_key~}}
-        {{cs_translate_text field 'translator'}}
-        {{~else if field.has_recursive_text~}}
-        {{cs_recursive_translate_text field 'translator'}}
-        {{~end~}}
+        {{~for field in export_fields~}}
+        {{generate_resolve_field_ref field}}
         {{~end~}}
     }
 
     public override string ToString()
     {
         return "{{full_name}}{ "
-    {{~ for field in hierarchy_export_fields ~}}
-        + "{{field.convention_name}}:" + {{cs_to_string field.convention_name field.ctype}} + ","
+    {{~for field in hierarchy_export_fields ~}}
+        + "{{format_field_name __code_style field.name}}:" + {{to_pretty_string (format_property_name __code_style field.name) field.ctype}} + ","
     {{~end~}}
         + "}";
     }
-    
-    partial void PostInit();
-    partial void PostResolve();
 }
-{{cs_end_name_space_grace x.namespace_with_top_module}}
+
+{{namespace_with_grace_end __namespace_with_top_module}}
