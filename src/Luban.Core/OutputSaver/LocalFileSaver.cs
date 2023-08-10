@@ -9,6 +9,11 @@ public class LocalFileSaver : OutputSaverBase
 
     protected override void BeforeSave(OutputFileManifest outputFileManifest, string outputDir)
     {
+        if (!EnvManager.Current.GetBoolOptionOrDefault($"{BuiltinOptionNames.OutputSaver}.local", "cleanUpOutputDir",
+                true, true))
+        {
+            return;
+        }
         FileCleaner.Clean(outputDir, outputFileManifest.DataFiles.Select(f => f.File).ToList());
     }
 

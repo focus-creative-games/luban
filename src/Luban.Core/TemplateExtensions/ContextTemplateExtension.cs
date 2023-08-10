@@ -18,16 +18,16 @@ public class ContextTemplateExtension : ScriptObject
 
     public static bool HasOption(string name)
     {
-        return EnvManager.Current.HasOption(name);
+        return EnvManager.Current.HasOptionRaw(name);
     }
 
     public static string GetOption(string name)
     {
-        return EnvManager.Current.GetOption(name);
+        return EnvManager.Current.GetOptionRaw(name);
     }
 
     public static string GetOptionOrDefault(string name, string defaultValue)
     {
-        return EnvManager.Current.GetOptionOrDefault(name, defaultValue);
+        return EnvManager.Current.GetOptionOrDefaultRaw(name, defaultValue);
     }
 }

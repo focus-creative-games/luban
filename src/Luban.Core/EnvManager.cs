@@ -11,59 +11,62 @@ public class EnvManager
         _options = options;
     }
 
-    public bool HasOption(string optionName)
+    public bool HasOptionRaw(string optionName)
     {
         return _options.ContainsKey(optionName);
     }
 
-    public string GetOption(string optionName)
+    public string GetOptionRaw(string optionName)
     {
         return _options.TryGetValue(optionName, out var value) ? value : null;
     }
 
-    public string GetOptionOrDefault(string optionName, string defaultValue)
+    public string GetOptionOrDefaultRaw(string optionName, string defaultValue)
     {
         return _options.TryGetValue(optionName, out var value) ? value : defaultValue;
     }
     
 
-    public string GetOption(string family, string name, bool useGlobalIfNotExits)
+    public string GetOption(string namespaze, string name, bool useGlobalIfNotExits)
     {
-        string nameWithFamily = family + "." + name;
-        if (_options.TryGetValue(nameWithFamily, out var value))
-        {
-            return value;
-        }
-        if (useGlobalIfNotExits && _options.TryGetValue(name, out value))
-        {
-            return value;
-        }
-        throw new Exception($"option '{nameWithFamily}' not exists");
+        return TryGetOption(namespaze, name, useGlobalIfNotExits, out var value) ? value : throw new Exception($"option '{name}' not exists");
     }
     
-    public bool TryGetOption(string family, string name, bool useGlobalIfNotExits, out string value)
+    public bool TryGetOption(string namespaze, string name, bool useGlobalIfNotExits, out string value)
     {
-        string nameWithFamily = family + "." + name;
-        if (_options.TryGetValue(nameWithFamily, out value))
+        while (true)
         {
-            return true;
-        }
-        if (useGlobalIfNotExits && _options.TryGetValue(name, out value))
-        {
-            return true;
-        }
+            string fullOptionName = string.IsNullOrEmpty(namespaze) ? name : namespaze + "." + name;
+            if (_options.TryGetValue(fullOptionName, out value))
+            {
+                return true;
+            }
 
-        return false;
+            if (string.IsNullOrEmpty(namespaze) || !useGlobalIfNotExits)
+            {
+                return false;
+            }
+
+            int index = namespaze.LastIndexOf('.');
+            if (index < 0)
+            {
+                namespaze = "";
+            }
+            else
+            {
+                namespaze = namespaze.Substring(0, index);
+            }
+        }
     }
     
-    public string GetOptionOrDefault(string family, string name, bool useGlobalIfNotExits, string defaultValue)
+    public string GetOptionOrDefault(string namespaze, string name, bool useGlobalIfNotExits, string defaultValue)
     {
-        return TryGetOption(family, name, useGlobalIfNotExits, out string value) ? value : defaultValue;
+        return TryGetOption( namespaze, name, useGlobalIfNotExits, out string value) ? value : defaultValue;
     }
     
-    public bool GetBoolOptionOrDefault(string family, string name, bool useGlobalIfNotExits, bool defaultValue)
+    public bool GetBoolOptionOrDefault(string namespaze, string name, bool useGlobalIfNotExits, bool defaultValue)
     {
-        if (TryGetOption(family, name, useGlobalIfNotExits, out string value))
+        if (TryGetOption(namespaze,  name, useGlobalIfNotExits, out string value))
         {
             switch (value.ToLowerInvariant())
             {
