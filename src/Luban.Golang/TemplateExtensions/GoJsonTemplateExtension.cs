@@ -12,9 +12,9 @@ public class GoJsonTemplateExtension : ScriptObject
     //     return type.Apply(JavaJsonUnderlyingDeserializeVisitor.Ins, jsonVar, fieldName, 0);
     // }
     
-    public static string DeserializeField(TType type, string name, string fieldName, string bufName)
+    public static string DeserializeField(TType type, string varName, string fieldName, string bufName)
     {
-        return type.Apply(GoDeserializeJsonFieldVisitor.Ins, name, fieldName, bufName);
+        return type.Apply(GoDeserializeJsonFieldVisitor.Ins, varName, fieldName, bufName);
     }
     
     public static string CollectImport(DefBean bean)

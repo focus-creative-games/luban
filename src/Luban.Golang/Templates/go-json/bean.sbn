@@ -1,0 +1,50 @@
+{{~if ___top_module != ''~}}
+package {{__top_module}};
+{{~end~}}
+
+{{~
+    go_full_name = full_name __this
+    parent_def_type = __this.parent_def_type
+    is_abstract_type = __this.is_abstract_type
+    hierarchy_fields = __this.hierarchy_export_fields
+    hierarchy_not_abstract_children = __this.hierarchy_not_abstract_children
+~}}
+
+{{collect_import __this}}
+
+type {{go_full_name}} struct {
+    {{~for field in hierarchy_fields ~}}
+    {{format_field_name __code_style field.name}} {{declaring_type_name field.ctype}}
+    {{~end~}}
+}
+
+const TypeId_{{go_full_name}} = {{__this.id}}
+
+func (*{{go_full_name}}) GetTypeId() int32 {
+    return {{__this.id}}
+}
+
+{{~if is_abstract_type~}}
+func New{{go_full_name}}(_buf map[string]interface{}) (interface{}, error) {
+    var id string
+    var _ok_ bool
+    if id, _ok_ = _buf["$type"].(string) ; !_ok_ {
+        return nil, errors.New("type id missing")
+    }
+    switch id {
+        {{~for child in hierarchy_not_abstract_children~}}
+        case "{{impl_data_type child __this}}": _v, err := New{{full_name child}}(_buf); if err != nil { return nil, errors.New("{{full_name child|string.downcase}}") } else { return _v, nil }
+        {{~end~}}
+        default: return nil, errors.New("unknown type id")
+    }
+}
+
+{{~else~}}
+func New{{go_full_name}}(_buf map[string]interface{}) (_v *{{go_full_name}}, err error) {
+    _v = &{{go_full_name}}{}
+    {{~for field in hierarchy_fields ~}}
+    {{deserialize_field field.ctype ("_v." + (format_field_name __code_style field.name)) field.name '_buf'}}
+    {{~end~}}
+    return
+}
+{{~end~}}

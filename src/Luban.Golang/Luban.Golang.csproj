@@ -40,6 +40,15 @@
       <None Update="Templates\common\go\enum.sbn">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="Templates\go-json\bean.sbn">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Templates\go-json\table.sbn">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Templates\go-json\tables.sbn">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
     <ItemGroup>
@@ -47,7 +56,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Templates\go-json\" />
       <Folder Include="TypeVisitors\" />
     </ItemGroup>
 

@@ -72,7 +72,7 @@ class GoDeserializeJsonUndering2Visitor : ITypeFuncVisitor<string, string, strin
 
     public string Accept(TBean type, string varName, string bufName)
     {
-        return $"{{ var _ok_ bool; var _x_ map[string]interface{{}}; if _x_, _ok_ = {bufName}.(map[string]interface{{}}); !_ok_ {{ err = errors.New(\"{varName} error\"); return }}; if {varName}, err = {($"Deserialize{GoCommonTemplateExtension.FullName(type.DefBean)}(_x_)")}; err != nil {{ return }} }}";
+        return $"{{ var _ok_ bool; var _x_ map[string]interface{{}}; if _x_, _ok_ = {bufName}.(map[string]interface{{}}); !_ok_ {{ err = errors.New(\"{varName} error\"); return }}; if {varName}, err = {($"New{GoCommonTemplateExtension.FullName(type.DefBean)}(_x_)")}; err != nil {{ return }} }}";
     }
 
     public string Accept(TArray type, string varName, string bufName)

@@ -1,0 +1,103 @@
+{{~if ___top_module != ''~}}
+package {{__top_module}};
+{{~end~}}
+
+{{~
+    go_full_name = full_name __this
+    key_type = __this.key_ttype
+    value_type =  __this.value_ttype
+    index_field = __this.index_field
+~}}
+
+{{~if __this.is_map_table~}}
+type {{go_full_name}} struct {
+    _dataMap map[{{declaring_type_name key_type}}]{{declaring_type_name value_type}}
+    _dataList []{{declaring_type_name value_type}}
+}
+
+func New{{go_full_name}}(_buf []map[string]interface{}) (*{{go_full_name}}, error) {
+    _dataList := make([]{{declaring_type_name value_type}}, 0, len(_buf))
+    dataMap := make(map[{{declaring_type_name key_type}}]{{declaring_type_name value_type}})
+
+    for _, _ele_ := range _buf {
+        if _v, err2 := New{{full_name value_type.def_bean}}(_ele_); err2 != nil {
+            return nil, err2
+        } else {
+            _dataList = append(_dataList, _v)
+{{~if value_type.is_dynamic ~}}
+    {{~for child in value_type.def_bean.hierarchy_not_abstract_children~}}
+            if __v, __is := _v.(*{{full_name child}}) ; __is {
+                dataMap[__v.{{format_field_name __code_style index_field.name}}] = _v
+                continue
+            }
+    {{~end~}}
+{{~else~}}
+            dataMap[_v.{{format_field_name __code_style index_field.name}}] = _v
+{{~end~}}
+        }
+    }
+    return &{{go_full_name}}{_dataList:_dataList, _dataMap:dataMap}, nil
+}
+
+func (table *{{go_full_name}}) GetDataMap() map[{{declaring_type_name key_type}}]{{declaring_type_name value_type}} {
+    return table._dataMap
+}
+
+func (table *{{go_full_name}}) GetDataList() []{{declaring_type_name value_type}} {
+    return table._dataList
+}
+
+func (table *{{go_full_name}}) Get(key {{declaring_type_name key_type}}) {{declaring_type_name value_type}} {
+    return table._dataMap[key]
+}
+
+{{~else if __this.is_list_table~}}
+type {{go_full_name}} struct {
+    _dataList []{{declaring_type_name value_type}}
+}
+
+func New{{go_full_name}}(_buf []map[string]interface{}) (*{{go_full_name}}, error) {
+    _dataList := make([]{{declaring_type_name value_type}}, 0, len(_buf))
+    for _, _ele_ := range _buf {
+        if _v, err2 := New{{full_name value_type.def_bean}}(_ele_); err2 != nil {
+            return nil, err2
+        } else {
+            _dataList = append(_dataList, _v)
+        }
+    }
+    return &{{go_full_name}}{_dataList:_dataList}, nil
+}
+
+func (table *{{go_full_name}}) GetDataList() []{{declaring_type_name value_type}} {
+    return table._dataList
+}
+
+func (table *{{go_full_name}}) Get(index int) {{declaring_type_name value_type}} {
+    return table._dataList[index]
+}
+
+{{~else~}}
+
+import "errors"
+
+type {{go_full_name}} struct {
+    _data {{declaring_type_name value_type}}
+}
+
+func New{{go_full_name}}(_buf []map[string]interface{}) (*{{go_full_name}}, error) {
+	if len(_buf) != 1 {
+        return nil, errors.New(" size != 1 ")
+	} else {
+		if _v, err2 := New{{full_name value_type.def_bean}}(_buf[0]); err2 != nil {
+			return nil, err2
+		} else {
+		    return &{{go_full_name}}{_data:_v}, nil
+		}
+	}
+}
+
+func (table *{{go_full_name}}) Get() {{declaring_type_name value_type}} {
+    return table._data
+}
+
+{{~end~}}
