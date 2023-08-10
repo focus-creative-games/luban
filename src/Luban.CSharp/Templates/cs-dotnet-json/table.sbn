@@ -1,173 +1,160 @@
-using Bright.Serialization;
-using System.Collections.Generic;
+using Luban;
 using System.Text.Json;
 
-{{ 
-    name = x.name
-    key_type = x.key_ttype
-    key_type1 =  x.key_ttype1
-    key_type2 =  x.key_ttype2
-    value_type =  x.value_ttype
+{{
+    
+    func index_type_name
+        ret (declaring_type_name $0.type)
+    end
+    
+    func table_union_map_type_name
+        ret 'System.Collections.Generic.Dictionary<(' + (array.each __table.index_list @index_type_name | array.join ', ') + '), ' + (declaring_type_name __value_type)  + '>'
+    end
+    
+    func table_key_list
+        varName = $0
+        indexList = __table.index_list |array.each do; ret varName + '.' + (format_property_name __code_style $0.index_field.name); end;
+        ret array.join indexList ', '
+    end
+    
+    func table_param_def_list
+        paramList = __table.index_list |array.each do; ret (declaring_type_name $0.type) + ' ' + $0.index_field.name; end
+        ret array.join paramList ', '
+    end
+    
+    func table_param_name_list
+        paramList = __table.index_list |array.each do; ret $0.index_field.name; end
+        ret array.join paramList ', '
+    end
 }}
-
-{{cs_start_name_space_grace x.namespace_with_top_module}}
-
-
-{{~if x.comment != '' ~}}
+{{namespace_with_grace_begin __namespace_with_top_module}}
+{{~if __table.comment != '' ~}}
 /// <summary>
-/// {{x.escape_comment}}
+/// {{escape_comment __table.comment}}
 /// </summary>
 {{~end~}}
-public sealed partial class {{name}}
+public partial class {{__name}}
 {
-    {{~if x.is_map_table ~}}
-    private readonly Dictionary<{{cs_define_type key_type}}, {{cs_define_type value_type}}> _dataMap;
-    private readonly List<{{cs_define_type value_type}}> _dataList;
+    {{~if __table.is_map_table ~}}
+    private readonly System.Collections.Generic.Dictionary<{{declaring_type_name __key_type}}, {{declaring_type_name __value_type}}> _dataMap;
+    private readonly System.Collections.Generic.List<{{declaring_type_name __value_type}}> _dataList;
     
-    public {{name}}(JsonElement _json)
+    public {{__name}}(JsonElement _buf)
     {
-        _dataMap = new Dictionary<{{cs_define_type key_type}}, {{cs_define_type value_type}}>();
-        _dataList = new List<{{cs_define_type value_type}}>();
+        _dataMap = new System.Collections.Generic.Dictionary<{{declaring_type_name __key_type}}, {{declaring_type_name __value_type}}>();
+        _dataList = new System.Collections.Generic.List<{{declaring_type_name __value_type}}>();
         
-        foreach(JsonElement _row in _json.EnumerateArray())
+        foreach(JsonElement _ele in _buf.EnumerateArray())
         {
-            var _v = {{cs_define_type value_type}}.Deserialize{{value_type.bean.name}}(_row);
+            {{declaring_type_name __value_type}} _v;
+            {{deserialize '_v' '_ele' __value_type}}
             _dataList.Add(_v);
-            _dataMap.Add(_v.{{x.index_field.convention_name}}, _v);
+            _dataMap.Add(_v.{{format_property_name __code_style __table.index_field.name}}, _v);
         }
-        PostInit();
     }
 
-    public Dictionary<{{cs_define_type key_type}}, {{cs_define_type value_type}}> DataMap => _dataMap;
-    public List<{{cs_define_type value_type}}> DataList => _dataList;
+    public System.Collections.Generic.Dictionary<{{declaring_type_name __key_type}}, {{declaring_type_name __value_type}}> DataMap => _dataMap;
+    public System.Collections.Generic.List<{{declaring_type_name __value_type}}> DataList => _dataList;
 
-{{~if value_type.is_dynamic~}}
-    public T GetOrDefaultAs<T>({{cs_define_type key_type}} key) where T : {{cs_define_type value_type}} => _dataMap.TryGetValue(key, out var v) ? (T)v : null;
-    public T GetAs<T>({{cs_define_type key_type}} key) where T : {{cs_define_type value_type}} => (T)_dataMap[key];
+{{~if __value_type.is_dynamic~}}
+    public T GetOrDefaultAs<T>({{declaring_type_name __key_type}} key) where T : {{declaring_type_name __value_type}} => _dataMap.TryGetValue(key, out var v) ? (T)v : null;
+    public T GetAs<T>({{declaring_type_name __key_type}} key) where T : {{declaring_type_name __value_type}} => (T)_dataMap[key];
 {{~end~}}
-    public {{cs_define_type value_type}} GetOrDefault({{cs_define_type key_type}} key) => _dataMap.TryGetValue(key, out var v) ? v : null;
-    public {{cs_define_type value_type}} Get({{cs_define_type key_type}} key) => _dataMap[key];
-    public {{cs_define_type value_type}} this[{{cs_define_type key_type}} key] => _dataMap[key];
+    public {{declaring_type_name __value_type}} GetOrDefault({{declaring_type_name __key_type}} key) => _dataMap.TryGetValue(key, out var v) ? v : null;
+    public {{declaring_type_name __value_type}} Get({{declaring_type_name __key_type}} key) => _dataMap[key];
+    public {{declaring_type_name __value_type}} this[{{declaring_type_name __key_type}} key] => _dataMap[key];
 
-    public void Resolve(Dictionary<string, object> _tables)
+    public void ResolveRef({{__manager_name}} tables)
     {
-        foreach(var v in _dataList)
-        {
-            v.Resolve(_tables);
-        }
-        PostResolve();
-    }
-
-    public void TranslateText(System.Func<string, string, string> translator)
-    {
-        foreach(var v in _dataList)
-        {
-            v.TranslateText(translator);
-        }
-    }
-    
-        {{~else if x.is_list_table ~}}
-    private readonly List<{{cs_define_type value_type}}> _dataList;
-
-    {{~if x.is_union_index~}}
-    private {{cs_table_union_map_type_name x}} _dataMapUnion;
-    {{~else if !x.index_list.empty?~}}
-    {{~for idx in x.index_list~}}
-    private Dictionary<{{cs_define_type idx.type}}, {{cs_define_type value_type}}> _dataMap_{{idx.index_field.name}};
-    {{~end~}}
-    {{~end~}}
-    
-    public {{name}}(JsonElement _json)
-    {
-        _dataList = new List<{{cs_define_type value_type}}>();
-        
-        foreach(JsonElement _row in _json.EnumerateArray())
-        {
-            var _v = {{cs_define_type value_type}}.Deserialize{{value_type.bean.name}}(_row);
-            _dataList.Add(_v);
-        }
-    {{~if x.is_union_index~}}
-        _dataMapUnion = new {{cs_table_union_map_type_name x}}();
         foreach(var _v in _dataList)
         {
-            _dataMapUnion.Add(({{cs_table_key_list x "_v"}}), _v);
+            _v.ResolveRef(tables);
         }
-    {{~else if !x.index_list.empty?~}}
-    {{~for idx in x.index_list~}}
-        _dataMap_{{idx.index_field.name}} = new Dictionary<{{cs_define_type idx.type}}, {{cs_define_type value_type}}>();
+    }
+
+        {{~else if __table.is_list_table ~}}
+    private readonly System.Collections.Generic.List<{{declaring_type_name __value_type}}> _dataList;
+
+    {{~if __table.is_union_index~}}
+    private {{table_union_map_type_name}} _dataMapUnion;
+    {{~else if !__table.index_list.empty?~}}
+    {{~for idx in __table.index_list~}}
+    private System.Collections.Generic.Dictionary<{{declaring_type_name idx.type}}, {{declaring_type_name __value_type}}> _dataMap_{{idx.index_field.name}};
+    {{~end~}}
+    {{~end~}}
+
+    public {{__name}}(JsonElement _buf)
+    {
+        _dataList = new System.Collections.Generic.List<{{declaring_type_name __value_type}}>();
+        
+        foreach(JsonElement _ele in _buf.EnumerateArray())
+        {
+            {{declaring_type_name __value_type}} _v;
+            {{deserialize '_v' '_ele' __value_type}}
+            _dataList.Add(_v);
+        }
+    {{~if __table.is_union_index~}}
+        _dataMapUnion = new {{table_union_map_type_name}}();
+        foreach(var _v in _dataList)
+        {
+            _dataMapUnion.Add(({{table_key_list "_v"}}), _v);
+        }
+    {{~else if !__table.index_list.empty?~}}
+    {{~for idx in __table.index_list~}}
+        _dataMap_{{idx.index_field.name}} = new System.Collections.Generic.Dictionary<{{declaring_type_name idx.type}}, {{declaring_type_name __value_type}}>();
     {{~end~}}
     foreach(var _v in _dataList)
     {
-    {{~for idx in x.index_list~}}
-        _dataMap_{{idx.index_field.name}}.Add(_v.{{idx.index_field.convention_name}}, _v);
+    {{~for idx in __table.index_list~}}
+        _dataMap_{{idx.index_field.name}}.Add(_v.{{format_property_name __code_style idx.index_field.name}}, _v);
     {{~end~}}
     }
     {{~end~}}
-        PostInit();
     }
 
-    public List<{{cs_define_type value_type}}> DataList => _dataList;
+    public System.Collections.Generic.List<{{declaring_type_name __value_type}}> DataList => _dataList;
 
-    {{~if x.is_union_index~}}
-    public {{cs_define_type value_type}} Get({{cs_table_get_param_def_list x}}) => _dataMapUnion.TryGetValue(({{cs_table_get_param_name_list x}}), out {{cs_define_type value_type}} __v) ? __v : null;
-    {{~else if !x.index_list.empty? ~}}
-        {{~for idx in x.index_list~}}
-    public {{cs_define_type value_type}} GetBy{{idx.index_field.convention_name}}({{cs_define_type idx.type}} key) => _dataMap_{{idx.index_field.name}}.TryGetValue(key, out {{cs_define_type value_type}} __v) ? __v : null;
+    {{~if __table.is_union_index~}}
+    public {{declaring_type_name __value_type}} Get({{table_param_def_list}}) => _dataMapUnion.TryGetValue(({{table_param_name_list}}), out {{declaring_type_name __value_type}} __v) ? __v : null;
+    {{~else if !__table.index_list.empty? ~}}
+        {{~for idx in __table.index_list~}}
+    public {{declaring_type_name __value_type}} GetBy{{format_property_name __code_style idx.index_field.name}}({{declaring_type_name idx.type}} key) => _dataMap_{{idx.index_field.name}}.TryGetValue(key, out {{declaring_type_name __value_type}} __v) ? __v : null;
         {{~end~}}
     {{~end~}}
-
-    public void Resolve(Dictionary<string, object> _tables)
+    
+    public void ResolveRef({{__manager_name}} tables)
     {
-        foreach(var v in _dataList)
+        foreach(var _v in _dataList)
         {
-            v.Resolve(_tables);
-        }
-        PostResolve();
-    }
-
-    public void TranslateText(System.Func<string, string, string> translator)
-    {
-        foreach(var v in _dataList)
-        {
-            v.TranslateText(translator);
+            _v.ResolveRef(tables);
         }
     }
     {{~else~}}
 
-     private readonly {{cs_define_type value_type}} _data;
+     private readonly {{declaring_type_name __value_type}} _data;
 
-    public {{name}}(JsonElement _json)
+    public {{__name}}(JsonElement _buf)
     {
-        int n = _json.GetArrayLength();
+        int n = _buf.GetArrayLength();
         if (n != 1) throw new SerializationException("table mode=one, but size != 1");
-        _data = {{cs_define_type value_type}}.Deserialize{{value_type.bean.name}}(_json[0]);
-        PostInit();
+        {{deserialize '_data' '_buf[0]' __value_type}}
     }
 
-    {{~ for field in value_type.bean.hierarchy_export_fields ~}}
+
+    {{~ for field in __value_type.def_bean.hierarchy_export_fields ~}}
 {{~if field.comment != '' ~}}
     /// <summary>
     /// {{field.escape_comment}}
     /// </summary>
 {{~end~}}
-     public {{cs_define_type field.ctype}} {{field.convention_name}} => _data.{{field.convention_name}};
+     public {{declaring_type_name field.ctype}} {{format_property_name __code_style field.name}} => _data.{{format_property_name __code_style field.name}};
     {{~end~}}
-
-    public void Resolve(Dictionary<string, object> _tables)
+    
+    public void ResolveRef({{__manager_name}} tables)
     {
-        _data.Resolve(_tables);
-        PostResolve();
+        _data.ResolveRef(tables);
     }
-
-    public void TranslateText(System.Func<string, string, string> translator)
-    {
-        _data.TranslateText(translator);
-    }
-
     {{~end~}}
-
-    partial void PostInit();
-    partial void PostResolve();
 }
 
-{{cs_end_name_space_grace x.namespace_with_top_module}}
+{{namespace_with_grace_end __namespace_with_top_module}}

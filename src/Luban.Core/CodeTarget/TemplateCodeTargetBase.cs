@@ -75,6 +75,8 @@ public abstract class TemplateCodeTargetBase : CodeTargetBase
             { "__namespace_with_top_module", table.NamespaceWithTopModule },
             { "__full_name_with_top_module", table.FullNameWithTopModule },
             { "__table", table },
+            { "__key_type", table.KeyTType},
+            { "__value_type", table.ValueTType},
             { "__code_style", CodeStyle},
         };
         tplCtx.PushGlobal(extraEnvs);
