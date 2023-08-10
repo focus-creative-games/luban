@@ -31,4 +31,8 @@ public static class BuiltinOptionNames
     public const string TypeMapperType = "type";
     
     public const string TypeMapperConstructor = "constructor";
+
+    public const string PathValidatorFamily = "pathValidator";
+
+    public const string PathValidatorRootDir = "rootDir";
 }

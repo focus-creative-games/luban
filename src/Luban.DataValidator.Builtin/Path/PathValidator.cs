@@ -95,7 +95,7 @@ public class PathValidator : DataValidatorBase
             return;
         }
 
-        string rootDir = EnvManager.Current.GetOption("validator", "rootDir", false);
+        string rootDir = EnvManager.Current.GetOption(BuiltinOptionNames.PathValidatorFamily, BuiltinOptionNames.PathValidatorRootDir, false);
 
         if (!_pathPattern.ExistPath(rootDir, value))
         {
