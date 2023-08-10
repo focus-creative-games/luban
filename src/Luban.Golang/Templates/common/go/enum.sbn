@@ -1,0 +1,19 @@
+{{~if ___top_module != ''~}}
+package {{__top_module}};
+{{~end~}}
+
+{{~if __this.comment != '' ~}}
+/**
+ * {{escape_comment __this.comment}}
+ */
+{{~end~}}
+const (
+    {{~ for item in __this.items ~}}
+{{~if item.comment_or_alias != '' ~}}
+    /**
+     * {{escape_comment item.comment_or_alias}}
+     */
+{{~end~}}
+    {{full_name __this}}_{{item.name}} = {{item.int_value}};
+    {{~end~}}
+)

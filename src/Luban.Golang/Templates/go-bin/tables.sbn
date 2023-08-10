@@ -1,0 +1,30 @@
+{{~if __namespace != ''~}}
+package {{__namespace}};
+{{~end~}}
+
+import "{{__luban_module_name}}"
+
+type ByteBufLoader func(string) (*luban.ByteBuf, error)
+
+type {{__name}} struct {
+    {{~for table in __tables ~}}
+    {{table.name}} *{{full_name table}}
+    {{~end~}}
+}
+
+func NewTables(loader ByteBufLoader) (*{{__name}}, error) {
+    var err error
+    var buf *luban.ByteBuf
+
+    tables := &{{__name}}{}
+    {{~for table in __tables ~}}
+    if buf, err = loader("{{table.output_data_file}}") ; err != nil {
+        return nil, err
+    }
+    if tables.{{table.name}}, err = New{{full_name table}}(buf) ; err != nil {
+        return nil, err
+    }
+    {{~end~}}
+    return tables, nil
+}
+

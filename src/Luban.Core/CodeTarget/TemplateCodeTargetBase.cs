@@ -70,6 +70,7 @@ public abstract class TemplateCodeTargetBase : CodeTargetBase
         var extraEnvs = new ScriptObject
         {
             { "__ctx", ctx},
+            { "__top_module", ctx.Target.TopModule },
             { "__manager_name", ctx.Target.Manager },
             { "__manager_name_with_top_module", TypeUtil.MakeFullName(ctx.TopModule, ctx.Target.Manager) },
             { "__name", table.Name },
@@ -93,6 +94,7 @@ public abstract class TemplateCodeTargetBase : CodeTargetBase
         var extraEnvs = new ScriptObject
         {
             { "__ctx", ctx},
+            { "__top_module", ctx.Target.TopModule },
             { "__manager_name", ctx.Target.Manager },
             { "__manager_name_with_top_module", TypeUtil.MakeFullName(ctx.TopModule, ctx.Target.Manager) },
             { "__name", bean.Name },
@@ -116,6 +118,7 @@ public abstract class TemplateCodeTargetBase : CodeTargetBase
             { "__ctx", ctx},
             { "__name", @enum.Name },
             { "__namespace", @enum.Namespace },
+            { "__top_module", ctx.Target.TopModule },
             { "__namespace_with_top_module", @enum.NamespaceWithTopModule },
             { "__full_name_with_top_module", @enum.FullNameWithTopModule },
             { "__enum", @enum },

@@ -1,0 +1,54 @@
+{{~if ___top_module != ''~}}
+package {{__top_module}};
+{{~end~}}
+
+{{~
+    go_full_name = full_name __this
+    parent_def_type = __this.parent_def_type
+    is_abstract_type = __this.is_abstract_type
+    hierarchy_fields = __this.hierarchy_export_fields
+    hierarchy_not_abstract_children = __this.hierarchy_not_abstract_children
+~}}
+
+import (
+    "{{__luban_module_name}}"
+)
+
+{{collect_import __this}}
+
+type {{go_full_name}} struct {
+    {{~for field in hierarchy_fields ~}}
+    {{format_field_name __code_style field.name}} {{declaring_type_name field.ctype}}
+    {{~end~}}
+}
+
+const TypeId_{{go_full_name}} = {{__this.id}}
+
+func (*{{go_full_name}}) GetTypeId() int32 {
+    return {{__this.id}}
+}
+
+{{~if is_abstract_type~}}
+func New{{go_full_name}}(_buf *luban.ByteBuf) (interface{}, error) {
+    var id int32
+    var err error
+    if id, err = _buf.ReadInt() ; err != nil {
+        return nil, err
+    }
+    switch id {
+        {{~for child in hierarchy_not_abstract_children~}}
+        case {{child.id}}: _v, err := New{{full_name child}}(_buf); if err != nil { return nil, errors.New("{{child.full_name|string.downcase}}") } else { return _v, nil }
+        {{~end~}}
+        default: return nil, errors.New("unknown type id")
+    }
+}
+
+{{~else~}}
+func New{{go_full_name}}(_buf *luban.ByteBuf) (_v *{{go_full_name}}, err error) {
+    _v = &{{go_full_name}}{}
+    {{~for field in hierarchy_fields ~}}
+    {{deserialize_field field.ctype ("_v." + (format_field_name __code_style field.name)) '_buf' 'err'}}
+    {{~end~}}
+    return
+}
+{{~end~}}
