@@ -3,9 +3,9 @@ using Luban.TypeVisitors;
 
 namespace Luban.Java.TypeVisitors;
 
-class JavaUnderingDeserializeVisitor : ITypeFuncVisitor<string, string, string>
+class JavaBinUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string, string>
 {
-    public static JavaUnderingDeserializeVisitor Ins { get; } = new();
+    public static JavaBinUnderlyingDeserializeVisitor Ins { get; } = new();
 
     public string Accept(TBool type, string bufName, string fieldName)
     {

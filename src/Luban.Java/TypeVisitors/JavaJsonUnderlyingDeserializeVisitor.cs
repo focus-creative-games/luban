@@ -4,9 +4,9 @@ using Luban.TypeVisitors;
 
 namespace Luban.Java.TypeVisitors;
 
-public class JavaJsonDeserialize : ITypeFuncVisitor<string, string, int, string>
+public class JavaJsonUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string, int, string>
 {
-    public static JavaJsonDeserialize Ins { get; } = new();
+    public static JavaJsonUnderlyingDeserializeVisitor Ins { get; } = new();
 
     public string Accept(TBool type, string json, string x, int depth)
     {
@@ -60,14 +60,7 @@ public class JavaJsonDeserialize : ITypeFuncVisitor<string, string, int, string>
 
     public string Accept(TBean type, string json, string x, int depth)
     {
-        if (type.IsDynamic)
-        {
-            return $"{x} = {type.DefBean.FullNameWithTopModule}.deserialize{type.DefBean.Name}({json}.getAsJsonObject());";
-        }
-        else
-        {
-            return $"{x} = new {type.DefBean.FullNameWithTopModule}({json}.getAsJsonObject());";
-        }
+        return $"{x} = {type.DefBean.FullNameWithTopModule}.deserialize({json}.getAsJsonObject());";
     }
 
     public string Accept(TArray type, string json, string x, int depth)

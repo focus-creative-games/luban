@@ -8,25 +8,18 @@ public class JavaJsonTemplateExtension : ScriptObject
 {
     public static string Deserialize(string fieldName, string jsonVar, TType type)
     {
-        if (type.IsNullable)
-        {
-            return $"{{var _j = {jsonVar}; if (_j.ValueKind != JsonValueKind.Null) {{ {type.Apply(JavaJsonDeserialize.Ins, "_j", fieldName, 0)} }} else {{ {fieldName} = null; }} }}";
-        }
-        else
-        {
-            return type.Apply(JavaJsonDeserialize.Ins, jsonVar, fieldName, 0);
-        }
+        return type.Apply(JavaJsonUnderlyingDeserializeVisitor.Ins, jsonVar, fieldName, 0);
     }
     
-    public static string DeserializeField(string fieldName, string jsonVar, string jsonFieldName, TType type)
+    public static string DeserializeField(string fieldName, string jsonName, string jsonFieldName, TType type)
     {
         if (type.IsNullable)
         {
-            return $"{{if ({jsonVar}.TryGetProperty(\"{jsonFieldName}\", out var _j) && _j.ValueKind != JsonValueKind.Null) {{ {type.Apply(JavaJsonDeserialize.Ins, "_j", fieldName, 0)} }} else {{ {fieldName} = null; }} }}";
+            return $"{{ if ({jsonName}.has(\"{jsonFieldName}\") && !{jsonName}.get(\"{jsonFieldName}\").isJsonNull()) {{ {type.Apply(JavaJsonUnderlyingDeserializeVisitor.Ins, $"{jsonName}.get(\"{jsonFieldName}\")", fieldName, 0)} }} else {{ {fieldName} = null; }} }}";
         }
         else
         {
-            return type.Apply(JavaJsonDeserialize.Ins, $"{jsonVar}.GetProperty(\"{jsonFieldName}\")", fieldName, 0);
+            return type.Apply(TypeVisitors.JavaJsonUnderlyingDeserializeVisitor.Ins, $"{jsonName}.get(\"{jsonFieldName}\")", fieldName, 0);
         }
     }
 }

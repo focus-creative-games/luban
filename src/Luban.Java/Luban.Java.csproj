@@ -12,7 +12,6 @@
 
     <ItemGroup>
       <Folder Include="Templates\common\java\" />
-      <Folder Include="TypeVisitors\" />
     </ItemGroup>
 
     <ItemGroup>
@@ -35,13 +34,13 @@
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
       <None Update="Templates\java-json\bean.sbn">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
       <None Update="Templates\java-json\table.sbn">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
       <None Update="Templates\java-json\tables.sbn">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>
 

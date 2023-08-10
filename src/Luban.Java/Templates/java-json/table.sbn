@@ -1,99 +1,82 @@
-package {{x.namespace_with_top_module}};
+{{~if __namespace_with_top_module != ''~}}
+package {{__namespace_with_top_module}};
+{{~end~}}
 
+import luban.*;
 import com.google.gson.JsonElement;
 
-{{~
-    name = x.name
-    key_type = x.key_ttype
-    key_type1 =  x.key_ttype1
-    key_type2 =  x.key_ttype2
-    value_type =  x.value_ttype
-~}}
 
-{{~if x.comment != '' ~}}
+{{~if __this.comment != '' ~}}
 /**
- * {{x.escape_comment}}
+ * {{escape_comment __this.comment}}
  */
 {{~end~}}
-public final class {{name}} {
-    {{~if x.is_map_table ~}}
-    private final java.util.HashMap<{{java_box_define_type key_type}}, {{java_box_define_type value_type}}> _dataMap;
-    private final java.util.ArrayList<{{java_box_define_type value_type}}> _dataList;
+public final class {{__name}} {
+    {{~if __this.is_map_table
+     key_type = __this.key_ttype
+     ~}}
+    private final java.util.HashMap<{{declaring_box_type_name key_type}}, {{declaring_box_type_name __value_type}}> _dataMap;
+    private final java.util.ArrayList<{{declaring_box_type_name __value_type}}> _dataList;
     
-    public {{name}}(JsonElement __json__) {
-        _dataMap = new java.util.HashMap<{{java_box_define_type key_type}}, {{java_box_define_type value_type}}>();
-        _dataList = new java.util.ArrayList<{{java_box_define_type value_type}}>();
+    public {{__name}}(JsonElement _buf) {
+        _dataMap = new java.util.HashMap<{{declaring_box_type_name key_type}}, {{declaring_box_type_name __value_type}}>();
+        _dataList = new java.util.ArrayList<{{declaring_box_type_name __value_type}}>();
         
-        for(com.google.gson.JsonElement _e_ : __json__.getAsJsonArray()) {
-            {{java_box_define_type value_type}} _v;
-            {{java_deserialize '_e_.getAsJsonObject()' '_v' value_type}}
+        for (com.google.gson.JsonElement _e_ : _buf.getAsJsonArray()) {
+            {{declaring_box_type_name __value_type}} _v;
+            {{deserialize '_v' '_e_' __value_type}}
             _dataList.add(_v);
-            _dataMap.put(_v.{{x.index_field.convention_name}}, _v);
+            _dataMap.put(_v.{{format_field_name __code_style __this.index_field.name}}, _v);
         }
     }
 
-    public java.util.HashMap<{{java_box_define_type key_type}}, {{java_box_define_type value_type}}> getDataMap() { return _dataMap; }
-    public java.util.ArrayList<{{java_box_define_type value_type}}> getDataList() { return _dataList; }
+    public java.util.HashMap<{{declaring_box_type_name key_type}}, {{declaring_box_type_name __value_type}}> getDataMap() { return _dataMap; }
+    public java.util.ArrayList<{{declaring_box_type_name __value_type}}> getDataList() { return _dataList; }
 
-{{~if value_type.is_dynamic~}}
+{{~if __value_type.is_dynamic~}}
     @SuppressWarnings("unchecked")
-    public <T extends {{java_box_define_type value_type}}> T getAs({{java_define_type key_type}} key) { return (T)_dataMap.get(key); }
+    public <T extends {{declaring_box_type_name __value_type}}> T getAs({{declaring_type_name key_type}} key) { return (T)_dataMap.get(key); }
 {{~end~}}
-    public {{java_box_define_type value_type}} get({{java_define_type key_type}} key) { return _dataMap.get(key); }
+    public {{declaring_box_type_name __value_type}} get({{declaring_type_name key_type}} key) { return _dataMap.get(key); }
 
-    public void resolve(java.util.HashMap<String, Object> _tables) {
-        for({{java_box_define_type value_type}} v : _dataList) {
-            v.resolve(_tables);
-        }
-    }
-
-    {{~else if x.is_list_table ~}}
-    private final java.util.ArrayList<{{java_box_define_type value_type}}> _dataList;
+    {{~else if __this.is_list_table ~}}
+    private final java.util.ArrayList<{{declaring_box_type_name __value_type}}> _dataList;
     
-    public {{name}}(JsonElement __json__) {
-        _dataList = new java.util.ArrayList<{{java_box_define_type value_type}}>();
+    public {{__name}}(JsonElement _buf) {
+        _dataList = new java.util.ArrayList<{{declaring_box_type_name __value_type}}>();
         
-        for(com.google.gson.JsonElement _e_ : __json__.getAsJsonArray()) {
-            {{java_box_define_type value_type}} _v;
-            {{java_deserialize '_e_.getAsJsonObject()' '_v' value_type}}
+        for (com.google.gson.JsonElement _e_ : _buf.getAsJsonArray()) {
+            {{declaring_box_type_name __value_type}} _v;
+            {{deserialize '_v' '_e_' __value_type}}
             _dataList.add(_v);
         }
     }
 
-    public java.util.ArrayList<{{java_box_define_type value_type}}> getDataList() { return _dataList; }
+    public java.util.ArrayList<{{declaring_box_type_name __value_type}}> getDataList() { return _dataList; }
 
-    public {{java_box_define_type value_type}} get(int index) { return _dataList.get(index); }
+    public {{declaring_box_type_name __value_type}} get(int index) { return _dataList.get(index); }
 
-    public void resolve(java.util.HashMap<String, Object> _tables) {
-        for({{java_box_define_type value_type}} v : _dataList) {
-            v.resolve(_tables);
-        }
-    }
 
     {{~else~}}
-    private final {{java_define_type value_type}} _data;
+    private final {{declaring_type_name __value_type}} _data;
 
-    public final {{java_define_type value_type}} data() { return _data; }
+    public final {{declaring_type_name __value_type}} data() { return _data; }
 
-    public {{name}}(JsonElement __json__) {
-        int n = __json__.getAsJsonArray().size();
-        if (n != 1) throw new bright.serialization.SerializationException("table mode=one, but size != 1");
-        {{java_deserialize '__json__.getAsJsonArray().get(0).getAsJsonObject()' '_data' value_type}}
+    public {{__name}}(JsonElement _buf) {
+        int n = _buf.getAsJsonArray().size();
+        if (n != 1) throw new SerializationException("table mode=one, but size != 1");
+        {{deserialize '_data' '_buf.getAsJsonArray().get(0).getAsJsonObject()' __value_type}}
     }
 
 
-    {{~ for field in value_type.bean.hierarchy_export_fields ~}}
+    {{~ for field in __value_type.def_bean.hierarchy_export_fields ~}}
 {{~if field.comment != '' ~}}
     /**
-     * {{field.escape_comment}}
+     * {{escape_comment field.comment}}
      */
 {{~end~}}
-     public {{java_define_type field.ctype}} {{field.convention_getter_name}}() { return _data.{{field.convention_name}}; }
+     public {{declaring_type_name field.ctype}} {{getter_name field.name}}() { return _data.{{format_field_name __code_style field.name}}; }
     {{~end~}}
-
-    public void resolve(java.util.HashMap<String, Object> _tables) {
-        _data.resolve(_tables);
-    }
 
     {{~end~}}
 }
