@@ -1,6 +1,7 @@
 using System.Text;
 using Luban.DataTarget;
 using Luban.Defs;
+using Luban.Utils;
 using MessagePack;
 
 namespace Luban.MsgPack;
@@ -22,11 +23,14 @@ public class MsgPackDataTarget : DataTargetBase
     
     public override OutputFile ExportTable(DefTable table, List<Record> records)
     {
-        var ss = new StringBuilder();
+        var ms = new System.Buffers.ArrayBufferWriter<byte>();
+        var writer = new MessagePackWriter(ms);
+        WriteList(table, records, ref writer);
+        writer.Flush();
         return new OutputFile()
         {
             File = $"{table.OutputDataFile}.{OutputFileExt}",
-            Content = ss.ToString(),
+            Content = ms.WrittenSpan.ToArray(),
         };
     }
 }
