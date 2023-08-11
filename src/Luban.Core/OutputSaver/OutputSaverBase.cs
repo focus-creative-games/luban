@@ -1,7 +1,10 @@
+using System.Reflection;
+
 namespace Luban.OutputSaver;
 
 public abstract class OutputSaverBase : IOutputSaver
 {
+    public virtual string Name => GetType().GetCustomAttribute<OutputSaverAttribute>().Name;
 
     protected virtual void BeforeSave(OutputFileManifest outputFileManifest, string outputDir)
     {
@@ -13,8 +16,9 @@ public abstract class OutputSaverBase : IOutputSaver
 
     }
     
-    public virtual void Save(OutputFileManifest outputFileManifest, string outputDir)
+    public virtual void Save(OutputFileManifest outputFileManifest)
     {
+        string outputDir = EnvManager.Current.GetOption($"{BuiltinOptionNames.DataExporter}.{Name}", BuiltinOptionNames.OutputDataDir, true);
         BeforeSave(outputFileManifest, outputDir);
         var tasks = new List<Task>();
         foreach (var outputFile in outputFileManifest.DataFiles)

@@ -2,7 +2,9 @@ namespace Luban.OutputSaver;
 
 public interface IOutputSaver
 {
-    void Save(OutputFileManifest outputFileManifest, string outputDir);
+    string Name { get; }
+    
+    void Save(OutputFileManifest outputFileManifest);
 
     void SaveFile(OutputFileManifest fileManifest, string outputDir, OutputFile outputFile);
 }

@@ -67,8 +67,10 @@ public class DefaultPipeline : IPipeline
 
     protected void DoValidate()
     {
+        s_logger.Info("validation begin");
         var v = new DataValidatorContext(_defAssembly);
         v.ValidateTables(_genCtx.Tables);
+        s_logger.Info("validation end");
     }
 
     protected void ProcessTargets()
@@ -84,9 +86,13 @@ public class DefaultPipeline : IPipeline
             }
         }));
 
-        if (_args.DataTargets.Count > 0)
+        if (_args.DataTargets.Count > 0 || EnvManager.Current.GetBoolOptionOrDefault("", BuiltinOptionNames.ForceLoadDatas, true, false))
         {
             LoadDatas();
+        }
+
+        if (_args.DataTargets.Count > 0)
+        {
             string dataExporterName = EnvManager.Current.GetOptionOrDefault("", BuiltinOptionNames.DataExporter, true, "default");
             s_logger.Debug("dataExporter: {}", dataExporterName);
             IDataExporter dataExporter = DataTargetManager.Ins.CreateDataExporter(dataExporterName);
@@ -102,42 +108,44 @@ public class DefaultPipeline : IPipeline
     protected void ProcessCodeTarget(string name, ICodeTarget codeTarget)
     {
         s_logger.Info("process code target:{} begin", name);
-        var outputManifest = new OutputFileManifest();
+        var outputManifest = new OutputFileManifest(name);
         GenerationContext.CurrentCodeTarget = codeTarget;
         codeTarget.Handle(_genCtx, outputManifest);
         
-        if (EnvManager.Current.TryGetOption(name, BuiltinOptionNames.CodePostprocess, true, out string postProcessName))
-        {
-            var oldManifest = outputManifest;
-            outputManifest = new OutputFileManifest();
-            PostProcessManager.Ins.GetPostProcess(postProcessName).PostProcess(oldManifest, outputManifest);
-        }
-
-        string outputSaverName = EnvManager.Current.GetOptionOrDefault(name, BuiltinOptionNames.OutputSaver, true, "local");
-        var saver = OutputSaverManager.Ins.GetOutputSaver(outputSaverName);
-        string outputDir = EnvManager.Current.GetOption($"{CodeTargetBase.FamilyPrefix}.{name}", BuiltinOptionNames.OutputCodeDir, true);
-        saver.Save(outputManifest, outputDir);
+        outputManifest = PostProcess(BuiltinOptionNames.CodePostprocess, outputManifest);
+        Save(outputManifest);
         s_logger.Info("process code target:{} end", name);
+    }
+
+    protected OutputFileManifest PostProcess(string familyName, OutputFileManifest manifest)
+    {
+        string name = manifest.TargetName;
+        if (EnvManager.Current.TryGetOption(name, familyName, true, out string postProcessName))
+        {
+            var newManifest = new OutputFileManifest(name);
+            PostProcessManager.Ins.GetPostProcess(postProcessName).PostProcess(manifest, newManifest);
+            return newManifest;
+        }
+        return manifest;
     }
     
     protected void ProcessDataTarget(string name, IDataExporter mission, IDataTarget dataTarget)
     {
         s_logger.Info("process data target:{} begin", name);
-        var outputManifest = new OutputFileManifest();
+        var outputManifest = new OutputFileManifest(name);
         mission.Handle(_genCtx, dataTarget, outputManifest);
         
-        if (EnvManager.Current.TryGetOption(name, BuiltinOptionNames.DataPostprocess, true, out string postProcessName))
-        {
-            var oldManifest = outputManifest;
-            outputManifest = new OutputFileManifest();
-            PostProcessManager.Ins.GetPostProcess(postProcessName).PostProcess(oldManifest, outputManifest);
-        }
+        var newManifest = PostProcess(BuiltinOptionNames.DataPostprocess, outputManifest);
+        Save(newManifest);
+        s_logger.Info("process data target:{} end", name);
+    }
 
+    private void Save(OutputFileManifest manifest)
+    {
+        string name = manifest.TargetName;
         string outputSaverName = EnvManager.Current.GetOptionOrDefault(name, BuiltinOptionNames.OutputSaver, true, "local");
         var saver = OutputSaverManager.Ins.GetOutputSaver(outputSaverName);
-        string outputDir = EnvManager.Current.GetOption($"{DataExporterBase.FamilyPrefix}.{name}", BuiltinOptionNames.OutputDataDir, true);
-        saver.Save(outputManifest, outputDir);
-        s_logger.Info("process data target:{} end", name);
+        saver.Save(manifest);
     }
     
 }

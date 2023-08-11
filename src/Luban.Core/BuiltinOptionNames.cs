@@ -35,4 +35,6 @@ public static class BuiltinOptionNames
     public const string PathValidatorFamily = "pathValidator";
 
     public const string PathValidatorRootDir = "rootDir";
+
+    public const string ForceLoadDatas = "forceLoadDatas";
 }
