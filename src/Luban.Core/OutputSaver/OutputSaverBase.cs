@@ -6,6 +6,14 @@ public abstract class OutputSaverBase : IOutputSaver
 {
     public virtual string Name => GetType().GetCustomAttribute<OutputSaverAttribute>().Name;
 
+    protected virtual string GetOutputDir(OutputFileManifest manifest)
+    {
+        string optionName = manifest.OutputType == OutputType.Code
+            ? BuiltinOptionNames.OutputCodeDir
+            : BuiltinOptionNames.OutputDataDir;
+        return EnvManager.Current.GetOption($"{BuiltinOptionNames.DataExporter}.{Name}", optionName, true);
+    }
+
     protected virtual void BeforeSave(OutputFileManifest outputFileManifest, string outputDir)
     {
 
@@ -18,7 +26,7 @@ public abstract class OutputSaverBase : IOutputSaver
     
     public virtual void Save(OutputFileManifest outputFileManifest)
     {
-        string outputDir = EnvManager.Current.GetOption($"{BuiltinOptionNames.DataExporter}.{Name}", BuiltinOptionNames.OutputDataDir, true);
+        string outputDir = GetOutputDir(outputFileManifest);
         BeforeSave(outputFileManifest, outputDir);
         var tasks = new List<Task>();
         foreach (var outputFile in outputFileManifest.DataFiles)

@@ -108,7 +108,7 @@ public class DefaultPipeline : IPipeline
     protected void ProcessCodeTarget(string name, ICodeTarget codeTarget)
     {
         s_logger.Info("process code target:{} begin", name);
-        var outputManifest = new OutputFileManifest(name);
+        var outputManifest = new OutputFileManifest(name, OutputType.Code);
         GenerationContext.CurrentCodeTarget = codeTarget;
         codeTarget.Handle(_genCtx, outputManifest);
         
@@ -122,7 +122,7 @@ public class DefaultPipeline : IPipeline
         string name = manifest.TargetName;
         if (EnvManager.Current.TryGetOption(name, familyName, true, out string postProcessName))
         {
-            var newManifest = new OutputFileManifest(name);
+            var newManifest = new OutputFileManifest(name, manifest.OutputType);
             PostProcessManager.Ins.GetPostProcess(postProcessName).PostProcess(manifest, newManifest);
             return newManifest;
         }
@@ -132,7 +132,7 @@ public class DefaultPipeline : IPipeline
     protected void ProcessDataTarget(string name, IDataExporter mission, IDataTarget dataTarget)
     {
         s_logger.Info("process data target:{} begin", name);
-        var outputManifest = new OutputFileManifest(name);
+        var outputManifest = new OutputFileManifest(name, OutputType.Data);
         mission.Handle(_genCtx, dataTarget, outputManifest);
         
         var newManifest = PostProcess(BuiltinOptionNames.DataPostprocess, outputManifest);
