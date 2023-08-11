@@ -8,7 +8,6 @@ namespace Luban.FlatBuffers.TemplateExtensions;
 
 public class FlatBuffersTemplateExtension : ScriptObject
 {
-    
     public static string FullName(DefTypeBase type)
     {
         return TypeUtil.MakeFlatBuffersFullName(type.Namespace, type.Name);

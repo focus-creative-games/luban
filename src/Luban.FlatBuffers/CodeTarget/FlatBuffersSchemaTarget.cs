@@ -1,6 +1,8 @@
 using Luban.CodeFormat;
 using Luban.CodeTarget;
+using Luban.Defs;
 using Luban.FlatBuffers.TemplateExtensions;
+using Luban.FlatBuffers.TypeVisitors;
 using Luban.Tmpl;
 using Scriban;
 using Scriban.Runtime;
@@ -18,10 +20,26 @@ public class FlatBuffersSchemaTarget : AllInOneTemplateCodeTargetBase
 
     protected override string DefaultOutputFileName => "schema.fbs";
 
-    protected override string TemplateDir => "fbs";
-
     protected override void OnCreateTemplateContext(TemplateContext ctx)
     {
+        ctx.PushGlobal(new FlatBuffersTemplateExtension());
         
+        var maps = CollectKeyValueEntry(GenerationContext.Current.ExportBeans).KeyValueEntries.Values;
+        ctx.PushGlobal(new ScriptObject()
+        {
+            {"__maps", maps},
+        });
+    }
+    
+    private MapKeyValueEntryCollection CollectKeyValueEntry(List<DefBean> beans)
+    {
+        var c = new MapKeyValueEntryCollection();
+
+        foreach (DefBean bean in beans)
+        {
+            CollectMapKeyValueEntriesVisitor.Ins.Accept(bean, c);
+        }
+
+        return c;
     }
 }

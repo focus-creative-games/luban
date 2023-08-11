@@ -13,22 +13,31 @@ enum {{typeName}}:int {
 }
 {{~end~}}
 
-{{~for bean in __beans
-    typeName = full_name bean
-~}}
+{{~for bean in __beans~}}
 {{~if bean.is_abstract_type ~}}
 union {{full_name bean}} {
     {{~for c in bean.hierarchy_not_abstract_children~}}
     {{full_name c}},
     {{~end~}}
 }
-{{~else~}}
+{{~end~}}
+{{~end~}}
+
+{{~for bean in __beans~}}
+{{~if !bean.is_abstract_type ~}}
 table {{full_name bean}} {
     {{~for f in bean.hierarchy_export_fields ~}}
     {{f.name}}:{{declaring_type_name f.ctype}}{{type_metadata f.ctype}};
     {{~end~}}
 }
 {{~end~}}
+{{~end~}}
+
+{{~for map in __maps~}}
+table KeyValue_{{declaring_type_name map.key_type}}_{{declaring_type_name map.value_type}} {
+    key: {{declaring_type_name map.key_type}}{{type_metadata map.key_type}};
+    value: {{declaring_type_name map.value_type}}{{type_metadata map.value_type}};
+}
 {{~end~}}
 
 {{~for table in __tables~}}
