@@ -16,8 +16,6 @@ public abstract class PythonCodeTargetBase : AllInOneTemplateCodeTargetBase
     
     protected override string DefaultOutputFileName => "schema.py";
 
-    protected override string TemplateDir => "python-json";
-
     protected override void OnCreateTemplateContext(TemplateContext ctx)
     {
         ctx.PushGlobal(new PythonCommonTemplateExtension());

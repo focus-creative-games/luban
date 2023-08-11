@@ -8,6 +8,8 @@ public class DefBean : DefTypeBase
 {
     public int Id { get; }
     
+    public int AutoId { get; private set; } // for protobuf
+
     public string Parent { get; }
 
     public DefBean ParentDefType { get; private set; }
@@ -154,6 +156,15 @@ public class DefBean : DefTypeBase
         foreach (var field in HierarchyFields)
         {
             field.PostCompile();
+        }
+
+        if (IsAbstractType && ParentDefType == null)
+        {
+            int autoId = 1;
+            foreach (DefBean child in HierarchyNotAbstractChildren)
+            {
+                child.AutoId = autoId++;
+            }
         }
     }
     

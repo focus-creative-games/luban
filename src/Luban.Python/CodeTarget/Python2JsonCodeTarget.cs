@@ -4,7 +4,7 @@ using Scriban;
 
 namespace Luban.Python.CodeTarget;
 
-[CodeTarget("python2-json")]
+[CodeTarget("python-json")]
 public class Python2JsonCodeTarget : PythonCodeTargetBase
 {
 

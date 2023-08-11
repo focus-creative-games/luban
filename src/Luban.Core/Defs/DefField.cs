@@ -114,7 +114,7 @@ public class DefField
     public static void CompileFields<T>(DefTypeBase hostType, List<T> fields) where T : DefField
     {
         var names = new HashSet<string>();
-        int nextAutoId = 0;
+        int nextAutoId = 1;
         foreach (var f in fields)
         {
             var name = f.Name;
