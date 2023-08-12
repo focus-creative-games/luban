@@ -1,5 +1,0 @@
-{
-  "Name": "SchemaCollector",
-  "Enabled": true,
-  "EntryDll" : "Luban.Schema.Default.dll"
-}

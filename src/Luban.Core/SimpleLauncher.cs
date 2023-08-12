@@ -7,7 +7,6 @@ using Luban.DataTarget;
 using Luban.L10N;
 using Luban.OutputSaver;
 using Luban.Pipeline;
-using Luban.Plugin;
 using Luban.PostProcess;
 using Luban.Schema;
 using Luban.Tmpl;
@@ -24,7 +23,6 @@ public class SimpleLauncher
         EnvManager.Current = new EnvManager(options);
         InitManagers();
         ScanRegisterAssemblyBehaviours();
-        ScanRegisterPlugins();
         PostInitManagers();
     }
     
@@ -39,7 +37,6 @@ public class SimpleLauncher
         DataLoaderManager.Ins.Init();
         ValidatorManager.Ins.Init();
         DataTargetManager.Ins.Init();
-        PluginManager.Ins.Init();
         PipelineManager.Ins.Init();
         L10NManager.Ins.Init();
         CustomBehaviourManager.Ins.Init();
@@ -77,13 +74,5 @@ public class SimpleLauncher
     {
         CustomBehaviourManager.Ins.ScanRegisterBehaviour(assembly);
         SchemaManager.Ins.ScanRegisterAll(assembly);
-    }
-
-    private void ScanRegisterPlugins()
-    {
-        foreach (var plugin in PluginManager.Ins.Plugins)
-        {
-            TemplateManager.Ins.AddTemplateSearchPath($"{plugin.Location}/Templates", false);
-        }
     }
 }
