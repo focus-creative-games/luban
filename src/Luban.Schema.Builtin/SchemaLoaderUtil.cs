@@ -117,7 +117,7 @@ public static class SchemaLoaderUtil
             Groups = SchemaLoaderUtil.CreateGroups(group),
             Comment = comment,
             Tags = tags,
-            IgnoreNameValidation = ignoreNameValidation,
+            NotNameValidation = ignoreNameValidation,
         };
         
         f.Type = type;

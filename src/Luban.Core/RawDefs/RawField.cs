@@ -10,7 +10,7 @@ public class RawField
 
     public string Tags { get; set; }
 
-    public bool IgnoreNameValidation { get; set; }
+    public bool NotNameValidation { get; set; }
     
     public List<string> Groups { get; set; }
 }
