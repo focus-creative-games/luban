@@ -23,7 +23,7 @@ public class DefTable : DefTypeBase
         Groups = b.Groups;
         Comment = b.Comment;
         ReadSchemaFromFile = b.ReadSchemaFromFile;
-        Tags = DefUtil.ParseAttrs(b.Tags);
+        Tags = b.Tags;
         _outputFile = b.OutputFile;
     }
 

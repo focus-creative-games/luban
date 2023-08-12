@@ -1,5 +1,6 @@
 using Luban.Defs;
 using Luban.RawDefs;
+using Luban.Utils;
 
 namespace Luban.Schema.Builtin;
 
@@ -23,7 +24,7 @@ public static class SchemaLoaderUtil
             Groups = CreateGroups(group),
             Comment = comment,
             Mode = ConvertMode( schemaFile, name, mode, index),
-            Tags = tags,
+            Tags = DefUtil.ParseAttrs(tags),
             OutputFile = outputFileName,
         };
         if (string.IsNullOrWhiteSpace(name))
@@ -114,9 +115,9 @@ public static class SchemaLoaderUtil
         var f = new RawField()
         {
             Name = name,
-            Groups = SchemaLoaderUtil.CreateGroups(group),
+            Groups = CreateGroups(group),
             Comment = comment,
-            Tags = tags,
+            Tags = DefUtil.ParseAttrs(tags),
             NotNameValidation = ignoreNameValidation,
         };
         

@@ -173,7 +173,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
                 Name = name,
                 Namespace = module,
                 IsFlags = (data.GetField("flags") as DBool).Value,
-                Tags = (data.GetField("tags") as DString).Value,
+                Tags = DefUtil.ParseAttrs((data.GetField("tags") as DString).Value),
                 Comment = (data.GetField("comment") as DString).Value,
                 IsUniqueItemId = (data.GetField("unique") as DBool).Value,
                 Items = items.Datas.Cast<DBean>().Select(d => new EnumItem()
@@ -182,7 +182,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
                     Alias = (d.GetField("alias") as DString).Value,
                     Value = (d.GetField("value") as DString).Value,
                     Comment = (d.GetField("comment") as DString).Value,
-                    Tags = (d.GetField("tags") as DString).Value,
+                    Tags = DefUtil.ParseAttrs((d.GetField("tags") as DString).Value),
                 }).ToList(),
             };
             Collector.Add(curEnum);
@@ -280,7 +280,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
                 Sep = sep,
                 Alias = alias,
                 Comment = comment,
-                Tags = tags,
+                Tags = DefUtil.ParseAttrs(tags),
                 Groups = SchemaLoaderUtil.CreateGroups(group),
                 Parent = parent,
                 Fields = fields.Datas.Select(d => (DBean)d).Select(b => SchemaLoaderUtil.CreateField(

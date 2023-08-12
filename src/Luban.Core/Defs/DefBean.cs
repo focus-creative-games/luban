@@ -71,7 +71,7 @@ public class DefBean : DefTypeBase
         Parent = b.Parent;
         Id = TypeUtil.ComputeCfgHashIdByName(FullName);
         Comment = b.Comment;
-        Tags = DefUtil.ParseAttrs(b.Tags);
+        Tags = b.Tags;
         foreach (var field in b.Fields)
         {
             Fields.Add(CreateField(field, 0));

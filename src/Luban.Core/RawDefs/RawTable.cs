@@ -18,7 +18,7 @@ public class RawTable
 
     public string Comment { get; set; }
 
-    public string Tags { get; set; }
+    public Dictionary<string, string> Tags { get; set; }
 
     public List<string> Groups { get; set; } = new();
 

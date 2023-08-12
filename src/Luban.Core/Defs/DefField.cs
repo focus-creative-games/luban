@@ -50,7 +50,7 @@ public class DefField
         Name = f.Name;
         Type = f.Type;
         Comment = f.Comment;
-        Tags = DefUtil.ParseAttrs(f.Tags);
+        Tags = f.Tags;
         IgnoreNameValidation = f.NotNameValidation;
         this.Groups = f.Groups;
         this.RawField = f;

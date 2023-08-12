@@ -18,12 +18,7 @@ public class DefAssembly
 
     private readonly Dictionary<string, DefTypeBase> _notCaseSenseNamespaces = new();
     
-
     public HashSet<string> ExternalSelectors { get; private set; }
-
-    private List<RawExternalType> ExternalTypes { get; set; }
-
-    private readonly Dictionary<string, RawExternalType> _externalTypesByTypeName = new();
 
     public Dictionary<string, string> Envs { get; }
     
@@ -46,9 +41,7 @@ public class DefAssembly
 
     public DefAssembly(RawAssembly assembly, string target, List<string> outputTables)
     {
-        this.ExternalSelectors = assembly.ExternalSelectors;
-        this.ExternalTypes = assembly.ExternalTypes;
-        this.Envs = assembly.Envs;
+        this.Envs = assembly.Options;
 
         _targets = assembly.Targets;
         Target = GetTarget(target);
@@ -122,11 +115,6 @@ public class DefAssembly
         {
             type.PostCompile();
         }
-
-        foreach (var externalType in assembly.ExternalTypes)
-        {
-            AddExternalType(externalType);
-        }
     }
     
     public bool NeedExport(List<string> groups)
@@ -183,29 +171,6 @@ public class DefAssembly
     public DefRefGroup GetRefGroup(string groupName)
     {
         return _refGroups.TryGetValue(groupName, out var refGroup) ? refGroup : null;
-    }
-
-    public RawExternalType GetExternalType(string typeName)
-    {
-        return _externalTypesByTypeName.GetValueOrDefault(typeName);
-    }
-
-    private static readonly HashSet<string> s_internalOriginTypes = new()
-    {
-        "datetime",
-    };
-
-    public void AddExternalType(RawExternalType type)
-    {
-        string originTypeName = type.OriginTypeName;
-        if (!Types.ContainsKey(originTypeName) && !s_internalOriginTypes.Contains(originTypeName))
-        {
-            throw new LoadDefException($"externaltype:'{type.Name}' originTypeName:'{originTypeName}' 不存在");
-        }
-        if (!_externalTypesByTypeName.TryAdd(originTypeName, type))
-        {
-            throw new LoadDefException($"type:'{originTypeName} 被重复映射. externaltype1:'{type.Name}' exteraltype2:'{_externalTypesByTypeName[originTypeName].Name}'");
-        }
     }
 
     public void AddType(DefTypeBase type)

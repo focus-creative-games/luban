@@ -8,7 +8,7 @@ public class RawField
 
     public string Comment { get; set; }
 
-    public string Tags { get; set; }
+    public Dictionary<string, string> Tags { get; set; }
 
     public bool NotNameValidation { get; set; }
     

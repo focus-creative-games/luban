@@ -54,8 +54,6 @@ public class GenerationContext
     
     public List<DefEnum> ExportEnums { get; }
     
-    private readonly Dictionary<string, RawExternalType> _externalTypesByTypeName = new();
-    
     public TimeZoneInfo TimeZone { get; }
     
     private readonly Dictionary<string, object> _uniqueObjects = new();

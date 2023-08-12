@@ -79,7 +79,7 @@ public class BeanSchemaFromExcelHeaderLoader : IBeanSchemaLoader
                     }
                     case "tags":
                     {
-                        cf.Tags = attrValue;
+                        cf.Tags = DefUtil.ParseAttrs(attrValue);
                         break;
                     }
                     default:

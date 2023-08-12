@@ -10,7 +10,7 @@ public class EnumItem
 
     public string Comment { get; set; }
 
-    public string Tags { get; set; }
+    public Dictionary<string, string> Tags { get; set; }
 }
 
 public class RawEnum
@@ -27,7 +27,7 @@ public class RawEnum
 
     public string Comment { get; set; }
 
-    public string Tags { get; set; }
+    public Dictionary<string, string> Tags { get; set; }
 
     public List<EnumItem> Items { get; set; }
     

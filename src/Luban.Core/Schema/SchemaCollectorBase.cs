@@ -8,8 +8,6 @@ public abstract class SchemaCollectorBase : ISchemaCollector
 
     private readonly List<RawEnum> _enums = new();
     private readonly List<RawBean> _beans = new();
-    private readonly HashSet<string> _externalSelectors = new();
-    private readonly List<RawExternalType> _externalTypes = new();
 
     private readonly Dictionary<string, string> _envs = new();
 
@@ -35,9 +33,7 @@ public abstract class SchemaCollectorBase : ISchemaCollector
             RefGroups = _refGroups,
             Enums = _enums,
             Beans = _beans,
-            ExternalTypes = _externalTypes,
-            ExternalSelectors = _externalSelectors,
-            Envs = _envs,
+            Options = _envs,
         };
     }
     

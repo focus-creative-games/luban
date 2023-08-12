@@ -93,7 +93,7 @@ public class DefEnum : DefTypeBase
         IsFlags = e.IsFlags;
         IsUniqueItemId = e.IsUniqueItemId;
         Comment = e.Comment;
-        Tags = DefUtil.ParseAttrs(e.Tags);
+        Tags = e.Tags;
         Groups = e.Groups;
         TypeMappers = e.TypeMappers is { Count: > 0 } ? e.TypeMappers : null;
         foreach (var item in e.Items)
@@ -105,7 +105,7 @@ public class DefEnum : DefTypeBase
                 Alias = item.Alias,
                 Value = item.Value,
                 Comment = string.IsNullOrWhiteSpace(item.Comment) ? item.Alias : item.Comment,
-                Tags = DefUtil.ParseAttrs(item.Tags),
+                Tags = item.Tags,
             });
         }
     }
