@@ -237,6 +237,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
             {
                 new() { Name = "full_name", Type = "string" },
                 new() {Name =  "parent", Type = "string" },
+                new() { Name = "valueType", Type = "bool" },
                 new() { Name = "sep", Type = "string" },
                 new() { Name = "alias", Type = "string" },
                 new() { Name = "comment", Type = "string" },
@@ -279,6 +280,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
             {
                 Name = name,
                 Namespace = module,
+                IsValueType = ((DBool)data.GetField("valueType")).Value,
                 Sep = sep,
                 Alias = alias,
                 Comment = comment,
