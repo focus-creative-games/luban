@@ -44,7 +44,7 @@ internal static class Program
         [Option('e', "excludeTag", Required = false, HelpText = "exclude tag")]
         public IEnumerable<string> ExcludeTags { get; set; }
         
-        [Option("outputTable", Required = false, HelpText = "output table")]
+        [Option('o', "outputTable", Required = false, HelpText = "output table")]
         public IEnumerable<string> OutputTables { get; set; }
         
         [Option("timeZone", Required = false, HelpText = "time zone")]

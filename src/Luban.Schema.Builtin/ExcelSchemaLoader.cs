@@ -137,6 +137,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
                 new() { Name = "full_name", Type = "string" },
                 new() { Name = "comment", Type = "string" },
                 new() { Name = "flags", Type = "bool" },
+                new() { Name = "group", Type = "string" },
                 new() { Name = "tags", Type = "string" },
                 new() { Name = "unique", Type = "bool" },
                 new() { Name = "items", Type = "list,__EnumItem__" },
@@ -176,6 +177,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
                 Tags = DefUtil.ParseAttrs((data.GetField("tags") as DString).Value),
                 Comment = (data.GetField("comment") as DString).Value,
                 IsUniqueItemId = (data.GetField("unique") as DBool).Value,
+                Groups = SchemaLoaderUtil.CreateGroups((data.GetField("group") as DString).Value.Trim()),
                 Items = items.Datas.Cast<DBean>().Select(d => new EnumItem()
                 {
                     Name = (d.GetField("name") as DString).Value,
