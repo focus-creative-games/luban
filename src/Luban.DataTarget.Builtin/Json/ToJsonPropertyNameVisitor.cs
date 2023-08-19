@@ -52,11 +52,6 @@ public class ToJsonPropertyNameVisitor : IDataFuncVisitor<string>
         return type.Value;
     }
 
-    public string Accept(DText type)
-    {
-        return type.Value;
-    }
-
     public string Accept(DDateTime type)
     {
         throw new NotSupportedException();

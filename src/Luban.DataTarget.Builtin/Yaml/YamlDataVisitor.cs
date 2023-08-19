@@ -68,11 +68,6 @@ public class YamlDataVisitor : IDataFuncVisitor<YamlNode>
         return ToText(type.Value);
     }
 
-    public YamlNode Accept(DText type)
-    {
-        return ToText(type.Value);
-    }
-
     public YamlNode Accept(DDateTime type)
     {
         return ToPlainNode(type.UnixTimeOfCurrentContext.ToString());

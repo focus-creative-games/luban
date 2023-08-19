@@ -16,11 +16,6 @@ public class ToLuaLiteralVisitor : ToLiteralVisitorBase
         return DataUtil.EscapeLuaStringWithQuote(type.Value);
     }
 
-    public override string Accept(DText type)
-    {
-        return DataUtil.EscapeLuaStringWithQuote(type.Value);
-    }
-
     public override string Accept(DBean type)
     {
         var x = new StringBuilder();

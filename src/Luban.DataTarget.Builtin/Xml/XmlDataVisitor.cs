@@ -58,11 +58,6 @@ public class XmlDataVisitor : IDataActionVisitor<XmlWriter>
         w.WriteValue(type.Value);
     }
 
-    public void Accept(DText type, XmlWriter w)
-    {
-        w.WriteValue(type.Value);
-    }
-
     public void Accept(DDateTime type, XmlWriter w)
     {
         w.WriteValue(type.UnixTimeOfCurrentContext);

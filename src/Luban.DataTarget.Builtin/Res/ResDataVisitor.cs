@@ -59,11 +59,6 @@ public class ResDataVisitor : IDataActionVisitor<TType, List<ResourceInfo>>
         }
     }
 
-    public void Accept(DText type, TType x, List<ResourceInfo> y)
-    {
-
-    }
-
     public void Accept(DDateTime type, TType x, List<ResourceInfo> y)
     {
 

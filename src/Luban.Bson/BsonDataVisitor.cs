@@ -56,11 +56,6 @@ public class BsonDataVisitor : IDataActionVisitor<BsonDataWriter>
         x.WriteValue(type.Value);
     }
 
-    public virtual void Accept(DText type, BsonDataWriter x)
-    {
-        x.WriteValue(type.Value);
-    }
-
     public virtual void Accept(DDateTime type, BsonDataWriter x)
     {
         x.WriteValue(type.UnixTimeOfCurrentContext);

@@ -62,11 +62,6 @@ public class ProtobufBinDataVisitor : IDataActionVisitor<CodedOutputStream>
         x.WriteString(type.Value);
     }
 
-    public void Accept(DText type, CodedOutputStream x)
-    {
-        x.WriteString(type.Value);
-    }
-
     private MemoryStream AllocMemoryStream()
     {
         // TODO 优化

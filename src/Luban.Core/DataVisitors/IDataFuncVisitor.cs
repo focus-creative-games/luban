@@ -22,8 +22,6 @@ public interface IDataFuncVisitor<TR>
 
     TR Accept(DString type);
 
-    TR Accept(DText type);
-
     TR Accept(DDateTime type);
 
     TR Accept(DBean type);
@@ -57,8 +55,6 @@ public interface IDataFuncVisitor<T, TR>
 
     TR Accept(DString type, T x);
 
-    TR Accept(DText type, T x);
-
     TR Accept(DDateTime type, T x);
 
     TR Accept(DBean type, T x);
@@ -90,8 +86,6 @@ public interface IDataFuncVisitor<T1, T2, TR>
     TR Accept(DEnum type, T1 x, T2 y);
 
     TR Accept(DString type, T1 x, T2 y);
-
-    TR Accept(DText type, T1 x, T2 y);
 
     TR Accept(DDateTime type, T1 x, T2 y);
 

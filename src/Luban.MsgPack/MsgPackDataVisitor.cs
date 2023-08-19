@@ -25,7 +25,6 @@ class MsgPackDataVisitor
             case DLong x: Accept(x, ref writer); break;
             case DDateTime x: Accept(x, ref writer); break;
             case DMap x: Accept(x, ref writer); break;
-            case DText x: Accept(x, ref writer); break;
             case DByte x: Accept(x, ref writer); break;
             case DDouble x: Accept(x, ref writer); break;
             case DSet x: Accept(x, ref writer); break;
@@ -75,11 +74,6 @@ class MsgPackDataVisitor
     }
 
     public void Accept(DString type, ref MessagePackWriter writer)
-    {
-        writer.Write(type.Value);
-    }
-
-    public void Accept(DText type, ref MessagePackWriter writer)
     {
         writer.Write(type.Value);
     }

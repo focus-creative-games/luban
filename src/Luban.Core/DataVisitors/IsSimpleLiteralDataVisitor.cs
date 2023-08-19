@@ -51,11 +51,6 @@ public class IsSimpleLiteralDataVisitor : IDataFuncVisitor<bool>
         return true;
     }
 
-    public bool Accept(DText type)
-    {
-        return true;
-    }
-
     public bool Accept(DDateTime type)
     {
         return true;

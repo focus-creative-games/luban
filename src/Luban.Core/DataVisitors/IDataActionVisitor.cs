@@ -22,8 +22,6 @@ public interface IDataActionVisitor<T>
 
     void Accept(DString type, T x);
 
-    void Accept(DText type, T x);
-
     void Accept(DDateTime type, T x);
 
     void Accept(DBean type, T x);
@@ -56,8 +54,6 @@ public interface IDataActionVisitor<T1, T2>
     void Accept(DEnum type, T1 x, T2 y);
 
     void Accept(DString type, T1 x, T2 y);
-
-    void Accept(DText type, T1 x, T2 y);
 
     void Accept(DDateTime type, T1 x, T2 y);
 
