@@ -18,7 +18,7 @@
         {{~ for item in items ~}}
 {{~if item.comment != '' ~}}
         /// <summary>
-        /// {{item.escape_comment}}
+        /// {{escape_comment item.comment_or_alias}}
         /// </summary>
 {{~end~}}
         {{format_enum_item_name __code_style item.name}} = {{item.value}},

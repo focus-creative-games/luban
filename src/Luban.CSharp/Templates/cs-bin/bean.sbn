@@ -86,7 +86,7 @@ public {{class_modifier __bean}} partial class {{__name}} : {{if parent_def_type
     {{~ for field in export_fields ~}}
 {{~if field.comment != '' ~}}
     /// <summary>
-    /// {{field.escape_comment}}
+    /// {{escape_comment field.comment}}
     /// </summary>
 {{~end~}}
     public readonly {{declaring_type_name field.ctype}} {{format_property_name __code_style field.name}};
