@@ -7,6 +7,7 @@ using Luban.L10N;
 using Luban.Pipeline;
 using Luban.Protobuf.TypeVisitors;
 using Luban.Schema.Builtin;
+using Luban.Tmpl;
 using Luban.Utils;
 using NLog;
 using System.Reflection;
@@ -50,6 +51,9 @@ internal static class Program
         [Option("timeZone", Required = false, HelpText = "time zone")]
         public string TimeZone { get; set; }
         
+        [Option("customTemplateDir", Required = false, HelpText = "custom template dirs")]
+        public IEnumerable<string> CustomTemplateDirs { get; set; }
+
         [Option("validationFailAsError", Required = false, HelpText = "validation fail as error")]
         public bool ValidationFailAsError { get; set; }
         
@@ -69,15 +73,24 @@ internal static class Program
         
         var launcher = new SimpleLauncher();
         launcher.Start(ParseXargs(opts.Xargs));
+        AddCustomTemplateDirs(opts.CustomTemplateDirs);
         
         var pipeline = PipelineManager.Ins.CreatePipeline(opts.Pipeline);
         pipeline.Run(CreatePipelineArgs(opts));
         if (opts.ValidationFailAsError && GenerationContext.Current.AnyValidatorFail)
         {
-            s_logger.Error("have some validation failure. exit code: 1");
+            s_logger.Error("encounter some validation failure. exit code: 1");
             Environment.Exit(1);
         }
         s_logger.Info("bye~");
+    }
+    
+    private static void AddCustomTemplateDirs(IEnumerable<string> dirs)
+    {
+        foreach (var dir in dirs)
+        {
+            TemplateManager.Ins.AddTemplateSearchPath(dir, true, true);
+        }
     }
 
     private static CommandOptions ParseArgs(string[] args)

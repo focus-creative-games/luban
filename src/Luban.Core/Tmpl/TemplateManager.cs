@@ -24,7 +24,7 @@ public class TemplateManager
         AddTemplateSearchPath($"{curDir}/Templates", true);
     }
 
-    public void AddTemplateSearchPath(string templateSearchPath, bool sureExists = false)
+    public void AddTemplateSearchPath(string templateSearchPath, bool sureExists = false, bool addFirst = false)
     {
         if (!Directory.Exists(templateSearchPath))
         {
@@ -34,7 +34,14 @@ public class TemplateManager
             }
             return;
         }
-        _templateSearchPaths.Add(templateSearchPath);
+        if (addFirst)
+        {
+            _templateSearchPaths.Insert(0, templateSearchPath);
+        }
+        else
+        {
+            _templateSearchPaths.Add(templateSearchPath);
+        }
     }
 
     public bool TryGetTemplateString(string templateName, out string result)
