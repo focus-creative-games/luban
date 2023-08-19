@@ -63,7 +63,7 @@ class YamlDataCreator : ITypeFuncVisitor<YamlNode, DefAssembly, DType>
 
     public DType Accept(TString type, YamlNode x, DefAssembly y)
     {
-        return DString.ValueOf(GetTextValue(x));
+        return DString.ValueOf(type, GetTextValue(x));
     }
 
     private static readonly YamlScalarNode s_typeNodeName = new(FieldNames.JsonTypeNameKey);

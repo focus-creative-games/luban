@@ -92,7 +92,7 @@ class LuaDataCreator : ITypeFuncVisitor<object, DefAssembly, DType>
     {
         if (x is string s)
         {
-            return DString.ValueOf(s);
+            return DString.ValueOf(type, s);
         }
         else
         {

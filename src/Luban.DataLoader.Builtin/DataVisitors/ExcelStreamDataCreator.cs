@@ -167,7 +167,7 @@ class ExcelStreamDataCreator : ITypeFuncVisitor<ExcelStream, DType>
                 throw new InvalidExcelDataException("字段不是nullable类型，不能为null");
             }
         }
-        return DString.ValueOf(s);
+        return DString.ValueOf(type, s);
     }
 
     private static string ParseString(object d)

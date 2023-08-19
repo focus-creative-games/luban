@@ -99,7 +99,7 @@ class StringDataCreator : ITypeFuncVisitor<string, DType>
 
     public DType Accept(TString type, string x)
     {
-        return DString.ValueOf(x);
+        return DString.ValueOf(type, x);
     }
 
     public DType Accept(TBean type, string x)

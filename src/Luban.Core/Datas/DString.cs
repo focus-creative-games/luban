@@ -1,4 +1,5 @@
 using Luban.DataVisitors;
+using Luban.Types;
 
 namespace Luban.Datas;
 
@@ -6,13 +7,22 @@ public class DString : DType<string>
 {
     private static readonly DString s_empty = new("");
 
-    public static DString ValueOf(string s)
+    public static DString ValueOf(TType type, string s)
     {
         if (s.Length == 0)
         {
             return s_empty;
         }
-        return new DString(s);
+
+        string escapeMode = type.GetTagOrDefault("escape", "0")?.ToLowerInvariant();
+        switch (escapeMode)
+        {
+            case "0":
+            case "false": return new DString(s);
+            case "1":
+            case "true": return new DString(System.Text.RegularExpressions.Regex.Unescape(s));
+            default: throw new Exception($"unknown escape mode:{escapeMode}");
+        }
     }
 
     public override string TypeName => "string";

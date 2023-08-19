@@ -53,7 +53,7 @@ public class JsonDataCreator : ITypeFuncVisitor<JsonElement, DefAssembly, DType>
 
     public DType Accept(TString type, JsonElement x, DefAssembly ass)
     {
-        return DString.ValueOf(x.GetString());
+        return DString.ValueOf(type, x.GetString());
     }
 
     public DType Accept(TBean type, JsonElement x, DefAssembly ass)
