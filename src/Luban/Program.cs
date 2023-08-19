@@ -104,7 +104,17 @@ internal static class Program
         foreach (var arg in xargs)
         {
             string[] pair = arg.Split('=', 2);
-            result.Add(pair[0], pair[1]);
+            if (pair.Length != 2)
+            {
+                Console.Error.WriteLine($"invalid xargs:{arg}");
+                Environment.Exit(1);
+            }
+
+            if (!result.TryAdd(pair[0], pair[1]))
+            {
+                Console.Error.WriteLine($"duplicate xargs:{arg}");
+                Environment.Exit(1);
+            }
         }
         return result;
     }

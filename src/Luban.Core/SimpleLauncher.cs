@@ -56,7 +56,7 @@ public class SimpleLauncher
             string dllName = Path.GetFileNameWithoutExtension(dllFile);
             if (!loadedAssemblyNames.Contains(dllName) && dllName.Contains("Luban"))
             {
-                s_logger.Info("load dll:{dll}", dllFile);
+                s_logger.Trace("load dll:{dll}", dllFile);
                 Assembly.LoadFile(dllFile);
             }
         }
