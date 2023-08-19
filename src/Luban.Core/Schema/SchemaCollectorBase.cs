@@ -18,8 +18,8 @@ public abstract class SchemaCollectorBase : ISchemaCollector
     private readonly List<RawGroup> _groups = new();
 
     private readonly List<RawRefGroup> _refGroups = new();
-    
-    public List<RawTable> Tables => _tables;
+
+    protected List<RawTable> Tables => _tables;
     
     public abstract void Load(string schemaPath);
     
@@ -39,39 +39,60 @@ public abstract class SchemaCollectorBase : ISchemaCollector
     
     public void Add(RawTable table)
     {
-        _tables.Add(table);
+        lock (this)
+        {
+            _tables.Add(table);
+        }
     }
 
     public void Add(RawBean bean)
     {
-        _beans.Add(bean);
+        lock (this)
+        {
+            _beans.Add(bean);
+        }
     }
 
     public void Add(RawEnum @enum)
     {
-        _enums.Add(@enum);
+        lock (this)
+        {
+            _enums.Add(@enum);
+        }
     }
 
     public void Add(RawGroup group)
     {
-        _groups.Add(group);
+        lock (this)
+        {
+            _groups.Add(group);
+        }
     }
 
     public void Add(RawRefGroup refGroup)
     {
-        _refGroups.Add(refGroup);
+        lock (this)
+        {
+            _refGroups.Add(refGroup);
+        }
     }
 
     public void Add(RawTarget target)
     {
-        _targets.Add(target);
+        lock (this)
+        {
+            _targets.Add(target);
+        }
     }
 
     public void AddEnv(string key, string value)
     {
-        if (!_envs.TryAdd(key, value))
+        lock (this)
         {
-            s_logger.Warn("env key:{} already exist, value:{} will be ignored", key, value);
+            if (!_envs.TryAdd(key, value))
+            {
+                s_logger.Warn("env key:{} already exist, value:{} will be ignored", key, value);
+            }
         }
     }
 }
