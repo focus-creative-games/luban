@@ -1,0 +1,140 @@
+{{namespace_with_grace_begin __namespace}}
+
+{{~if __this.comment != '' ~}}
+/**
+ * {{escape_comment __this.comment}}
+ */
+{{~end~}}
+
+class {{__name}}
+{
+    {{~if __this.is_map_table ~}}
+    private:
+    ::luban::HashMap<{{declaring_type_name __key_type}}, {{declaring_type_name __value_type}}> _dataMap;
+    ::luban::Vector<{{declaring_type_name __value_type}}> _dataList;
+    
+    public:
+    bool load(::luban::ByteBuf& _buf)
+    {        
+        int n;
+        if (!_buf.readSize(n)) return false;
+        for(; n > 0 ; --n)
+        {
+            {{declaring_type_name __value_type}} _v;
+            {{deserialize '_buf' '_v' __value_type}}
+            _dataList.push_back(_v);
+            _dataMap[_v->{{format_field_name __code_style __this.index_field.name}}] = _v;
+        }
+        return true;
+    }
+
+    const ::luban::HashMap<{{declaring_type_name __key_type}}, {{declaring_type_name __value_type}}>& getDataMap() const { return _dataMap; }
+    const ::luban::Vector<{{declaring_type_name __value_type}}>& getDataList() const { return _dataList; }
+
+    {{make_type_cpp_name __value_type.def_bean}}* getRaw({{declaring_type_name __key_type}} key)
+    { 
+        auto it = _dataMap.find(key);
+        return it != _dataMap.end() ? it->second.get() : nullptr;
+    }
+
+    {{declaring_type_name __value_type}} get({{declaring_type_name __key_type}} key)
+    { 
+        auto it = _dataMap.find(key);
+        return it != _dataMap.end() ? it->second : nullptr;
+    }
+
+    {{~else if __this.is_list_table~}}
+    private:
+        ::luban::Vector<{{declaring_type_name __value_type}}> _dataList;
+    {{~if __this.is_union_index~}}
+
+    {{~else if !__this.index_list.empty?~}}
+        {{~for idx in __this.index_list~}}
+        ::luban::HashMap<{{declaring_type_name idx.type}}, {{declaring_type_name __value_type}}> _dataMap_{{idx.index_field.name}};
+        {{~end~}}
+    {{~else~}}
+    {{~end~}}    
+    
+        public:
+        bool load(::luban::ByteBuf& _buf)
+        {        
+            int n;
+            if (!_buf.readSize(n)) return false;
+            for(; n > 0 ; --n)
+            {
+                {{declaring_type_name __value_type}} _v;
+                {{deserialize '_buf' '_v' __value_type}}
+                _dataList.push_back(_v);
+                {{~if __this.is_union_index~}}
+
+                {{~else if !__this.index_list.empty?~}}
+                {{~for idx in __this.index_list~}}
+                _dataMap_{{idx.index_field.name}}[_v->{{idx.index_field.name}}] = _v;
+                {{~end~}}
+                {{~else~}}
+                {{~end~}}
+            }
+            return true;
+        }
+
+        const ::luban::Vector<{{declaring_type_name __value_type}}>& getDataList() const { return _dataList; }
+
+        {{~if __this.is_union_index~}}
+
+        {{~else if !__this.index_list.empty?~}}
+        {{~for idx in __this.index_list~}}
+        ::luban::HashMap<{{declaring_type_name idx.type}}, {{declaring_type_name __value_type}}>& getDataMapBy{{idx.index_field.name}}()
+        {
+            return _dataMap_{{idx.index_field.name}};
+        }
+        {{make_type_cpp_name __value_type.def_bean}}* getRawBy{{idx.index_field.name}}({{declaring_type_name idx.type}} key)
+        {                    
+            auto it = _dataMap_{{idx.index_field.name}}.find(key);
+            return it != _dataMap_{{idx.index_field.name}}.end() ? it->second.get() : nullptr;
+        }
+        {{declaring_type_name __value_type}} getBy{{idx.index_field.name}}({{declaring_type_name idx.type}} key)
+        {
+            auto it = _dataMap_{{idx.index_field.name}}.find(key);
+            return it != _dataMap_{{idx.index_field.name}}.end() ? it->second : nullptr;
+        }
+        {{~end~}}
+        {{~else~}}
+            {{make_type_cpp_name __value_type.def_bean}}* getRaw(size_t index) const
+            { 
+                return _dataList[index].get();
+            }
+
+            {{declaring_type_name __value_type}} get(size_t index) const
+            { 
+                return _dataList[index];
+            }
+        {{~end~}}
+    {{~else~}}
+     private:
+    {{declaring_type_name __value_type}} _data;
+
+    public:
+    {{declaring_type_name __value_type}} data() const { return _data; }
+
+    bool load(::luban::ByteBuf& _buf)
+    {
+        int n;
+        if (!_buf.readSize(n)) return false;
+        if (n != 1) return false;
+        {{deserialize '_buf' '_data' __value_type}}
+        return true;
+    }
+
+
+    {{~ for field in __value_type.def_bean.hierarchy_export_fields ~}}
+{{~if field.comment != '' ~}}
+    /**
+     * {{escape_comment field.comment}}
+     */
+{{~end~}}
+    {{declaring_type_name field.ctype}}& {{getter_name field.name}}() const { return _data->{{format_field_name __code_style field.name}}; }
+    {{~end~}}
+    {{~end~}}
+};
+
+{{namespace_with_grace_end __namespace}}

@@ -37,6 +37,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Golang", "Luban.Golan
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Typescript", "Luban.Typescript\Luban.Typescript.csproj", "{CA2B5775-0ED2-439E-8946-65C0FC4449F9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Cpp", "Luban.Cpp\Luban.Cpp.csproj", "{7692415C-FED5-4837-8DA0-4949B7E660CC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -111,6 +113,10 @@ Global
 		{CA2B5775-0ED2-439E-8946-65C0FC4449F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA2B5775-0ED2-439E-8946-65C0FC4449F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CA2B5775-0ED2-439E-8946-65C0FC4449F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7692415C-FED5-4837-8DA0-4949B7E660CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7692415C-FED5-4837-8DA0-4949B7E660CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7692415C-FED5-4837-8DA0-4949B7E660CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7692415C-FED5-4837-8DA0-4949B7E660CC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

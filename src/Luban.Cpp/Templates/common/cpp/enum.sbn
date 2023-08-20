@@ -1,0 +1,25 @@
+{{~
+    comment = __enum.comment
+    items = __enum.items
+~}}
+
+
+{{namespace_with_grace_begin __namespace}} 
+{{~if comment != '' ~}}
+    /// <summary>
+    /// {{escape_comment comment}}
+    /// </summary>
+{{~end~}}
+    enum class {{__name}}
+    {
+        {{~ for item in items ~}}
+{{~if item.comment != '' ~}}
+        /// <summary>
+        /// {{escape_comment item.comment_or_alias}}
+        /// </summary>
+{{~end~}}
+        {{format_enum_item_name __code_style item.name}} = {{item.value}},
+        {{~end~}}
+    };
+
+{{namespace_with_grace_end __namespace}} 

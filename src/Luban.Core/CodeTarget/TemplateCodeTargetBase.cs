@@ -103,6 +103,9 @@ public abstract class TemplateCodeTargetBase : CodeTargetBase
             { "__full_name_with_top_module", bean.FullNameWithTopModule },
             { "__bean", bean },
             { "__this", bean },
+            {"__export_fields", bean.ExportFields},
+            {"__hierarchy_export_fields", bean.HierarchyExportFields},
+            {"__parent_def_type", bean.ParentDefType},
             { "__code_style", CodeStyle},
         };
         tplCtx.PushGlobal(extraEnvs);

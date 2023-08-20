@@ -70,7 +70,7 @@ public class DString : DType<string>
     {
         if (other is DString d)
         {
-            return this.Value.CompareTo(d.Value);
+            return String.Compare(this.Value, d.Value, StringComparison.Ordinal);
         }
         throw new System.NotSupportedException();
     }
