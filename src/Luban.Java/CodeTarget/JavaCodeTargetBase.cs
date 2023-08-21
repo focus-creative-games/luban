@@ -16,7 +16,7 @@ public abstract class JavaCodeTargetBase : TemplateCodeTargetBase
 
     protected override string GetFileNameWithoutExtByTypeName(string name)
     {
-        return TypeUtil.MakeFullName(GenerationContext.Current.TopModule, name).Replace('.', '/');
+        return name.Replace('.', '/');
     }
 
     protected override void OnCreateTemplateContext(TemplateContext ctx)
