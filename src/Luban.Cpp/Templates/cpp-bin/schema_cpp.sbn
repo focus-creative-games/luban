@@ -1,5 +1,3 @@
-#include <algorithm>
-
 #include "{{__schema_header_file}}"
 
 {{namespace_with_grace_begin __top_module}}

@@ -51,7 +51,7 @@ public abstract class CppCodeTargetBase : TemplateCodeTargetBase
             {
                 var writer = new CodeWriter();
                 GenerateTable(ctx, table, writer);
-                return writer.ToResult(FileHeader);
+                return writer.ToResult(null);
             }));
         }
 

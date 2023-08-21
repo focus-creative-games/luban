@@ -2,8 +2,6 @@
     comment = __enum.comment
     items = __enum.items
 ~}}
-
-
 {{namespace_with_grace_begin __namespace}} 
 {{~if comment != '' ~}}
     /// <summary>
