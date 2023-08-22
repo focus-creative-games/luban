@@ -98,7 +98,7 @@ public class RootXmlSchemaLoader : SchemaLoaderBase, IRootSchemaLoader
     {
         var name = XmlUtil.GetRequiredAttribute(e, "name");
         var manager = XmlUtil.GetRequiredAttribute(e, "manager");
-        var topModule = XmlUtil.GetRequiredAttribute(e, "topModule");
+        var topModule = XmlUtil.GetOptionalAttribute(e, "topModule");
         List<string> groups = SchemaLoaderUtil.CreateGroups(XmlUtil.GetOptionalAttribute(e, "group"));
         XmlSchemaUtil.ValidAttrKeys(_xmlFileName, e, _targetAttrs, _targetAttrs);
         Collector.Add(new RawTarget() { Name = name, Manager = manager, Groups = groups, TopModule = topModule});
