@@ -122,7 +122,7 @@ Data label filtering
 
 ## Overview of other formats
 
-Take behavior tree as an example to show how to configure behavior tree configuration in json format. For xml, lua, yaml and other formats, please refer to [Detailed Documentation](http://localhost:3000/docs/intro).
+Take behavior tree as an example to show how to configure behavior tree configuration in json format. For xml, lua, yaml and other formats, please refer to [Detailed Documentation](https://luban.doc.code-philosophy.com/en/docs/intro).
 
 ```json
 {

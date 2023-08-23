@@ -122,7 +122,7 @@ map的列限定格式
 
 ## 其他格式概览
 
-以行为树为例，展示json格式下如何配置行为树配置。xml、lua、yaml等格式请参见 [详细文档](http://localhost:3000/docs/intro)。
+以行为树为例，展示json格式下如何配置行为树配置。xml、lua、yaml等格式请参见 [详细文档](https://luban.doc.code-philosophy.com/docs/intro)。
 
 ```json
 {
