@@ -3,11 +3,6 @@ using Luban.DataLoader.Builtin.Utils;
 
 namespace Luban.DataLoader.Builtin.Excel;
 
-public class DataNotEnoughException : System.Exception
-{
-
-}
-
 class ExcelStream
 {
 
