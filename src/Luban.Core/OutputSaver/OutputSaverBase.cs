@@ -11,7 +11,7 @@ public abstract class OutputSaverBase : IOutputSaver
         string optionName = manifest.OutputType == OutputType.Code
             ? BuiltinOptionNames.OutputCodeDir
             : BuiltinOptionNames.OutputDataDir;
-        return EnvManager.Current.GetOption($"{BuiltinOptionNames.DataExporter}.{Name}", optionName, true);
+        return EnvManager.Current.GetOption($"{manifest.TargetName}", optionName, true);
     }
 
     protected virtual void BeforeSave(OutputFileManifest outputFileManifest, string outputDir)
