@@ -1,0 +1,59 @@
+{{~
+    comment = __enum.comment
+    items = __enum.items
+    itemType = 'Luban.EditorEnumItemInfo'
+~}}
+
+{{namespace_with_grace_begin __namespace_with_top_module}}
+{{~if comment != '' ~}}
+    /// <summary>
+    /// {{escape_comment comment}}
+    /// </summary>
+{{~end~}}
+    {{~if __enum.is_flags~}}
+    [System.Flags]
+    {{~end~}}
+    public enum {{__name}}
+    {
+        {{~ for item in items ~}}
+{{~if item.comment != '' ~}}
+        /// <summary>
+        /// {{escape_comment item.comment_or_alias}}
+        /// </summary>
+{{~end~}}
+        {{format_enum_item_name __code_style item.name}} = {{item.value}},
+        {{~end~}}
+    }
+
+    public static class {{__name}}_Metadata
+    {
+        {{~ for item in items ~}}
+        public static readonly {{itemType}} {{item.name}} = new {{itemType}}("{{item.name}}", "{{item.alias}}", {{item.int_value}}, "{{item.comment}}");
+        {{~end~}}
+
+        private static readonly System.Collections.Generic.List<{{itemType}}> __items = new System.Collections.Generic.List<{{itemType}}>
+        {
+        {{~ for item in items ~}}
+            {{item.name}},
+        {{~end~}}
+        };
+
+        public static System.Collections.Generic.List<{{itemType}}> GetItems() => __items;
+
+        public static {{itemType}} GetByName(string name)
+        {
+            return __items.Find(c => c.Name == name);
+        }
+
+        public static {{itemType}} GetByNameOrAlias(string name)
+        {
+            return __items.Find(c => c.Name == name || c.Alias == name);
+        }
+
+        public static {{itemType}} GetByValue(int value)
+        {
+            return __items.Find(c => c.Value == value);
+        }
+    }
+
+{{namespace_with_grace_end __namespace_with_top_module}} 

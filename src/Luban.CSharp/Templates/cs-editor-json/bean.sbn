@@ -1,0 +1,102 @@
+using System.Collections.Generic;
+using SimpleJSON;
+using Luban;
+
+{{namespace_with_grace_begin __namespace_with_top_module}}
+
+{{~if __this.comment != '' ~}}
+/// <summary>
+/// {{escape_comment __this.comment}}
+/// </summary>
+{{~end~}}
+public {{class_modifier __bean}} class {{__name}} : {{if __parent_def_type}} {{__this.parent}} {{else}} Luban.EditorBeanBase {{end}}
+{
+    public {{__name}}()
+    {
+        {{~ for field in __fields ~}}
+        {{~if (need_init field.ctype) && !field.ctype.is_nullable ~}}
+            {{format_field_name __code_style field.name}} = {{init_value field.ctype}};
+        {{~end~}}
+        {{~end~}}
+    }
+
+    {{~if !__this.is_abstract_type~}}
+    public override void LoadJson(SimpleJSON.JSONObject _json)
+    {
+        {{~ for field in __hierarchy_fields ~}}
+        { 
+            var _fieldJson = _json["{{field.name}}"];
+            if (_fieldJson != null)
+            {
+                {{deserialize '_fieldJson' (format_field_name __code_style field.name) field.ctype}}
+            }
+        }
+        
+        {{~end~}}
+    }
+
+    public override void SaveJson(SimpleJSON.JSONObject _json)
+    {
+        {{~if parent~}}
+        _json["$type"] = "{{__this.full_name}}";
+        {{~end~}}
+        {{~ for field in __hierarchy_fields ~}}
+            {{~if field.ctype.is_nullable}}
+        if ({{format_field_name __code_style field.name}} != null)
+        {
+            {{serialize '_json' field.name (format_field_name __code_style field.name) field.ctype}}
+        }
+            {{~else~}}
+        {
+                {{~if (is_raw_nullable field.ctype)}}
+            if ({{format_field_name __code_style field.name}} == null) { throw new System.ArgumentNullException(); }
+                {{~end~}}
+            {{serialize '_json' field.name (format_field_name __code_style field.name) field.ctype}}
+        }
+            {{~end~}}
+        {{~end~}}
+    }
+    {{~end~}}
+
+    public static {{__name}} LoadJson{{__name}}(SimpleJSON.JSONNode _json)
+    {
+    {{~if __this.is_abstract_type~}}
+        string type = _json["$type"];
+        {{__name}} obj;
+        switch (type)
+        {
+        {{~for child in __this.hierarchy_not_abstract_children~}}
+            {{~if child.namespace == __this.namespace && __this.namespace != '' ~}}
+            case "{{child.full_name}}":   
+            {{~end~}}
+            case "{{impl_data_type child __this}}":obj = new {{child.full_name}}(); break;
+        {{~end~}}
+            default: throw new SerializationException();
+        }
+    {{~else~}}
+        {{__name}} obj = new {{__this.full_name}}();
+    {{~end~}}
+        obj.LoadJson((SimpleJSON.JSONObject)_json);
+        return obj;
+    }
+        
+    public static void SaveJson{{__name}}({{__name}} _obj, SimpleJSON.JSONNode _json)
+    {
+    {{~if __this.is_abstract_type~}}
+        _json["$type"] = _obj.GetType().Name;
+    {{~end~}}
+        _obj.SaveJson((SimpleJSON.JSONObject)_json);
+    }
+
+    {{~ for field in __fields ~}}
+{{~if field.comment != '' ~}}
+    /// <summary>
+    /// {{escape_comment field.comment}}
+    /// </summary>
+{{~end~}}
+    public {{declaring_type_name field.ctype}} {{format_field_name __code_style field.name}};
+
+    {{~end~}}
+}
+
+{{namespace_with_grace_end __namespace_with_top_module}}
