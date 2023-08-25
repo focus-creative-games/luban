@@ -2,8 +2,6 @@ namespace Luban.RawDefs;
 
 public class RawAssembly
 {
-    public Dictionary<string, string> Options { get; set; } = new();
-
     public List<RawBean> Beans { get; set; } = new();
 
     public List<RawEnum> Enums { get; set; } = new();

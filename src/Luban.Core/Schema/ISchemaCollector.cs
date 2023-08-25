@@ -20,6 +20,4 @@ public interface ISchemaCollector
     void Add(RawRefGroup refGroup);
     
     void Add(RawTarget target);
-
-    void AddEnv(string key, string value);
 }

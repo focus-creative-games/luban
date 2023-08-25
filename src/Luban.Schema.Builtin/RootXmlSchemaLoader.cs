@@ -21,7 +21,6 @@ public class RootXmlSchemaLoader : SchemaLoaderBase, IRootSchemaLoader
 
     public RootXmlSchemaLoader()
     {
-        _tagHandlers.Add("env", AddEnv);
         _tagHandlers.Add("externalselector", AddExternalSelector);
         _tagHandlers.Add("import", AddImport);
         _tagHandlers.Add("target", AddTarget);
@@ -49,22 +48,13 @@ public class RootXmlSchemaLoader : SchemaLoaderBase, IRootSchemaLoader
             }
         }
     }
-
-    private static readonly List<string> _envRequireAttrs = new() { "name", "value", };
-
-    private void AddEnv(XElement e)
-    {
-        XmlSchemaUtil.ValidAttrKeys(_xmlFileName, e, null, _envRequireAttrs);
-        string name = XmlUtil.GetRequiredAttribute(e, "name");
-        Collector.AddEnv(name, XmlUtil.GetRequiredAttribute(e, "value"));
-    }
     
-     private static readonly List<string> _ImportRequireAttrs = new() { "name" };
-     private static readonly List<string> _ImportOptinalAttrs = new() { "type" };
+     private static readonly List<string> _importRequireAttrs = new() { "name" };
+     private static readonly List<string> _importOptionalAttrs = new() { "type" };
      
     private void AddImport(XElement e)
     {
-        XmlSchemaUtil.ValidAttrKeys(_xmlFileName, e, _ImportOptinalAttrs, _ImportRequireAttrs);
+        XmlSchemaUtil.ValidAttrKeys(_xmlFileName, e, _importOptionalAttrs, _importRequireAttrs);
         var importName = XmlUtil.GetRequiredAttribute(e, "name");
         if (string.IsNullOrWhiteSpace(importName))
         {

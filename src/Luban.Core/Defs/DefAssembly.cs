@@ -18,14 +18,8 @@ public class DefAssembly
 
     private readonly Dictionary<string, DefTypeBase> _notCaseSenseNamespaces = new();
     
-    public HashSet<string> ExternalSelectors { get; private set; }
-
-    public Dictionary<string, string> Envs { get; }
-    
-
     private readonly List<RawTarget> _targets;
 
-    
     public RawTarget Target { get; }
     
     public IReadOnlyList<RawTarget> Targets => _targets;
@@ -41,8 +35,6 @@ public class DefAssembly
 
     public DefAssembly(RawAssembly assembly, string target, List<string> outputTables)
     {
-        this.Envs = assembly.Options;
-
         _targets = assembly.Targets;
         Target = GetTarget(target);
 

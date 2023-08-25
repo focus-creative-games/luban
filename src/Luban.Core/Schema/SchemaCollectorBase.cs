@@ -9,8 +9,6 @@ public abstract class SchemaCollectorBase : ISchemaCollector
     private readonly List<RawEnum> _enums = new();
     private readonly List<RawBean> _beans = new();
 
-    private readonly Dictionary<string, string> _envs = new();
-
     private readonly List<RawTable> _tables = new();
 
     private readonly List<RawTarget> _targets = new();
@@ -33,7 +31,6 @@ public abstract class SchemaCollectorBase : ISchemaCollector
             RefGroups = _refGroups,
             Enums = _enums,
             Beans = _beans,
-            Options = _envs,
         };
     }
     
@@ -82,17 +79,6 @@ public abstract class SchemaCollectorBase : ISchemaCollector
         lock (this)
         {
             _targets.Add(target);
-        }
-    }
-
-    public void AddEnv(string key, string value)
-    {
-        lock (this)
-        {
-            if (!_envs.TryAdd(key, value))
-            {
-                s_logger.Warn("env key:{} already exist, value:{} will be ignored", key, value);
-            }
         }
     }
 }
