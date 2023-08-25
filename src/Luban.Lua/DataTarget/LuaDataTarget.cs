@@ -22,7 +22,15 @@ public class LuaDataTarget : DataTargetBase
         foreach (Record r in records)
         {
             DBean d = r.Data;
-            s.Append($"[{d.GetField(t.Index).Apply(ToLuaLiteralVisitor.Ins)}] = ");
+            string keyStr = d.GetField(t.Index).Apply(ToLuaLiteralVisitor.Ins);
+            if (!keyStr.StartsWith("[", StringComparison.Ordinal))
+            {
+                s.Append($"[{keyStr}] = ");
+            }
+            else
+            {
+                s.Append($"[ {keyStr} ] = ");
+            }
             s.Append(d.Apply(ToLuaLiteralVisitor.Ins));
             s.Append(',').AppendLine();
         }
