@@ -2,6 +2,7 @@
 using Luban.CSharp;
 using Luban.DataExporter.Builtin;
 using Luban.DataLoader.Builtin;
+using Luban.DataLoader.Builtin.DataVisitors;
 using Luban.DataValidator.Builtin.Collection;
 using Luban.L10N;
 using Luban.Pipeline;
@@ -70,19 +71,77 @@ internal static class Program
     {
         CommandOptions opts = ParseArgs(args);
         SetupApp(opts);
-        
-        var launcher = new SimpleLauncher();
-        launcher.Start(ParseXargs(opts.Xargs));
-        AddCustomTemplateDirs(opts.CustomTemplateDirs);
-        
-        var pipeline = PipelineManager.Ins.CreatePipeline(opts.Pipeline);
-        pipeline.Run(CreatePipelineArgs(opts));
-        if (opts.ValidationFailAsError && GenerationContext.Current.AnyValidatorFail)
+
+        try
         {
-            s_logger.Error("encounter some validation failure. exit code: 1");
+            var launcher = new SimpleLauncher();
+            launcher.Start(ParseXargs(opts.Xargs));
+            AddCustomTemplateDirs(opts.CustomTemplateDirs);
+
+            var pipeline = PipelineManager.Ins.CreatePipeline(opts.Pipeline);
+            pipeline.Run(CreatePipelineArgs(opts));
+            if (opts.ValidationFailAsError && GenerationContext.Current.AnyValidatorFail)
+            {
+                s_logger.Error("encounter some validation failure. exit code: 1");
+                Environment.Exit(1);
+            }
+            s_logger.Info("bye~");
+        }
+        catch (Exception e)
+        {
+            PrettyPrintException(e);
             Environment.Exit(1);
         }
-        s_logger.Info("bye~");
+    }
+
+    private static void PrettyPrintException(Exception e)
+    {
+        if (TryExtractDataCreateException(e, out var dce))
+        {
+            s_logger.Error($"=======================================================================");
+            s_logger.Error("解析失败!");
+            s_logger.Error($"文件:        {dce.OriginDataLocation}");
+            s_logger.Error($"错误位置:    {dce.DataLocationInFile}");
+            s_logger.Error($"Err:         {dce.OriginErrorMsg}");
+            s_logger.Error($"字段:        {dce.VariableFullPathStr}");
+            s_logger.Error($"=======================================================================");
+            return;
+        }
+        do
+        {
+            s_logger.Error("===> {}", e.Message);
+            e = e.InnerException;
+        } while (e != null);
+    }
+
+    private static bool TryExtractDataCreateException(Exception e, out DataCreateException extract)
+    {
+        if (e is DataCreateException dce)
+        {
+            extract = dce;
+            return true;
+        }
+
+        if (e is AggregateException ae)
+        {
+            foreach (var innerException in ae.InnerExceptions)
+            {
+                if (TryExtractDataCreateException(innerException, out extract))
+                {
+                    return true;
+                }
+            }
+        }
+
+        if (e.InnerException != null)
+        {
+            if (TryExtractDataCreateException(e.InnerException, out extract))
+            {
+                return true;
+            }
+        }
+        extract = null;
+        return false;
     }
     
     private static void AddCustomTemplateDirs(IEnumerable<string> dirs)

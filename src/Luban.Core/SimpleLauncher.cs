@@ -50,14 +50,13 @@ public class SimpleLauncher
     private void ScanRegisterAssemblyBehaviours()
     {
         string dllDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        var loadedAssemblyNames = AppDomain.CurrentDomain.GetAssemblies().Select(a => a.GetName().Name).ToHashSet();
         foreach (var dllFile in Directory.GetFiles(dllDir, "*.dll", SearchOption.TopDirectoryOnly))
         {
             string dllName = Path.GetFileNameWithoutExtension(dllFile);
-            if (!loadedAssemblyNames.Contains(dllName) && dllName.Contains("Luban"))
+            if (dllName.Contains("Luban") && AppDomain.CurrentDomain.GetAssemblies().All(a => a.GetName().Name != dllName))
             {
                 s_logger.Trace("load dll:{dll}", dllFile);
-                Assembly.LoadFile(dllFile);
+                Assembly.Load(dllName);
             }
         }
         
