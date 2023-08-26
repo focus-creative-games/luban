@@ -57,24 +57,9 @@ public class UnderlyingDeclaringTypeNameVisitor : ITypeFuncVisitor<string>
         return type.DefBean.FullName;
     }
 
-
-    private string GetArrayType(TType elementType)
-    {
-        switch (elementType)
-        {
-            case TByte _: return "Uint8Array";
-            case TShort _:
-            case TInt _:
-            case TLong _:
-            case TFloat _: return "Float32Array";
-            case TDouble _: return "Float64Array";
-            default: return $"{elementType.Apply(this)}[]";
-        }
-    }
-
     public virtual string Accept(TArray type)
     {
-        return GetArrayType(type.ElementType);
+        return $"{type.ElementType.Apply(this)}[]";
     }
 
     public virtual string Accept(TList type)

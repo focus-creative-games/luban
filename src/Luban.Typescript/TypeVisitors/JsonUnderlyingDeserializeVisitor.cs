@@ -73,26 +73,12 @@ public class JsonUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string,
 
     public string Accept(TArray type, string jsonVarName, string fieldName)
     {
-        if (type.Apply(SimpleJsonTypeVisitor.Ins))
-        {
-            return $"{fieldName} = {jsonVarName}";
-        }
-        else
-        {
-            return $"{{ {fieldName} = []; for(let _ele of {jsonVarName}) {{ let _e :{type.ElementType.Apply(DeclaringTypeNameVisitor.Ins)}; {type.ElementType.Apply(this, "_ele", "_e")}; {fieldName}.push(_e);}}}}";
-        }
+        return $"{{ {fieldName} = []; for(let _ele of {jsonVarName}) {{ let _e; {type.ElementType.Apply(this, "_ele", "_e")}; {fieldName}.push(_e);}}}}";
     }
 
     public string Accept(TList type, string jsonVarName, string fieldName)
     {
-        if (type.Apply(SimpleJsonTypeVisitor.Ins))
-        {
-            return $"{fieldName} = {jsonVarName}";
-        }
-        else
-        {
-            return $"{{ {fieldName} = []; for(let _ele of {jsonVarName}) {{ let _e : {type.ElementType.Apply(DeclaringTypeNameVisitor.Ins)}; {type.ElementType.Apply(this, "_ele", "_e")}; {fieldName}.push(_e);}}}}";
-        }
+        return $"{{ {fieldName} = []; for(let _ele of {jsonVarName}) {{ let _e; {type.ElementType.Apply(this, "_ele", "_e")}; {fieldName}.push(_e);}}}}";
     }
 
     public string Accept(TSet type, string jsonVarName, string fieldName)
@@ -103,13 +89,12 @@ public class JsonUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string,
         }
         else
         {
-            return $"{{ {fieldName} = new {type.Apply(DeclaringTypeNameVisitor.Ins)}(); for(var _ele of {jsonVarName}) {{ let _e:{type.ElementType.Apply(DeclaringTypeNameVisitor.Ins)}; {type.ElementType.Apply(this, "_ele", "_e")}; {fieldName}.add(_e);}}}}";
+            return $"{{ {fieldName} = new {type.Apply(DeclaringTypeNameVisitor.Ins)}(); for(var _ele of {jsonVarName}) {{ let _e; {type.ElementType.Apply(this, "_ele", "_e")}; {fieldName}.add(_e);}}}}";
         }
     }
 
     public string Accept(TMap type, string jsonVarName, string fieldName)
     {
-        return $"{fieldName} = new {type.Apply(DeclaringTypeNameVisitor.Ins)}(); for(var _entry_ of {jsonVarName}) {{ let _k:{type.KeyType.Apply(DeclaringTypeNameVisitor.Ins)}; {type.KeyType.Apply(this, "_entry_[0]", "_k")};  let _v:{type.ValueType.Apply(DeclaringTypeNameVisitor.Ins)};  {type.ValueType.Apply(this, "_entry_[1]", "_v")}; {fieldName}.set(_k, _v);  }}";
-
+        return $"{fieldName} = new {type.Apply(DeclaringTypeNameVisitor.Ins)}(); for(var _entry_ of {jsonVarName}) {{ let _k; {type.KeyType.Apply(this, "_entry_[0]", "_k")};  let _v;  {type.ValueType.Apply(this, "_entry_[1]", "_v")}; {fieldName}.set(_k, _v);  }}";
     }
 }

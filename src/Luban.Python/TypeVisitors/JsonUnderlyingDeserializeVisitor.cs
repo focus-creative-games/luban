@@ -69,38 +69,17 @@ public class JsonUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string,
 
     public string Accept(TArray type, string jsonVarName, string fieldName)
     {
-        if (type.Apply(SimpleJsonTypeVisitor.Ins))
-        {
-            return $"{fieldName} = {jsonVarName}";
-        }
-        else
-        {
-            return $"{fieldName} = []\nfor _ele in {jsonVarName}: {type.ElementType.Apply(this, "_ele", "_e")}; {fieldName}.append(_e)";
-        }
+        return $"{fieldName} = []\nfor _ele in {jsonVarName}: {type.ElementType.Apply(this, "_ele", "_e")}; {fieldName}.append(_e)";
     }
 
     public string Accept(TList type, string jsonVarName, string fieldName)
     {
-        if (type.Apply(SimpleJsonTypeVisitor.Ins))
-        {
-            return $"{fieldName} = {jsonVarName}";
-        }
-        else
-        {
-            return $"{fieldName} = []\nfor _ele in {jsonVarName}: {type.ElementType.Apply(this, "_ele", "_e")}; {fieldName}.append(_e)";
-        }
+        return $"{fieldName} = []\nfor _ele in {jsonVarName}: {type.ElementType.Apply(this, "_ele", "_e")}; {fieldName}.append(_e)";
     }
 
     public string Accept(TSet type, string jsonVarName, string fieldName)
     {
-        if (type.Apply(SimpleJsonTypeVisitor.Ins))
-        {
-            return $"{fieldName} = {jsonVarName}";
-        }
-        else
-        {
-            return $"{fieldName} = set()\nfor _ele in {jsonVarName}: {type.ElementType.Apply(this, "_ele", "_e")}; {fieldName}.add(_e)";
-        }
+        return $"{fieldName} = []\nfor _ele in {jsonVarName}: {type.ElementType.Apply(this, "_ele", "_e")}; {fieldName}.append(_e)";
     }
 
     public string Accept(TMap type, string jsonVarName, string fieldName)
