@@ -144,7 +144,7 @@ public partial class {{__name}}
     {{~ for field in __value_type.def_bean.hierarchy_export_fields ~}}
 {{~if field.comment != '' ~}}
     /// <summary>
-    /// {{field.escape_comment}}
+    /// {{escape_comment field.comment}}
     /// </summary>
 {{~end~}}
      public {{declaring_type_name field.ctype}} {{format_property_name __code_style field.name}} => _data.{{format_property_name __code_style field.name}};

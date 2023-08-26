@@ -101,7 +101,7 @@ class {{full_name table}}:
     name = format_field_name __code_style field.name
 ~}}
     '''
-    {{field.escape_comment}}
+    {{escape_comment field.comment}}
     '''
 {{~end~}}
     def {{name}}(self) : return self._data.{{name}}

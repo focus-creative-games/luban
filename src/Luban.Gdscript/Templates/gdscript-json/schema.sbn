@@ -1,0 +1,111 @@
+
+class_name Schema
+
+{{~for enum in __enums~}}
+{{~if enum.comment != '' ~}}
+# {{enum.comment | html.escape}}
+{{~end~}}
+enum {{full_name enum}}
+{
+    {{~ for item in enum.items ~}}
+    {{item.name}} = {{item.value}},{{-if item.comment_or_alias != '' }}# {{item.comment_or_alias | html.escape}}{{-end}}
+    {{~end~}}
+}
+
+{{~end~}}
+
+{{~for bean in __beans
+    name = (full_name bean)
+~}}
+class {{name}} {{if bean.parent_def_type}}extends {{full_name bean.parent_def_type}}{{end}}:
+{{~ for field in bean.export_fields ~}}
+    var {{format_field_name __code_style field.name}}: {{declaring_type_name field.ctype}}
+{{~end~}}
+{{~if bean.is_abstract_type~}}
+    static func fromJson(_json_):
+        var type = _json_['$type']
+        match type:
+        {{~ for child in bean.hierarchy_not_abstract_children~}}
+            "{{impl_data_type child bean}}": return {{full_name child}}.new(_json_)
+        {{~end~}}
+            _: assert(false)
+{{~end~}}
+
+    func _init(_json_) -> void:
+{{~if bean.parent_def_type~}}
+        super(_json_)
+{{~end~}}
+        {{~ for field in bean.export_fields ~}}
+        {{deserialize_field ('self.' + (format_field_name __code_style field.name)) '_json_' field.name field.ctype}}
+        {{~end~}}
+        {{~if bean.export_fields.empty?~}}
+        pass
+        {{~end~}}
+
+{{~end~}}
+
+{{~for table in __tables
+    value_type = table.value_ttype
+    value_type_name = (declaring_type_name value_type)
+~}}
+class {{full_name table}}:
+    {{~if table.is_map_table ~}}
+    var _data_list = []
+    var _data_map = {}
+    func _init(_json_ ) -> void:
+        self._data_map = {}
+        self._data_list = []
+        
+        for _json2_ in _json_:
+            var _v
+            {{deserialize '_v' '_json2_' value_type}}
+            self._data_list.append(_v)
+            self._data_map[_v.{{format_field_name __code_style table.index_field.name}}] = _v
+
+    func get_data_map() -> Dictionary : return self._data_map
+    func get_data_list() -> Array : return self._data_list
+
+    func get_item(key) -> {{value_type_name}} : return self._data_map.get(key)
+    {{~else if table.is_list_table ~}}
+    var _data_list = []
+    func _init(_json_):
+        self._data_list = []
+        
+        for _json2_ in _json_:
+            var _v
+            {{deserialize '_v' '_json2_' value_type}}
+            self._data_list.append(_v)
+
+    func get_data_list() -> Array : return self._data_list
+    func get_item(index) -> {{value_type_name}} : return self._data_list[index]
+    {{~else~}}
+    var _data: {{value_type_name}}
+    func _init(_json_):
+        assert(len(_json_) == 1, "table mode=one, but size != 1")
+        {{deserialize 'self._data' '_json_[0]' value_type}}
+
+    func get_data() -> {{value_type_name}} : return self._data
+
+    {{~ for field in value_type.def_bean.hierarchy_export_fields
+     name = format_field_name __code_style field.name
+     ~}}
+{{~if field.comment != '' ~}}
+    # {{escape_comment field.comment}}
+{{~end~}}
+    var {{name}}: {{declaring_type_name field.ctype}}:
+        get: return self._data.{{name}}
+    {{~end~}}
+    {{~end~}}
+
+{{~end~}}
+
+
+class {{str_full_name __full_name}}:
+        {{~for table in __tables ~}}
+    var {{format_method_name __code_style table.name}}: {{full_name table}} 
+        {{~end~}}
+    func _init(loader):
+        {{~for table in __tables ~}}
+        self.{{format_method_name __code_style table.name}} = {{full_name table}}.new(loader.call('{{table.output_data_file}}')); 
+        {{~end~}}
+        pass

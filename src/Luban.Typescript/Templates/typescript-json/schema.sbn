@@ -127,7 +127,7 @@ export class {{table.name}}{
     {{~ for field in value_type.def_bean.hierarchy_export_fields ~}}
 {{~if field.comment != '' ~}}
     /**
-     * {{field.escape_comment}}
+     * {{escape_comment field.comment}}
      */
 {{~end~}}
      get  {{format_field_name __code_style field.name}}(): {{declaring_type_name field.ctype}} { return this._data.{{format_field_name __code_style field.name}}; }

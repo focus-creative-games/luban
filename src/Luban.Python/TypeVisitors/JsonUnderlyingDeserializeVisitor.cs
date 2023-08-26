@@ -6,9 +6,9 @@ using Luban.TypeVisitors;
 
 namespace Luban.Python.TypeVisitors;
 
-public class PyUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string, string>
+public class JsonUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string, string>
 {
-    public static PyUnderlyingDeserializeVisitor Ins { get; } = new();
+    public static JsonUnderlyingDeserializeVisitor Ins { get; } = new();
 
     public string Accept(TBool type, string jsonVarName, string fieldName)
     {

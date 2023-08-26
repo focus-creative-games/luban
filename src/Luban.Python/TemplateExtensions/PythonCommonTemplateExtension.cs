@@ -23,11 +23,11 @@ public class PythonCommonTemplateExtension : ScriptObject
     {
         if (type.IsNullable)
         {
-            return $"if {jsonVarName} != None: {type.Apply(PyUnderlyingDeserializeVisitor.Ins, jsonVarName, fieldName)}";
+            return $"if {jsonVarName} != None: {type.Apply(JsonUnderlyingDeserializeVisitor.Ins, jsonVarName, fieldName)}";
         }
         else
         {
-            return type.Apply(PyUnderlyingDeserializeVisitor.Ins, jsonVarName, fieldName);
+            return type.Apply(JsonUnderlyingDeserializeVisitor.Ins, jsonVarName, fieldName);
         }
     }
 
@@ -35,11 +35,11 @@ public class PythonCommonTemplateExtension : ScriptObject
     {
         if (type.IsNullable)
         {
-            return $"if {jsonVarName}.get('{jsonFieldName}') != None: {type.Apply(PyUnderlyingDeserializeVisitor.Ins, $"{jsonVarName}['{jsonFieldName}']", fieldName)}";
+            return $"if {jsonVarName}.get('{jsonFieldName}') != None: {type.Apply(JsonUnderlyingDeserializeVisitor.Ins, $"{jsonVarName}['{jsonFieldName}']", fieldName)}";
         }
         else
         {
-            return type.Apply(PyUnderlyingDeserializeVisitor.Ins, $"{jsonVarName}['{jsonFieldName}']", fieldName);
+            return type.Apply(JsonUnderlyingDeserializeVisitor.Ins, $"{jsonVarName}['{jsonFieldName}']", fieldName);
         }
     }
 }

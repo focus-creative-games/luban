@@ -4,9 +4,9 @@ using Luban.Utils;
 
 namespace Luban.Python.TypeVisitors;
 
-public class PyDefineTypeName : DecoratorFuncVisitor<string>
+public class DeclaringTypeNameVisitor : DecoratorFuncVisitor<string>
 {
-    public static PyDefineTypeName Ins { get; } = new();
+    public static DeclaringTypeNameVisitor Ins { get; } = new();
 
     public override string DoAccept(TType type)
     {
