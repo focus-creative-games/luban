@@ -5,32 +5,29 @@ using Luban.Utils;
 
 namespace Luban.Schema.Builtin;
 
-[SchemaLoader("root", "xml")]
-public class RootXmlSchemaLoader : SchemaLoaderBase, IRootSchemaLoader
+public class JsonConfigLoader : IConfigLoader
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
     
     private readonly Dictionary<string, Action<XElement>> _tagHandlers = new();
-    
+
+    private readonly List<RawGroup> _groups = new();
+    private readonly List<RawTarget> _targets = new();
     private readonly List<SchemaFileInfo> _importFiles = new();
-    
-    public IReadOnlyList<SchemaFileInfo> ImportFiles => _importFiles;
 
     private string _xmlFileName;
     private string _curDir;
 
-    public RootXmlSchemaLoader()
+    public JsonConfigLoader()
     {
-        _tagHandlers.Add("externalselector", AddExternalSelector);
         _tagHandlers.Add("import", AddImport);
         _tagHandlers.Add("target", AddTarget);
         _tagHandlers.Add("group", AddGroup);
-        _tagHandlers.Add("refgroup", AddRefGroup);
     }
 
-    public override void Load(string fileName)
+    public LubanConfig Load(string fileName)
     {
-        s_logger.Debug("load root xml schema file:{}", fileName);
+        s_logger.Debug("load root json config file:{}", fileName);
         _xmlFileName = fileName;
         _curDir = Directory.GetParent(fileName).FullName;
         XElement doc = XmlUtil.Open(fileName);
@@ -47,6 +44,13 @@ public class RootXmlSchemaLoader : SchemaLoaderBase, IRootSchemaLoader
                 throw new LoadDefException($"定义文件:{fileName} 非法 tag:{tagName}");
             }
         }
+
+        return new LubanConfig()
+        {
+            Groups = _groups,
+            Targets = _targets,
+            Imports = _importFiles,
+        };
     }
     
      private static readonly List<string> _importRequireAttrs = new() { "name" };
@@ -79,7 +83,7 @@ public class RootXmlSchemaLoader : SchemaLoaderBase, IRootSchemaLoader
         XmlSchemaUtil.ValidAttrKeys(_xmlFileName, e, _groupOptionalAttrs, _groupRequireAttrs);
         List<string> groupNames = SchemaLoaderUtil.CreateGroups(XmlUtil.GetRequiredAttribute(e, "name"));
         bool isDefault = XmlUtil.GetOptionBoolAttribute(e, "default");
-        Collector.Add(new RawGroup(){ Names = groupNames, IsDefault = isDefault});
+        _groups.Add(new RawGroup(){ Names = groupNames, Default = isDefault});
     }
 
     private readonly List<string> _targetAttrs = new() { "name", "manager", "group", "topModule" };
@@ -91,23 +95,7 @@ public class RootXmlSchemaLoader : SchemaLoaderBase, IRootSchemaLoader
         var topModule = XmlUtil.GetOptionalAttribute(e, "topModule");
         List<string> groups = SchemaLoaderUtil.CreateGroups(XmlUtil.GetOptionalAttribute(e, "group"));
         XmlSchemaUtil.ValidAttrKeys(_xmlFileName, e, _targetAttrs, _targetAttrs);
-        Collector.Add(new RawTarget() { Name = name, Manager = manager, Groups = groups, TopModule = topModule});
-    }
-
-    private void AddRefGroup(XElement e)
-    {
-        Collector.Add(XmlSchemaUtil.CreateRefGroup(_xmlFileName, e));
+        _targets.Add(new RawTarget() { Name = name, Manager = manager, Groups = groups, TopModule = topModule});
     }
     
-    private static readonly List<string> _selectorRequiredAttrs = new() { "name" };
-    private void AddExternalSelector(XElement e)
-    {
-        // ValidAttrKeys(_rootXml, e, null, _selectorRequiredAttrs);
-        // string name = XmlUtil.GetRequiredAttribute(e, "name");
-        // if (!_externalSelectors.Add(name))
-        // {
-        //     throw new LoadDefException($"定义文件:{_rootXml} external selector name:{name} 重复");
-        // }
-        // s_logger.Trace("add selector:{}", name);
-    }
 }

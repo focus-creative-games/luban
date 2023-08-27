@@ -8,12 +8,19 @@ public class DefaultSchemaCollector : SchemaCollectorBase
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
-    public override void Load(string schemaPath)
-    {
-        var rootLoader = (IRootSchemaLoader)SchemaManager.Ins.CreateSchemaLoader(FileUtil.GetExtensionWithDot(schemaPath), "root", this);
-        rootLoader.Load(schemaPath);
+    private LubanConfig _config;
 
-        foreach (var importFile in rootLoader.ImportFiles)
+    public override void Load(string configFile)
+    {
+        IConfigLoader rootLoader = Path.GetExtension(configFile) switch
+        {
+            ".xml" => new XmlConfigLoader(),
+            ".json" => new JsonConfigLoader(),
+            _ => throw new Exception($"unsupported config file:{configFile}"),
+        };
+        _config = rootLoader.Load(configFile);
+
+        foreach (var importFile in _config.Imports)
         {
             s_logger.Debug("import schema file:{} type:{}", importFile.FileName, importFile.Type);
             var schemaLoader = SchemaManager.Ins.CreateSchemaLoader(FileUtil.GetExtensionWithDot(importFile.FileName), importFile.Type, this);
@@ -22,7 +29,12 @@ public class DefaultSchemaCollector : SchemaCollectorBase
         
         LoadTableValueTypeSchemasFromFile();
     }
-    
+
+    public override RawAssembly CreateRawAssembly()
+    {
+        return CreateRawAssembly(_config);
+    }
+
     private void LoadTableValueTypeSchemasFromFile()
     {
         var tasks = new List<Task>();

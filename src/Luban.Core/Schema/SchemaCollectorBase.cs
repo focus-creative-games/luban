@@ -11,23 +11,21 @@ public abstract class SchemaCollectorBase : ISchemaCollector
 
     private readonly List<RawTable> _tables = new();
 
-    private readonly List<RawTarget> _targets = new();
-
-    private readonly List<RawGroup> _groups = new();
-
     private readonly List<RawRefGroup> _refGroups = new();
 
     protected List<RawTable> Tables => _tables;
     
     public abstract void Load(string schemaPath);
+
+    public abstract RawAssembly CreateRawAssembly();
     
-    public RawAssembly CreateRawAssembly()
+    protected RawAssembly CreateRawAssembly(LubanConfig config)
     {
         return new RawAssembly()
         {
             Tables = _tables,
-            Targets = _targets,
-            Groups = _groups,
+            Targets = config.Targets.ToList(),
+            Groups = config.Groups.ToList(),
             RefGroups = _refGroups,
             Enums = _enums,
             Beans = _beans,
@@ -58,27 +56,11 @@ public abstract class SchemaCollectorBase : ISchemaCollector
         }
     }
 
-    public void Add(RawGroup group)
-    {
-        lock (this)
-        {
-            _groups.Add(group);
-        }
-    }
-
     public void Add(RawRefGroup refGroup)
     {
         lock (this)
         {
             _refGroups.Add(refGroup);
-        }
-    }
-
-    public void Add(RawTarget target)
-    {
-        lock (this)
-        {
-            _targets.Add(target);
         }
     }
 }

@@ -9,6 +9,4 @@ public class RawTarget
     public string TopModule { get; set; }
 
     public List<string> Groups { get; set; } = new();
-
-    public List<string> Refs { get; set; } = new();
 }
