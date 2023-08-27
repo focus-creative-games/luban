@@ -31,6 +31,16 @@ luban标准化了游戏配置开发工作流，可以极大提升策划和程序
 - 支持所有主流的热更新方案。hybridclr、ilruntime、{x,t,s}lua、puerts等
 - 清晰优雅的生成管线，很容易在luban基础上进行二次开发，定制出适合自己项目风格的配置工具。
 
+## 文档
+
+- [官方文档](https://luban.doc.code-philosophy.com/)
+- [快速上手](https://luban.doc.code-philosophy.com/docs/beginner/quickstart)
+- **示例项目** ([github](https://github.com/focus-creative-games/luban_examples)) ([gitee](https://gitee.com/focus-creative-games/luban_examples))
+- 支持与联系
+  - QQ群: 692890842 （Luban开发交流群）
+  - discord: https://discord.gg/dGY4zzGMJ4
+  - 邮箱: luban@code-philosophy.com
+
 ## Excel格式概览
 
 基础数据格式

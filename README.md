@@ -6,7 +6,7 @@
 
 ![icon](docs/images/logo.png)
 
-[![license](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://opensource.org/licenses/MIT) ![star] (https://img.shields.io/github/stars/focus-creative-games/luban?style=flat-square)
+[![license](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://opensource.org/licenses/MIT) ![star](https://img.shields.io/github/stars/focus-creative-games/luban?style=flat-square)
 
 
 luban is a powerful, easy-to-use, elegant, and stable game configuration solution. It is designed to meet the needs of simple to complex game configuration workflows from small to very large game projects.
@@ -30,6 +30,16 @@ Luban standardizes the game configuration development workflow, which can greatl
 - Good cross-platform capability. It can run well on Win, Linux, and Mac platforms.
 - Support all mainstream hot update solutions. hybridclr, ilruntime, {x,t,s}lua, puerts, etc.
 - Clear and elegant generation pipeline, it is easy to carry out secondary development on the basis of luban, and customize a configuration tool suitable for your own project style.
+
+## Documentation
+
+- [Official Documentation](https://luban.doc.code-philosophy.com/)
+- [Quick Start](https://luban.doc.code-philosophy.com/docs/beginner/quickstart)
+- **Example Project** ([github](https://github.com/focus-creative-games/luban_examples)) ([gitee](https://gitee.com/focus-creative-games/luban_examples) )
+- Support and contact
+   - QQ group: 692890842 (Luban development exchange group)
+   - discord: https://discord.gg/dGY4zzGMJ4
+   - Email: luban@code-philosophy.com
 
 ## Excel format overview
 
