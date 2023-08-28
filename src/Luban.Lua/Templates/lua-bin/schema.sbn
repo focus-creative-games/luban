@@ -27,9 +27,9 @@ end
 local enums =
 {
     {{~ for c in __enums ~}}
-    ---@class {{c.full_name}}
+    ---@class {{c.full_name}} {{-if c.comment != ''}} @{{escape_comment c.comment}}{{end}}
     {{~ for item in c.items ~}}
-     ---@field public {{item.name}} integer
+     ---@field public {{item.name}} integer {{-if item.comment != ''}} @{{escape_comment item.comment}}{{end}}
     {{~end~}}
     ['{{c.full_name}}'] = {  {{ for item in c.items }} {{item.name}}={{item.int_value}}, {{end}} };
     {{~end~}}
@@ -102,9 +102,9 @@ local function InitTypes(methods)
     local beans = {}
     {{~ for bean in __beans ~}}
         do
-        ---@class {{bean.full_name}} {{if bean.parent_def_type}}:{{bean.parent}} {{end}}
+        ---@class {{bean.full_name}} {{if bean.parent_def_type}}:{{bean.parent}} {{end}} {{-if bean.comment != ''}} @{{escape_comment bean.comment}}{{end}}
         {{~ for field in bean.export_fields~}}
-         ---@field public {{field.name}} {{comment_type field.ctype}}
+         ---@field public {{field.name}} {{comment_type field.ctype}} {{-if field.comment != ''}} @{{escape_comment field.comment}}{{end}}
         {{~end~}}
             local class = {
                 {{~ for field in bean.export_fields~}}
