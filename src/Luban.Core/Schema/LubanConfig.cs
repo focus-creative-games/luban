@@ -9,4 +9,6 @@ public class LubanConfig
     public List<RawTarget> Targets { get; set; }
     
     public List<SchemaFileInfo> Imports { get; set; }
+    
+    public string InputDataDir { get; set; }
 }

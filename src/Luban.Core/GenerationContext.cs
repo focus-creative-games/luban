@@ -6,6 +6,7 @@ using Luban.DataLoader;
 using Luban.Datas;
 using Luban.Defs;
 using Luban.RawDefs;
+using Luban.Schema;
 using Luban.Types;
 using Luban.TypeVisitors;
 using Luban.Utils;
@@ -32,7 +33,9 @@ public class GenerationContext
     
     public static ICodeTarget CurrentCodeTarget { get; set; }
 
-    public DefAssembly Assembly { get; set; }
+    public static LubanConfig GlobalConf { get; set; }
+
+    public DefAssembly Assembly { get; }
 
     public RawTarget Target => Assembly.Target;
 
@@ -116,7 +119,7 @@ public class GenerationContext
     
     public static string GetInputDataPath()
     {
-        return EnvManager.Current.GetOption("", BuiltinOptionNames.InputDataDir, true);
+        return GlobalConf.InputDataDir;
     }
     
     public void AddDataTable(DefTable table, List<Record> mainRecords, List<Record> patchRecords)

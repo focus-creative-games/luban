@@ -25,8 +25,8 @@ internal static class Program
         [Option('s', "schemaCollector", Required = false, HelpText = "schema collector name")]
         public string SchemaCollector { get; set; } = "default";
         
-        [Option("schemaPath", Required = true, HelpText = "schema path")]
-        public string SchemaPath { get; set; }
+        [Option("conf", Required = true, HelpText = "luban conf file")]
+        public string ConfigFile { get; set; }
         
         [Option('t', "target", Required = true, HelpText = "target name")]
         public string Target { get; set; }
@@ -197,7 +197,7 @@ internal static class Program
         {
             Target = opts.Target,
             SchemaCollector = opts.SchemaCollector,
-            SchemaPath = opts.SchemaPath,
+            ConfFile = opts.ConfigFile,
             OutputTables = opts.OutputTables?.ToList() ?? new List<string>(),
             CodeTargets = opts.CodeTargets?.ToList() ?? new List<string>(),
             DataTargets = opts.DataTargets?.ToList() ?? new List<string>(),

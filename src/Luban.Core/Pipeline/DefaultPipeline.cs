@@ -15,6 +15,8 @@ public class DefaultPipeline : IPipeline
 {
     private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
+    private LubanConfig _config;
+
     private PipelineArguments _args;
     
     private RawAssembly _rawAssembly;
@@ -37,10 +39,13 @@ public class DefaultPipeline : IPipeline
 
     protected void LoadSchema()
     {
+        IConfigLoader rootLoader = new GlobalConfigLoader();
+        GenerationContext.GlobalConf = _config = rootLoader.Load(_args.ConfFile);
+
         string schemaCollectorName = _args.SchemaCollector;
-        s_logger.Info("load schema. collector: {}  path:{}", schemaCollectorName, _args.SchemaPath);
+        s_logger.Info("load schema. collector: {}  path:{}", schemaCollectorName, _args.ConfFile);
         var schemaCollector = SchemaManager.Ins.CreateSchemaCollector(schemaCollectorName);
-        schemaCollector.Load(_args.SchemaPath);
+        schemaCollector.Load(_config);
         _rawAssembly = schemaCollector.CreateRawAssembly();
     }
 

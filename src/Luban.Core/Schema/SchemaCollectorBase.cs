@@ -15,7 +15,7 @@ public abstract class SchemaCollectorBase : ISchemaCollector
 
     protected List<RawTable> Tables => _tables;
     
-    public abstract void Load(string schemaPath);
+    public abstract void Load(LubanConfig config);
 
     public abstract RawAssembly CreateRawAssembly();
     

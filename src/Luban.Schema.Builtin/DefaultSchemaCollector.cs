@@ -10,15 +10,9 @@ public class DefaultSchemaCollector : SchemaCollectorBase
 
     private LubanConfig _config;
 
-    public override void Load(string configFile)
+    public override void Load(LubanConfig config)
     {
-        IConfigLoader rootLoader = Path.GetExtension(configFile) switch
-        {
-            ".xml" => new XmlConfigLoader(),
-            ".json" => new JsonConfigLoader(),
-            _ => throw new Exception($"unsupported config file:{configFile}"),
-        };
-        _config = rootLoader.Load(configFile);
+        _config = config;
 
         foreach (var importFile in _config.Imports)
         {

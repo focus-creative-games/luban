@@ -14,7 +14,7 @@ public class PipelineArguments
     
     public string SchemaCollector { get; set; }
     
-    public string SchemaPath { get; set; }
+    public string ConfFile { get; set; }
 
     public List<string> OutputTables { get; set; }
     
