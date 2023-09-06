@@ -1,4 +1,5 @@
 using Luban.RawDefs;
+using Luban.Schema;
 using Luban.Utils;
 
 namespace Luban.Defs;
@@ -35,7 +36,28 @@ public abstract class DefTypeBase
         return Tags != null && Tags.TryGetValue(attrName, out var value) ? value : null;
     }
 
-    public virtual void PreCompile() { }
+    public virtual void PreCompile()
+    {
+        if (Groups != null && Groups.Count > 0)
+        {
+            LubanConfig c = GenerationContext.GlobalConf;
+            if (Groups.Contains("*"))
+            {
+                Groups.Clear();
+                Groups.AddRange(c.Groups.SelectMany(g => g.Names));
+            }
+            else
+            {
+                foreach (var g in Groups)
+                {
+                    if (c.Groups.All(gg => !gg.Names.Contains(g)))
+                    {
+                        throw new Exception($"type:{FullName} group:{g} not found");
+                    }
+                }
+            }
+        }
+    }
 
     public abstract void Compile();
 

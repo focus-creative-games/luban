@@ -127,6 +127,7 @@ public class DefBean : DefTypeBase
 
     public override void PreCompile()
     {
+        base.PreCompile();
         SetupParentRecursively();
         CollectHierarchyFields(HierarchyFields);
     }
