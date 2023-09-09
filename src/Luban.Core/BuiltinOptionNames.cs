@@ -36,5 +36,5 @@ public static class BuiltinOptionNames
 
     public const string PathValidatorRootDir = "rootDir";
 
-    public const string ForceLoadDatas = "forceLoadDatas";
+    public const string NamingConvention = "namingConvention";
 }

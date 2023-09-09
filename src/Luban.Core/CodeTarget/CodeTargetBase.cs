@@ -1,4 +1,6 @@
 using System.Reflection;
+using Luban.CodeFormat;
+using Luban.CodeFormat.CodeStyles;
 using Luban.Defs;
 
 namespace Luban.CodeTarget;
@@ -11,7 +13,29 @@ public abstract class CodeTargetBase : ICodeTarget
     {
         return name;
     }
-    
+
+    protected virtual ICodeStyle DefaultCodeStyle => CodeFormatManager.Ins.NoneCodeStyle;
+
+    protected virtual ICodeStyle CodeStyle => _codeStyle ??= CreateConfigurableCodeStyle();
+
+    private ICodeStyle _codeStyle;
+
+    private ICodeStyle CreateConfigurableCodeStyle()
+    {
+        var baseStyle = GenerationContext.Current.GetCodeStyle(Name) ?? DefaultCodeStyle;
+
+        var env = EnvManager.Current;
+        string namingKey = BuiltinOptionNames.NamingConvention;
+        return new OverlayCodeStyle(baseStyle,
+            env.GetOptionOrDefault($"{namingKey}.{Name}", "namespace", true, ""),
+            env.GetOptionOrDefault($"{namingKey}.{Name}", "type", true, ""),
+            env.GetOptionOrDefault($"{namingKey}.{Name}", "method", true, ""),
+            env.GetOptionOrDefault($"{namingKey}.{Name}", "property", true, ""),
+            env.GetOptionOrDefault($"{namingKey}.{Name}", "field", true, ""),
+            env.GetOptionOrDefault($"{namingKey}.{Name}", "enumItem", true, "")
+            );
+    }
+
     public virtual void Handle(GenerationContext ctx, OutputFileManifest manifest)
     {
         var tasks = new List<Task<OutputFile>>();

@@ -12,10 +12,6 @@ public abstract class TemplateCodeTargetBase : CodeTargetBase
 {
     protected virtual string CommonTemplateSearchPath => $"common/{FileSuffixName}";
 
-    protected virtual ICodeStyle DefaultCodeStyle => CodeFormatManager.Ins.NoneCodeStyle;
-
-    protected virtual ICodeStyle CodeStyle => GenerationContext.Current.GetCodeStyle(Name) ?? DefaultCodeStyle;
-
     protected virtual string TemplateDir => Name;
     
     protected TemplateContext CreateTemplateContext(Template template)

@@ -2,7 +2,11 @@
   "profiles": {
     "cs-bin": {
       "commandName": "Project",
-      "commandLineArgs": "-t\r\nserver\r\n-c\r\ncs-bin\r\n-d\r\nbin\r\n--conf\r\nD:\\workspace2\\luban_examples\\DesignerConfigs\\luban.conf\r\n--validationFailAsError\r\n-x\r\noutputCodeDir=D:\\workspace2\\luban_examples\\Projects\\Csharp_Unity_bin\\Assets\\Gen\r\n-x\r\noutputDataDir=D:\\workspace2\\luban_examples\\Projects\\GenerateDatas\\bytes\r\n-x\r\npathValidator.rootDir=D:\\workspace2\\luban_examples\\Projects\\Csharp_Unity_bin\r\n-x\r\nl10n.textProviderFile=*@D:\\workspace2\\luban_examples\\DesignerConfigs\\Datas\\l10n\\texts.json"
+      "commandLineArgs": "-t\r\nall\r\n-c\r\ncs-bin\r\n-d\r\nbin\r\n--conf\r\nD:\\workspace2\\luban_examples\\DataTables\\luban.conf\r\n--validationFailAsError\r\n-x\r\noutputCodeDir=D:\\workspace2\\luban_examples\\Projects\\Csharp_Unity_bin\\Assets\\Gen\r\n-x\r\noutputDataDir=D:\\workspace2\\luban_examples\\Projects\\GenerateDatas\\bytes\r\n-x\r\npathValidator.rootDir=D:\\workspace2\\luban_examples\\Projects\\Csharp_Unity_bin\r\n-x\r\nl10n.textProviderFile=*@D:\\workspace2\\luban_examples\\DataTables\\Datas\\l10n\\texts.json"
+    },
+    "cs-bin-namingConvention": {
+      "commandName": "Project",
+      "commandLineArgs": "-t\r\nall\r\n-c\r\ncs-bin\r\n-d\r\nbin\r\n--conf\r\nD:\\workspace2\\luban_examples\\DataTables\\luban.conf\r\n--validationFailAsError\r\n-x\r\noutputCodeDir=D:\\workspace2\\luban_examples\\Projects\\Csharp_Unity_bin\\Assets\\Gen\r\n-x\r\noutputDataDir=D:\\workspace2\\luban_examples\\Projects\\GenerateDatas\\bytes\r\n-x\r\npathValidator.rootDir=D:\\workspace2\\luban_examples\\Projects\\Csharp_Unity_bin\r\n-x\r\nl10n.textProviderFile=*@D:\\workspace2\\luban_examples\\DataTables\\Datas\\l10n\\texts.json\r\n-x namingConvention.property=upper"
     }
   }
 }
