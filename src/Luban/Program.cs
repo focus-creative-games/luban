@@ -39,6 +39,9 @@ internal static class Program
 
         [Option('p', "pipeline", Required = false, HelpText = "pipeline name")]
         public string Pipeline { get; set; } = "default";
+
+        [Option('f', "forceLoadTableDatas", Required = false, HelpText = "force load table datas when not any dataTarget")]
+        public bool ForceLoadTableDatas { get; set; }
         
         [Option('i', "includeTag", Required = false, HelpText = "include tag")]
         public IEnumerable<string> IncludeTags { get; set; }
@@ -196,6 +199,7 @@ internal static class Program
         return new PipelineArguments()
         {
             Target = opts.Target,
+            ForceLoadTableDatas = opts.ForceLoadTableDatas,
             SchemaCollector = opts.SchemaCollector,
             ConfFile = opts.ConfigFile,
             OutputTables = opts.OutputTables?.ToList() ?? new List<string>(),

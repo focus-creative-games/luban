@@ -3,7 +3,9 @@ namespace Luban.Pipeline;
 public class PipelineArguments
 {
     public string Target { get; set; }
-    
+
+    public bool ForceLoadTableDatas { get; set; }
+
     public List<string> IncludeTags { get; set; }
     
     public List<string> ExcludeTags { get; set; }

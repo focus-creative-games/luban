@@ -91,7 +91,7 @@ public class DefaultPipeline : IPipeline
             }
         }));
 
-        if (_args.DataTargets.Count > 0 || EnvManager.Current.GetBoolOptionOrDefault("", BuiltinOptionNames.ForceLoadDatas, true, false))
+        if (_args.ForceLoadTableDatas || _args.DataTargets.Count > 0)
         {
             LoadDatas();
         }
