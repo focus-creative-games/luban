@@ -1,5 +1,6 @@
 
 using Luban.DataVisitors;
+using Luban.Types;
 
 namespace Luban.Datas;
 
@@ -8,6 +9,10 @@ public abstract class DType : System.IComparable<DType>
     public abstract void Apply<T>(IDataActionVisitor<T> visitor, T x);
 
     public abstract void Apply<T1, T2>(IDataActionVisitor<T1, T2> visitor, T1 x, T2 y);
+
+    public abstract void Apply<T>(IDataActionVisitor2<T> visitor, TType type, T x);
+
+    public abstract void Apply<T1, T2>(IDataActionVisitor2<T1, T2> visitor, TType type, T1 x, T2 y);
 
     public abstract TR Apply<TR>(IDataFuncVisitor<TR> visitor);
 

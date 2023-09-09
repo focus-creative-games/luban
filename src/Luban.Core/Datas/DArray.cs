@@ -47,6 +47,16 @@ public class DArray : DType
         return visitor.Accept(this);
     }
 
+    public override void Apply<T>(IDataActionVisitor2<T> visitor, TType type, T x)
+    {
+        visitor.Accept(this, type, x);
+    }
+
+    public override void Apply<T1, T2>(IDataActionVisitor2<T1, T2> visitor, TType type, T1 x, T2 y)
+    {
+        visitor.Accept(this, type, x, y);
+    }
+
     public override TR Apply<T, TR>(IDataFuncVisitor<T, TR> visitor, T x)
     {
         return visitor.Accept(this, x);
