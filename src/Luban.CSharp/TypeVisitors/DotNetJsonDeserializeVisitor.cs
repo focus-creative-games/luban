@@ -1,5 +1,6 @@
 using Luban.Types;
 using Luban.TypeVisitors;
+using Luban.Utils;
 
 namespace Luban.CSharp.TypeVisitors;
 
@@ -58,8 +59,9 @@ public class DotNetJsonDeserializeVisitor : ITypeFuncVisitor<string, string, int
 
     public string Accept(TBean type, string json, string x, int depth)
     {
-        string src = $"{type.Apply(DeclaringTypeNameVisitor.Ins)}.Deserialize{type.DefBean.Name}({json})";
-        return $"{x} = {src};";
+        string src = $"{type.DefBean.FullName}.Deserialize{type.DefBean.Name}({json})";
+        string constructor = type.DefBean.TypeConstructorWithTypeMapper();
+        return $"{x} = {(string.IsNullOrEmpty(constructor) ? src : $"{constructor}({src})")};";
     }
 
     public string Accept(TArray type, string json, string x, int depth)

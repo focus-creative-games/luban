@@ -1,5 +1,6 @@
 using Luban.Types;
 using Luban.TypeVisitors;
+using Luban.Utils;
 
 namespace Luban.CSharp.TypeVisitors;
 
@@ -60,7 +61,8 @@ public class SimpleJsonDeserializeVisitor : ITypeFuncVisitor<string, string, int
     public string Accept(TBean type, string json, string x, int depth)
     {
         string src = $"{type.DefBean.FullName}.Deserialize{type.DefBean.Name}({json})";
-        return $"{{ if(!{json}.IsObject) {{ throw new SerializationException(); }}  {x} = {src};  }}";
+        string constructor = type.DefBean.TypeConstructorWithTypeMapper();
+        return $"{{ if(!{json}.IsObject) {{ throw new SerializationException(); }}  {x} = {(string.IsNullOrEmpty(constructor) ? src : $"{constructor}({src})")};  }}";
     }
 
     public string Accept(TArray type, string json, string x, int depth)
