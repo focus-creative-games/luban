@@ -14,6 +14,7 @@ public class BinaryRecordOffsetDataTarget : DataTargetBase
     {
         ByteBuf buf = new ByteBuf();
         buf.WriteSize(datas.Count);
+        x.WriteSize(datas.Count);
         foreach (var d in datas)
         {
             foreach (var indexInfo in table.IndexList)
