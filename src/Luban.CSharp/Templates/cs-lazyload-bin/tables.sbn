@@ -1,0 +1,34 @@
+using Luban;
+
+{{namespace_with_grace_begin __namespace}}
+    public partial class {{__name}}
+    {
+        {{count = 0}}
+        {{~for table in __tables ~}}
+        {{count = count + 1}}
+        {{~if table.comment != '' ~}}
+        /// <summary>
+        /// {{escape_comment table.comment}}
+        /// </summary>
+        {{~end~}}
+        public {{table.full_name}} {{format_property_name __code_style table.name}} {get; }
+        {{~end~}}
+        public static readonly int TABLE_COUNT = {{count}};
+
+        public {{__name}}(System.Func<string, ByteBuf> offsetLoader,  System.Func<string, int, int, ByteBuf> byteBufLoader)
+        {
+            {{~for table in __tables ~}}
+            {{format_property_name __code_style table.name}} = new {{table.full_name}}(offsetLoader("{{table.output_data_file}}"), "{{table.output_data_file}}", byteBufLoader);
+            {{~end~}}
+            ResolveRef();
+        }
+    
+        private void ResolveRef()
+        {
+            {{~for table in __tables ~}}
+            {{format_property_name __code_style table.name}}.ResolveRef(this);
+            {{~end~}}
+        }
+    }
+
+{{namespace_with_grace_end __namespace}}

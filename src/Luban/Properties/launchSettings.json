@@ -2,7 +2,7 @@
   "profiles": {
     "cs-bin": {
       "commandName": "Project",
-      "commandLineArgs": "-t\r\nall\r\n-c\r\ncs-bin\r\n-d\r\nbin\r\n--conf\r\nD:\\workspace2\\luban_examples\\DataTables\\luban.conf\r\n--validationFailAsError\r\n-x\r\noutputCodeDir=D:\\workspace2\\luban_examples\\Projects\\Csharp_Unity_bin\\Assets\\Gen\r\n-x\r\noutputDataDir=D:\\workspace2\\luban_examples\\Projects\\GenerateDatas\\bytes\r\n-x\r\npathValidator.rootDir=D:\\workspace2\\luban_examples\\Projects\\Csharp_Unity_bin\r\n-x\r\nl10n.textProviderFile=*@D:\\workspace2\\luban_examples\\DataTables\\Datas\\l10n\\texts.json"
+      "commandLineArgs": "-t\r\nall\r\n-c\r\ncs-lazyload-bin\r\n-d\r\nbin bin-offsetlength\r\n--conf\r\nD:\\WorkPlace\\Projects\\luban_examples\\DataTables\\luban.conf\r\n--validationFailAsError\r\n-x\r\noutputCodeDir=D:\\WorkPlace\\Projects\\luban_examples\\Projects\\Csharp_Unity_bin\\Assets\\Gen\r\n-x\r\nbin.outputDataDir=D:\\WorkPlace\\Projects\\luban_examples\\Projects\\GenerateDatas\\bytes\r\n-x\r\nbin-offsetlength.outputDataDir=D:\\WorkPlace\\Projects\\luban_examples\\Projects\\GenerateDatas\\bytesOffset\r\n-x\r\npathValidator.rootDir=D:\\WorkPlace\\Projects\\luban_examples\\Projects\\Csharp_Unity_bin\r\n-x\r\nl10n.textProviderFile=*@D:\\WorkPlace\\Projects\\luban_examples\\DataTables\\Datas\\l10n\\texts.json"
     },
     "cs-bin-namingConvention": {
       "commandName": "Project",

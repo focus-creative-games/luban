@@ -1,0 +1,128 @@
+﻿using Luban;
+{{
+    parent_def_type = __bean.parent_def_type
+    export_fields = __bean.export_fields
+    hierarchy_export_fields = __bean.hierarchy_export_fields
+}}
+
+{{namespace_with_grace_begin __namespace_with_top_module}}
+    {{~if __bean.comment != '' ~}}
+    /// <summary>
+    /// {{escape_comment __bean.comment}}
+    /// </summary>
+    {{~end~}}
+    {{~
+    func get_ref_name 
+        ret (format_property_name __code_style $0.name) + '_Ref'
+    end
+
+    func get_index_var_name
+        ret (format_property_name __code_style $0.name) + '_Index'
+    end
+
+    func generate_resolve_field_ref
+        field = $0
+        fieldName = format_property_name __code_style field.name
+        refTable = get_ref_table field
+        if can_generate_ref field
+            tableName = format_property_name __code_style refTable.name
+            if field.is_nullable
+                ret (get_ref_name field) + ' = ' + fieldName + '!= null ? tables.' + tableName + '.GetOrDefault(' + (get_value_of_nullable_type field.ctype fieldName) + ') : null;'
+            else
+                ret (get_ref_name field) + ' = tables.' + tableName + '.GetOrDefault(' + fieldName + ');'
+            end
+        else
+            if (is_field_bean_need_resolve_ref field)
+                ret fieldName + '?.ResolveRef(tables);'
+            else if (is_field_array_like_need_resolve_ref field)
+                ret 'foreach (var _e in ' + fieldName + ') { _e?.ResolveRef(tables); }'
+            else if (is_field_map_need_resolve_ref field)
+                ret 'foreach (var _e in ' + fieldName + '.Values) { _e?.ResolveRef(tables); }'
+            else
+                ret ''
+            end
+        end
+    end
+    ~}}
+    {{~if __bean.is_value_type~}}
+    public partial struct {{__name}}
+    {{~else~}}
+    public {{class_modifier __bean}} partial class {{__name}} : {{if parent_def_type}}{{__bean.parent}}{{else}}Luban.BeanBase{{end}}
+    {{~end~}}
+    {
+        public {{__name}}(ByteBuf _buf) {{if parent_def_type}} : base(_buf) {{end}}
+        {
+            {{~ for field in export_fields
+                fieldName = format_property_name __code_style field.name
+             ~}}
+            {{deserialize '_buf' fieldName field.ctype}}
+                {{~if can_generate_ref field~}}
+            {{get_ref_name field}} = null;
+                {{~end~}}
+                {{~if has_index field~}}
+            foreach(var _v in {{fieldName}})
+            { 
+                {{get_index_var_name field}}.Add(_v.{{format_property_name __code_style (get_index_field field).name}}, _v);
+            }
+                {{~end~}}
+            {{~end~}}
+        }
+
+        public static {{__name}} Deserialize{{__name}}(ByteBuf _buf)
+        {
+        {{~if __bean.is_abstract_type~}}
+            switch (_buf.ReadInt())
+            {
+            {{~for child in __bean.hierarchy_not_abstract_children~}}
+                case {{child.full_name}}.__ID__: return new {{child.full_name}}(_buf);
+            {{~end~}}
+                default: throw new SerializationException();
+            }
+        {{~else~}}
+            return new {{__bean.full_name}}(_buf);
+        {{~end~}}
+        }
+
+        {{~ for field in export_fields ~}}
+    {{~if field.comment != '' ~}}
+        /// <summary>
+        /// {{escape_comment field.comment}}
+        /// </summary>
+    {{~end~}}
+        public readonly {{declaring_type_name field.ctype}} {{format_property_name __code_style field.name}};
+        {{~if can_generate_ref field~}}
+        public {{declaring_type_name (get_ref_type field)}} {{get_ref_name field}};
+        {{~end~}}
+       {{~if has_index field
+            indexMapType = get_index_map_type field
+       ~}}
+        public readonly {{declaring_type_name indexMapType}} {{get_index_var_name field}} = new {{declaring_type_name indexMapType}}();
+       {{~end~}}
+       {{~end~}}
+   
+    {{~if !__bean.is_abstract_type && !__bean.is_value_type~}}
+        public const int __ID__ = {{__bean.id}};
+        public override int GetTypeId() => __ID__;
+    {{~end~}}
+
+        public {{method_modifier __bean}} void ResolveRef({{__manager_name}} tables)
+        {
+            {{~if parent_def_type~}}
+            base.ResolveRef(tables);
+            {{~end~}}
+            {{~for field in export_fields~}}
+            {{generate_resolve_field_ref field}}
+            {{~end~}}
+        }
+
+        public override string ToString()
+        {
+            return "{{full_name}}{ "
+        {{~for field in hierarchy_export_fields ~}}
+            + "{{format_field_name __code_style field.name}}:" + {{to_pretty_string (format_property_name __code_style field.name) field.ctype}} + ","
+        {{~end~}}
+            + "}";
+        }
+    }
+
+{{namespace_with_grace_end __namespace_with_top_module}}

@@ -1,0 +1,342 @@
+using Luban;
+using System.Linq;
+
+{{ 
+    key_type = __table.key_ttype
+    value_type =  __table.value_ttype
+    
+    func index_type_name
+        ret (declaring_type_name $0.type)
+    end
+    
+    func table_union_map_type_name
+        ret 'System.Collections.Generic.Dictionary<(' + (array.each __table.index_list @index_type_name | array.join ', ') + '), ' + (declaring_type_name value_type)  + '>'
+    end
+    
+    func table_union_map_int_name
+        ret 'System.Collections.Generic.Dictionary<(' + (array.each __table.index_list @index_type_name | array.join ', ') + '), int>'
+    end
+    
+    func table_union_key_name
+        key_idx = $0
+        for idx in __table.index_list
+            if idx.index_field.name == key_idx.index_field.name
+                ret 'key_' + idx.index_field.name
+            end
+        end
+    end
+    
+    func table_union_key_names
+        key_names = __table.index_list |array.each do; ret table_union_key_name $0; end
+        ret array.join key_names ', '
+    end
+    
+    func table_key_list
+        varName = $0
+        indexList = __table.index_list |array.each do; ret varName + '.' + (format_property_name __code_style $0.index_field.name); end;
+        ret array.join indexList ', '
+    end
+    
+    func table_param_def_list
+        paramList = __table.index_list |array.each do; ret (declaring_type_name $0.type) + ' ' + $0.index_field.name; end
+        ret array.join paramList ', '
+    end
+    
+    func table_param_type_list
+        paramList = __table.index_list |array.each do; ret (declaring_type_name $0.type); end
+        ret array.join paramList ', '
+    end
+    
+    func table_param_name_list
+        paramList = __table.index_list |array.each do; ret $0.index_field.name; end
+        ret array.join paramList ', '
+    end
+}}
+{{namespace_with_grace_begin __namespace_with_top_module}}
+    {{~if __table.comment != '' ~}}
+    /// <summary>
+    /// {{escape_comment __table.comment}}
+    /// </summary>
+    {{~end~}}
+    public partial class {{__name}}
+    {
+        private readonly System.Func<string, int, int, ByteBuf> _byteBufLoader;
+        private readonly string _fileName;
+        private Tables _tables;
+        {{~if __table.is_map_table ~}}{{## 单索引表}}
+        private readonly System.Collections.Generic.Dictionary<{{declaring_type_name key_type}}, {{declaring_type_name value_type}}> _dataMap;
+        private readonly System.Collections.Generic.Dictionary<{{declaring_type_name key_type}}, int> _offsetMap;
+        private readonly System.Collections.Generic.Dictionary<{{declaring_type_name key_type}}, int> _lengthMap;
+
+        private readonly System.Collections.Generic.List<{{declaring_type_name value_type}}> _dataList;
+    
+        public {{__name}}(ByteBuf _buf,string fileName, System.Func<string, int, int, ByteBuf> byteBufLoader)
+        {
+            _dataMap = new System.Collections.Generic.Dictionary<{{declaring_type_name key_type}}, {{declaring_type_name value_type}}>();
+            _offsetMap = new System.Collections.Generic.Dictionary<{{declaring_type_name key_type}}, int>();
+            _lengthMap = new System.Collections.Generic.Dictionary<{{declaring_type_name key_type}}, int>();
+            _fileName = fileName;
+            _byteBufLoader = byteBufLoader;
+        
+            for (int n = _buf.ReadSize(); n > 0; --n)
+            {
+                {{declaring_type_name key_type}} key;
+                {{deserialize '_buf' 'key' key_type}}
+                int offset = _buf.ReadInt();
+                int length = _buf.ReadInt();
+                _offsetMap.Add(key, offset);
+                _lengthMap.Add(key, length);
+            }
+        }
+
+        public void LoadAll(System.Action<{{declaring_type_name key_type}},{{declaring_type_name value_type}}> onLoad = null)
+        {
+            foreach(var (key,offset) in _offsetMap)
+		    {
+                var value = this.Get(key);
+                if (value != null)
+			    {
+				    onLoad?.Invoke(key, value);
+			    }
+		    }
+        }
+
+        {{~if value_type.is_dynamic~}}
+        public T GetOrDefaultAs<T>({{declaring_type_name key_type}} key) where T : {{declaring_type_name value_type}} => _dataMap.TryGetValue(key, out var v) ? (T)v : null;
+        public T GetAs<T>({{declaring_type_name key_type}} key) where T : {{declaring_type_name value_type}} => (T)_dataMap[key];
+        {{~end~}}
+        public {{declaring_type_name value_type}} GetOrDefault({{declaring_type_name key_type}} key) => this.Get(key) ?? default;
+        public {{declaring_type_name value_type}} Get({{declaring_type_name key_type}} key)
+        {
+            if (_dataMap.TryGetValue(key, out var v))
+            {
+                return v;
+            }
+            int offset = _offsetMap[key];
+            int length = _lengthMap[key];
+            ByteBuf buf = this._byteBufLoader(this._fileName, offset, length);
+            {{deserialize 'buf' 'v' value_type}};
+            _dataMap[key] = v;
+            v.ResolveRef(_tables);
+            return v;
+        }
+        public {{declaring_type_name value_type}} this[{{declaring_type_name key_type}} key] => this.Get(key);
+
+        public void ResolveRef({{__manager_name}} tables)
+        {
+            this._tables = tables;
+        }
+
+    {{~else if __table.is_list_table ~}}{{## list类型的表}}
+        {{~if __table.is_union_index~}}{{## 联合多索引表}}
+        private {{table_union_map_type_name}} _dataMapUnion;
+        private {{table_union_map_int_name}} _offsetMapUnion;
+        private {{table_union_map_int_name}} _lengthMapUnion;
+
+        public {{__name}}(ByteBuf _buf, string fileName, System.Func<string, int, int, ByteBuf> byteBufLoader)
+        {
+            _dataMapUnion = new {{table_union_map_type_name}}();
+            _offsetMapUnion = new {{table_union_map_int_name}}();
+            _lengthMapUnion = new {{table_union_map_int_name}}();
+            _fileName = fileName;
+            _byteBufLoader = byteBufLoader;
+
+            for (int n = _buf.ReadSize() ; n > 0 ; --n)
+            {   {{~for idx in __table.index_list~}}{{key_name = table_union_key_name idx}}
+                {{declaring_type_name idx.type}} {{key_name}};
+                {{deserialize '_buf' key_name idx.type}}
+                {{~end~}}
+                int offset = _buf.ReadInt();
+                int length = _buf.ReadInt();
+
+                _offsetMapUnion.Add(({{table_union_key_names}}), offset);
+                _lengthMapUnion.Add(({{table_union_key_names}}), length);
+            }
+        }
+
+        public void LoadAll(System.Action<{{table_param_type_list}},{{declaring_type_name value_type}}> onLoad = null)
+        {
+            foreach(var (({{table_param_name_list}}),offset) in _offsetMapUnion)
+            {
+                var value = this.Get({{table_param_name_list}});
+                if (value != null)
+                {
+                    onLoad?.Invoke({{table_key_list 'value'}}, value);
+                }
+            }
+        }
+
+        public {{declaring_type_name value_type}} GetOrDefault({{table_param_def_list}}) => this.Get({{table_param_name_list}}) ?? default;
+        public {{declaring_type_name value_type}} Get({{table_param_def_list}})
+        {
+            if (_dataMapUnion.TryGetValue(({{table_param_name_list}}), out var v))
+            {
+                return v;
+            }
+            int offset = _offsetMapUnion[({{table_param_name_list}})];
+            int length = _lengthMapUnion[({{table_param_name_list}})];
+            ByteBuf buf = this._byteBufLoader(this._fileName, offset, length);
+        
+            {{deserialize 'buf' 'v' value_type}};
+            _dataMapUnion[({{table_param_name_list}})] = v;
+            v.ResolveRef(_tables);
+            return v;
+        }
+        {{~else~}}{{## 非联合多索引表}}
+            {{~if !__table.index_list.empty?~}}{{## 独立多索引表}}
+                {{~for idx in __table.index_list~}}
+        private System.Collections.Generic.Dictionary<{{declaring_type_name idx.type}}, {{declaring_type_name value_type}}> _dataMap_{{idx.index_field.name}};
+        private System.Collections.Generic.Dictionary<{{declaring_type_name idx.type}}, int> _offsetMap_{{idx.index_field.name}};
+        private System.Collections.Generic.Dictionary<{{declaring_type_name idx.type}}, int> _lengthMap_{{idx.index_field.name}};
+                {{~end~}}
+
+        public {{__name}}(ByteBuf _buf, string fileName, System.Func<string, int, int, ByteBuf> byteBufLoader)
+        {
+            {{~for idx in __table.index_list~}}
+            _dataMap_{{idx.index_field.name}} = new System.Collections.Generic.Dictionary<{{declaring_type_name idx.type}}, {{declaring_type_name value_type}}>();
+            _offsetMap_{{idx.index_field.name}} = new System.Collections.Generic.Dictionary<{{declaring_type_name idx.type}}, int>();
+            _lengthMap_{{idx.index_field.name}} = new System.Collections.Generic.Dictionary<{{declaring_type_name idx.type}}, int>();
+            {{~end~}}
+            _fileName = fileName;
+            _byteBufLoader = byteBufLoader;
+            
+            for (int n = _buf.ReadSize(); n > 0; --n)
+            {   
+                {{~for idx in __table.index_list~}}
+                {{declaring_type_name idx.type}} key_{{idx.index_field.name}};
+                {{deserialize '_buf' 'key_'+idx.index_field.name idx.type}}
+                {{~end~}}
+
+                int offset = _buf.ReadInt();
+                int length = _buf.ReadInt();
+
+                {{~for idx in __table.index_list~}}
+                _offsetMap_{{idx.index_field.name}}.Add(key_{{idx.index_field.name}}, offset);
+                _lengthMap_{{idx.index_field.name}}.Add(key_{{idx.index_field.name}}, length);
+                {{~end~}}
+            }
+        }
+                {{~for idx in __table.index_list~}}
+        public {{declaring_type_name value_type}} GetBy{{format_property_name __code_style idx.index_field.name}}OrDefault({{declaring_type_name idx.type}} key) => this.GetBy{{format_property_name __code_style idx.index_field.name}}(key) ?? default;
+        public {{declaring_type_name value_type}} GetBy{{format_property_name __code_style idx.index_field.name}}({{declaring_type_name idx.type}} key)
+        {
+            if (_dataMap_{{idx.index_field.name}}.TryGetValue(key, out var v))
+            {
+                return v;
+            }
+            int offset = _offsetMap_{{idx.index_field.name}}[key];
+            int length = _lengthMap_{{idx.index_field.name}}[key];
+            ByteBuf buf = this._byteBufLoader(this._fileName, offset, length);
+            {{deserialize 'buf' 'v' value_type}};
+                    {{~for idx in __table.index_list~}}
+            _dataMap_{{idx.index_field.name}}[v.{{format_property_name __code_style idx.index_field.name}}] = v;
+                    {{~end~}}
+            v.ResolveRef(_tables);
+            return v;
+        }
+                {{~end~}}
+                
+        public void LoadAll(System.Action<{{table_param_type_list}},{{declaring_type_name value_type}}> onLoad = null)
+        {
+            //用第一个Index来索引即可
+            foreach(var (key,offset) in _offsetMap_{{__table.index_list[0].index_field.name}})
+            {
+                var value = this.GetBy{{format_property_name __code_style __table.index_list[0].index_field.name}}(key);
+                if (value != null)
+                {
+                    //把所有的索引值都传进去
+                    onLoad?.Invoke({{table_key_list 'value'}}, value);
+                }
+            }
+        }
+            {{~else~}}{{## 无索引表}}
+        private readonly System.Collections.Generic.Dictionary<int,{{declaring_type_name value_type}}> _indexDataMap;
+        private readonly System.Collections.Generic.List<int> _offsetList;
+        private readonly System.Collections.Generic.List<int> _lengthList;
+
+        public {{__name}}(ByteBuf _buf, string fileName, System.Func<string, int, int, ByteBuf> byteBufLoader)
+        {
+            _indexDataMap = new System.Collections.Generic.Dictionary<int, {{declaring_type_name value_type}}>();
+            _offsetList = new System.Collections.Generic.List<int>();
+            _lengthList = new System.Collections.Generic.List<int>();
+            _fileName = fileName;
+            _byteBufLoader = byteBufLoader;
+            
+            for (int n = _buf.ReadSize(); n > 0; --n)
+            {
+                int offset = _buf.ReadInt();
+                int length = _buf.ReadInt();
+
+                _offsetList.Add(offset);
+                _lengthList.Add(length);
+            }
+        }
+        
+        public {{declaring_type_name value_type}} GetByIndex(int index)
+        {
+            if (_indexDataMap.TryGetValue(index, out var v))
+            {
+                return v;
+            }
+            int offset = _offsetList[index];
+            int length = _lengthList[index];
+            ByteBuf buf = this._byteBufLoader(this._fileName, offset, length);
+            {{deserialize 'buf' 'v' value_type}};
+            _indexDataMap[index] = v;
+            v.ResolveRef(_tables);
+            return v;
+        }
+
+        public void LoadAll(System.Action<int,{{declaring_type_name value_type}}> onLoad = null)
+        {
+            for (int i = 0; i < _offsetList.Count; ++i)
+            {
+                var value = this.GetByIndex(i);
+                if (value != null)
+                {
+                    onLoad?.Invoke(i, value);
+                }
+            }
+        }
+            {{~end~}}
+        {{~end~}}
+        public void ResolveRef({{__manager_name}} tables)
+        {
+            this._tables = tables;
+        }
+    {{~else~}}{{## 单例表}}
+        private readonly {{declaring_type_name value_type}} _data;
+     
+        public {{__name}}(ByteBuf _buf, string fileName, System.Func<string, int, int, ByteBuf> byteBufLoader)
+        {
+            int n = _buf.ReadSize();
+            if (n != 1) throw new SerializationException("table mode=one, but size != 1");
+            int offset = _buf.ReadInt();
+            int length = _buf.ReadInt();
+            ByteBuf dataBuf = byteBufLoader(fileName, offset, length);
+            {{deserialize 'dataBuf' '_data' value_type}}
+        }
+
+
+        {{~ for field in value_type.def_bean.hierarchy_export_fields ~}}
+            {{~if field.comment != '' ~}}
+        /// <summary>
+        /// {{escape_comment field.comment}}
+        /// </summary>
+            {{~end~}}
+         public {{declaring_type_name field.ctype}} {{format_property_name __code_style field.name}} => _data.{{format_property_name __code_style field.name}};
+        {{~end~}}
+    
+        public void ResolveRef({{__manager_name}} tables)
+        {
+            _data.ResolveRef(tables);
+        }
+
+        public override string ToString()
+        {
+            return _data.ToString();
+        }
+    {{~end~}}
+    }
+
+{{namespace_with_grace_end __namespace_with_top_module}}
