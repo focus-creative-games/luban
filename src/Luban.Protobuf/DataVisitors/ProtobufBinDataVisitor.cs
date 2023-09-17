@@ -153,7 +153,7 @@ public class ProtobufBinDataVisitor : IDataActionVisitor<CodedOutputStream>
 
             if (bean.IsAbstractType)
             {
-                cos.WriteTag(type.ImplType.Id, WireFormat.WireType.LengthDelimited);
+                cos.WriteTag(type.ImplType.AutoId, WireFormat.WireType.LengthDelimited);
                 EnterScope(cos, cos2 => WriteRawMessageWithoutLength(type, cos2));
             }
             else
