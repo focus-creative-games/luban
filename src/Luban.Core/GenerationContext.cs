@@ -35,13 +35,13 @@ public class GenerationContext
 
     public static LubanConfig GlobalConf { get; set; }
 
-    public DefAssembly Assembly { get; }
+    public DefAssembly Assembly { get; private set; }
 
     public RawTarget Target => Assembly.Target;
 
-    public List<string> IncludeTags { get; }
+    public List<string> IncludeTags { get; private set; }
     
-    public List<string> ExcludeTags { get; }
+    public List<string> ExcludeTags { get; private set; }
     
     private readonly ConcurrentDictionary<string, TableDataInfo> _recordsByTables = new();
     
@@ -49,15 +49,15 @@ public class GenerationContext
 
     public List<DefTable> Tables => Assembly.GetAllTables();
     
-    private List<DefTypeBase> ExportTypes { get; }
+    private List<DefTypeBase> ExportTypes { get; set; }
     
-    public List<DefTable> ExportTables { get; }
+    public List<DefTable> ExportTables { get; private set; }
     
-    public List<DefBean> ExportBeans { get; }
+    public List<DefBean> ExportBeans { get; private set; }
     
-    public List<DefEnum> ExportEnums { get; }
+    public List<DefEnum> ExportEnums { get; private set; }
     
-    public TimeZoneInfo TimeZone { get; }
+    public TimeZoneInfo TimeZone { get; private set; }
     
     private readonly Dictionary<string, object> _uniqueObjects = new();
     
@@ -70,9 +70,13 @@ public class GenerationContext
         s_logger.Info("load datas end");
     }
 
-    public GenerationContext(GenerationContextBuilder builder)
+    public GenerationContext()
     {
         Current = this;
+    }
+
+    public void Init(GenerationContextBuilder builder)
+    {
         Assembly = builder.Assembly;
         IncludeTags = builder.IncludeTags;
         ExcludeTags = builder.ExcludeTags;
@@ -193,6 +197,15 @@ public class GenerationContext
         lock (this)
         {
             return _uniqueObjects[key];
+        }
+    }
+    
+    public object TryGetUniqueObject(string key)
+    {
+        lock (this)
+        {
+            _uniqueObjects.TryGetValue(key, out var obj);
+            return obj;
         }
     }
     

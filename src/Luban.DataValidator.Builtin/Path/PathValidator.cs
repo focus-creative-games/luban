@@ -10,6 +10,8 @@ namespace Luban.DataValidator.Builtin.Path;
 public class PathValidator : DataValidatorBase
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
+
+    private readonly string _rootDir;
     
     private string _rawPattern;
 
@@ -17,6 +19,14 @@ public class PathValidator : DataValidatorBase
 
     public PathValidator()
     {
+        if (!EnvManager.Current.TryGetOption(BuiltinOptionNames.PathValidatorFamily, BuiltinOptionNames.PathValidatorRootDir, false, out _rootDir))
+        {
+            string key = $"{BuiltinOptionNames.PathValidatorFamily}.{BuiltinOptionNames.PathValidatorRootDir}";
+            if (GenerationContext.Current.GetOrAddUniqueObject(key, () => this) == this)
+            {
+                s_logger.Warn("don't set option '-x {0}=<rootValidationDir>', path validation is disabled", key);
+            }
+        }
     }
 
     public override void Compile(DefField field, TType type)
@@ -89,15 +99,18 @@ public class PathValidator : DataValidatorBase
 
     public override void Validate(DataValidatorContext ctx, TType type, DType data)
     {
+        if (string.IsNullOrEmpty(_rootDir))
+        {
+            return;
+        }
+        
         string value = ((DString)data).Value;
         if (value == "" && _pathPattern.EmptyAble)
         {
             return;
         }
 
-        string rootDir = EnvManager.Current.GetOption(BuiltinOptionNames.PathValidatorFamily, BuiltinOptionNames.PathValidatorRootDir, false);
-
-        if (!_pathPattern.ExistPath(rootDir, value))
+        if (!_pathPattern.ExistPath(_rootDir, value))
         {
             s_logger.Error("{}:{} (来自文件:{}) 找不到对应文件", RecordPath, value, Source);
             GenerationContext.Current.LogValidatorFail(this);

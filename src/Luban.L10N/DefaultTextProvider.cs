@@ -23,7 +23,7 @@ public class DefaultTextProvider : ITextProvider
         if (!EnvManager.Current.TryGetOption(BuiltinOptionNames.L10NFamily, BuiltinOptionNames.TextProviderFile, true,
                 out string textProviderFile))
         {
-            s_logger.Error("not found option: '-x {0}.{1}=<textProviderFile>', text validation is disabled", BuiltinOptionNames.L10NFamily, BuiltinOptionNames.TextProviderFile);
+            s_logger.Warn("not found option: '-x {0}.{1}=<textProviderFile>', text validation is disabled", BuiltinOptionNames.L10NFamily, BuiltinOptionNames.TextProviderFile);
             _enableTextValidation = false;
             return;
         }

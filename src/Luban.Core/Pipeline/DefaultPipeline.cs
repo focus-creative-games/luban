@@ -52,6 +52,7 @@ public class DefaultPipeline : IPipeline
     protected void PrepareGenerationContext()
     {
         s_logger.Debug("prepare generation context");
+        _genCtx = new GenerationContext();
         _defAssembly = new DefAssembly(_rawAssembly, _args.Target, _args.OutputTables);
         
         var generationCtxBuilder = new GenerationContextBuilder
@@ -61,7 +62,7 @@ public class DefaultPipeline : IPipeline
             ExcludeTags = _args.ExcludeTags,
             TimeZone = _args.TimeZone,
         };
-        _genCtx = new GenerationContext(generationCtxBuilder);
+        _genCtx.Init(generationCtxBuilder);
     }
 
     protected void LoadDatas()
