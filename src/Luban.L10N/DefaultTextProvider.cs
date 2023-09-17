@@ -12,18 +12,24 @@ public class DefaultTextProvider : ITextProvider
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
+    private bool _enableTextValidation;
     private string _keyFieldName;
     private readonly HashSet<string> _keys = new();
+    
+    public bool Enable => _enableTextValidation;
+    
     public void Load()
     {
         if (!EnvManager.Current.TryGetOption(BuiltinOptionNames.L10NFamily, BuiltinOptionNames.TextProviderFile, true,
                 out string textProviderFile))
         {
-            s_logger.Error("not found option:{}.{}, text validation will not work", BuiltinOptionNames.L10NFamily, BuiltinOptionNames.TextProviderFile);
+            s_logger.Error("not found option: '-x {0}.{1}=<textProviderFile>', text validation is disabled", BuiltinOptionNames.L10NFamily, BuiltinOptionNames.TextProviderFile);
+            _enableTextValidation = false;
             return;
         }
         _keyFieldName = EnvManager.Current.GetOptionOrDefault(BuiltinOptionNames.L10NFamily, BuiltinOptionNames.TextKeyFieldName, false, "key");
         LoadTextListFromFile(textProviderFile);
+        _enableTextValidation = true;
     }
 
     public bool IsValidKey(string key)

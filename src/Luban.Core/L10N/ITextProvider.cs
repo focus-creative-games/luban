@@ -2,6 +2,8 @@ namespace Luban.L10N;
 
 public interface ITextProvider
 {
+    bool Enable { get; }
+    
     void Load();
     
     bool IsValidKey(string key);

@@ -41,7 +41,7 @@ public class TextValidator : DataValidatorBase
         {
             return;
         }
-        if (!Provider.IsValidKey(key))
+        if (Provider.Enable && !Provider.IsValidKey(key))
         {
             s_logger.Error("记录 {}:{} (来自文件:{}) 不是一个有效的文本key", DataValidatorContext.CurrentRecordPath, data, Source);
             GenerationContext.Current.LogValidatorFail(this); 
