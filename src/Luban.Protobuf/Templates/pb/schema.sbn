@@ -6,11 +6,11 @@ package {{__namespace}};
     typeName = full_name enum
  ~}}
 enum {{typeName}} {
+    {{~if !enum.has_zero_value_item ~}}
+    {{typeName}}_EMPTY_PLACEHOLDER = 0;
+    {{~end~}}
     {{~for item in enum.items ~}}
     {{typeName}}_{{item.name}} = {{item.int_value}};
-    {{~end~}}
-    {{~if enum.items.empty?}}
-    {{typeName}}_EMPTY_PLACEHOLDER = 0;
     {{~end~}}
 }
 {{~end~}}
