@@ -21,9 +21,39 @@ export enum {{enum.name}} {
 {{~end~}}
 
 
+{{~
+func get_ref_name 
+    ret (format_property_name __code_style $0.name) + '_ref'
+end
+
+func generate_resolve_field_ref
+    field = $0
+    fieldName = format_property_name __code_style field.name
+    refTable = get_ref_table field
+    if can_generate_ref field
+        tableName = refTable.name
+        if field.is_nullable
+            ret 'this.'+(get_ref_name field) + ' = this.' + fieldName + '!= null ? tables.' + tableName + '.get(this.' + fieldName + ') : null'
+        else
+            ret 'this.'+(get_ref_name field) + ' = tables.' + tableName + '.get(this.' + fieldName + ')'
+        end
+    else
+        if (is_field_bean_need_resolve_ref field)
+            ret 'this.'+fieldName + '?.resolve(tables);'
+        else if (is_field_array_like_need_resolve_ref field)
+            ret 'for (let _e of ' + fieldName + ') { _e?.resolve(tables); }'
+        else if (is_field_map_need_resolve_ref field)
+            ret 'foreach (var [_, _e] of ' + fieldName ') { _e?.resolve(tables); }'
+        else
+            ret ''
+        end
+    end
+end
+~}}
+
 {{~for bean in __beans~}}
 
-{{namespace_with_grace_begin bean.namespace}} 
+{{namespace_with_grace_begin bean.namespace}}
 {{~if bean.comment != '' ~}}
 /**
  * {{escape_comment bean.comment}}
@@ -60,7 +90,22 @@ export {{if bean.is_abstract_type}}abstract {{end}}class {{bean.name}}{{if bean.
      */
 {{~end~}}
     readonly {{format_field_name __code_style field.name}}: {{declaring_type_name field.ctype}}
+    {{~if can_generate_ref field~}}
+    {{get_ref_name field}}: {{declaring_type_name (get_ref_type field)}} | undefined
     {{~end~}}
+    {{~end~}}
+
+    resolve(tables:{{__name}})
+    {
+        {{~if bean.parent_def_type~}}
+        super.resolve(tables)
+        {{~end~}}
+        {{~ for field in bean.export_fields ~}}
+        {{~if can_generate_ref field~}}
+        {{generate_resolve_field_ref field}}
+        {{~end~}}
+        {{~end~}}
+    }
 }
 
 {{namespace_with_grace_end bean.namespace}}
@@ -98,6 +143,13 @@ export class {{table.name}}{
 
     get(key: {{declaring_type_name key_type}}): {{declaring_type_name value_type}} | undefined { return this._dataMap.get(key); }
 
+    resolve(tables:{{__name}})
+    {
+        for(let  data of this._dataList)
+        {
+            data.resolve(tables)
+        }
+    }
     {{~else if table.is_list_table ~}}
     private _dataList: {{declaring_type_name value_type}}[]
     
@@ -113,7 +165,14 @@ export class {{table.name}}{
     getDataList(): {{declaring_type_name value_type}}[] { return this._dataList }
 
     get(index: number): {{declaring_type_name value_type}} | undefined { return this._dataList[index] }
-
+    
+    resolve(tables:{{__name}})
+    {
+        for(let  data of this._dataList)
+        {
+            data.resolve(tables)
+        }
+    }
     {{~else~}}
 
     private _data: {{declaring_type_name value_type}}
@@ -130,9 +189,16 @@ export class {{table.name}}{
      * {{escape_comment field.comment}}
      */
 {{~end~}}
-     get  {{format_field_name __code_style field.name}}(): {{declaring_type_name field.ctype}} { return this._data.{{format_field_name __code_style field.name}}; }
+    get  {{format_field_name __code_style field.name}}(): {{declaring_type_name field.ctype}} { return this._data.{{format_field_name __code_style field.name}}; }
+    {{~if can_generate_ref field~}}
+    get  {{format_field_name __code_style field.name}}_ref(): {{declaring_type_name (get_ref_type field)}} | undefined { return this._data.{{format_field_name __code_style field.name}}_ref; }
+    {{~end~}}
     {{~end~}}
 
+    resolve(tables:{{__name}})
+    {
+        this._data.resolve(tables)
+    }
     {{end}}
 }
 {{namespace_with_grace_end table.namespace}}
@@ -156,6 +222,10 @@ export class {{__name}} {
     constructor(loader: JsonLoader) {
         {{~for table in __tables ~}}
         this._{{table.name}} = new {{table.full_name}}(loader('{{table.output_data_file}}'))
+        {{~end~}}
+
+        {{~for table in __tables ~}}
+        this._{{table.name}}.resolve(this)
         {{~end~}}
     }
 }
