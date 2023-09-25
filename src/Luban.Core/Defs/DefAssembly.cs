@@ -26,7 +26,14 @@ public class DefAssembly
 
     public RawTarget GetTarget(string targetName)
     {
-        return _targets.Find(t => t.Name == targetName);
+        var target = _targets.Find(t => t.Name == targetName);
+
+        if(target is null)
+        {
+            throw new Exception($"target is null {targetName}");
+        }
+
+        return target;
     }
 
     private readonly List<DefTable> _exportTables;
