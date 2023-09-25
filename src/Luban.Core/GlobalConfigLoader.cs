@@ -70,8 +70,13 @@ public class GlobalConfigLoader : IConfigLoader
          
         List<SchemaFileInfo> importFiles = new();
         foreach (var schemaFile in globalConf.SchemaFiles)
-        {     
-            foreach (var subFile in FileUtil.GetFileOrDirectory(Path.Combine(_curDir, schemaFile.FileName)))
+        {
+            string fileOrDirectory = Path.Combine(_curDir, schemaFile.FileName);
+            if (!File.Exists(fileOrDirectory))
+            {
+                throw new Exception($"schemal file:{schemaFile} ²»´æÔÚ");
+            }
+            foreach (var subFile in FileUtil.GetFileOrDirectory(fileOrDirectory))
             {
                 importFiles.Add(new SchemaFileInfo(){ FileName = subFile, Type = schemaFile.Type});
             }
