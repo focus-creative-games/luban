@@ -39,12 +39,16 @@ public abstract class CodeTargetBase : ICodeTarget
     public virtual void Handle(GenerationContext ctx, OutputFileManifest manifest)
     {
         var tasks = new List<Task<OutputFile>>();
-        tasks.Add(Task.Run(() =>
+
+        if(!string.IsNullOrEmpty(ctx.Target.Manager))
         {
-            var writer = new CodeWriter();
-            GenerateTables(ctx, ctx.ExportTables, writer);
-            return new OutputFile(){ File = $"{GetFileNameWithoutExtByTypeName(ctx.Target.Manager)}.{FileSuffixName}", Content = writer.ToResult(FileHeader) };
-        }));
+            tasks.Add(Task.Run(() =>
+            {
+                var writer = new CodeWriter();
+                GenerateTables(ctx, ctx.ExportTables, writer);
+                return new OutputFile(){ File = $"{GetFileNameWithoutExtByTypeName(ctx.Target.Manager)}.{FileSuffixName}", Content = writer.ToResult(FileHeader) };
+            })); 
+        }
 
         foreach (var table in ctx.ExportTables)
         {
