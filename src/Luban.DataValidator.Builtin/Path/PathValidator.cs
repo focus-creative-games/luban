@@ -24,7 +24,7 @@ public class PathValidator : DataValidatorBase
             string key = $"{BuiltinOptionNames.PathValidatorFamily}.{BuiltinOptionNames.PathValidatorRootDir}";
             if (GenerationContext.Current.GetOrAddUniqueObject(key, () => this) == this)
             {
-                s_logger.Warn("don't set option '-x {0}=<rootValidationDir>', path validation is disabled", key);
+                s_logger.Warn("option '-x {0}=<rootValidationDir>' not found, path validation is disabled", key);
             }
         }
     }

@@ -37,6 +37,10 @@ public class DefAssembly
     {
         _targets = assembly.Targets;
         Target = GetTarget(target);
+        if (Target == null)
+        {
+            throw new Exception($"target:{target} is invalid");
+        }
 
         foreach (var g in assembly.RefGroups)
         {
