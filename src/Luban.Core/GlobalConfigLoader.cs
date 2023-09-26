@@ -72,10 +72,6 @@ public class GlobalConfigLoader : IConfigLoader
         foreach (var schemaFile in globalConf.SchemaFiles)
         {
             string fileOrDirectory = Path.Combine(_curDir, schemaFile.FileName);
-            if (!File.Exists(fileOrDirectory) && !Directory.Exists(fileOrDirectory))
-            {
-                throw new Exception($"schemal file:{fileOrDirectory} 不存在");
-            }
             foreach (var subFile in FileUtil.GetFileOrDirectory(fileOrDirectory))
             {
                 importFiles.Add(new SchemaFileInfo(){ FileName = subFile, Type = schemaFile.Type});

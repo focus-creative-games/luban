@@ -272,3 +272,4 @@ __pycache__/
 /src/Excel2TextDiff/Properties/launchSettings.json
 /src/packages
 /src/.vscode
+/src/Luban/Properties/*.json
