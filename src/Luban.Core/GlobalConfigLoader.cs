@@ -1,4 +1,4 @@
-using System.Text;
+Ôªøusing System.Text;
 using System.Text.Json;
 using Luban.RawDefs;
 using Luban.Schema;
@@ -74,7 +74,7 @@ public class GlobalConfigLoader : IConfigLoader
             string fileOrDirectory = Path.Combine(_curDir, schemaFile.FileName);
             if (!File.Exists(fileOrDirectory))
             {
-                throw new Exception($"schemal file:{schemaFile} ≤ª¥Ê‘⁄");
+                throw new Exception($"schemal file:{schemaFile} ‰∏çÂ≠òÂú®");
             }
             foreach (var subFile in FileUtil.GetFileOrDirectory(fileOrDirectory))
             {
