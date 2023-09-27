@@ -24,11 +24,11 @@ public class GdscriptJsonTemplateExtension : ScriptObject
     {
         if (type.IsNullable)
         {
-            return $"if {jsonVarName}.get('{jsonFieldName}') != null: {type.Apply(UnderlyingDeserializeVisitor.Ins, $"{jsonVarName}['{jsonFieldName}']", fieldName)}";
+            return $"if {jsonVarName}.get('{jsonFieldName}') != null: {type.Apply(UnderlyingDeserializeVisitor.Ins, $"{jsonVarName}[\"{jsonFieldName}\"]", fieldName)}";
         }
         else
         {
-            return type.Apply(UnderlyingDeserializeVisitor.Ins, $"{jsonVarName}['{jsonFieldName}']", fieldName);
+            return type.Apply(UnderlyingDeserializeVisitor.Ins, $"{jsonVarName}[\"{jsonFieldName}\"]", fieldName);
         }
     }
 }
