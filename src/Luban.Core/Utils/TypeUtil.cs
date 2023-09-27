@@ -121,7 +121,7 @@ public static class TypeUtil
 
     public static string MakeGDScriptFullName(string module, string name)
     {
-        return UpperCaseFirstChar(module.Replace('.', '_') + name);
+        return ToPascalCase(module.Replace('.', '_') + "_" + name);
     }
 
     public static string MakeRustFullName(string module, string name)
