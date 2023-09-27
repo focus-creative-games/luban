@@ -1,4 +1,3 @@
-## 所有配置表导出的管理类（包括枚举，数据类Bean，单行数据类组合而成的表格数据类Table，以及表格数据类组合而成的表格管理类Tables）
 @tool
 class_name Schema
 extends RefCounted
@@ -66,9 +65,7 @@ class {{name}}{{if bean.parent_def_type}} extends {{full_name bean.parent_def_ty
 {{~end~}}
 class {{full_name table}}:
     {{~if table.is_map_table ~}}
-    ## 数据数组
     var _data_list: Array[{{value_type_name}}]
-    ## 数据字典
     var _data_map: Dictionary
     
     func _init(_json_) -> void:
@@ -78,22 +75,17 @@ class {{full_name table}}:
             self._data_list.append(_v)
             self._data_map[_v.{{format_field_name __code_style table.index_field.name}}] = _v
 
-    ## 获取数据数组
     func get_data_list() -> Array[{{value_type_name}}]:
         return self._data_list
 
-    ## 获取数据字典
     func get_data_map() -> Dictionary:
         return self._data_map
 
-    ## 获取键值对应的行数据对象
     func get_item(key) -> {{value_type_name}}:
         return self._data_map.get(key)
 
     {{~else if table.multi_key ~}}
-    ## 数据数组
     var _data_list: Array[{{value_type_name}}]
-    ## 数据字典
     var _data_map: Dictionary
     {{~ for INDEX in table.index_list ~}}
     var _{{INDEX.index_field.name}}_data_map: Dictionary ## 以{{INDEX.index_field.name}}为key的数据字典
@@ -113,26 +105,21 @@ class {{full_name table}}:
             self._{{INDEX.index_field.name}}_data_map[_v.{{INDEX.index_field.name}}] = _v
         {{~ end ~}}
 
-    ## 获取数据数组
     func get_data_list() -> Array[{{value_type_name}}]:
         return self._data_list
 
-    ## 获取数据字典
     func get_data_map() -> Dictionary:
         return self._data_map
 
     {{~ for INDEX in table.index_list ~}}
-    ## 获取以{{INDEX.index_field.name}}为key的数据字典
     func get_{{INDEX.index_field.name}}_data_map() -> Dictionary:
         return self._{{INDEX.index_field.name}}_data_map
 
     {{~ end ~}}
-    ## 通过默认key获取行数据对象
     func get_item(key) -> {{value_type_name}}:
         return self._data_map.get(key)
 
 {{~ for INDEX in table.index_list ~}}
-    ## 通过{{INDEX.index_field.name}}获取行数据对象
     func get_item_by_{{INDEX.index_field.name}}({{INDEX.index_field.name}}) -> {{value_type_name}}:
         return self._{{INDEX.index_field.name}}_data_map.get({{INDEX.index_field.name}})
 
@@ -146,22 +133,18 @@ class {{full_name table}}:
             {{deserialize '_v' '_json2_' value_type}}
             self._data_list.append(_v)
 
-    ## 获取数据数组
     func get_data_list() -> Array[{{value_type_name}}]:
         return self._data_list
     
-    ## 通过序号获取行数据对象
     func get_item(index) -> {{value_type_name}}:
         return self._data_list[index]
     {{~else~}}
-    ## 单例数据对象
     var _data:{{value_type_name}}
     
     func _init(_json_) -> void:
         assert(len(_json_) == 1, "table mode = one, but size != 1")
         {{deserialize 'self._data' '_json_[0]' value_type}}
 
-    ## 获取单例数据对象
     func get_data() -> {{value_type_name}}:
         return self._data
 
@@ -178,7 +161,6 @@ class {{full_name table}}:
     {{~end~}}
 
 {{~end~}}
-## 表格管理类：表格数据类组合而成，通过实例化此类进行各配置表数据的访问
 class {{str_full_name __full_name}}:
     {{~for table in __tables ~}}
     {{~if table.comment != ''~}}
