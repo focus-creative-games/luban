@@ -1,26 +1,38 @@
-
+@tool
 class_name Schema
+extends RefCounted
+
 
 {{~for enum in __enums~}}
 {{~if enum.comment != '' ~}}
-# {{enum.comment | html.escape}}
+## {{enum.comment | html.escape}}
 {{~end~}}
 enum {{full_name enum}}
 {
     {{~ for item in enum.items ~}}
-    {{item.name}} = {{item.value}},{{-if item.comment_or_alias != '' }}# {{item.comment_or_alias | html.escape}}{{-end}}
+    {{~if item.comment_or_alias != '' ~}}
+    ## {{item.comment_or_alias | html.escape}}
+    {{~end~}}
+    {{item.name}} = {{item.value}},
     {{~end~}}
 }
 
-{{~end~}}
 
+{{~end~}}
 {{~for bean in __beans
     name = (full_name bean)
 ~}}
-class {{name}} {{if bean.parent_def_type}}extends {{full_name bean.parent_def_type}}{{end}}:
+{{~if bean.comment != '' ~}}
+## {{bean.comment | html.escape}}
+{{~end~}}
+class {{name}}{{if bean.parent_def_type}} extends {{full_name bean.parent_def_type}}{{end}}:
 {{~ for field in bean.export_fields ~}}
+    {{~if field.comment != '' ~}}
+    ## {{field.comment | html.escape}}
+    {{~end~}}
     var {{format_field_name __code_style field.name}}: {{declaring_type_name field.ctype}}
 {{~end~}}
+
 {{~if bean.is_abstract_type~}}
     static func fromJson(_json_):
         var type = _json_['$type']
@@ -29,8 +41,8 @@ class {{name}} {{if bean.parent_def_type}}extends {{full_name bean.parent_def_ty
             "{{impl_data_type child bean}}": return {{full_name child}}.new(_json_)
         {{~end~}}
             _: assert(false)
-{{~end~}}
 
+{{~end~}}
     func _init(_json_) -> void:
 {{~if bean.parent_def_type~}}
         super(_json_)
@@ -42,70 +54,122 @@ class {{name}} {{if bean.parent_def_type}}extends {{full_name bean.parent_def_ty
         pass
         {{~end~}}
 
-{{~end~}}
 
+{{~end~}}
 {{~for table in __tables
     value_type = table.value_ttype
     value_type_name = (declaring_type_name value_type)
 ~}}
+{{~if table.comment != '' ~}}
+## {{table.comment | html.escape}}
+{{~end~}}
 class {{full_name table}}:
     {{~if table.is_map_table ~}}
-    var _data_list = []
-    var _data_map = {}
-    func _init(_json_ ) -> void:
-        self._data_map = {}
-        self._data_list = []
-        
+    var _data_list: Array[{{value_type_name}}]
+    var _data_map: Dictionary
+    
+    func _init(_json_) -> void:
         for _json2_ in _json_:
-            var _v
+            var _v: {{value_type_name}}
             {{deserialize '_v' '_json2_' value_type}}
             self._data_list.append(_v)
             self._data_map[_v.{{format_field_name __code_style table.index_field.name}}] = _v
 
-    func get_data_map() -> Dictionary : return self._data_map
-    func get_data_list() -> Array : return self._data_list
+    func get_data_list() -> Array[{{value_type_name}}]:
+        return self._data_list
 
-    func get_item(key) -> {{value_type_name}} : return self._data_map.get(key)
-    {{~else if table.is_list_table ~}}
-    var _data_list = []
-    func _init(_json_):
-        self._data_list = []
-        
+    func get_data_map() -> Dictionary:
+        return self._data_map
+
+    func get_item(key) -> {{value_type_name}}:
+        return self._data_map.get(key)
+
+    {{~else if table.multi_key ~}}
+    var _data_list: Array[{{value_type_name}}]
+    var _data_map: Dictionary
+    {{~ for INDEX in table.index_list ~}}
+    var _{{INDEX.index_field.name}}_data_map: Dictionary ## 以{{INDEX.index_field.name}}为key的数据字典
+    {{~ end ~}} 
+
+    func _init(_json_) -> void:
+        {{~ for INDEX in table.index_list ~}}
+        self._{{INDEX.index_field.name}}_data_map = {}
+        {{~ end ~}}
+    
         for _json2_ in _json_:
-            var _v
+            var _v: {{value_type_name}}
+            {{deserialize '_v' '_json2_' value_type}}
+            self._data_list.append(_v)
+            self._data_map[_v.{{format_field_name __code_style table.index_field.name}}] = _v
+        {{~ for INDEX in table.index_list ~}}
+            self._{{INDEX.index_field.name}}_data_map[_v.{{INDEX.index_field.name}}] = _v
+        {{~ end ~}}
+
+    func get_data_list() -> Array[{{value_type_name}}]:
+        return self._data_list
+
+    func get_data_map() -> Dictionary:
+        return self._data_map
+
+    {{~ for INDEX in table.index_list ~}}
+    func get_{{INDEX.index_field.name}}_data_map() -> Dictionary:
+        return self._{{INDEX.index_field.name}}_data_map
+
+    {{~ end ~}}
+    func get_item(key) -> {{value_type_name}}:
+        return self._data_map.get(key)
+
+{{~ for INDEX in table.index_list ~}}
+    func get_item_by_{{INDEX.index_field.name}}({{INDEX.index_field.name}}) -> {{value_type_name}}:
+        return self._{{INDEX.index_field.name}}_data_map.get({{INDEX.index_field.name}})
+
+{{~ end ~}}
+    {{~else if table.is_list_table ~}}
+    var _data_list: Array[{{value_type_name}}] ## 数据数组
+    
+    func _init(_json_) -> void:
+        for _json2_ in _json_:
+            var _v: {{value_type_name}}
             {{deserialize '_v' '_json2_' value_type}}
             self._data_list.append(_v)
 
-    func get_data_list() -> Array : return self._data_list
-    func get_item(index) -> {{value_type_name}} : return self._data_list[index]
+    func get_data_list() -> Array[{{value_type_name}}]:
+        return self._data_list
+    
+    func get_item(index) -> {{value_type_name}}:
+        return self._data_list[index]
     {{~else~}}
-    var _data: {{value_type_name}}
-    func _init(_json_):
-        assert(len(_json_) == 1, "table mode=one, but size != 1")
+    var _data:{{value_type_name}}
+    
+    func _init(_json_) -> void:
+        assert(len(_json_) == 1, "table mode = one, but size != 1")
         {{deserialize 'self._data' '_json_[0]' value_type}}
 
-    func get_data() -> {{value_type_name}} : return self._data
+    func get_data() -> {{value_type_name}}:
+        return self._data
 
     {{~ for field in value_type.def_bean.hierarchy_export_fields
      name = format_field_name __code_style field.name
      ~}}
 {{~if field.comment != '' ~}}
-    # {{escape_comment field.comment}}
+    ## {{escape_comment field.comment}}
 {{~end~}}
     var {{name}}: {{declaring_type_name field.ctype}}:
         get: return self._data.{{name}}
+
     {{~end~}}
     {{~end~}}
 
 {{~end~}}
-
-
 class {{str_full_name __full_name}}:
+    {{~for table in __tables ~}}
+    {{~if table.comment != ''~}}
+    ## {{table.comment | html.escape}}
+    {{~end~}}
+    var {{format_method_name __code_style table.name}}: {{full_name table}}
+    {{~end~}}
+    
+    func _init(loader: Callable) -> void:
         {{~for table in __tables ~}}
-    var {{format_method_name __code_style table.name}}: {{full_name table}} 
+        self.{{format_method_name __code_style table.name}} = {{full_name table}}.new(loader.call('{{table.output_data_file}}'))
         {{~end~}}
-    func _init(loader):
-        {{~for table in __tables ~}}
-        self.{{format_method_name __code_style table.name}} = {{full_name table}}.new(loader.call('{{table.output_data_file}}')); 
-        {{~end~}}
-        pass

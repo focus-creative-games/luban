@@ -21,6 +21,6 @@ public class GdscriptCommonTemplateExtension : ScriptObject
     
     public static string StrFullName(string fullName)
     {
-        return fullName.Replace(".", "_");
+        return TypeUtil.ToPascalCase(fullName.Replace(".", "_"));
     }
 }
