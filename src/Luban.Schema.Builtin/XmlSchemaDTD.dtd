@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+        <!ELEMENT module (module|enum|bean|table|refgroup|import)*>
+        <!--    命名空间名，可以为空。可以是多级命名空间，如a.b-->
+        <!ATTLIST module name CDATA #IMPLIED>
+
+        <!ELEMENT enum (var*,mapper?)>
+        <!--    类型名，不能包含命名空间        -->
+        <!ATTLIST enum name ID #REQUIRED>
+        <!--    等价schema逻辑结构中isFlags字段-->
+        <!ATTLIST enum flags (true|false|True|False|TRUE|FALSE) "false" #IMPLIED>
+        <!--    当前enum内的所有枚举值必须唯一，等价schema逻辑结构中isUniqueItemId字段-->
+        <!ATTLIST enum unique (true|false|True|False|TRUE|FALSE) "false" #IMPLIED>
+        <!ATTLIST enum comment CDATA #IMPLIED>
+        <!--    填写方式为 key1=value1#key2=value2...-->
+        <!ATTLIST enum tags CDATA #IMPLIED>
+
+
+        <!ELEMENT bean (var*,mapper?)>
+        <!--        类型名-->
+        <!ATTLIST bean name CDATA #REQUIRED>
+        <!--        父类名-->
+        <!ATTLIST bean parent CDATA #IMPLIED>
+        <!--        是否为值类型，例如为c#这种支持值类型的语言生成代码时，生成struct而不是class类型，对于java这种语言没有效果-->
+        <!ATTLIST bean valueType (true|false|True|False|TRUE|FALSE) "false" #IMPLIED>
+        <!--        默认字段分割符，用于excel中紧凑地填写复合结构，如在一个单元格内1,2,3表达一个vector3结构，而不是强行占据多个单元格。
+        sep可以是多个字符，表示用sep中任意一个字符分割，而不是整个sep作为分割符  -->
+        <!ATTLIST bean sep CDATA #IMPLIED>
+        <!--        别名，主要用于英文不好的策划填写多态名，如Circle类也能填'圆'来表达-->
+        <!ATTLIST bean alias (true|false|True|False|TRUE|FALSE) "false" #IMPLIED>
+        <!--        注释-->
+        <!ATTLIST bean comment CDATA #IMPLIED>
+        <!--        导出分组，可以为0到多个-->
+        <!ATTLIST bean group CDATA #IMPLIED>
+        <!ATTLIST bean tag CDATA #IMPLIED>
+
+
+        <!ELEMENT var EMPTY>
+        <!ATTLIST var name CDATA #REQUIRED>
+        <!ATTLIST var alias CDATA #IMPLIED>
+        <!ATTLIST var value CDATA #IMPLIED>
+        <!ATTLIST var comment CDATA #IMPLIED>
+        <!ATTLIST var tags CDATA #IMPLIED>
+        <!--    这里的type在bean中使用的时候是必须的，在enum中是非必须的-->
+        <!ATTLIST var type CDATA #IMPLIED>
+        <!ATTLIST var group CDATA #IMPLIED>
+
+
+        <!ELEMENT table EMPTY>
+        <!ATTLIST table readSchemaFromFile (true|false|True|False|TRUE|FALSE) "false" #IMPLIED>
+        <!ATTLIST table name ID #REQUIRED>
+        <!ATTLIST table value ID #REQUIRED>
+        <!ATTLIST table input CDATA #REQUIRED>
+        <!ATTLIST table index CDATA #IMPLIED>
+        <!ATTLIST table mode (one|singleton|map|list) #IMPLIED>
+        <!ATTLIST table comment CDATA #IMPLIED>
+        <!ATTLIST table group CDATA #IMPLIED>
+        <!ATTLIST table tags CDATA #IMPLIED>
+        <!ATTLIST table output CDATA #IMPLIED>
+<!--        <!ATTLIST table encoding (GBK|UTF-8) #IMPLIED>-->
+
+
+        <!ELEMENT mapper (option+)>
+        <!ATTLIST mapper target CDATA #REQUIRED>
+        <!ATTLIST mapper codeTarget CDATA #REQUIRED>
+
+        <!ELEMENT option EMPTY>
+        <!ATTLIST option name (type|constructor) #REQUIRED>
+        <!ATTLIST option value CDATA #REQUIRED>
+
+        <!ELEMENT refgroup EMPTY>
+        <!ATTLIST refgroup name CDATA #REQUIRED>
+
+        <!ELEMENT import EMPTY>
+        <!ATTLIST import name CDATA #REQUIRED>
+        <!ATTLIST import type CDATA #REQUIRED>
+
