@@ -45,4 +45,10 @@
       <PackageReference Include="NLog" Version="5.2.2">
       </PackageReference>
     </ItemGroup>
+
+    <ItemGroup>
+        <None Update="XmlSchemaDTD.dtd">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 </Project>
