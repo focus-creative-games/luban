@@ -2,7 +2,7 @@
   "profiles": {
     "cs-bin": {
       "commandName": "Project",
-      "commandLineArgs": "-t\r\nall\r\n-c\r\ncs-bin\r\n-d\r\nbin\r\n--conf\r\nD:\\workspace2\\luban_examples\\DataTables\\luban.conf\r\n--validationFailAsError\r\n-x\r\noutputCodeDir=D:\\workspace2\\luban_examples\\Projects\\Csharp_Unity_bin\\Assets\\Gen\r\n-x\r\noutputDataDir=D:\\workspace2\\luban_examples\\Projects\\GenerateDatas\\bytes\r\n-x\r\npathValidator.rootDir=D:\\workspace2\\luban_examples\\Projects\\Csharp_Unity_bin\r\n-x\r\nl10n.textProviderFile=*@D:\\workspace2\\luban_examples\\DataTables\\Datas\\l10n\\texts.json"
+      "commandLineArgs": "-m\r\ndefa\r\n-t\r\nclient\r\n-c\r\ncs-bin\r\n-d\r\nenc-bin\r\n--conf\r\n/Users/wsyu/work/game-spec/config.json\r\n-x\r\noutputCodeDir=/Users/wsyu/work/game-spec/output.client/code\r\n-x\r\noutputDataDir=/Users/wsyu/work/game-spec/output.client/data\n-x\noutputDictDir=/Users/wsyu/work/game-spec/output.client/dict\r\n-x\r\npathValidator.rootDir=/Users/wsyu/work/luban_examples/Projects/Csharp_Unity_bin\r\n-x\r\nl10n.textProviderFile=/Users/wsyu/work/game-spec/spec/本地化/language.xlsx\r\n-x\r\nl10n.textProviderName=default\n-x\nl10n.textDictionaryFile=/Users/wsyu/work/game-spec/spec/本地化/language.xlsx\n-x\nl10n.outputDictDir=/Users/wsyu/work/game-spec/output.client/dict\nencryption.keyHeader=oO0ø\nencryption.keyBody=xuz0"
     },
     "cs-bin-namingConvention": {
       "commandName": "Project",

@@ -41,6 +41,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Cpp", "Luban.Cpp\Luba
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Gdscript", "Luban.Gdscript\Luban.Gdscript.csproj", "{70A9132F-8527-4E5E-96C5-A025B880CC0B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Encryption", "Luban.Encryption\Luban.Encryption.csproj", "{B4B58009-7CFF-43B3-8ED1-CD04DE3BE9D5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -123,6 +125,10 @@ Global
 		{70A9132F-8527-4E5E-96C5-A025B880CC0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70A9132F-8527-4E5E-96C5-A025B880CC0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70A9132F-8527-4E5E-96C5-A025B880CC0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4B58009-7CFF-43B3-8ED1-CD04DE3BE9D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4B58009-7CFF-43B3-8ED1-CD04DE3BE9D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4B58009-7CFF-43B3-8ED1-CD04DE3BE9D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4B58009-7CFF-43B3-8ED1-CD04DE3BE9D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

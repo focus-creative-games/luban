@@ -3,13 +3,11 @@
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>disable</Nullable>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Luban.Core\Luban.Core.csproj" />
-      <ProjectReference Include="..\Luban.DataLoader.Builtin\Luban.DataLoader.Builtin.csproj" />
-      <ProjectReference Include="..\Luban.Encryption\Luban.Encryption.csproj" />
     </ItemGroup>
 
 </Project>

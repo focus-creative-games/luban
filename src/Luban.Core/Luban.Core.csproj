@@ -44,4 +44,10 @@
       <PackageReference Include="Scriban" Version="5.7.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Reference Include="Luban.L10N">
+        <HintPath>..\Luban\bin\Debug\net7.0\Luban.L10N.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>

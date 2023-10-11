@@ -14,6 +14,11 @@ public class CsharpTemplateExtension : ScriptObject
         return type.Apply(DeclaringTypeNameVisitor.Ins);
     }
 
+    public static string ReadonlyDeclaringTypeName(TType type)
+    {
+        return type.Apply(ReadonlyDeclaringTypeNameVisitor.Ins);
+    }
+
     public static string ClassOrStruct(DefBean bean)
     {
         return bean.IsValueType ? "struct" : "class";

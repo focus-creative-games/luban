@@ -21,7 +21,8 @@ internal static class Program
 
     private class CommandOptions
     {
-        
+        [Option('m', "mode", Required = false, HelpText = "generation mode(default or l10nOnly)")]
+        public string Mode { get; set; } = "default";
         [Option('s', "schemaCollector", Required = false, HelpText = "schema collector name")]
         public string SchemaCollector { get; set; } = "default";
         
@@ -81,8 +82,12 @@ internal static class Program
             launcher.Start(ParseXargs(opts.Xargs));
             AddCustomTemplateDirs(opts.CustomTemplateDirs);
 
-            var pipeline = PipelineManager.Ins.CreatePipeline(opts.Pipeline);
-            pipeline.Run(CreatePipelineArgs(opts));
+            if (opts.Mode != "l10nOnly")
+            {
+                var pipeline = PipelineManager.Ins.CreatePipeline(opts.Pipeline);
+                pipeline.Run(CreatePipelineArgs(opts));
+            }
+            TextBinaryGeneration.Generate();
             if (opts.ValidationFailAsError && GenerationContext.Current.AnyValidatorFail)
             {
                 s_logger.Error("encounter some validation failure. exit code: 1");
@@ -112,7 +117,7 @@ internal static class Program
         }
         do
         {
-            s_logger.Error("===> {}", e.Message);
+            s_logger.Error("===> {}\n{}", e.Message, e.StackTrace);
             e = e.InnerException;
         } while (e != null);
     }

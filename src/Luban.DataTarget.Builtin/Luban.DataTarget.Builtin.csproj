@@ -34,6 +34,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Luban.Core\Luban.Core.csproj" />
       <ProjectReference Include="..\Luban.DataLoader.Builtin\Luban.DataLoader.Builtin.csproj" />
+      <ProjectReference Include="..\Luban.Encryption\Luban.Encryption.csproj" />
     </ItemGroup>
 
 </Project>
