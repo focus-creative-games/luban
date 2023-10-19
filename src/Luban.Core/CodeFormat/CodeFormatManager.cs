@@ -10,8 +10,6 @@ public class CodeFormatManager
     private static readonly ILogger s_logger = LogManager.GetCurrentClassLogger();
     
     public static CodeFormatManager Ins { get; } = new ();
-
-    private readonly Dictionary<string, ICodeStyle> _codeStyles = new();
     
     
     public ICodeStyle NoneCodeStyle { get; private set; }
@@ -58,10 +56,7 @@ public class CodeFormatManager
 
     public void RegisterCodeStyle(string name, ICodeStyle codeStyle)
     {
-        if (!_codeStyles.TryAdd(name, codeStyle))
-        {
-            s_logger.Error("code style:{} exists", name);
-        }
+        CustomBehaviourManager.Ins.RegisterBehaviour(typeof(CodeStyleAttribute), name, 0, () => codeStyle);
     }
 
     public ICodeStyle RegisterCodeStyle(string name, string namespaceNamingConvention, string typeNamingConvention,
