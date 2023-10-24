@@ -55,14 +55,14 @@ public class ExcelSchemaLoader : SchemaLoaderBase
         {
             Assembly = new DefAssembly(new RawAssembly()
             {
-                Targets = new List<RawTarget>{new() { Name = "default", Manager = "Tables"}},
+                Targets = new List<RawTarget> { new() { Name = "default", Manager = "Tables" } },
             }, "default", new List<string>()),
         };
         defTableRecordType.PreCompile();
         defTableRecordType.Compile();
         defTableRecordType.PostCompile();
         var tableRecordType = TBean.Create(false, defTableRecordType, null);
-        
+
         (var actualFile, var sheetName) = FileUtil.SplitFileAndSheetName(FileUtil.Standardize(fileName));
         var records = DataLoaderManager.Ins.LoadTableFile(tableRecordType, actualFile, sheetName, new Dictionary<string, string>());
         foreach (var r in records)
@@ -87,6 +87,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
             string tags = (data.GetField("tags") as DString).Value.Trim();
             string outputFile = (data.GetField("output") as DString).Value.Trim();
             // string options = (data.GetField("options") as DString).Value.Trim(); 
+
             var table = SchemaLoaderUtil.CreateTable(fileName, name, module, valueType, index, mode, group, comment, readSchemaFromFile, inputFile, tags, outputFile);
             Collector.Add(table);
         };
@@ -96,7 +97,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
     {
         var ass = new DefAssembly(new RawAssembly()
         {
-            Targets = new List<RawTarget>{new() { Name = "default", Manager = "Tables"}},
+            Targets = new List<RawTarget> { new() { Name = "default", Manager = "Tables" } },
         }, "default", new List<string>());
 
         var enumItemType = new DefBean(new RawBean()
@@ -151,7 +152,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
         defTableRecordType.Compile();
         defTableRecordType.PostCompile();
         var tableRecordType = TBean.Create(false, defTableRecordType, null);
-        
+
         (var actualFile, var sheetName) = FileUtil.SplitFileAndSheetName(FileUtil.Standardize(fileName));
         var records = DataLoaderManager.Ins.LoadTableFile(tableRecordType, actualFile, sheetName, new Dictionary<string, string>());
 
@@ -195,7 +196,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
     {
         var ass = new DefAssembly(new RawAssembly()
         {
-            Targets = new List<RawTarget>{new() { Name = "default", Manager = "Tables"}},
+            Targets = new List<RawTarget> { new() { Name = "default", Manager = "Tables" } },
         }, "default", new List<string>());
 
         var defBeanFieldType = new DefBean(new RawBean()
@@ -213,7 +214,8 @@ public class ExcelSchemaLoader : SchemaLoaderBase
                 new() { Name = "group", Type = "string" },
                 new() { Name = "comment", Type = "string" },
                 new() { Name = "tags", Type = "string" },
-            }
+            },
+            IsFromFileSchema = false
         })
         {
             Assembly = ass,

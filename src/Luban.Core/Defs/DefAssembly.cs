@@ -7,7 +7,7 @@ namespace Luban.Defs;
 public class DefAssembly
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
-    
+
     public Dictionary<string, DefTypeBase> Types { get; } = new();
 
     public List<DefTypeBase> TypeList { get; } = new();
@@ -17,11 +17,11 @@ public class DefAssembly
     private readonly HashSet<string> _namespaces = new();
 
     private readonly Dictionary<string, DefTypeBase> _notCaseSenseNamespaces = new();
-    
+
     private readonly List<RawTarget> _targets;
 
     public RawTarget Target { get; }
-    
+
     public IReadOnlyList<RawTarget> Targets => _targets;
 
     public RawTarget GetTarget(string targetName)
@@ -112,16 +112,16 @@ public class DefAssembly
             type.PostCompile();
         }
     }
-    
+
     public bool NeedExport(List<string> groups)
     {
-        if (groups.Count == 0)
+        if (groups == null || groups.Count == 0)
         {
             return true;
         }
         return groups.Any(g => Target.Groups.Contains(g));
     }
-    
+
 
     private readonly Dictionary<string, DefRefGroup> _refGroups = new();
 
@@ -149,7 +149,7 @@ public class DefAssembly
         return TablesByFullName.TryGetValue(name, out var t) ? t : null;
     }
 
-  
+
     public List<DefTable> GetAllTables()
     {
         return TypeList.Where(t => t is DefTable).Cast<DefTable>().ToList();
@@ -171,6 +171,38 @@ public class DefAssembly
 
     public void AddType(DefTypeBase type)
     {
+        if (type is DefBean defBean)
+        {
+            if (defBean.IsFromFileSchema)
+            {
+                var defTable = defBean.BelongDefTableIfFromFileSchema;
+                if (!NeedExport(defTable.Groups))
+                {
+                    return;
+                }
+            }
+            else
+            {
+                if (!NeedExport(defBean.Groups))
+                {
+                    return;
+                }
+            }
+        }
+        else if (type is DefTable defTable)
+        {
+            if (!NeedExport(defTable.Groups))
+            {
+                return;
+            }
+        }
+        else if (type is DefEnum defEnum)
+        {
+            if (!NeedExport(defEnum.Groups))
+            {
+                return;
+            }
+        }
         string fullName = type.FullName;
         if (Types.ContainsKey(fullName))
         {
@@ -335,17 +367,17 @@ public class DefAssembly
             case "time":
             case "datetime": return TDateTime.Create(nullable, tags);
             default:
-            {
-                var dtype = GetDefTType(module, type, nullable, tags);
-                if (dtype != null)
                 {
-                    return dtype;
+                    var dtype = GetDefTType(module, type, nullable, tags);
+                    if (dtype != null)
+                    {
+                        return dtype;
+                    }
+                    else
+                    {
+                        throw new ArgumentException($"invalid type. module:'{module}' type:'{type}'");
+                    }
                 }
-                else
-                {
-                    throw new ArgumentException($"invalid type. module:'{module}' type:'{type}'");
-                }
-            }
         }
     }
 
@@ -366,24 +398,24 @@ public class DefAssembly
         switch (containerType)
         {
             case "array":
-            {
-                return TArray.Create(false, containerTags, CreateType(module, elementType, true));
-            }
+                {
+                    return TArray.Create(false, containerTags, CreateType(module, elementType, true));
+                }
             case "list": return TList.Create(false, containerTags, CreateType(module, elementType, true), true);
             case "set":
-            {
-                TType type = CreateType(module, elementType, true);
-                if (type.IsCollection)
                 {
-                    throw new Exception("set的元素不支持容器类型");
+                    TType type = CreateType(module, elementType, true);
+                    if (type.IsCollection)
+                    {
+                        throw new Exception("set的元素不支持容器类型");
+                    }
+                    return TSet.Create(false, containerTags, type, false);
                 }
-                return TSet.Create(false, containerTags, type, false);
-            }
             case "map": return CreateMapType(module, containerTags, elementType, false);
             default:
-            {
-                throw new ArgumentException($"invalid container type. module:'{module}' container:'{containerType}' element:'{elementType}'");
-            }
+                {
+                    throw new ArgumentException($"invalid container type. module:'{module}' container:'{containerType}' element:'{elementType}'");
+                }
         }
     }
 }

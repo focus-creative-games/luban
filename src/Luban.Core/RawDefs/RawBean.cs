@@ -15,14 +15,17 @@ public class RawBean
     public string Comment { get; set; }
 
     public Dictionary<string, string> Tags { get; set; }
-    
+
     public string Alias { get; set; }
 
     public string Sep { get; set; }
-    
+
     public List<string> Groups { get; set; }
 
     public List<RawField> Fields { get; set; }
-    
+
     public List<TypeMapper> TypeMappers { get; set; }
+
+    public bool IsFromFileSchema { get; set; }
+    public RawTable BelongRawTableIfFromSchema { get; set; }
 }
