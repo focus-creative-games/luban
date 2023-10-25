@@ -119,6 +119,10 @@ public class DefAssembly
         {
             return true;
         }
+        if (groups.Contains("*"))
+        {
+            return true;
+        }
         return groups.Any(g => Target.Groups.Contains(g));
     }
 

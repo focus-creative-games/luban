@@ -199,7 +199,7 @@ public class DefBean : DefTypeBase
         {
             ParentDefType.CollectHierarchyFields(fields);
         }
-        fields.AddRange(Fields);
+        fields.AddRange(ExportFields);
     }
 
     private void SetupParentRecursively()

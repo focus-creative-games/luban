@@ -61,7 +61,7 @@ class RefTypeVisitor : ITypeActionVisitor<Dictionary<string, DefTypeBase>>
     {
         if (types.TryAdd(type.FullName, type))
         {
-            foreach (var f in type.Fields)
+            foreach (var f in type.ExportFields)
             {
                 f.CType.Apply(this, types);
             }

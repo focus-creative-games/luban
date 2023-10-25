@@ -65,15 +65,15 @@ class DeepCompareTypeDefine : ITypeFuncVisitor<TType, Dictionary<DefTypeBase, bo
 
         try
         {
-            if (a.Fields.Count != b.Fields.Count)
+            if (a.ExportFields.Count != b.ExportFields.Count)
             {
                 return setupNotEqual();
             }
 
-            for (int i = 0; i < a.Fields.Count; i++)
+            for (int i = 0; i < a.ExportFields.Count; i++)
             {
-                var f1 = a.Fields[i];
-                var f2 = b.Fields[i];
+                var f1 = a.ExportFields[i];
+                var f2 = b.ExportFields[i];
                 if (f1.Name != f2.Name
                     || f1.NeedExport() != f2.NeedExport()
                     || f1.CType.IsNullable != f2.CType.IsNullable
