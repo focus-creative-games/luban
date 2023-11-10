@@ -50,6 +50,10 @@ public class DataLoaderManager
     public List<Record> LoadTableFile(DefTable table, string file, string subAssetName, Dictionary<string, string> options)
     {
         s_logger.Trace("load table:{} file:{}", table.FullName, file);
+        if(!File.Exists(file) && !Directory.Exists(file))
+        {
+            throw new Exception($"'{table.FullName}'的input文件或目录不存在: {file} ");
+        }
         string loaderName = options.TryGetValue("loader", out var name) ? name : FileUtil.GetExtensionWithDot(file);
         var loader = CreateDataLoader(loaderName);
         using var stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
