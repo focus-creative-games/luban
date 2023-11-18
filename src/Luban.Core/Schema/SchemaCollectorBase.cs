@@ -14,11 +14,11 @@ public abstract class SchemaCollectorBase : ISchemaCollector
     private readonly List<RawRefGroup> _refGroups = new();
 
     protected List<RawTable> Tables => _tables;
-    
+
     public abstract void Load(LubanConfig config);
 
     public abstract RawAssembly CreateRawAssembly();
-    
+
     protected RawAssembly CreateRawAssembly(LubanConfig config)
     {
         return new RawAssembly()
@@ -31,7 +31,7 @@ public abstract class SchemaCollectorBase : ISchemaCollector
             Beans = _beans,
         };
     }
-    
+
     public void Add(RawTable table)
     {
         lock (this)

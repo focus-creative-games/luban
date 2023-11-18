@@ -20,7 +20,7 @@ public class DefaultSchemaCollector : SchemaCollectorBase
             var schemaLoader = SchemaManager.Ins.CreateSchemaLoader(FileUtil.GetExtensionWithDot(importFile.FileName), importFile.Type, this);
             schemaLoader.Load(importFile.FileName);
         }
-        
+
         LoadTableValueTypeSchemasFromFile();
     }
 

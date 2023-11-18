@@ -11,7 +11,7 @@ public class PipelineManager
     {
 
     }
-    
+
     public IPipeline CreatePipeline(string name)
     {
         return CustomBehaviourManager.Ins.CreateBehaviour<IPipeline, PipelineAttribute>(name);

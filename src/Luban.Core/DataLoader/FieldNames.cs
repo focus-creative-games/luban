@@ -16,7 +16,7 @@ public static class FieldNames
 
     public const string ExcelTypeNameKey = "$type";
     public const string ExcelValueNameKey = "$value";
-    
+
     public const string ExcelMapKey = "$key";
 
     public const string TagKey = "__tag__";

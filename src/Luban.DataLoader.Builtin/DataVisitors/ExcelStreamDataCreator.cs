@@ -279,7 +279,7 @@ class ExcelStreamDataCreator : ITypeFuncVisitor<ExcelStream, DType>
     private static ExcelStream TrySep(TType type, ExcelStream stream)
     {
         string sep = type.GetTag("sep");
-            
+
         if (!string.IsNullOrEmpty(sep) && !stream.TryReadEOF())
         {
             stream = new ExcelStream(stream.ReadCell(), sep);

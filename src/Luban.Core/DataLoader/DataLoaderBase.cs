@@ -10,6 +10,6 @@ public abstract class DataLoaderBase : IDataLoader
     public abstract Record ReadOne(TBean type);
 
     public abstract List<Record> ReadMulti(TBean type);
-    
+
     public abstract void Load(string rawUrl, string sheetName, Stream stream);
 }

@@ -23,7 +23,7 @@ public abstract class OutputSaverBase : IOutputSaver
     {
 
     }
-    
+
     public virtual void Save(OutputFileManifest outputFileManifest)
     {
         string outputDir = GetOutputDir(outputFileManifest);

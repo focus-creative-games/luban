@@ -4,7 +4,7 @@ namespace Luban.TypeVisitors;
 
 public class RawDefineTypeNameVisitor : ITypeFuncVisitor<string>
 {
-    public static RawDefineTypeNameVisitor Ins { get; } = new ();
+    public static RawDefineTypeNameVisitor Ins { get; } = new();
 
     public string Accept(TBool type)
     {

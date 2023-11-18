@@ -51,7 +51,7 @@ public class LuaDataTarget : DataTargetBase
     }
 
     protected override string OutputFileExt => "lua";
-    
+
     public override OutputFile ExportTable(DefTable table, List<Record> records)
     {
         var ss = new StringBuilder();

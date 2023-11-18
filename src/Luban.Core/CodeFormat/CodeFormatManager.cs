@@ -8,24 +8,24 @@ namespace Luban.CodeFormat;
 public class CodeFormatManager
 {
     private static readonly ILogger s_logger = LogManager.GetCurrentClassLogger();
-    
-    public static CodeFormatManager Ins { get; } = new ();
-    
-    
+
+    public static CodeFormatManager Ins { get; } = new();
+
+
     public ICodeStyle NoneCodeStyle { get; private set; }
-    
+
     public ICodeStyle CsharpDefaultCodeStyle { get; private set; }
 
     public ICodeStyle JavaDefaultCodeStyle { get; private set; }
-    
+
     public ICodeStyle GoDefaultCodeStyle { get; private set; }
-    
+
     public ICodeStyle LuaDefaultCodeStyle { get; private set; }
-    
+
     public ICodeStyle TypescriptDefaultCodeStyle { get; private set; }
-    
+
     public ICodeStyle CppDefaultCodeStyle { get; private set; }
-    
+
     public ICodeStyle PythonDefaultCodeStyle { get; private set; }
 
     public void Init()

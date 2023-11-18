@@ -12,7 +12,7 @@ public class JsonConvertTarget : DataTargetBase
     protected override string OutputFileExt => "json";
 
     public static bool UseCompactJson => EnvManager.Current.GetBoolOptionOrDefault($"{FamilyPrefix}.json", "compact", true, false);
-    
+
     protected virtual JsonDataVisitor ImplJsonDataVisitor => JsonConvertor.Ins;
 
     public void WriteAsArray(List<Record> datas, Utf8JsonWriter x, JsonDataVisitor jsonDataVisitor)
@@ -26,7 +26,7 @@ public class JsonConvertTarget : DataTargetBase
     }
 
     public override OutputFile ExportRecord(DefTable table, Record record)
-    {                  
+    {
         var ss = new MemoryStream();
         var jsonWriter = new Utf8JsonWriter(ss, new JsonWriterOptions()
         {
@@ -45,7 +45,7 @@ public class JsonConvertTarget : DataTargetBase
             Content = DataUtil.StreamToBytes(ss),
         };
     }
-    
+
     public override OutputFile ExportTable(DefTable table, List<Record> records)
     {
         throw new NotSupportedException();

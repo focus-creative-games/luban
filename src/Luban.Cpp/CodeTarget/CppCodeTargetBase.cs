@@ -62,7 +62,7 @@ public abstract class CppCodeTargetBase : TemplateCodeTargetBase
         Task.WaitAll(enumTasks.ToArray());
         Task.WaitAll(beanTasks.ToArray());
         Task.WaitAll(tableTasks.ToArray());
-        
+
         var template = GetTemplate("schema_h");
         var tplCtx = CreateTemplateContext(template);
         var extraEnvs = new ScriptObject
@@ -79,10 +79,10 @@ public abstract class CppCodeTargetBase : TemplateCodeTargetBase
         tplCtx.PushGlobal(extraEnvs);
         var schemaHeader = new CodeWriter();
         schemaHeader.Write(template.Render(tplCtx));
-        
-        return new OutputFile(){ File = outputFileName, Content = schemaHeader.ToResult(FileHeader) };
+
+        return new OutputFile() { File = outputFileName, Content = schemaHeader.ToResult(FileHeader) };
     }
-    
+
     private OutputFile GenerateSchemaCpp(GenerationContext ctx, List<DefBean> beans, string schemaHeaderFileName, string outputFileName)
     {
         var template = GetTemplate("schema_cpp");
@@ -98,29 +98,29 @@ public abstract class CppCodeTargetBase : TemplateCodeTargetBase
         tplCtx.PushGlobal(extraEnvs);
         var schemaCpp = new CodeWriter();
         schemaCpp.Write(template.Render(tplCtx));
-        
-        return new OutputFile(){ File = outputFileName, Content = schemaCpp.ToResult(FileHeader) };
+
+        return new OutputFile() { File = outputFileName, Content = schemaCpp.ToResult(FileHeader) };
     }
-    
+
     public override void Handle(GenerationContext ctx, OutputFileManifest manifest)
     {
         string schemaFileNameWithoutExt = EnvManager.Current.GetOptionOrDefault(Name, "schemaFileNameWithoutExt", true, "schema");
         string schemaFileName = $"{schemaFileNameWithoutExt}.h";
         manifest.AddFile(GenerateSchemaHeader(ctx, schemaFileName));
-        
+
         var cppTasks = new List<Task<OutputFile>>();
         var beanTypes = ctx.ExportBeans;
 
         int typeCountPerStubFile = int.Parse(EnvManager.Current.GetOptionOrDefault(Name, "typeCountPerStubFile", true, "100"));
-        
+
         for (int i = 0, n = beanTypes.Count; i < n; i += typeCountPerStubFile)
         {
             int startIndex = i;
             cppTasks.Add(Task.Run(() =>
-                GenerateSchemaCpp(ctx, 
+                GenerateSchemaCpp(ctx,
                     beanTypes.GetRange(startIndex, Math.Min(typeCountPerStubFile, beanTypes.Count - startIndex)),
                     schemaFileName,
-                    $"{schemaFileNameWithoutExt}_{startIndex/typeCountPerStubFile}.cpp")));
+                    $"{schemaFileNameWithoutExt}_{startIndex / typeCountPerStubFile}.cpp")));
         }
 
         Task.WaitAll(cppTasks.ToArray());

@@ -13,7 +13,7 @@ public class PythonCommonTemplateExtension : ScriptObject
     {
         return TypeUtil.MakePyFullName(type.Namespace, type.Name);
     }
-    
+
     public static string StrFullName(string fullName)
     {
         return fullName.Replace(".", "_");

@@ -7,7 +7,7 @@ namespace Luban.Defs;
 public class DefAssembly
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
-    
+
     public Dictionary<string, DefTypeBase> Types { get; } = new();
 
     public List<DefTypeBase> TypeList { get; } = new();
@@ -17,11 +17,11 @@ public class DefAssembly
     private readonly HashSet<string> _namespaces = new();
 
     private readonly Dictionary<string, DefTypeBase> _notCaseSenseNamespaces = new();
-    
+
     private readonly List<RawTarget> _targets;
 
     public RawTarget Target { get; }
-    
+
     public IReadOnlyList<RawTarget> Targets => _targets;
 
     public RawTarget GetTarget(string targetName)
@@ -112,7 +112,7 @@ public class DefAssembly
             type.PostCompile();
         }
     }
-    
+
     public bool NeedExport(List<string> groups)
     {
         if (groups.Count == 0)
@@ -121,7 +121,7 @@ public class DefAssembly
         }
         return groups.Any(g => Target.Groups.Contains(g));
     }
-    
+
 
     private readonly Dictionary<string, DefRefGroup> _refGroups = new();
 
@@ -149,7 +149,7 @@ public class DefAssembly
         return TablesByFullName.TryGetValue(name, out var t) ? t : null;
     }
 
-  
+
     public List<DefTable> GetAllTables()
     {
         return TypeList.Where(t => t is DefTable).Cast<DefTable>().ToList();
@@ -228,7 +228,8 @@ public class DefAssembly
         }
         else
         {
-            return TEnum.Create(nullable, defType, tags); ;
+            return TEnum.Create(nullable, defType, tags);
+            ;
         }
     }
 
@@ -256,9 +257,12 @@ public class DefAssembly
         var defType = GetDefType(module, type);
         switch (defType)
         {
-            case DefBean d: return GetOrCreateTBean(d, nullable, tags);
-            case DefEnum d: return GetOrCreateTEnum(d, nullable, tags);
-            default: return null;
+            case DefBean d:
+                return GetOrCreateTBean(d, nullable, tags);
+            case DefEnum d:
+                return GetOrCreateTEnum(d, nullable, tags);
+            default:
+                return null;
         }
     }
 
@@ -316,24 +320,36 @@ public class DefAssembly
 
         switch (type)
         {
-            case "bool": return TBool.Create(nullable, tags);
+            case "bool":
+                return TBool.Create(nullable, tags);
             case "uint8":
-            case "byte": return TByte.Create(nullable, tags);
+            case "byte":
+                return TByte.Create(nullable, tags);
             case "int16":
-            case "short": return TShort.Create(nullable, tags);
+            case "short":
+                return TShort.Create(nullable, tags);
             case "int32":
-            case "int": return TInt.Create(nullable, tags);
+            case "int":
+                return TInt.Create(nullable, tags);
             case "int64":
-            case "long": return TLong.Create(nullable, tags, false);
-            case "bigint": return TLong.Create(nullable, tags, true);
+            case "long":
+                return TLong.Create(nullable, tags, false);
+            case "bigint":
+                return TLong.Create(nullable, tags, true);
             case "float32":
-            case "float": return TFloat.Create(nullable, tags);
+            case "float":
+                return TFloat.Create(nullable, tags);
             case "float64":
-            case "double": return TDouble.Create(nullable, tags);
-            case "string": return TString.Create(nullable, tags);
-            case "text": tags.Add("text", "1"); return TString.Create(nullable, tags);
+            case "double":
+                return TDouble.Create(nullable, tags);
+            case "string":
+                return TString.Create(nullable, tags);
+            case "text":
+                tags.Add("text", "1");
+                return TString.Create(nullable, tags);
             case "time":
-            case "datetime": return TDateTime.Create(nullable, tags);
+            case "datetime":
+                return TDateTime.Create(nullable, tags);
             default:
             {
                 var dtype = GetDefTType(module, type, nullable, tags);
@@ -369,7 +385,8 @@ public class DefAssembly
             {
                 return TArray.Create(false, containerTags, CreateType(module, elementType, true));
             }
-            case "list": return TList.Create(false, containerTags, CreateType(module, elementType, true), true);
+            case "list":
+                return TList.Create(false, containerTags, CreateType(module, elementType, true), true);
             case "set":
             {
                 TType type = CreateType(module, elementType, true);
@@ -379,7 +396,8 @@ public class DefAssembly
                 }
                 return TSet.Create(false, containerTags, type, false);
             }
-            case "map": return CreateMapType(module, containerTags, elementType, false);
+            case "map":
+                return CreateMapType(module, containerTags, elementType, false);
             default:
             {
                 throw new ArgumentException($"invalid container type. module:'{module}' container:'{containerType}' element:'{elementType}'");

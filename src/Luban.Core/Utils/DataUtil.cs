@@ -35,9 +35,12 @@ public static class DataUtil
     {
         switch (s)
         {
-            case "null": return null;
-            case "\"\"": return string.Empty;
-            default: return s;
+            case "null":
+                return null;
+            case "\"\"":
+                return string.Empty;
+            default:
+                return s;
         }
     }
 
@@ -60,7 +63,7 @@ public static class DataUtil
         var multiEqaulChars = new StringBuilder();
         var result = new StringBuilder();
         var startIndex = s.EndsWith(']') ? 1 : 0;
-        for(int i = startIndex; i < 100 ;i++)
+        for (int i = startIndex; i < 100; i++)
         {
             if (i > 0)
             {
@@ -69,7 +72,7 @@ public static class DataUtil
             var multiEqualStr = multiEqaulChars.ToString();
             if (i == 0 || s.Contains(multiEqualStr))
             {
-                if (s.Contains("[" + multiEqualStr + "[") ||  s.Contains("]" + multiEqualStr + "]"))
+                if (s.Contains("[" + multiEqualStr + "[") || s.Contains("]" + multiEqualStr + "]"))
                 {
                     continue;
                 }
@@ -164,7 +167,7 @@ public static class DataUtil
         }
         return defType;
     }
-    
+
     private const string TAG_UNCHECKED = "unchecked";
 
     public static bool IsUnchecked(Record rec)

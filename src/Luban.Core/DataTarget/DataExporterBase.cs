@@ -5,8 +5,8 @@ namespace Luban.DataTarget;
 public abstract class DataExporterBase : IDataExporter
 {
     public const string FamilyPrefix = "dataExporter";
-    
-    
+
+
     public virtual void Handle(GenerationContext ctx, IDataTarget dataTarget, OutputFileManifest manifest)
     {
         List<DefTable> tables = dataTarget.ExportAllRecords ? ctx.Tables : ctx.ExportTables;
@@ -52,6 +52,6 @@ public abstract class DataExporterBase : IDataExporter
 
     protected virtual void ExportCustom(List<DefTable> tables, OutputFileManifest manifest, IDataTarget dataTarget)
     {
-        
+
     }
 }

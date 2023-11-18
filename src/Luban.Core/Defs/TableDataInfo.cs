@@ -173,7 +173,8 @@ public class TableDataInfo
                 FinalRecords = mainRecords;
                 break;
             }
-            default: throw new Exception($"unknown mode:{Table.Mode}");
+            default:
+                throw new Exception($"unknown mode:{Table.Mode}");
         }
     }
 }

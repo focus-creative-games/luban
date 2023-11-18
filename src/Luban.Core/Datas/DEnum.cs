@@ -65,9 +65,12 @@ public class DEnum : DType
     {
         switch (obj)
         {
-            case DInt dint: return this.Value == dint.Value;
-            case DEnum denum: return this.Value == denum.Value;
-            default: return false;
+            case DInt dint:
+                return this.Value == dint.Value;
+            case DEnum denum:
+                return this.Value == denum.Value;
+            default:
+                return false;
         }
     }
 

@@ -110,7 +110,8 @@ public class RefValidator : DataValidatorBase
                     }
                     break;
                 }
-                default: throw new NotSupportedException();
+                default:
+                    throw new NotSupportedException();
             }
         }
 
@@ -176,7 +177,7 @@ public class RefValidator : DataValidatorBase
             {
                 throw new Exception($"field:'{field}' 类型:'{type.TypeName}' 与被引用的表:{actualTable} value_type:{valueTypeName} 索引字段:{indexName} key_type:{tmap.KeyType.TypeName} 不一致");
             }
-            
+
         }
         else if (table.IsMapTable)
         {

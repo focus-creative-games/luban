@@ -11,7 +11,7 @@ namespace Luban.DataValidator.Builtin.Collection;
 public class IndexValidator : DataValidatorBase
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
-    
+
     private int _fieldIndex;
 
     public IndexValidator()
@@ -43,13 +43,17 @@ public class IndexValidator : DataValidatorBase
     }
 
     private IEnumerable<DType> GetElements(DType data)
-    {      
+    {
         switch (data)
         {
-            case DArray array: return array.Datas;
-            case DList list: return list.Datas;
-            case DSet dset: return dset.Datas;
-            default: throw new Exception("not possible");
+            case DArray array:
+                return array.Datas;
+            case DList list:
+                return list.Datas;
+            case DSet dset:
+                return dset.Datas;
+            default:
+                throw new Exception("not possible");
         }
     }
 

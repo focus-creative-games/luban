@@ -13,7 +13,7 @@ public abstract class TemplateCodeTargetBase : CodeTargetBase
     protected virtual string CommonTemplateSearchPath => $"common/{FileSuffixName}";
 
     protected virtual string TemplateDir => Name;
-    
+
     protected TemplateContext CreateTemplateContext(Template template)
     {
         var ctx = new TemplateContext()
@@ -28,7 +28,7 @@ public abstract class TemplateCodeTargetBase : CodeTargetBase
     }
 
     protected abstract void OnCreateTemplateContext(TemplateContext ctx);
-    
+
     protected virtual Scriban.Template GetTemplate(string name)
     {
         if (TemplateManager.Ins.TryGetTemplate($"{TemplateDir}/{name}", out var template))
@@ -42,7 +42,7 @@ public abstract class TemplateCodeTargetBase : CodeTargetBase
         }
         throw new Exception($"template:{name} not found");
     }
-    
+
     public override void GenerateTables(GenerationContext ctx, List<DefTable> tables, CodeWriter writer)
     {
         var template = GetTemplate("tables");

@@ -89,9 +89,12 @@ static class LoadDataUtil
     {
         switch (s)
         {
-            case "null": return null;
-            case "\"\"": return string.Empty;
-            default: return s;
+            case "null":
+                return null;
+            case "\"\"":
+                return string.Empty;
+            default:
+                return s;
         }
     }
 
@@ -114,7 +117,7 @@ static class LoadDataUtil
         var multiEqaulChars = new StringBuilder();
         var result = new StringBuilder();
         var startIndex = s.EndsWith(']') ? 1 : 0;
-        for(int i = startIndex; i < 100 ;i++)
+        for (int i = startIndex; i < 100; i++)
         {
             if (i > 0)
             {
@@ -123,7 +126,7 @@ static class LoadDataUtil
             var multiEqualStr = multiEqaulChars.ToString();
             if (i == 0 || s.Contains(multiEqualStr))
             {
-                if (s.Contains("[" + multiEqualStr + "[") ||  s.Contains("]" + multiEqualStr + "]"))
+                if (s.Contains("[" + multiEqualStr + "[") || s.Contains("]" + multiEqualStr + "]"))
                 {
                     continue;
                 }
@@ -258,12 +261,15 @@ static class LoadDataUtil
             case "true":
             case "1":
             case "y":
-            case "yes": return true;
+            case "yes":
+                return true;
             case "false":
             case "0":
             case "n":
-            case "no": return false;
-            default: throw new InvalidExcelDataException($"{s} 不是 bool 类型的值 (true|1|y|yes 或 false|0|n|no)");
+            case "no":
+                return false;
+            default:
+                throw new InvalidExcelDataException($"{s} 不是 bool 类型的值 (true|1|y|yes 或 false|0|n|no)");
         }
     }
 

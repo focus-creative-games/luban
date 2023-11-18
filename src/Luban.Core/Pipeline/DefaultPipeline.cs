@@ -18,9 +18,9 @@ public class DefaultPipeline : IPipeline
     private LubanConfig _config;
 
     private PipelineArguments _args;
-    
+
     private RawAssembly _rawAssembly;
-    
+
     private DefAssembly _defAssembly;
 
     private GenerationContext _genCtx;
@@ -54,7 +54,7 @@ public class DefaultPipeline : IPipeline
         s_logger.Debug("prepare generation context");
         _genCtx = new GenerationContext();
         _defAssembly = new DefAssembly(_rawAssembly, _args.Target, _args.OutputTables);
-        
+
         var generationCtxBuilder = new GenerationContextBuilder
         {
             Assembly = _defAssembly,
@@ -117,7 +117,7 @@ public class DefaultPipeline : IPipeline
         var outputManifest = new OutputFileManifest(name, OutputType.Code);
         GenerationContext.CurrentCodeTarget = codeTarget;
         codeTarget.Handle(_genCtx, outputManifest);
-        
+
         outputManifest = PostProcess(BuiltinOptionNames.CodePostprocess, outputManifest);
         Save(outputManifest);
         s_logger.Info("process code target:{} end", name);
@@ -134,13 +134,13 @@ public class DefaultPipeline : IPipeline
         }
         return manifest;
     }
-    
+
     protected void ProcessDataTarget(string name, IDataExporter mission, IDataTarget dataTarget)
     {
         s_logger.Info("process data target:{} begin", name);
         var outputManifest = new OutputFileManifest(name, OutputType.Data);
         mission.Handle(_genCtx, dataTarget, outputManifest);
-        
+
         var newManifest = PostProcess(BuiltinOptionNames.DataPostprocess, outputManifest);
         Save(newManifest);
         s_logger.Info("process data target:{} end", name);
@@ -153,5 +153,5 @@ public class DefaultPipeline : IPipeline
         var saver = OutputSaverManager.Ins.GetOutputSaver(outputSaverName);
         saver.Save(manifest);
     }
-    
+
 }

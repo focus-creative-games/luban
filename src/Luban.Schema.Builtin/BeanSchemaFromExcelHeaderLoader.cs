@@ -11,7 +11,7 @@ public class BeanSchemaFromExcelHeaderLoader : IBeanSchemaLoader
     {
         return LoadTableValueTypeDefineFromFile(fileName, beanFullName);
     }
-    
+
     public static RawBean LoadTableValueTypeDefineFromFile(string fileName, string valueTypeFullName)
     {
         var valueTypeNamespace = TypeUtil.GetNamespace(valueTypeFullName);
@@ -25,7 +25,7 @@ public class BeanSchemaFromExcelHeaderLoader : IBeanSchemaLoader
             Groups = new(),
             Fields = new(),
         };
-        
+
         (var actualFile, var sheetName) = FileUtil.SplitFileAndSheetName(FileUtil.Standardize(fileName));
         using var inputStream = new FileStream(actualFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
         var tableDefInfo = SheetLoadUtil.LoadSheetTableDefInfo(actualFile, sheetName, inputStream);

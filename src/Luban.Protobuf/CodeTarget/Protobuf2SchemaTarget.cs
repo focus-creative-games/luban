@@ -8,7 +8,7 @@ namespace Luban.Protobuf.CodeTarget;
 public class Protobuf2SchemaTarget : ProtobufSchemaTargetBase
 {
     protected override string Syntax => "proto2";
-    
+
     protected override void OnCreateTemplateContext(TemplateContext ctx)
     {
         ctx.PushGlobal(new Protobuf2TemplateExtension());

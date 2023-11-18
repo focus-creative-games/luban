@@ -13,12 +13,12 @@ public class GdscriptCommonTemplateExtension : ScriptObject
     {
         return type.Apply(DeclaringTypeNameVisitor.Ins);
     }
-    
+
     public static string FullName(DefTypeBase type)
     {
         return TypeUtil.MakeGDScriptFullName(type.Namespace, type.Name);
     }
-    
+
     public static string StrFullName(string fullName)
     {
         return TypeUtil.ToPascalCase(fullName.Replace(".", "_"));

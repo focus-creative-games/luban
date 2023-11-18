@@ -13,14 +13,14 @@ public class CsharpEditorJsonCodeTarget : CsharpCodeTargetBase
     public override void Handle(GenerationContext ctx, OutputFileManifest manifest)
     {
         var tasks = new List<Task<OutputFile>>();
-        
+
         foreach (var bean in ctx.Assembly.TypeList.OfType<DefBean>())
         {
             tasks.Add(Task.Run(() =>
             {
                 var writer = new CodeWriter();
                 GenerateBean(ctx, bean, writer);
-                return new OutputFile(){ File = $"{GetFileNameWithoutExtByTypeName(bean.FullName)}.{FileSuffixName}", Content = writer.ToResult(FileHeader) };
+                return new OutputFile() { File = $"{GetFileNameWithoutExtByTypeName(bean.FullName)}.{FileSuffixName}", Content = writer.ToResult(FileHeader) };
             }));
         }
 
@@ -30,7 +30,7 @@ public class CsharpEditorJsonCodeTarget : CsharpCodeTargetBase
             {
                 var writer = new CodeWriter();
                 GenerateEnum(ctx, @enum, writer);
-                return new OutputFile(){ File = $"{GetFileNameWithoutExtByTypeName(@enum.FullName)}.{FileSuffixName}", Content = writer.ToResult(FileHeader) };
+                return new OutputFile() { File = $"{GetFileNameWithoutExtByTypeName(@enum.FullName)}.{FileSuffixName}", Content = writer.ToResult(FileHeader) };
             }));
         }
 
@@ -47,7 +47,7 @@ public class CsharpEditorJsonCodeTarget : CsharpCodeTargetBase
     {
         return TypeUtil.MakeFullName(TopModule, name);
     }
-    
+
     public override void GenerateBean(GenerationContext ctx, DefBean bean, CodeWriter writer)
     {
         var template = GetTemplate("bean");

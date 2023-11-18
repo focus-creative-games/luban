@@ -6,7 +6,7 @@ namespace Luban.DataExporter.Builtin.Json;
 class Json2DataVisitor : JsonDataVisitor
 {
     public static new Json2DataVisitor Ins { get; } = new();
-    
+
     public override void Accept(DMap type, Utf8JsonWriter x)
     {
         x.WriteStartObject();

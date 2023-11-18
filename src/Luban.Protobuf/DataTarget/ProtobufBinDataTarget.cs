@@ -10,7 +10,7 @@ namespace Luban.Protobuf.DataTarget;
 public class ProtobufBinDataTarget : DataTargetBase
 {
     protected override string OutputFileExt => "bytes";
-    
+
     public void WriteList(DefTable table, List<Record> datas, MemoryStream x)
     {
         var cos = new CodedOutputStream(x);

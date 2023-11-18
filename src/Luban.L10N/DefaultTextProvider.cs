@@ -15,9 +15,9 @@ public class DefaultTextProvider : ITextProvider
     private bool _enableTextValidation;
     private string _keyFieldName;
     private readonly HashSet<string> _keys = new();
-    
+
     public bool Enable => _enableTextValidation;
-    
+
     public void Load()
     {
         if (!EnvManager.Current.TryGetOption(BuiltinOptionNames.L10NFamily, BuiltinOptionNames.TextProviderFile, true,
@@ -41,14 +41,14 @@ public class DefaultTextProvider : ITextProvider
     {
         throw new NotSupportedException("default text provider not support get text");
     }
-    
+
     private void LoadTextListFromFile(string fileName)
     {
         var ass = new DefAssembly(new RawAssembly()
         {
-            Targets = new List<RawTarget>{new() { Name = "default", Manager = "Tables"}},
+            Targets = new List<RawTarget> { new() { Name = "default", Manager = "Tables" } },
         }, "default", new List<string>());
-        
+
         var defTableRecordType = new DefBean(new RawBean()
         {
             Namespace = "__intern__",
@@ -70,7 +70,7 @@ public class DefaultTextProvider : ITextProvider
         defTableRecordType.Compile();
         defTableRecordType.PostCompile();
         var tableRecordType = TBean.Create(false, defTableRecordType, null);
-        
+
         (var actualFile, var sheetName) = FileUtil.SplitFileAndSheetName(FileUtil.Standardize(fileName));
         var records = DataLoaderManager.Ins.LoadTableFile(tableRecordType, actualFile, sheetName, new Dictionary<string, string>());
 

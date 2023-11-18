@@ -5,7 +5,7 @@ namespace Luban.CSharp.TypeVisitors;
 
 public class NeedInitFieldVisitor : AllFalseVisitor
 {
-    public static NeedInitFieldVisitor Ins { get; } = new ();
+    public static NeedInitFieldVisitor Ins { get; } = new();
 
     public override bool Accept(TString type)
     {

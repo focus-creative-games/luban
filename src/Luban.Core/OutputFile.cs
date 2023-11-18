@@ -5,7 +5,7 @@ namespace Luban;
 public class OutputFile
 {
     public string File { get; init; }
-    
+
     /// <summary>
     /// Data type: string or byte[]
     /// </summary>

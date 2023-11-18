@@ -14,7 +14,7 @@ public enum TargetFileType
 public class PostProcessAttribute : BehaviourBaseAttribute
 {
     public TargetFileType TargetFileType { get; }
-    
+
     public PostProcessAttribute(string name, TargetFileType targetFileType) : base(name)
     {
         TargetFileType = targetFileType;

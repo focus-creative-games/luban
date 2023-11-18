@@ -11,11 +11,11 @@ namespace Luban.DataValidator.Builtin.Str;
 public class RegexValidator : DataValidatorBase
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
-    
+
     private Regex _regex;
 
     private Func<DType, string> _stringGetter;
-    
+
     public RegexValidator()
     {
     }
@@ -27,7 +27,7 @@ public class RegexValidator : DataValidatorBase
         {
             case TString:
             {
-                _stringGetter = d => ((DString) d).Value;
+                _stringGetter = d => ((DString)d).Value;
                 break;
             }
             default:

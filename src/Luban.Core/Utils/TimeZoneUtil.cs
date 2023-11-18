@@ -6,7 +6,7 @@ public static class TimeZoneUtil
 
     public static TimeZoneInfo GetTimeZone(string timeZoneName)
     {
-        
+
         if (string.IsNullOrEmpty(timeZoneName))
         {
             try
@@ -24,7 +24,8 @@ public static class TimeZoneUtil
                     throw new ArgumentException("The default timezone ID 'Asia/Shanghai' and 'China Standard Time' was not found on local computer. please set valid timezone manually.");
                 }
             }
-        }if (timeZoneName.ToLower() == "local")
+        }
+        if (timeZoneName.ToLower() == "local")
         {
             return TimeZoneInfo.Local;
         }

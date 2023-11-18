@@ -11,25 +11,25 @@ namespace Luban.Protobuf.TemplateExtensions;
 public class Protobuf2TemplateExtension : ScriptObject
 {
     public static string PreDecorator(TType type)
-   {
-       if (type.IsNullable)
-       {
-           return "optional";
-       }
-       else if (type.IsCollection)
-       {
-           if (type is TMap)
-           {
-               return "";
-           }
-           else
-           {
-               return "repeated";
-           }
-       }
-       else
-       {
-           return "required";
-       }
-   }
+    {
+        if (type.IsNullable)
+        {
+            return "optional";
+        }
+        else if (type.IsCollection)
+        {
+            if (type is TMap)
+            {
+                return "";
+            }
+            else
+            {
+                return "repeated";
+            }
+        }
+        else
+        {
+            return "required";
+        }
+    }
 }

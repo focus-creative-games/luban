@@ -6,10 +6,10 @@ namespace Luban.CodeTarget;
 public class CodeTargetManager
 {
     public static CodeTargetManager Ins { get; } = new();
-    
+
     public void Init()
     {
-        
+
     }
 
     public ICodeTarget CreateCodeTarget(string name)

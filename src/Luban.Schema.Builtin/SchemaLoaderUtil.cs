@@ -10,7 +10,7 @@ public static class SchemaLoaderUtil
     {
         return s.Split(',', ';').Select(x => x.Trim()).Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
     }
-    
+
     public static RawTable CreateTable(string schemaFile, string name, string module, string valueType, string index, string mode, string group,
         string comment, bool readSchemaFromFile, string input, string tags, string outputFileName)
     {
@@ -23,7 +23,7 @@ public static class SchemaLoaderUtil
             Index = index,
             Groups = CreateGroups(group),
             Comment = comment,
-            Mode = ConvertMode( schemaFile, name, mode, index),
+            Mode = ConvertMode(schemaFile, name, mode, index),
             Tags = DefUtil.ParseAttrs(tags),
             OutputFile = outputFileName,
         };
@@ -56,7 +56,7 @@ public static class SchemaLoaderUtil
 
         return p;
     }
-    
+
     public static TableMode ConvertMode(string schemaFile, string tableName, string modeStr, string indexStr)
     {
         TableMode mode;
@@ -107,7 +107,7 @@ public static class SchemaLoaderUtil
         }
         return mode;
     }
-    
+
     public static RawField CreateField(string schemaFile, string name, string type, string group,
         string comment, string tags,
         bool ignoreNameValidation)
@@ -120,9 +120,9 @@ public static class SchemaLoaderUtil
             Tags = DefUtil.ParseAttrs(tags),
             NotNameValidation = ignoreNameValidation,
         };
-        
+
         f.Type = type;
-        
+
         //FillValueValidator(f, refs, "ref");
         //FillValueValidator(f, path, "path"); // (ue4|unity|normal|regex);xxx;xxx
         //FillValueValidator(f, range, "range");

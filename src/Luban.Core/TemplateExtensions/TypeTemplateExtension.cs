@@ -12,12 +12,12 @@ public class TypeTemplateExtension : ScriptObject
     {
         return type.IsNullable;
     }
-    
+
     public static string FormatMethodName(ICodeStyle codeStyle, string name)
     {
         return codeStyle.FormatMethod(name);
     }
-    
+
     public static string FormatFieldName(ICodeStyle codeStyle, string name)
     {
         return codeStyle.FormatField(name);
@@ -32,7 +32,7 @@ public class TypeTemplateExtension : ScriptObject
     {
         return codeStyle.FormatEnumItemName(name);
     }
-    
+
     public static bool CanGenerateRef(DefField field)
     {
         if (field.CType.IsCollection)
@@ -42,7 +42,7 @@ public class TypeTemplateExtension : ScriptObject
 
         return GetRefTable(field) != null;
     }
-    
+
     public static DefTable GetRefTable(DefField field)
     {
         if (field.CType.GetTag("ref") is { } value && GenerationContext.Current.Assembly.GetCfgTable(value.Replace("?", "")) is { } cfgTable)
@@ -51,17 +51,17 @@ public class TypeTemplateExtension : ScriptObject
         }
         return null;
     }
-    
+
     public static TType GetRefType(DefField field)
     {
         return GetRefTable(field)?.ValueTType;
     }
-    
+
     public static bool IsFieldBeanNeedResolveRef(DefField field)
     {
         return field.CType is TBean bean && bean.DefBean.TypeMappers == null && !bean.DefBean.IsValueType;
     }
-    
+
     public static bool IsFieldArrayLikeNeedResolveRef(DefField field)
     {
         return field.CType.ElementType is TBean bean && bean.DefBean.TypeMappers == null && !bean.DefBean.IsValueType && field.CType is not TMap;
@@ -71,7 +71,7 @@ public class TypeTemplateExtension : ScriptObject
     {
         return field.CType is TMap { ValueType: TBean bean } && bean.DefBean.TypeMappers == null && !bean.DefBean.IsValueType;
     }
-    
+
     public static bool HasIndex(DefField field)
     {
         TType type = field.CType;

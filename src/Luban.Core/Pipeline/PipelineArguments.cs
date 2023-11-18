@@ -7,20 +7,20 @@ public class PipelineArguments
     public bool ForceLoadTableDatas { get; set; }
 
     public List<string> IncludeTags { get; set; }
-    
+
     public List<string> ExcludeTags { get; set; }
-    
+
     public List<string> CodeTargets { get; set; }
-    
+
     public List<string> DataTargets { get; set; }
-    
+
     public string SchemaCollector { get; set; }
-    
+
     public string ConfFile { get; set; }
 
     public List<string> OutputTables { get; set; }
-    
+
     public string TimeZone { get; set; }
-    
+
     public Dictionary<string, object> CustomArgs { get; set; }
 }

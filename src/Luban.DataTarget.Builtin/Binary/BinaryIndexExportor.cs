@@ -29,6 +29,6 @@ class BinaryIndexExportor
             x.WriteSize(offset);
             Console.WriteLine($"table:{table.Name} key:{keyStr} offset:{offset}");
         }
-          
+
     }
 }

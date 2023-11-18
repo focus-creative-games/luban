@@ -27,15 +27,25 @@ public class DoubleRange
         }
         switch (_str[0])
         {
-            case '[': _includeMinBound = true; break;
-            case '(': _includeMinBound = false; break;
-            default: throw new Exception($"range定义不合法");
+            case '[':
+                _includeMinBound = true;
+                break;
+            case '(':
+                _includeMinBound = false;
+                break;
+            default:
+                throw new Exception($"range定义不合法");
         }
         switch (_str[^1])
         {
-            case ']': _includeMaxBound = true; break;
-            case ')': _includeMaxBound = false; break;
-            default: throw new Exception($"range定义不合法");
+            case ']':
+                _includeMaxBound = true;
+                break;
+            case ')':
+                _includeMaxBound = false;
+                break;
+            default:
+                throw new Exception($"range定义不合法");
         }
 
         var pars = _str[1..^1].Split(',');
@@ -70,7 +80,7 @@ public class DoubleRange
         }
         return false;
     }
-    
+
 
     public bool CheckInRange(double x)
     {
