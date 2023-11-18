@@ -19,9 +19,9 @@ public class GenerationContextBuilder
     public DefAssembly Assembly { get; set; }
 
     public List<string> IncludeTags { get; set; }
-    
+
     public List<string> ExcludeTags { get; set; }
-    
+
     public string TimeZone { get; set; }
 }
 
@@ -30,7 +30,7 @@ public class GenerationContext
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
     public static GenerationContext Current { get; private set; }
-    
+
     public static ICodeTarget CurrentCodeTarget { get; set; }
 
     public static LubanConfig GlobalConf { get; set; }
@@ -40,27 +40,27 @@ public class GenerationContext
     public RawTarget Target => Assembly.Target;
 
     public List<string> IncludeTags { get; private set; }
-    
+
     public List<string> ExcludeTags { get; private set; }
-    
+
     private readonly ConcurrentDictionary<string, TableDataInfo> _recordsByTables = new();
-    
+
     public string TopModule => Target.TopModule;
 
     public List<DefTable> Tables => Assembly.GetAllTables();
-    
+
     private List<DefTypeBase> ExportTypes { get; set; }
-    
+
     public List<DefTable> ExportTables { get; private set; }
-    
+
     public List<DefBean> ExportBeans { get; private set; }
-    
+
     public List<DefEnum> ExportEnums { get; private set; }
-    
+
     public TimeZoneInfo TimeZone { get; private set; }
-    
+
     private readonly Dictionary<string, object> _uniqueObjects = new();
-    
+
     private readonly HashSet<Type> _failedValidatorTypes = new();
 
     public void LoadDatas()
@@ -81,18 +81,18 @@ public class GenerationContext
         IncludeTags = builder.IncludeTags;
         ExcludeTags = builder.ExcludeTags;
         TimeZone = TimeZoneUtil.GetTimeZone(builder.TimeZone);
-        
+
         ExportTables = Assembly.ExportTables;
         ExportTypes = CalculateExportTypes();
         ExportBeans = ExportTypes.OfType<DefBean>().ToList();
         ExportEnums = ExportTypes.OfType<DefEnum>().ToList();
     }
-    
+
     private bool NeedExportNotDefault(List<string> groups)
     {
         return groups.Any(g => Target.Groups.Contains(g));
     }
-    
+
     private List<DefTypeBase> CalculateExportTypes()
     {
         var refTypes = new Dictionary<string, DefTypeBase>();
@@ -120,12 +120,12 @@ public class GenerationContext
 
         return refTypes.Values.ToList();
     }
-    
+
     public static string GetInputDataPath()
     {
         return GlobalConf.InputDataDir;
     }
-    
+
     public void AddDataTable(DefTable table, List<Record> mainRecords, List<Record> patchRecords)
     {
         s_logger.Debug("AddDataTable name:{} record count:{}", table.FullName, mainRecords.Count);
@@ -169,9 +169,12 @@ public class GenerationContext
                 DType keyb = b.Data.GetField(keyFieldName);
                 switch (keya)
                 {
-                    case DInt ai: return ai.Value.CompareTo((keyb as DInt).Value);
-                    case DLong al: return al.Value.CompareTo((keyb as DLong).Value);
-                    default: throw new NotSupportedException();
+                    case DInt ai:
+                        return ai.Value.CompareTo((keyb as DInt).Value);
+                    case DLong al:
+                        return al.Value.CompareTo((keyb as DLong).Value);
+                    default:
+                        throw new NotSupportedException();
                 }
             });
         }
@@ -191,7 +194,7 @@ public class GenerationContext
         }
         return null;
     }
-    
+
     public object GetUniqueObject(string key)
     {
         lock (this)
@@ -199,7 +202,7 @@ public class GenerationContext
             return _uniqueObjects[key];
         }
     }
-    
+
     public object TryGetUniqueObject(string key)
     {
         lock (this)
@@ -208,7 +211,7 @@ public class GenerationContext
             return obj;
         }
     }
-    
+
     public object GetOrAddUniqueObject(string key, Func<object> factory)
     {
         lock (this)
@@ -233,7 +236,7 @@ public class GenerationContext
             _failedValidatorTypes.Add(validator.GetType());
         }
     }
-    
+
     public bool AnyValidatorFail
     {
         get

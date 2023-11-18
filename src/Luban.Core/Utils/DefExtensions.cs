@@ -10,23 +10,23 @@ public static class DefExtensions
     {
         return field.Assembly.NeedExport(field.Groups);
     }
-    
+
     public static List<DefField> GetExportFields(this DefBean bean)
     {
         return bean.Fields.Where(f => f.NeedExport()).ToList();
     }
-    
+
     public static List<DefField> GetHierarchyExportFields(this DefBean bean)
     {
         return bean.HierarchyFields.Where(f => f.NeedExport()).ToList();
     }
-    
+
     public static bool NeedExport(this DefTable table)
     {
         return table.Assembly.NeedExport(table.Groups);
     }
-    
-    
+
+
     public static string TypeNameWithTypeMapper(this DefTypeBase type)
     {
         if (type.TypeMappers != null)
@@ -43,7 +43,7 @@ public static class DefExtensions
         }
         return null;
     }
-    
+
     public static string TypeConstructorWithTypeMapper(this DefTypeBase type)
     {
         if (type.TypeMappers != null)

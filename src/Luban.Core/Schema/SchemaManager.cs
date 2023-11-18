@@ -7,32 +7,32 @@ namespace Luban.Schema;
 public class SchemaManager
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
-    
-    public static SchemaManager Ins { get; } = new ();
-    
+
+    public static SchemaManager Ins { get; } = new();
+
     private class LoaderInfo
     {
         public string Type { get; init; }
-        
+
         public string ExtName { get; init; }
-        
+
         public int Priority { get; init; }
-        
+
         public Func<ISchemaLoader> Creator { get; init; }
     }
-    
+
     private readonly Dictionary<(string, string), LoaderInfo> _schemaLoaders = new();
 
     public void Init()
     {
-        
+
     }
-    
+
     public void ScanRegisterAll(Assembly assembly)
     {
         ScanRegisterSchemaLoaderCreator(assembly);
     }
-    
+
     public ISchemaCollector CreateSchemaCollector(string name)
     {
         return CustomBehaviourManager.Ins.CreateBehaviour<ISchemaCollector, SchemaCollectorAttribute>(name);
@@ -50,7 +50,7 @@ public class SchemaManager
         schemaLoader.Collector = collector;
         return schemaLoader;
     }
-    
+
     public void RegisterSchemaLoaderCreator(string type, string extName, int priority, Func<ISchemaLoader> creator)
     {
         if (_schemaLoaders.TryGetValue((extName, type), out var loader))
@@ -62,9 +62,9 @@ public class SchemaManager
             }
         }
         s_logger.Trace("add schema loader creator. type:{} priority:{} extName:{}", type, priority, extName);
-        _schemaLoaders[(extName, type)] = new LoaderInfo(){ Type = type, ExtName = extName, Priority = priority, Creator = creator};
+        _schemaLoaders[(extName, type)] = new LoaderInfo() { Type = type, ExtName = extName, Priority = priority, Creator = creator };
     }
-    
+
     public void ScanRegisterSchemaLoaderCreator(Assembly assembly)
     {
         foreach (var t in assembly.GetTypes())
@@ -82,7 +82,7 @@ public class SchemaManager
             }
         }
     }
-    
+
     public IBeanSchemaLoader CreateBeanSchemaLoader(string type)
     {
         return CustomBehaviourManager.Ins.CreateBehaviour<IBeanSchemaLoader, BeanSchemaLoaderAttribute>(type);

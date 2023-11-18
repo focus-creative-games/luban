@@ -20,7 +20,7 @@ public class DefField
     public bool IsNullable => CType.IsNullable;
 
     public string Comment { get; }
-    
+
     public int AutoId { get; set; }
 
     // public string EscapeComment => DefUtil.EscapeCommentByCurrentLanguage(Comment);

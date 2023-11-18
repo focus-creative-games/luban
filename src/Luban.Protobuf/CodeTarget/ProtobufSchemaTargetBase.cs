@@ -12,7 +12,7 @@ public abstract class ProtobufSchemaTargetBase : AllInOneTemplateCodeTargetBase
     public override string FileHeader => "";
 
     protected override string FileSuffixName => "pb";
-    
+
     protected abstract string Syntax { get; }
 
     protected override string TemplateDir => "pb";

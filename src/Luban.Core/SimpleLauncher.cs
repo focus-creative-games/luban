@@ -17,7 +17,7 @@ namespace Luban;
 public class SimpleLauncher
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
-    
+
     public void Start(Dictionary<string, string> options)
     {
         EnvManager.Current = new EnvManager(options);
@@ -25,7 +25,7 @@ public class SimpleLauncher
         ScanRegisterAssemblyBehaviours();
         PostInitManagers();
     }
-    
+
     private void InitManagers()
     {
         SchemaManager.Ins.Init();
@@ -59,7 +59,7 @@ public class SimpleLauncher
                 Assembly.Load(dllName);
             }
         }
-        
+
         foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
         {
             if (assembly.GetCustomAttribute<RegisterBehaviourAttribute>() != null)

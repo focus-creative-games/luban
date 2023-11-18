@@ -18,10 +18,13 @@ public class DString : DType<string>
         switch (escapeMode)
         {
             case "0":
-            case "false": return new DString(s);
+            case "false":
+                return new DString(s);
             case "1":
-            case "true": return new DString(System.Text.RegularExpressions.Regex.Unescape(s));
-            default: throw new Exception($"unknown escape mode:{escapeMode}");
+            case "true":
+                return new DString(System.Text.RegularExpressions.Regex.Unescape(s));
+            default:
+                throw new Exception($"unknown escape mode:{escapeMode}");
         }
     }
 

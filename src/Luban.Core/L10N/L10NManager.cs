@@ -8,7 +8,7 @@ public class L10NManager
 
     public void Init()
     {
-        
+
     }
 
     public ITextProvider CreateTextProvider(string name)
@@ -17,7 +17,7 @@ public class L10NManager
         provider.Load();
         return provider;
     }
-    
+
     public ITextProvider GetOrCreateContextUniqueTextProvider(string name)
     {
         return (ITextProvider)GenerationContext.Current.GetOrAddUniqueObject($"{BuiltinOptionNames.TextProviderName}.{name}", () => CreateTextProvider(name));

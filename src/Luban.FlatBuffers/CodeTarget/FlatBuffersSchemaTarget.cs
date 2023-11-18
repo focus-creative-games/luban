@@ -15,7 +15,7 @@ public class FlatBuffersSchemaTarget : AllInOneTemplateCodeTargetBase
     public override string FileHeader => "";
 
     protected override string FileSuffixName => "fbs";
-    
+
     protected override ICodeStyle CodeStyle => CodeFormatManager.Ins.NoneCodeStyle;
 
     protected override string DefaultOutputFileName => "schema.fbs";
@@ -23,14 +23,14 @@ public class FlatBuffersSchemaTarget : AllInOneTemplateCodeTargetBase
     protected override void OnCreateTemplateContext(TemplateContext ctx)
     {
         ctx.PushGlobal(new FlatBuffersTemplateExtension());
-        
+
         var maps = CollectKeyValueEntry(GenerationContext.Current.ExportBeans).KeyValueEntries.Values;
         ctx.PushGlobal(new ScriptObject()
         {
             {"__maps", maps},
         });
     }
-    
+
     private MapKeyValueEntryCollection CollectKeyValueEntry(List<DefBean> beans)
     {
         var c = new MapKeyValueEntryCollection();

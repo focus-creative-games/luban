@@ -9,12 +9,12 @@ namespace Luban.DataLoader;
 public class DataLoaderManager
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
-    
+
     public static DataLoaderManager Ins { get; } = new();
 
     public void Init()
     {
-        
+
     }
 
     public void LoadDatas(GenerationContext ctx)
@@ -46,11 +46,11 @@ public class DataLoaderManager
         }
         ctx.AddDataTable(table, records, null);
     }
-    
+
     public List<Record> LoadTableFile(DefTable table, string file, string subAssetName, Dictionary<string, string> options)
     {
         s_logger.Trace("load table:{} file:{}", table.FullName, file);
-        if(!File.Exists(file) && !Directory.Exists(file))
+        if (!File.Exists(file) && !Directory.Exists(file))
         {
             throw new Exception($"'{table.FullName}'的input文件或目录不存在: {file} ");
         }
@@ -64,7 +64,7 @@ public class DataLoaderManager
         }
         return new List<Record> { loader.ReadOne(table.ValueTType) };
     }
-    
+
     public List<Record> LoadTableFile(TBean valueType, string file, string subAssetName, Dictionary<string, string> options)
     {
         string loaderName = options.TryGetValue("loader", out var name) ? name : FileUtil.GetExtensionWithDot(file);
@@ -77,13 +77,13 @@ public class DataLoaderManager
         }
         return new List<Record> { loader.ReadOne(valueType) };
     }
-    
-    
+
+
     private static bool IsMultiRecordField(string sheet)
     {
         return !string.IsNullOrEmpty(sheet) && sheet.StartsWith("*");
     }
-    
+
     private static bool IsMultiRecordFile(string file, string sheetOrFieldName)
     {
         return FileUtil.IsExcelFile(file) || IsMultiRecordField(sheetOrFieldName);

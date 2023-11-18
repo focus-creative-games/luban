@@ -13,17 +13,17 @@ public abstract class DefTypeBase
     public string Namespace { get; set; }
 
     public string FullName => TypeUtil.MakeFullName(Namespace, Name);
-    
+
     public string NamespaceWithTopModule => TypeUtil.MakeNamespace(GenerationContext.Current.TopModule, Namespace);
-    
+
     public string FullNameWithTopModule => TypeUtil.MakeNamespace(GenerationContext.Current.TopModule, FullName);
-    
+
     public List<string> Groups { get; set; }
 
     public string Comment { get; protected set; }
 
     public Dictionary<string, string> Tags { get; protected set; }
-    
+
     public List<TypeMapper> TypeMappers { get; protected set; }
 
     public bool HasTag(string attrName)

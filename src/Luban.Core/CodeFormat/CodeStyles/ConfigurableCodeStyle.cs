@@ -8,7 +8,7 @@ public class ConfigurableCodeStyle : CodeStyleBase
     private readonly INamingConventionFormatter _propertyFormatter;
     private readonly INamingConventionFormatter _fieldFormatter;
     private readonly INamingConventionFormatter _enumItemFormatter;
-    
+
     public ConfigurableCodeStyle(string namespaceFormatterName, string typeFormatterName, string methodFormatterName,
         string propertyFormatterName, string fieldFormatterName, string enumItemFormatterName)
     {
@@ -34,7 +34,7 @@ public class ConfigurableCodeStyle : CodeStyleBase
     {
         return _methodFormatter.FormatName(methodName);
     }
-    
+
     public override string FormatProperty(string propertyName)
     {
         return _propertyFormatter.FormatName(propertyName);
@@ -44,7 +44,7 @@ public class ConfigurableCodeStyle : CodeStyleBase
     {
         return _fieldFormatter.FormatName(fieldName);
     }
-    
+
     public override string FormatEnumItemName(string enumItemName)
     {
         return _enumItemFormatter.FormatName(enumItemName);

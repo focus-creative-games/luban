@@ -8,7 +8,7 @@ namespace Luban.Gdscript.TypeVisitors;
 public class UnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string, string>
 {
     public static UnderlyingDeserializeVisitor Ins { get; } = new();
-    
+
     public string Accept(TBool type, string jsonVarName, string fieldName)
     {
         return $"{fieldName} = {jsonVarName}";
@@ -90,5 +90,5 @@ public class UnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string, str
     {
         return $"{fieldName} = {jsonVarName}";
     }
-    
+
 }

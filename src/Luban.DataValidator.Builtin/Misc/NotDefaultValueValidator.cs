@@ -10,7 +10,7 @@ namespace Luban.DataValidator.Builtin.Misc;
 public class NotDefaultValueValidator : DataValidatorBase
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
-    
+
     public override void Compile(DefField field, TType type)
     {
 

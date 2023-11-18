@@ -9,10 +9,10 @@ namespace Luban.DataValidator.Builtin.Range;
 public class RangeValidator : DataValidatorBase
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
-    
+
     private LongRange _longRange;
     private DoubleRange _doubleRange;
-    
+
     private Func<DType, long> _longGetter;
     private Func<DType, double> _doubleGetter;
 
@@ -60,7 +60,8 @@ public class RangeValidator : DataValidatorBase
                 _doubleGetter = d => ((DDouble)d).Value;
                 break;
             }
-            default: throw new Exception($"range not support type:{type} field:{field}");
+            default:
+                throw new Exception($"range not support type:{type} field:{field}");
         }
     }
 

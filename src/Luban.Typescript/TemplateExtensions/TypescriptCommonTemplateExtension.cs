@@ -41,5 +41,5 @@ public class TypescriptCommonTemplateExtension : ScriptObject
         }
         return string.Join("", ns.Split('.').Select(n => $"}}"));
     }
-    
+
 }

@@ -109,7 +109,7 @@ class LuaDataCreator : ITypeFuncVisitor<object, DefAssembly, DType>
         if (bean.IsAbstractType)
         {
             string subType;
-            if(table.ContainsKey(FieldNames.LuaTypeNameKey))
+            if (table.ContainsKey(FieldNames.LuaTypeNameKey))
             {
                 subType = (string)(table[FieldNames.LuaTypeNameKey]);
             }

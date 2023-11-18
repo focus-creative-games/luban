@@ -14,22 +14,53 @@ class MsgPackDataVisitor
     {
         switch (type)
         {
-            case DInt x: Accept(x, ref writer); break;
-            case DString x: Accept(x, ref writer); break;
-            case DFloat x: Accept(x, ref writer); break;
-            case DBean x: Accept(x, ref writer); break;
-            case DBool x: Accept(x, ref writer); break;
-            case DEnum x: Accept(x, ref writer); break;
-            case DList x: Accept(x, ref writer); break;
-            case DArray x: Accept(x, ref writer); break;
-            case DLong x: Accept(x, ref writer); break;
-            case DDateTime x: Accept(x, ref writer); break;
-            case DMap x: Accept(x, ref writer); break;
-            case DByte x: Accept(x, ref writer); break;
-            case DDouble x: Accept(x, ref writer); break;
-            case DSet x: Accept(x, ref writer); break;
-            case DShort x: Accept(x, ref writer); break;
-            default: throw new NotSupportedException($"DType:{type.GetType().FullName} not support");
+            case DInt x:
+                Accept(x, ref writer);
+                break;
+            case DString x:
+                Accept(x, ref writer);
+                break;
+            case DFloat x:
+                Accept(x, ref writer);
+                break;
+            case DBean x:
+                Accept(x, ref writer);
+                break;
+            case DBool x:
+                Accept(x, ref writer);
+                break;
+            case DEnum x:
+                Accept(x, ref writer);
+                break;
+            case DList x:
+                Accept(x, ref writer);
+                break;
+            case DArray x:
+                Accept(x, ref writer);
+                break;
+            case DLong x:
+                Accept(x, ref writer);
+                break;
+            case DDateTime x:
+                Accept(x, ref writer);
+                break;
+            case DMap x:
+                Accept(x, ref writer);
+                break;
+            case DByte x:
+                Accept(x, ref writer);
+                break;
+            case DDouble x:
+                Accept(x, ref writer);
+                break;
+            case DSet x:
+                Accept(x, ref writer);
+                break;
+            case DShort x:
+                Accept(x, ref writer);
+                break;
+            default:
+                throw new NotSupportedException($"DType:{type.GetType().FullName} not support");
         }
     }
 

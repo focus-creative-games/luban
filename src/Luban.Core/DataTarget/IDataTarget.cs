@@ -13,12 +13,12 @@ public enum AggregationType
 public interface IDataTarget
 {
     AggregationType AggregationType { get; }
-    
+
     bool ExportAllRecords { get; }
 
     OutputFile ExportTable(DefTable table, List<Record> records);
-    
+
     OutputFile ExportTables(List<DefTable> tables);
-    
+
     OutputFile ExportRecord(DefTable table, Record record);
 }

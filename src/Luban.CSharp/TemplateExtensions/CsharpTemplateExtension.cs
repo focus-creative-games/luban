@@ -23,7 +23,7 @@ public class CsharpTemplateExtension : ScriptObject
     {
         return bean.IsValueType ? "struct" : "class";
     }
-    
+
     public static string ClassModifier(DefBean bean)
     {
         return bean.IsAbstractType ? "abstract" : "sealed";
@@ -33,7 +33,7 @@ public class CsharpTemplateExtension : ScriptObject
     {
         return bean.ParentDefType != null ? "override" : (bean.IsAbstractType ? "virtual" : "");
     }
-    
+
     public static string NamespaceWithGraceBegin(string ns)
     {
         if (string.IsNullOrEmpty(ns))
@@ -61,7 +61,7 @@ public class CsharpTemplateExtension : ScriptObject
     {
         return type.Apply(IsRawNullableTypeVisitor.Ins) ? varName : $"{varName}.Value";
     }
-    
+
     // public static string RefTypeName(DefField field)
     // {
     //     if (field.CType.GetTag("ref") is { } value && GenerationContext.Current.Assembly.GetCfgTable(value) is { } cfgTable)

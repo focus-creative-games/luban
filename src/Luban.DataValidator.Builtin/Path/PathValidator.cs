@@ -12,7 +12,7 @@ public class PathValidator : DataValidatorBase
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
     private readonly string _rootDir;
-    
+
     private string _rawPattern;
 
     private IPathPattern _pathPattern;
@@ -37,7 +37,7 @@ public class PathValidator : DataValidatorBase
         {
             ThrowCompileError(field, "只支持string类型");
         }
-        
+
         string[] ss = _rawPattern.Split(';');
         if (ss.Length < 1)
         {
@@ -103,7 +103,7 @@ public class PathValidator : DataValidatorBase
         {
             return;
         }
-        
+
         string value = ((DString)data).Value;
         if (value == "" && _pathPattern.EmptyAble)
         {

@@ -10,7 +10,7 @@ namespace Luban.DataValidator.Builtin.Collection;
 public class SizeValidator : DataValidatorBase
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
-    
+
     private LongRange _range;
 
     private Func<DType, long> _sizeGetter;

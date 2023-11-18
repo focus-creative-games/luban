@@ -9,7 +9,7 @@ namespace Luban.L10N;
 public class TextValidator : DataValidatorBase
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
-    
+
     private ITextProvider _provider;
 
     private ITextProvider Provider
@@ -24,7 +24,7 @@ public class TextValidator : DataValidatorBase
             return _provider;
         }
     }
-    
+
     public override void Compile(DefField field, TType type)
     {
         if (type is not TString)
@@ -44,7 +44,7 @@ public class TextValidator : DataValidatorBase
         if (Provider.Enable && !Provider.IsValidKey(key))
         {
             s_logger.Error("记录 {}:{} (来自文件:{}) 不是一个有效的文本key", DataValidatorContext.CurrentRecordPath, data, Source);
-            GenerationContext.Current.LogValidatorFail(this); 
+            GenerationContext.Current.LogValidatorFail(this);
         }
     }
 }

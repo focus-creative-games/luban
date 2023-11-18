@@ -7,7 +7,7 @@ namespace Luban.Defs;
 public class DefBean : DefTypeBase
 {
     public int Id { get; }
-    
+
     public int AutoId { get; private set; } // for protobuf
 
     public string Parent { get; }
@@ -29,7 +29,7 @@ public class DefBean : DefTypeBase
         }
         foreach (var child in Children)
         {
-            foreach(var c2 in  child.GetHierarchyChildren())
+            foreach (var c2 in child.GetHierarchyChildren())
             {
                 yield return c2;
             }
@@ -47,16 +47,16 @@ public class DefBean : DefTypeBase
     public bool IsMultiRow { get; set; }
 
     public string Sep { get; }
-    
+
     public bool IsValueType { get; }
 
 
     private List<DefField> _hierarchyExportFields;
-    
+
     public List<DefField> HierarchyExportFields => _hierarchyExportFields ??= HierarchyFields.Where(f => f.NeedExport()).ToList();
 
     private List<DefField> _exportFields;
-    
+
     public List<DefField> ExportFields => _exportFields ??= Fields.Where(f => f.NeedExport()).ToList();
 
     public bool IsDefineEquals(DefBean b)
@@ -168,7 +168,7 @@ public class DefBean : DefTypeBase
             }
         }
     }
-    
+
     public void CollectHierarchyNotAbstractChildren(List<DefBean> children)
     {
         if (IsAbstractType)

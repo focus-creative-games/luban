@@ -11,6 +11,6 @@ public class RawField
     public Dictionary<string, string> Tags { get; set; }
 
     public bool NotNameValidation { get; set; }
-    
+
     public List<string> Groups { get; set; }
 }

@@ -11,7 +11,7 @@ namespace Luban.DataExporter.Builtin.Xml;
 public class XmlDataTarget : DataTargetBase
 {
     protected override string OutputFileExt => "xml";
-    
+
     public void WriteAsArray(List<Record> datas, XmlWriter w)
     {
         w.WriteStartDocument();

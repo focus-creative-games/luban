@@ -10,7 +10,7 @@ public class JavaJsonTemplateExtension : ScriptObject
     {
         return type.Apply(JavaJsonUnderlyingDeserializeVisitor.Ins, jsonVar, fieldName, 0);
     }
-    
+
     public static string DeserializeField(string fieldName, string jsonName, string jsonFieldName, TType type)
     {
         if (type.IsNullable)

@@ -81,9 +81,9 @@ class DeserializeJsonUnderingVisitor : ITypeFuncVisitor<string, string, string, 
         return $@" {{
                 var _arr_ []interface{{}}
                 var _ok_ bool
-                if _arr_, _ok_ = {bufName}[""{ fieldName}""].([]interface{{}}); !_ok_ {{ err = errors.New(""{fieldName} error""); return }}
+                if _arr_, _ok_ = {bufName}[""{fieldName}""].([]interface{{}}); !_ok_ {{ err = errors.New(""{fieldName} error""); return }}
 
-                { varName} = make([]{elementType.Apply(DeclaringTypeNameVisitor.Ins)}, 0, len(_arr_))
+                {varName} = make([]{elementType.Apply(DeclaringTypeNameVisitor.Ins)}, 0, len(_arr_))
                 
                 for _, _e_ := range _arr_ {{
                     var _list_v_ {elementType.Apply(DeclaringTypeNameVisitor.Ins)}
@@ -114,7 +114,7 @@ class DeserializeJsonUnderingVisitor : ITypeFuncVisitor<string, string, string, 
         return $@"{{
                 var _arr_ []interface{{}}
                 var _ok_ bool
-                if _arr_, _ok_ = {bufName}[""{ fieldName}""].([]interface{{}}); !_ok_ {{ err = errors.New(""{fieldName} error""); return }}
+                if _arr_, _ok_ = {bufName}[""{fieldName}""].([]interface{{}}); !_ok_ {{ err = errors.New(""{fieldName} error""); return }}
 
                 {varName} = make({type.Apply(DeclaringTypeNameVisitor.Ins)})
                 

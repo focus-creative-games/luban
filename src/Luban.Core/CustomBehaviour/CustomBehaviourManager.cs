@@ -5,17 +5,17 @@ namespace Luban.CustomBehaviour;
 public class CustomBehaviourManager
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
-    
-    public static CustomBehaviourManager Ins { get; } = new ();
+
+    public static CustomBehaviourManager Ins { get; } = new();
 
     private class BehaviourInfo
     {
         public int Priority { get; set; }
-        
+
         public Func<object> Creator { get; set; }
     }
-    
-    private readonly Dictionary<(Type,string), BehaviourInfo> _behaviourCreators = new ();
+
+    private readonly Dictionary<(Type, string), BehaviourInfo> _behaviourCreators = new();
 
     public void Init()
     {
@@ -32,7 +32,7 @@ public class CustomBehaviourManager
         throw new Exception($"behaviour:{name} not exists");
     }
 
-    public bool TryCreateBehaviour<T, C>(string name, out T behaviour) where C : Attribute, ICustomBehaviour where T:class
+    public bool TryCreateBehaviour<T, C>(string name, out T behaviour) where C : Attribute, ICustomBehaviour where T : class
     {
         if (_behaviourCreators.TryGetValue((typeof(C), name), out var bi))
         {
@@ -43,7 +43,7 @@ public class CustomBehaviourManager
         behaviour = null;
         return false;
     }
-    
+
     public void RegisterBehaviour(Type type, string name, int priority, Func<object> behaviourCreator)
     {
         if (_behaviourCreators.TryGetValue((type, name), out var bi))
@@ -58,7 +58,7 @@ public class CustomBehaviourManager
         s_logger.Trace("register behaviour type:{} name:{} priority:{}", type, name, priority);
         _behaviourCreators[(type, name)] = new BehaviourInfo() { Priority = priority, Creator = behaviourCreator };
     }
-    
+
     public void ScanRegisterBehaviour(Assembly assembly)
     {
         foreach (var t in assembly.GetTypes())

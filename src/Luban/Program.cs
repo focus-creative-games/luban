@@ -21,19 +21,19 @@ internal static class Program
 
     private class CommandOptions
     {
-        
+
         [Option('s', "schemaCollector", Required = false, HelpText = "schema collector name")]
         public string SchemaCollector { get; set; } = "default";
-        
+
         [Option("conf", Required = true, HelpText = "luban conf file")]
         public string ConfigFile { get; set; }
-        
+
         [Option('t', "target", Required = true, HelpText = "target name")]
         public string Target { get; set; }
-        
+
         [Option('c', "codeTarget", Required = false, HelpText = "code target name")]
         public IEnumerable<string> CodeTargets { get; set; }
-        
+
         [Option('d', "dataTarget", Required = false, HelpText = "data target name")]
         public IEnumerable<string> DataTargets { get; set; }
 
@@ -42,32 +42,32 @@ internal static class Program
 
         [Option('f', "forceLoadTableDatas", Required = false, HelpText = "force load table datas when not any dataTarget")]
         public bool ForceLoadTableDatas { get; set; }
-        
+
         [Option('i', "includeTag", Required = false, HelpText = "include tag")]
         public IEnumerable<string> IncludeTags { get; set; }
 
         [Option('e', "excludeTag", Required = false, HelpText = "exclude tag")]
         public IEnumerable<string> ExcludeTags { get; set; }
-        
+
         [Option('o', "outputTable", Required = false, HelpText = "output table")]
         public IEnumerable<string> OutputTables { get; set; }
-        
+
         [Option("timeZone", Required = false, HelpText = "time zone")]
         public string TimeZone { get; set; }
-        
+
         [Option("customTemplateDir", Required = false, HelpText = "custom template dirs")]
         public IEnumerable<string> CustomTemplateDirs { get; set; }
 
         [Option("validationFailAsError", Required = false, HelpText = "validation fail as error")]
         public bool ValidationFailAsError { get; set; }
-        
+
         [Option('x', "xargs", Required = false, HelpText = "args like -x a=1 -x b=2")]
         public IEnumerable<string> Xargs { get; set; }
-        
+
         [Option('v', "verbose", Required = false, HelpText = "verbose")]
         public bool Verbose { get; set; }
     }
-    
+
     private static ILogger s_logger;
 
     private static void Main(string[] args)
@@ -146,7 +146,7 @@ internal static class Program
         extract = null;
         return false;
     }
-    
+
     private static void AddCustomTemplateDirs(IEnumerable<string> dirs)
     {
         foreach (var dir in dirs)
@@ -172,7 +172,7 @@ internal static class Program
         }
         return ((Parsed<CommandOptions>)result).Value;
     }
-    
+
     private static Dictionary<string, string> ParseXargs(IEnumerable<string> xargs)
     {
         var result = new Dictionary<string, string>();
@@ -234,7 +234,7 @@ internal static class Program
         s_logger.Info("");
         s_logger.Info(" =============================================================================================");
     }
-    
+
     private static void InitSimpleNLogConfigure(NLog.LogLevel minConsoleLogLevel)
     {
         var logConfig = new NLog.Config.LoggingConfiguration();

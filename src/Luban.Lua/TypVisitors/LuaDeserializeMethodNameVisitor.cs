@@ -5,7 +5,7 @@ namespace Luban.Lua.TypVisitors;
 
 public class LuaDeserializeMethodNameVisitor : ITypeFuncVisitor<string>
 {
-    public static LuaDeserializeMethodNameVisitor Ins { get; } = new ();
+    public static LuaDeserializeMethodNameVisitor Ins { get; } = new();
 
     public string Accept(TBool type)
     {

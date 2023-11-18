@@ -9,7 +9,7 @@ namespace Luban.DataExporter.Builtin.Yaml;
 public class YamlDataTarget : DataTargetBase
 {
     protected override string OutputFileExt => "yml";
-    
+
     public YamlNode WriteAsArray(List<Record> datas)
     {
 

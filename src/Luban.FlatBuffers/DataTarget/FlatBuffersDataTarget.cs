@@ -11,7 +11,7 @@ namespace Luban.FlatBuffers.DataTarget;
 public class FlatBuffersDataTarget : DataTargetBase
 {
     protected override string OutputFileExt => "json";
-    
+
     private void WriteAsTable(List<Record> datas, Utf8JsonWriter x)
     {
         x.WriteStartObject();
@@ -27,7 +27,7 @@ public class FlatBuffersDataTarget : DataTargetBase
     }
 
     public override OutputFile ExportTable(DefTable table, List<Record> records)
-    {                  
+    {
         var ss = new MemoryStream();
         var jsonWriter = new Utf8JsonWriter(ss, new JsonWriterOptions()
         {

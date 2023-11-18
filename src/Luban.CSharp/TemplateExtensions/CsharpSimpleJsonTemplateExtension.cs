@@ -17,7 +17,7 @@ public class CsharpSimpleJsonTemplateExtension : ScriptObject
             return type.Apply(SimpleJsonDeserializeVisitor.Ins, jsonVar, fieldName, 0);
         }
     }
-    
+
     public static string DeserializeField(string fieldName, string jsonVar, string jsonFieldName, TType type)
     {
         if (type.IsNullable)

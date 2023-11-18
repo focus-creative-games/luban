@@ -7,13 +7,13 @@ namespace Luban.Validator;
 
 public class ValidatorManager
 {
-    public static ValidatorManager Ins { get; } = new ();
+    public static ValidatorManager Ins { get; } = new();
 
     public void Init()
     {
-        
+
     }
-    
+
     public void InitValidatorsRecursive(TType type)
     {
         foreach (var (tagName, tagValue) in type.Tags)
@@ -73,7 +73,7 @@ public class ValidatorManager
         validator.Args = args;
         return validator;
     }
-    
+
     public bool TryCreateDataValidator(string name, string args, out IDataValidator validator)
     {
         if (CustomBehaviourManager.Ins.TryCreateBehaviour<IDataValidator, ValidatorAttribute>(name, out validator))

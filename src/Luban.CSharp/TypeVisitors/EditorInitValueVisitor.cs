@@ -8,7 +8,7 @@ public class EditorInitValueVisitor : CtorDefaultValueVisitor
 
     public override string Accept(TEnum type)
     {
-        return $"{(type.DefEnum.Items.Count > 0 ? $"{type.Apply(EditorDeclaringTypeNameVisitor.Ins)}."+type.DefEnum.Items[0].Name : "default")}";
+        return $"{(type.DefEnum.Items.Count > 0 ? $"{type.Apply(EditorDeclaringTypeNameVisitor.Ins)}." + type.DefEnum.Items[0].Name : "default")}";
     }
 
     public override string Accept(TDateTime type)

@@ -11,7 +11,7 @@ namespace Luban.CodeTarget;
 public abstract class AllInOneTemplateCodeTargetBase : TemplateCodeTargetBase
 {
     protected abstract string DefaultOutputFileName { get; }
-    
+
     public override void Handle(GenerationContext ctx, OutputFileManifest manifest)
     {
         string outputSchemaFileName = EnvManager.Current.GetOptionOrDefault(Name, $"outputFile", true, DefaultOutputFileName);
@@ -21,7 +21,7 @@ public abstract class AllInOneTemplateCodeTargetBase : TemplateCodeTargetBase
             Content = GenerateSchema(ctx),
         });
     }
-        
+
     protected virtual string GenerateSchema(GenerationContext ctx)
     {
         var writer = new CodeWriter();

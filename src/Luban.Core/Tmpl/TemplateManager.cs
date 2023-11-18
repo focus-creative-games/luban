@@ -8,7 +8,7 @@ namespace Luban.Tmpl;
 public class TemplateManager
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
-    
+
     public static TemplateManager Ins { get; } = new();
 
 

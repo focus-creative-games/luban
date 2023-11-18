@@ -245,9 +245,11 @@ public static class DefUtil
         {
             case "":
             case "r":
-            case "row": return true;
+            case "row":
+                return true;
             case "c":
-            case "column": return false;
+            case "column":
+                return false;
             default:
             {
                 throw new Exception($"orientation 属性值只能为row|r|column|c");

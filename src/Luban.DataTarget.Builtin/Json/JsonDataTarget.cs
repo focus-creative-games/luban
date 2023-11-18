@@ -11,7 +11,7 @@ public class JsonDataTarget : DataTargetBase
     protected override string OutputFileExt => "json";
 
     public static bool UseCompactJson => EnvManager.Current.GetBoolOptionOrDefault($"{FamilyPrefix}.json", "compact", true, false);
-    
+
     protected virtual JsonDataVisitor ImplJsonDataVisitor => JsonDataVisitor.Ins;
 
     public void WriteAsArray(List<Record> datas, Utf8JsonWriter x, JsonDataVisitor jsonDataVisitor)
@@ -25,7 +25,7 @@ public class JsonDataTarget : DataTargetBase
     }
 
     public override OutputFile ExportTable(DefTable table, List<Record> records)
-    {                  
+    {
         var ss = new MemoryStream();
         var jsonWriter = new Utf8JsonWriter(ss, new JsonWriterOptions()
         {

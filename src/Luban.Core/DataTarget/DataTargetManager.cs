@@ -10,7 +10,7 @@ public class DataTargetManager
 
     public void Init()
     {
-        
+
     }
 
     public IDataExporter CreateDataExporter(string name)

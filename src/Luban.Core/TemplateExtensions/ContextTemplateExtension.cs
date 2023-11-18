@@ -4,7 +4,7 @@ namespace Luban.TemplateExtensions;
 
 public class ContextTemplateExtension : ScriptObject
 {
-    
+
 
     public static bool HasTag(dynamic obj, string attrName)
     {

@@ -5,7 +5,7 @@ namespace Luban.Typescript.TypeVisitors;
 
 public class JsonDeserializeVisitor : DecoratorFuncVisitor<string, string, string>
 {
-    public static JsonDeserializeVisitor Ins { get; } = new ();
+    public static JsonDeserializeVisitor Ins { get; } = new();
 
     public override string DoAccept(TType type, string jsonFieldName, string fieldName)
     {

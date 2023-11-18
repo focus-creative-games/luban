@@ -9,9 +9,9 @@ public class OutputSaverManager
 
     public void Init()
     {
-        
+
     }
-    
+
     public IOutputSaver GetOutputSaver(string name)
     {
         return CustomBehaviourManager.Ins.CreateBehaviour<IOutputSaver, OutputSaverAttribute>(name);

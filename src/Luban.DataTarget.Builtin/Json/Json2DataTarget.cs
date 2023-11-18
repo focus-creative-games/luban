@@ -10,7 +10,7 @@ namespace Luban.DataExporter.Builtin.Json;
 public class Json2DataTarget : JsonDataTarget
 {
     protected override string OutputFileExt => "json";
-    
+
     private void WriteAsObject(DefTable table, List<Record> datas, Utf8JsonWriter x)
     {
         switch (table.Mode)
@@ -48,11 +48,11 @@ public class Json2DataTarget : JsonDataTarget
     }
 
     public override OutputFile ExportTable(DefTable table, List<Record> records)
-    {                  
+    {
         var ss = new MemoryStream();
         var jsonWriter = new Utf8JsonWriter(ss, new JsonWriterOptions()
         {
-            Indented = ! UseCompactJson,
+            Indented = !UseCompactJson,
             SkipValidation = false,
             Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
         });

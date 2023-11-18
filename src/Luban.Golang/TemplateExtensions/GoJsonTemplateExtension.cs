@@ -11,12 +11,12 @@ public class GoJsonTemplateExtension : ScriptObject
     // {
     //     return type.Apply(JavaJsonUnderlyingDeserializeVisitor.Ins, jsonVar, fieldName, 0);
     // }
-    
+
     public static string DeserializeField(TType type, string varName, string fieldName, string bufName)
     {
         return type.Apply(DeserializeJsonFieldVisitor.Ins, varName, fieldName, bufName);
     }
-    
+
     public static string CollectImport(DefBean bean)
     {
         var imports = new HashSet<string>();
@@ -24,7 +24,7 @@ public class GoJsonTemplateExtension : ScriptObject
         {
             imports.Add("errors");
         }
-        
+
         foreach (var f in bean.HierarchyExportFields)
         {
             f.CType.Apply(TypeVisitors.JsonImport.Ins, imports);

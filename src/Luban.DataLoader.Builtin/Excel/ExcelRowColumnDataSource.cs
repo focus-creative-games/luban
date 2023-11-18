@@ -22,7 +22,7 @@ public class ExcelRowColumnDataSource : DataLoaderBase
     {
         s_logger.Trace("{} {}", rawUrl, sheetName);
         RawUrl = rawUrl;
-        
+
         foreach (RawSheet rawSheet in SheetLoadUtil.LoadRawSheets(rawUrl, sheetName, stream))
         {
             var sheet = new RowColumnSheet(rawUrl, sheetName);

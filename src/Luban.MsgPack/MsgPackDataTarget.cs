@@ -20,7 +20,7 @@ public class MsgPackDataTarget : DataTargetBase
             MsgPackDataVisitor.Ins.Accept(record.Data, ref writer);
         }
     }
-    
+
     public override OutputFile ExportTable(DefTable table, List<Record> records)
     {
         var ms = new System.Buffers.ArrayBufferWriter<byte>();

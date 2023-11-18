@@ -8,7 +8,7 @@ namespace Luban.DataExporter.Builtin.Xml;
 public class ToXmlLiteralVisitor : ToLiteralVisitorBase
 {
     public static ToXmlLiteralVisitor Ins { get; } = new();
-    
+
     public override string Accept(DBean type)
     {
         throw new NotSupportedException();

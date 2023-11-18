@@ -102,7 +102,8 @@ public class Title
                 sub.Init();
             }
         }
-        SubHierarchyMultiRows = SubTitleList.Any(t => t.HierarchyMultiRows); ;
+        SubHierarchyMultiRows = SubTitleList.Any(t => t.HierarchyMultiRows);
+        ;
         HierarchyMultiRows = SelfMultiRows || SubHierarchyMultiRows;
     }
 

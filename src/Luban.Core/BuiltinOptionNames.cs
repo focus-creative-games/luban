@@ -3,19 +3,19 @@ namespace Luban;
 public static class BuiltinOptionNames
 {
     public const string InputDataDir = "inputDataDir";
-    
+
     public const string OutputCodeDir = "outputCodeDir";
-    
+
     public const string OutputDataDir = "outputDataDir";
 
-    public const string CodeStyle= "codeStyle";
-    
+    public const string CodeStyle = "codeStyle";
+
     public const string DataExporter = "dataExporter";
 
     public const string CodePostprocess = "codePostprocess";
 
     public const string DataPostprocess = "dataPostprocess";
-    
+
     public const string OutputSaver = "outputSaver";
 
     public const string CleanUpOutputDir = "cleanUpOutputDir";
@@ -33,7 +33,7 @@ public static class BuiltinOptionNames
     public const string TextKeyFieldName = "key";
 
     public const string TypeMapperType = "type";
-    
+
     public const string TypeMapperConstructor = "constructor";
 
     public const string PathValidatorFamily = "pathValidator";

@@ -9,7 +9,7 @@ namespace Luban.Bson;
 public class BsonDataTarget : DataTargetBase
 {
     protected override string OutputFileExt => "bson";
-    
+
 
     private void WriteAsArray(List<Record> datas, BsonDataWriter x)
     {
