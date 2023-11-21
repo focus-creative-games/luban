@@ -114,7 +114,10 @@ public {{class_modifier __bean}} partial class {{__name}} : {{if parent_def_type
         {{~for field in export_fields~}}
         {{generate_resolve_field_ref field}}
         {{~end~}}
+
+        PartialResolveRef(tables);
     }
+    partial void PartialResolveRef(Tables tables);
 
     public override string ToString()
     {
