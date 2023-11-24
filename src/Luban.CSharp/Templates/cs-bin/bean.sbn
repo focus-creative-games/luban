@@ -31,6 +31,24 @@ func generate_resolve_field_ref
         else
             ret (get_ref_name field) + ' = tables.' + tableName + '.GetOrDefault(' + fieldName + ');'
         end
+    else if can_generate_collection_ref field
+        collection_ref_table = get_collection_ref_table field
+        tableName = format_property_name __code_style collection_ref_table.name
+		if field.ctype.type_name == 'list' || field.ctype.type_name == 'set'
+            line1 = (get_ref_name field) + ' = new ' + (declaring_collection_ref_name field.ctype) + '();' + '\n'
+            line2 = 'foreach (var _v in ' + fieldName + ') { ' + (get_ref_name field) + '.Add(tables.' + tableName + '.GetOrDefault(_v)); }' + '\n'
+            ret line1 + line2
+        else if field.ctype.type_name == 'array'
+            line1 = (get_ref_name field) + ' = new ' + (declaring_type_name collection_ref_table.value_ttype) + '[' + fieldName + '.Length];' + '\n'
+            line2 = 'for (int _i = 0; _i < ' + fieldName + '.Length; _i++) { ' + (get_ref_name field) + '[_i] = tables.' + tableName + '.GetOrDefault(' + fieldName + '[_i]); }' + '\n'
+            ret line1 + line2
+		else if field.ctype.type_name == 'map'
+            line1 = (get_ref_name field) + ' = new ' + (declaring_collection_ref_name field.ctype) + '();' + '\n'
+			line2 = 'foreach (var (_k,_v) in ' + fieldName + ') { ' + (get_ref_name field) + '.Add(_k, tables.' + tableName + '.GetOrDefault(_v)); }' + '\n'
+			ret line1 + line2
+		else
+			ret ''
+		end
     else
         if (is_field_bean_need_resolve_ref field)
             ret fieldName + '?.ResolveRef(tables);'
@@ -92,6 +110,8 @@ public {{class_modifier __bean}} partial class {{__name}} : {{if parent_def_type
     public readonly {{declaring_type_name field.ctype}} {{format_property_name __code_style field.name}};
     {{~if can_generate_ref field~}}
     public {{declaring_type_name (get_ref_type field)}} {{get_ref_name field}};
+    {{~else if can_generate_collection_ref field~}}
+    public {{declaring_collection_ref_name field.ctype}} {{get_ref_name field}};
     {{~end~}}
    {{~if has_index field
         indexMapType = get_index_map_type field
