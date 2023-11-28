@@ -27,6 +27,8 @@ public class CodeWriter
         {
             sb.AppendLine(line);
         }
+        sb.Replace("\r\n", "\n");
+        sb.Replace("\n\r", "\n");
         return sb.ToString();
     }
 }
