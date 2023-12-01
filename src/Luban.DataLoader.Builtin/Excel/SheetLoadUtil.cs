@@ -67,7 +67,7 @@ public static class SheetLoadUtil
         ValidateTitles(cells);
         var title = ParseTitle(cells, reader.MergeCells, orientRow);
         cells.RemoveAll(c => IsNotDataRow(c));
-        return new RawSheet() { Title = title, TableName = tableName, Cells = cells };
+        return new RawSheet() { Title = title, TableName = tableName, SheetName = reader.Name, Cells = cells };
     }
 
 
