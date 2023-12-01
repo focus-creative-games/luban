@@ -44,4 +44,28 @@
       <PackageReference Include="Scriban" Version="5.7.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Update="Assets\Language_Chinese.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Language_Chinese.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Assets\Language_English.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Language_English.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Update="Assets\Language_Chinese.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Language_Chinese.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Assets\Language_English.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Language_English.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
 </Project>
