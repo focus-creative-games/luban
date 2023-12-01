@@ -25,7 +25,7 @@ public class ExcelRowColumnDataSource : DataLoaderBase
 
         foreach (RawSheet rawSheet in SheetLoadUtil.LoadRawSheets(rawUrl, sheetName, stream))
         {
-            var sheet = new RowColumnSheet(rawUrl, sheetName);
+            var sheet = new RowColumnSheet(rawUrl, sheetName, rawSheet.SheetName);
             sheet.Load(rawSheet);
             _sheets.Add(sheet);
         }
@@ -40,7 +40,7 @@ public class ExcelRowColumnDataSource : DataLoaderBase
     {
         foreach (RawSheet rawSheet in rawSheets)
         {
-            var sheet = new RowColumnSheet("__intern__", rawSheet.TableName);
+            var sheet = new RowColumnSheet("__intern__", rawSheet.TableName, rawSheet.SheetName);
             sheet.Load(rawSheet);
             _sheets.Add(sheet);
         }

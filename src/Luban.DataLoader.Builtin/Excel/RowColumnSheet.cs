@@ -8,12 +8,15 @@ class RowColumnSheet
 
     public string RawUrl { get; }
 
+    public string SheetName { get; }
+
     public List<(string Tag, TitleRow Row)> Rows { get; } = new();
 
-    public RowColumnSheet(string rawUrl, string name)
+    public RowColumnSheet(string rawUrl, string name, string sheetName)
     {
         this.RawUrl = rawUrl;
         this.Name = name;
+        this.SheetName =sheetName;
     }
 
     private string GetRowTag(List<Cell> row)
