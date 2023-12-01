@@ -213,6 +213,7 @@ internal static class Program
 
     private static void SetupApp(CommandOptions opts)
     {
+        Language.Init();
         ConsoleUtil.EnableQuickEditMode(false);
         Console.OutputEncoding = Encoding.UTF8;
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -230,7 +231,7 @@ internal static class Program
     {
         s_logger.Info(" =============================================================================================");
         s_logger.Info("");
-        s_logger.Info("    Luban is developed by Code Philosophy Technology Co., LTD. website: https://code-philosophy.com");
+        s_logger.Info(Language.GetString("CopyRight"));
         s_logger.Info("");
         s_logger.Info(" =============================================================================================");
     }
