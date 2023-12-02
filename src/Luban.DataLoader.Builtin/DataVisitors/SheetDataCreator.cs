@@ -281,7 +281,7 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
             }
             catch (Exception e)
             {
-                var dce = new DataCreateException(e, $"字段：{fname} 位置:{field.Location}");
+                 var dce = new DataCreateException(e, $"Sheet:{sheet.SheetName} 字段:{fname} 位置:{field.Location}");
                 dce.Push(bean, f);
                 throw dce;
             }

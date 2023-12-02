@@ -6,5 +6,7 @@ public class RawSheet
 
     public string TableName { get; set; }
 
+    public string SheetName { get; set; }
+
     public List<List<Cell>> Cells { get; set; }
 }
