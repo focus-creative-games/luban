@@ -67,7 +67,7 @@ public class ExcelRowColumnDataSource : DataLoaderBase
                         continue;
                     }
                     var data = (DBean)type.Apply(SheetDataCreator.Ins, sheet, row);
-                    datas.Add(new Record(data, sheet.RawUrl, DataUtil.ParseTags(tagStr)));
+                    datas.Add(new Record(data, sheet.RawUrl, sheet.SheetName, DataUtil.ParseTags(tagStr)));
                 }
             }
             catch (DataCreateException dce)

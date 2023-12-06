@@ -12,6 +12,8 @@ public class Record
 
     public List<string> Tags { get; }
 
+    public string SheetName { get; }
+
     public bool IsNotFiltered(List<string> excludeTags)
     {
         if (Tags == null)
@@ -20,7 +22,13 @@ public class Record
         }
         return Tags.TrueForAll(t => !excludeTags.Contains(t));
     }
-
+    public Record(DBean data, string source, string sheetName, List<string> tags)
+    {
+        Data = data;
+        Source = source;
+        Tags = tags;
+        SheetName = sheetName;
+    }
     public Record(DBean data, string source, List<string> tags)
     {
         Data = data;

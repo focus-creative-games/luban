@@ -14,5 +14,7 @@ public abstract class DataValidatorBase : IDataValidator
 
     protected static string Source => DataValidatorContext.CurrentVisitor.CurrentValidateRecord.Source;
 
+    protected static string SheetName => DataValidatorContext.CurrentVisitor.CurrentValidateRecord.SheetName;
+
     protected static string RecordPath => DataValidatorContext.CurrentRecordPath;
 }
