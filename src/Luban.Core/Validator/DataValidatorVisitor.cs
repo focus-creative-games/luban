@@ -35,6 +35,7 @@ public class DataValidatorVisitor : TypeActionVisitorAdaptor<DType>
             DBean data = r.Data;
             _path.Clear();
             _path.Push(table.FullName);
+            _path.Push(r.SheetName);
             if (table.IsMapTable)
             {
                 _path.Push(data.Fields[keyIndex]);

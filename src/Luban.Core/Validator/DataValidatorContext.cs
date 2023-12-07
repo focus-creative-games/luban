@@ -10,8 +10,7 @@ public class DataValidatorContext
     [field: ThreadStatic]
     public static DataValidatorVisitor CurrentVisitor { get; set; }
 
-    public static string CurrentRecordPath =>
-                 TypeUtil.MakeFullName(CurrentVisitor.Path, CurrentVisitor.CurrentValidateRecord.SheetName);
+    public static string CurrentRecordPath => TypeUtil.MakeFullName(CurrentVisitor.Path);
 
     public DefAssembly Assembly { get; }
 

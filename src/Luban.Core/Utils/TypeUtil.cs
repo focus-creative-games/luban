@@ -11,7 +11,7 @@ public static class TypeUtil
         return (fullName.Substring(0, index), fullName.Substring(index + 1));
     }
 
-    public static string MakeFullName(Stack<object> path, string sheetName = default)
+    public static string MakeFullName(Stack<object> path)
     {
         var reverse = new List<string>();
         int index = 0;
@@ -19,10 +19,6 @@ public static class TypeUtil
         {
             if (e is not string)
             {
-                if (!string.IsNullOrEmpty(sheetName))
-                {
-                    reverse.Add("@" + sheetName);
-                }
                 reverse.Add("[" + e + "]");
             }
             else
