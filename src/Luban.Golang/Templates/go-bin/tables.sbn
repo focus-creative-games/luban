@@ -2,7 +2,10 @@
 package {{__namespace}};
 {{~end~}}
 
-import "{{__luban_module_name}}"
+import (
+    "{{__luban_module_name}}"
+    "errors"
+)
 
 type ByteBufLoader func(string) (*luban.ByteBuf, error)
 
@@ -22,7 +25,7 @@ func NewTables(loader ByteBufLoader) (*{{__name}}, error) {
         return nil, err
     }
     if tables.{{table.name}}, err = New{{full_name table}}(buf) ; err != nil {
-        return nil, err
+        return nil, errors.Join(errors.New("failed to load {{table.name}}"), err)
     }
     {{~end~}}
     return tables, nil
