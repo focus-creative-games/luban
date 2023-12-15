@@ -67,12 +67,12 @@ public class ExcelRowColumnDataSource : DataLoaderBase
                         continue;
                     }
                     var data = (DBean)type.Apply(SheetDataCreator.Ins, sheet, row);
-                    datas.Add(new Record(data, sheet.RawUrl, DataUtil.ParseTags(tagStr)));
+                    datas.Add(new Record(data, sheet.UrlWithParams, DataUtil.ParseTags(tagStr)));
                 }
             }
             catch (DataCreateException dce)
             {
-                dce.OriginDataLocation = sheet.RawUrl;
+                dce.OriginDataLocation = sheet.UrlWithParams;
                 throw;
             }
             catch (Exception e)

@@ -6,7 +6,9 @@ class RowColumnSheet
 
     public string Name { get; }
 
-    public string RawUrl { get; }
+    public string UrlWithoutParams { get; }
+
+    public string UrlWithParams => string.IsNullOrEmpty(SheetName) ? UrlWithoutParams : $"{SheetName}@{UrlWithoutParams}";
 
     public string SheetName { get; }
 
@@ -14,7 +16,7 @@ class RowColumnSheet
 
     public RowColumnSheet(string rawUrl, string name, string sheetName)
     {
-        this.RawUrl = rawUrl;
+        this.UrlWithoutParams = rawUrl;
         this.Name = name;
         this.SheetName =sheetName;
     }
