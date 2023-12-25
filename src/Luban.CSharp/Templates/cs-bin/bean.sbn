@@ -31,6 +31,15 @@ func generate_resolve_field_ref
         else
             ret (get_ref_name field) + ' = tables.' + tableName + '.GetOrDefault(' + fieldName + ');'
         end
+    else if can_generate_ref_group field
+        ref_tables = get_ref_group_tables field
+        content = ''
+        for ref_table in ref_tables
+            tableName = format_property_name __code_style ref_table.name
+            ref_field_name = (get_ref_name field) + '_' + tableName
+            content += ref_field_name + ' = tables.' + tableName + '.GetOrDefault(' + fieldName + ');' + '\n'
+        end
+        ret content
     else if can_generate_collection_ref field
         collection_ref_table = get_collection_ref_table field
         tableName = format_property_name __code_style collection_ref_table.name
@@ -102,22 +111,27 @@ public {{class_modifier __bean}} partial class {{__name}} : {{if parent_def_type
     }
 
     {{~ for field in export_fields ~}}
-{{~if field.comment != '' ~}}
+        {{~if field.comment != '' ~}}
     /// <summary>
     /// {{escape_comment field.comment}}
     /// </summary>
-{{~end~}}
+        {{~end~}}
     public readonly {{declaring_type_name field.ctype}} {{format_property_name __code_style field.name}};
-    {{~if can_generate_ref field~}}
+        {{~if can_generate_ref field~}}
     public {{declaring_type_name (get_ref_type field)}} {{get_ref_name field}};
-    {{~else if can_generate_collection_ref field~}}
+        {{~else if can_generate_ref_group field~}}
+            {{~ ref_tables = get_ref_group_tables field ~}}
+            {{~ for ref_table in ref_tables ~}}
+    public {{declaring_type_name ref_table.value_ttype}} {{get_ref_name field}}_{{format_property_name __code_style ref_table.name}};
+            {{~end~}}
+        {{~else if can_generate_collection_ref field~}}
     public {{declaring_collection_ref_name field.ctype}} {{get_ref_name field}};
-    {{~end~}}
+        {{~end~}}
    {{~if has_index field
         indexMapType = get_index_map_type field
    ~}}
     public readonly {{declaring_type_name indexMapType}} {{get_index_var_name field}} = new {{declaring_type_name indexMapType}}();
-   {{~end~}}
+    {{~end~}}
    {{~end~}}
    
 {{~if !__bean.is_abstract_type && !__bean.is_value_type~}}

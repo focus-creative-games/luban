@@ -42,6 +42,16 @@ public class TypeTemplateExtension : ScriptObject
 
         return GetRefTable(field) != null;
     }
+    public static bool CanGenerateRefGroup(DefField field)
+    {
+        if (field.CType.IsCollection)
+        {
+            return false;
+        }
+
+        var refTables = GetRefGroupTables(field);
+        return refTables != null && refTables.Count > 0;
+    }
 
     public static bool CanGenerateCollectionRef(DefField field)
     {
@@ -75,6 +85,15 @@ public class TypeTemplateExtension : ScriptObject
         if (field.CType.GetTag("ref") is { } value && GenerationContext.Current.Assembly.GetCfgTable(value.Replace("?", "")) is { } cfgTable)
         {
             return cfgTable;
+        }
+        return null;
+    }
+
+    public static List<DefTable> GetRefGroupTables(DefField field)
+    {
+        if (field.CType.GetTag("ref") is { } value && GenerationContext.Current.Assembly.GetRefGroup(value.Replace("?", "")) is { } refGroup)
+        {
+            return refGroup.Refs.Select(s => GenerationContext.Current.Assembly.GetCfgTable(s)).ToList();
         }
         return null;
     }
