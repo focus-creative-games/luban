@@ -134,6 +134,8 @@ public partial class {{__name}}
 
      private readonly {{declaring_type_name value_type}} _data;
 
+     public {{declaring_type_name value_type}} Data => _data;
+
     public {{__name}}(ByteBuf _buf)
     {
         int n = _buf.ReadSize();

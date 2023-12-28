@@ -133,6 +133,8 @@ public partial class {{__name}}
 
      private readonly {{declaring_type_name __value_type}} _data;
 
+     public {{declaring_type_name __value_type}} Data => _data;
+
     public {{__name}}(JsonElement _buf)
     {
         int n = _buf.GetArrayLength();
