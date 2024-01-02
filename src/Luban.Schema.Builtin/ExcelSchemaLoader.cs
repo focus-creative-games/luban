@@ -131,6 +131,29 @@ public class ExcelSchemaLoader : SchemaLoaderBase
         enumItemType.Compile();
         enumItemType.PostCompile();
 
+        var typeMapperInfoType = new DefBean(new RawBean()
+        {
+            Namespace = "__intern__",
+            Name = "__TypeMapperInfo__",
+            Parent = "",
+            Alias = "",
+            IsValueType = false,
+            Sep = "",
+            Fields = new List<RawField>
+                {
+                    new() { Name = "targets", Type = "list,string" },
+                    new() { Name = "code_targets", Type = "list,string" },
+                    new() { Name = "options", Type = "map,string,string" },
+                },
+        })
+        {
+            Assembly = ass,
+        };
+        typeMapperInfoType.PreCompile();
+        typeMapperInfoType.Compile();
+        typeMapperInfoType.PostCompile();
+        ass.AddType(typeMapperInfoType);
+
         var defTableRecordType = new DefBean(new RawBean()
         {
             Namespace = "__intern__",
@@ -148,6 +171,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
                 new() { Name = "tags", Type = "string" },
                 new() { Name = "unique", Type = "bool" },
                 new() { Name = "items", Type = "list,__EnumItem__" },
+                new() { Name = "type_mappers", Type = "list,__TypeMapperInfo__" },
             }
         })
         {
@@ -175,7 +199,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
             string module = TypeUtil.GetNamespace(fullName);
 
             DList items = (data.GetField("items") as DList);
-
+            DList typeMappers = (data.GetField("type_mappers") as DList);
             var curEnum = new RawEnum()
             {
                 Name = name,
@@ -192,6 +216,12 @@ public class ExcelSchemaLoader : SchemaLoaderBase
                     Value = (d.GetField("value") as DString).Value,
                     Comment = (d.GetField("comment") as DString).Value,
                     Tags = DefUtil.ParseAttrs((d.GetField("tags") as DString).Value),
+                }).ToList(),
+                TypeMappers = typeMappers.Datas.Select(d => (DBean)d).Select(b => new TypeMapper()
+                {
+                    Targets = (b.GetField("targets") as DList).Datas.Select(d => (d as DString).Value).ToList(),
+                    CodeTargets = (b.GetField("code_targets") as DList).Datas.Select(d => (d as DString).Value).ToList(),
+                    Options = (b.GetField("options") as DMap).Datas.ToDictionary(d => (d.Key as DString).Value, d => (d.Value as DString).Value),
                 }).ToList(),
             };
             Collector.Add(curEnum);
@@ -225,12 +255,33 @@ public class ExcelSchemaLoader : SchemaLoaderBase
         {
             Assembly = ass,
         };
-
         defBeanFieldType.PreCompile();
         defBeanFieldType.Compile();
         defBeanFieldType.PostCompile();
-
         ass.AddType(defBeanFieldType);
+
+        var typeMapperInfoType = new DefBean(new RawBean()
+        {
+            Namespace = "__intern__",
+            Name = "__TypeMapperInfo__",
+            Parent = "",
+            Alias = "",
+            IsValueType = false,
+            Sep = "",
+            Fields = new List<RawField>
+                {
+                    new() { Name = "targets", Type = "list,string" },
+                    new() { Name = "code_targets", Type = "list,string" },
+                    new() { Name = "options", Type = "map,string,string" },
+                },
+        })
+        {
+            Assembly = ass,
+        };
+        typeMapperInfoType.PreCompile();
+        typeMapperInfoType.Compile();
+        typeMapperInfoType.PostCompile();
+        ass.AddType(typeMapperInfoType);
 
         var defTableRecordType = new DefBean(new RawBean()
         {
@@ -243,7 +294,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
             Fields = new List<RawField>
             {
                 new() { Name = "full_name", Type = "string" },
-                new() {Name =  "parent", Type = "string" },
+                new() { Name = "parent", Type = "string" },
                 new() { Name = "valueType", Type = "bool" },
                 new() { Name = "sep", Type = "string" },
                 new() { Name = "alias", Type = "string" },
@@ -251,6 +302,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
                 new() { Name = "tags", Type = "string" },
                 new() { Name = "group", Type = "string" },
                 new() { Name = "fields", Type = "list,__FieldInfo__" },
+                new() { Name = "type_mappers", Type = "list,__TypeMapperInfo__" },
             }
         })
         {
@@ -283,6 +335,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
             string tags = (data.GetField("tags") as DString).Value.Trim();
             string group = (data.GetField("group") as DString).Value.Trim();
             DList fields = data.GetField("fields") as DList;
+            DList typeMappers = data.GetField("type_mappers") as DList;
             var curBean = new RawBean()
             {
                 Name = name,
@@ -303,6 +356,12 @@ public class ExcelSchemaLoader : SchemaLoaderBase
                     (b.GetField("tags") as DString).Value.Trim(),
                     false
                 )).ToList(),
+                TypeMappers = typeMappers.Datas.Select(d => (DBean)d).Select(b => new TypeMapper()
+                {
+                    Targets = (b.GetField("targets") as DList).Datas.Select(d => (d as DString).Value).ToList(),
+                    CodeTargets = (b.GetField("code_targets") as DList).Datas.Select(d => (d as DString).Value).ToList(),
+                    Options = (b.GetField("options") as DMap).Datas.ToDictionary(d => (d.Key as DString).Value, d => (d.Value as DString).Value),
+                }).ToList(),
             };
             Collector.Add(curBean);
         };
