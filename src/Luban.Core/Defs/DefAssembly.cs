@@ -54,14 +54,20 @@ public class DefAssembly
 
         foreach (var b in assembly.Beans)
         {
-            AddType(new DefBean(b));
+            if (NeedExport(b.Groups))
+            {
+                AddType(new DefBean(b));
+            }
         }
 
         foreach (var p in assembly.Tables)
         {
-            var table = new DefTable(p);
-            AddType(table);
-            AddCfgTable(table);
+            if (NeedExport(p.Groups))
+            {
+                var table = new DefTable(p);
+                AddType(table);
+                AddCfgTable(table);
+            }
         }
 
         _targets.AddRange(assembly.Targets);

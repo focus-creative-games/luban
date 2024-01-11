@@ -4,5 +4,5 @@ namespace Luban.Schema;
 
 public interface IBeanSchemaLoader
 {
-    RawBean Load(string fileName, string beanFullName);
+    RawBean Load(string fileName, string beanFullName, List<string> groups);
 }

@@ -7,12 +7,12 @@ namespace Luban.Schema.Builtin;
 [BeanSchemaLoader("default")]
 public class BeanSchemaFromExcelHeaderLoader : IBeanSchemaLoader
 {
-    public RawBean Load(string fileName, string beanFullName)
+    public RawBean Load(string fileName, string beanFullName, List<string> groups)
     {
-        return LoadTableValueTypeDefineFromFile(fileName, beanFullName);
+        return LoadTableValueTypeDefineFromFile(fileName, beanFullName, groups);
     }
 
-    public static RawBean LoadTableValueTypeDefineFromFile(string fileName, string valueTypeFullName)
+    public static RawBean LoadTableValueTypeDefineFromFile(string fileName, string valueTypeFullName, List<string> groups)
     {
         var valueTypeNamespace = TypeUtil.GetNamespace(valueTypeFullName);
         string valueTypeName = TypeUtil.GetName(valueTypeFullName);
@@ -22,7 +22,7 @@ public class BeanSchemaFromExcelHeaderLoader : IBeanSchemaLoader
             Name = valueTypeName,
             Comment = "",
             Parent = "",
-            Groups = new(),
+            Groups = groups,
             Fields = new(),
         };
 
