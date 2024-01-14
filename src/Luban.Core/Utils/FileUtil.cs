@@ -237,6 +237,10 @@ public static class FileUtil
                 {
                     continue;
                 }
+                if (file.EndsWith(".meta", StringComparison.Ordinal))
+                {
+                    continue;
+                }
                 files.Add(file.Replace('\\', '/'));
             }
             // must sort files for making generation stable.
