@@ -4,6 +4,7 @@ namespace Luban.Schema;
 
 public class LubanConfig
 {
+    public string ConfigFileName { get; set; }
     public List<RawGroup> Groups { get; set; }
 
     public List<RawTarget> Targets { get; set; }

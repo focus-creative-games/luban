@@ -65,12 +65,22 @@ public class GlobalConfigLoader : IConfigLoader
         };
         var globalConf = JsonSerializer.Deserialize<LubanConf>(File.ReadAllText(fileName, Encoding.UTF8), options);
 
+        var configFileName = Path.GetFileName(fileName);
+        var dataInputDir = Path.Combine(_curDir, globalConf.DataDir);
         List<RawGroup> groups = globalConf.Groups.Select(g => new RawGroup() { Names = g.Names, IsDefault = g.Default }).ToList();
         List<RawTarget> targets = globalConf.Targets.Select(t => new RawTarget() { Name = t.Name, Manager = t.Manager, Groups = t.Groups, TopModule = t.TopModule }).ToList();
 
         List<SchemaFileInfo> importFiles = new();
         foreach (var schemaFile in globalConf.SchemaFiles)
         {
+            if (string.IsNullOrEmpty(schemaFile.Type))
+            {
+                var fullPath = Path.Combine(_curDir, schemaFile.FileName);
+                if (!Directory.Exists(fullPath))
+                {
+                    throw new Exception($"{configFileName} schemal 文件错误: 目录'{fullPath}'不存在");
+                }
+            }
             string fileOrDirectory = Path.Combine(_curDir, schemaFile.FileName);
             foreach (var subFile in FileUtil.GetFileOrDirectory(fileOrDirectory))
             {
@@ -79,7 +89,8 @@ public class GlobalConfigLoader : IConfigLoader
         }
         return new LubanConfig()
         {
-            InputDataDir = Path.Combine(_curDir, globalConf.DataDir),
+            ConfigFileName = configFileName,
+            InputDataDir = dataInputDir,
             Groups = groups,
             Targets = targets,
             Imports = importFiles,

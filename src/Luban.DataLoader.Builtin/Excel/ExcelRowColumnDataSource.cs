@@ -32,7 +32,14 @@ public class ExcelRowColumnDataSource : DataLoaderBase
 
         if (_sheets.Count == 0)
         {
-            throw new Exception($"excel:{rawUrl} 不包含有效的单元薄(有效单元薄的A0单元格必须是##).");
+            if (!string.IsNullOrWhiteSpace(sheetName))
+            {
+                throw new Exception($"excel:‘{rawUrl}’ sheet:‘{sheetName}’ 不存在或者不是有效的单元簿(有效单元薄的A0单元格必须是##)");
+            }
+            else
+            {
+                throw new Exception($"excel: ‘{rawUrl}’ 不包含有效的单元薄(有效单元薄的A0单元格必须是##).");
+            }
         }
     }
 
