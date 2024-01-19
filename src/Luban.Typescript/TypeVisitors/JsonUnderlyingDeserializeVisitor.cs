@@ -5,61 +5,61 @@ using Luban.TypeVisitors;
 
 namespace Luban.Typescript.TypeVisitors;
 
-public class JsonUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string, string>
+public class JsonUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string, int, string>
 {
     public static JsonUnderlyingDeserializeVisitor Ins { get; } = new JsonUnderlyingDeserializeVisitor();
 
-    public string Accept(TBool type, string jsonVarName, string fieldName)
+    public string Accept(TBool type, string jsonVarName, string fieldName, int depth)
     {
         return $"{fieldName} = {jsonVarName}";
     }
 
-    public string Accept(TByte type, string jsonVarName, string fieldName)
+    public string Accept(TByte type, string jsonVarName, string fieldName, int depth)
     {
         return $"{fieldName} = {jsonVarName}";
     }
 
-    public string Accept(TShort type, string jsonVarName, string fieldName)
+    public string Accept(TShort type, string jsonVarName, string fieldName, int depth)
     {
         return $"{fieldName} = {jsonVarName}";
     }
 
-    public string Accept(TInt type, string jsonVarName, string fieldName)
+    public string Accept(TInt type, string jsonVarName, string fieldName, int depth)
     {
         return $"{fieldName} = {jsonVarName}";
     }
 
-    public string Accept(TLong type, string jsonVarName, string fieldName)
+    public string Accept(TLong type, string jsonVarName, string fieldName, int depth)
     {
         return $"{fieldName} = {jsonVarName}";
     }
 
-    public string Accept(TFloat type, string jsonVarName, string fieldName)
+    public string Accept(TFloat type, string jsonVarName, string fieldName, int depth)
     {
         return $"{fieldName} = {jsonVarName}";
     }
 
-    public string Accept(TDouble type, string jsonVarName, string fieldName)
+    public string Accept(TDouble type, string jsonVarName, string fieldName, int depth)
     {
         return $"{fieldName} = {jsonVarName}";
     }
 
-    public string Accept(TEnum type, string jsonVarName, string fieldName)
+    public string Accept(TEnum type, string jsonVarName, string fieldName, int depth)
     {
         return $"{fieldName} = {jsonVarName}";
     }
 
-    public string Accept(TString type, string jsonVarName, string fieldName)
+    public string Accept(TString type, string jsonVarName, string fieldName, int depth)
     {
         return $"{fieldName} = {jsonVarName}";
     }
 
-    public string Accept(TDateTime type, string jsonVarName, string fieldName)
+    public string Accept(TDateTime type, string jsonVarName, string fieldName, int depth)
     {
         return $"{fieldName} = {jsonVarName}";
     }
 
-    public string Accept(TBean type, string jsonVarName, string fieldName)
+    public string Accept(TBean type, string jsonVarName, string fieldName, int depth)
     {
         if (type.DefBean.IsAbstractType)
         {
@@ -71,17 +71,17 @@ public class JsonUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string,
         }
     }
 
-    public string Accept(TArray type, string jsonVarName, string fieldName)
+    public string Accept(TArray type, string jsonVarName, string fieldName, int depth)
     {
-        return $"{{ {fieldName} = []; for(let _ele of {jsonVarName}) {{ let _e; {type.ElementType.Apply(this, "_ele", "_e")}; {fieldName}.push(_e);}}}}";
+        return $"{{ {fieldName} = []; for(let _ele{depth} of {jsonVarName}) {{ let _e{depth}; {type.ElementType.Apply(this, $"_ele{depth}", $"_e{depth}", depth + 1)}; {fieldName}.push(_e{depth});}}}}";
     }
 
-    public string Accept(TList type, string jsonVarName, string fieldName)
+    public string Accept(TList type, string jsonVarName, string fieldName, int depth)
     {
-        return $"{{ {fieldName} = []; for(let _ele of {jsonVarName}) {{ let _e; {type.ElementType.Apply(this, "_ele", "_e")}; {fieldName}.push(_e);}}}}";
+        return $"{{ {fieldName} = []; for(let _ele{depth} of {jsonVarName}) {{ let _e{depth}; {type.ElementType.Apply(this, $"_ele{depth}", $"_e{depth}", depth + 1)}; {fieldName}.push(_e{depth});}}}}";
     }
 
-    public string Accept(TSet type, string jsonVarName, string fieldName)
+    public string Accept(TSet type, string jsonVarName, string fieldName, int depth)
     {
         if (type.Apply(SimpleJsonTypeVisitor.Ins))
         {
@@ -89,12 +89,12 @@ public class JsonUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string,
         }
         else
         {
-            return $"{{ {fieldName} = new {type.Apply(DeclaringTypeNameVisitor.Ins)}(); for(var _ele of {jsonVarName}) {{ let _e; {type.ElementType.Apply(this, "_ele", "_e")}; {fieldName}.add(_e);}}}}";
+            return $"{{ {fieldName} = new {type.Apply(DeclaringTypeNameVisitor.Ins)}(); for(var _ele{depth} of {jsonVarName}) {{ let _e{depth}; {type.ElementType.Apply(this, $"_ele{depth}", $"_e{depth}", depth + 1)}; {fieldName}.add(_e{depth});}}}}";
         }
     }
 
-    public string Accept(TMap type, string jsonVarName, string fieldName)
+    public string Accept(TMap type, string jsonVarName, string fieldName, int depth)
     {
-        return $"{fieldName} = new {type.Apply(DeclaringTypeNameVisitor.Ins)}(); for(var _entry_ of {jsonVarName}) {{ let _k; {type.KeyType.Apply(this, "_entry_[0]", "_k")};  let _v;  {type.ValueType.Apply(this, "_entry_[1]", "_v")}; {fieldName}.set(_k, _v);  }}";
+        return $"{fieldName} = new {type.Apply(DeclaringTypeNameVisitor.Ins)}(); for(var _entry{depth}_ of {jsonVarName}) {{ let _k{depth}; {type.KeyType.Apply(this, $"_entry{depth}_[0]", $"_k{depth}", depth + 1)};  let _v{depth};  {type.ValueType.Apply(this, $"_entry{depth}_[1]", $"_v{depth}", depth + 1)}; {fieldName}.set(_k{depth}, _v{depth});  }}";
     }
 }
