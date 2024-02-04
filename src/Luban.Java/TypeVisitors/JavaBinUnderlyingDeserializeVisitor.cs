@@ -1,5 +1,6 @@
 using Luban.Types;
 using Luban.TypeVisitors;
+using Luban.Utils;
 
 namespace Luban.Java.TypeVisitors;
 
@@ -44,7 +45,9 @@ class JavaBinUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string, str
 
     public string Accept(TEnum type, string bufName, string fieldName)
     {
-        return $"{fieldName} = {bufName}.readInt();";
+        string src = $"{bufName}.readInt()";
+        string constructor = type.DefEnum.TypeConstructorWithTypeMapper();
+        return $"{fieldName} = {(string.IsNullOrEmpty(constructor) ? src : $"{constructor}({src})")};";
     }
 
     public string Accept(TString type, string bufName, string fieldName)
@@ -54,7 +57,9 @@ class JavaBinUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string, str
 
     public string Accept(TBean type, string bufName, string fieldName)
     {
-        return $"{fieldName} = {type.DefBean.FullNameWithTopModule}.deserialize({bufName});";
+        string src = $"{type.DefBean.FullNameWithTopModule}.deserialize({bufName})";
+        string constructor = type.DefBean.TypeConstructorWithTypeMapper();
+        return $"{fieldName} = {(string.IsNullOrEmpty(constructor) ? src : $"{constructor}({src})")};";
     }
 
     public string Accept(TArray type, string bufName, string fieldName)
