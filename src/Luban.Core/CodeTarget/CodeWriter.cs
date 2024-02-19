@@ -28,7 +28,12 @@ public class CodeWriter
             sb.AppendLine(line);
         }
         sb.Replace("\r\n", "\n");
-        sb.Replace("\n\r", "\n");
+        sb.Replace("\r", "\n");
+        string lineEndingStyle = EnvManager.Current.GetOptionOrDefault(string.Empty, BuiltinOptionNames.CodeLineEndingStyle, true, string.Empty).ToUpper();
+        if (lineEndingStyle == "CRLF")
+        {
+            sb.Replace("\n", "\r\n");
+        }
         return sb.ToString();
     }
 }
