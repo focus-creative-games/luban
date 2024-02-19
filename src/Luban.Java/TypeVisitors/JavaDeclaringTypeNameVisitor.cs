@@ -1,5 +1,6 @@
 using Luban.Types;
 using Luban.TypeVisitors;
+using Luban.Utils;
 
 namespace Luban.Java.TypeVisitors;
 
@@ -44,8 +45,8 @@ public class JavaDeclaringTypeNameVisitor : ITypeFuncVisitor<string>
 
     public virtual string Accept(TEnum type)
     {
-        //return type.DefineEnum.FullNameWithTopModule;
-        return type.IsNullable ? "Integer" : "int";
+        string src = type.IsNullable ? "Integer" : "int";
+        return type.DefEnum.TypeNameWithTypeMapper() ?? src;
     }
 
     public string Accept(TString type)
@@ -60,7 +61,7 @@ public class JavaDeclaringTypeNameVisitor : ITypeFuncVisitor<string>
 
     public string Accept(TBean type)
     {
-        return type.DefBean.FullNameWithTopModule;
+        return type.DefBean.TypeNameWithTypeMapper() ?? type.DefBean.FullNameWithTopModule;
     }
 
     public string Accept(TArray type)
