@@ -59,6 +59,19 @@ public class DefBean : DefTypeBase
 
     public List<DefField> ExportFields => _exportFields ??= Fields.Where(f => f.NeedExport()).ToList();
 
+    public bool IsAssignableFrom(DefBean b)
+    {
+        while (b != null)
+        {
+            if (b == this)
+            {
+                return true;
+            }
+            b = b.ParentDefType;
+        }
+        return false;
+    }
+
     public bool IsDefineEquals(DefBean b)
     {
         return DeepCompareTypeDefine.Ins.Compare(this, b, new Dictionary<DefTypeBase, bool>(), new HashSet<DefTypeBase>());

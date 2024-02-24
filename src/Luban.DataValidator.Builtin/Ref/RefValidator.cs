@@ -155,7 +155,7 @@ public class RefValidator : DataValidatorBase
         string actualTable = table.FullName;
         string fieldTypeName = type.TypeName;
         string valueTypeName = table.ValueTType.DefBean.FullName;
-        if (!table.NeedExport() && field.NeedExport())
+        if (!table.NeedExport() && field.NeedExport() && field.HostType.Assembly.ExportTables.Any(t => t.ValueTType.DefBean.IsAssignableFrom(field.HostType)))
         {
             throw new Exception($"field:'{field}' ref 引用的表:'{actualTable}' 没有导出");
         }
