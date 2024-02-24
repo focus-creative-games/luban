@@ -93,6 +93,7 @@ internal static class Program
         catch (Exception e)
         {
             PrettyPrintException(e);
+            s_logger.Error("run failed!!!");
             Environment.Exit(1);
         }
     }
