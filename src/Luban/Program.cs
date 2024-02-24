@@ -64,6 +64,9 @@ internal static class Program
         [Option('x', "xargs", Required = false, HelpText = "args like -x a=1 -x b=2")]
         public IEnumerable<string> Xargs { get; set; }
 
+        [Option('l', "logConfig", Required = false, Default = "nlog.xml", HelpText = "nlog config file")]
+        public string LogConfig { get; set; }
+
         [Option('v', "verbose", Required = false, HelpText = "verbose")]
         public bool Verbose { get; set; }
     }
@@ -222,7 +225,7 @@ internal static class Program
         ThreadPool.SetMinThreads(Math.Max(4, processorCount), 0);
         ThreadPool.SetMaxThreads(Math.Max(16, processorCount * 2), 2);
 
-        InitSimpleNLogConfigure(opts.Verbose ? LogLevel.Trace : LogLevel.Info);
+        NLog.LogManager.Setup().LoadConfigurationFromFile(opts.LogConfig);
         s_logger = LogManager.GetCurrentClassLogger();
         PrintCopyRight();
     }
@@ -234,22 +237,5 @@ internal static class Program
         s_logger.Info("    Luban is developed by Code Philosophy Technology Co., LTD. website: https://code-philosophy.com");
         s_logger.Info("");
         s_logger.Info(" =============================================================================================");
-    }
-
-    private static void InitSimpleNLogConfigure(NLog.LogLevel minConsoleLogLevel)
-    {
-        var logConfig = new NLog.Config.LoggingConfiguration();
-        NLog.Layouts.Layout layout;
-        if (minConsoleLogLevel <= NLog.LogLevel.Debug)
-        {
-            layout = NLog.Layouts.Layout.FromString("${longdate}|${level:uppercase=true}|${callsite}:${callsite-linenumber}|${message}${onexception:${newline}${exception:format=tostring}${exception:format=StackTrace}}");
-        }
-        else
-        {
-            layout = NLog.Layouts.Layout.FromString("${longdate}|${message}${onexception:${newline}${exception:format=tostring}${exception:format=StackTrace}}");
-        }
-        logConfig.AddTarget("console", new NLog.Targets.ColoredConsoleTarget() { Layout = layout });
-        logConfig.AddRule(minConsoleLogLevel, NLog.LogLevel.Fatal, "console");
-        NLog.LogManager.Configuration = logConfig;
     }
 }

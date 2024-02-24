@@ -62,6 +62,9 @@
     </ItemGroup>
 
     <ItemGroup>
+      <None Update="nlog.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
       <None Update="Templates\common\flatbuffers\enum.sbn">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>

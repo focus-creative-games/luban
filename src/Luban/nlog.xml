@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<nlog xmlns="http://www.nlog-project.org/schemas/NLog.xsd"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+ <targets>
+	<default-wrapper xsi:type="AsyncWrapper"
+		name="default-wrapper"
+		queueLimit="1000000"
+		timeToSleepBetweenBatches="1"
+		batchSize="1000"
+		overflowAction="Block"
+	/>
+ 
+   <target name="logconsole" xsi:type="ColoredConsole" useDefaultRowHighlightingRules="false"
+	layout="${date}|${level:uppercase=true}|${message}${onexception:${newline}${exception:format=tostring}${exception:format=StackTrace}}" >
+		<highlight-row condition="level == LogLevel.Warn" foregroundColor="Yellow" />
+		<highlight-row condition="level == LogLevel.Error" foregroundColor="Red" />
+		<highlight-row condition="level == LogLevel.Fatal" foregroundColor="Red" backgroundColor="White" />
+   </target>
+ </targets>
+
+ <rules>   
+   <logger name="*" minlevel="Info" writeTo="logconsole" />
+ </rules>
+</nlog>
