@@ -34,6 +34,6 @@ public class IsRawNullableTypeVisitor : AllFalseVisitor
 
     public override bool Accept(TBean type)
     {
-        return true;
+        return !type.DefBean.IsValueType;
     }
 }
