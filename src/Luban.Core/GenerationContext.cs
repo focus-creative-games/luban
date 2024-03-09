@@ -105,7 +105,7 @@ public class GenerationContext
                 {
                     TBean.Create(false, bean, null).Apply(RefTypeVisitor.Ins, refTypes);
                 }
-                else if (t is DefEnum)
+                else if (t is DefEnum && NeedExportNotDefault(t.Groups))
                 {
                     refTypes.Add(t.FullName, t);
                 }
