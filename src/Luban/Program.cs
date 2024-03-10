@@ -234,7 +234,7 @@ internal static class Program
     {
         s_logger.Info(" =============================================================================================");
         s_logger.Info("");
-        s_logger.Info("    Luban is developed by Code Philosophy Technology Co., LTD. website: https://code-philosophy.com");
+        s_logger.Info("  Luban is developed by Code Philosophy Technology Co., LTD. https://code-philosophy.com");
         s_logger.Info("");
         s_logger.Info(" =============================================================================================");
     }
