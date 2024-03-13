@@ -116,6 +116,7 @@ public class DefaultPipeline : IPipeline
         s_logger.Info("process code target:{} begin", name);
         var outputManifest = new OutputFileManifest(name, OutputType.Code);
         GenerationContext.CurrentCodeTarget = codeTarget;
+        codeTarget.ValidateDefinition(_genCtx);
         codeTarget.Handle(_genCtx, outputManifest);
 
         outputManifest = PostProcess(BuiltinOptionNames.CodePostprocess, outputManifest);
