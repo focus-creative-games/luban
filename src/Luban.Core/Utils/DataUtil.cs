@@ -7,6 +7,22 @@ namespace Luban.Utils;
 
 public static class DataUtil
 {
+    public static bool ParseBool(string s)
+    {
+        s = s.ToLower().Trim();
+        switch (s)
+        {
+            case "true":
+            case "1":
+                return true;
+            case "false":
+            case "0":
+                return false;
+            default:
+                throw new Exception($"{s} 不是 bool 类型的值 (true|1 或 false|0)");
+        }
+    }
+
     private static readonly string[] dateTimeFormats = new string[] {
         "yyyy-M-d HH:mm:ss", "yyyy-M-d HH:mm", "yyyy-M-d HH", "yyyy-M-d",
         //"yyyy/MM/dd HH:mm:ss", "yyyy/MM/dd HH:mm", "yyyy/MM/dd HH", "yyyy/MM/dd",

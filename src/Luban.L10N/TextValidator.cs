@@ -1,6 +1,7 @@
 ﻿using Luban.Datas;
 using Luban.Defs;
 using Luban.Types;
+using Luban.Utils;
 using Luban.Validator;
 
 namespace Luban.L10N;
@@ -10,38 +11,28 @@ public class TextValidator : DataValidatorBase
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
-    private ITextProvider _provider;
-
-    private ITextProvider Provider
-    {
-        get
-        {
-            if (_provider == null)
-            {
-                string textProviderName = EnvManager.Current.GetOptionOrDefault(BuiltinOptionNames.L10NFamily, BuiltinOptionNames.TextProviderName, false, "default");
-                _provider = L10NManager.Ins.GetOrCreateContextUniqueTextProvider(textProviderName);
-            }
-            return _provider;
-        }
-    }
-
     public override void Compile(DefField field, TType type)
     {
         if (type is not TString)
         {
             throw new Exception($"field:{field} text validator supports string type only");
         }
-
     }
 
     public override void Validate(DataValidatorContext ctx, TType type, DType data)
     {
+        ITextProvider provider = GenerationContext.Current.TextProvider;
+        // dont' check when convertTextKeyToValue is true
+        if (provider == null || provider.ConvertTextKeyToValue)
+        {
+            return;
+        }
         string key = ((DString)data).Value;
         if (string.IsNullOrEmpty(key))
         {
             return;
         }
-        if (Provider.Enable && !Provider.IsValidKey(key))
+        if (!provider.IsValidKey(key))
         {
             s_logger.Error("记录 {}:{} (来自文件:{}) 不是一个有效的文本key", DataValidatorContext.CurrentRecordPath, data, Source);
             GenerationContext.Current.LogValidatorFail(this);

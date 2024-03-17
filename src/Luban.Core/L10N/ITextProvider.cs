@@ -2,11 +2,15 @@ namespace Luban.L10N;
 
 public interface ITextProvider
 {
-    bool Enable { get; }
-
     void Load();
+
+    void ProcessDatas();
 
     bool IsValidKey(string key);
 
-    string GetText(string key, string language);
+    bool TryGetText(string key, out string text);
+
+    void AddUnknownKey(string key);
+
+    bool ConvertTextKeyToValue { get; }
 }
