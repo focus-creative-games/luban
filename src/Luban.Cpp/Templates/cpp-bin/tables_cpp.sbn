@@ -1,0 +1,28 @@
+{{~for table in __tables~}}
+#include "{{to_snake_case table.name}}.h"
+{{~end~}}
+
+{{namespace_with_grace_begin __namespace}}
+
+{{__name}}::{{__name}}()
+    : tables({{__tables_count}})
+{
+{{~for table in __tables~}}
+    tables[{{make_cpp_name table.full_name}}::__ID__] = std::make_unique<{{make_cpp_name table.full_name}}>();
+{{~end~}}
+}
+
+bool {{__name}}::load(::luban::Loader<::luban::ByteBuf> loader)
+{
+    ::luban::ByteBuf buf;
+    
+    for (auto& pair : tables)
+    {
+        buf.clear();
+        if (!loader(buf, pair.second->getOutputDataFile())) return false;
+        if (!pair.second->load(buf)) return false;
+    }
+
+    return true;
+}
+{{namespace_with_grace_end __namespace}}

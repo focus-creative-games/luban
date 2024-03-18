@@ -2,7 +2,7 @@
     comment = __enum.comment
     items = __enum.items
 ~}}
-{{namespace_with_grace_begin __namespace}} 
+{{namespace_with_grace_begin __namespace_with_top_module}}
 {{~if comment != '' ~}}
     /// <summary>
     /// {{escape_comment comment}}
@@ -19,5 +19,4 @@
         {{format_enum_item_name __code_style item.name}} = {{item.value}},
         {{~end~}}
     };
-
-{{namespace_with_grace_end __namespace}} 
+{{namespace_with_grace_end __namespace_with_top_module}}

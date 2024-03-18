@@ -4,6 +4,7 @@ using Luban.Cpp.TemplateExtensions;
 using Luban.Defs;
 using Scriban;
 using Scriban.Runtime;
+using Luban.Utils;
 
 namespace Luban.Cpp.CodeTarget;
 
@@ -20,113 +21,101 @@ public abstract class CppCodeTargetBase : TemplateCodeTargetBase
         ctx.PushGlobal(new CppTemplateExtension());
     }
 
-    private OutputFile GenerateSchemaHeader(GenerationContext ctx, string outputFileName)
+    private void PrintBean(GenerationContext ctx)
     {
-        var enumTasks = new List<Task<string>>();
-        foreach (var @enum in ctx.ExportEnums)
+        foreach (var @bean in ctx.ExportBeans)
         {
-            enumTasks.Add(Task.Run(() =>
+            Console.WriteLine("Name:{0}", bean.Name);
+            
+            foreach (var @Field in @bean.ExportFields)
             {
-                var writer = new CodeWriter();
-                GenerateEnum(ctx, @enum, writer);
-                return writer.ToResult(null);
-            }));
+                Console.WriteLine("Field:{0}, is bean[{1}]", Field.Name, Field.CType.IsBean);
+            }
         }
-
-        var beanTasks = new List<Task<string>>();
-        foreach (var bean in ctx.ExportBeans)
-        {
-            beanTasks.Add(Task.Run(() =>
-            {
-                var writer = new CodeWriter();
-                GenerateBean(ctx, bean, writer);
-                return writer.ToResult(null);
-            }));
-        }
-
-        var tableTasks = new List<Task<string>>();
-        foreach (var table in ctx.ExportTables)
-        {
-            tableTasks.Add(Task.Run(() =>
-            {
-                var writer = new CodeWriter();
-                GenerateTable(ctx, table, writer);
-                return writer.ToResult(null);
-            }));
-        }
-
-        var tablesWriter = new CodeWriter();
-        GenerateTables(ctx, ctx.ExportTables, tablesWriter);
-
-
-        Task.WaitAll(enumTasks.ToArray());
-        Task.WaitAll(beanTasks.ToArray());
-        Task.WaitAll(tableTasks.ToArray());
-
-        var template = GetTemplate("schema_h");
-        var tplCtx = CreateTemplateContext(template);
-        var extraEnvs = new ScriptObject
-        {
-            { "__ctx", ctx},
-            { "__top_module", ctx.Target.TopModule },
-            { "__enum_codes", string.Join('\n', enumTasks.Select(t => t.Result))},
-            { "__bean_codes", string.Join('\n', beanTasks.Select(t => t.Result))},
-            { "__table_codes", string.Join('\n', tableTasks.Select(t => t.Result))},
-            { "__tables_code", tablesWriter.ToResult(null)},
-            { "__beans", ctx.ExportBeans},
-            { "__code_style", CodeStyle},
-        };
-        tplCtx.PushGlobal(extraEnvs);
-        var schemaHeader = new CodeWriter();
-        schemaHeader.Write(template.Render(tplCtx));
-
-        return new OutputFile() { File = outputFileName, Content = schemaHeader.ToResult(FileHeader) };
     }
 
-    private OutputFile GenerateSchemaCpp(GenerationContext ctx, List<DefBean> beans, string schemaHeaderFileName, string outputFileName)
+    public void GenerateTablesCpp(GenerationContext ctx, List<DefTable> tables, CodeWriter writer)
     {
-        var template = GetTemplate("schema_cpp");
+        var template = GetTemplate("tables_cpp");
         var tplCtx = CreateTemplateContext(template);
         var extraEnvs = new ScriptObject
         {
             { "__ctx", ctx},
-            { "__top_module", ctx.Target.TopModule },
-            { "__beans", beans},
-            { "__schema_header_file", schemaHeaderFileName},
+            { "__name", ctx.Target.Manager },
+            { "__namespace", ctx.Target.TopModule },
+            { "__tables", tables },
             { "__code_style", CodeStyle},
+            { "__tables_count", tables.Count }
         };
         tplCtx.PushGlobal(extraEnvs);
-        var schemaCpp = new CodeWriter();
-        schemaCpp.Write(template.Render(tplCtx));
-
-        return new OutputFile() { File = outputFileName, Content = schemaCpp.ToResult(FileHeader) };
+        writer.Write(template.Render(tplCtx));
     }
 
     public override void Handle(GenerationContext ctx, OutputFileManifest manifest)
     {
-        string schemaFileNameWithoutExt = EnvManager.Current.GetOptionOrDefault(Name, "schemaFileNameWithoutExt", true, "schema");
-        string schemaFileName = $"{schemaFileNameWithoutExt}.h";
-        manifest.AddFile(GenerateSchemaHeader(ctx, schemaFileName));
-
-        var cppTasks = new List<Task<OutputFile>>();
-        var beanTypes = ctx.ExportBeans;
-
-        int typeCountPerStubFile = int.Parse(EnvManager.Current.GetOptionOrDefault(Name, "typeCountPerStubFile", true, "100"));
-
-        for (int i = 0, n = beanTypes.Count; i < n; i += typeCountPerStubFile)
+        // enum
         {
-            int startIndex = i;
-            cppTasks.Add(Task.Run(() =>
-                GenerateSchemaCpp(ctx,
-                    beanTypes.GetRange(startIndex, Math.Min(typeCountPerStubFile, beanTypes.Count - startIndex)),
-                    schemaFileName,
-                    $"{schemaFileNameWithoutExt}_{startIndex / typeCountPerStubFile}.cpp")));
+            var writer = new CodeWriter();
+            writer.Write("#pragma once");
+        
+            foreach (var @enum in ctx.ExportEnums)
+            {
+                base.GenerateEnum(ctx, @enum, writer);
+            }
+            writer.ToResult(null);
+            manifest.AddFile(new OutputFile() { File = "enum.h", Content = writer.ToResult(FileHeader) });
+        }
+        
+        // beans
+        {
+            foreach (var @bean in ctx.ExportBeans)
+            {
+                var writer = new CodeWriter();
+                writer.Write("#pragma once");
+                writer.Write("#include \"enum.h\"");
+                writer.Write("#include \"CfgBean.h\"");
+            
+                base.GenerateBean(ctx, @bean, writer);
+                manifest.AddFile(new OutputFile() { File = $"{TypeUtil.ToSnakeCase(bean.FullName)}.h", Content = writer.ToResult(FileHeader) });
+            }
+        }
+        
+        
+        // table
+        {
+            foreach (var @table in ctx.ExportTables)
+            {
+                var writer = new CodeWriter();
+                writer.Write("#pragma once");
+            
+                base.GenerateTable(ctx, @table, writer);
+                manifest.AddFile(new OutputFile() { File = $"{TypeUtil.ToSnakeCase(table.Name)}.h", Content = writer.ToResult(FileHeader) });
+            }
         }
 
-        Task.WaitAll(cppTasks.ToArray());
-        foreach (var cppTask in cppTasks)
+        // tables
         {
-            manifest.AddFile(cppTask.Result);
+            var writer = new CodeWriter();
+            writer.Write("#pragma once");
+            
+            base.GenerateTables(ctx, ctx.ExportTables, writer);
+        
+            manifest.AddFile(new OutputFile() { File = "tables.h", Content = writer.ToResult(FileHeader) });
+        }
+
+        // tables.cpp
+        {
+            var writer = new CodeWriter();
+            writer.Write("#include \"tables.h\"");
+            
+            GenerateTablesCpp(ctx, ctx.ExportTables, writer);
+        
+            manifest.AddFile(new OutputFile() { File = "tables.cpp", Content = writer.ToResult(FileHeader) });
+        }
+
+        // debug
+        {
+            PrintBean(ctx);
         }
     }
 }

@@ -9,6 +9,6 @@ public class CppSharedPtrUnderlyingDeclaringTypeNameVisitor : CppUnderlyingDecla
 
     public override string Accept(TBean type)
     {
-        return $"::luban::SharedPtr<{CppTemplateExtension.MakeTypeCppName(type.DefBean)}>";
+        return CppTemplateExtension.MakeTypeCppName(type.DefBean);
     }
 }

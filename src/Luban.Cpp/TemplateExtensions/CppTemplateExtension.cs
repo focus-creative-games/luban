@@ -50,4 +50,30 @@ public class CppTemplateExtension : ScriptObject
         return $"(*({varName}))";
     }
 
+    public static string GetBeansIncludes(List<DefField> fields)
+    {
+        var includes = new HashSet<string>();
+        foreach (var field in fields)
+        {
+            if (field.CType.IsBean == false)
+                continue;
+                
+            if (includes.Contains(field.Type))
+                continue;
+
+            includes.Add(field.Type);
+        }
+        return string.Join("\n", includes.Select(item => $"#include \"{TypeUtil.ToSnakeCase(item)}.h\""));
+    }
+
+
+    public static string ToSnakeCase(string str)
+    {
+        return TypeUtil.ToSnakeCase(str);
+    }
+
+    public static int GetIdByFullName(string fullName)
+    {
+        return TypeUtil.ComputeCfgHashIdByName(fullName);
+    }
 }

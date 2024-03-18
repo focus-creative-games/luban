@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Luban.Utils;
 
@@ -236,6 +237,13 @@ public static class TypeUtil
     public static string ToPascalCase(string name)
     {
         return string.Join("", name.Split('_').Where(s => !string.IsNullOrWhiteSpace(s)).Select(c => UpperCaseFirstChar(c)));
+    }
+    
+    public static string ToSnakeCase(string name)
+    {
+        name = Regex.Replace(name, "(?<=.)([A-Z])", "_$1", RegexOptions.Compiled);
+        name = Regex.Replace(name, "\\._([A-Z])", ".$1", RegexOptions.Compiled);
+        return name.ToLower();
     }
 
     public static string ToUnderScores(string name)

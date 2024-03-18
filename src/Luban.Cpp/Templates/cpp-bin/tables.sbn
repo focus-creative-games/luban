@@ -1,23 +1,27 @@
+#include "TableBase.h"
+#include "CfgBean.h"
+#include <type_traits> 
+
+{{namespace_with_grace_begin __namespace}}
 class {{__name}}
 {
-    public:
-    {{~for table in __tables ~}}
-{{~if table.comment != '' ~}}
-    /**
-     * {{escape_comment table.comment}}
-     */
-{{~end~}}
-     {{make_cpp_name table.full_name}} {{table.name}};
-    {{~end~}}
+public:
+    {{__name}}();
+    
+    ::luban::HashMap<::luban::int32, ::luban::UniquePtr<::luban::TableBase>> tables;
 
-    bool load(::luban::Loader<::luban::ByteBuf> loader)
-    {
-        ::luban::ByteBuf buf;
-        {{~for table in __tables~}}
-        buf.clear();
-        if (!loader(buf, "{{table.output_data_file}}")) return false;
-        if (!{{table.name}}.load(buf)) return false;
-        {{~end~}}
-        return true;
-    }
+    bool load(::luban::Loader<::luban::ByteBuf> loader);
+    
+    template <typename T>
+    T& GetTable();
+    
 };
+
+template <typename T>
+T& {{__name}}::GetTable()
+{
+    static_assert(std::is_base_of<::luban::TableBase, T>::value, "T must be a base of TableBase");
+    return static_cast<T&>(*(tables[T::__ID__]));
+}
+
+{{namespace_with_grace_end __namespace}}
