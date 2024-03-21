@@ -5,6 +5,7 @@ using Luban.CodeTarget;
 using Luban.DataLoader;
 using Luban.Datas;
 using Luban.Defs;
+using Luban.L10N;
 using Luban.RawDefs;
 using Luban.Schema;
 using Luban.Types;
@@ -59,6 +60,8 @@ public class GenerationContext
 
     public TimeZoneInfo TimeZone { get; private set; }
 
+    public ITextProvider TextProvider { get; private set; }
+
     private readonly Dictionary<string, object> _uniqueObjects = new();
 
     private readonly HashSet<Type> _failedValidatorTypes = new();
@@ -66,6 +69,7 @@ public class GenerationContext
     public void LoadDatas()
     {
         s_logger.Info("load datas begin");
+        TextProvider?.Load();
         DataLoaderManager.Ins.LoadDatas(this);
         s_logger.Info("load datas end");
     }
@@ -82,6 +86,9 @@ public class GenerationContext
         ExcludeTags = builder.ExcludeTags;
         TimeZone = TimeZoneUtil.GetTimeZone(builder.TimeZone);
 
+        TextProvider = EnvManager.Current.TryGetOption(BuiltinOptionNames.L10NFamily, BuiltinOptionNames.L10NProviderName, false, out string providerName) ?
+            L10NManager.Ins.CreateTextProvider(providerName) : null;
+
         ExportTables = Assembly.ExportTables;
         ExportTypes = CalculateExportTypes();
         ExportBeans = ExportTypes.OfType<DefBean>().ToList();
@@ -90,7 +97,7 @@ public class GenerationContext
 
     private bool NeedExportNotDefault(List<string> groups)
     {
-        return groups.Any(g => Target.Groups.Contains(g));
+        return groups.Any(Target.Groups.Contains);
     }
 
     private List<DefTypeBase> CalculateExportTypes()

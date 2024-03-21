@@ -52,7 +52,7 @@ public abstract class ToLiteralVisitorBase : IDataFuncVisitor<string>
 
     public virtual string Accept(DDateTime type)
     {
-        return type.UnixTimeOfCurrentContext.ToString();
+        return type.UnixTimeOfCurrentContext().ToString();
     }
 
     public abstract string Accept(DBean type);

@@ -20,6 +20,14 @@ public class FlatBuffersSchemaTarget : AllInOneTemplateCodeTargetBase
 
     protected override string DefaultOutputFileName => "schema.fbs";
 
+    private static readonly HashSet<string> s_preservedKeyWords = new()
+    {
+        // flatbuffers schema preserved key words
+        "namespace", "enum", "struct", "union", "table", "root_table", "rpc_service", "file_extension", "attribute", "deprecated", "force_align", "include"
+    };
+
+    protected override IReadOnlySet<string> PreservedKeyWords => s_preservedKeyWords;
+
     protected override void OnCreateTemplateContext(TemplateContext ctx)
     {
         ctx.PushGlobal(new FlatBuffersTemplateExtension());

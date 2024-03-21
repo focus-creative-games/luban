@@ -21,6 +21,16 @@ public abstract class ProtobufSchemaTargetBase : AllInOneTemplateCodeTargetBase
 
     protected override string DefaultOutputFileName => "schema.proto";
 
+    private static readonly HashSet<string> s_preservedKeyWords = new()
+    {
+        // protobuf schema preserved key words
+        "package", "optional", "import", "message", "enum", "service", "rpc", "stream", "returns", "oneof", "map", "reserved",
+        "to", "max", "true", "false", "syntax", "repeated", "required", "extend", "extensions", "group", "default", "packed", "option",
+        "int32", "int64", "uint32", "uint64", "sint32", "sint64", "fixed32", "fixed64", "sfixed32", "sfixed64", "float", "double", "bool", "string", "bytes"
+    };
+
+    protected override IReadOnlySet<string> PreservedKeyWords => s_preservedKeyWords;
+
     protected override string GenerateSchema(GenerationContext ctx)
     {
         var writer = new CodeWriter();

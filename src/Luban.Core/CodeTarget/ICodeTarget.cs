@@ -6,6 +6,8 @@ public interface ICodeTarget
 {
     string Name { get; }
 
+    void ValidateDefinition(GenerationContext ctx);
+
     void Handle(GenerationContext ctx, OutputFileManifest manifest);
 
     string FileHeader { get; }

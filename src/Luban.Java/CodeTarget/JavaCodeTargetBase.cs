@@ -14,6 +14,18 @@ public abstract class JavaCodeTargetBase : TemplateCodeTargetBase
 
     protected override ICodeStyle DefaultCodeStyle => CodeFormatManager.Ins.JavaDefaultCodeStyle;
 
+    private static readonly HashSet<string> s_preservedKeyWords = new()
+    {
+        // java preserved key words
+        "abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const", "continue", "default",
+        "do", "double", "else", "enum", "extends", "final", "finally", "float", "for", "if", "goto", "implements", "import",
+        "instanceof", "int", "interface", "long", "native", "new", "package", "private", "protected", "public", "return",
+        "short", "static", "strictfp", "super", "switch", "synchronized", "this", "throw", "throws", "transient", "try",
+        "void", "volatile", "while"
+    };
+
+    protected override IReadOnlySet<string> PreservedKeyWords => s_preservedKeyWords;
+
     protected override string GetFileNameWithoutExtByTypeName(string name)
     {
         return name.Replace('.', '/');
