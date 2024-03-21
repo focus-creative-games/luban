@@ -483,4 +483,126 @@ namespace Luban.Job.Common.TypeVisitors
         }
 
     }
+
+    public abstract class DecoratorFuncVisitor<T1, T2, T3,T4, TR> : ITypeFuncVisitor<T1, T2, T3,T4, TR>
+    {
+
+        public abstract TR DoAccept(TType tpye, T1 x, T2 y, T3 z,T4 t);
+
+        public virtual TR Accept(TBool type, T1 x, T2 y, T3 z,T4 t)
+        {
+            return DoAccept(type, x, y, z,t);
+        }
+
+        public virtual TR Accept(TByte type, T1 x, T2 y, T3 z,T4 t)
+        {
+            return DoAccept(type, x, y, z,t);
+        }
+
+        public virtual TR Accept(TShort type, T1 x, T2 y, T3 z,T4 t)
+        {
+            return DoAccept(type, x, y, z,t);
+        }
+
+        public virtual TR Accept(TFshort type, T1 x, T2 y, T3 z,T4 t)
+        {
+            return DoAccept(type, x, y, z,t);
+        }
+
+        public virtual TR Accept(TInt type, T1 x, T2 y, T3 z,T4 t)
+        {
+            return DoAccept(type, x, y, z,t);
+        }
+
+        public virtual TR Accept(TFint type, T1 x, T2 y, T3 z,T4 t)
+        {
+            return DoAccept(type, x, y, z,t);
+        }
+
+        public virtual TR Accept(TLong type, T1 x, T2 y, T3 z,T4 t)
+        {
+            return DoAccept(type, x, y, z,t);
+        }
+
+        public virtual TR Accept(TFlong type, T1 x, T2 y, T3 z,T4 t)
+        {
+            return DoAccept(type, x, y, z,t);
+        }
+
+        public virtual TR Accept(TFloat type, T1 x, T2 y, T3 z,T4 t)
+        {
+            return DoAccept(type, x, y, z,t);
+        }
+
+        public virtual TR Accept(TDouble type, T1 x, T2 y, T3 z,T4 t)
+        {
+            return DoAccept(type, x, y, z,t);
+        }
+
+        public virtual TR Accept(TEnum type, T1 x, T2 y, T3 z,T4 t)
+        {
+            return DoAccept(type, x, y, z,t);
+        }
+
+        public virtual TR Accept(TString type, T1 x, T2 y, T3 z,T4 t)
+        {
+            return DoAccept(type, x, y, z,t);
+        }
+
+        public virtual TR Accept(TBytes type, T1 x, T2 y, T3 z,T4 t)
+        {
+            return DoAccept(type, x, y, z,t);
+        }
+
+        public virtual TR Accept(TText type, T1 x, T2 y, T3 z,T4 t)
+        {
+            return DoAccept(type, x, y, z,t);
+        }
+
+        public virtual TR Accept(TBean type, T1 x, T2 y, T3 z,T4 t)
+        {
+            return DoAccept(type, x, y, z,t);
+        }
+
+        public virtual TR Accept(TArray type, T1 x, T2 y, T3 z,T4 t)
+        {
+            return DoAccept(type, x, y, z,t);
+        }
+
+        public virtual TR Accept(TList type, T1 x, T2 y, T3 z,T4 t)
+        {
+            return DoAccept(type, x, y, z,t);
+        }
+
+        public virtual TR Accept(TSet type, T1 x, T2 y, T3 z,T4 t)
+        {
+            return DoAccept(type, x, y, z,t);
+        }
+
+        public virtual TR Accept(TMap type, T1 x, T2 y, T3 z,T4 t)
+        {
+            return DoAccept(type, x, y, z,t);
+        }
+
+        public virtual TR Accept(TVector2 type, T1 x, T2 y, T3 z,T4 t)
+        {
+            return DoAccept(type, x, y, z,t);
+        }
+
+        public virtual TR Accept(TVector3 type, T1 x, T2 y, T3 z,T4 t)
+        {
+            return DoAccept(type, x, y, z,t);
+        }
+
+        public virtual TR Accept(TVector4 type, T1 x, T2 y, T3 z,T4 t)
+        {
+            return DoAccept(type, x, y, z,t);
+        }
+
+        public virtual TR Accept(TDateTime type, T1 x, T2 y, T3 z,T4 t)
+        {
+            return DoAccept(type, x, y, z,t);
+        }
+
+    }
 }
