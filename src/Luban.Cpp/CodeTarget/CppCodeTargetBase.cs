@@ -34,7 +34,7 @@ public abstract class CppCodeTargetBase : TemplateCodeTargetBase
         }
     }
 
-    public void GenerateTablesCpp(GenerationContext ctx, List<DefTable> tables, CodeWriter writer)
+    private void GenerateTablesCpp(GenerationContext ctx, List<DefTable> tables, CodeWriter writer)
     {
         var template = GetTemplate("tables_cpp");
         var tplCtx = CreateTemplateContext(template);
@@ -46,6 +46,23 @@ public abstract class CppCodeTargetBase : TemplateCodeTargetBase
             { "__tables", tables },
             { "__code_style", CodeStyle},
             { "__tables_count", tables.Count }
+        };
+        tplCtx.PushGlobal(extraEnvs);
+        writer.Write(template.Render(tplCtx));
+    }
+    
+    private void GenerateAbstractBeanDeserialize(GenerationContext ctx, List<DefBean> beans, CodeWriter writer)
+    {
+        var template = GetTemplate("abstract_bean_deserialize");
+        var tplCtx = CreateTemplateContext(template);
+        var extraEnvs = new ScriptObject
+        {
+            { "__ctx", ctx},
+            { "__name", ctx.Target.Manager },
+            { "__namespace", ctx.Target.TopModule },
+            { "__manager_name_with_top_module", TypeUtil.MakeFullName(ctx.TopModule, ctx.Target.Manager) },
+            { "__beans", beans },
+            { "__code_style", CodeStyle}
         };
         tplCtx.PushGlobal(extraEnvs);
         writer.Write(template.Render(tplCtx));
@@ -79,8 +96,15 @@ public abstract class CppCodeTargetBase : TemplateCodeTargetBase
                 manifest.AddFile(new OutputFile() { File = $"{TypeUtil.ToSnakeCase(bean.FullName)}.h", Content = writer.ToResult(FileHeader) });
             }
         }
-        
-        
+
+        // abstract bean deserialize
+        {
+            var writer = new CodeWriter();
+            GenerateAbstractBeanDeserialize(ctx, ctx.ExportBeans, writer);
+            manifest.AddFile(new OutputFile() { File = $"abstract_bean_deserialize.cpp", Content = writer.ToResult(FileHeader) });
+        }
+
+
         // table
         {
             foreach (var @table in ctx.ExportTables)
@@ -115,7 +139,7 @@ public abstract class CppCodeTargetBase : TemplateCodeTargetBase
 
         // debug
         {
-            PrintBean(ctx);
+            // PrintBean(ctx);
         }
     }
 }

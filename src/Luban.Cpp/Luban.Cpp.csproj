@@ -47,6 +47,9 @@
       <None Update="Templates\cpp-bin\tables_cpp.sbn">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="Templates\cpp-bin\abstract_bean_deserialize.sbn">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
     <ItemGroup>

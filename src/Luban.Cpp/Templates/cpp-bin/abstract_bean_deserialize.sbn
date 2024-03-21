@@ -1,0 +1,37 @@
+{{~for bean in __beans~}}
+    {{~if !bean.is_abstract_type
+        continue
+    end~}}
+    
+#include "{{to_snake_case bean.full_name}}.h"
+{{~for child in bean.hierarchy_not_abstract_children~}}
+#include "{{to_snake_case child.full_name}}.h"
+{{~end~}}
+{{~end~}}
+
+{{~for bean in __beans~}}
+    {{~if !bean.is_abstract_type
+        continue
+    end~}}
+{{namespace_with_grace_begin bean.namespace_with_top_module}}
+bool {{bean.name}}::deserialize{{bean.name}}(::luban::ByteBuf& _buf, ::luban::SharedPtr<{{bean.name}}>& _out)
+{
+    int id;
+    if (!_buf.readInt(id)) return false;
+    switch (id)
+    {
+    {{~for child in bean.hierarchy_not_abstract_children~}}
+        case {{make_type_cpp_name child}}::__ID__: { _out.reset(new {{make_type_cpp_name child}}()); break; }
+    {{~end~}}
+        default: { return false;}
+    }
+    
+    if (!_out->deserialize(_buf))
+    {
+        _out.reset();
+        return false;
+    }
+    return true;
+}
+{{namespace_with_grace_end bean.namespace_with_top_module}}
+{{~end~}}

@@ -1,6 +1,24 @@
 #include "{{to_snake_case __this.value_type}}.h"
 #include "TableBase.h"
-
+{{~if __this.is_list_table && __this.is_union_index~}}
+#include "Hasher.h"
+{{~end~}}   
+{{
+    func table_index_list_param_list(index_list)
+        paramList = index_list |array.each do; ret (declaring_type_name $0.type) + ' ' + $0.index_field.name; end
+        ret array.join paramList ', '
+    end
+    
+    func table_index_name_list(index_list, prefix = "")
+        paramList = index_list |array.each do; ret prefix + $0.index_field.name; end
+        ret array.join paramList ', '
+    end
+    
+    func table_index_type_list(index_list)
+        paramList = index_list |array.each do; ret (declaring_type_name $0.type); end
+        ret array.join paramList ', '
+    end
+}}
 {{namespace_with_grace_begin __namespace_with_top_module}}
 
 {{~if __this.comment != '' ~}}
@@ -45,7 +63,7 @@ public:
 private:
     ::luban::Vector<{{declaring_type_name __value_type}}> _dataList;
 {{~if __this.is_union_index~}}
-
+    ::luban::HashMap<std::tuple<{{table_index_type_list __this.index_list}}>, {{declaring_type_name __value_type}}*, ::luban::Hasher<{{table_index_type_list __this.index_list}}>> _dataMap;
 {{~else if !__this.index_list.empty?~}}
     {{~for idx in __this.index_list~}}
     ::luban::HashMap<{{declaring_type_name idx.type}}, {{declaring_type_name __value_type}}*> _dataMap_{{idx.index_field.name}};
@@ -64,7 +82,7 @@ public:
             {{declaring_type_name __value_type}}& _v = _dataList[i];
             {{deserialize '_buf' '_v' __value_type}}
             {{~if __this.is_union_index~}}
-
+            _dataMap[std::make_tuple({{table_index_name_list __this.index_list '_v.'}})] = std::addressof(_v);
             {{~else if !__this.index_list.empty?~}}
             {{~for idx in __this.index_list~}}
             _dataMap_{{idx.index_field.name}}[_v.{{idx.index_field.name}}] = std::addressof(_v);
@@ -78,10 +96,14 @@ public:
     const ::luban::Vector<{{declaring_type_name __value_type}}>& getDataList() const { return _dataList; }
 
 {{~if __this.is_union_index~}}
-
+    const {{declaring_type_name __value_type}}* get({{table_index_list_param_list __this.index_list}}) const
+    { 
+        auto iter = _dataMap.find(std::make_tuple({{table_index_name_list __this.index_list}}));
+        return iter != _dataMap.end() ? iter->second : nullptr;
+    }
 {{~else if !__this.index_list.empty?~}}
 {{~for idx in __this.index_list~}}
-    ::luban::HashMap<{{declaring_type_name idx.type}}, {{declaring_type_name __value_type}}*>& getDataMapBy{{idx.index_field.name}}()
+    const ::luban::HashMap<{{declaring_type_name idx.type}}, {{declaring_type_name __value_type}}*>& getDataMapBy{{idx.index_field.name}}()
     {
         return _dataMap_{{idx.index_field.name}};
     }
@@ -113,7 +135,6 @@ public:
         {{deserialize '_buf' '_data' __value_type}}
         return true;
     }
-
 
     {{~ for field in __value_type.def_bean.hierarchy_export_fields ~}}
 {{~if field.comment != '' ~}}

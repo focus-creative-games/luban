@@ -9,11 +9,9 @@ public class DeclaringTypeNameVisitor : DecoratorFuncVisitor<string>
 
     public override string DoAccept(TType type)
     {
-        return type.IsNullable ? $"::luban::SharedPtr<{type.Apply(CppSharedPtrUnderlyingDeclaringTypeNameVisitor.Ins)}>" : type.Apply(CppSharedPtrUnderlyingDeclaringTypeNameVisitor.Ins);
-    }
-
-    public override string Accept(TBean type)
-    {
-        return type.Apply(CppSharedPtrUnderlyingDeclaringTypeNameVisitor.Ins);
+        if (type.IsNullable)
+            return $"::luban::SharedPtr<{type.Apply(CppSmartPtrUnderlyingDeclaringTypeNameVisitor.Ins)}>";
+        
+        return type.Apply(CppSmartPtrUnderlyingDeclaringTypeNameVisitor.Ins);
     }
 }
