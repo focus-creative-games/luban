@@ -15,7 +15,11 @@ public class JsonDataSource : DataLoaderBase
     public override void Load(string rawUrl, string sheetOrFieldName, Stream stream)
     {
         RawUrl = rawUrl;
-        this._data = JsonDocument.Parse(stream).RootElement;
+        this._data = JsonDocument.Parse(stream, new JsonDocumentOptions()
+        {
+            AllowTrailingCommas = true,
+            CommentHandling = JsonCommentHandling.Skip,
+        }).RootElement;
 
         if (!string.IsNullOrEmpty(sheetOrFieldName))
         {

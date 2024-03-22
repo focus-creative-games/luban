@@ -62,6 +62,8 @@ public class GlobalConfigLoader : IConfigLoader
         var options = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true,
+            AllowTrailingCommas = true,
+            ReadCommentHandling = JsonCommentHandling.Skip,
         };
         var globalConf = JsonSerializer.Deserialize<LubanConf>(File.ReadAllText(fileName, Encoding.UTF8), options);
 
