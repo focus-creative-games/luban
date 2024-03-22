@@ -15,6 +15,15 @@ public abstract class GdscriptCodeTargetBase : AllInOneTemplateCodeTargetBase
 
     protected override string DefaultOutputFileName => "schema.gd";
 
+
+    private static readonly HashSet<string> s_preservedKeyWords = new()
+    {
+        // gdscript preserved key words
+        "and", "as", "assert", "break", "class", "const", "continue", "elif", "else", "enum", "extends", "for", "if", "in", "is", "pass", "return", "self", "static", "while"
+    };
+
+    protected override IReadOnlySet<string> PreservedKeyWords => s_preservedKeyWords;
+
     protected override void OnCreateTemplateContext(TemplateContext ctx)
     {
         ctx.PushGlobal(new GdscriptCommonTemplateExtension());

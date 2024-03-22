@@ -16,8 +16,6 @@ public class DDateTime : DType
         this.Time = time;
     }
 
-    public long UnixTimeOfCurrentContext => GetUnixTime(GenerationContext.Current.TimeZone);
-
     public override bool Equals(object obj)
     {
         return obj is DDateTime d && Time == d.Time;
@@ -45,7 +43,7 @@ public class DDateTime : DType
     public long GetUnixTime(TimeZoneInfo asTimeZone)
     {
         var destDateTime = TimeZoneInfo.ConvertTime(Time, asTimeZone, TimeZoneInfo.Utc);
-        return (long)new DateTimeOffset(destDateTime).ToUnixTimeSeconds();
+        return new DateTimeOffset(destDateTime).ToUnixTimeSeconds();
     }
 
     public override void Apply<T>(IDataActionVisitor<T> visitor, T x)
@@ -81,5 +79,20 @@ public class DDateTime : DType
     public override TR Apply<T1, T2, TR>(IDataFuncVisitor<T1, T2, TR> visitor, T1 x, T2 y)
     {
         return visitor.Accept(this, x, y);
+    }
+
+    public override TR Apply<TR>(IDataFuncVisitor2<TR> visitor, TType type)
+    {
+        return visitor.Accept(this, type);
+    }
+
+    public override TR Apply<T, TR>(IDataFuncVisitor2<T, TR> visitor, TType type, T x)
+    {
+        return visitor.Accept(this, type, x);
+    }
+
+    public override TR Apply<T1, T2, TR>(IDataFuncVisitor2<T1, T2, TR> visitor, TType type, T1 x, T2 y)
+    {
+        return visitor.Accept(this, type, x, y);
     }
 }

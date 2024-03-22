@@ -68,6 +68,21 @@ public class DInt : DType<int>
         return visitor.Accept(this, x, y);
     }
 
+    public override TR Apply<TR>(IDataFuncVisitor2<TR> visitor, TType type)
+    {
+        return visitor.Accept(this, type);
+    }
+
+    public override TR Apply<T, TR>(IDataFuncVisitor2<T, TR> visitor, TType type, T x)
+    {
+        return visitor.Accept(this, type, x);
+    }
+
+    public override TR Apply<T1, T2, TR>(IDataFuncVisitor2<T1, T2, TR> visitor, TType type, T1 x, T2 y)
+    {
+        return visitor.Accept(this, type, x, y);
+    }
+
     public override bool Equals(object obj)
     {
         switch (obj)

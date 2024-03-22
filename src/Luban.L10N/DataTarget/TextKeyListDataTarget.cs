@@ -33,7 +33,7 @@ internal class TextKeyListDataTarget : DataTargetBase
         keys.Sort((a, b) => string.Compare(a, b, StringComparison.Ordinal));
         var content = string.Join("\n", keys);
 
-        string outputFile = EnvManager.Current.GetOption(BuiltinOptionNames.L10NFamily, BuiltinOptionNames.TextKeyListFile, false);
+        string outputFile = EnvManager.Current.GetOption(BuiltinOptionNames.L10NFamily, BuiltinOptionNames.L10NTextListFile, false);
 
         return new OutputFile { File = outputFile, Content = content };
     }

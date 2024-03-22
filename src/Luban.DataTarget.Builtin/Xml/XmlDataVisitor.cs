@@ -60,7 +60,7 @@ public class XmlDataVisitor : IDataActionVisitor<XmlWriter>
 
     public void Accept(DDateTime type, XmlWriter w)
     {
-        w.WriteValue(type.UnixTimeOfCurrentContext);
+        w.WriteValue(type.UnixTimeOfCurrentContext());
     }
 
     public void Accept(DBean type, XmlWriter w)

@@ -57,7 +57,7 @@ public class BinaryDataVisitor : IDataActionVisitor<ByteBuf>
 
     public void Accept(DDateTime type, ByteBuf x)
     {
-        x.WriteLong(type.UnixTimeOfCurrentContext);
+        x.WriteLong(type.UnixTimeOfCurrentContext());
     }
 
     public void Accept(DBean type, ByteBuf x)

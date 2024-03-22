@@ -63,11 +63,6 @@ public class DefField
 
     public void Compile()
     {
-        if (!IgnoreNameValidation && !TypeUtil.IsValidName(Name))
-        {
-            throw new Exception($"type:'{HostType.FullName}' field name:'{Name}' is reserved");
-        }
-
         try
         {
             CType = Assembly.CreateType(HostType.Namespace, Type, false);

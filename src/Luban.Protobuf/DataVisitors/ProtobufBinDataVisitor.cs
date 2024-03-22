@@ -54,7 +54,7 @@ public class ProtobufBinDataVisitor : IDataActionVisitor<CodedOutputStream>
 
     public void Accept(DDateTime type, CodedOutputStream x)
     {
-        x.WriteInt64(type.UnixTimeOfCurrentContext);
+        x.WriteInt64(type.UnixTimeOfCurrentContext());
     }
 
     public void Accept(DString type, CodedOutputStream x)

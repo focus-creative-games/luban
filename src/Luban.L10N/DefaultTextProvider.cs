@@ -4,6 +4,7 @@ using Luban.Defs;
 using Luban.RawDefs;
 using Luban.Types;
 using Luban.Utils;
+using System.Linq;
 
 namespace Luban.L10N;
 
@@ -12,34 +13,49 @@ public class DefaultTextProvider : ITextProvider
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
-    private bool _enableTextValidation;
     private string _keyFieldName;
-    private readonly HashSet<string> _keys = new();
+    private string _ValueFieldName;
 
-    public bool Enable => _enableTextValidation;
+    private bool _convertTextKeyToValue;
+
+    private readonly Dictionary<string, string> _texts = new();
+
+    private readonly HashSet<string> _unknownTextKeys = new();
 
     public void Load()
     {
-        if (!EnvManager.Current.TryGetOption(BuiltinOptionNames.L10NFamily, BuiltinOptionNames.TextProviderFile, true,
-                out string textProviderFile))
+        EnvManager env = EnvManager.Current;
+
+        _keyFieldName = env.GetOptionOrDefault(BuiltinOptionNames.L10NFamily, BuiltinOptionNames.L10NTextFileKeyFieldName, false, "");
+        if (string.IsNullOrWhiteSpace(_keyFieldName))
         {
-            s_logger.Warn("option: '-x {0}.{1}=<textProviderFile>' not found, text validation is disabled", BuiltinOptionNames.L10NFamily, BuiltinOptionNames.TextProviderFile);
-            _enableTextValidation = false;
-            return;
+            throw new Exception($"'-x {BuiltinOptionNames.L10NFamily}.{BuiltinOptionNames.L10NTextFileKeyFieldName}=xxx' missing");
         }
-        _keyFieldName = EnvManager.Current.GetOptionOrDefault(BuiltinOptionNames.L10NFamily, BuiltinOptionNames.TextKeyFieldName, false, "key");
+
+        _convertTextKeyToValue = DataUtil.ParseBool(env.GetOptionOrDefault(BuiltinOptionNames.L10NFamily, BuiltinOptionNames.L10NConvertTextKeyToValue, false, "false"));
+        if (_convertTextKeyToValue)
+        {
+            _ValueFieldName = env.GetOptionOrDefault(BuiltinOptionNames.L10NFamily, BuiltinOptionNames.L10NTextFileLanguageFieldName, false, "");
+            if (string.IsNullOrWhiteSpace(_ValueFieldName))
+            {
+                throw new Exception($"'-x {BuiltinOptionNames.L10NFamily}.{BuiltinOptionNames.L10NTextFileLanguageFieldName}=xxx' missing");
+            }
+        }
+
+        string textProviderFile = env.GetOption(BuiltinOptionNames.L10NFamily, BuiltinOptionNames.L10NTextFilePath, false);
         LoadTextListFromFile(textProviderFile);
-        _enableTextValidation = true;
     }
+
+    public bool ConvertTextKeyToValue => _convertTextKeyToValue;
 
     public bool IsValidKey(string key)
     {
-        return _keys.Contains(key);
+        return _texts.ContainsKey(key);
     }
 
-    public string GetText(string key, string language)
+    public bool TryGetText(string key, out string text)
     {
-        throw new NotSupportedException("default text provider not support get text");
+        return _texts.TryGetValue(key, out text);
     }
 
     private void LoadTextListFromFile(string fileName)
@@ -49,6 +65,12 @@ public class DefaultTextProvider : ITextProvider
             Targets = new List<RawTarget> { new() { Name = "default", Manager = "Tables" } },
         }, "default", new List<string>());
 
+
+        var rawFields = new List<RawField> { new() { Name = _keyFieldName, Type = "string" }, };
+        if (_convertTextKeyToValue)
+        {
+            rawFields.Add(new() { Name = _ValueFieldName, Type = "string" });
+        }
         var defTableRecordType = new DefBean(new RawBean()
         {
             Namespace = "__intern__",
@@ -57,14 +79,12 @@ public class DefaultTextProvider : ITextProvider
             Alias = "",
             IsValueType = false,
             Sep = "",
-            Fields = new List<RawField>
-            {
-                new() { Name = _keyFieldName, Type = "string" },
-            }
+            Fields = rawFields,
         })
         {
             Assembly = ass,
         };
+
         ass.AddType(defTableRecordType);
         defTableRecordType.PreCompile();
         defTableRecordType.Compile();
@@ -79,10 +99,36 @@ public class DefaultTextProvider : ITextProvider
             DBean data = r.Data;
 
             string key = ((DString)data.GetField(_keyFieldName)).Value;
-            if (!_keys.Add(key))
+            string value = _convertTextKeyToValue ? ((DString)data.GetField(_ValueFieldName)).Value : key;
+            if (string.IsNullOrEmpty(key))
             {
-                s_logger.Warn("textProviderFile:{} key:{} duplicated", fileName, key);
+                s_logger.Error("textFile:{} key:{} is empty. ignore it!", fileName, key);
+                continue;
+            }
+            if (!_texts.TryAdd(key, value))
+            {
+                s_logger.Error("textFile:{} key:{} is duplicated", fileName, key);
             }
         };
+    }
+
+    public void AddUnknownKey(string key)
+    {
+        _unknownTextKeys.Add(key);
+    }
+
+    public void ProcessDatas()
+    {
+        if (_convertTextKeyToValue)
+        {
+            var trans = new TextKeyToValueTransformer(this);
+            foreach (var table in GenerationContext.Current.Tables)
+            {
+                foreach (var record in GenerationContext.Current.GetTableAllDataList(table))
+                {
+                    record.Data = (DBean)record.Data.Apply(trans,table.ValueTType);
+                }
+            }
+        }
     }
 }
