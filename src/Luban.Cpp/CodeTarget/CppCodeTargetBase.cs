@@ -70,6 +70,8 @@ public abstract class CppCodeTargetBase : TemplateCodeTargetBase
 
     public override void Handle(GenerationContext ctx, OutputFileManifest manifest)
     {
+        var tasks = new List<Task<OutputFile>>();
+
         // enum
         {
             var writer = new CodeWriter();
@@ -77,31 +79,39 @@ public abstract class CppCodeTargetBase : TemplateCodeTargetBase
         
             foreach (var @enum in ctx.ExportEnums)
             {
-                base.GenerateEnum(ctx, @enum, writer);
+                tasks.Add(Task.Run(() =>
+                {
+                    base.GenerateEnum(ctx, @enum, writer);
+                    return new OutputFile() { File = "enum.h", Content = writer.ToResult(FileHeader) };
+                }));
             }
-            writer.ToResult(null);
-            manifest.AddFile(new OutputFile() { File = "enum.h", Content = writer.ToResult(FileHeader) });
         }
         
         // beans
         {
             foreach (var @bean in ctx.ExportBeans)
             {
-                var writer = new CodeWriter();
-                writer.Write("#pragma once");
-                writer.Write("#include \"enum.h\"");
-                writer.Write("#include \"CfgBean.h\"");
-            
-                base.GenerateBean(ctx, @bean, writer);
-                manifest.AddFile(new OutputFile() { File = $"{TypeUtil.ToSnakeCase(bean.FullName)}.h", Content = writer.ToResult(FileHeader) });
+                tasks.Add(Task.Run(() =>
+                {
+                    var writer = new CodeWriter();
+                    writer.Write("#pragma once");
+                    writer.Write("#include \"enum.h\"");
+                    writer.Write("#include \"CfgBean.h\"");
+                
+                    base.GenerateBean(ctx, @bean, writer);
+                    return new OutputFile() { File = $"{TypeUtil.ToSnakeCase(bean.FullName)}.h", Content = writer.ToResult(FileHeader) };
+                }));
             }
         }
 
         // abstract bean deserialize
         {
-            var writer = new CodeWriter();
-            GenerateAbstractBeanDeserialize(ctx, ctx.ExportBeans, writer);
-            manifest.AddFile(new OutputFile() { File = $"abstract_bean_deserialize.cpp", Content = writer.ToResult(FileHeader) });
+            tasks.Add(Task.Run(() =>
+            {
+                var writer = new CodeWriter();
+                GenerateAbstractBeanDeserialize(ctx, ctx.ExportBeans, writer);
+                return new OutputFile() { File = $"abstract_bean_deserialize.cpp", Content = writer.ToResult(FileHeader) };
+            }));
         }
 
 
@@ -109,32 +119,46 @@ public abstract class CppCodeTargetBase : TemplateCodeTargetBase
         {
             foreach (var @table in ctx.ExportTables)
             {
-                var writer = new CodeWriter();
-                writer.Write("#pragma once");
-            
-                base.GenerateTable(ctx, @table, writer);
-                manifest.AddFile(new OutputFile() { File = $"{TypeUtil.ToSnakeCase(table.Name)}.h", Content = writer.ToResult(FileHeader) });
+                tasks.Add(Task.Run(() =>
+                {
+                    var writer = new CodeWriter();
+                    writer.Write("#pragma once");
+                
+                    base.GenerateTable(ctx, @table, writer);
+                    return new OutputFile() { File = $"{TypeUtil.ToSnakeCase(table.Name)}.h", Content = writer.ToResult(FileHeader) };
+                }));
             }
         }
 
         // tables
         {
-            var writer = new CodeWriter();
-            writer.Write("#pragma once");
+            tasks.Add(Task.Run(() =>
+            {
+                var writer = new CodeWriter();
+                writer.Write("#pragma once");
+                
+                base.GenerateTables(ctx, ctx.ExportTables, writer);
             
-            base.GenerateTables(ctx, ctx.ExportTables, writer);
-        
-            manifest.AddFile(new OutputFile() { File = "tables.h", Content = writer.ToResult(FileHeader) });
+                return new OutputFile() { File = "tables.h", Content = writer.ToResult(FileHeader) };
+            }));
         }
 
         // tables.cpp
         {
-            var writer = new CodeWriter();
-            writer.Write("#include \"tables.h\"");
-            
-            GenerateTablesCpp(ctx, ctx.ExportTables, writer);
+            tasks.Add(Task.Run(() =>
+            {
+                var writer = new CodeWriter();
+                writer.Write("#include \"tables.h\"");
+
+                GenerateTablesCpp(ctx, ctx.ExportTables, writer);
+                return new OutputFile() { File = "tables.cpp", Content = writer.ToResult(FileHeader) };
+            }));
+        }
         
-            manifest.AddFile(new OutputFile() { File = "tables.cpp", Content = writer.ToResult(FileHeader) });
+        Task.WaitAll(tasks.ToArray());
+        foreach (var task in tasks)
+        {
+            manifest.AddFile(task.Result);
         }
 
         // debug

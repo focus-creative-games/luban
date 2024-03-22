@@ -77,6 +77,11 @@ public:
         int n;
         if (!_buf.readSize(n)) return false;
         _dataList.resize(n);
+        {{~if __this.multi_key
+            for idx in __this.index_list~}}
+        _dataMap_{{idx.index_field.name}}.rehash(n);
+            {{~end
+        end~}}
         for(int i = 0; i < n ; ++i)
         {
             {{declaring_type_name __value_type}}& _v = _dataList[i];
