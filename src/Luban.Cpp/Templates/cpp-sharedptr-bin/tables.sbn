@@ -1,0 +1,23 @@
+class {{__name}}
+{
+    public:
+    {{~for table in __tables ~}}
+{{~if table.comment != '' ~}}
+    /**
+     * {{escape_comment table.comment}}
+     */
+{{~end~}}
+     {{make_cpp_name table.full_name}} {{table.name}};
+    {{~end~}}
+
+    bool load(::luban::Loader<::luban::ByteBuf> loader)
+    {
+        ::luban::ByteBuf buf;
+        {{~for table in __tables~}}
+        buf.clear();
+        if (!loader(buf, "{{table.output_data_file}}")) return false;
+        if (!{{table.name}}.load(buf)) return false;
+        {{~end~}}
+        return true;
+    }
+};

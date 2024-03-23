@@ -19,11 +19,6 @@ public class CppTemplateExtension : ScriptObject
         return TypeUtil.MakeCppFullName("", typeName);
     }
 
-    public static string DeclaringTypeName(TType type)
-    {
-        return type.Apply(DeclaringTypeNameVisitor.Ins);
-    }
-
     public static string GetterName(string originName)
     {
         var words = originName.Split('_').Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();

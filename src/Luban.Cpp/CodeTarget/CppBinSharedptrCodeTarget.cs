@@ -4,12 +4,12 @@ using Scriban;
 
 namespace Luban.Cpp.CodeTarget;
 
-[CodeTarget("cpp-bin")]
-public class CppBinCodeTarget : CppCodeTargetBase
+[CodeTarget("cpp-sharedptr-bin")]
+public class CppBinSharedptrCodeTarget : CppCodeTargetBase
 {
     protected override void OnCreateTemplateContext(TemplateContext ctx)
     {
         base.OnCreateTemplateContext(ctx);
-        ctx.PushGlobal(new CppBinTemplateExtension());
+        ctx.PushGlobal(new CppSharedptrBinTemplateExtension());
     }
 }

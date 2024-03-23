@@ -11,6 +11,21 @@
     </ItemGroup>
 
     <ItemGroup>
+      <None Update="Templates\cpp-rawptr-bin\bean.sbn">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Templates\cpp-rawptr-bin\schema_cpp.sbn">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Templates\cpp-rawptr-bin\schema_h.sbn">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Templates\cpp-rawptr-bin\table.sbn">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Templates\cpp-rawptr-bin\tables.sbn">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
       <None Update="Templates\cs-bin\bean.sbn">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
@@ -32,28 +47,24 @@
       <None Update="Templates\common\cs\enum.sbn">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="Templates\cpp-bin\bean.sbn">
+      <None Update="Templates\cpp-sharedptr-bin\bean.sbn">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="Templates\cpp-bin\schema_cpp.sbn">
+      <None Update="Templates\cpp-sharedptr-bin\schema_cpp.sbn">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="Templates\cpp-bin\schema_h.sbn">
+      <None Update="Templates\cpp-sharedptr-bin\schema_h.sbn">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="Templates\cpp-bin\table.sbn">
+      <None Update="Templates\cpp-sharedptr-bin\table.sbn">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="Templates\cpp-bin\tables.sbn">
+      <None Update="Templates\cpp-sharedptr-bin\tables.sbn">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
       <None Update="Templates\common\cpp\enum.sbn">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="TypeVisitors\" />
     </ItemGroup>
 
 </Project>

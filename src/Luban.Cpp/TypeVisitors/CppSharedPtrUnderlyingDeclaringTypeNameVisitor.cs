@@ -3,9 +3,9 @@ using Luban.Types;
 
 namespace Luban.Cpp.TypeVisitors;
 
-public class CppSharedPtrUnderlyingDeclaringTypeNameVisitor : CppUnderlyingDeclaringTypeNameVisitor
+public class CppSharedptrUnderlyingDeclaringTypeNameVisitor : CppUnderlyingDeclaringTypeNameVisitor
 {
-    public new static CppSharedPtrUnderlyingDeclaringTypeNameVisitor Ins { get; } = new();
+    public new static CppSharedptrUnderlyingDeclaringTypeNameVisitor Ins { get; } = new();
 
     public override string Accept(TBean type)
     {

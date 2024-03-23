@@ -23,7 +23,7 @@ bool {{make_cpp_name bean.full_name}}::deserialize(::luban::ByteBuf& _buf)
 bool {{make_cpp_name bean.full_name}}::deserialize{{bean.name}}(::luban::ByteBuf& _buf, ::luban::SharedPtr<{{make_cpp_name bean.full_name}}>& _out)
 {
 {{~if bean.is_abstract_type~}}
-    int id;
+    int32_t id;
     if (!_buf.readInt(id)) return false;
     switch (id)
     {

@@ -1,0 +1,32 @@
+﻿{{namespace_with_grace_begin __namespace}}
+
+{{~if __this.comment != '' ~}}
+/**
+ * {{escape_comment __this.comment}}
+ */
+{{~end~}}
+struct {{__name}} : public{{if __parent_def_type}} {{make_cpp_name __parent_def_type.full_name}} {{else}} luban::CfgBean {{end}}
+{
+    static bool deserialize{{__name}}(::luban::ByteBuf& _buf, {{__name}}*& _out);
+
+    virtual ~{{__name}}() {}
+
+    bool deserialize(::luban::ByteBuf& _buf);
+
+    {{~ for field in __export_fields ~}}
+{{~if field.comment != '' ~}}
+    /**
+     * {{escape_comment field.comment}}
+     */
+{{~end~}}
+    {{declaring_type_name field.ctype}} {{format_field_name __code_style field.name}};
+    {{~end~}}
+
+{{~if !__this.is_abstract_type~}}
+    static constexpr int __ID__ = {{__this.id}};
+
+    int getTypeId() const override { return __ID__; }
+{{~end~}}
+};
+
+{{namespace_with_grace_end __namespace}}

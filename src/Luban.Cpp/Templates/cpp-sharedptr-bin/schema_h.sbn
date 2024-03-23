@@ -1,0 +1,21 @@
+#pragma once
+#include <functional>
+#include <algorithm>
+
+#include "CfgBean.h"
+
+{{namespace_with_grace_begin __top_module}}
+
+{{__enum_codes~}}
+
+{{~for b in __beans~}}
+{{namespace_with_grace_begin b.namespace}} struct {{b.name}}; {{namespace_with_grace_end b.namespace}}
+{{~end~}}
+
+{{~__bean_codes~}}
+
+{{~__table_codes~}}
+
+{{__tables_code}}
+
+{{namespace_with_grace_end __top_module}}
