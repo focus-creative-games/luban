@@ -197,4 +197,53 @@ namespace Luban.Job.Common.TypeVisitors
 
         TR Accept(TMap type, T x, T2 y, T3 z);
     }
+
+        public interface ITypeFuncVisitor<T, T2, T3,T4, TR>
+    {
+        TR Accept(TBool type, T x, T2 y, T3 z,T4 t);
+
+        TR Accept(TByte type, T x, T2 y, T3 z,T4 t);
+
+        TR Accept(TShort type, T x, T2 y, T3 z,T4 t);
+
+        TR Accept(TFshort type, T x, T2 y, T3 z,T4 t);
+
+        TR Accept(TInt type, T x, T2 y, T3 z,T4 t);
+
+        TR Accept(TFint type, T x, T2 y, T3 z,T4 t);
+
+        TR Accept(TLong type, T x, T2 y, T3 z,T4 t);
+
+        TR Accept(TFlong type, T x, T2 y, T3 z,T4 t);
+
+        TR Accept(TFloat type, T x, T2 y, T3 z,T4 t);
+
+        TR Accept(TDouble type, T x, T2 y, T3 z,T4 t);
+
+        TR Accept(TEnum type, T x, T2 y, T3 z,T4 t);
+
+        TR Accept(TString type, T x, T2 y, T3 z,T4 t);
+
+        TR Accept(TText type, T x, T2 y, T3 z,T4 t);
+
+        TR Accept(TBytes type, T x, T2 y, T3 z,T4 t);
+
+        TR Accept(TVector2 type, T x, T2 y, T3 z,T4 t);
+
+        TR Accept(TVector3 type, T x, T2 y, T3 z,T4 t);
+
+        TR Accept(TVector4 type, T x, T2 y, T3 z,T4 t);
+
+        TR Accept(TDateTime type, T x, T2 y, T3 z,T4 t);
+
+        TR Accept(TBean type, T x, T2 y, T3 z,T4 t);
+
+        TR Accept(TArray type, T x, T2 y, T3 z,T4 t);
+
+        TR Accept(TList type, T x, T2 y, T3 z,T4 t);
+
+        TR Accept(TSet type, T x, T2 y, T3 z,T4 t);
+
+        TR Accept(TMap type, T x, T2 y, T3 z,T4 t);
+    }
 }
