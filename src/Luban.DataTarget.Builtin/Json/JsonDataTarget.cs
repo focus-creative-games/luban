@@ -10,7 +10,7 @@ public class JsonDataTarget : DataTargetBase
 {
     protected override string OutputFileExt => "json";
 
-    public static bool UseCompactJson => EnvManager.Current.GetBoolOptionOrDefault($"{FamilyPrefix}.json", "compact", true, false);
+    public static bool UseCompactJson => EnvManager.Current.GetBoolOptionOrDefault("json", "compact", true, false);
 
     protected virtual JsonDataVisitor ImplJsonDataVisitor => JsonDataVisitor.Ins;
 
