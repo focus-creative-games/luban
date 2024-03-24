@@ -51,6 +51,7 @@
       <ProjectReference Include="..\Luban.L10N\Luban.L10N.csproj" />
       <ProjectReference Include="..\Luban.Lua\Luban.Lua.csproj" />
       <ProjectReference Include="..\Luban.MsgPack\Luban.MsgPack.csproj" />
+      <ProjectReference Include="..\Luban.PHP\Luban.PHP.csproj" />
       <ProjectReference Include="..\Luban.Protobuf\Luban.Protobuf.csproj" />
       <ProjectReference Include="..\Luban.Python\Luban.Python.csproj" />
       <ProjectReference Include="..\Luban.Schema.Builtin\Luban.Schema.Builtin.csproj" />

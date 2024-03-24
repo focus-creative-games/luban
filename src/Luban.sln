@@ -1,45 +1,47 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29418.71
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban", "Luban\Luban.csproj", "{26003D67-6228-4848-8B8F-985992800237}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luban", "Luban\Luban.csproj", "{26003D67-6228-4848-8B8F-985992800237}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.DataLoader.Builtin", "Luban.DataLoader.Builtin\Luban.DataLoader.Builtin.csproj", "{2200760D-A03B-46F8-8968-6818FB0984CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luban.DataLoader.Builtin", "Luban.DataLoader.Builtin\Luban.DataLoader.Builtin.csproj", "{2200760D-A03B-46F8-8968-6818FB0984CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Core", "Luban.Core\Luban.Core.csproj", "{C89F41B6-D378-4558-A8F8-AEE4A68600DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luban.Core", "Luban.Core\Luban.Core.csproj", "{C89F41B6-D378-4558-A8F8-AEE4A68600DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.CSharp", "Luban.CSharp\Luban.CSharp.csproj", "{EDEA1339-94A4-4A2D-8C09-707296306F60}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luban.CSharp", "Luban.CSharp\Luban.CSharp.csproj", "{EDEA1339-94A4-4A2D-8C09-707296306F60}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Schema.Builtin", "Luban.Schema.Builtin\Luban.Schema.Builtin.csproj", "{701EA9C0-C680-4FA3-B51B-CEC79BCFE56B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luban.Schema.Builtin", "Luban.Schema.Builtin\Luban.Schema.Builtin.csproj", "{701EA9C0-C680-4FA3-B51B-CEC79BCFE56B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.DataTarget.Builtin", "Luban.DataTarget.Builtin\Luban.DataTarget.Builtin.csproj", "{7D1DC8E2-6581-4E35-A098-A8ED9264361C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luban.DataTarget.Builtin", "Luban.DataTarget.Builtin\Luban.DataTarget.Builtin.csproj", "{7D1DC8E2-6581-4E35-A098-A8ED9264361C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.DataValidator.Builtin", "Luban.DataValidator.Builtin\Luban.DataValidator.Builtin.csproj", "{E1E70DDB-FBEC-429D-8FBF-657271949DB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luban.DataValidator.Builtin", "Luban.DataValidator.Builtin\Luban.DataValidator.Builtin.csproj", "{E1E70DDB-FBEC-429D-8FBF-657271949DB6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.L10N", "Luban.L10N\Luban.L10N.csproj", "{C5278424-8595-4A09-A1FC-C5703AB1D0A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luban.L10N", "Luban.L10N\Luban.L10N.csproj", "{C5278424-8595-4A09-A1FC-C5703AB1D0A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Protobuf", "Luban.Protobuf\Luban.Protobuf.csproj", "{B7F83DCC-433F-4364-B1DB-D191BCCC9279}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luban.Protobuf", "Luban.Protobuf\Luban.Protobuf.csproj", "{B7F83DCC-433F-4364-B1DB-D191BCCC9279}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.FlatBuffers", "Luban.FlatBuffers\Luban.FlatBuffers.csproj", "{0E6A7105-D241-4D13-A0B7-3AC6CC6E091D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luban.FlatBuffers", "Luban.FlatBuffers\Luban.FlatBuffers.csproj", "{0E6A7105-D241-4D13-A0B7-3AC6CC6E091D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.MsgPack", "Luban.MsgPack\Luban.MsgPack.csproj", "{EAE81827-B4AB-4FFD-ADFA-8D1DD8C3F8EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luban.MsgPack", "Luban.MsgPack\Luban.MsgPack.csproj", "{EAE81827-B4AB-4FFD-ADFA-8D1DD8C3F8EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Bson", "Luban.Bson\Luban.Bson.csproj", "{DB041AE2-4AB0-4BA1-BA6E-611BC9AC3848}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luban.Bson", "Luban.Bson\Luban.Bson.csproj", "{DB041AE2-4AB0-4BA1-BA6E-611BC9AC3848}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Lua", "Luban.Lua\Luban.Lua.csproj", "{6FCDA8CB-5483-48A9-9BAF-DAAB12CF27E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luban.Lua", "Luban.Lua\Luban.Lua.csproj", "{6FCDA8CB-5483-48A9-9BAF-DAAB12CF27E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Python", "Luban.Python\Luban.Python.csproj", "{37900AA3-7B17-47D6-9318-74E71C0E04B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luban.Python", "Luban.Python\Luban.Python.csproj", "{37900AA3-7B17-47D6-9318-74E71C0E04B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Java", "Luban.Java\Luban.Java.csproj", "{4195E08B-F834-4D28-9A2C-32866862B549}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luban.Java", "Luban.Java\Luban.Java.csproj", "{4195E08B-F834-4D28-9A2C-32866862B549}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Golang", "Luban.Golang\Luban.Golang.csproj", "{9C22771A-D27E-49AA-A6DC-5D6B165373F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luban.Golang", "Luban.Golang\Luban.Golang.csproj", "{9C22771A-D27E-49AA-A6DC-5D6B165373F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Typescript", "Luban.Typescript\Luban.Typescript.csproj", "{CA2B5775-0ED2-439E-8946-65C0FC4449F9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luban.Typescript", "Luban.Typescript\Luban.Typescript.csproj", "{CA2B5775-0ED2-439E-8946-65C0FC4449F9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Cpp", "Luban.Cpp\Luban.Cpp.csproj", "{7692415C-FED5-4837-8DA0-4949B7E660CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luban.Cpp", "Luban.Cpp\Luban.Cpp.csproj", "{7692415C-FED5-4837-8DA0-4949B7E660CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Gdscript", "Luban.Gdscript\Luban.Gdscript.csproj", "{70A9132F-8527-4E5E-96C5-A025B880CC0B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luban.Gdscript", "Luban.Gdscript\Luban.Gdscript.csproj", "{70A9132F-8527-4E5E-96C5-A025B880CC0B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luban.PHP", "Luban.PHP\Luban.PHP.csproj", "{96E2962A-53A9-4B73-B90B-BDCE46938B2E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -123,6 +125,10 @@ Global
 		{70A9132F-8527-4E5E-96C5-A025B880CC0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70A9132F-8527-4E5E-96C5-A025B880CC0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70A9132F-8527-4E5E-96C5-A025B880CC0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96E2962A-53A9-4B73-B90B-BDCE46938B2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96E2962A-53A9-4B73-B90B-BDCE46938B2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96E2962A-53A9-4B73-B90B-BDCE46938B2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96E2962A-53A9-4B73-B90B-BDCE46938B2E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

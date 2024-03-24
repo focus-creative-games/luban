@@ -41,4 +41,7 @@ public class CommonFileHeaders
 #    the code is regenerated.
 #  </auto-generated>
 ";
+
+    public const string AUTO_GENERATE_PHP = @"<?php
+";
 }
