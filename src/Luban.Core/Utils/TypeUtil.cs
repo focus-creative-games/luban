@@ -116,7 +116,7 @@ public static class TypeUtil
 
     public static string MakePyFullName(string module, string name)
     {
-        return module.Replace('.', '_') + name;
+        return MakeFullName(module, name).Replace('.', '_');
     }
 
     public static string MakeGDScriptFullName(string module, string name)
