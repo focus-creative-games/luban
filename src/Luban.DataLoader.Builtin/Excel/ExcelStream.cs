@@ -190,6 +190,17 @@ class ExcelStream
         return false;
     }
 
+    public bool TryPeed(out object data)
+    {
+        int oldCurIndex = _curIndex;
+        if (TryRead(out data))
+        {
+            _curIndex = oldCurIndex;
+            return true;
+        }
+        return false;
+    }
+
     public object Read(bool notSkip = false)
     {
         //if (curIndex <= toIndex)
