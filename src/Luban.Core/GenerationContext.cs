@@ -97,7 +97,8 @@ public class GenerationContext
 
     private bool NeedExportNotDefault(List<string> groups)
     {
-        return groups.Any(Target.Groups.Contains);
+        // 如果没设置 groups 或者是 target groups
+        return groups.Count == 0 || groups.Any(Target.Groups.Contains);
     }
 
     private List<DefTypeBase> CalculateExportTypes()
