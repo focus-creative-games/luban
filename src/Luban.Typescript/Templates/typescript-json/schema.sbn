@@ -41,9 +41,9 @@ func generate_resolve_field_ref
         if (is_field_bean_need_resolve_ref field)
             ret 'this.'+fieldName + '?.resolve(tables);'
         else if (is_field_array_like_need_resolve_ref field)
-            ret 'for (let _e of ' + fieldName + ') { _e?.resolve(tables); }'
+            ret 'for (let _e of ' + 'this.' + + fieldName + ') { _e?.resolve(tables); }'
         else if (is_field_map_need_resolve_ref field)
-            ret 'foreach (var [_, _e] of ' + fieldName ') { _e?.resolve(tables); }'
+            ret 'foreach (var [_, _e] of ' + 'this.' + fieldName ') { _e?.resolve(tables); }'
         else
             ret ''
         end
@@ -101,9 +101,7 @@ export {{if bean.is_abstract_type}}abstract {{end}}class {{bean.name}}{{if bean.
         super.resolve(tables)
         {{~end~}}
         {{~ for field in bean.export_fields ~}}
-        {{~if can_generate_ref field~}}
         {{generate_resolve_field_ref field}}
-        {{~end~}}
         {{~end~}}
     }
 }
