@@ -133,3 +133,36 @@ public interface ITypeFuncVisitor<T, T2, T3, TR>
 
     TR Accept(TMap type, T x, T2 y, T3 z);
 }
+
+public interface ITypeFuncVisitor<T, T2, T3, T4, TR>
+{
+    TR Accept(TBool type, T x, T2 y, T3 z, T4 w);
+
+    TR Accept(TByte type, T x, T2 y, T3 z, T4 w);
+
+    TR Accept(TShort type, T x, T2 y, T3 z, T4 w);
+
+    TR Accept(TInt type, T x, T2 y, T3 z, T4 w);
+
+    TR Accept(TLong type, T x, T2 y, T3 z, T4 w);
+
+    TR Accept(TFloat type, T x, T2 y, T3 z, T4 w);
+
+    TR Accept(TDouble type, T x, T2 y, T3 z, T4 w);
+
+    TR Accept(TEnum type, T x, T2 y, T3 z, T4 w);
+
+    TR Accept(TString type, T x, T2 y, T3 z, T4 w);
+
+    TR Accept(TDateTime type, T x, T2 y, T3 z, T4 w);
+
+    TR Accept(TBean type, T x, T2 y, T3 z, T4 w);
+
+    TR Accept(TArray type, T x, T2 y, T3 z, T4 w);
+
+    TR Accept(TList type, T x, T2 y, T3 z, T4 w);
+
+    TR Accept(TSet type, T x, T2 y, T3 z, T4 w);
+
+    TR Accept(TMap type, T x, T2 y, T3 z, T4 w);
+}

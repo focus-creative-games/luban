@@ -52,4 +52,9 @@ public class TLong : TType
     {
         return visitor.Accept(this, x, y, z);
     }
+
+    public override TR Apply<T1, T2, T3, T4, TR>(ITypeFuncVisitor<T1, T2, T3, T4, TR> visitor, T1 x, T2 y, T3 z, T4 w)
+    {
+        return visitor.Accept(this, x, y, z, w);
+    }
 }

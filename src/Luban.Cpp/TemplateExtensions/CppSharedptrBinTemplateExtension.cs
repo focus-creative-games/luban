@@ -8,7 +8,7 @@ public class CppSharedptrBinTemplateExtension : ScriptObject
 {
     public static string Deserialize(string bufName, string fieldName, TType type)
     {
-        return type.Apply(CppSharedptrDeserializeVisitor.Ins, bufName, fieldName);
+        return type.Apply(CppSharedptrDeserializeVisitor.Ins, bufName, fieldName,0);
     }
 
     public static string DeclaringTypeName(TType type)
