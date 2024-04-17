@@ -41,25 +41,19 @@ public class CsharpEditorJsonCodeTarget : CsharpCodeTargetBase
         }
     }
 
-    private string TopModule => EnvManager.Current.GetOptionOrDefault("editor", "topModule", true, "editor.cfg");
-
-    private string MakeNameWithTopModule(string name)
-    {
-        return TypeUtil.MakeFullName(TopModule, name);
-    }
-
     public override void GenerateBean(GenerationContext ctx, DefBean bean, CodeWriter writer)
     {
         var template = GetTemplate("bean");
         var tplCtx = CreateTemplateContext(template);
+        string topModule = ctx.Target.TopModule;
         var extraEnvs = new ScriptObject
         {
             { "__ctx", ctx},
-            { "__top_module", TopModule },
+            { "__top_module", topModule },
             { "__name", bean.Name },
             { "__namespace", bean.Namespace },
-            { "__namespace_with_top_module", MakeNameWithTopModule(bean.Namespace) },
-            { "__full_name_with_top_module", MakeNameWithTopModule(bean.FullName) },
+            { "__namespace_with_top_module", TypeUtil.MakeFullName(topModule, bean.Namespace) },
+            { "__full_name_with_top_module", TypeUtil.MakeFullName(topModule, bean.FullName) },
             { "__bean", bean },
             { "__this", bean },
             {"__fields", bean.Fields},
@@ -75,14 +69,15 @@ public class CsharpEditorJsonCodeTarget : CsharpCodeTargetBase
     {
         var template = GetTemplate("enum");
         var tplCtx = CreateTemplateContext(template);
+        string topModule = ctx.Target.TopModule;
         var extraEnvs = new ScriptObject
         {
             { "__ctx", ctx},
             { "__name", @enum.Name },
             { "__namespace", @enum.Namespace },
-            { "__top_module", TopModule },
-            { "__namespace_with_top_module", MakeNameWithTopModule(@enum.Namespace) },
-            { "__full_name_with_top_module", MakeNameWithTopModule(@enum.FullName) },
+            { "__top_module", topModule },
+            { "__namespace_with_top_module", TypeUtil.MakeFullName(topModule, @enum.Namespace) },
+            { "__full_name_with_top_module", TypeUtil.MakeFullName(topModule, @enum.FullName) },
             { "__enum", @enum },
             { "__this", @enum },
             { "__code_style", CodeStyle},
