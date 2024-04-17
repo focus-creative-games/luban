@@ -20,7 +20,7 @@ public class TemplateManager
 
     public void Init()
     {
-        string curDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        string curDir = Path.GetDirectoryName(AppContext.BaseDirectory);
         AddTemplateSearchPath($"{curDir}/Templates", true);
     }
 

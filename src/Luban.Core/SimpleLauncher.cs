@@ -49,7 +49,7 @@ public class SimpleLauncher
 
     private void ScanRegisterAssemblyBehaviours()
     {
-        string dllDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        string dllDir = Path.GetDirectoryName(AppContext.BaseDirectory);
         foreach (var dllFile in Directory.GetFiles(dllDir, "*.dll", SearchOption.TopDirectoryOnly))
         {
             string dllName = Path.GetFileNameWithoutExtension(dllFile);
