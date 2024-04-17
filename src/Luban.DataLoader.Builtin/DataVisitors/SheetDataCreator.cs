@@ -281,7 +281,7 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
             }
             catch (Exception e)
             {
-                 var dce = new DataCreateException(e, $"Sheet:{sheet.SheetName} 字段:{fname} 位置:{field.Location}");
+                var dce = new DataCreateException(e, $"Sheet:{sheet.SheetName} 字段:{fname} 位置:{field.Location}");
                 dce.Push(bean, f);
                 throw dce;
             }
@@ -476,12 +476,20 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
             foreach (var e in row.Fields)
             {
                 var keyData = type.KeyType.Apply(StringDataCreator.Ins, e.Key);
-                if (RowColumnSheet.IsBlankRow(e.Value.Row, e.Value.SelfTitle.FromIndex, e.Value.SelfTitle.ToIndex))
+                if (e.Value.Row != null)
                 {
-                    continue;
+                    if (RowColumnSheet.IsBlankRow(e.Value.Row, e.Value.SelfTitle.FromIndex, e.Value.SelfTitle.ToIndex))
+                    {
+                        continue;
+                    }
+                    var valueData = type.ValueType.Apply(ExcelStreamDataCreator.Ins, e.Value.AsStream(""));
+                    datas.Add(keyData, valueData);
                 }
-                var valueData = type.ValueType.Apply(ExcelStreamDataCreator.Ins, e.Value.AsStream(""));
-                datas.Add(keyData, valueData);
+                else
+                {
+                    var valueData = type.ValueType.Apply(this, sheet, e.Value);
+                    datas.Add(keyData, valueData);
+                }
             }
             return new DMap(type, datas);
         }
