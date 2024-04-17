@@ -15,8 +15,4 @@ public class LoadDefException : Exception
     public LoadDefException(string message, Exception innerException) : base(message, innerException)
     {
     }
-
-    protected LoadDefException(SerializationInfo info, StreamingContext context) : base(info, context)
-    {
-    }
 }

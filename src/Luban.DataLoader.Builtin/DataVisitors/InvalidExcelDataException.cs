@@ -15,8 +15,4 @@ class InvalidExcelDataException : Exception
     public InvalidExcelDataException(string message, Exception innerException) : base(message, innerException)
     {
     }
-
-    protected InvalidExcelDataException(SerializationInfo info, StreamingContext context) : base(info, context)
-    {
-    }
 }

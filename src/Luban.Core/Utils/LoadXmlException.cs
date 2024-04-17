@@ -15,8 +15,4 @@ public class LoadXmlException : Exception
     public LoadXmlException(string message, Exception innerException) : base(message, innerException)
     {
     }
-
-    protected LoadXmlException(SerializationInfo info, StreamingContext context) : base(info, context)
-    {
-    }
 }
