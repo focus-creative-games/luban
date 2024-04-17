@@ -86,7 +86,7 @@ public class ProtobufBinDataVisitor : IDataActionVisitor<CodedOutputStream>
         int index = 0;
         foreach (var field in type.Fields)
         {
-            var defField = (DefField)defFields[index++];
+            var defField = defFields[index++];
             if (!defField.NeedExport())
             {
                 continue;

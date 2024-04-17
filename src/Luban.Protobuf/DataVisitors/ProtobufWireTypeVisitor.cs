@@ -66,21 +66,22 @@ public class ProtobufWireTypeVisitor : ITypeFuncVisitor<WireFormat.WireType>
     public WireFormat.WireType Accept(TArray type)
     {
         //return WireFormat.WireType.LengthDelimited;
-        throw new System.NotSupportedException();
+        throw new Exception("not support multi-dimension array wire type");
     }
 
     public WireFormat.WireType Accept(TList type)
     {
-        throw new System.NotSupportedException();
+        throw new Exception("not support multi-dimension list wire type");
     }
 
     public WireFormat.WireType Accept(TSet type)
     {
-        throw new System.NotSupportedException();
+        throw new Exception("not support multi-dimension set wire type");
     }
 
     public WireFormat.WireType Accept(TMap type)
     {
-        return WireFormat.WireType.LengthDelimited;
+        //return WireFormat.WireType.LengthDelimited;
+        throw new Exception("not support multi-dimension set wire type");
     }
 }
