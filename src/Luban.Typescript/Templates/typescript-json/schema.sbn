@@ -41,9 +41,9 @@ func generate_resolve_field_ref
         if (is_field_bean_need_resolve_ref field)
             ret 'this.'+fieldName + '?.resolve(tables);'
         else if (is_field_array_like_need_resolve_ref field)
-            ret 'for (let _e of ' + 'this.' + + fieldName + ') { _e?.resolve(tables); }'
+            ret 'for (let _e of ' + 'this.' + fieldName + ') { _e?.resolve(tables); }'
         else if (is_field_map_need_resolve_ref field)
-            ret 'foreach (var [_, _e] of ' + 'this.' + fieldName ') { _e?.resolve(tables); }'
+            ret 'for (let [_, _e] of ' + 'this.' + fieldName + ') { _e?.resolve(tables); }'
         else
             ret ''
         end
