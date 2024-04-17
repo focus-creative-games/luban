@@ -159,7 +159,7 @@ public static class SheetLoadUtil
             {
                 break;
             }
-            string rowTag = row[0].Value?.ToString()?.ToLower() ?? "";
+            string rowTag = row[0].Value?.ToString()?.ToLower()?.Trim() ?? "";
             if (!rowTag.StartsWith("##"))
             {
                 break;
@@ -194,7 +194,7 @@ public static class SheetLoadUtil
             {
                 break;
             }
-            string rowTag = row[0].Value?.ToString()?.ToLower() ?? "";
+            string rowTag = row[0].Value?.ToString()?.ToLower()?.Trim() ?? "";
             if (rowTag == "##field" || rowTag == "##var" || rowTag == "##+")
             {
                 rowIndex = i;
