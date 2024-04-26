@@ -18,7 +18,7 @@ public abstract class GoCodeTargetBase : TemplateCodeTargetBase
     private static readonly HashSet<string> s_preservedKeyWords = new()
     {
         // go preserved key words 
-        "break", "default", "func", "interface", "select", "case", "defer", "go", "map", "struct", "chan", "else", "goto", "package", "switch", "const", "fallthrough", "if", "range", "type", "continue", "for", "import", "return", "var"
+        //"break", "default", "func", "interface", "select", "case", "defer", "go", "map", "struct", "chan", "else", "goto", "package", "switch", "const", "fallthrough", "if", "range", "continue", "for", "import", "return", "var"
     };
 
     protected override IReadOnlySet<string> PreservedKeyWords => s_preservedKeyWords;
