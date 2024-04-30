@@ -11,21 +11,27 @@ type AbstractBase = dyn std::any::Any + Sync + Send;
 pub trait GetBase<'a, T> {
     fn get_base(&'a self) -> T;
 }
-{{~end~}}
-{{~for bean in __polymorphic_beans~}}
 
-impl<'a> TryFrom<&'a AbstractBase> for &'a {{full_name bean}} {
-    type Error = String;
+macro_rules! try_from {
+    ($($t:ty),+) => {
+        $(
+            impl<'a> TryFrom<&'a AbstractBase> for &'a $t {
+                type Error = String;
 
-    fn try_from(value: &'a AbstractBase) -> Result<Self, Self::Error> {
-        let r = value.downcast_ref::<{{full_name bean}}>();
-        if let Some(v) = r {
-            return Ok(v);
-        }
+                fn try_from(value: &'a AbstractBase) -> Result<Self, Self::Error> {
+                    let r = value.downcast_ref::<$t>();
+                    if let Some(v) = r {
+                        return Ok(v);
+                    }
 
-        Err("can not into to {{full_name bean}}".to_string())
-    }
+                    Err(concat!("can not into to ", stringify!($t)).to_string())
+                }
+            }
+        )+
+    };
 }
+
+try_from!( {{array.each __polymorphic_beans @full_name | array.join ", "}});
 {{~end~}}
 
 pub struct Tables{
