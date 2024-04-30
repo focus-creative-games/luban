@@ -43,6 +43,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luban.Gdscript", "Luban.Gds
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luban.PHP", "Luban.PHP\Luban.PHP.csproj", "{96E2962A-53A9-4B73-B90B-BDCE46938B2E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luban.Rust", "Luban.Rust\Luban.Rust.csproj", "{15DC99B5-9ACF-4CB0-BCE4-3BD636A77445}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -129,6 +131,10 @@ Global
 		{96E2962A-53A9-4B73-B90B-BDCE46938B2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96E2962A-53A9-4B73-B90B-BDCE46938B2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96E2962A-53A9-4B73-B90B-BDCE46938B2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15DC99B5-9ACF-4CB0-BCE4-3BD636A77445}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15DC99B5-9ACF-4CB0-BCE4-3BD636A77445}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15DC99B5-9ACF-4CB0-BCE4-3BD636A77445}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15DC99B5-9ACF-4CB0-BCE4-3BD636A77445}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

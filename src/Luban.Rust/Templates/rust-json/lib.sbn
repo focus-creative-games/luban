@@ -1,0 +1,22 @@
+﻿pub mod prelude{
+    pub use crate::*;
+{{~ for ns in __ns ~}}
+    pub use {{ns}}::*;
+{{~end~}}
+}
+
+pub struct Tables{
+{{~ for table in __tables ~}}
+    pub {{table.name}}: std::sync::Arc<{{full_name table}}>,
+{{~end~}}
+}
+
+impl Tables {
+    pub fn new<T: Fn(&str) -> serde_json::Value>(loader: T) -> Tables {
+        Tables {
+{{~ for table in __tables ~}}
+            {{table.name}}: {{full_name table}}::new(&loader("{{table.output_data_file}}")),
+{{~end~}}
+        }
+    }
+}
