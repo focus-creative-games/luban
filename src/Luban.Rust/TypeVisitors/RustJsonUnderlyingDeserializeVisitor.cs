@@ -1,4 +1,5 @@
-﻿using Luban.Types;
+﻿using Luban.Rust.TemplateExtensions;
+using Luban.Types;
 using Luban.TypeVisitors;
 
 namespace Luban.Rust.TypeVisitors;
@@ -44,8 +45,8 @@ public class RustJsonUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, str
 
     public string Accept(TEnum type, string json, string field, int depth)
     {
-        return type.DefEnum.IsFlags 
-            ? $"{type.Apply(RustDeclaringTypeNameVisitor.Ins)}::from_bits_truncate(<u32 as std::str::FromStr>::from_str(&{json}.to_string()).unwrap())" 
+        return type.DefEnum.IsFlags
+            ? $"{type.Apply(RustDeclaringTypeNameVisitor.Ins)}::from_bits_truncate(<u32 as std::str::FromStr>::from_str(&{json}.to_string()).unwrap())"
             : $"<i32 as std::str::FromStr>::from_str(&{json}.to_string()).unwrap().into()";
     }
 
@@ -61,7 +62,9 @@ public class RustJsonUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, str
 
     public string Accept(TBean type, string json, string field, int depth)
     {
-        return $"{type.Apply(RustDeclaringTypeNameVisitor.Ins)}::new(&{json})";
+        return type.DefBean.IsAbstractType
+            ? $"{RustCommonTemplateExtension.FullName(type.DefBean)}::new(&{json})"
+            : $"{type.Apply(RustDeclaringTypeNameVisitor.Ins)}::new(&{json})";
     }
 
     public string Accept(TArray type, string json, string field, int depth)

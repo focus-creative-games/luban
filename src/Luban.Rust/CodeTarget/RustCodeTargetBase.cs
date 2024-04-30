@@ -37,43 +37,37 @@ public class RustCodeTargetBase : TemplateCodeTargetBase
 
     public override void Handle(GenerationContext ctx, OutputFileManifest manifest)
     {
-        //TODO 多态
         var topMod = new Mod();
         var modDic = new Dictionary<string, Mod>();
-        foreach (var item in ctx.ExportTables)
-        {
-            CollectMod(item, topMod, modDic);
-        }
-
+        var polymorphicBeans = new HashSet<DefBean>();
+        foreach (var item in ctx.ExportTables) CollectMod(item, topMod, modDic);
         foreach (var item in ctx.ExportBeans)
         {
+            if (item.IsAbstractType) polymorphicBeans.Add(item);
+            if (!string.IsNullOrEmpty(item.Parent)) polymorphicBeans.Add(item);
             CollectMod(item, topMod, modDic);
         }
 
-        foreach (var item in ctx.ExportEnums)
+        foreach (var item in ctx.ExportEnums) CollectMod(item, topMod, modDic);
+
+        var tasks = new List<Task<OutputFile>>
         {
-            CollectMod(item, topMod, modDic);
-        }
-
-
-        var tasks = new List<Task<OutputFile>>();
-
-        tasks.Add(Task.Run(() =>
-        {
-            var allns = modDic.Values.Select(x => "crate::" + x.FullPath.Replace("/", "::")).ToList();
-            var allmods = modDic.Keys.Select(x => x.Replace(".", "::"));
-            return new OutputFile()
+            Task.Run(() =>
             {
-                File = $"{GenerationContext.Current.TopModule}/src/lib.rs",
-                Content = GenerateLib(ctx, allmods, allns, topMod),
-            };
-        }));
-
-        tasks.Add(Task.Run(() => new OutputFile()
-        {
-            File = $"{GenerationContext.Current.TopModule}/Cargo.toml",
-            Content = GenerateToml(ctx),
-        }));
+                var allns = modDic.Values.Select(x => "crate::" + x.FullPath.Replace("/", "::")).ToList();
+                var allmods = modDic.Keys.Select(x => x.Replace(".", "::"));
+                return new OutputFile()
+                {
+                    File = $"{GenerationContext.Current.TopModule}/src/lib.rs",
+                    Content = GenerateLib(ctx, allmods, allns, topMod, polymorphicBeans),
+                };
+            }),
+            Task.Run(() => new OutputFile()
+            {
+                File = $"{GenerationContext.Current.TopModule}/Cargo.toml",
+                Content = GenerateToml(ctx),
+            })
+        };
 
         foreach (var mod in modDic.Values)
         {
@@ -106,7 +100,7 @@ public class RustCodeTargetBase : TemplateCodeTargetBase
             var parent = topMod;
             foreach (var se in ns)
             {
-                if (!modDic.TryGetValue(se, out mod))
+                if (!modDic.TryGetValue(se, out mod!))
                 {
                     mod = new Mod
                     {
@@ -153,7 +147,7 @@ public class RustCodeTargetBase : TemplateCodeTargetBase
         return writer.ToResult(string.Empty);
     }
 
-    protected virtual string GenerateLib(GenerationContext ctx, IEnumerable<string> mods, IEnumerable<string> ns, Mod topMod)
+    protected virtual string GenerateLib(GenerationContext ctx, IEnumerable<string> mods, IEnumerable<string> ns, Mod topMod, HashSet<DefBean> polymorphicBeans)
     {
         var writer = new CodeWriter();
         var template = GetTemplate($"lib");
@@ -170,6 +164,7 @@ public class RustCodeTargetBase : TemplateCodeTargetBase
             {"__mods", mods},
             {"__ns", ns},
             {"__tables", ctx.ExportTables},
+            {"__polymorphic_beans", polymorphicBeans},
             {"__code_style", CodeStyle},
         };
         tplCtx.PushGlobal(extraEnvs);

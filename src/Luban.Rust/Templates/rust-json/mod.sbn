@@ -13,7 +13,7 @@ use serde::Deserialize;
 {{~end~}}
 {{~ if enum.is_flags ~}}
 bitflags::bitflags!{    
-    #[derive(Deserialize, Debug, Hash, Eq, PartialEq)]
+    #[derive(Debug, Hash, Eq, PartialEq)]
     pub struct {{enum.name}} : u32 {
         {{~ for item in enum.items ~}}
     {{~if item.comment_or_alias != '' ~}}
@@ -50,31 +50,81 @@ impl From<i32> for {{enum.name}} {
 
 {{~end~}}
 {{~end~}}
-{{~ for bean in __mod.beans ~}}
-#[derive(Deserialize, Debug)]
+{{~ for bean in __mod.beans 
+    hierarchy_fields = bean.hierarchy_export_fields
+~}}
+#[derive(Debug)]
 pub struct {{bean.name}} {
-    {{~ for field in bean.export_fields ~}}
+    {{~ for field in hierarchy_fields ~}}
 {{~if field.comment != '' ~}}
     /// {{escape_comment field.comment}}
 {{~end~}}
     pub {{field.name}}: {{declaring_type_name field.ctype}},
     {{~end~}}
 }
+{{~if bean.is_abstract_type~}}
+
+impl {{bean.name}} {
+    pub fn new(json: &serde_json::Value) -> std::sync::Arc<AbstractBase> {
+        let type_id = json["$type"].as_str().unwrap();
+        match type_id {
+            {{~for child in bean.hierarchy_not_abstract_children~}}
+            "{{impl_data_type child bean}}" => std::sync::Arc::new({{full_name child}}::new(json)),
+            {{~end~}}
+            _ => panic!("Invalid type for {{bean.name}}:{}", type_id)
+        }
+    }
+}
+
+pub trait T{{bean.name}} {
+    {{~ for field in hierarchy_fields ~}}
+    fn {{getter_name field.name}}(&self) -> &{{declaring_type_name field.ctype}};
+    {{~end~}}
+}
+{{~for child in bean.hierarchy_not_abstract_children~}}
+
+impl {{base_trait_name bean}} for {{full_name child}} {
+    {{~ for field in hierarchy_fields ~}}
+    fn {{getter_name field.name}}(&self) -> &{{declaring_type_name field.ctype}} {
+        &self.{{field.name}}
+    }
+    {{~end~}}
+}
+{{~end~}}
+
+impl<'a> GetBase<'a, &'a dyn {{base_trait_name bean}}> for AbstractBase {
+    fn get_base(&'a self) -> &'a dyn {{base_trait_name bean}} {
+        {{~for child in bean.hierarchy_not_abstract_children~}}
+        let base: Result<&{{full_name child}}, _> = self.try_into();
+        if let Ok(r) = base {
+            return r;
+        }
+        {{~end~}}
+
+        panic!("Invalid type for Shape")
+    }
+}
+{{~else~}}
 
 impl {{bean.name}}{
     pub fn new(json: &serde_json::Value) -> {{bean.name}} {
-        {{~ for field in bean.export_fields ~}}
+        {{~ for field in hierarchy_fields ~}}
         {{deserialize_field field.name 'json' field.ctype}}
         {{~end~}}
         
-        {{bean.name}} { {{ for field in bean.export_fields }}{{field.name}}, {{end}}}
+        {{bean.name}} { {{ for field in hierarchy_fields }}{{field.name}}, {{end}}}
     }
 }
+{{~end~}}
 
 {{~end~}}
 {{~ for table in __mod.tables
     key_type = declaring_type_name table.key_ttype
-    value_type = "std::sync::Arc<"+declaring_type_name table.value_ttype+">"
+    if table.value_ttype.def_bean.is_abstract_type
+        value_type = declaring_type_name table.value_ttype
+    else
+        value_type = "std::sync::Arc<"+declaring_type_name table.value_ttype+">"
+    end
     name = table.name    
     map_type = "std::collections::HashMap<"+key_type+", "+value_type+">"
 ~}}
@@ -108,9 +158,6 @@ impl {{bean.name}}{
 ///{{table.comment | html.escape}}
 {{~end~}}
 #[derive(Debug)]
-{{~ if table.is_singleton_table ~}}
-#[derive(Deserialize)]
-{{~end~}}
 pub struct {{table.name}} {
     {{~if table.is_map_table ~}}
     pub data_list: Vec<{{value_type}}>,
@@ -137,12 +184,17 @@ impl {{name}} {
 
         for x in json.as_array().unwrap() {
             {{~ if table.value_ttype.is_bean ~}}
-            let row: {{value_type}} = std::sync::Arc::new({{declaring_type_name table.value_ttype}}::new(x));
+            {{deserialize_row "row" "x" table.value_ttype}}
             {{~else~}}
             let row: {{value_type}} = std::sync::Arc::new(serde_json::from_value(x.clone()).unwrap());
             {{~end~}}
             data_list.push(row.clone());
+            {{~ if table.value_ttype.def_bean.is_abstract_type ~}}
+            let key = <AbstractBase as GetBase<&dyn {{base_trait_name table.value_ttype.def_bean}}>>::get_base(std::ops::Deref::deref(&row));
+            data_map.insert(key.{{getter_name table.index_field.name}}().clone(), row.clone());
+            {{~else~}}
             data_map.insert(row.{{table.index_field.name}}.clone(), row.clone());
+            {{~end~}}
         }
 
         std::sync::Arc::new({{name}} { data_map, data_list })
@@ -167,7 +219,11 @@ impl {{name}} {
         let mut data_list: Vec<{{value_type}}> = vec![];
 
         for x in json.as_array().unwrap() {
+            {{~ if table.value_ttype.is_bean ~}}
+            {{deserialize_row "row" "x" table.value_ttype}}
+            {{~else~}}
             let row: {{value_type}} = std::sync::Arc::new(serde_json::from_value(x.clone()).unwrap());
+            {{~end~}}
             data_list.push(row.clone());
         }
     {{~if table.is_union_index~}}
@@ -219,7 +275,7 @@ impl {{name}} {
         let json = json.as_array().unwrap();
         let n = json.len();
         if n != 1 { panic!("table mode=one, but size != 1") }
-        let data = serde_json::from_value(json[0].clone()).unwrap();
+        let data = {{full_name table.value_ttype.def_bean}}::new(&json[0]);
         std::sync::Arc::new({{name}} { data })
     }
 }

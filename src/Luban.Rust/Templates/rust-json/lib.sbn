@@ -4,6 +4,29 @@
     pub use {{ns}}::*;
 {{~end~}}
 }
+{{~ if __polymorphic_beans.count != 0 ~}}
+
+type AbstractBase = dyn std::any::Any + Sync + Send;
+
+pub trait GetBase<'a, T> {
+    fn get_base(&'a self) -> T;
+}
+{{~end~}}
+{{~for bean in __polymorphic_beans~}}
+
+impl<'a> TryFrom<&'a AbstractBase> for &'a {{full_name bean}} {
+    type Error = String;
+
+    fn try_from(value: &'a AbstractBase) -> Result<Self, Self::Error> {
+        let r = value.downcast_ref::<{{full_name bean}}>();
+        if let Some(v) = r {
+            return Ok(v);
+        }
+
+        Err("can not into to {{full_name bean}}".to_string())
+    }
+}
+{{~end~}}
 
 pub struct Tables{
 {{~ for table in __tables ~}}

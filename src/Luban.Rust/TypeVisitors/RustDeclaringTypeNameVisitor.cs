@@ -59,7 +59,9 @@ public class RustDeclaringTypeNameVisitor : ITypeFuncVisitor<string>
 
     public string Accept(TBean type)
     {
-        return $"crate::{type.DefBean.FullName.Replace(".", "::")}";
+        return type.DefBean.IsAbstractType 
+            ? "std::sync::Arc<AbstractBase>" 
+            : $"crate::{type.DefBean.FullName.Replace(".", "::")}";
     }
 
     public string Accept(TArray type)
