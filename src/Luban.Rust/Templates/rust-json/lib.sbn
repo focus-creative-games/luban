@@ -9,7 +9,7 @@
 type AbstractBase = dyn std::any::Any + Sync + Send;
 
 pub trait GetBase<'a, T> {
-    fn get_base(&'a self) -> T;
+    fn get_base(&'a self) -> Result<T, LubanError>;
 }
 
 macro_rules! try_from {
@@ -34,6 +34,27 @@ macro_rules! try_from {
 try_from!( {{array.each __polymorphic_beans @full_name | array.join ", "}});
 {{~end~}}
 
+#[derive(Debug)]
+pub enum LubanError {
+    Loader(String),
+    Table(String),
+    Bean(String),
+    Polymorphic(String),
+    Unknown(String),
+}
+
+impl std::fmt::Display for LubanError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(match self {
+            LubanError::Loader(msg) |
+            LubanError::Table(msg) |
+            LubanError::Bean(msg) |
+            LubanError::Polymorphic(msg) |
+            LubanError::Unknown(msg) => msg,
+        })
+    }
+}
+
 pub struct Tables{
 {{~ for table in __tables ~}}
     pub {{table.name}}: std::sync::Arc<{{full_name table}}>,
@@ -41,11 +62,11 @@ pub struct Tables{
 }
 
 impl Tables {
-    pub fn new<T: Fn(&str) -> serde_json::Value>(loader: T) -> Tables {
-        Tables {
+    pub fn new<T: Fn(&str) -> Result<serde_json::Value, LubanError>>(loader: T) -> Result<Tables, LubanError> {
+        Ok(Tables {
 {{~ for table in __tables ~}}
-            {{table.name}}: {{full_name table}}::new(&loader("{{table.output_data_file}}")),
+            {{table.name}}: {{full_name table}}::new(&loader("{{table.output_data_file}}")?)?,
 {{~end~}}
-        }
+        })
     }
 }

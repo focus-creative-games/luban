@@ -15,17 +15,17 @@ public class RustJsonUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, str
 
     public string Accept(TByte type, string json, string field, int depth)
     {
-        return $"{json}.as_u64().unwrap() as u8";
+        return $"({json}.as_u64().unwrap() as u8)";
     }
 
     public string Accept(TShort type, string json, string field, int depth)
     {
-        return $"{json}.as_i64().unwrap() as i16";
+        return $"({json}.as_i64().unwrap() as i16)";
     }
 
     public string Accept(TInt type, string json, string field, int depth)
     {
-        return $"{json}.as_i64().unwrap() as i32";
+        return $"({json}.as_i64().unwrap() as i32)";
     }
 
     public string Accept(TLong type, string json, string field, int depth)
@@ -35,7 +35,7 @@ public class RustJsonUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, str
 
     public string Accept(TFloat type, string json, string field, int depth)
     {
-        return $"{json}.as_f64().unwrap() as f32";
+        return $"({json}.as_f64().unwrap() as f32)";
     }
 
     public string Accept(TDouble type, string json, string field, int depth)
@@ -57,33 +57,33 @@ public class RustJsonUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, str
 
     public string Accept(TDateTime type, string json, string field, int depth)
     {
-        return $"{json}.as_i64().unwrap() as u64";
+        return $"({json}.as_i64().unwrap() as u64)";
     }
 
     public string Accept(TBean type, string json, string field, int depth)
     {
         return type.DefBean.IsAbstractType
-            ? $"{RustCommonTemplateExtension.FullName(type.DefBean)}::new(&{json})"
-            : $"{type.Apply(RustDeclaringTypeNameVisitor.Ins)}::new(&{json})";
+            ? $"{RustCommonTemplateExtension.FullName(type.DefBean)}::new(&{json})?"
+            : $"{type.Apply(RustDeclaringTypeNameVisitor.Ins)}::new(&{json})?";
     }
 
     public string Accept(TArray type, string json, string field, int depth)
     {
-        return $"{json}.as_array().unwrap().iter().map(|field| {type.ElementType.Apply(this, "field", "_temp", depth + 1)}).collect()";
+        return $"{json}.as_array().unwrap().iter().map(|field| {type.ElementType.Apply(this, "field", "_temp", depth + 1)}).collect()".Replace("?", ".unwrap()");
     }
 
     public string Accept(TList type, string json, string field, int depth)
     {
-        return $"{json}.as_array().unwrap().iter().map(|field| {type.ElementType.Apply(this, "field", "_temp", depth + 1)}).collect()";
+        return $"{json}.as_array().unwrap().iter().map(|field| {type.ElementType.Apply(this, "field", "_temp", depth + 1)}).collect()".Replace("?", ".unwrap()");
     }
 
     public string Accept(TSet type, string json, string field, int depth)
     {
-        return $"{json}.as_array().unwrap().iter().map(|field| {type.ElementType.Apply(this, "field", "_temp", depth + 1)}).collect()";
+        return $"{json}.as_array().unwrap().iter().map(|field| {type.ElementType.Apply(this, "field", "_temp", depth + 1)}).collect()".Replace("?", ".unwrap()");
     }
 
     public string Accept(TMap type, string json, string field, int depth)
     {
-        return $"std::collections::HashMap::from_iter({json}.as_array().unwrap().iter().map(|x| {{let array = x.as_array().unwrap();({type.KeyType.Apply(this, "array[0]", "", depth + 1)}, {type.ElementType.Apply(this, "array[1]", "", depth + 1)})}}).collect::<Vec<({type.KeyType.Apply(RustDeclaringBoxTypeNameVisitor.Ins)}, {type.ElementType.Apply(RustDeclaringBoxTypeNameVisitor.Ins)})>>())";
+        return $"std::collections::HashMap::from_iter({json}.as_array().unwrap().iter().map(|x| {{let array = x.as_array().unwrap();({type.KeyType.Apply(this, "array[0]", "", depth + 1)}, {type.ElementType.Apply(this, "array[1]", "", depth + 1)})}}).collect::<Vec<({type.KeyType.Apply(RustDeclaringBoxTypeNameVisitor.Ins)}, {type.ElementType.Apply(RustDeclaringBoxTypeNameVisitor.Ins)})>>())".Replace("?", ".unwrap()");
     }
 }

@@ -65,13 +65,13 @@ pub struct {{bean.name}} {
 {{~if bean.is_abstract_type~}}
 
 impl {{bean.name}} {
-    pub fn new(json: &serde_json::Value) -> std::sync::Arc<AbstractBase> {
+    pub fn new(json: &serde_json::Value) -> Result<std::sync::Arc<AbstractBase>, LubanError> {
         let type_id = json["$type"].as_str().unwrap();
         match type_id {
             {{~for child in bean.hierarchy_not_abstract_children~}}
-            "{{impl_data_type child bean}}" => std::sync::Arc::new({{full_name child}}::new(json)),
+            "{{impl_data_type child bean}}" => Ok(std::sync::Arc::new({{full_name child}}::new(json)?)),
             {{~end~}}
-            _ => panic!("Invalid type for {{bean.name}}:{}", type_id)
+            _ => Err(LubanError::Bean(format!("Invalid type for {{bean.name}}:{}", type_id)))
         }
     }
 }
@@ -93,26 +93,26 @@ impl {{base_trait_name bean}} for {{full_name child}} {
 {{~end~}}
 
 impl<'a> GetBase<'a, &'a dyn {{base_trait_name bean}}> for AbstractBase {
-    fn get_base(&'a self) -> &'a dyn {{base_trait_name bean}} {
+    fn get_base(&'a self) -> Result<&'a dyn {{base_trait_name bean}}, LubanError> {
         {{~for child in bean.hierarchy_not_abstract_children~}}
         let base: Result<&{{full_name child}}, _> = self.try_into();
         if let Ok(r) = base {
-            return r;
+            return Ok(r);
         }
         {{~end~}}
 
-        panic!("Invalid type for Shape")
+        Err(LubanError::Polymorphic(format!("Invalid type for Shape")))
     }
 }
 {{~else~}}
 
 impl {{bean.name}}{
-    pub fn new(json: &serde_json::Value) -> {{bean.name}} {
+    pub fn new(json: &serde_json::Value) -> Result<{{bean.name}}, LubanError> {
         {{~ for field in hierarchy_fields ~}}
         {{deserialize_field field.name 'json' field.ctype}}
         {{~end~}}
         
-        {{bean.name}} { {{ for field in hierarchy_fields }}{{field.name}}, {{end}}}
+        Ok({{bean.name}} { {{ for field in hierarchy_fields }}{{field.name}}, {{end}}})
     }
 }
 {{~end~}}
@@ -177,8 +177,8 @@ pub struct {{table.name}} {
 }
 {{~if table.is_map_table ~}}
 
-impl {{name}} {    
-    pub fn new(json: &serde_json::Value) -> std::sync::Arc<{{name}}> {
+impl {{name}} {
+    pub fn new(json: &serde_json::Value) -> Result<std::sync::Arc<{{name}}>, LubanError> {
         let mut data_map: {{map_type}} = Default::default();
         let mut data_list: Vec<{{value_type}}> = vec![];
 
@@ -190,14 +190,14 @@ impl {{name}} {
             {{~end~}}
             data_list.push(row.clone());
             {{~ if table.value_ttype.def_bean.is_abstract_type ~}}
-            let key = <AbstractBase as GetBase<&dyn {{base_trait_name table.value_ttype.def_bean}}>>::get_base(std::ops::Deref::deref(&row));
+            let key = <AbstractBase as GetBase<&dyn {{base_trait_name table.value_ttype.def_bean}}>>::get_base(std::ops::Deref::deref(&row))?;
             data_map.insert(key.{{getter_name table.index_field.name}}().clone(), row.clone());
             {{~else~}}
             data_map.insert(row.{{table.index_field.name}}.clone(), row.clone());
             {{~end~}}
         }
 
-        std::sync::Arc::new({{name}} { data_map, data_list })
+        Ok(std::sync::Arc::new({{name}} { data_map, data_list }))
     }
 
     pub fn get(&self, key: &{{key_type}}) -> Option<{{value_type}}> {
@@ -215,7 +215,7 @@ impl std::ops::Index<{{key_type}}> for {{name}} {
 {{~else if table.is_list_table ~}}
 
 impl {{name}} {
-    pub fn new(json: &serde_json::Value) -> std::sync::Arc<{{name}}> {
+    pub fn new(json: &serde_json::Value) -> Result<std::sync::Arc<{{name}}>, LubanError> {
         let mut data_list: Vec<{{value_type}}> = vec![];
 
         for x in json.as_array().unwrap() {
@@ -242,7 +242,7 @@ impl {{name}} {
         }
     {{~end~}}
 
-        std::sync::Arc::new({{table.name}} { 
+    Ok(std::sync::Arc::new({{table.name}} { 
             data_list,
 {{~if table.is_union_index~}}
             data_map_union,
@@ -251,7 +251,7 @@ impl {{name}} {
             data_map_{{idx.index_field.name}},
     {{~end~}}
 {{~end~}}
-        })
+        }))
     }
 
     {{~if table.is_union_index~}}
@@ -271,12 +271,12 @@ impl {{name}} {
 {{~else~}}
 
 impl {{name}} {
-    pub fn new(json: &serde_json::Value) -> std::sync::Arc<{{name}}> {
+    pub fn new(json: &serde_json::Value) -> Result<std::sync::Arc<{{name}}>, LubanError> {
         let json = json.as_array().unwrap();
         let n = json.len();
-        if n != 1 { panic!("table mode=one, but size != 1") }
-        let data = {{full_name table.value_ttype.def_bean}}::new(&json[0]);
-        std::sync::Arc::new({{name}} { data })
+        if n != 1 { return Err(LubanError::Table(format!("table mode=one, but size != 1"))); }
+        let data = {{full_name table.value_ttype.def_bean}}::new(&json[0])?;
+        Ok(std::sync::Arc::new({{name}} { data }))
     }
 }
 {{~end~}}
