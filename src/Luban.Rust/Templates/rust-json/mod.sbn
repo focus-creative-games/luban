@@ -48,6 +48,8 @@ impl From<i32> for {{enum.name}} {
     }
 }
 
+enum_from_num!({{enum.name}});
+
 {{~end~}}
 {{~end~}}
 {{~ for bean in __mod.beans 

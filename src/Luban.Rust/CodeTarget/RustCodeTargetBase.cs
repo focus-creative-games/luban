@@ -169,12 +169,12 @@ public class RustCodeTargetBase : TemplateCodeTargetBase
         };
         tplCtx.PushGlobal(extraEnvs);
         writer.Write(template.Render(tplCtx));
-        var result = writer.ToResult(null);
-        result = GenerateMod(ctx, topMod) + result;
+        var result = writer.ToResult(FileHeader);
+        result = result + GenerateMod(ctx, topMod, false);
         return result;
     }
 
-    protected virtual string GenerateMod(GenerationContext ctx, Mod mod)
+    protected virtual string GenerateMod(GenerationContext ctx, Mod mod, bool addHeader = true)
     {
         var writer = new CodeWriter();
         var template = GetTemplate($"mod");
@@ -192,7 +192,7 @@ public class RustCodeTargetBase : TemplateCodeTargetBase
         };
         tplCtx.PushGlobal(extraEnvs);
         writer.Write(template.Render(tplCtx));
-        var result = writer.ToResult(FileHeader);
+        var result = writer.ToResult(addHeader ? FileHeader : null);
         return result;
     }
 

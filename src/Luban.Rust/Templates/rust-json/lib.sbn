@@ -12,7 +12,8 @@ pub trait GetBase<'a, T> {
     fn get_base(&'a self) -> Result<T, LubanError>;
 }
 
-macro_rules! try_from {
+#[macro_export]
+macro_rules! base_try_from {
     ($($t:ty),+) => {
         $(
             impl<'a> TryFrom<&'a AbstractBase> for &'a $t {
@@ -31,7 +32,23 @@ macro_rules! try_from {
     };
 }
 
-try_from!( {{array.each __polymorphic_beans @full_name | array.join ", "}});
+#[macro_export]
+macro_rules! enum_from_num {
+    ($t:ty) => {
+        enum_from_num!($t, i64, i16, i8, u64, u32, u16, u8, f64, f32);
+    };
+    ($t:ty,$($num:ty),+) => {
+        $(
+            impl From<$num> for $t {
+                fn from(value: $num) -> Self {
+                    (value as i32).into()
+                }
+            }
+        )+
+    };
+}
+
+base_try_from!( {{array.each __polymorphic_beans @full_name | array.join ", "}});
 {{~end~}}
 
 #[derive(Debug)]
