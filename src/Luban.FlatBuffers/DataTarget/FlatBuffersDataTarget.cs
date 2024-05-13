@@ -10,7 +10,7 @@ namespace Luban.FlatBuffers.DataTarget;
 [DataTarget("flatbuffers-json")]
 public class FlatBuffersDataTarget : DataTargetBase
 {
-    protected override string OutputFileExt => "json";
+    protected override string DefaultOutputFileExt => "json";
 
     private void WriteAsTable(List<Record> datas, Utf8JsonWriter x)
     {

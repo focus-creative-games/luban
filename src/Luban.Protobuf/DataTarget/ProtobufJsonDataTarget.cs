@@ -10,7 +10,7 @@ namespace Luban.Protobuf.DataTarget;
 [DataTarget("protobuf-json")]
 public class ProtobufJsonDataTarget : JsonDataTarget
 {
-    protected override string OutputFileExt => "json";
+    protected override string DefaultOutputFileExt => "json";
 
     protected override JsonDataVisitor ImplJsonDataVisitor => ProtobufJsonDataVisitor.Ins;
 

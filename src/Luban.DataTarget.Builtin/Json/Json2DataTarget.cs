@@ -9,7 +9,7 @@ namespace Luban.DataExporter.Builtin.Json;
 [DataTarget("json2")]
 public class Json2DataTarget : JsonDataTarget
 {
-    protected override string OutputFileExt => "json";
+    protected override string DefaultOutputFileExt => "json";
 
     private void WriteAsObject(DefTable table, List<Record> datas, Utf8JsonWriter x)
     {

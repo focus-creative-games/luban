@@ -8,7 +8,7 @@ namespace Luban.Bson;
 [DataTarget("bson")]
 public class BsonDataTarget : DataTargetBase
 {
-    protected override string OutputFileExt => "bson";
+    protected override string DefaultOutputFileExt => "bson";
 
 
     private void WriteAsArray(List<Record> datas, BsonDataWriter x)
