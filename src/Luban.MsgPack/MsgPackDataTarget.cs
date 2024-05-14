@@ -9,7 +9,7 @@ namespace Luban.MsgPack;
 [DataTarget("msgpack")]
 public class MsgPackDataTarget : DataTargetBase
 {
-    protected override string OutputFileExt => "bytes";
+    protected override string DefaultOutputFileExt => "bytes";
 
 
     public void WriteList(DefTable table, List<Record> records, ref MessagePackWriter writer)

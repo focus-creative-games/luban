@@ -8,7 +8,7 @@ namespace Luban.DataExporter.Builtin.Binary;
 [DataTarget("bin-offset")]
 public class BinaryRecordOffsetDataTarget : DataTargetBase
 {
-    protected override string OutputFileExt => "bytes";
+    protected override string DefaultOutputFileExt => "bytes";
 
     private void WriteList(DefTable table, List<Record> datas, ByteBuf x)
     {

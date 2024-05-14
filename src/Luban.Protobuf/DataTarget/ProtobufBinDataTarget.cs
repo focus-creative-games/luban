@@ -9,7 +9,7 @@ namespace Luban.Protobuf.DataTarget;
 [DataTarget("protobuf-bin")]
 public class ProtobufBinDataTarget : DataTargetBase
 {
-    protected override string OutputFileExt => "bytes";
+    protected override string DefaultOutputFileExt => "bytes";
 
     public void WriteList(DefTable table, List<Record> datas, MemoryStream x)
     {

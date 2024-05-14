@@ -50,7 +50,7 @@ public class LuaDataTarget : DataTargetBase
         s.Append('}');
     }
 
-    protected override string OutputFileExt => "lua";
+    protected override string DefaultOutputFileExt => "lua";
 
     public override OutputFile ExportTable(DefTable table, List<Record> records)
     {

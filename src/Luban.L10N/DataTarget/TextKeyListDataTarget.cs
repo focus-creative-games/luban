@@ -7,7 +7,7 @@ namespace Luban.L10N.DataTarget;
 [DataTarget("text-list")]
 internal class TextKeyListDataTarget : DataTargetBase
 {
-    protected override string OutputFileExt => "txt";
+    protected override string DefaultOutputFileExt => "txt";
 
     public override bool ExportAllRecords => true;
 
