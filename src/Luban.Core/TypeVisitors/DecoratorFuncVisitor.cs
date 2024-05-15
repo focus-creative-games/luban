@@ -323,3 +323,85 @@ public abstract class DecoratorFuncVisitor<T1, T2, T3, TR> : ITypeFuncVisitor<T1
     }
 
 }
+
+public abstract class DecoratorFuncVisitor<T1, T2, T3, T4, TR> : ITypeFuncVisitor<T1, T2, T3, T4, TR>
+{
+
+    public abstract TR DoAccept(TType tpye, T1 a, T2 b, T3 c, T4 d);
+
+    public virtual TR Accept(TBool type, T1 a, T2 b, T3 c, T4 d)
+    {
+        return DoAccept(type, a, b, c, d);
+    }
+
+    public virtual TR Accept(TByte type, T1 a, T2 b, T3 c, T4 d)
+    {
+        return DoAccept(type, a, b, c, d);
+    }
+
+    public virtual TR Accept(TShort type, T1 a, T2 b, T3 c, T4 d)
+    {
+        return DoAccept(type, a, b, c, d);
+    }
+
+    public virtual TR Accept(TInt type, T1 a, T2 b, T3 c, T4 d)
+    {
+        return DoAccept(type, a, b, c, d);
+    }
+
+    public virtual TR Accept(TLong type, T1 a, T2 b, T3 c, T4 d)
+    {
+        return DoAccept(type, a, b, c, d);
+    }
+
+    public virtual TR Accept(TFloat type, T1 a, T2 b, T3 c, T4 d)
+    {
+        return DoAccept(type, a, b, c, d);
+    }
+
+    public virtual TR Accept(TDouble type, T1 a, T2 b, T3 c, T4 d)
+    {
+        return DoAccept(type, a, b, c, d);
+    }
+
+    public virtual TR Accept(TEnum type, T1 a, T2 b, T3 c, T4 d)
+    {
+        return DoAccept(type, a, b, c, d);
+    }
+
+    public virtual TR Accept(TString type, T1 a, T2 b, T3 c, T4 d)
+    {
+        return DoAccept(type, a, b, c, d);
+    }
+
+    public virtual TR Accept(TDateTime type, T1 a, T2 b, T3 c, T4 d)
+    {
+        return DoAccept(type, a, b, c, d);
+    }
+
+    public virtual TR Accept(TBean type, T1 a, T2 b, T3 c, T4 d)
+    {
+        return DoAccept(type, a, b, c, d);
+    }
+
+    public virtual TR Accept(TArray type, T1 a, T2 b, T3 c, T4 d)
+    {
+        return DoAccept(type, a, b, c, d);
+    }
+
+    public virtual TR Accept(TList type, T1 a, T2 b, T3 c, T4 d)
+    {
+        return DoAccept(type, a, b, c, d);
+    }
+
+    public virtual TR Accept(TSet type, T1 a, T2 b, T3 c, T4 d)
+    {
+        return DoAccept(type, a, b, c, d);
+    }
+
+    public virtual TR Accept(TMap type, T1 a, T2 b, T3 c, T4 d)
+    {
+        return DoAccept(type, a, b, c, d);
+    }
+
+}
