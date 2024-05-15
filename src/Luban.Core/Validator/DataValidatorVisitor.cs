@@ -71,7 +71,7 @@ public class DataValidatorVisitor : TypeActionVisitorAdaptor<DType>
             }
         }
 
-        if (elementType is TBean)
+        if (elementType.IsBean || elementType.IsCollection)
         {
             int index = 0;
             foreach (var value in eles)
