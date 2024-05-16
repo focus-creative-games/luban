@@ -2,9 +2,13 @@
 using Luban.CodeTarget;
 using Luban.Defs;
 using Luban.Rust.TemplateExtensions;
+using Luban.Tmpl;
 using Luban.Utils;
+
 using Scriban;
 using Scriban.Runtime;
+
+using System.Xml.Linq;
 
 namespace Luban.Rust.CodeTarget;
 
@@ -40,15 +44,28 @@ public class RustCodeTargetBase : TemplateCodeTargetBase
         var topMod = new Mod();
         var modDic = new Dictionary<string, Mod>();
         var polymorphicBeans = new HashSet<DefBean>();
-        foreach (var item in ctx.ExportTables) CollectMod(item, topMod, modDic);
-        foreach (var item in ctx.ExportBeans)
+        foreach (var item in ctx.ExportTables)
         {
-            if (item.IsAbstractType) polymorphicBeans.Add(item);
-            if (!string.IsNullOrEmpty(item.Parent)) polymorphicBeans.Add(item);
             CollectMod(item, topMod, modDic);
         }
 
-        foreach (var item in ctx.ExportEnums) CollectMod(item, topMod, modDic);
+        foreach (var item in ctx.ExportBeans)
+        {
+            if (item.IsAbstractType)
+            {
+                polymorphicBeans.Add(item);
+            }
+            if (!string.IsNullOrEmpty(item.Parent))
+            {
+                polymorphicBeans.Add(item);
+            }
+            CollectMod(item, topMod, modDic);
+        }
+
+        foreach (var item in ctx.ExportEnums)
+        {
+            CollectMod(item, topMod, modDic);
+        }
 
         var tasks = new List<Task<OutputFile>>
         {
@@ -84,6 +101,7 @@ public class RustCodeTargetBase : TemplateCodeTargetBase
             }));
         }
 
+        GenerateMacros(ctx, manifest);
         Task.WaitAll(tasks.ToArray());
         foreach (var task in tasks)
         {
@@ -194,6 +212,16 @@ public class RustCodeTargetBase : TemplateCodeTargetBase
         writer.Write(template.Render(tplCtx));
         var result = writer.ToResult(addHeader ? FileHeader : null);
         return result;
+    }
+
+    protected virtual void GenerateMacros(GenerationContext ctx, OutputFileManifest manifest)
+    {
+        var template = TemplateManager.Ins.GetTemplateString($"{CommonTemplateSearchPath}/macros/Cargo.toml");
+        var path = $"macros/Cargo.toml";
+        manifest.AddFile(path, template);
+        template = TemplateManager.Ins.GetTemplateString($"{CommonTemplateSearchPath}/macros/src/lib.rs");
+        path = $"macros/src/lib.rs";
+        manifest.AddFile(path, template);
     }
 
     protected class Mod

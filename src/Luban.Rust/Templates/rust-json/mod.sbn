@@ -24,7 +24,7 @@ bitflags::bitflags!{
     }
 }
 {{~else~}}
-#[derive(Deserialize, Debug, Hash, Eq, PartialEq)]
+#[derive(Deserialize, Debug, Hash, Eq, PartialEq, macros::EnumFromNum)]
 pub enum {{enum.name}} {
     {{~ for item in enum.items ~}}
 {{~if item.comment_or_alias != '' ~}}
@@ -48,14 +48,15 @@ impl From<i32> for {{enum.name}} {
     }
 }
 
-enum_from_num!({{enum.name}});
-
 {{~end~}}
 {{~end~}}
 {{~ for bean in __mod.beans 
     hierarchy_fields = bean.hierarchy_export_fields
 ~}}
 #[derive(Debug)]
+{{~if bean.parent != ''~}}
+#[derive(macros::TryIntoBase)]
+{{~end~}}
 pub struct {{bean.name}} {
     {{~ for field in hierarchy_fields ~}}
 {{~if field.comment != '' ~}}

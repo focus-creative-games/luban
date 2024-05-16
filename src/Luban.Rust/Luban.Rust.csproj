@@ -20,6 +20,12 @@
         <None Update="Templates\rust-json\mod.sbn">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Update="Templates\common\rs\macros\Cargo.toml.sbn">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Templates\common\rs\macros\src\lib.rs.sbn">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
 </Project>
