@@ -13,7 +13,7 @@ public class TEnum : TType
 
     public override string TypeName => "enum";
 
-    public bool IsEnum => true;
+    public override bool IsEnum => true;
 
     public DefEnum DefEnum { get; }
 

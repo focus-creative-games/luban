@@ -46,6 +46,8 @@ public abstract class TType
 
     public virtual bool IsBean => false;
 
+    public virtual bool IsEnum => false;
+
     public virtual TType ElementType => null;
 
     public abstract void Apply<T>(ITypeActionVisitor<T> visitor, T x);
