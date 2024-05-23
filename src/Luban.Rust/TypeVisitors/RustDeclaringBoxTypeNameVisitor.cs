@@ -12,6 +12,4 @@ public class RustDeclaringBoxTypeNameVisitor : DecoratorFuncVisitor<string>
         var origin = type.Apply(RustDeclaringTypeNameVisitor.Ins);
         return type.IsNullable ? $"Option<{origin}>" : origin;
     }
-    
-    
 }
