@@ -1,5 +1,6 @@
 ﻿using Luban.Types;
 using Luban.TypeVisitors;
+using Luban.Utils;
 
 namespace Luban.Rust.TypeVisitors;
 
@@ -44,7 +45,7 @@ public class RustDeclaringTypeNameVisitor : ITypeFuncVisitor<string>
 
     public string Accept(TEnum type)
     {
-        return $"crate::{type.DefEnum.FullName.Replace(".", "::")}";
+        return $"crate::{(type.DefEnum.TypeNameWithTypeMapper() ?? type.DefEnum.FullName).Replace(".", "::")}";
     }
 
     public string Accept(TString type)
@@ -61,12 +62,12 @@ public class RustDeclaringTypeNameVisitor : ITypeFuncVisitor<string>
     {
         return type.DefBean.IsAbstractType 
             ? "std::sync::Arc<AbstractBase>" 
-            : $"crate::{type.DefBean.FullName.Replace(".", "::")}";
+            : $"crate::{(type.DefBean.TypeNameWithTypeMapper() ?? type.DefBean.FullName).Replace(".", "::")}";
     }
 
     public string Accept(TArray type)
     {
-        return $"Box<[{type.ElementType.Apply(this)}]>";
+        return $"Vec<{type.ElementType.Apply(this)}>";
     }
 
     public string Accept(TList type)

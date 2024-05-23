@@ -5,7 +5,7 @@ pub mod {{mod.name}};
 {{~ if __mod.name != '' ~}}
 use super::*;
 {{~end~}}
-use serde::Deserialize;
+use luban_lib::*;
 
 {{~ for enum in __mod.enums ~}}
 {{~ if enum.comment != '' ~}}
@@ -24,7 +24,7 @@ bitflags::bitflags!{
     }
 }
 {{~else~}}
-#[derive(Deserialize, Debug, Hash, Eq, PartialEq, macros::EnumFromNum)]
+#[derive(Debug, Hash, Eq, PartialEq, macros::EnumFromNum)]
 pub enum {{enum.name}} {
     {{~ for item in enum.items ~}}
 {{~if item.comment_or_alias != '' ~}}
@@ -68,11 +68,11 @@ pub struct {{bean.name}} {
 {{~if bean.is_abstract_type~}}
 
 impl {{bean.name}} {
-    pub fn new(json: &serde_json::Value) -> Result<std::sync::Arc<AbstractBase>, LubanError> {
-        let type_id = json["$type"].as_str().unwrap();
+    pub fn new(mut buf: &mut ByteBuf) -> Result<std::sync::Arc<AbstractBase>, LubanError> {
+        let type_id = buf.read_int();
         match type_id {
             {{~for child in bean.hierarchy_not_abstract_children~}}
-            "{{impl_data_type child bean}}" => Ok(std::sync::Arc::new({{full_name child}}::new(json)?)),
+            {{full_name child}}::__ID__ => Ok(std::sync::Arc::new({{full_name child}}::new(buf)?)),
             {{~end~}}
             _ => Err(LubanError::Bean(format!("Invalid type for {{bean.name}}:{}", type_id)))
         }
@@ -110,13 +110,15 @@ impl<'a> GetBase<'a, &'a dyn {{base_trait_name bean}}> for AbstractBase {
 {{~else~}}
 
 impl {{bean.name}}{
-    pub fn new(json: &serde_json::Value) -> Result<{{bean.name}}, LubanError> {
+    pub fn new(mut buf: &mut ByteBuf) -> Result<{{bean.name}}, LubanError> {
         {{~ for field in hierarchy_fields ~}}
-        {{deserialize_field field.name 'json' field.ctype}}
+        {{deserialize field.name 'buf' field.ctype}}
         {{~end~}}
         
         Ok({{bean.name}} { {{ for field in hierarchy_fields }}{{field.name}}, {{end}}})
     }
+
+    pub const __ID__: i32 = {{bean.id}};
 }
 {{~end~}}
 
@@ -181,16 +183,12 @@ pub struct {{table.name}} {
 {{~if table.is_map_table ~}}
 
 impl {{name}} {
-    pub fn new(json: &serde_json::Value) -> Result<std::sync::Arc<{{name}}>, LubanError> {
+    pub fn new(mut buf: ByteBuf) -> Result<std::sync::Arc<{{name}}>, LubanError> {
         let mut data_map: {{map_type}} = Default::default();
         let mut data_list: Vec<{{value_type}}> = vec![];
 
-        for x in json.as_array().unwrap() {
-            {{~ if table.value_ttype.is_bean ~}}
-            {{deserialize_row "row" "x" table.value_ttype}}
-            {{~else~}}
-            let row: {{value_type}} = std::sync::Arc::new(serde_json::from_value(x.clone()).unwrap());
-            {{~end~}}
+        for x in (0..buf.read_size()).rev() {
+            {{deserialize_row "row" "buf" table.value_ttype}}
             data_list.push(row.clone());
             {{~ if table.value_ttype.def_bean.is_abstract_type ~}}
             let key = <AbstractBase as GetBase<&dyn {{base_trait_name table.value_ttype.def_bean}}>>::get_base(std::ops::Deref::deref(&row))?;
@@ -218,15 +216,11 @@ impl std::ops::Index<{{key_type}}> for {{name}} {
 {{~else if table.is_list_table ~}}
 
 impl {{name}} {
-    pub fn new(json: &serde_json::Value) -> Result<std::sync::Arc<{{name}}>, LubanError> {
+    pub fn new(mut buf: ByteBuf) -> Result<std::sync::Arc<{{name}}>, LubanError> {
         let mut data_list: Vec<{{value_type}}> = vec![];
 
-        for x in json.as_array().unwrap() {
-            {{~ if table.value_ttype.is_bean ~}}
-            {{deserialize_row "row" "x" table.value_ttype}}
-            {{~else~}}
-            let row: {{value_type}} = std::sync::Arc::new(serde_json::from_value(x.clone()).unwrap());
-            {{~end~}}
+        for x in (0..buf.read_size()).rev() {
+            {{deserialize_row "row" "buf" table.value_ttype}}
             data_list.push(row.clone());
         }
     {{~if table.is_union_index~}}
@@ -274,11 +268,10 @@ impl {{name}} {
 {{~else~}}
 
 impl {{name}} {
-    pub fn new(json: &serde_json::Value) -> Result<std::sync::Arc<{{name}}>, LubanError> {
-        let json = json.as_array().unwrap();
-        let n = json.len();
+    pub fn new(mut buf: ByteBuf) -> Result<std::sync::Arc<{{name}}>, LubanError> {
+        let n = buf.read_size();
         if n != 1 { return Err(LubanError::Table(format!("table mode=one, but size != 1"))); }
-        let data = {{full_name table.value_ttype.def_bean}}::new(&json[0])?;
+        {{deserialize 'data' 'buf' table.value_ttype}}
         Ok(std::sync::Arc::new({{name}} { data }))
     }
 }
