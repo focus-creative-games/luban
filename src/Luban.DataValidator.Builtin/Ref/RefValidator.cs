@@ -67,13 +67,12 @@ public class RefValidator : DataValidatorBase
     {
         var genCtx = GenerationContext.Current;
         var excludeTags = genCtx.ExcludeTags;
-
         foreach (var tableInfo in _compiledTables)
         {
             var (defTable, field, zeroAble) = tableInfo;
             if (zeroAble && key.Apply(IsDefaultValueVisitor.Ins))
             {
-                return;
+                continue;
             }
 
             switch (defTable.Mode)
@@ -92,7 +91,7 @@ public class RefValidator : DataValidatorBase
                             s_logger.Error("记录 {} = {} (来自文件:{}) 在引用表:{} 中存在，但导出时被过滤了",
                                 RecordPath, key, Source, defTable.FullName);
                         }
-                        return;
+                        continue;
                     }
                     break;
                 }
@@ -106,20 +105,17 @@ public class RefValidator : DataValidatorBase
                             s_logger.Error("记录 {} = {} (来自文件:{}) 在引用表:{} 中存在，但导出时被过滤了",
                                 RecordPath, key, Source, defTable.FullName);
                         }
-                        return;
+                        continue;
                     }
                     break;
                 }
                 default:
                     throw new NotSupportedException();
             }
-        }
 
-        foreach (var table in _compiledTables)
-        {
-            s_logger.Error("记录 {} = {} (来自文件:{}) 在引用表:{} 中不存在", RecordPath, key, Source, table.Table.FullName);
+            s_logger.Error("记录 {} = {} (来自文件:{}) 在引用表:{} 中不存在", RecordPath, key, Source, defTable.FullName);
+            GenerationContext.Current.LogValidatorFail(this);
         }
-        GenerationContext.Current.LogValidatorFail(this);
     }
 
     private static (string TableName, string FieldName, bool IgnoreDefault) ParseRefString(string refStr)
