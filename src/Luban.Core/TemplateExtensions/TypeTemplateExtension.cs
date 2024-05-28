@@ -52,6 +52,35 @@ public class TypeTemplateExtension : ScriptObject
         return GetCollectionRefTable(field) != null;
     }
 
+    public static bool CanGenerateRefGroup(DefField field)
+    {
+        if (field.CType.IsCollection)
+        {
+            return false;
+        }
+        var refTables = GetRefTablesFromRefGroup(field);
+        return refTables != null && refTables.Count > 0;
+    }
+
+    public static bool CanGenerateCollectionRefGroup(DefField field)
+    {
+        if (!field.CType.IsCollection)
+        {
+            return false;
+        }
+        var refTables = GetCollectionRefTablesFromRefGroup(field);
+        return refTables != null && refTables.Count > 0;
+    }
+
+    public static DefTable GetRefTable(DefField field)
+    {
+        if (field.CType.GetTag("ref") is { } value && GenerationContext.Current.Assembly.GetCfgTable(value.Replace("?", "")) is { } cfgTable)
+        {
+            return cfgTable;
+        }
+        return null;
+    }
+
     public static DefTable GetCollectionRefTable(DefField field)
     {
         var refTag = field.CType.GetTag("ref");
@@ -70,18 +99,80 @@ public class TypeTemplateExtension : ScriptObject
         return null;
     }
 
-    public static DefTable GetRefTable(DefField field)
-    {
-        if (field.CType.GetTag("ref") is { } value && GenerationContext.Current.Assembly.GetCfgTable(value.Replace("?", "")) is { } cfgTable)
-        {
-            return cfgTable;
-        }
-        return null;
-    }
-
     public static TType GetRefType(DefField field)
     {
         return GetRefTable(field)?.ValueTType;
+    }
+
+    public static List<DefTable> DoGetRefTablesFromRefGroup(string refTag)
+    {
+        var refGroup = GenerationContext.Current.Assembly.GetRefGroup(refTag.Replace("?", ""));
+        if (refGroup == null)
+        {
+            return null;
+        }
+        var refTables = new List<DefTable>();
+        foreach (var refTableName in refGroup.Refs)
+        {
+            var tableName = refTableName;
+            if (refTableName.Contains("@"))
+            {
+                tableName = refTableName.Split('@')[1];
+            }
+            var refTable = GenerationContext.Current.Assembly.GetCfgTable(tableName);
+            if (refTable == null)
+            {
+                throw new Exception($"refgroup:'{refTag}' ref:'{tableName}' 不存在");
+            }
+            if (refTable.Mode != TableMode.MAP)
+            {
+                continue;
+            }
+            refTables.Add(refTable);
+        }
+        return refTables;
+    }
+
+    public static List<DefTable> GetRefTablesFromRefGroup(DefField field)
+    {
+        var refTag = field.CType.GetTag("ref");
+        if (refTag == null)
+        {
+            return null;
+        }
+        return DoGetRefTablesFromRefGroup(refTag);
+    }
+
+    public static bool HasRefGroup(DefField field)
+    {
+        return CanGenerateCollectionRefGroup(field) || CanGenerateRefGroup(field);
+    }
+
+    public static int GetRefGroupTablesCount(DefField field)
+    {
+        if (CanGenerateCollectionRefGroup(field))
+        {
+            return GetCollectionRefTablesFromRefGroup(field).Count;
+        }
+        if (CanGenerateRefGroup(field))
+        {
+            return GetRefTablesFromRefGroup(field).Count;
+        }
+        return 0;
+    }
+
+    public static List<DefTable> GetCollectionRefTablesFromRefGroup(DefField field)
+    {
+        var refTag = field.CType.GetTag("ref");
+        if (refTag == null)
+        {
+            refTag = field.CType.ElementType.GetTag("ref");
+        }
+        if (refTag == null)
+        {
+            return null;
+        }
+        return DoGetRefTablesFromRefGroup(refTag);
     }
 
     public static bool IsFieldBeanNeedResolveRef(DefField field)

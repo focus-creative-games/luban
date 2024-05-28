@@ -16,6 +16,10 @@ func get_ref_name
     ret (format_property_name __code_style $0.name) + '_Ref'
 end
 
+func get_ref_name_with_table_name
+    ret (format_property_name __code_style $0.name) + '_Ref_' + format_property_name __code_style $1
+end
+
 func get_index_var_name
     ret (format_property_name __code_style $0.name) + '_Index'
 end
@@ -49,6 +53,36 @@ func generate_resolve_field_ref
 		else
 			ret ''
 		end
+    else if can_generate_ref_group field
+        index = $1
+        refTables = get_ref_tables_from_ref_group field
+        refTable = refTables[index]
+        tableName = format_property_name __code_style refTable.name
+        if field.is_nullable
+            ret (get_ref_name_with_table_name field refTable.name) + ' = ' + fieldName + '!= null ? tables.' + tableName + '.GetOrDefault(' + (get_value_of_nullable_type field.ctype fieldName) + ') : null;'
+        else
+            ret (get_ref_name_with_table_name field refTable.name) + ' = tables.' + tableName + '.GetOrDefault(' + fieldName + ');'
+        end
+    else if can_generate_collection_ref_group field
+        index = $1
+        ref_tables = get_collection_ref_tables_from_ref_group field
+        ref_table = ref_tables[index]
+        tableName = format_property_name __code_style ref_table.name
+        if field.ctype.type_name == 'list' || field.ctype.type_name == 'set'
+            line1 = (get_ref_name_with_table_name field ref_table.name) + ' = new ' + (declaring_collection_ref_name_from_ref_group field.ctype index) + '();' + '\n'
+            line2 = 'foreach (var _v in ' + fieldName + ') { ' + (get_ref_name_with_table_name field ref_table.name) + '.Add(tables.' + tableName + '.GetOrDefault(_v)); }' + '\n'
+            ret line1 + line2
+        else if field.ctype.type_name == 'array'
+            line1 = (get_ref_name_with_table_name field ref_table.name) + ' = new ' + (declaring_type_name ref_table.value_ttype) + '[' + fieldName + '.Length];' + '\n'
+            line2 = 'for (int _i = 0; _i < ' + fieldName + '.Length; _i++) { ' + (get_ref_name_with_table_name field ref_table.name) + '[_i] = tables.' + tableName + '.GetOrDefault(' + fieldName + '[_i]); }' + '\n'
+            ret line1 + line2
+        else if field.ctype.type_name == 'map'
+            line1 = (get_ref_name_with_table_name field ref_table.name) + ' = new ' + (declaring_collection_ref_name_from_ref_group field.ctype index) + '();' + '\n'
+            line2 = 'foreach (var (_k,_v) in ' + fieldName + ') { ' + (get_ref_name_with_table_name field ref_table.name) + '.Add(_k, tables.' + tableName + '.GetOrDefault(_v)); }' + '\n'
+            ret line1 + line2
+        else
+            ret ''
+        end
     else
         if (is_field_bean_need_resolve_ref field)
             ret fieldName + '?.ResolveRef(tables);'
@@ -112,6 +146,14 @@ public {{class_modifier __bean}} partial class {{__name}} : {{if parent_def_type
     public {{declaring_type_name (get_ref_type field)}} {{get_ref_name field}};
     {{~else if can_generate_collection_ref field~}}
     public {{declaring_collection_ref_name field.ctype}} {{get_ref_name field}};
+    {{~else if can_generate_ref_group field~}}
+        {{~for ref_table in (get_ref_tables_from_ref_group field)~}}
+    public {{declaring_type_name ref_table.value_ttype}} {{get_ref_name_with_table_name field ref_table.name}};
+        {{~end~}}
+    {{~else if can_generate_collection_ref_group field~}}
+        {{~for ref_table in (get_collection_ref_tables_from_ref_group field)~}}
+    public {{declaring_collection_ref_name_from_ref_group field.ctype for.index}} {{get_ref_name_with_table_name field ref_table.name}};
+        {{~end~}}
     {{~end~}}
    {{~if has_index field
         indexMapType = get_index_map_type field
@@ -131,7 +173,13 @@ public {{class_modifier __bean}} partial class {{__name}} : {{if parent_def_type
         base.ResolveRef(tables);
         {{~end~}}
         {{~for field in export_fields~}}
+            {{~if has_ref_group field~}}
+                {{~for index in 0..((get_ref_group_tables_count field) - 1)~}}
+        {{generate_resolve_field_ref field index}}
+                {{~end~}}
+            {{~else~}}
         {{generate_resolve_field_ref field}}
+            {{~end~}}
         {{~end~}}
     }
 

@@ -19,6 +19,11 @@ public class CsharpTemplateExtension : ScriptObject
         return type.Apply(DeclaringCollectionRefNameVisitor.Ins);
     }
 
+    public static string DeclaringCollectionRefNameFromRefGroup(TType type, int index)
+    {
+        return type.Apply(DeclaringCollectionRefNameFromRefGroupVisitor.Ins, index);
+    }
+
     public static string ClassOrStruct(DefBean bean)
     {
         return bean.IsValueType ? "struct" : "class";
