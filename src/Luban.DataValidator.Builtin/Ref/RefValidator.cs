@@ -88,7 +88,7 @@ public class RefValidator : DataValidatorBase
                     var recordMap = genCtx.GetTableDataInfo(defTable).FinalRecordMap;
                     if (recordMap.TryGetValue(key, out Record rec))
                     {
-                        if (!rec.IsNotFiltered(excludeTags) && rec.IsFiltered(includeTags))
+                        if (!rec.IsNotFiltered(excludeTags) && !rec.IsFiltered(includeTags))
                         {
                             s_logger.Error("记录 {} = {} (来自文件:{}) 在引用表:{} 中存在，但导出时被过滤了",
                                 RecordPath, key, Source, defTable.FullName);
@@ -102,7 +102,7 @@ public class RefValidator : DataValidatorBase
                     var recordMap = genCtx.GetTableDataInfo(defTable).FinalRecordMapByIndexs[field];
                     if (recordMap.TryGetValue(key, out Record rec))
                     {
-                        if (!rec.IsNotFiltered(excludeTags) && rec.IsFiltered(includeTags))
+                        if (!rec.IsNotFiltered(excludeTags) && !rec.IsFiltered(includeTags))
                         {
                             s_logger.Error("记录 {} = {} (来自文件:{}) 在引用表:{} 中存在，但导出时被过滤了",
                                 RecordPath, key, Source, defTable.FullName);
