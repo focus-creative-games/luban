@@ -21,6 +21,15 @@ public class Record
         return Tags.TrueForAll(t => !excludeTags.Contains(t));
     }
 
+    public bool IsFiltered(List<string> includeTags)
+    {
+        if (Tags == null)
+        {
+            return true;
+        }
+        return Tags.Any(includeTags.Contains);
+    }
+
     public Record(DBean data, string source, List<string> tags)
     {
         Data = data;
