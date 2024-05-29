@@ -147,19 +147,25 @@ public class GenerationContext
     public List<Record> GetTableExportDataList(DefTable table)
     {
         var tableDataInfo = _recordsByTables[table.FullName];
-        if (ExcludeTags.Count == 0)
-        {
-            return tableDataInfo.FinalRecords;
-        }
-        else
+        var ret = tableDataInfo.FinalRecords;
+        if (ExcludeTags.Count != 0)
         {
             var finalRecords = tableDataInfo.FinalRecords.Where(r => r.IsNotFiltered(ExcludeTags)).ToList();
-            if (table.IsSingletonTable && finalRecords.Count != 1)
-            {
-                throw new Exception($"配置表 {table.FullName} 是单值表 mode=one,但数据个数:{finalRecords.Count} != 1");
-            }
-            return finalRecords;
+            ret = finalRecords;
         }
+
+        if (IncludeTags.Count != 0)
+        {
+            var finalRecords = tableDataInfo.FinalRecords.Where(r => r.IsFiltered(IncludeTags)).ToList();
+            ret = finalRecords;
+        }
+        
+        if (table.IsSingletonTable && ret.Count != 1)
+        {
+            throw new Exception($"配置表 {table.FullName} 是单值表 mode=one,但数据个数:{ret.Count} != 1");
+        }
+
+        return ret;
     }
 
     public static List<Record> ToSortByKeyDataList(DefTable table, List<Record> originRecords)
