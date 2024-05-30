@@ -11,11 +11,11 @@ public class JavaBinDeserializeVisitor : DecoratorFuncVisitor<string, string, st
     {
         if (type.IsNullable)
         {
-            return $"if({bufName}.readBool()){{ {type.Apply(JavaBinUnderlyingDeserializeVisitor.Ins, bufName, fieldName)} }} else {{ {fieldName} = null; }}";
+            return $"if({bufName}.readBool()){{ {type.Apply(JavaBinUnderlyingDeserializeVisitor.Ins, bufName, fieldName, 0)} }} else {{ {fieldName} = null; }}";
         }
         else
         {
-            return type.Apply(JavaBinUnderlyingDeserializeVisitor.Ins, bufName, fieldName);
+            return type.Apply(JavaBinUnderlyingDeserializeVisitor.Ins, bufName, fieldName, 0);
         }
     }
 }
