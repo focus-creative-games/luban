@@ -473,7 +473,7 @@ public static class SheetLoadUtil
         return row.All(c => string.IsNullOrWhiteSpace(c.Value?.ToString()));
     }
 
-    const int maxEmptyRowCountOfInterruptParse = 10;
+    const int maxEmptyRowCountOfInterruptParse = 60;
 
     private static List<List<Cell>> ParseRawSheetContent(IExcelDataReader reader, bool orientRow, bool headerOnly)
     {
