@@ -26,6 +26,14 @@ func get_ref_name
     ret (format_property_name __code_style $0.name) + '_ref'
 end
 
+func should_resolve_field
+    field = $0
+    if ((can_generate_ref field) || (is_field_bean_need_resolve_ref field) || (is_field_array_like_need_resolve_ref field) || (is_field_map_need_resolve_ref field)) 
+        ret true
+    end
+    ret false
+end
+
 func generate_resolve_field_ref
     field = $0
     fieldName = format_property_name __code_style field.name
@@ -101,7 +109,9 @@ export {{if bean.is_abstract_type}}abstract {{end}}class {{bean.name}}{{if bean.
         super.resolve(tables)
         {{~end~}}
         {{~ for field in bean.export_fields ~}}
+        {{~if should_resolve_field field ~}}
         {{generate_resolve_field_ref field}}
+        {{~end~}}
         {{~end~}}
     }
 }
