@@ -1,0 +1,31 @@
+import pb from 'pb';
+
+type BufLoader = (file: string) => Uint8Array;
+
+export class {{__name}} {
+    {{~ for table in __tables ~}}
+    private _{{table.name}}: pb.cfg.{{table.name}}
+{{~if table.comment != '' ~}}
+    /**
+     * {{escape_comment table.comment}}
+     */
+{{~end~}}
+    get {{table.name}}(): pb.cfg.{{table.name}}  { return this._{{table.name}};}
+    {{~end~}}
+
+    static getTableNames(): string[] {
+        let names: string[] = [];
+        {{~for table in __tables ~}}
+        names.push('{{table.output_data_file}}');
+        {{~end~}}
+        return names;
+    }
+
+    constructor(loader: BufLoader) {
+        let buffer: Uint8Array;
+        {{~for table in __tables ~}}
+        buffer = loader('{{table.output_data_file}}');
+        this._{{table.name}} = pb.cfg.{{table.name}}.decode(buffer, buffer.length);
+        {{~end~}}
+    }
+}
