@@ -66,6 +66,8 @@ public class GenerationContext
 
     private readonly HashSet<Type> _failedValidatorTypes = new();
 
+    private bool _exportEmptyGroupsTypes;
+
     public void LoadDatas()
     {
         s_logger.Info("load datas begin");
@@ -85,6 +87,7 @@ public class GenerationContext
         IncludeTags = builder.IncludeTags;
         ExcludeTags = builder.ExcludeTags;
         TimeZone = TimeZoneUtil.GetTimeZone(builder.TimeZone);
+        _exportEmptyGroupsTypes = builder.Assembly.Target.Groups.Any(g => GlobalConf.Groups.First(gd => gd.Names.Contains(g))?.IsDefault == true);
 
         TextProvider = EnvManager.Current.TryGetOption(BuiltinOptionNames.L10NFamily, BuiltinOptionNames.L10NProviderName, false, out string providerName) ?
             L10NManager.Ins.CreateTextProvider(providerName) : null;
@@ -97,6 +100,10 @@ public class GenerationContext
 
     private bool NeedExportNotDefault(List<string> groups)
     {
+        if (groups.Count == 0)
+        {
+            return _exportEmptyGroupsTypes;
+        }
         return groups.Any(Target.Groups.Contains);
     }
 
