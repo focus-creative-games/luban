@@ -29,6 +29,11 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>disable</Nullable>
         <OutputType>Exe</OutputType>
+        <RepositoryUrl>https://github.com/focus-creative-games/luban</RepositoryUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackAsTool>True</PackAsTool>
+        <FileVersion>$(AssemblyVersion)</FileVersion>
+        <Version>2.8.0</Version>
     </PropertyGroup>
 
     <ItemGroup>
@@ -61,6 +66,13 @@
 
     <ItemGroup>
       <Folder Include="Plugin\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="..\..\README.md">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
     </ItemGroup>
 
     <ItemGroup>
