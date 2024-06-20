@@ -33,7 +33,7 @@ public class DefAssembly
 
     public List<DefTable> ExportTables => _exportTables;
 
-    public DefAssembly(RawAssembly assembly, string target, List<string> outputTables)
+    public DefAssembly(RawAssembly assembly, string target, List<string> outputTables, List<RawGroup> groupDefs)
     {
         _targets = assembly.Targets;
         Target = GetTarget(target);
@@ -69,7 +69,7 @@ public class DefAssembly
         List<DefTable> originTables = GetAllTables();
         if (outputTables.Count == 0)
         {
-            _exportTables = originTables.Where(t => NeedExport(t.Groups)).ToList();
+            _exportTables = originTables.Where(t => NeedExport(t.Groups, groupDefs)).ToList();
         }
         else
         {
@@ -113,11 +113,11 @@ public class DefAssembly
         }
     }
 
-    public bool NeedExport(List<string> groups)
+    public bool NeedExport(List<string> groups, List<RawGroup> groupDefs)
     {
         if (groups.Count == 0)
         {
-            return true;
+            return groupDefs == null || Target.Groups.Any(g => groupDefs.FirstOrDefault(gd => gd.Names.Contains(g))?.IsDefault == true);
         }
         return groups.Any(g => Target.Groups.Contains(g));
     }
