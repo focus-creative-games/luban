@@ -45,7 +45,7 @@ func generate_resolve_field_ref
             ret line1 + line2
 		else if field.ctype.type_name == 'map'
             line1 = (get_ref_name field) + ' = new ' + (declaring_collection_ref_name field.ctype) + '();' + '\n'
-			line2 = 'foreach (var (_k,_v) in ' + fieldName + ') { ' + (get_ref_name field) + '.Add(_k, tables.' + tableName + '.GetOrDefault(_v)); }' + '\n'
+			line2 = 'foreach (var kvp in ' + fieldName + ') { ' + (get_ref_name field) + '.Add(kvp.Key, tables.' + tableName + '.GetOrDefault(kvp.Value)); }' + '\n'
 			ret line1 + line2
 		else
 			ret ''
@@ -132,7 +132,10 @@ public {{class_modifier __bean}} partial class {{__name}} : {{if parent_def_type
         base.ResolveRef(tables);
         {{~end~}}
         {{~for field in export_fields~}}
-        {{generate_resolve_field_ref field}}
+            {{~ line = generate_resolve_field_ref field ~}}
+                {{~ if line != ''~}}
+        {{line}}
+                {{~end~}}
         {{~end~}}
     }
 
