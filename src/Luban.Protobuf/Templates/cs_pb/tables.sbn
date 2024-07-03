@@ -1,0 +1,32 @@
+using Google.Protobuf;
+using Google.Protobuf.Collections;
+using System.Reflection;
+
+{{namespace_with_grace_begin __namespace}}
+public partial class {{__name}}
+{
+    {{~for table in __tables ~}}
+{{~if table.comment != '' ~}}
+    /// <summary>
+    /// {{escape_comment table.comment}}
+    /// </summary>
+{{~end~}}
+    public {{proto_full_name table.full_name}} {{format_property_name __code_style table.name}} { get; }
+
+    {{~end~}}
+
+    public {{__name}}(System.Func<string, byte[]> loader)
+    {
+        {{~for table in __tables ~}}
+        {{format_property_name __code_style table.name}} = {{proto_full_name table.full_name}}.Parser.ParseFrom(loader("{{table.output_data_file}}"));
+        {{~end~}}
+    }
+    public {{__name}}(System.Func<string, string> loader)
+    {
+        {{~for table in __tables ~}}
+        {{format_property_name __code_style table.name}} = {{proto_full_name table.full_name}}.Parser.ParseJson(loader("{{table.output_data_file}}"));
+        {{~end~}}
+    }
+}
+
+{{namespace_with_grace_end __namespace}}

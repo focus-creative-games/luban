@@ -16,6 +16,9 @@
     </ItemGroup>
 
     <ItemGroup>
+      <None Update="Templates\cs_pb\tables.sbn">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
       <None Update="Templates\pb\schema.sbn">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
