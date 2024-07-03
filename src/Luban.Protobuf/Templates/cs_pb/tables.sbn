@@ -1,6 +1,4 @@
 using Google.Protobuf;
-using Google.Protobuf.Collections;
-using System.Reflection;
 
 {{namespace_with_grace_begin __namespace}}
 public partial class {{__name}}
