@@ -79,7 +79,7 @@ public abstract class ProtobufSchemaTargetBase : AllInOneTemplateCodeTargetBase
                             var finalElementType = array.FinalElementType;
                             var type = finalElementType.GetType();
 
-                            if (dimensionDic.TryGetValue(type, out var val) || val.Item2 < dimension)
+                            if (!dimensionDic.TryGetValue(type, out var val) || val.Item2 < dimension)
                             {
                                 dimensionDic[type] = (finalElementType, dimension);
                             }
@@ -101,7 +101,7 @@ public abstract class ProtobufSchemaTargetBase : AllInOneTemplateCodeTargetBase
                         {
                             var type = finalElementType.GetType();
 
-                            if (dimensionDic.TryGetValue(type, out var val) || val.Item2 < dimension)
+                            if (!dimensionDic.TryGetValue(type, out var val) || val.Item2 < dimension)
                             {
                                 dimensionDic[type] = (finalElementType, dimension);
                             }
