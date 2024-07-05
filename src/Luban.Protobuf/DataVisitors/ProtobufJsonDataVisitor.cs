@@ -57,4 +57,61 @@ public class ProtobufJsonDataVisitor : JsonDataVisitor
         }
         x.WriteEndArray();
     }
+    /// <summary>
+    /// 多维数组转为一维object
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="x"></param>
+    void WriteMultiArray(List<DType> datas, Utf8JsonWriter x)
+    {
+        x.WriteStartArray();
+        foreach (var d in datas)
+        {
+            if (d is DArray array)
+            {
+                x.WriteStartObject();
+                x.WritePropertyName("items");
+
+                WriteMultiArray(array.Datas, x);
+
+                x.WriteEndObject();
+            }
+            else if (d is DList list)
+            {
+                x.WriteStartObject();
+                x.WritePropertyName("items");
+
+                WriteMultiArray(list.Datas, x);
+
+                x.WriteEndObject();
+            }
+            else
+            {
+                d.Apply(this, x);
+            }
+        }
+        x.WriteEndArray();
+    }
+    public override void Accept(DArray type, Utf8JsonWriter x)
+    {
+        if (type.Type.Dimension > 1)
+        {
+            WriteMultiArray(type.Datas, x);
+        }
+        else
+        {
+            WriteList(type.Datas, x);
+        }
+    }
+    public override void Accept(DList type, Utf8JsonWriter x)
+    {
+        if(type.Type.ElementType is TList)
+        {
+            WriteMultiArray(type.Datas, x);
+        }
+        else
+        {
+            WriteList(type.Datas, x);
+        }
+    }
 }

@@ -1,9 +1,4 @@
-
-using Luban.CodeFormat;
-using Luban.Defs;
-using Luban.Protobuf.TypeVisitors;
 using Luban.Types;
-using Luban.Utils;
 using Scriban.Runtime;
 
 namespace Luban.Protobuf.TemplateExtensions;

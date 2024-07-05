@@ -65,11 +65,19 @@ public class ProtobufTypeNameVisitor : ITypeFuncVisitor<string>
 
     public string Accept(TArray type)
     {
+        if (type.Dimension > 1)
+        {
+            return $"{type.ElementType.Apply(this)}_Array";
+        }
         return $"{type.ElementType.Apply(this)}";
     }
 
     public string Accept(TList type)
     {
+        if (type.ElementType is TList)
+        {
+            return $"{type.ElementType.Apply(this)}_Array";
+        }
         return $"{type.ElementType.Apply(this)}";
     }
 

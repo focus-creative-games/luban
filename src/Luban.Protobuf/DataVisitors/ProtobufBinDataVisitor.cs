@@ -75,13 +75,6 @@ public class ProtobufBinDataVisitor : IDataActionVisitor<CodedOutputStream>
 
     private void WriteRawMessageWithoutLength(DBean type, CodedOutputStream temp)
     {
-        //var ms = AllocMemoryStream();
-        //var temp = new CodedOutputStream(ms);
-        //if (bean.IsAbstractType)
-        //{
-        //    temp.WriteTag(type.ImplType.AutoId, WireFormat.WireType.LengthDelimited);
-        //}
-
         var defFields = type.ImplType.HierarchyFields;
         int index = 0;
         foreach (var field in type.Fields)
@@ -96,43 +89,10 @@ public class ProtobufBinDataVisitor : IDataActionVisitor<CodedOutputStream>
             {
                 continue;
             }
-            switch (field)
-            {
-                case DArray arr:
-                {
-                    WriteList(fieldType.ElementType, defField.AutoId, arr.Datas, temp);
-                    break;
-                }
-                case DList list:
-                {
-                    WriteList(fieldType.ElementType, defField.AutoId, list.Datas, temp);
-                    break;
-                }
-                case DSet set:
-                {
-                    WriteList(fieldType.ElementType, defField.AutoId, set.Datas, temp);
-                    break;
-                }
-                case DMap map:
-                {
-                    WriteMap(map, defField.AutoId, temp);
-                    break;
-                }
-                default:
-                {
-                    temp.WriteTag(defField.AutoId, defField.CType.Apply(ProtobufWireTypeVisitor.Ins));
-                    field.Apply(this, temp);
-                    break;
-                }
-            }
+            WriteField(field, fieldType, defField.AutoId, temp);
         }
-        //temp.Flush();
-        //ms.Seek(0, SeekOrigin.Begin);
-        //var bs = ByteString.FromStream(ms);
-        //x.WriteBytes(bs);
-        //FreeMemoryStream(ms);
     }
-
+    
     private void EnterScope(CodedOutputStream x, Action<CodedOutputStream> action)
     {
         var ms = AllocMemoryStream();
@@ -149,8 +109,7 @@ public class ProtobufBinDataVisitor : IDataActionVisitor<CodedOutputStream>
     {
         EnterScope(x, cos =>
         {
-            var bean = type.Type;
-
+            DefBean bean = type.Type;
             if (bean.IsAbstractType)
             {
                 cos.WriteTag(type.ImplType.AutoId, WireFormat.WireType.LengthDelimited);
@@ -163,9 +122,139 @@ public class ProtobufBinDataVisitor : IDataActionVisitor<CodedOutputStream>
         });
     }
 
+    public void Accept(DArray type, CodedOutputStream x)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void WriteMultiDimension(List<DType> datas, int dimension, CodedOutputStream x)
+    {
+        if (dimension >= 2)
+        {
+            foreach (var data in datas)
+            {
+                x.WriteTag(1, WireFormat.WireType.LengthDelimited);
+
+                EnterScope(x, cos =>
+                {
+                    if(data is DArray array)
+                    {
+                        WriteMultiDimension(array.Datas, dimension - 1, cos);
+                    }
+                    else if(data is DList list)
+                    {
+                        WriteMultiDimension(list.Datas, dimension - 1, cos);
+                    }
+                    else
+                    {
+                        throw new Exception(data + "may not support multi array");
+                    }
+                });
+            }
+        }
+        else
+        {
+            x.WriteTag(1, WireFormat.WireType.LengthDelimited);
+            var ms = AllocMemoryStream();
+            var temp = new CodedOutputStream(ms);
+            foreach (var data in datas)
+            {
+                data.Apply(this, temp);
+            }
+            temp.Flush();
+            ms.Seek(0, SeekOrigin.Begin);
+            x.WriteBytes(ByteString.FromStream(ms));
+            FreeMemoryStream(ms);
+        }
+
+    }
+
+    void WriteField(DType field, TType fieldType, int autoId, CodedOutputStream temp)
+    {
+        switch (field)
+        {
+            case DArray arr:
+            {
+                var dimension = arr.Type.Dimension;
+                if (dimension > 1)
+                {
+                    foreach (var data in arr.Datas)
+                    {
+                        temp.WriteTag(autoId, WireFormat.WireType.LengthDelimited);
+
+                        EnterScope(temp, cos =>
+                        {
+                            var array = data as DArray;
+                            WriteMultiDimension(array.Datas, dimension - 1, cos);
+                        });
+                    }
+                }
+                else
+                {
+                    WriteList(fieldType.ElementType, autoId, arr.Datas, temp);
+                }
+                break;
+            }
+            case DList list:
+            {
+                int dimension = 1;
+                var elementType = fieldType.ElementType;
+
+                while (elementType is TList listElement)
+                {
+                    dimension++;
+                    elementType = listElement.ElementType;
+                }
+                if (dimension > 1)
+                {
+                    foreach (var data in list.Datas)
+                    {
+                        temp.WriteTag(autoId, WireFormat.WireType.LengthDelimited);
+
+                        EnterScope(temp, cos =>
+                        {
+                            var array = data as DList;
+                            WriteMultiDimension(array.Datas, dimension - 1, cos);
+                        });
+                    }
+                }
+                else
+                {
+                    WriteList(fieldType.ElementType, autoId, list.Datas, temp);
+                }
+                break;
+            }
+            case DSet set:
+            {
+                WriteList(fieldType.ElementType, autoId, set.Datas, temp);
+                break;
+            }
+            case DMap map:
+            {
+                WriteMap(map, autoId, temp);
+                break;
+            }
+            default:
+            {
+                temp.WriteTag(autoId, fieldType.Apply(ProtobufWireTypeVisitor.Ins));
+                field.Apply(this, temp);
+                break;
+            }
+        }
+    }
+    public void Accept(DList type, CodedOutputStream x)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Accept(DSet type, CodedOutputStream x)
+    {
+        throw new NotImplementedException();
+    }
     private void WriteList(TType elementType, int fieldId, List<DType> datas, CodedOutputStream x)
     {
-        if (elementType.Apply(IsProtobufPackedType.Ins))
+
+        if (elementType.Apply(IsProtobufPackedType.Ins))//基础类型
         {
             x.WriteTag(fieldId, WireFormat.WireType.LengthDelimited);
             var ms = AllocMemoryStream();
@@ -179,9 +268,10 @@ public class ProtobufBinDataVisitor : IDataActionVisitor<CodedOutputStream>
             x.WriteBytes(ByteString.FromStream(ms));
             FreeMemoryStream(ms);
         }
-        else
+        else//bean 类型
         {
             var eleWireType = elementType.Apply(ProtobufWireTypeVisitor.Ins);
+
             foreach (var data in datas)
             {
                 x.WriteTag(fieldId, eleWireType);
@@ -189,22 +279,6 @@ public class ProtobufBinDataVisitor : IDataActionVisitor<CodedOutputStream>
             }
         }
     }
-
-    public void Accept(DArray type, CodedOutputStream x)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Accept(DList type, CodedOutputStream x)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Accept(DSet type, CodedOutputStream x)
-    {
-        throw new NotImplementedException();
-    }
-
     private void WriteMap(DMap type, int fieldId, CodedOutputStream x)
     {
         var keyType = type.Type.KeyType;

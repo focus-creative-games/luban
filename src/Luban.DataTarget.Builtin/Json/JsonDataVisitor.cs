@@ -103,12 +103,12 @@ public class JsonDataVisitor : IDataActionVisitor<Utf8JsonWriter>
         x.WriteEndArray();
     }
 
-    public void Accept(DArray type, Utf8JsonWriter x)
+    public virtual void Accept(DArray type, Utf8JsonWriter x)
     {
         WriteList(type.Datas, x);
     }
 
-    public void Accept(DList type, Utf8JsonWriter x)
+    public virtual void Accept(DList type, Utf8JsonWriter x)
     {
         WriteList(type.Datas, x);
     }

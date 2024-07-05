@@ -15,6 +15,10 @@ enum {{typeName}} {
 }
 {{~end~}}
 
+{{~for dimension in __dimension~}}
+{{gen_array_dimension dimension}}  
+{{~end~}}
+
 {{~for bean in __beans
     typeName = full_name bean
 ~}}

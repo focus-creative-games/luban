@@ -1,7 +1,9 @@
 using Luban.CodeFormat;
 using Luban.CodeTarget;
+using Luban.Defs;
 using Luban.Protobuf.TemplateExtensions;
 using Luban.Tmpl;
+using Luban.Types;
 using Scriban;
 using Scriban.Runtime;
 
@@ -38,6 +40,7 @@ public abstract class ProtobufSchemaTargetBase : AllInOneTemplateCodeTargetBase
         var tplCtx = CreateTemplateContext(template);
         tplCtx.PushGlobal(new ProtobufCommonTemplateExtension());
         OnCreateTemplateContext(tplCtx);
+
         var extraEnvs = new ScriptObject
         {
             { "__ctx", ctx},
@@ -45,6 +48,7 @@ public abstract class ProtobufSchemaTargetBase : AllInOneTemplateCodeTargetBase
             { "__namespace", ctx.Target.TopModule},
             { "__tables", ctx.ExportTables},
             { "__beans", ctx.ExportBeans},
+            { "__dimension", GenMultiDimensionInfo(ctx.ExportBeans) },
             { "__enums", ctx.ExportEnums},
             { "__code_style", CodeStyle},
             { "__syntax", Syntax},
@@ -52,5 +56,62 @@ public abstract class ProtobufSchemaTargetBase : AllInOneTemplateCodeTargetBase
         tplCtx.PushGlobal(extraEnvs);
         writer.Write(template.Render(tplCtx));
         return writer.ToResult(FileHeader);
+    }
+
+    private Dictionary<Type, (TType, int)> GenMultiDimensionInfo(List<DefBean> exportBeans)
+    {
+        Dictionary<Type, (TType, int)> dimensionDic = new Dictionary<Type, (TType, int)>();
+
+        foreach (var bean in exportBeans)
+        {
+            var filds = bean.Fields;
+
+            foreach (var field in filds)
+            {
+                switch (field.CType)
+                {
+                    case TArray array:
+                    {
+                        var dimension = array.Dimension;
+
+                        if (dimension > 1)
+                        {
+                            var finalElementType = array.FinalElementType;
+                            var type = finalElementType.GetType();
+
+                            if (dimensionDic.TryGetValue(type, out var val) || val.Item2 < dimension)
+                            {
+                                dimensionDic[type] = (finalElementType, dimension);
+                            }
+                        }
+                        break;
+                    }
+                    case TList list:
+                    {
+                        int dimension = 1;
+
+                        var finalElementType = list.ElementType;
+
+                        while (finalElementType is TList listElement)
+                        {
+                            dimension++;
+                            finalElementType = listElement.ElementType;
+                        }
+                        if (dimension > 1)
+                        {
+                            var type = finalElementType.GetType();
+
+                            if (dimensionDic.TryGetValue(type, out var val) || val.Item2 < dimension)
+                            {
+                                dimensionDic[type] = (finalElementType, dimension);
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        return dimensionDic;
     }
 }
