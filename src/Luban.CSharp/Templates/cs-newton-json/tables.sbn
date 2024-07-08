@@ -1,0 +1,32 @@
+using Newtonsoft.Json.Linq;
+
+{{namespace_with_grace_begin __namespace}}
+public partial class {{__name}}
+{
+    {{~for table in __tables ~}}
+{{~if table.comment != '' ~}}
+    /// <summary>
+    /// {{escape_comment table.comment}}
+    /// </summary>
+{{~end~}}
+    public {{table.full_name}} {{format_property_name __code_style table.name}} {get; }
+    {{~end~}}
+
+
+      public {{__name}}(System.Func<string, JArray> loader)
+    {
+        {{~for table in __tables ~}}
+        {{format_property_name __code_style table.name}} = new {{table.full_name}}(loader("{{table.output_data_file}}"));
+        {{~end~}}
+        ResolveRef();
+    }
+    
+     private void ResolveRef()
+    {
+        {{~for table in __tables ~}}
+        {{format_property_name __code_style table.name}}.ResolveRef(this);
+        {{~end~}}
+    }
+}
+
+{{namespace_with_grace_end __namespace}}
