@@ -95,7 +95,8 @@ public {{class_modifier __bean}} partial class {{__name}} : {{if parent_def_type
     public static {{__name}} Deserialize{{__name}}(JToken _buf)
     {
     {{~if __bean.is_abstract_type~}}
-        switch (_buf.GetProperty("$type").GetString())
+        var _obj=_buf as JObject;
+        switch (_obj.GetValue("$type").ToString())
         {
         {{~for child in __bean.hierarchy_not_abstract_children~}}
             case "{{impl_data_type child __bean}}": return new {{child.full_name}}(_buf);
