@@ -1,4 +1,6 @@
 using Newtonsoft.Json.Linq;
+using Luban;
+
 {{
     
     func index_type_name
@@ -72,6 +74,7 @@ public partial class {{__name}}
             _v.ResolveRef(tables);
         }
     }
+
     {{~else if __table.is_list_table ~}}
     private readonly System.Collections.Generic.List<{{declaring_type_name __value_type}}> _dataList;
 
@@ -82,6 +85,84 @@ public partial class {{__name}}
     private System.Collections.Generic.Dictionary<{{declaring_type_name idx.type}}, {{declaring_type_name __value_type}}> _dataMap_{{idx.index_field.name}};
     {{~end~}}
     {{~end~}}
+
+
+    public {{__name}}(JArray _buf)
+    {
+        _dataList = new System.Collections.Generic.List<{{declaring_type_name __value_type}}>();
+        
+        foreach(JObject _ele in _buf)
+        {
+            {{declaring_type_name __value_type}} _v;
+            {{deserialize '_v' '_ele' __value_type}}
+            _dataList.Add(_v);
+        }
+        {{~if __table.is_union_index~}}
+        _dataMapUnion = new {{table_union_map_type_name}}();
+        foreach(var _v in _dataList)
+        {
+            _dataMapUnion.Add(({{table_key_list "_v"}}), _v);
+        }
+        {{~else if !__table.index_list.empty?~}}
+        {{~for idx in __table.index_list~}}
+            _dataMap_{{idx.index_field.name}} = new System.Collections.Generic.Dictionary<{{declaring_type_name idx.type}}, {{declaring_type_name __value_type}}>();
+        {{~end~}}
+        foreach(var _v in _dataList)
+        {
+        {{~for idx in __table.index_list~}}
+            _dataMap_{{idx.index_field.name}}.Add(_v.{{format_property_name __code_style idx.index_field.name}}, _v);
+        {{~end~}}
+        }
+        {{~end~}}
+    }
+
+    public System.Collections.Generic.List<{{declaring_type_name __value_type}}> DataList => _dataList;
+
+
+    {{~if __table.is_union_index~}}
+    public {{declaring_type_name __value_type}} Get({{table_param_def_list}}) => _dataMapUnion.TryGetValue(({{table_param_name_list}}), out {{declaring_type_name __value_type}} __v) ? __v : null;
+    {{~else if !__table.index_list.empty? ~}}
+        {{~for idx in __table.index_list~}}
+    public {{declaring_type_name __value_type}} GetBy{{format_property_name __code_style idx.index_field.name}}({{declaring_type_name idx.type}} key) => _dataMap_{{idx.index_field.name}}.TryGetValue(key, out {{declaring_type_name __value_type}} __v) ? __v : null;
+        {{~end~}}
+    {{~end~}}
+
+    public void ResolveRef({{__manager_name}} tables)
+    {
+        foreach(var _v in _dataList)
+        {
+            _v.ResolveRef(tables);
+        }
+    }
+    {{~else~}}
+
+     private readonly {{declaring_type_name __value_type}} _data;
+
+     public {{declaring_type_name __value_type}} Data => _data;
+
+    public {{__name}}(JArray _buf)
+    {
+        int n = _buf.Count;
+        if (n != 1) throw new SerializationException("table mode=one, but size != 1");
+        {{deserialize '_data' '_buf[0]' __value_type}}
+    }
+
+
+    {{~ for field in __value_type.def_bean.hierarchy_export_fields ~}}
+{{~if field.comment != '' ~}}
+    /// <summary>
+    /// {{escape_comment field.comment}}
+    /// </summary>
+{{~end~}}
+     public {{declaring_type_name field.ctype}} {{format_property_name __code_style field.name}} => _data.{{format_property_name __code_style field.name}};
+    {{~end~}}
+    
+    public void ResolveRef({{__manager_name}} tables)
+    {
+        _data.ResolveRef(tables);
+    }
+
+
 
     {{~end~}}
 }
