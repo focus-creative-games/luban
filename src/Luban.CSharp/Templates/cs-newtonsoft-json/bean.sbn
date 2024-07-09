@@ -1,0 +1,158 @@
+﻿using Luban;
+using Newtonsoft.Json.Linq;
+
+{{
+    parent_def_type = __bean.parent_def_type
+    export_fields = __bean.export_fields
+    hierarchy_export_fields = __bean.hierarchy_export_fields
+}}
+
+{{namespace_with_grace_begin __namespace_with_top_module}}
+{{~if __bean.comment != '' ~}}
+/// <summary>
+/// {{escape_comment __bean.comment}}
+/// </summary>
+{{~end~}}
+{{~
+func get_ref_name 
+    ret (format_property_name __code_style $0.name) + '_Ref'
+end
+
+func get_index_var_name
+    ret (format_property_name __code_style $0.name) + '_Index'
+end
+
+
+func generate_resolve_field_ref
+    field = $0
+    fieldName = format_property_name __code_style field.name
+    refTable = get_ref_table field
+    if can_generate_ref field
+        tableName = format_property_name __code_style refTable.name
+        if field.is_nullable
+            ret (get_ref_name field) + ' = ' + fieldName + '!= null ? tables.' + tableName + '.GetOrDefault(' + (get_value_of_nullable_type field.ctype fieldName) + ') : null;'
+        else
+            ret (get_ref_name field) + ' = tables.' + tableName + '.GetOrDefault(' + fieldName + ');'
+        end
+    else if can_generate_collection_ref field
+        collection_ref_table = get_collection_ref_table field
+        tableName = format_property_name __code_style collection_ref_table.name
+		if field.ctype.type_name == 'list' || field.ctype.type_name == 'set'
+            line1 = (get_ref_name field) + ' = new ' + (declaring_collection_ref_name field.ctype) + '();' + '\n'
+            line2 = 'foreach (var _v in ' + fieldName + ') { ' + (get_ref_name field) + '.Add(tables.' + tableName + '.GetOrDefault(_v)); }' + '\n'
+            ret line1 + line2
+        else if field.ctype.type_name == 'array'
+            line1 = (get_ref_name field) + ' = new ' + (declaring_type_name collection_ref_table.value_ttype) + '[' + fieldName + '.Length];' + '\n'
+            line2 = 'for (int _i = 0; _i < ' + fieldName + '.Length; _i++) { ' + (get_ref_name field) + '[_i] = tables.' + tableName + '.GetOrDefault(' + fieldName + '[_i]); }' + '\n'
+            ret line1 + line2
+		else if field.ctype.type_name == 'map'
+            line1 = (get_ref_name field) + ' = new ' + (declaring_collection_ref_name field.ctype) + '();' + '\n'
+			line2 = 'foreach (var kvp in ' + fieldName + ') { ' + (get_ref_name field) + '.Add(kvp.Key, tables.' + tableName + '.GetOrDefault(kvp.Value)); }' + '\n'
+			ret line1 + line2
+		else
+			ret ''
+		end
+    else
+        if (is_field_bean_need_resolve_ref field)
+            ret fieldName + '?.ResolveRef(tables);'
+        else if (is_field_array_like_need_resolve_ref field)
+            ret 'foreach (var _e in ' + fieldName + ') { _e?.ResolveRef(tables); }'
+        else if (is_field_map_need_resolve_ref field)
+            ret 'foreach (var _e in ' + fieldName + '.Values) { _e?.ResolveRef(tables); }'
+        else
+            ret ''
+        end
+    end
+end
+
+~}}
+
+{{~if __bean.is_value_type~}}
+public partial struct {{__name}}
+{{~else~}}
+public {{class_modifier __bean}} partial class {{__name}} : {{if parent_def_type}}{{__bean.parent}}{{else}}Luban.BeanBase{{end}}
+{{~end~}}
+{
+    public {{__name}}(JToken _buf) {{if parent_def_type}} : base(_buf) {{end}}
+    {
+        JObject _obj = _buf as JObject;
+        {{~ for field in export_fields
+            fieldName = format_property_name __code_style field.name
+         ~}}
+        {{deserialize_field fieldName '_obj' field.name field.ctype}}
+            {{~if can_generate_ref field~}}
+        {{get_ref_name field}} = null;
+            {{~end~}}
+            {{~if has_index field~}}
+        foreach(var _v in {{fieldName}})
+        { 
+            {{get_index_var_name field}}.Add(_v.{{format_property_name __code_style (get_index_field field).name}}, _v);
+        }
+            {{~end~}}
+        {{~end~}}
+    }
+
+    public static {{__name}} Deserialize{{__name}}(JToken _buf)
+    {
+    {{~if __bean.is_abstract_type~}}
+        var _obj=_buf as JObject;
+        switch (_obj.GetValue("$type").ToString())
+        {
+        {{~for child in __bean.hierarchy_not_abstract_children~}}
+            case "{{impl_data_type child __bean}}": return new {{child.full_name}}(_buf);
+        {{~end~}}
+            default: throw new SerializationException();
+        }
+    {{~else~}}
+        return new {{__bean.full_name}}(_buf);
+    {{~end~}}
+    }
+
+    {{~ for field in export_fields ~}}
+{{~if field.comment != '' ~}}
+    /// <summary>
+    /// {{escape_comment field.comment}}
+    /// </summary>
+{{~end~}}
+    public readonly {{declaring_type_name field.ctype}} {{format_property_name __code_style field.name}};
+    {{~if can_generate_ref field~}}
+    public {{declaring_type_name (get_ref_type field)}} {{get_ref_name field}};
+    {{~else if can_generate_collection_ref field~}}
+    public {{declaring_collection_ref_name field.ctype}} {{get_ref_name field}};
+    {{~end~}}
+   {{~if has_index field
+        indexMapType = get_index_map_type field
+   ~}}
+    public readonly {{declaring_type_name indexMapType}} {{get_index_var_name field}} = new {{declaring_type_name indexMapType}}();
+   {{~end~}}
+   {{~end~}}
+
+
+    {{~if !__bean.is_abstract_type && !__bean.is_value_type~}}
+    public const int __ID__ = {{__bean.id}};
+    public override int GetTypeId() => __ID__;
+    {{~end~}}
+
+    public {{method_modifier __bean}} void ResolveRef({{__manager_name}} tables)
+    {
+        {{~if parent_def_type~}}
+        base.ResolveRef(tables);
+        {{~end~}}
+        {{~for field in export_fields~}}
+            {{~ line = generate_resolve_field_ref field ~}}
+                {{~ if line != ''~}}
+        {{line}}
+                {{~end~}}
+        {{~end~}}
+    }
+
+    public override string ToString()
+    {
+        return "{{full_name}}{ "
+    {{~for field in hierarchy_export_fields ~}}
+        + "{{format_field_name __code_style field.name}}:" + {{to_pretty_string (format_property_name __code_style field.name) field.ctype}} + ","
+    {{~end~}}
+        + "}";
+    }
+}
+{{namespace_with_grace_end __namespace_with_top_module}}
