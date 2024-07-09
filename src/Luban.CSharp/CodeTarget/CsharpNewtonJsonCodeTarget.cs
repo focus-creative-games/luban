@@ -4,12 +4,12 @@ using Scriban;
 
 namespace Luban.CSharp.CodeTarget;
 
-[CodeTarget("cs-newton-json")]
-public class CsharpNewtonJsonCodeTarget : CsharpCodeTargetBase
+[CodeTarget("cs-newtonsoft-json")]
+public class CsharpNewtonSoftJsonCodeTarget : CsharpCodeTargetBase
 {
     protected override void OnCreateTemplateContext(TemplateContext ctx)
     {
         base.OnCreateTemplateContext(ctx);
-        ctx.PushGlobal(new CsharpNewtonJsonTemplateExtension());
+        ctx.PushGlobal(new CsharpNewtonSoftJsonTemplateExtension());
     }
 }

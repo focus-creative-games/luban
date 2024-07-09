@@ -4,10 +4,10 @@ using Luban.Utils;
 
 namespace Luban.CSharp.TypeVisitors
 {
-    internal class NewtonJsonDeserializeVisitor: ITypeFuncVisitor<string, string, int, string>
+    internal class NewtonSoftJsonDeserializeVisitor: ITypeFuncVisitor<string, string, int, string>
     {
 
-        public static NewtonJsonDeserializeVisitor Ins { get; } = new();
+        public static NewtonSoftJsonDeserializeVisitor Ins { get; } = new();
 
         public string Accept(TBool type, string x, string y, int z)
         {
