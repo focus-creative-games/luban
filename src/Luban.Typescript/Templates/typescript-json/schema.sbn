@@ -95,8 +95,7 @@ export {{if bean.is_abstract_type}}abstract {{end}}class {{bean.name}}{{if bean.
     {{~end~}}
     {{~end~}}
 
-    resolve(tables:{{__name}})
-    {
+    resolve(tables:{{__name}}) {
         {{~if bean.parent_def_type~}}
         super.resolve(tables)
         {{~end~}}
@@ -121,7 +120,7 @@ export {{if bean.is_abstract_type}}abstract {{end}}class {{bean.name}}{{if bean.
  * {{escape_comment table.comment}}
  */
 {{~end~}}
-export class {{table.name}}{
+export class {{table.name}} {
     {{~if table.is_map_table ~}}
     private _dataMap: Map<{{declaring_type_name key_type}}, {{declaring_type_name value_type}}>
     private _dataList: {{declaring_type_name value_type}}[]
@@ -141,8 +140,7 @@ export class {{table.name}}{
 
     get(key: {{declaring_type_name key_type}}): {{declaring_type_name value_type}} | undefined { return this._dataMap.get(key); }
 
-    resolve(tables:{{__name}})
-    {
+    resolve(tables:{{__name}}) {
         for(let  data of this._dataList)
         {
             data.resolve(tables)
@@ -164,8 +162,7 @@ export class {{table.name}}{
 
     get(index: number): {{declaring_type_name value_type}} | undefined { return this._dataList[index] }
     
-    resolve(tables:{{__name}})
-    {
+    resolve(tables:{{__name}}) {
         for(let  data of this._dataList)
         {
             data.resolve(tables)
