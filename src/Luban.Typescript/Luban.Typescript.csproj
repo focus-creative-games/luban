@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Luban.Core\Luban.Core.csproj" />
+      <ProjectReference Include="..\Luban.CSharp\Luban.CSharp.csproj" />
       <ProjectReference Include="..\Luban.DataTarget.Builtin\Luban.DataTarget.Builtin.csproj" />
     </ItemGroup>
 
@@ -49,6 +50,12 @@
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
       <None Update="Templates\typescript-json\schema.sbn">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Templates\typescript-bin\schema.sbn">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Templates\typescript-proto\schema.sbn">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>
