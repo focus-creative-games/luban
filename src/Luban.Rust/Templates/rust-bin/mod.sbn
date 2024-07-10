@@ -19,7 +19,7 @@ bitflags::bitflags!{
     {{~if item.comment_or_alias != '' ~}}
         ///{{item.comment_or_alias | html.escape}}
     {{~end~}}
-        const {{item.name}} = {{item.value}};
+        const {{item.name}} = {{item.int_value}};
         {{~end~}}
     }
 }
