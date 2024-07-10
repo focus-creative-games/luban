@@ -4,8 +4,8 @@ using Scriban;
 
 namespace Luban.Typescript.CodeTarget;
 
-[CodeTarget("typescript-proto")]
-public class TypescriptProtoCodeTarget : TypescriptCodeTargetBase
+[CodeTarget("typescript-protobuf")]
+public class TypescriptProtobufCodeTarget : TypescriptCodeTargetBase
 {
     protected override void OnCreateTemplateContext(TemplateContext ctx)
     {

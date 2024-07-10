@@ -55,7 +55,7 @@
       <None Update="Templates\typescript-bin\schema.sbn">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="Templates\typescript-proto\schema.sbn">
+      <None Update="Templates\typescript-protobuf\schema.sbn">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>
