@@ -97,7 +97,7 @@ public abstract class CppCodeTargetBase : TemplateCodeTargetBase
         var schemaHeader = new CodeWriter();
         schemaHeader.Write(template.Render(tplCtx));
 
-        return new OutputFile() { File = outputFileName, Content = schemaHeader.ToResult(FileHeader) };
+        return CreateOutputFile(outputFileName, schemaHeader.ToResult(FileHeader));
     }
 
     private OutputFile GenerateSchemaCpp(GenerationContext ctx, List<DefBean> beans, string schemaHeaderFileName, string outputFileName)
@@ -116,7 +116,7 @@ public abstract class CppCodeTargetBase : TemplateCodeTargetBase
         var schemaCpp = new CodeWriter();
         schemaCpp.Write(template.Render(tplCtx));
 
-        return new OutputFile() { File = outputFileName, Content = schemaCpp.ToResult(FileHeader) };
+        return CreateOutputFile(outputFileName, schemaCpp.ToResult(FileHeader));
     }
 
     public override void Handle(GenerationContext ctx, OutputFileManifest manifest)

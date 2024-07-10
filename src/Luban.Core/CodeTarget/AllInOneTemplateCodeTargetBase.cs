@@ -15,11 +15,7 @@ public abstract class AllInOneTemplateCodeTargetBase : TemplateCodeTargetBase
     public override void Handle(GenerationContext ctx, OutputFileManifest manifest)
     {
         string outputSchemaFileName = EnvManager.Current.GetOptionOrDefault(Name, $"outputFile", true, DefaultOutputFileName);
-        manifest.AddFile(new OutputFile()
-        {
-            File = $"{outputSchemaFileName}",
-            Content = GenerateSchema(ctx),
-        });
+        manifest.AddFile(CreateOutputFile($"{outputSchemaFileName}", GenerateSchema(ctx)));
     }
 
     protected virtual string GenerateSchema(GenerationContext ctx)

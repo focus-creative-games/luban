@@ -53,4 +53,6 @@ public static class BuiltinOptionNames
     public const string NamingConvention = "namingConvention";
 
     public const string LineEnding = "lineEnding";
+
+    public const string FileEncoding = "fileEncoding";
 }

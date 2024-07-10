@@ -1,6 +1,7 @@
 ﻿using Luban.DataTarget;
 using Luban.DataVisitors;
 using Luban.Defs;
+using System.Text;
 
 namespace Luban.L10N.DataTarget;
 
@@ -35,6 +36,6 @@ internal class TextKeyListDataTarget : DataTargetBase
 
         string outputFile = EnvManager.Current.GetOption(BuiltinOptionNames.L10NFamily, BuiltinOptionNames.L10NTextListFile, false);
 
-        return new OutputFile { File = outputFile, Content = content };
+        return new OutputFile { File = outputFile, Content = content, Encoding = FileEncoding };
     }
 }

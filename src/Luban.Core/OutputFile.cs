@@ -11,12 +11,14 @@ public class OutputFile
     /// </summary>
     public object Content { get; init; }
 
+    public Encoding Encoding { get; set; } = Encoding.UTF8;
+
     public byte[] GetContentBytes()
     {
         if (Content is byte[] bytes)
         {
             return bytes;
         }
-        return Encoding.UTF8.GetBytes((string)Content);
+        return this.Encoding.GetBytes((string)Content);
     }
 }

@@ -1,11 +1,24 @@
+using Luban.CodeTarget;
 using Luban.Defs;
 using System.Reflection;
+using System.Text;
 
 namespace Luban.DataTarget;
 
 public abstract class DataTargetBase : IDataTarget
 {
     public const string FamilyPrefix = "tableExporter";
+
+    public string Name => GetType().GetCustomAttribute<DataTargetAttribute>().Name;
+
+    public virtual Encoding FileEncoding
+    {
+        get
+        {
+            string encoding = EnvManager.Current.GetOptionOrDefault(Name, BuiltinOptionNames.FileEncoding, true, "");
+            return string.IsNullOrEmpty(encoding) ? Encoding.UTF8 : System.Text.Encoding.GetEncoding(encoding);
+        }
+    }
 
     public virtual AggregationType AggregationType => AggregationType.Table;
 

@@ -43,6 +43,7 @@ public class ProtobufJsonDataTarget : JsonDataTarget
         {
             File = $"{table.OutputDataFile}.{OutputFileExt}",
             Content = DataUtil.StreamToBytes(ss),
+            Encoding = FileEncoding,
         };
     }
 }

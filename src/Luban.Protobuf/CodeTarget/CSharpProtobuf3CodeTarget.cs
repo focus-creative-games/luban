@@ -26,7 +26,7 @@ public class CSharpProtobuf3CodeTarget : ProtobufSchemaTargetBase
         {
             var writer = new CodeWriter();
             GenerateTables(ctx, ctx.ExportTables, writer);
-            return new OutputFile() { File = $"{GetFileNameWithoutExtByTypeName(ctx.Target.Manager)}.{FileSuffixName}", Content = writer.ToResult(FileHeader) };
+            return CreateOutputFile($"{GetFileNameWithoutExtByTypeName(ctx.Target.Manager)}.{FileSuffixName}", writer.ToResult(FileHeader));
         }));
         Task.WaitAll(tasks.ToArray());
         foreach (var task in tasks)

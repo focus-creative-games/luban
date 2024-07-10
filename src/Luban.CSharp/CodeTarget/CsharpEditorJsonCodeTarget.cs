@@ -20,7 +20,7 @@ public class CsharpEditorJsonCodeTarget : CsharpCodeTargetBase
             {
                 var writer = new CodeWriter();
                 GenerateBean(ctx, bean, writer);
-                return new OutputFile() { File = $"{GetFileNameWithoutExtByTypeName(bean.FullName)}.{FileSuffixName}", Content = writer.ToResult(FileHeader) };
+                return CreateOutputFile($"{GetFileNameWithoutExtByTypeName(bean.FullName)}.{FileSuffixName}", writer.ToResult(FileHeader));
             }));
         }
 
@@ -30,7 +30,7 @@ public class CsharpEditorJsonCodeTarget : CsharpCodeTargetBase
             {
                 var writer = new CodeWriter();
                 GenerateEnum(ctx, @enum, writer);
-                return new OutputFile() { File = $"{GetFileNameWithoutExtByTypeName(@enum.FullName)}.{FileSuffixName}", Content = writer.ToResult(FileHeader) };
+                return CreateOutputFile($"{GetFileNameWithoutExtByTypeName(@enum.FullName)}.{FileSuffixName}", writer.ToResult(FileHeader));
             }));
         }
 

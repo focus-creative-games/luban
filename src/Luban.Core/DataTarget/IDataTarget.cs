@@ -1,4 +1,5 @@
 using Luban.Defs;
+using System.Text;
 
 namespace Luban.DataTarget;
 
@@ -13,6 +14,8 @@ public enum AggregationType
 public interface IDataTarget
 {
     AggregationType AggregationType { get; }
+
+    Encoding FileEncoding { get; }
 
     bool ExportAllRecords { get; }
 

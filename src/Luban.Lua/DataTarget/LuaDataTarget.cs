@@ -71,6 +71,7 @@ public class LuaDataTarget : DataTargetBase
         {
             File = $"{table.OutputDataFile}.{OutputFileExt}",
             Content = ss.ToString(),
+            Encoding = FileEncoding,
         };
     }
 }

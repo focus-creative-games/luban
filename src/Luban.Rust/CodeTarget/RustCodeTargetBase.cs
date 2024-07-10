@@ -7,7 +7,7 @@ using Luban.Utils;
 
 using Scriban;
 using Scriban.Runtime;
-
+using System.Text;
 using System.Xml.Linq;
 
 namespace Luban.Rust.CodeTarget;
@@ -73,17 +73,9 @@ public class RustCodeTargetBase : TemplateCodeTargetBase
             {
                 var allns = modDic.Values.Select(x => "crate::" + x.FullPath.Replace("/", "::")).ToList();
                 var allmods = modDic.Keys.Select(x => x.Replace(".", "::"));
-                return new OutputFile()
-                {
-                    File = $"{GenerationContext.Current.TopModule}/src/lib.rs",
-                    Content = GenerateLib(ctx, allmods, allns, topMod, polymorphicBeans),
-                };
+                return CreateOutputFile($"{GenerationContext.Current.TopModule}/src/lib.rs", GenerateLib(ctx, allmods, allns, topMod, polymorphicBeans));
             }),
-            Task.Run(() => new OutputFile()
-            {
-                File = $"{GenerationContext.Current.TopModule}/Cargo.toml",
-                Content = GenerateToml(ctx),
-            })
+            Task.Run(() => CreateOutputFile($"{GenerationContext.Current.TopModule}/Cargo.toml", GenerateToml(ctx))),
         };
 
         foreach (var mod in modDic.Values)
@@ -93,11 +85,7 @@ public class RustCodeTargetBase : TemplateCodeTargetBase
                 var path = $"{GenerationContext.Current.TopModule}/src/{mod.FullPath}";
                 path += mod.SubMods.Count <= 0 ? ".rs" : "/mod.rs";
 
-                return new OutputFile()
-                {
-                    File = path,
-                    Content = GenerateMod(ctx, mod),
-                };
+                return CreateOutputFile(path, GenerateMod(ctx, mod));
             }));
         }
 
@@ -218,10 +206,10 @@ public class RustCodeTargetBase : TemplateCodeTargetBase
     {
         var template = TemplateManager.Ins.GetTemplateString($"{CommonTemplateSearchPath}/macros/Cargo.toml");
         var path = $"macros/Cargo.toml";
-        manifest.AddFile(path, template);
+        manifest.AddFile(path, template, Encoding.UTF8);
         template = TemplateManager.Ins.GetTemplateString($"{CommonTemplateSearchPath}/macros/src/lib.rs");
         path = $"macros/src/lib.rs";
-        manifest.AddFile(path, template);
+        manifest.AddFile(path, template, Encoding.UTF8);
     }
 
     protected class Mod

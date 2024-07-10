@@ -1,4 +1,5 @@
 using Luban.Defs;
+using System.Text;
 
 namespace Luban.CodeTarget;
 
@@ -11,6 +12,8 @@ public interface ICodeTarget
     void Handle(GenerationContext ctx, OutputFileManifest manifest);
 
     string FileHeader { get; }
+
+    Encoding FileEncoding { get; }
 
     string GetPathFromFullName(string fullName);
 
