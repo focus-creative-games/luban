@@ -58,12 +58,12 @@ namespace Luban.Typescript.TypeVisitors
         {
             switch (elementType)
             {
-                case TByte _: return "new Uint8Array()";
+                case TByte _:
                 case TShort _:
                 case TInt _:
                 case TLong _:
-                case TFloat _: return "new Float32Array()";
-                case TDouble _: return "new Float64Array()";
+                case TFloat _:
+                case TDouble _:
                 default: return "[]";
             }
         }
@@ -72,13 +72,13 @@ namespace Luban.Typescript.TypeVisitors
         {
             switch (arrayType.ElementType)
             {
-                case TByte _: return $"new Uint8Array({size})";
+                case TByte _:
                 case TShort _:
                 case TInt _:
                 case TLong _:
-                case TFloat _: return $"new Float32Array({size})";
-                case TDouble _: return $"new Float64Array({size})";
-                default: return "[]";
+                case TFloat _:
+                case TDouble _:
+                default: return $"new Array({size})";
             }
         }
 
