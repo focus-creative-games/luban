@@ -1,6 +1,7 @@
 using Luban.DataLoader.Builtin.Excel;
 using Luban.RawDefs;
 using Luban.Utils;
+using System.Xml.Linq;
 
 namespace Luban.Schema.Builtin;
 
@@ -26,16 +27,27 @@ public class BeanSchemaFromExcelHeaderLoader : IBeanSchemaLoader
             Fields = new(),
         };
 
-        string actualFile, sheetName = null;
 
-        if (Directory.Exists(fileName))
+        (var actualFile, var sheetName) = FileUtil.SplitFileAndSheetName(FileUtil.Standardize(fileName));
+
+        if (!File.Exists(actualFile))
         {
-            var files = FileUtil.GetFileOrDirectory(fileName);
-            actualFile = files[0];
-        }
-        else
-        {
-            (actualFile, sheetName) = FileUtil.SplitFileAndSheetName(FileUtil.Standardize(fileName));
+            if (Directory.Exists(fileName))
+            {
+                var files = FileUtil.GetFileOrDirectory(fileName);
+                if (files.Count == 0)
+                {
+                    throw new Exception($"directory:{fileName} is empty!");
+                }
+                else
+                {
+                    actualFile = files[0];
+                }
+            }
+            else
+            {
+                throw new Exception($"file or directory:{fileName} not exists!");
+            } 
         }
 
         using var inputStream = new FileStream(actualFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
