@@ -22,7 +22,7 @@ luban标准化了游戏配置开发工作流，可以极大提升策划和程序
 - 丰富的导出格式。 支持生成binary、json、bson、xml、lua、yaml等格式数据
 - 增强的excel格式。可以简洁地配置出像简单列表、子结构、结构列表，以及任意复杂的深层次的嵌套结构
 - 完备的类型系统。不仅能表达常见的规范行列表，由于**支持OOP类型继承**，能灵活优雅表达行为树、技能、剧情、副本之类复杂GamePlay数据
-- 支持多种的语言。支持生成c#、java、go、cpp、lua、python、typescript 等语言代码
+- 支持多种的语言。内置支持生成c#、java、go、cpp、lua、python、typescript、rust、php、erlang 等语言代码，同时还能通过protobuf之类消息方案支持其他语言
 - 支持主流的消息方案。 protobuf(schema + binary + json)、flatbuffers(schema + json)、msgpack(binary)
 - 强大的数据校验能力。ref引用检查、path资源路径、range范围检查等等
 - 完善的本地化支持

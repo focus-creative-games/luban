@@ -22,7 +22,7 @@ Luban standardizes the game configuration development workflow, which can greatl
 - Rich export formats. Support generating binary, json, bson, xml, lua, yaml and other format data
 - Enhanced excel format. Simple configurations such as simple lists, substructures, structured lists, and arbitrarily complex deep nested structures can be concisely configured
 - Complete type system. Not only can it express common specification line lists, but it can flexibly and elegantly express complex GamePlay data such as behavior trees, skills, plots, and dungeons because **supports OOP type inheritance**
-- Support multiple languages. Supports generating language codes such as c#, java, go, cpp, lua, python, typescript, etc.
+- Support multiple languages. Supports generating language codes such as c#, java, go, cpp, lua, python, typescript, php, rust, etc.
 - Support popular message schemes. protobuf(schema + binary + json), flatbuffers(schema + json), msgpack(binary)
 - Powerful data verification capability. ref reference check, path resource path, range range check, etc.
 - Perfect localization support
