@@ -26,9 +26,21 @@ public class BeanSchemaFromExcelHeaderLoader : IBeanSchemaLoader
             Fields = new(),
         };
 
-        (var actualFile, var sheetName) = FileUtil.SplitFileAndSheetName(FileUtil.Standardize(fileName));
+        string actualFile, sheetName = null;
+
+        if (Directory.Exists(fileName))
+        {
+            var files = FileUtil.GetFileOrDirectory(fileName);
+            actualFile = files[0];
+        }
+        else
+        {
+            (actualFile, sheetName) = FileUtil.SplitFileAndSheetName(FileUtil.Standardize(fileName));
+        }
+
         using var inputStream = new FileStream(actualFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-        var tableDefInfo = SheetLoadUtil.LoadSheetTableDefInfo(actualFile, sheetName, inputStream);
+
+        var tableDefInfo = SheetLoadUtil.LoadSheetTableDefInfo(fileName, sheetName, inputStream);
 
         foreach (var (name, f) in tableDefInfo.FieldInfos)
         {
