@@ -7,6 +7,6 @@ public class TypescriptBinTemplateExtension : ScriptObject
 {
     public static string Deserialize(string fieldName, string bufName, TType type)
     {
-        return type.Apply(TypescriptBinDeserializeVisitor.Ins, bufName, fieldName);
+        return type.Apply(BinDeserializeVisitor.Ins, bufName, fieldName);
     }
 }

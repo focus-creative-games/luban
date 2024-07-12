@@ -2,11 +2,11 @@ using Luban.Types;
 
 namespace Luban.Typescript.TypeVisitors
 {
-    public class TypescriptBinUnderingDeserializeVisitor : TypescriptBinUnderingDeserializeVisitorBase
+    public class BinUnderingDeserializeVisitor : BinUnderingDeserializeVisitorBase
     {
-        public static TypescriptBinUnderingDeserializeVisitor Ins { get; } = new TypescriptBinUnderingDeserializeVisitor();
+        public static BinUnderingDeserializeVisitor Ins { get; } = new BinUnderingDeserializeVisitor();
 
-        public override string Accept(TBean type, string bufVarName, string fieldName)
+        public override string Accept(TBean type, string bufVarName, string fieldName, int depth)
         {
             if (type.DefBean.IsAbstractType)
             {
