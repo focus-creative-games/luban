@@ -51,7 +51,7 @@ public class BeanSchemaFromExcelHeaderLoader : IBeanSchemaLoader
 
         using var inputStream = new FileStream(actualFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
-        var tableDefInfo = SheetLoadUtil.LoadSheetTableDefInfo(fileName, sheetName, inputStream);
+        var tableDefInfo = SheetLoadUtil.LoadSheetTableDefInfo(actualFile, sheetName, inputStream);
 
         foreach (var (name, f) in tableDefInfo.FieldInfos)
         {
