@@ -6,7 +6,7 @@ namespace Luban.Typescript.TypeVisitors
     {
         public static TypescriptBinUnderingDeserializeVisitor Ins { get; } = new TypescriptBinUnderingDeserializeVisitor();
 
-        public override string Accept(TBean type, string bufVarName, string fieldName)
+        public override string Accept(TBean type, string bufVarName, string fieldName, int depth)
         {
             if (type.DefBean.IsAbstractType)
             {
