@@ -225,7 +225,7 @@ public static class SheetLoadUtil
         string titleName = attrs[0];
         var tags = new Dictionary<string, string>();
         // *  开头的表示是多行
-        if (titleName.StartsWith("*"))
+        if (titleName.StartsWith('*'))
         {
             titleName = titleName.Substring(1);
             tags.Add("multi_rows", "1");
@@ -235,7 +235,7 @@ public static class SheetLoadUtil
         //    titleName = titleName.Substring(0, titleName.Length - 1);
         //    tags.Add("multi_rows", "1");
         //}
-        if (titleName.StartsWith("!"))
+        if (titleName.StartsWith('!'))
         {
             titleName = titleName.Substring(1);
             tags.Add("non_empty", "1");
@@ -320,6 +320,8 @@ public static class SheetLoadUtil
 
             Title subTitle;
             // [field,,,, field] 形成多列字段
+
+
             if (titleName.StartsWith('['))
             {
                 int startIndex = i;

@@ -187,7 +187,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
                 Groups = SchemaLoaderUtil.CreateGroups((data.GetField("group") as DString).Value.Trim()),
                 Items = items.Datas.Cast<DBean>().Select(d => new EnumItem()
                 {
-                    Name = (d.GetField("name") as DString).Value,
+                    Name = (d.GetField("name") as DString).Value.Trim(),
                     Alias = (d.GetField("alias") as DString).Value,
                     Value = (d.GetField("value") as DString).Value,
                     Comment = (d.GetField("comment") as DString).Value,
