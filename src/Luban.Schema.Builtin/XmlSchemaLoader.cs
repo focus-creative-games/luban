@@ -99,7 +99,7 @@ public class XmlSchemaLoader : SchemaLoaderBase
                     XmlSchemaUtil.ValidAttrKeys(_fileName, item, _enumItemOptionalAttrs, _enumItemRequiredAttrs);
                     en.Items.Add(new EnumItem()
                     {
-                        Name = XmlUtil.GetRequiredAttribute(item, "name"),
+                        Name = XmlUtil.GetRequiredAttribute(item, "name").Trim(),
                         Alias = XmlUtil.GetOptionalAttribute(item, "alias"),
                         Value = XmlUtil.GetOptionalAttribute(item, "value"),
                         Comment = XmlUtil.GetOptionalAttribute(item, "comment"),
