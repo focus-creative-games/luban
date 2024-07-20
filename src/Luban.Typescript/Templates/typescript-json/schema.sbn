@@ -20,7 +20,6 @@ export enum {{enum.name}} {
 {{namespace_with_grace_end enum.namespace}} 
 {{~end~}}
 
-
 {{~
 func get_ref_name 
     ret (format_property_name __code_style $0.name) + '_ref'
@@ -114,6 +113,27 @@ export {{if bean.is_abstract_type}}abstract {{end}}class {{bean.name}}{{if bean.
     value_type = table.value_ttype
 ~}}
 
+{{~
+func table_key_list
+    varName = $0
+    indexList = table.index_list |array.each do
+        formattedName = format_property_name __code_style $0.index_field.name
+        ret varName + '.' + formattedName + ' == ' + formattedName
+    end
+    ret array.join indexList ' && '
+end
+
+func table_param_name_list
+    paramList = table.index_list |array.each do
+        fieldName = format_property_name __code_style $0.index_field.name
+        # fieldType = declaring_type_name(get_ref_type($0.index_field.type))
+        fieldType = declaring_type_name($0.index_field.ctype)
+        ret fieldName + ': ' + fieldType
+    end
+    ret array.join paramList ', '
+end
+~}}
+
 {{namespace_with_grace_begin table.namespace}}
 {{~if table.comment != '' ~}}
 /**
@@ -160,8 +180,21 @@ export class {{table.name}} {
 
     getDataList(): {{declaring_type_name value_type}}[] { return this._dataList }
 
+    {{~if table.is_union_index~}}
+    get({{table_param_name_list}}): {{declaring_type_name value_type}} | undefined { 
+        for(let  data of this._dataList)
+        {
+            if({{ table_key_list 'data' }})
+            {
+                return data
+            }
+        }
+        return undefined
+    }
+    {{~else~}}
     get(index: number): {{declaring_type_name value_type}} | undefined { return this._dataList[index] }
-    
+    {{~end~}}
+
     resolve(tables:{{__name}}) {
         for(let  data of this._dataList)
         {
