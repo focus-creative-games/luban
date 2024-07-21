@@ -59,6 +59,22 @@ class {{name}} {{if bean.parent_def_type}}({{full_name bean.parent_def_type}}){{
 {{~for table in __tables
     value_type = table.value_ttype
 ~}}
+
+{{
+    func table_key_list
+        varName = $0
+        indexList = table.index_list | array.each do
+            ret varName + '.' + (format_property_name __code_style $0.index_field.name)
+        end
+        ret array.join indexList ', '
+    end
+
+    func table_param_name_list
+        paramList = table.index_list |array.each do; ret $0.index_field.name; end
+        ret array.join paramList ', '
+    end
+}}
+
 class {{full_name table}}:
     {{~if table.is_map_table ~}}
 
@@ -79,15 +95,25 @@ class {{full_name table}}:
 
     def __init__(self, _json_ ):
         self._dataList = []
-        
+        {{~if table.is_union_index~}}
+        self._indexMap = {}
+        {{~end~}}
+
         for _json2_ in _json_:
             {{deserialize '_v' '_json2_' value_type}}
             self._dataList.append(_v)
+            {{~if table.is_union_index~}}
+            self._indexMap[({{table_key_list '_v'}})] = _v
+            {{~end~}}
 
     def getDataList(self) : return self._dataList
 
+    {{~if table.is_union_index~}}
+    def get(self, {{table_param_name_list}}):
+        return self._indexMap.get(({{table_param_name_list}}))
+    {{~else~}}
     def get(self, index) : return self._dataList[index]
-
+    {{~end~}}
     {{~else~}}
 
     def __init__(self, _json_):
