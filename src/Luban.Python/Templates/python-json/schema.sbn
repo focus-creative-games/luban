@@ -96,24 +96,35 @@ class {{full_name table}}:
     def __init__(self, _json_ ):
         self._dataList = []
         {{~if table.is_union_index~}}
-        self._indexMap = {}
+        self._dataMapUnion = {}
+        {{~else if !table.index_list.empty?~}}
+        {{~for idx in table.index_list~}}
+        self._dataMap_{{idx.index_field.name}} = {}
+        {{~end~}}
         {{~end~}}
 
         for _json2_ in _json_:
             {{deserialize '_v' '_json2_' value_type}}
             self._dataList.append(_v)
             {{~if table.is_union_index~}}
-            self._indexMap[({{table_key_list '_v'}})] = _v
+            self._dataMapUnion[({{table_key_list '_v'}})] = _v
+            {{~else if !table.index_list.empty?~}}
+            {{~for idx in table.index_list~}}
+            self._dataMap_{{idx.index_field.name}}[_v.{{format_property_name __code_style idx.index_field.name}}] = _v
+            {{~end~}}
             {{~end~}}
 
     def getDataList(self) : return self._dataList
 
     {{~if table.is_union_index~}}
     def get(self, {{table_param_name_list}}):
-        return self._indexMap.get(({{table_param_name_list}}))
-    {{~else~}}
-    def get(self, index) : return self._dataList[index]
+        return self._dataMapUnion.get(({{table_param_name_list}}))
+    {{~else if !table.index_list.empty? ~}}
+        {{~for idx in table.index_list~}}
+    def get_by_{{format_property_name __code_style idx.index_field.name}}(self, key): return self._dataMap_{{idx.index_field.name}}.get(key)
+        {{~end~}}
     {{~end~}}
+
     {{~else~}}
 
     def __init__(self, _json_):
