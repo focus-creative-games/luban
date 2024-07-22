@@ -1,4 +1,19 @@
 from enum import Enum
+{{
+    
+    func table_key_list
+        table = $0
+        varName = $1
+        indexList = table.index_list |array.each do; ret varName + '.' + (format_property_name __code_style $0.index_field.name); end;
+        ret array.join indexList ', '
+    end
+    
+    func table_param_name_list
+        table = $0
+        paramList = table.index_list |array.each do; ret $0.index_field.name; end
+        ret array.join paramList ', '
+    end
+}}
 
 {{~for enum in __enums~}}
 {{~if enum.comment != '' ~}}
@@ -75,19 +90,42 @@ class {{full_name table}}:
     def getDataList(self) : return self._dataList
 
     def get(self, key) : return self._dataMap.get(key)
-    {{~else if table.is_list_table ~}}
-
+    {{~else if table.is_union_index~}}
+    
     def __init__(self, _json_ ):
+        self._dataMap = {}
         self._dataList = []
         
         for _json2_ in _json_:
             {{deserialize '_v' '_json2_' value_type}}
             self._dataList.append(_v)
+            self._dataMap[({{table_key_list table '_v'}})] = _v
+
+    def getDataMap(self) : return self._dataMap
+    def getDataList(self) : return self._dataList
+
+    def get(self, {{table_param_name_list table}}) : return self._dataMap.get(({{table_param_name_list table}}))
+
+    {{~else if table.is_list_table ~}}
+
+    def __init__(self, _json_ ):
+        self._dataList = []
+        {{~for idx in table.index_list~}}
+        self._dataMap_{{idx.index_field.name}} = {}
+        {{~end~}}
+        for _json2_ in _json_:
+            {{deserialize '_v' '_json2_' value_type}}
+            self._dataList.append(_v)
+            {{~for idx in table.index_list~}}
+            self._dataMap_{{idx.index_field.name}}[_v.{{format_property_name __code_style idx.index_field.name}}] = _v
+            {{~end~}}
 
     def getDataList(self) : return self._dataList
 
     def get(self, index) : return self._dataList[index]
-
+    {{~for idx in table.index_list~}}
+    def get_by_{{format_property_name __code_style idx.index_field.name}}(self, key): return self._dataMap_{{idx.index_field.name}}.get(key)
+    {{~end~}}
     {{~else~}}
 
     def __init__(self, _json_):
