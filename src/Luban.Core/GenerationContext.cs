@@ -132,7 +132,7 @@ public class GenerationContext
             table.ValueTType.Apply(RefTypeVisitor.Ins, refTypes);
         }
 
-        return refTypes.Values.ToList();
+        return refTypes.OrderBy(p => p.Key).Select(p => p.Value).ToList();
     }
 
     public static string GetInputDataPath()
