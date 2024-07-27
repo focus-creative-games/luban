@@ -28,12 +28,12 @@ bool {{make_cpp_name bean.full_name}}::deserialize{{bean.name}}(::luban::ByteBuf
     switch (id)
     {
     {{~for child in bean.hierarchy_not_abstract_children~}}
-        case {{make_type_cpp_name child}}::__ID__: { _out.reset(new {{make_type_cpp_name child}}()); if (_out->deserialize(_buf)) { return true; } else { _out.reset(); return false;} }
+        case {{make_type_cpp_name child}}::__ID__: { _out.reset(LUBAN_NEW({{make_type_cpp_name child}})); if (_out->deserialize(_buf)) { return true; } else { _out.reset(); return false;} }
     {{~end~}}
         default: { _out = nullptr; return false;}
     }
 {{~else~}}
-    _out.reset(new {{make_type_cpp_name bean}}());
+    _out.reset(LUBAN_NEW({{make_type_cpp_name bean}}));
     if (_out->deserialize(_buf))
     {
         return true;
