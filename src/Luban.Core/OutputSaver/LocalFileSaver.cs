@@ -21,9 +21,10 @@ public class LocalFileSaver : OutputSaverBase
     {
         string fullOutputPath = $"{outputDir}/{outputFile.File}";
         Directory.CreateDirectory(Path.GetDirectoryName(fullOutputPath));
+        string tag = File.Exists(fullOutputPath) ? "overwrite" : "new";
         if (FileUtil.WriteAllBytes(fullOutputPath, outputFile.GetContentBytes()))
         {
-            s_logger.Info("save file:{} ", fullOutputPath);
+            s_logger.Info("[{0}] {1} ", tag, fullOutputPath);
         }
     }
 }

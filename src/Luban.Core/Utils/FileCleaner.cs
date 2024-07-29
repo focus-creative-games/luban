@@ -67,7 +67,7 @@ public class FileCleaner
             }
             else if (!_ignoreFileExtensions.Contains(FileUtil.GetFileExtension(file)))
             {
-                s_logger.Info("[remove] file: {file}", file);
+                s_logger.Info("[remove] {0}", file);
                 File.Delete(file);
             }
         }
