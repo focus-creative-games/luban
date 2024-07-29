@@ -50,11 +50,7 @@ public class DefaultTableImporter : ITableImporter
             string rawTableName = TypeUtil.GetName(rawTableFullName);
             string tableNamespace = TypeUtil.MakeFullName(namespaceFromRelativePath, string.Format(tableNamespaceFormatStr, rawTableNamespace));
             string tableName = string.Format(tableNameFormatStr, rawTableName);
-            string valueTypeFullName = string.Format(valueTypeNameFormatStr, rawTableName);
-            if (string.IsNullOrWhiteSpace(TypeUtil.GetNamespace(valueTypeFullName)))
-            {
-                valueTypeFullName = TypeUtil.MakeFullName(tableNamespace, valueTypeFullName);
-            }
+            string valueTypeFullName = TypeUtil.MakeFullName(tableNamespace, string.Format(valueTypeNameFormatStr, rawTableName));
 
             var table = new RawTable()
             {
