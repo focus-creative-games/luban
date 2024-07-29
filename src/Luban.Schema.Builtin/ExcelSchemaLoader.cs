@@ -84,6 +84,10 @@ public class ExcelSchemaLoader : SchemaLoaderBase
             }
             string module = TypeUtil.GetNamespace(fullName);
             string valueType = (data.GetField("value_type") as DString).Value.Trim();
+            if (string.IsNullOrEmpty(TypeUtil.GetNamespace(valueType)))
+            {
+                valueType = TypeUtil.MakeFullName(module, valueType);
+            }
             string index = (data.GetField("index") as DString).Value.Trim();
             string mode = (data.GetField("mode") as DString).Value.Trim();
             string group = (data.GetField("group") as DString).Value.Trim();
