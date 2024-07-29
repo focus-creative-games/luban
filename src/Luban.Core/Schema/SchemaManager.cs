@@ -87,4 +87,9 @@ public class SchemaManager
     {
         return CustomBehaviourManager.Ins.CreateBehaviour<IBeanSchemaLoader, BeanSchemaLoaderAttribute>(type);
     }
+
+    public ITableImporter CreateTableImporter(string type)
+    {
+        return CustomBehaviourManager.Ins.CreateBehaviour<ITableImporter, TableImporterAttribute>(type);
+    }
 }

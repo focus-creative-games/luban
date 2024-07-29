@@ -21,6 +21,7 @@ public class DefaultSchemaCollector : SchemaCollectorBase
             schemaLoader.Load(importFile.FileName);
         }
 
+        LoadTablesFromTableImporter();
         LoadTableValueTypeSchemasFromFile();
     }
 
@@ -46,5 +47,19 @@ public class DefaultSchemaCollector : SchemaCollectorBase
             }));
         }
         Task.WaitAll(tasks.ToArray());
+    }
+
+    private void LoadTablesFromTableImporter()
+    {
+        string tableImporterName = EnvManager.Current.GetOptionOrDefault("tableImporter", "name", false, "default");
+        if (string.IsNullOrWhiteSpace(tableImporterName) || tableImporterName == "none")
+        {
+            return;
+        }
+        ITableImporter tableImporter = SchemaManager.Ins.CreateTableImporter(tableImporterName);
+        foreach (var table in tableImporter.LoadImportTables())
+        {
+            Add(table);
+        }
     }
 }

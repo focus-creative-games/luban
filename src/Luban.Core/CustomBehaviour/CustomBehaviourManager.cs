@@ -29,7 +29,7 @@ public class CustomBehaviourManager
             return (T)bi.Creator();
         }
 
-        throw new Exception($"behaviour:{name} not exists");
+        throw new Exception($"behaviour:{name} type:{typeof(T)} not exists");
     }
 
     public bool TryCreateBehaviour<T, C>(string name, out T behaviour) where C : Attribute, ICustomBehaviour where T : class
