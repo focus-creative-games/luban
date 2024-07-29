@@ -24,6 +24,11 @@ public abstract class CsharpCodeTargetBase : TemplateCodeTargetBase
 
     protected override IReadOnlySet<string> PreservedKeyWords => s_preservedKeyWords;
 
+    protected override string GetFileNameWithoutExtByTypeName(string name)
+    {
+        return name.Replace('.', '/');
+    }
+
     protected override void OnCreateTemplateContext(TemplateContext ctx)
     {
         ctx.PushGlobal(new CsharpTemplateExtension());
