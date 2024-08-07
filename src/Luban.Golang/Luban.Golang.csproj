@@ -55,8 +55,4 @@
       <ProjectReference Include="..\Luban.Core\Luban.Core.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="TypeVisitors\" />
-    </ItemGroup>
-
 </Project>
