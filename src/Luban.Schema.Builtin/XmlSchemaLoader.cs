@@ -132,6 +132,10 @@ public class XmlSchemaLoader : SchemaLoaderBase
         string module = CurNamespace;
         string valueType = XmlUtil.GetRequiredAttribute(e, "value");
         bool defineFromFile = XmlUtil.GetOptionBoolAttribute(e, "readSchemaFromFile");
+        if (string.IsNullOrEmpty(TypeUtil.GetNamespace(valueType)))
+        {
+            valueType = TypeUtil.MakeFullName(module, valueType);
+        }
         string index = XmlUtil.GetOptionalAttribute(e, "index");
         string group = XmlUtil.GetOptionalAttribute(e, "group");
         string comment = XmlUtil.GetOptionalAttribute(e, "comment");
