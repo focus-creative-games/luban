@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using SimpleJSON;
 using Luban;
+using UnityEngine;
+using System.Linq;
 
 {{namespace_with_grace_begin __namespace_with_top_module}}
 
@@ -20,7 +22,48 @@ public {{class_modifier __bean}} class {{__name}} : {{if __parent_def_type}} {{_
         {{~end~}}
     }
 
-    {{~if !__this.is_abstract_type~}}
+    {{~if __this.is_abstract_type~}}
+    private int _typeIndex = -1;
+    public int TypeIndex
+    {
+        get => _typeIndex;
+        set
+        {
+            if(_typeIndex == value)
+            {
+                return;
+            }
+            _typeIndex = value;
+            Instance = Create(Types[value]);
+        }
+    }
+    public {{__name}} Instance { get; set;}
+    public abstract string GetTypeStr();
+    public static List<string> Types = new List<string>()
+    {
+    {{~for field in __bean.hierarchy_not_abstract_children ~}}
+        "{{field.full_name}}",
+    {{~end~}}
+    };
+
+    public static {{__name}} Create(string type)
+    {
+        switch (type)
+        {
+        {{~for child in __this.hierarchy_not_abstract_children~}}
+            {{~if child.namespace == __this.namespace && __this.namespace != '' ~}}
+            case "{{child.full_name}}":   
+            {{~end~}}
+            case "{{impl_data_type child __this}}":return new {{child.full_name}}();
+        {{~end~}}
+            default: return null;
+        }
+    }
+    {{~else~}}
+        {{~if __bean.parent_def_type~}}
+    public const string TYPE_STR = "{{__this.full_name}}";
+    public override string GetTypeStr() => TYPE_STR;
+        {{~end~}}
     public override void LoadJson(SimpleJSON.JSONObject _json)
     {
         {{~ for field in __hierarchy_fields ~}}
@@ -58,6 +101,23 @@ public {{class_modifier __bean}} class {{__name}} : {{if __parent_def_type}} {{_
     }
     {{~end~}}
 
+
+    public override void Render()
+    {
+        UnityEditor.EditorGUILayout.BeginVertical();
+    {{~for field in __bean.hierarchy_export_fields ~}}
+        UnityEditor.EditorGUILayout.BeginHorizontal();
+        {{~if field.comment != '' ~}}
+        UnityEditor.EditorGUILayout.LabelField(new GUIContent("{{field.name}}", "{{field.comment}}"), GUILayout.Width(100));
+        {{~else~}}
+        UnityEditor.EditorGUILayout.LabelField("{{field.name}}", GUILayout.Width(100));
+        {{~end~}}
+        {{render_editor (format_field_name __code_style field.name) field.ctype}}
+        UnityEditor.EditorGUILayout.EndHorizontal();
+    {{~end~}}
+        UnityEditor.EditorGUILayout.EndVertical();
+    }
+
     public static {{__name}} LoadJson{{__name}}(SimpleJSON.JSONNode _json)
     {
     {{~if __this.is_abstract_type~}}
@@ -84,8 +144,10 @@ public {{class_modifier __bean}} class {{__name}} : {{if __parent_def_type}} {{_
     {
     {{~if __this.is_abstract_type~}}
         _json["$type"] = _obj.GetType().Name;
-    {{~end~}}
+        _obj.Instance.SaveJson((SimpleJSON.JSONObject)_json);
+    {{~else~}}
         _obj.SaveJson((SimpleJSON.JSONObject)_json);
+    {{~end~}}
     }
 
     {{~ for field in __fields ~}}
@@ -95,8 +157,17 @@ public {{class_modifier __bean}} class {{__name}} : {{if __parent_def_type}} {{_
     /// </summary>
 {{~end~}}
     public {{declaring_type_name field.ctype}} {{format_field_name __code_style field.name}};
-
+    public UnityEngine.Object {{format_field_name __code_style field.name}}_UnityObject;
     {{~end~}}
+
+    public override string ToString()
+    {
+        return "{{full_name}}{ "
+    {{~for field in __bean.hierarchy_export_fields ~}}
+        + "{{format_field_name __code_style field.name}}:" + {{to_pretty_string (format_field_name __code_style field.name) field.ctype}} + ","
+    {{~end~}}
+        + "}";
+    }
 }
 
 {{namespace_with_grace_end __namespace_with_top_module}}

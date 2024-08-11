@@ -33,11 +33,11 @@ public class EditorInitValueVisitor : CtorDefaultValueVisitor
 
     public override string Accept(TSet type)
     {
-        return $"new {ConstStrings.HashSetTypeName}<{type.ElementType.Apply(EditorDeclaringTypeNameVisitor.Ins)}>()";
+        return $"new {ConstStrings.ListTypeName}<{type.ElementType.Apply(EditorDeclaringTypeNameVisitor.Ins)}>()";
     }
 
     public override string Accept(TMap type)
     {
-        return $"new {ConstStrings.HashMapTypeName}<{type.KeyType.Apply(EditorDeclaringTypeNameVisitor.Ins)},{type.ValueType.Apply(EditorDeclaringTypeNameVisitor.Ins)}>()";
+        return $"new {ConstStrings.ListTypeName}<object[]>()";
     }
 }

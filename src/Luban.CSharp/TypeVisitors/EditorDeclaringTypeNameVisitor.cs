@@ -13,4 +13,14 @@ public class EditorDeclaringTypeNameVisitor : DeclaringTypeNameVisitor
     {
         return "string";
     }
+
+    public override string Accept(TMap type)
+    {
+        return $"{ConstStrings.ListTypeName}<object[]>";
+    }
+
+    public override string Accept(TSet type)
+    {
+        return $"{ConstStrings.ListTypeName}<{type.ElementType.Apply(this)}>";
+    }
 }
