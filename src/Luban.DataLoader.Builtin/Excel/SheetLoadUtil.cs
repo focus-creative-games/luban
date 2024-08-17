@@ -505,8 +505,9 @@ public static class SheetLoadUtil
             }
             else
             {
-                originRows.Add(row);
+                emptyRowCount = 0;
             }
+            originRows.Add(row);
             if (orientRow && headerOnly && !IsHeaderRow(row))
             {
                 break;
