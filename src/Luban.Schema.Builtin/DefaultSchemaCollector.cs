@@ -41,7 +41,7 @@ public class DefaultSchemaCollector : SchemaCollectorBase
                 string fileName = table.InputFiles[0];
                 IBeanSchemaLoader schemaLoader = SchemaManager.Ins.CreateBeanSchemaLoader(beanSchemaLoaderName);
                 string fullPath = $"{GenerationContext.GetInputDataPath()}/{fileName}";
-                RawBean bean = schemaLoader.Load(fullPath, table.ValueType);
+                RawBean bean = schemaLoader.Load(fullPath, table.ValueType, table);
                 bean.Groups = new List<string>(table.Groups);
                 Add(bean);
             }));
