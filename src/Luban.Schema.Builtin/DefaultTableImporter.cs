@@ -29,6 +29,10 @@ public class DefaultTableImporter : ITableImporter
         var tables = new List<RawTable>();
         foreach (string file in Directory.GetFiles(dataDir, "*", SearchOption.AllDirectories))
         {
+            if (FileUtil.IsIgnoreFile(file))
+            {
+                continue;
+            }
             string fileName = Path.GetFileName(file);
             string ext = Path.GetExtension(fileName).TrimStart('.');
             if (!excelExts.Contains(ext))

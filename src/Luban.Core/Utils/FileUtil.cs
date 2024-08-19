@@ -226,6 +226,11 @@ public static class FileUtil
         Directory.Delete(rootDir, false);
     }
 
+    public static bool IsIgnoreFile(string file)
+    {
+        return file.Split('\\', '/').Any(fileName => fileName.StartsWith(".") || fileName.StartsWith("_") || fileName.StartsWith("~"));
+    }
+
     public static List<string> GetFileOrDirectory(string fileOrDirectory)
     {
         var files = new List<string>();
@@ -233,7 +238,7 @@ public static class FileUtil
         {
             foreach (var file in Directory.GetFiles(fileOrDirectory, "*", SearchOption.AllDirectories))
             {
-                if (file.Substring(fileOrDirectory.Length).Split('\\', '/').Any(fileName => fileName.StartsWith(".") || fileName.StartsWith("_") || fileName.StartsWith("~")))
+                if (IsIgnoreFile(file))
                 {
                     continue;
                 }
