@@ -228,7 +228,28 @@ public static class FileUtil
 
     public static bool IsIgnoreFile(string file)
     {
-        return file.Split('\\', '/').Any(fileName => fileName.StartsWith(".") || fileName.StartsWith("_") || fileName.StartsWith("~"));
+        var parts = file.Split('\\', '/');
+        foreach (var part in parts)
+        {
+            if (part.StartsWith("."))
+            {
+                if (part == "." || part == "..")
+                {
+                    continue;
+                }
+                return true;
+            }
+            if (part.StartsWith("_"))
+            {
+                return true;
+            }
+            if (part.StartsWith("~"))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static List<string> GetFileOrDirectory(string fileOrDirectory)
