@@ -228,6 +228,7 @@ public static class FileUtil
 
     public static bool IsIgnoreFile(string file)
     {
+        file = Path.GetFullPath(file);
         return file.Split('\\', '/').Any(fileName => fileName.StartsWith(".") || fileName.StartsWith("_") || fileName.StartsWith("~"));
     }
 
