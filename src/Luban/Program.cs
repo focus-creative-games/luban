@@ -68,6 +68,9 @@ internal static class Program
         [Option('l', "logConfig", Required = false, Default = "nlog.xml", HelpText = "nlog config file")]
         public string LogConfig { get; set; }
 
+        [Option('w', "watchDir", Required = false, HelpText = "watch dir and regererate when dir changes")]
+        public IEnumerable<string> WatchDirs { get; set; }
+
         [Option('v', "verbose", Required = false, HelpText = "verbose")]
         public bool Verbose { get; set; }
     }
@@ -79,6 +82,40 @@ internal static class Program
         CommandOptions opts = ParseArgs(args);
         SetupApp(opts);
 
+        if (opts.WatchDirs != null && opts.WatchDirs.Any())
+        {
+            RunLoop(opts, opts.WatchDirs);
+        }
+        else
+        {
+            RunOnce(opts);
+        }
+    }
+
+    private static void RunOnce(CommandOptions opts)
+    {
+        RunGeneration(opts, true);
+    }
+
+    private static volatile bool s_anyChange = false;
+
+    private static void RunLoop(CommandOptions opts, IEnumerable<string> watchDirs)
+    {
+        var watcher = new DirectoryWatcher(opts.WatchDirs.ToArray(), () => s_anyChange = true);
+        s_anyChange = true;
+        while (true)
+        {
+            if (s_anyChange)
+            {
+                s_anyChange = false;
+                RunGeneration(opts, false);
+            }
+            Thread.Sleep(1000);
+        }
+    }
+
+    private static void RunGeneration(CommandOptions opts, bool exitOnError)
+    {
         try
         {
             IConfigLoader rootLoader = new GlobalConfigLoader();
@@ -92,7 +129,7 @@ internal static class Program
 
             var pipeline = PipelineManager.Ins.CreatePipeline(opts.Pipeline);
             pipeline.Run(CreatePipelineArgs(opts, config));
-            if (opts.ValidationFailAsError && GenerationContext.Current.AnyValidatorFail)
+            if (exitOnError && opts.ValidationFailAsError && GenerationContext.Current.AnyValidatorFail)
             {
                 s_logger.Error("encounter some validation failure. exit code: 1");
                 Environment.Exit(1);
@@ -103,7 +140,10 @@ internal static class Program
         {
             PrettyPrintException(e);
             s_logger.Error("run failed!!!");
-            Environment.Exit(1);
+            if (exitOnError)
+            {
+                Environment.Exit(1);
+            }
         }
     }
 

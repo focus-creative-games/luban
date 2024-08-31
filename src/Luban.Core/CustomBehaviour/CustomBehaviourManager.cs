@@ -19,7 +19,7 @@ public class CustomBehaviourManager
 
     public void Init()
     {
-
+        _behaviourCreators.Clear();
     }
 
     public T CreateBehaviour<T, C>(string name) where C : Attribute, ICustomBehaviour where T : class

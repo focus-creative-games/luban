@@ -25,7 +25,7 @@ public class SchemaManager
 
     public void Init()
     {
-
+        _schemaLoaders.Clear();
     }
 
     public void ScanRegisterAll(Assembly assembly)
