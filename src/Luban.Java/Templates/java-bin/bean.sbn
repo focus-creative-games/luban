@@ -58,7 +58,7 @@ public {{class_modifier __this}} class {{__name}} extends {{if parent_def_type}}
     public String toString() {
         return "{{full_name}}{ "
     {{~for field in hierarchy_export_fields ~}}
-        + "(format_field_name __code_style field.name):" + {{format_field_name __code_style field.name}} + ","
+        + "{{format_field_name __code_style field.name}}:" + {{format_field_name __code_style field.name}} + ","
     {{~end~}}
         + "}";
     }
