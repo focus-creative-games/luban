@@ -1,5 +1,6 @@
 using System.Reflection;
 using Luban.CustomBehaviour;
+using Luban.Datas;
 using Luban.Defs;
 using Luban.Types;
 using Luban.Utils;
@@ -49,35 +50,56 @@ public class DataLoaderManager
 
     public List<Record> LoadTableFile(DefTable table, string file, string subAssetName, Dictionary<string, string> options)
     {
-        s_logger.Trace("load table:{} file:{}", table.FullName, file);
-        if (!File.Exists(file) && !Directory.Exists(file))
+        try
         {
-            throw new Exception($"'{table.FullName}'的input文件或目录不存在: {file} ");
+            s_logger.Trace("load table:{} file:{}", table.FullName, file);
+            if (!File.Exists(file) && !Directory.Exists(file))
+            {
+                throw new Exception($"'{table.FullName}'的input文件或目录不存在: {file} ");
+            }
+            string loaderName = options.TryGetValue("loader", out var name) ? name : FileUtil.GetExtensionWithDot(file);
+            var loader = CreateDataLoader(loaderName);
+            using var stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            loader.Load(file, subAssetName, stream);
+            if (IsMultiRecordFile(file, subAssetName))
+            {
+                return loader.ReadMulti(table.ValueTType);
+            }
+            return new List<Record> { loader.ReadOne(table.ValueTType) };
         }
-        string loaderName = options.TryGetValue("loader", out var name) ? name : FileUtil.GetExtensionWithDot(file);
-        var loader = CreateDataLoader(loaderName);
-        using var stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-        loader.Load(file, subAssetName, stream);
-        if (IsMultiRecordFile(file, subAssetName))
+        catch (DataCreateException)
         {
-            return loader.ReadMulti(table.ValueTType);
+            throw;
         }
-        return new List<Record> { loader.ReadOne(table.ValueTType) };
+        catch (Exception e)
+        {
+            throw new Exception($"LoadTableFile fail. {file}", e);
+        }
     }
 
     public List<Record> LoadTableFile(TBean valueType, string file, string subAssetName, Dictionary<string, string> options)
     {
-        string loaderName = options.TryGetValue("loader", out var name) ? name : FileUtil.GetExtensionWithDot(file);
-        var loader = CreateDataLoader(loaderName);
-        using var stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-        loader.Load(file, subAssetName, stream);
-        if (IsMultiRecordFile(file, subAssetName))
+        try
         {
-            return loader.ReadMulti(valueType);
+            string loaderName = options.TryGetValue("loader", out var name) ? name : FileUtil.GetExtensionWithDot(file);
+            var loader = CreateDataLoader(loaderName);
+            using var stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            loader.Load(file, subAssetName, stream);
+            if (IsMultiRecordFile(file, subAssetName))
+            {
+                return loader.ReadMulti(valueType);
+            }
+            return new List<Record> { loader.ReadOne(valueType) };
         }
-        return new List<Record> { loader.ReadOne(valueType) };
+        catch (DataCreateException)
+        {
+            throw;
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"LoadTableFile fail. {file}", e);
+        }
     }
-
 
     private static bool IsMultiRecordField(string sheet)
     {

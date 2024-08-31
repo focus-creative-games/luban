@@ -1,6 +1,6 @@
 ﻿using Luban.Defs;
 
-namespace Luban.DataLoader.Builtin.DataVisitors;
+namespace Luban.DataLoader;
 
 public class DataCreateException : System.Exception
 {
