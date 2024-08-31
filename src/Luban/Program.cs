@@ -227,6 +227,10 @@ internal static class Program
     private static Dictionary<string, string> ParseXargs0(IEnumerable<string> xargs)
     {
         var result = new Dictionary<string, string>();
+        if (xargs == null)
+        {
+            return result;
+        }
         foreach (var arg in xargs)
         {
             string[] pair = arg.Split('=', 2);
