@@ -7,6 +7,7 @@ using Luban.DataValidator.Builtin.Collection;
 using Luban.L10N;
 using Luban.Pipeline;
 using Luban.Protobuf.TypeVisitors;
+using Luban.Schema;
 using Luban.Schema.Builtin;
 using Luban.Tmpl;
 using Luban.Utils;
@@ -80,12 +81,17 @@ internal static class Program
 
         try
         {
+            IConfigLoader rootLoader = new GlobalConfigLoader();
+            var config = rootLoader.Load(opts.ConfigFile);
+            GenerationContext.GlobalConf = config;
+
+
             var launcher = new SimpleLauncher();
-            launcher.Start(ParseXargs(opts.Xargs));
+            launcher.Start(ParseXargs(config.Xargs, opts.Xargs));
             AddCustomTemplateDirs(opts.CustomTemplateDirs);
 
             var pipeline = PipelineManager.Ins.CreatePipeline(opts.Pipeline);
-            pipeline.Run(CreatePipelineArgs(opts));
+            pipeline.Run(CreatePipelineArgs(opts, config));
             if (opts.ValidationFailAsError && GenerationContext.Current.AnyValidatorFail)
             {
                 s_logger.Error("encounter some validation failure. exit code: 1");
@@ -177,7 +183,8 @@ internal static class Program
         return ((Parsed<CommandOptions>)result).Value;
     }
 
-    private static Dictionary<string, string> ParseXargs(IEnumerable<string> xargs)
+
+    private static Dictionary<string, string> ParseXargs0(IEnumerable<string> xargs)
     {
         var result = new Dictionary<string, string>();
         foreach (var arg in xargs)
@@ -185,27 +192,36 @@ internal static class Program
             string[] pair = arg.Split('=', 2);
             if (pair.Length != 2)
             {
-                Console.Error.WriteLine($"invalid xargs:{arg}");
-                Environment.Exit(1);
+                throw new Exception($"invalid xargs:{arg}");
             }
 
             if (!result.TryAdd(pair[0], pair[1]))
             {
-                Console.Error.WriteLine($"duplicate xargs:{arg}");
-                Environment.Exit(1);
+                throw new Exception($"duplicate xargs:{arg}");
             }
         }
         return result;
     }
 
-    private static PipelineArguments CreatePipelineArgs(CommandOptions opts)
+    private static Dictionary<string, string> ParseXargs(IEnumerable<string> defaultXargs, IEnumerable<string> cmdXargs)
+    {
+        var defaultXargsMap = ParseXargs0(defaultXargs);
+        var cmdXargsMap = ParseXargs0(cmdXargs);
+        foreach (var kv in cmdXargsMap)
+        {
+            defaultXargsMap[kv.Key] = kv.Value;
+        }
+        return defaultXargsMap;
+    }
+
+    private static PipelineArguments CreatePipelineArgs(CommandOptions opts, LubanConfig config)
     {
         return new PipelineArguments()
         {
             Target = opts.Target,
             ForceLoadTableDatas = opts.ForceLoadTableDatas,
             SchemaCollector = opts.SchemaCollector,
-            ConfFile = opts.ConfigFile,
+            Config = config,
             OutputTables = opts.OutputTables?.ToList() ?? new List<string>(),
             CodeTargets = opts.CodeTargets?.ToList() ?? new List<string>(),
             DataTargets = opts.DataTargets?.ToList() ?? new List<string>(),

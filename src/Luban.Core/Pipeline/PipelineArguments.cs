@@ -1,3 +1,5 @@
+using Luban.Schema;
+
 namespace Luban.Pipeline;
 
 public class PipelineArguments
@@ -16,7 +18,7 @@ public class PipelineArguments
 
     public string SchemaCollector { get; set; }
 
-    public string ConfFile { get; set; }
+    public LubanConfig Config { get; set; }
 
     public List<string> OutputTables { get; set; }
 

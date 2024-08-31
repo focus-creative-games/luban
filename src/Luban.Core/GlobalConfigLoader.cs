@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Luban.RawDefs;
 using Luban.Schema;
 using Luban.Utils;
@@ -52,6 +53,8 @@ public class GlobalConfigLoader : IConfigLoader
         public string DataDir { get; set; }
 
         public List<Target> Targets { get; set; }
+
+        public List<string> Xargs { get; set; }
     }
 
     public LubanConfig Load(string fileName)
@@ -96,6 +99,7 @@ public class GlobalConfigLoader : IConfigLoader
             Groups = groups,
             Targets = targets,
             Imports = importFiles,
+            Xargs = globalConf.Xargs,
         };
     }
 
