@@ -67,8 +67,12 @@ public class DataLoaderManager
             }
             return new List<Record> { loader.ReadOne(table.ValueTType) };
         }
-        catch (DataCreateException)
+        catch (DataCreateException e)
         {
+            if (string.IsNullOrEmpty(e.OriginDataLocation))
+            {
+                e.OriginDataLocation = file;
+            }
             throw;
         }
         catch (Exception e)
@@ -91,8 +95,12 @@ public class DataLoaderManager
             }
             return new List<Record> { loader.ReadOne(valueType) };
         }
-        catch (DataCreateException)
+        catch (DataCreateException e)
         {
+            if (string.IsNullOrEmpty(e.OriginDataLocation))
+            {
+                e.OriginDataLocation = file;
+            }
             throw;
         }
         catch (Exception e)
