@@ -74,7 +74,8 @@ public class JsonUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string,
         string eleName = $"_ele{depth}_";
         string subVarName = $"_e{depth}_";
         string padding = StringUtil.RepeatSpaceAsTab(depth);
-        return $"{padding}{fieldName} = []\n{padding}for {eleName} in {jsonVarName}:\n{type.ElementType.Apply(this, eleName, subVarName, depth + 1)}\n{padding}{fieldName}.append({subVarName})";
+        string subPadding = StringUtil.RepeatSpaceAsTab(depth + 1);
+        return $"{padding}{fieldName} = []\n{padding}for {eleName} in {jsonVarName}:\n{type.ElementType.Apply(this, eleName, subVarName, depth + 1)}\n{subPadding}{fieldName}.append({subVarName})";
     }
 
     public string Accept(TList type, string jsonVarName, string fieldName, int depth)
@@ -82,7 +83,8 @@ public class JsonUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string,
         string eleName = $"_ele{depth}_";
         string subVarName = $"_e{depth}_";
         string padding = StringUtil.RepeatSpaceAsTab(depth);
-        return $"{padding}{fieldName} = []\n{padding}for {eleName} in {jsonVarName}:\n{type.ElementType.Apply(this, eleName, subVarName, depth + 1)}\n{padding}{fieldName}.append({subVarName})";
+        string subPadding = StringUtil.RepeatSpaceAsTab(depth + 1);
+        return $"{padding}{fieldName} = []\n{padding}for {eleName} in {jsonVarName}:\n{type.ElementType.Apply(this, eleName, subVarName, depth + 1)}\n{subPadding}{fieldName}.append({subVarName})";
     }
 
     public string Accept(TSet type, string jsonVarName, string fieldName, int depth)
@@ -90,7 +92,8 @@ public class JsonUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string,
         string eleName = $"_ele{depth}_";
         string subVarName = $"_e{depth}_";
         string padding = StringUtil.RepeatSpaceAsTab(depth);
-        return $"{padding}{fieldName} = []\n{padding}for {eleName} in {jsonVarName}:\n{type.ElementType.Apply(this, eleName, subVarName, depth + 1)}\n{padding}{fieldName}.append({subVarName})";
+        string subPadding = StringUtil.RepeatSpaceAsTab(depth + 1);
+        return $"{padding}{fieldName} = []\n{padding}for {eleName} in {jsonVarName}:\n{type.ElementType.Apply(this, eleName, subVarName, depth + 1)}\n{subPadding}{fieldName}.append({subVarName})";
     }
 
     public string Accept(TMap type, string jsonVarName, string fieldName, int depth)
@@ -100,7 +103,8 @@ public class JsonUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string,
         string keySubVarName = $"_k{depth}_";
         string valueSubVarName = $"_v{depth}_";
         string padding = StringUtil.RepeatSpaceAsTab(depth);
-        return $"{padding}{fieldName} = {{}};\n{padding}for {keyEleName}, {valueEleName} in {jsonVarName}:\n{type.KeyType.Apply(this, keyEleName, keySubVarName, depth + 1)}\n{type.ValueType.Apply(this, valueEleName, valueSubVarName, depth + 1)}\n{padding}{fieldName}[{keySubVarName}] = {valueSubVarName}";
+        string subPadding = StringUtil.RepeatSpaceAsTab(depth + 1);
+        return $"{padding}{fieldName} = {{}};\n{padding}for {keyEleName}, {valueEleName} in {jsonVarName}:\n{type.KeyType.Apply(this, keyEleName, keySubVarName, depth + 1)}\n{type.ValueType.Apply(this, valueEleName, valueSubVarName, depth + 1)}\n{subPadding}{fieldName}[{keySubVarName}] = {valueSubVarName}";
     }
 
     public string Accept(TDateTime type, string jsonVarName, string fieldName, int depth)
