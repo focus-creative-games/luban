@@ -48,9 +48,9 @@ class {{name}} {{if bean.parent_def_type}}({{full_name bean.parent_def_type}}){{
         if not childrenTypes:
             childrenTypes = {{name}}._childrenTypes = {
         {{~ for child in bean.hierarchy_not_abstract_children~}}
-            '{{impl_data_type child bean}}': {{name}},
+                '{{impl_data_type child bean}}': {{name}},
         {{~end~}}
-    }
+            }
         type = _json_['$type']
         child = {{name}}._childrenTypes.get(type)
         if child != None:
