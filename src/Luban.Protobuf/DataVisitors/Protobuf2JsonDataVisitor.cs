@@ -8,9 +8,9 @@ using Luban.Utils;
 
 namespace Luban.Protobuf.DataVisitors;
 
-public class ProtobufJsonDataVisitor : JsonDataVisitor
+public class Protobuf2JsonDataVisitor : JsonDataVisitor
 {
-    public static new ProtobufJsonDataVisitor Ins { get; } = new();
+    public static new Protobuf2JsonDataVisitor Ins { get; } = new();
 
     public override void Accept(DBean type, Utf8JsonWriter x)
     {
@@ -18,9 +18,8 @@ public class ProtobufJsonDataVisitor : JsonDataVisitor
 
         if (type.Type.IsAbstractType)
         {
-            // protobuf oneof 用 @type来识别类型
-            x.WritePropertyName("@type");
-            x.WriteStringValue(TBean.Create(false, type.ImplType, null).Apply(ProtobufTypeNameVisitor.Ins));
+            x.WritePropertyName(type.ImplType.Name);
+            x.WriteStartObject();
         }
 
         var defFields = type.ImplType.HierarchyFields;
@@ -41,20 +40,22 @@ public class ProtobufJsonDataVisitor : JsonDataVisitor
                 d.Apply(this, x);
             }
         }
+        if (type.Type.IsAbstractType)
+        {
+            x.WriteEndObject();
+        }
         x.WriteEndObject();
     }
 
 
     public override void Accept(DMap type, Utf8JsonWriter x)
     {
-        x.WriteStartArray();
+        x.WriteStartObject();
         foreach (var d in type.Datas)
         {
-            x.WriteStartArray();
-            x.WriteStringValue(d.Key.Apply(ToJsonLiteralVisitor.Ins));
+            x.WritePropertyName(d.Key.Apply(ToJsonLiteralVisitor.Ins));
             d.Value.Apply(this, x);
-            x.WriteEndArray();
         }
-        x.WriteEndArray();
+        x.WriteEndObject();
     }
 }

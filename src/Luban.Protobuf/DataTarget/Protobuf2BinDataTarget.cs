@@ -6,8 +6,8 @@ using Luban.Utils;
 
 namespace Luban.Protobuf.DataTarget;
 
-[DataTarget("protobuf-bin")]
-public class ProtobufBinDataTarget : DataTargetBase
+[DataTarget("protobuf2-bin")]
+public class Protobuf2BinDataTarget : DataTargetBase
 {
     protected override string DefaultOutputFileExt => "bytes";
 

@@ -7,12 +7,12 @@ using Luban.Utils;
 
 namespace Luban.Protobuf.DataTarget;
 
-[DataTarget("protobuf-json")]
-public class ProtobufJsonDataTarget : JsonDataTarget
+[DataTarget("protobuf2-json")]
+public class Protobuf2JsonDataTarget : JsonDataTarget
 {
     protected override string DefaultOutputFileExt => "json";
 
-    protected override JsonDataVisitor ImplJsonDataVisitor => ProtobufJsonDataVisitor.Ins;
+    protected override JsonDataVisitor ImplJsonDataVisitor => Protobuf2JsonDataVisitor.Ins;
 
     public void WriteAsTable(List<Record> datas, Utf8JsonWriter x)
     {
@@ -22,7 +22,7 @@ public class ProtobufJsonDataTarget : JsonDataTarget
         x.WriteStartArray();
         foreach (var d in datas)
         {
-            d.Data.Apply(ProtobufJsonDataVisitor.Ins, x);
+            d.Data.Apply(Protobuf2JsonDataVisitor.Ins, x);
         }
         x.WriteEndArray();
         x.WriteEndObject();
