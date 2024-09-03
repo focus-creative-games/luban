@@ -47,14 +47,14 @@ public class ProtobufJsonDataVisitor : JsonDataVisitor
 
     public override void Accept(DMap type, Utf8JsonWriter x)
     {
-        x.WriteStartArray();
+        x.WriteStartObject();
+
         foreach (var d in type.Datas)
         {
-            x.WriteStartArray();
-            x.WriteStringValue(d.Key.Apply(ToJsonLiteralVisitor.Ins));
+            x.WritePropertyName(d.Key.Apply(ToJsonLiteralVisitor.Ins));
+
             d.Value.Apply(this, x);
-            x.WriteEndArray();
         }
-        x.WriteEndArray();
+        x.WriteEndObject();
     }
 }

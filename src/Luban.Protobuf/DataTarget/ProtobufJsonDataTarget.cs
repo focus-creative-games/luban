@@ -7,7 +7,7 @@ using Luban.Utils;
 
 namespace Luban.Protobuf.DataTarget;
 
-[DataTarget("protobuf-json")]
+[DataTarget("protobuf-json2")]
 public class ProtobufJsonDataTarget : JsonDataTarget
 {
     protected override string DefaultOutputFileExt => "json";
