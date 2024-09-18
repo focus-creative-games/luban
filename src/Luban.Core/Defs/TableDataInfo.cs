@@ -32,6 +32,11 @@ public class TableDataInfo
         {
             record.AutoIndex = index++;
         }
+
+        if (table.IsSingletonTable && FinalRecords.Count != 1)
+        {
+            throw new Exception($"配置表 {table.FullName} 是单值表 mode=one,但数据个数:{FinalRecords.Count} != 1");
+        }
     }
 
     private void BuildIndexs()

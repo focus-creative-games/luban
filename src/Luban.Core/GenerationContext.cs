@@ -178,7 +178,9 @@ public class GenerationContext
     public void AddDataTable(DefTable table, List<Record> mainRecords, List<Record> patchRecords)
     {
         s_logger.Debug("AddDataTable name:{} record count:{}", table.FullName, mainRecords.Count);
-        _recordsByTables[table.FullName] = new TableDataInfo(table, mainRecords, patchRecords);
+        _recordsByTables[table.FullName] = new TableDataInfo(table,
+            mainRecords.Where(r => r.IsNotFiltered(ExcludeTags)).ToList(),
+            patchRecords != null ? patchRecords.Where(r => r.IsNotFiltered(ExcludeTags)).ToList() : null);
     }
 
     public List<Record> GetTableAllDataList(DefTable table)
@@ -188,20 +190,7 @@ public class GenerationContext
 
     public List<Record> GetTableExportDataList(DefTable table)
     {
-        var tableDataInfo = _recordsByTables[table.FullName];
-        if (ExcludeTags.Count == 0)
-        {
-            return tableDataInfo.FinalRecords;
-        }
-        else
-        {
-            var finalRecords = tableDataInfo.FinalRecords.Where(r => r.IsNotFiltered(ExcludeTags)).ToList();
-            if (table.IsSingletonTable && finalRecords.Count != 1)
-            {
-                throw new Exception($"配置表 {table.FullName} 是单值表 mode=one,但数据个数:{finalRecords.Count} != 1");
-            }
-            return finalRecords;
-        }
+        return _recordsByTables[table.FullName].FinalRecords;
     }
 
     public static List<Record> ToSortByKeyDataList(DefTable table, List<Record> originRecords)
