@@ -56,6 +56,30 @@ class XmlDataCreator : ITypeFuncVisitor<XElement, DefAssembly, DType>
         return DString.ValueOf(type, x.Value);
     }
 
+    private XElement GetBeanField(XElement x, DefField f)
+    {
+        var eles = x.Elements(f.Name);
+        var ele = string.IsNullOrEmpty(f.CurrentVariantNameWithoutFieldName) ? eles.FirstOrDefault() : eles.FirstOrDefault(e =>
+        {
+            var v = e.Attribute("variant");
+            return v != null && v.Value == f.CurrentVariantNameWithoutFieldName;
+        });
+        if (ele != null)
+        {
+            return ele;
+        }
+        if (!string.IsNullOrEmpty(f.Alias))
+        {
+            eles = x.Elements(f.Alias);
+            return string.IsNullOrEmpty(f.CurrentVariantNameWithoutFieldName) ? eles.FirstOrDefault() : eles.FirstOrDefault(e =>
+            {
+                var v = e.Attribute("variant");
+                return v != null && v.Value == f.CurrentVariantNameWithoutFieldName;
+            });
+        }
+        return null;
+    }
+
     public DType Accept(TBean type, XElement x, DefAssembly ass)
     {
         var bean = type.DefBean;
@@ -82,12 +106,7 @@ class XmlDataCreator : ITypeFuncVisitor<XElement, DefAssembly, DType>
         var fields = new List<DType>();
         foreach (DefField f in implBean.HierarchyFields)
         {
-            var feles = x.Elements(f.Name);
-            XElement fele = feles.FirstOrDefault();
-            if (fele == null && !string.IsNullOrEmpty(f.Alias))
-            {
-                fele = x.Elements(f.Alias).FirstOrDefault();
-            }
+            XElement fele = GetBeanField(x, f);
             if (fele == null)
             {
                 if (f.CType.IsNullable)

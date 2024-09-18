@@ -63,7 +63,7 @@ public class DefaultTextProvider : ITextProvider
         var ass = new DefAssembly(new RawAssembly()
         {
             Targets = new List<RawTarget> { new() { Name = "default", Manager = "Tables" } },
-        }, "default", new List<string>(), null);
+        }, "default", new List<string>(), null, null);
 
 
         var rawFields = new List<RawField> { new() { Name = _keyFieldName, Type = "string" }, };

@@ -58,10 +58,29 @@ public class BeanSchemaFromExcelHeaderLoader : IBeanSchemaLoader
 
         foreach (var (name, f) in tableDefInfo.FieldInfos)
         {
+            if (name.Contains('@'))
+            {
+                var splitName = name.Split('@');
+                if (splitName.Length != 2)
+                {
+                    throw new Exception($"file:{fileName} title:'{name}' is invalid!");
+                }
+                string actualName = splitName[0];
+                string variantName = splitName[1];
+                RawField rawField = cb.Fields.Find(f => f.Name == actualName);
+                if (rawField == null)
+                {
+                    throw new Exception($"file:{fileName} field:{actualName} not found for variant field:'{name}' not found!");
+                }
+                rawField.Variants.Add(variantName);
+                continue;
+            }
+
             var cf = new RawField()
             {
                 Name = name,
                 Groups = new List<string>(),
+                Variants = new List<string>(),
             };
 
             string[] attrs = f.Type.Trim().Split('&').Select(s => s.Trim()).ToArray();

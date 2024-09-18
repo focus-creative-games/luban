@@ -100,6 +100,25 @@ class LuaDataCreator : ITypeFuncVisitor<object, DefAssembly, DType>
         }
     }
 
+    private object GetBeanField(LuaTable table, DefField f)
+    {
+        object ele;
+        if (!string.IsNullOrEmpty(f.CurrentVariantNameWithoutFieldName))
+        {
+            ele = table[f.CurrentVariantNameWithFieldName];
+            if (ele != null)
+            {
+                return ele;
+            }
+        }
+        ele = table[f.Name];
+        if (ele == null && !string.IsNullOrEmpty(f.Alias))
+        {
+            ele = table[f.Alias];
+        }
+        return ele;
+    }
+
     public DType Accept(TBean type, object x, DefAssembly ass)
     {
         var table = (LuaTable)x;
@@ -131,11 +150,7 @@ class LuaDataCreator : ITypeFuncVisitor<object, DefAssembly, DType>
         var fields = new List<DType>();
         foreach (DefField f in implBean.HierarchyFields)
         {
-            var ele = table[f.Name];
-            if (ele == null && !string.IsNullOrEmpty(f.Alias))
-            {
-                ele = table[f.Alias];
-            }
+            var ele = GetBeanField(table, f);
 
             if (ele != null)
             {

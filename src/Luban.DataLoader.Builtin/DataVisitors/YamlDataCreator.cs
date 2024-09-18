@@ -69,6 +69,26 @@ class YamlDataCreator : ITypeFuncVisitor<YamlNode, DefAssembly, DType>
     private static readonly YamlScalarNode s_typeNodeName = new(FieldNames.JsonTypeNameKey);
     private static readonly YamlScalarNode s_typeNodeNameFallback = new(FieldNames.FallbackTypeNameKey);
 
+    private bool TryGetBeanField(YamlMappingNode x, DefField field, out YamlNode ele)
+    {
+        if (!string.IsNullOrEmpty(field.CurrentVariantNameWithFieldName))
+        {
+            if (x.Children.TryGetValue(new YamlScalarNode(field.CurrentVariantNameWithFieldName), out ele))
+            {
+                return true;
+            }
+        }
+        if (x.Children.TryGetValue(new YamlScalarNode(field.Name), out ele))
+        {
+            return true;
+        }
+        if (!string.IsNullOrEmpty(field.Alias) && x.Children.TryGetValue(new YamlScalarNode(field.Alias), out ele))
+        {
+            return true;
+        }
+        return false;
+    }
+
     public DType Accept(TBean type, YamlNode x, DefAssembly y)
     {
         var m = (YamlMappingNode)x;
@@ -96,7 +116,7 @@ class YamlDataCreator : ITypeFuncVisitor<YamlNode, DefAssembly, DType>
         var fields = new List<DType>();
         foreach (DefField f in implBean.HierarchyFields)
         {
-            if (!m.Children.TryGetValue(new YamlScalarNode(f.Name), out var fele) && (!string.IsNullOrEmpty(f.Alias) && !m.Children.TryGetValue(new YamlScalarNode(f.Alias), out fele)))
+            if (!TryGetBeanField(m, f, out var fele))
             {
                 if (f.CType.IsNullable)
                 {

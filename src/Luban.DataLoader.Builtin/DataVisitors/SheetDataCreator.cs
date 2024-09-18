@@ -259,6 +259,29 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
         return DataUtil.CreateDateTime(d.ToString());
     }
 
+    private bool TryGetBeanField(TitleRow row, DefField field, out TitleRow ele)
+    {
+        if (!string.IsNullOrEmpty(field.CurrentVariantNameWithFieldName))
+        {
+            ele = row.GetSubTitleNamedRow(field.CurrentVariantNameWithFieldName);
+            if (ele != null)
+            {
+                return true;
+            }
+        }
+        ele = row.GetSubTitleNamedRow(field.Name);
+        if (ele != null)
+        {
+            return true;
+        }
+        if (!string.IsNullOrEmpty(field.Alias))
+        {
+            ele = row.GetSubTitleNamedRow(field.Alias);
+            return ele != null;
+        }
+        return false;
+    }
+
     private List<DType> CreateBeanFields(DefBean bean, RowColumnSheet sheet, TitleRow row)
     {
         var list = new List<DType>();
@@ -266,17 +289,9 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
 
         {
             string fname = f.Name;
-            TitleRow field = row.GetSubTitleNamedRow(fname);
-            if (field == null)
+            if (!TryGetBeanField(row, f, out var field))
             {
-                if (!string.IsNullOrEmpty(f.Alias))
-                {
-                    field = row.GetSubTitleNamedRow(f.Alias);
-                }
-                if (field == null)
-                {
-                    throw new Exception($"bean:'{bean.FullName}' 缺失 列:'{fname}'，请检查是否写错或者遗漏");
-                }
+                throw new Exception($"bean:'{bean.FullName}' 缺失 列:'{fname}'，请检查是否写错或者遗漏");
             }
             try
             {

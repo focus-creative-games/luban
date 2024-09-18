@@ -42,6 +42,9 @@ internal static class Program
         [Option('e', "excludeTag", Required = false, HelpText = "exclude tag")]
         public IEnumerable<string> ExcludeTags { get; set; }
 
+        [Option("variant", Required = false, HelpText = "field variants")]
+        public IEnumerable<string> Variants { get; set; }
+
         [Option('o', "outputTable", Required = false, HelpText = "output table")]
         public IEnumerable<string> OutputTables { get; set; }
 
@@ -250,6 +253,29 @@ internal static class Program
         return defaultXargsMap;
     }
 
+    private static Dictionary<string, string> ParseVariants(IEnumerable<string> variants)
+    {
+        var result = new Dictionary<string, string>();
+        if (variants == null)
+        {
+            return result;
+        }
+        foreach (var variant in variants)
+        {
+            string[] pair = variant.Split('=', 2);
+            if (pair.Length != 2)
+            {
+                throw new Exception($"invalid variant:{variant}");
+            }
+
+            if (!result.TryAdd(pair[0], pair[1]))
+            {
+                throw new Exception($"duplicate variant:{variant}");
+            }
+        }
+        return result;
+    }
+
     private static PipelineArguments CreatePipelineArgs(CommandOptions opts, LubanConfig config)
     {
         return new PipelineArguments()
@@ -263,6 +289,7 @@ internal static class Program
             DataTargets = opts.DataTargets?.ToList() ?? new List<string>(),
             IncludeTags = opts.IncludeTags?.ToList() ?? new List<string>(),
             ExcludeTags = opts.ExcludeTags?.ToList() ?? new List<string>(),
+            Variants = ParseVariants(opts.Variants),
             TimeZone = opts.TimeZone,
         };
     }

@@ -290,6 +290,11 @@ public static class DefUtil
         }
     }
 
+    public static List<string> ParseVariant(string s)
+    {
+        return s.Split(',', ';').Select(x => x.Trim()).Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+    }
+
     // public static string EscapeCommentByCurrentLanguage(string comment)
     // {
     //     var curLan = DefAssembly.LocalAssebmly.CurrentLanguage;

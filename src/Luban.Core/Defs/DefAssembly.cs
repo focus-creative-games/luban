@@ -33,7 +33,19 @@ public class DefAssembly
 
     public List<DefTable> ExportTables => _exportTables;
 
-    public DefAssembly(RawAssembly assembly, string target, List<string> outputTables, List<RawGroup> groupDefs)
+    private Dictionary<string, string> _variants;
+
+    public bool TryGetVariantName(string variantKey, out string variantName)
+    {
+        if (_variants == null)
+        {
+            variantName = "";
+            return false;
+        }
+        return _variants.TryGetValue(variantKey, out variantName);
+    }
+
+    public DefAssembly(RawAssembly assembly, string target, List<string> outputTables, List<RawGroup> groupDefs, Dictionary<string, string> variants)
     {
         _targets = assembly.Targets;
         Target = GetTarget(target);
@@ -41,6 +53,7 @@ public class DefAssembly
         {
             throw new Exception($"target:{target} is invalid");
         }
+        _variants = variants;
 
         foreach (var g in assembly.RefGroups)
         {

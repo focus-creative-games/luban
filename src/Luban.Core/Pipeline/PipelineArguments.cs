@@ -25,4 +25,6 @@ public class PipelineArguments
     public string TimeZone { get; set; }
 
     public Dictionary<string, object> CustomArgs { get; set; }
+
+    public Dictionary<string, string> Variants { get; set; }
 }

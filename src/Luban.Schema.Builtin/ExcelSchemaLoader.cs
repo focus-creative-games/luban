@@ -63,7 +63,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
             Assembly = new DefAssembly(new RawAssembly()
             {
                 Targets = new List<RawTarget> { new() { Name = "default", Manager = "Tables" } },
-            }, "default", new List<string>(), null),
+            }, "default", new List<string>(), null, null),
         };
         defTableRecordType.PreCompile();
         defTableRecordType.Compile();
@@ -108,7 +108,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
         var ass = new DefAssembly(new RawAssembly()
         {
             Targets = new List<RawTarget> { new() { Name = "default", Manager = "Tables" } },
-        }, "default", new List<string>(), null);
+        }, "default", new List<string>(), null, null);
 
         var enumItemType = new DefBean(new RawBean()
         {
@@ -207,7 +207,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
         var ass = new DefAssembly(new RawAssembly()
         {
             Targets = new List<RawTarget> { new() { Name = "default", Manager = "Tables" } },
-        }, "default", new List<string>(), null);
+        }, "default", new List<string>(), null, null);
 
         var defBeanFieldType = new DefBean(new RawBean()
         {
@@ -225,6 +225,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
                 new() { Name = "group", Type = "string" },
                 new() { Name = "comment", Type = "string" },
                 new() { Name = "tags", Type = "string" },
+                new() { Name = "variants", Type = "string" },
             }
         })
         {
@@ -307,6 +308,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
                     (b.GetField("group") as DString).Value,
                     (b.GetField("comment") as DString).Value.Trim(),
                     (b.GetField("tags") as DString).Value.Trim(),
+                    (b.GetField("variants") as DString).Value.Trim(),
                     false
                 )).ToList(),
             };

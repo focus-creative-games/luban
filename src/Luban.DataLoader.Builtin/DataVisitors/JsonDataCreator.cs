@@ -56,6 +56,26 @@ public class JsonDataCreator : ITypeFuncVisitor<JsonElement, DefAssembly, DType>
         return DString.ValueOf(type, x.GetString());
     }
 
+    private bool TryGetBeanField(JsonElement x, DefField field, out JsonElement ele)
+    {
+        if (!string.IsNullOrEmpty(field.CurrentVariantNameWithFieldName))
+        {
+            if ( x.TryGetProperty(field.CurrentVariantNameWithFieldName, out ele))
+            {
+                return true;
+            }
+        }
+        if (x.TryGetProperty(field.Name, out ele))
+        {
+            return true;
+        }
+        if (!string.IsNullOrEmpty(field.Alias) && x.TryGetProperty(field.Alias, out ele))
+        {
+            return true;
+        }
+        return false;
+    }
+
     public DType Accept(TBean type, JsonElement x, DefAssembly ass)
     {
         var bean = type.DefBean;
@@ -78,7 +98,7 @@ public class JsonDataCreator : ITypeFuncVisitor<JsonElement, DefAssembly, DType>
         var fields = new List<DType>();
         foreach (DefField f in implBean.HierarchyFields)
         {
-            if (x.TryGetProperty(f.Name, out var ele) || (!string.IsNullOrEmpty(f.Alias) && x.TryGetProperty(f.Alias, out ele)))
+            if (TryGetBeanField(x, f, out var ele))
             {
                 if (ele.ValueKind == JsonValueKind.Null || ele.ValueKind == JsonValueKind.Undefined)
                 {
@@ -116,7 +136,7 @@ public class JsonDataCreator : ITypeFuncVisitor<JsonElement, DefAssembly, DType>
             }
             else
             {
-                throw new Exception($"结构:'{implBean.FullName}' 字段:'{f.Name}' 缺失");
+                throw new Exception($"结构:'{implBean.FullName}' 字段:'{f.CurrentVariantNameWithFieldNameOrOrigin}' 缺失");
             }
         }
         return new DBean(type, implBean, fields);
