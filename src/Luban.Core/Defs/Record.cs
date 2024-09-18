@@ -12,13 +12,17 @@ public class Record
 
     public List<string> Tags { get; }
 
-    public bool IsNotFiltered(List<string> excludeTags)
+    public bool IsNotFiltered(List<string> includeTags, List<string> excludeTags)
     {
-        if (Tags == null)
+        if (Tags == null || Tags.Count == 0)
         {
             return true;
         }
-        return Tags.TrueForAll(t => !excludeTags.Contains(t));
+        if (includeTags != null && includeTags.Count > 0)
+        {
+            return Tags.Any(includeTags.Contains);
+        }
+        return !Tags.Any(excludeTags.Contains);
     }
 
     public Record(DBean data, string source, List<string> tags)
