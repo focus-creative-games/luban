@@ -150,6 +150,7 @@ public class XmlSchemaLoader : SchemaLoaderBase
     {
         // "ref",
         // "path",
+        "alias",
         "group",
         "comment",
         "tags",
@@ -174,7 +175,9 @@ public class XmlSchemaLoader : SchemaLoaderBase
         //     typeStr = typeStr + "#(path=" + pathStr + ")";
         // }
 
-        return SchemaLoaderUtil.CreateField(_fileName, XmlUtil.GetRequiredAttribute(e, "name"),
+        return SchemaLoaderUtil.CreateField(_fileName,
+            XmlUtil.GetRequiredAttribute(e, "name"),
+            XmlUtil.GetOptionalAttribute(e, "alias"),
             typeStr,
             XmlUtil.GetOptionalAttribute(e, "group"),
             XmlUtil.GetOptionalAttribute(e, "comment"),

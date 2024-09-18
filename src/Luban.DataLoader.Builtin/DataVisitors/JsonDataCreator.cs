@@ -78,7 +78,7 @@ public class JsonDataCreator : ITypeFuncVisitor<JsonElement, DefAssembly, DType>
         var fields = new List<DType>();
         foreach (DefField f in implBean.HierarchyFields)
         {
-            if (x.TryGetProperty(f.Name, out var ele))
+            if (x.TryGetProperty(f.Name, out var ele) || (!string.IsNullOrEmpty(f.Alias) && x.TryGetProperty(f.Alias, out ele)))
             {
                 if (ele.ValueKind == JsonValueKind.Null || ele.ValueKind == JsonValueKind.Undefined)
                 {

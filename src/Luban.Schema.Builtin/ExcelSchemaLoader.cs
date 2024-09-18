@@ -220,6 +220,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
             Fields = new List<RawField>
             {
                 new() { Name = "name", Type = "string" },
+                new() { Name = "alias", Type = "string" },
                 new() { Name = "type", Type = "string" },
                 new() { Name = "group", Type = "string" },
                 new() { Name = "comment", Type = "string" },
@@ -301,6 +302,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
                 Fields = fields.Datas.Select(d => (DBean)d).Select(b => SchemaLoaderUtil.CreateField(
                     fileName,
                     (b.GetField("name") as DString).Value.Trim(),
+                    (b.GetField("alias") as DString).Value.Trim(),
                     (b.GetField("type") as DString).Value.Trim(),
                     (b.GetField("group") as DString).Value,
                     (b.GetField("comment") as DString).Value.Trim(),

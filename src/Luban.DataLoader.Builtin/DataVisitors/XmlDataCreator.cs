@@ -84,6 +84,10 @@ class XmlDataCreator : ITypeFuncVisitor<XElement, DefAssembly, DType>
         {
             var feles = x.Elements(f.Name);
             XElement fele = feles.FirstOrDefault();
+            if (fele == null && !string.IsNullOrEmpty(f.Alias))
+            {
+                fele = x.Elements(f.Alias).FirstOrDefault();
+            }
             if (fele == null)
             {
                 if (f.CType.IsNullable)

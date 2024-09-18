@@ -4,6 +4,8 @@ public class RawField
 {
     public string Name { get; set; }
 
+    public string Alias { get; set; }
+
     public string Type { get; set; }
 
     public string Comment { get; set; }

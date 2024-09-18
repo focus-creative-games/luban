@@ -9,9 +9,11 @@ public class DefField
 {
     public DefAssembly Assembly => HostType.Assembly;
 
-    public DefBean HostType { get; set; }
+    public DefBean HostType { get; }
 
-    public string Name { get; protected set; }
+    public string Name { get; }
+
+    public string Alias { get; }
 
     public string Type { get; }
 
@@ -48,6 +50,7 @@ public class DefField
     {
         HostType = host;
         Name = f.Name;
+        Alias = f.Alias;
         Type = f.Type;
         Comment = f.Comment;
         Tags = f.Tags;
@@ -128,8 +131,20 @@ public class DefField
             f.AutoId = nextAutoId++;
         }
 
+        var aliasNames = new Dictionary<string, DefField>();
         foreach (var f in fields)
         {
+            if (!string.IsNullOrEmpty(f.Alias))
+            {
+                if (!aliasNames.TryAdd(f.Alias, f))
+                {
+                    throw new Exception($"type:'{hostType.FullName}' field:'{f.Name}' alias:'{f.Alias}' duplicate with field:{aliasNames[f.Alias].Name}");
+                }
+                if (names.Contains(f.Alias))
+                {
+                    throw new Exception($"type:'{hostType.FullName}' field:'{f.Name}' alias:'{f.Alias}' duplicate with other field name");
+                }
+            }
             f.Compile();
         }
     }

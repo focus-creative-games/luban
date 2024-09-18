@@ -96,7 +96,7 @@ class YamlDataCreator : ITypeFuncVisitor<YamlNode, DefAssembly, DType>
         var fields = new List<DType>();
         foreach (DefField f in implBean.HierarchyFields)
         {
-            if (!m.Children.TryGetValue(new YamlScalarNode(f.Name), out var fele))
+            if (!m.Children.TryGetValue(new YamlScalarNode(f.Name), out var fele) && (!string.IsNullOrEmpty(f.Alias) && !m.Children.TryGetValue(new YamlScalarNode(f.Alias), out fele)))
             {
                 if (f.CType.IsNullable)
                 {

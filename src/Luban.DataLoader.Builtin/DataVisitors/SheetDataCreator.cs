@@ -269,7 +269,14 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
             TitleRow field = row.GetSubTitleNamedRow(fname);
             if (field == null)
             {
-                throw new Exception($"bean:'{bean.FullName}' 缺失 列:'{fname}'，请检查是否写错或者遗漏");
+                if (!string.IsNullOrEmpty(f.Alias))
+                {
+                    field = row.GetSubTitleNamedRow(f.Alias);
+                }
+                if (field == null)
+                {
+                    throw new Exception($"bean:'{bean.FullName}' 缺失 列:'{fname}'，请检查是否写错或者遗漏");
+                }
             }
             try
             {

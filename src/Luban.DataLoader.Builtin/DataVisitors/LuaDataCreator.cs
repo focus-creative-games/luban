@@ -132,6 +132,10 @@ class LuaDataCreator : ITypeFuncVisitor<object, DefAssembly, DType>
         foreach (DefField f in implBean.HierarchyFields)
         {
             var ele = table[f.Name];
+            if (ele == null && !string.IsNullOrEmpty(f.Alias))
+            {
+                ele = table[f.Alias];
+            }
 
             if (ele != null)
             {

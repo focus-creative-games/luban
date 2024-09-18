@@ -30,7 +30,7 @@ public class XmlDataSource : DataLoaderBase
         {
             return null;
         }
-        var data = (DBean)type.Apply(XmlDataCreator.Ins, _doc, (DefAssembly)type.DefBean.Assembly);
+        var data = (DBean)type.Apply(XmlDataCreator.Ins, _doc, type.DefBean.Assembly);
         var tags = DataUtil.ParseTags(tagName);
         return new Record(data, RawUrl, tags);
     }
