@@ -139,7 +139,8 @@ public static class DefUtil
             int level1Right = -1;
             for (int i = 0; i < rawType.Length; i++)
             {
-                if (rawType[i] == '(')
+                char c = rawType[i];
+                if (c == '(' || c == '[' || c == '{')
                 {
                     braceDepth++;
                     if (level1Left < 0)
@@ -147,10 +148,10 @@ public static class DefUtil
                         level1Left = i;
                     }
                 }
-                if (rawType[i] == ')')
+                if (c == ')' || c == ']' || c == '}')
                 {
                     braceDepth--;
-                    if (level1Right < 0 && braceDepth == 0)
+                    if (level1Right < 0 && braceDepth == 0 && c == ')')
                     {
                         level1Right = i;
                         break;
