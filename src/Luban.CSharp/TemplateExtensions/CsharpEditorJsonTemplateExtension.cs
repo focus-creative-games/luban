@@ -14,12 +14,12 @@ public class CsharpEditorTemplateExtension : ScriptObject
 
     public static string Deserialize(string jsonName, string fieldName, TType type)
     {
-        return $"{type.Apply(EditorJsonLoad.Ins, jsonName, fieldName)}";
+        return $"{type.Apply(EditorJsonLoad.Ins, jsonName, fieldName, 0)}";
     }
 
     public static string Serialize(string jsonName, string jsonFieldName, string fieldName, TType type)
     {
-        return $"{type.Apply(EditorJsonSave.Ins, jsonName, jsonFieldName, fieldName)}";
+        return $"{type.Apply(EditorJsonSave.Ins, jsonName, jsonFieldName, fieldName, 0)}";
     }
 
     public static bool IsRawNullable(TType type)

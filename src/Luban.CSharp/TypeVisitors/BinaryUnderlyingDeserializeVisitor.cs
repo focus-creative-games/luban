@@ -65,11 +65,8 @@ public class BinaryUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, strin
         return $"{fieldName} = {(string.IsNullOrEmpty(constructor) ? src : $"{constructor}({src})")};";
     }
 
-    public string Accept(TArray type, string bufName, string fieldName, int depth)
+    public static string CreateNewArrayWithSize(TArray type, string n)
     {
-        string n = $"__n{depth}";
-        string e = $"__e{depth}";
-        string index = $"__index{depth}";
         string typeStr = $"{type.ElementType.Apply(DeclaringTypeNameVisitor.Ins)}[{n}]";
         if (type.Dimension > 1)
         {
@@ -79,6 +76,15 @@ public class BinaryUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, strin
                 typeStr += "[]";
             }
         }
+        return typeStr;
+    }
+
+    public string Accept(TArray type, string bufName, string fieldName, int depth)
+    {
+        string n = $"__n{depth}";
+        string e = $"__e{depth}";
+        string index = $"__index{depth}";
+        string typeStr = CreateNewArrayWithSize(type, n);
         return $"{{int {n} = System.Math.Min({bufName}.ReadSize(), {bufName}.Size);{fieldName} = new {typeStr};for(var {index} = 0 ; {index} < {n} ; {index}++) {{ {type.ElementType.Apply(DeclaringTypeNameVisitor.Ins)} {e};{type.ElementType.Apply(this, bufName, $"{e}", depth + 1)} {fieldName}[{index}] = {e};}}}}";
     }
 
