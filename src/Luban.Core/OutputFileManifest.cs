@@ -24,12 +24,6 @@ public class OutputFileManifest
         OutputType = outputType;
     }
 
-
-    public void AddFile(string file, object content, Encoding encoding)
-    {
-        AddFile(new OutputFile { File = file, Content = content, Encoding = encoding });
-    }
-
     public void AddFile(OutputFile file)
     {
         lock (this)

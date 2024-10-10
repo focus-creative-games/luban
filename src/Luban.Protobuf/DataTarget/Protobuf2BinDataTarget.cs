@@ -27,10 +27,6 @@ public class Protobuf2BinDataTarget : DataTargetBase
         var ss = new MemoryStream();
         WriteList(table, records, ss);
         ss.Flush();
-        return new OutputFile()
-        {
-            File = $"{table.OutputDataFile}.{OutputFileExt}",
-            Content = DataUtil.StreamToBytes(ss),
-        };
+        return CreateOutputFile($"{table.OutputDataFile}.{OutputFileExt}", DataUtil.StreamToBytes(ss));
     }
 }

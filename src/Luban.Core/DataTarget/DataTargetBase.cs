@@ -1,5 +1,6 @@
 using Luban.CodeTarget;
 using Luban.Defs;
+using Luban.Utils;
 using System.Reflection;
 using System.Text;
 
@@ -60,4 +61,20 @@ public abstract class DataTargetBase : IDataTarget
         throw new NotSupportedException();
     }
 
+    private static string GetLineEnding()
+    {
+        string endings = EnvManager.Current.GetOptionOrDefault("data", BuiltinOptionNames.LineEnding, true, "").ToLowerInvariant();
+        return StringUtil.GetLineEnding(endings);
+    }
+
+    protected OutputFile CreateOutputFile(string path, string content)
+    {
+        string finalContent = content.ReplaceLineEndings(GetLineEnding());
+        return new OutputFile() { File = path, Content = finalContent, Encoding = FileEncoding };
+    }
+
+    protected OutputFile CreateOutputFile(string path, byte[] content)
+    {
+        return new OutputFile() { File = path, Content = content, Encoding = FileEncoding };
+    }
 }

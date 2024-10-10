@@ -18,4 +18,21 @@ public static class StringUtil
     {
         return count == 0 ? "" : string.Concat(Enumerable.Repeat("    ", count));
     }
+
+    public static string GetLineEnding(string endings)
+    {
+        switch (endings)
+        {
+            case "":
+                return Environment.NewLine;
+            case "crlf":
+                return "\r\n";
+            case "lf":
+                return "\n";
+            case "cr":
+                return "\r";
+            default:
+                throw new Exception($"unknown line ending: {endings}");
+        }
+    }
 }

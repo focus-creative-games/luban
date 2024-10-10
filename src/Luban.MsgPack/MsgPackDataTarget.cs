@@ -27,10 +27,6 @@ public class MsgPackDataTarget : DataTargetBase
         var writer = new MessagePackWriter(ms);
         WriteList(table, records, ref writer);
         writer.Flush();
-        return new OutputFile()
-        {
-            File = $"{table.OutputDataFile}.{OutputFileExt}",
-            Content = ms.WrittenSpan.ToArray(),
-        };
+        return CreateOutputFile($"{table.OutputDataFile}.{OutputFileExt}", ms.WrittenSpan.ToArray());
     }
 }

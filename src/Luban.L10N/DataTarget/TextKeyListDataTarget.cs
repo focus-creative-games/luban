@@ -36,6 +36,6 @@ internal class TextKeyListDataTarget : DataTargetBase
 
         string outputFile = EnvManager.Current.GetOption(BuiltinOptionNames.L10NFamily, BuiltinOptionNames.L10NTextListFile, false);
 
-        return new OutputFile { File = outputFile, Content = content, Encoding = FileEncoding };
+        return CreateOutputFile(outputFile, content);
     }
 }

@@ -59,10 +59,6 @@ public class Json2DataTarget : JsonDataTarget
         });
         WriteAsObject(table, records, jsonWriter);
         jsonWriter.Flush();
-        return new OutputFile()
-        {
-            File = $"{table.OutputDataFile}.{OutputFileExt}",
-            Content = DataUtil.StreamToBytes(ss),
-        };
+        return CreateOutputFile($"{table.OutputDataFile}.{OutputFileExt}", Encoding.UTF8.GetString(DataUtil.StreamToBytes(ss)));
     }
 }

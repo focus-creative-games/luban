@@ -3,6 +3,7 @@ using System.Text;
 using Luban.CodeFormat;
 using Luban.CodeFormat.CodeStyles;
 using Luban.Defs;
+using Luban.Utils;
 
 namespace Luban.CodeTarget;
 
@@ -182,9 +183,16 @@ public abstract class CodeTargetBase : ICodeTarget
         return fullName.Replace('.', '/') + "." + FileSuffixName;
     }
 
+    private static string GetLineEnding()
+    {
+        string endings = EnvManager.Current.GetOptionOrDefault("code", BuiltinOptionNames.LineEnding, true, "").ToLowerInvariant();
+        return StringUtil.GetLineEnding(endings);
+    }
+
     protected OutputFile CreateOutputFile(string path, string content)
     {
-        return new OutputFile() { File = path, Content = content, Encoding = FileEncoding };
+        string finalContent = content.ReplaceLineEndings(GetLineEnding());
+        return new OutputFile() { File = path, Content = finalContent, Encoding = FileEncoding };
     }
 
     public abstract void GenerateTables(GenerationContext ctx, List<DefTable> tables, CodeWriter writer);

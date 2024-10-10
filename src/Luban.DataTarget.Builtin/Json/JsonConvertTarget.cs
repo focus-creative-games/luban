@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using Luban.DataTarget;
 using Luban.DataVisitors;
@@ -39,11 +40,7 @@ public class JsonConvertTarget : DataTargetBase
         var fileName = table.IsMapTable ?
             record.Data.GetField(table.IndexField.Name).Apply(ToStringVisitor2.Ins).Replace("\"", "").Replace("'", "")
             : record.AutoIndex.ToString();
-        return new OutputFile()
-        {
-            File = $"{table.FullName}/{fileName}.{OutputFileExt}",
-            Content = DataUtil.StreamToBytes(ss),
-        };
+        return CreateOutputFile($"{table.FullName}/{fileName}.{OutputFileExt}", Encoding.UTF8.GetString(DataUtil.StreamToBytes(ss)));
     }
 
     public override OutputFile ExportTable(DefTable table, List<Record> records)

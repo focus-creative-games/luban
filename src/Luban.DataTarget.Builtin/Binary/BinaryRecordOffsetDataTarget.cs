@@ -31,10 +31,6 @@ public class BinaryRecordOffsetDataTarget : DataTargetBase
     {
         var bytes = new ByteBuf();
         WriteList(table, records, bytes);
-        return new OutputFile()
-        {
-            File = $"{table.OutputDataFile}.{OutputFileExt}",
-            Content = bytes.CopyData(),
-        };
+        return CreateOutputFile($"{table.OutputDataFile}.{OutputFileExt}", bytes.CopyData());
     }
 }

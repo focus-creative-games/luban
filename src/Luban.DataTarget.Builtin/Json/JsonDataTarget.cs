@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using Luban.DataTarget;
 using Luban.Defs;
@@ -13,6 +14,7 @@ public class JsonDataTarget : DataTargetBase
     public static bool UseCompactJson => EnvManager.Current.GetBoolOptionOrDefault("json", "compact", true, false);
 
     protected virtual JsonDataVisitor ImplJsonDataVisitor => JsonDataVisitor.Ins;
+
 
     public void WriteAsArray(List<Record> datas, Utf8JsonWriter x, JsonDataVisitor jsonDataVisitor)
     {
@@ -35,10 +37,6 @@ public class JsonDataTarget : DataTargetBase
         });
         WriteAsArray(records, jsonWriter, ImplJsonDataVisitor);
         jsonWriter.Flush();
-        return new OutputFile()
-        {
-            File = $"{table.OutputDataFile}.{OutputFileExt}",
-            Content = DataUtil.StreamToBytes(ss),
-        };
+        return CreateOutputFile($"{table.OutputDataFile}.{OutputFileExt}", Encoding.UTF8.GetString(DataUtil.StreamToBytes(ss)));
     }
 }

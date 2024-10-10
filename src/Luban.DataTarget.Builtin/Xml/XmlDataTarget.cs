@@ -1,3 +1,4 @@
+using System.Text;
 using System.Xml;
 using Luban.DataTarget;
 using Luban.Defs;
@@ -29,16 +30,12 @@ public class XmlDataTarget : DataTargetBase
         var xwSetting = new XmlWriterSettings()
         {
             Indent = true,
-            Encoding = System.Text.Encoding.UTF8,
+            Encoding = Encoding.UTF8,
         };
         var ms = new MemoryStream();
         using var xmlWriter = XmlWriter.Create(ms, xwSetting);
         WriteAsArray(records, xmlWriter);
         xmlWriter.Flush();
-        return new OutputFile()
-        {
-            File = $"{table.OutputDataFile}.{OutputFileExt}",
-            Content = DataUtil.StreamToBytes(ms),
-        };
+        return CreateOutputFile($"{table.OutputDataFile}.{OutputFileExt}", Encoding.UTF8.GetString(DataUtil.StreamToBytes(ms)));
     }
 }

@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using Luban.DataExporter.Builtin.Json;
 using Luban.DataTarget;
@@ -39,11 +40,6 @@ public class Protobuf2JsonDataTarget : JsonDataTarget
         });
         WriteAsTable(records, jsonWriter);
         jsonWriter.Flush();
-        return new OutputFile()
-        {
-            File = $"{table.OutputDataFile}.{OutputFileExt}",
-            Content = DataUtil.StreamToBytes(ss),
-            Encoding = FileEncoding,
-        };
+        return CreateOutputFile($"{table.OutputDataFile}.{OutputFileExt}", Encoding.UTF8.GetString(DataUtil.StreamToBytes(ss)));
     }
 }

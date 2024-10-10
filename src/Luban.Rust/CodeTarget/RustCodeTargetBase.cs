@@ -206,10 +206,10 @@ public class RustCodeTargetBase : TemplateCodeTargetBase
     {
         var template = TemplateManager.Ins.GetTemplateString($"{CommonTemplateSearchPath}/macros/Cargo.toml");
         var path = $"macros/Cargo.toml";
-        manifest.AddFile(path, template, Encoding.UTF8);
+        manifest.AddFile(CreateOutputFile(path, template));
         template = TemplateManager.Ins.GetTemplateString($"{CommonTemplateSearchPath}/macros/src/lib.rs");
         path = $"macros/src/lib.rs";
-        manifest.AddFile(path, template, Encoding.UTF8);
+        manifest.AddFile(CreateOutputFile(path, template));
     }
 
     protected class Mod

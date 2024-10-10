@@ -1,6 +1,7 @@
 using Luban.DataTarget;
 using Luban.Defs;
 using Luban.Utils;
+using System.Text;
 using YamlDotNet.RepresentationModel;
 
 namespace Luban.DataExporter.Builtin.Yaml;
@@ -29,10 +30,6 @@ public class YamlDataTarget : DataTargetBase
         var tw = new StreamWriter(ms);
         ys.Save(tw, false);
         tw.Flush();
-        return new OutputFile()
-        {
-            File = $"{table.OutputDataFile}.{OutputFileExt}",
-            Content = DataUtil.StreamToBytes(ms),
-        };
+        return CreateOutputFile($"{table.OutputDataFile}.{OutputFileExt}", Encoding.UTF8.GetString(DataUtil.StreamToBytes(ms)));
     }
 }

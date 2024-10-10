@@ -1,3 +1,4 @@
+using Luban.Utils;
 using System.Text;
 
 namespace Luban.CodeTarget;
@@ -16,19 +17,6 @@ public class CodeWriter
         _lines.Add(line);
     }
 
-    private static string GetLineEnding()
-    {
-        string endings = EnvManager.Current.GetOptionOrDefault("", BuiltinOptionNames.LineEnding, true, "").ToLowerInvariant();
-        switch (endings)
-        {
-            case "": return Environment.NewLine;
-            case "crlf": return "\r\n";
-            case "lf": return "\n";
-            case "cr": return "\r";
-            default: throw new Exception($"unknown line ending: {endings}");
-        }
-    }
-
     public string ToResult(string header)
     {
         var sb = new StringBuilder(100 * 1024);
@@ -40,7 +28,6 @@ public class CodeWriter
         {
             sb.AppendLine(line);
         }
-        string lineEnding = GetLineEnding();
-        return sb.ToString().ReplaceLineEndings(lineEnding);
+        return sb.ToString();
     }
 }

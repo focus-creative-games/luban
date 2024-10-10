@@ -37,10 +37,6 @@ public class FlatBuffersDataTarget : DataTargetBase
         });
         WriteAsTable(records, jsonWriter);
         jsonWriter.Flush();
-        return new OutputFile()
-        {
-            File = $"{table.OutputDataFile}.{OutputFileExt}",
-            Content = DataUtil.StreamToBytes(ss),
-        };
+        return CreateOutputFile($"{table.OutputDataFile}.{OutputFileExt}", DataUtil.StreamToBytes(ss));
     }
 }
