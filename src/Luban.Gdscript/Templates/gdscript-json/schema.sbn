@@ -86,9 +86,8 @@ class {{full_name table}}:
 
     {{~else if table.multi_key ~}}
     var _data_list: Array[{{value_type_name}}]
-    var _data_map: Dictionary
     {{~ for INDEX in table.index_list ~}}
-    var _{{INDEX.index_field.name}}_data_map: Dictionary ## 以{{INDEX.index_field.name}}为key的数据字典
+    var _{{INDEX.index_field.name}}_data_map: Dictionary
     {{~ end ~}} 
 
     func _init(_json_) -> void:
@@ -100,7 +99,6 @@ class {{full_name table}}:
             var _v: {{value_type_name}}
             {{deserialize '_v' '_json2_' value_type}}
             self._data_list.append(_v)
-            self._data_map[_v.{{format_field_name __code_style table.index_field.name}}] = _v
         {{~ for INDEX in table.index_list ~}}
             self._{{INDEX.index_field.name}}_data_map[_v.{{INDEX.index_field.name}}] = _v
         {{~ end ~}}
@@ -108,16 +106,10 @@ class {{full_name table}}:
     func get_data_list() -> Array[{{value_type_name}}]:
         return self._data_list
 
-    func get_data_map() -> Dictionary:
-        return self._data_map
-
     {{~ for INDEX in table.index_list ~}}
     func get_{{INDEX.index_field.name}}_data_map() -> Dictionary:
         return self._{{INDEX.index_field.name}}_data_map
-
     {{~ end ~}}
-    func get_item(key) -> {{value_type_name}}:
-        return self._data_map.get(key)
 
 {{~ for INDEX in table.index_list ~}}
     func get_item_by_{{INDEX.index_field.name}}({{INDEX.index_field.name}}) -> {{value_type_name}}:
@@ -125,7 +117,7 @@ class {{full_name table}}:
 
 {{~ end ~}}
     {{~else if table.is_list_table ~}}
-    var _data_list: Array[{{value_type_name}}] ## 数据数组
+    var _data_list: Array[{{value_type_name}}]
     
     func _init(_json_) -> void:
         for _json2_ in _json_:
