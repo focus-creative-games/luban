@@ -65,21 +65,37 @@ public class ProtobufTypeNameVisitor : ITypeFuncVisitor<string>
 
     public string Accept(TArray type)
     {
+        if (type.ElementType.IsCollection)
+        {
+            throw new Exception("not support multi-dimension array type");
+        }
         return $"{type.ElementType.Apply(this)}";
     }
 
     public string Accept(TList type)
     {
+        if (type.ElementType.IsCollection)
+        {
+            throw new Exception("not support multi-dimension list type");
+        }
         return $"{type.ElementType.Apply(this)}";
     }
 
     public string Accept(TSet type)
     {
+        if (type.ElementType.IsCollection)
+        {
+            throw new Exception("not support multi-dimension set type");
+        }
         return $"{type.ElementType.Apply(this)}";
     }
 
     public string Accept(TMap type)
     {
+        if (type.ElementType.IsCollection)
+        {
+            throw new Exception("not support multi-dimension map type");
+        }
         string key = type.KeyType is TEnum ? "int32" : (type.KeyType.Apply(this));
         return $"map<{key}, {type.ValueType.Apply(this)}>";
     }
