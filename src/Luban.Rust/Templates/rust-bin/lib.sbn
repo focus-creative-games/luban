@@ -1,17 +1,9 @@
-﻿pub mod prelude{
+﻿pub mod prelude {
     pub use crate::*;
 {{~ for ns in __ns ~}}
     pub use {{ns}}::*;
 {{~end~}}
 }
-{{~ if __polymorphic_beans.count != 0 ~}}
-
-type AbstractBase = dyn std::any::Any + Sync + Send;
-
-pub trait GetBase<'a, T> {
-    fn get_base(&'a self) -> Result<T, LubanError>;
-}
-{{~end~}}
 
 #[derive(Debug)]
 pub enum LubanError {
@@ -34,18 +26,26 @@ impl std::fmt::Display for LubanError {
     }
 }
 
-pub struct Tables{
+pub struct {{__name}}{
 {{~ for table in __tables ~}}
     pub {{table.name}}: std::sync::Arc<{{full_name table}}>,
 {{~end~}}
 }
 
-impl Tables {
-    pub fn new<T: Fn(&str) -> Result<ByteBuf, LubanError>>(loader: T) -> Result<Tables, LubanError> {
-        Ok(Tables {
+impl {{__name}} {
+    pub fn new<T: Fn(&str) -> Result<ByteBuf, LubanError>>(loader: T) -> Result<{{__name}}, LubanError> {
+        let mut tables = {{~__name~}} {
 {{~ for table in __tables ~}}
             {{table.name}}: {{full_name table}}::new(loader("{{table.output_data_file}}")?)?,
 {{~end~}}
-        })
+        };
+        unsafe { tables.resolve_ref(); }
+        Ok(tables)
+    }
+
+    unsafe fn resolve_ref(&mut self) {
+{{~ for table in __tables ~}}
+        let mut b = Box::from_raw(self.{{table.name}}.as_ref() as *const {{full_name table}} as *mut {{full_name table}}); b.as_mut().resolve_ref(self); let _ = Box::into_raw(b);
+{{~end~}}
     }
 }

@@ -1,3 +1,62 @@
+{{~
+func get_ref_name 
+    ret (format_property_name __code_style $0.name) + '_ref'
+end
+
+func generate_resolve_field_ref
+    field = $0
+    fieldName = format_property_name __code_style field.name
+    refTable = get_ref_table field
+    if can_generate_ref field
+        tableName = format_property_name __code_style refTable.name
+        if field.is_nullable
+            ret 'self.'+(get_ref_name field)+' = if let Some(x) = &self.'+field.name+' { tables.'+(get_collection_ref_table field).name+'.get(x) } else { None };'
+        else
+            ret 'self.'+(get_ref_name field)+' = tables.'+(get_collection_ref_table field).name+'.get(&self.'+field.name+');'
+        end
+    else if can_generate_collection_ref field
+        collection_ref_table = get_collection_ref_table field
+        tableName = format_property_name __code_style collection_ref_table.name
+		if field.ctype.type_name == 'list' || field.ctype.type_name == 'array'
+            ret 'self.'+(get_ref_name field)+' = Some(std::sync::Arc::new(self.'+fieldName+'.iter().map(|x| tables.'+tableName+'.get(x)).collect()));'
+        else if field.ctype.type_name == 'set'
+            line1 = '//HashSet does not support yet, not every type implement [Eq] and [Hash],use list instead.\n'
+            line2 = 'self.'+(get_ref_name field)+' = Some(std::sync::Arc::new(self.'+fieldName+'.iter().map(|x| tables.'+tableName+'.get(x)).collect()));'
+            ret line1 + line2
+		else if field.ctype.type_name == 'map'
+		    ret 'self.'+(get_ref_name field)+' = Some(std::sync::Arc::new(self.'+fieldName+'.iter().map(|x| (x.0.clone(), tables.'+tableName+'.get(x.1))).collect()));'
+		else
+			ret ''
+		end
+    else
+        if (is_field_bean_need_resolve_ref field)
+            if field.is_nullable
+                ret 'if let Some(x) = &mut self.'+fieldName+' { x.resolve_ref(tables); }'
+            else
+                ret 'self.'+fieldName +'.resolve_ref(tables);'
+            end
+        else if (is_field_array_like_need_resolve_ref field)
+            ret 'self.'+fieldName+'.iter_mut().for_each(|mut x| { x.resolve_ref(tables); });'
+        else if (is_field_map_need_resolve_ref field)
+            ret 'self.'+fieldName+'.values_mut().for_each(|x| { x.resolve_ref(tables) });'
+        else
+            ret ''
+        end
+    end
+end
+
+func get_ref_resolve
+    table = $0
+    table_name = full_name table
+    if table.is_map_table || table.is_list_table
+    ret 'pub(crate) unsafe fn resolve_ref(&mut self, tables: &'+__name+') {
+    self.data_list.iter_mut().for_each(|mut x| {
+       let mut b = Box::from_raw(x.as_ref() as *const '+declaring_type_name table.value_ttype+' as *mut '+declaring_type_name table.value_ttype+'); b.as_mut().resolve_ref(tables); let _ = Box::into_raw(b);
+    });
+}'
+    end
+end
+~}}
 {{~ for mod in __mod.sub_mods ~}}
 pub mod {{mod.name}};
 {{~end~}}
@@ -12,7 +71,7 @@ use serde::Deserialize;
 ///{{enum.comment | html.escape}}
 {{~end~}}
 {{~ if enum.is_flags ~}}
-bitflags::bitflags!{    
+bitflags::bitflags! {    
     #[derive(Debug, Hash, Eq, PartialEq)]
     pub struct {{enum.name}} : u32 {
         {{~ for item in enum.items ~}}
@@ -39,7 +98,7 @@ pub enum {{enum.name}} {
 
 impl From<i32> for {{enum.name}} {
     fn from(value: i32) -> Self {
-        match value { 
+        match value {
             {{~ for item in enum.items ~}}
             {{item.value}} => {{enum.name}}::{{item.name}},
             {{~end~}}
@@ -54,68 +113,90 @@ impl From<i32> for {{enum.name}} {
     hierarchy_fields = bean.hierarchy_export_fields
 ~}}
 #[derive(Debug)]
-{{~if bean.parent != ''~}}
-#[derive(macros::TryIntoBase)]
+{{~if bean.is_abstract_type~}}
+pub enum {{bean.name}} {
+    {{~for child in bean.hierarchy_not_abstract_children~}}
+    {{child.name}}(std::sync::Arc<{{full_name child}}>),
+    {{~end~}}
+}
+
+impl {{bean.name}} {
+    pub fn new(json: &serde_json::Value) -> Result<Self, LubanError> {
+        let type_id = json["$type"].as_str().unwrap();
+        match type_id {
+            {{~for child in bean.hierarchy_not_abstract_children~}}
+            "{{impl_data_type child bean}}" => Ok(Self::{{child.name}}(std::sync::Arc::new({{full_name child}}::new(json)?))),
+            {{~end~}}
+            _ => Err(LubanError::Bean(format!("Invalid type for {{bean.name}}:{}", type_id)))
+        }
+    }
+    {{~ for field in hierarchy_fields ~}}
+    
+{{~if field.comment != '' ~}}
+    /// {{escape_comment field.comment}}
 {{~end~}}
+    pub fn {{getter_name field.name}}(&self) -> &{{declaring_type_name field.ctype}} {
+        match self {
+            {{~for child in bean.hierarchy_not_abstract_children~}}
+            Self::{{child.name}}(x) => { &x.{{field.name}} }
+            {{~end~}}
+        }
+    }    
+        {{~if (can_generate_ref field) || (can_generate_collection_ref field)~}}
+        
+    pub fn {{getter_name (get_ref_name field)}}(&self) -> &Option<std::sync::Arc<{{declaring_type_name (get_ref_type field)}}>> {
+        match self {
+            {{~for child in bean.hierarchy_not_abstract_children~}}
+            Self::{{child.name}}(x) => { &x.{{get_ref_name field}} }
+            {{~end~}}
+        }        
+    }
+        {{~end~}}
+    {{~end~}}    
+
+    pub(crate) unsafe fn resolve_ref(&mut self, tables: &Tables) {
+        match self {
+        {{~for child in bean.hierarchy_not_abstract_children~}}            
+            Self::{{child.name}}(ref mut x) => { let mut b = Box::from_raw(x.as_ref() as *const {{full_name child}} as *mut {{full_name child}}); b.as_mut().resolve_ref(tables); let _ = Box::into_raw(b); }
+        {{~end~}}
+        }
+    }
+}
+
+{{~else~}}
 pub struct {{bean.name}} {
     {{~ for field in hierarchy_fields ~}}
 {{~if field.comment != '' ~}}
     /// {{escape_comment field.comment}}
 {{~end~}}
     pub {{field.name}}: {{declaring_type_name field.ctype}},
-    {{~end~}}
-}
-{{~if bean.is_abstract_type~}}
-
-impl {{bean.name}} {
-    pub fn new(json: &serde_json::Value) -> Result<std::sync::Arc<AbstractBase>, LubanError> {
-        let type_id = json["$type"].as_str().unwrap();
-        match type_id {
-            {{~for child in bean.hierarchy_not_abstract_children~}}
-            "{{impl_data_type child bean}}" => Ok(std::sync::Arc::new({{full_name child}}::new(json)?)),
-            {{~end~}}
-            _ => Err(LubanError::Bean(format!("Invalid type for {{bean.name}}:{}", type_id)))
-        }
-    }
-}
-
-pub trait T{{bean.name}} {
-    {{~ for field in hierarchy_fields ~}}
-    fn {{getter_name field.name}}(&self) -> &{{declaring_type_name field.ctype}};
-    {{~end~}}
-}
-{{~for child in bean.hierarchy_not_abstract_children~}}
-
-impl {{base_trait_name bean}} for {{full_name child}} {
-    {{~ for field in hierarchy_fields ~}}
-    fn {{getter_name field.name}}(&self) -> &{{declaring_type_name field.ctype}} {
-        &self.{{field.name}}
-    }
-    {{~end~}}
-}
-{{~end~}}
-
-impl<'a> GetBase<'a, &'a dyn {{base_trait_name bean}}> for AbstractBase {
-    fn get_base(&'a self) -> Result<&'a dyn {{base_trait_name bean}}, LubanError> {
-        {{~for child in bean.hierarchy_not_abstract_children~}}
-        let base: Result<&{{full_name child}}, _> = self.try_into();
-        if let Ok(r) = base {
-            return Ok(r);
-        }
+        {{~if can_generate_ref field~}}
+    pub {{get_ref_name field}}: Option<std::sync::Arc<{{declaring_type_name (get_ref_type field)}}>>,
+        {{~else if can_generate_collection_ref field~}}
+    pub {{get_ref_name field}}: Option<std::sync::Arc<{{declaring_collection_ref_name field.ctype}}>>,
         {{~end~}}
-
-        Err(LubanError::Polymorphic(format!("Invalid type for {{bean.name}}")))
-    }
+    {{~end~}}
 }
-{{~else~}}
 
 impl {{bean.name}}{
     pub fn new(json: &serde_json::Value) -> Result<{{bean.name}}, LubanError> {
         {{~ for field in hierarchy_fields ~}}
         {{deserialize_field field.name 'json' field.ctype}}
+        {{~if (can_generate_ref field) || (can_generate_collection_ref field)~}}
+        let {{get_ref_name field}} = None;
+        {{~end~}}
         {{~end~}}
         
-        Ok({{bean.name}} { {{ for field in hierarchy_fields }}{{field.name}}, {{end}}})
+        Ok({{bean.name}} { {{ for field in hierarchy_fields }}{{field.name}}, {{if (can_generate_ref field) || (can_generate_collection_ref field)}}{{get_ref_name field}}, {{end}}{{end}}})
+    }    
+
+    pub(crate) unsafe fn resolve_ref(&mut self, tables: &Tables) {
+        {{~for field in hierarchy_fields~}}
+            {{~ line = generate_resolve_field_ref field ~}}
+                {{~ if line != ''~}}
+        {{line}}
+                {{~end~}}
+        {{~end~}}
     }
 }
 {{~end~}}
@@ -123,16 +204,11 @@ impl {{bean.name}}{
 {{~end~}}
 {{~ for table in __mod.tables
     key_type = declaring_type_name table.key_ttype
-    if table.value_ttype.def_bean.is_abstract_type
-        value_type = declaring_type_name table.value_ttype
-    else
-        value_type = "std::sync::Arc<"+declaring_type_name table.value_ttype+">"
-    end
+    value_type = "std::sync::Arc<"+declaring_type_name table.value_ttype+">"
     name = table.name    
     map_type = "std::collections::HashMap<"+key_type+", "+value_type+">"
 ~}}
 {{
-    
     func index_type_name
         ret (declaring_type_name $0.type)
     end
@@ -193,8 +269,7 @@ impl {{name}} {
             {{~end~}}
             data_list.push(row.clone());
             {{~ if table.value_ttype.def_bean.is_abstract_type ~}}
-            let key = <AbstractBase as GetBase<&dyn {{base_trait_name table.value_ttype.def_bean}}>>::get_base(std::ops::Deref::deref(&row))?;
-            data_map.insert(key.{{getter_name table.index_field.name}}().clone(), row.clone());
+            data_map.insert(row.{{getter_name table.index_field.name}}().clone(), row.clone());
             {{~else~}}
             data_map.insert(row.{{table.index_field.name}}.clone(), row.clone());
             {{~end~}}
@@ -206,6 +281,8 @@ impl {{name}} {
     pub fn get(&self, key: &{{key_type}}) -> Option<{{value_type}}> {
         self.data_map.get(key).map(|x| x.clone())
     }
+    
+    {{get_ref_resolve}}
 }
 
 impl std::ops::Index<{{key_type}}> for {{name}} {
@@ -256,8 +333,8 @@ impl {{name}} {
 {{~end~}}
         }))
     }
-
     {{~if table.is_union_index~}}
+    
     pub fn get(&self, key: &({{array.each table.index_list @index_type_name | array.join ', '}})) -> Option<{{value_type}}> {
         self.data_map_union.get(key).map(|x| x.clone())
     }
@@ -270,6 +347,8 @@ impl {{name}} {
     }
     {{~end~}}
     {{~end~}}
+    
+    {{get_ref_resolve}}
 }
 {{~else~}}
 
@@ -280,6 +359,10 @@ impl {{name}} {
         if n != 1 { return Err(LubanError::Table(format!("table mode=one, but size != 1"))); }
         let data = {{full_name table.value_ttype.def_bean}}::new(&json[0])?;
         Ok(std::sync::Arc::new({{name}} { data }))
+    }
+    
+    pub(crate) unsafe fn resolve_ref(&mut self, tables: &{{__name}}) {
+        self.data.resolve_ref(tables);
     }
 }
 {{~end~}}

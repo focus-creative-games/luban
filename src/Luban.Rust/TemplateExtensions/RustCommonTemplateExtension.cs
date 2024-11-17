@@ -29,6 +29,10 @@ public class RustCommonTemplateExtension : ScriptObject
         
         var name = $"crate::{bean.FullName.Replace(".", "::")}";
         return name.Insert(name.Length - bean.Name.Length, "T");
+    }
 
+    public static string DeclaringCollectionRefName(TType type)
+    {
+        return type.Apply(DeclaringCollectionRefNameVisitor.Ins);
     }
 }

@@ -170,7 +170,6 @@ public class RustCodeTargetBase : TemplateCodeTargetBase
             {"__mods", mods},
             {"__ns", ns},
             {"__tables", ctx.ExportTables},
-            {"__polymorphic_beans", polymorphicBeans},
             {"__code_style", CodeStyle},
         };
         tplCtx.PushGlobal(extraEnvs);
