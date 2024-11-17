@@ -121,7 +121,7 @@ pub enum {{bean.name}} {
 }
 
 impl {{bean.name}} {
-    pub fn new(mut buf: &mut ByteBuf) -> Result<Self, LubanError> {
+    pub(crate) fn new(mut buf: &mut ByteBuf) -> Result<Self, LubanError> {
         let type_id = buf.read_int();
         match type_id {
             {{~for child in bean.hierarchy_not_abstract_children~}}
@@ -179,7 +179,7 @@ pub struct {{bean.name}} {
 }
 
 impl {{bean.name}}{
-    pub fn new(mut buf: &mut ByteBuf) -> Result<{{bean.name}}, LubanError> {
+    pub(crate) fn new(mut buf: &mut ByteBuf) -> Result<{{bean.name}}, LubanError> {
         {{~ for field in hierarchy_fields ~}}
         {{deserialize field.name 'buf' field.ctype}}
         {{~if (can_generate_ref field) || (can_generate_collection_ref field)~}}
@@ -259,7 +259,7 @@ pub struct {{table.name}} {
 {{~if table.is_map_table ~}}
 
 impl {{name}} {
-    pub fn new(mut buf: ByteBuf) -> Result<std::sync::Arc<{{name}}>, LubanError> {
+    pub(crate) fn new(mut buf: ByteBuf) -> Result<std::sync::Arc<{{name}}>, LubanError> {
         let mut data_map: {{map_type}} = Default::default();
         let mut data_list: Vec<{{value_type}}> = vec![];
 
@@ -293,7 +293,7 @@ impl std::ops::Index<{{key_type}}> for {{name}} {
 {{~else if table.is_list_table ~}}
 
 impl {{name}} {
-    pub fn new(mut buf: ByteBuf) -> Result<std::sync::Arc<{{name}}>, LubanError> {
+    pub(crate) fn new(mut buf: ByteBuf) -> Result<std::sync::Arc<{{name}}>, LubanError> {
         let mut data_list: Vec<{{value_type}}> = vec![];
 
         for x in (0..buf.read_size()).rev() {
@@ -347,7 +347,7 @@ impl {{name}} {
 {{~else~}}
 
 impl {{name}} {
-    pub fn new(mut buf: ByteBuf) -> Result<std::sync::Arc<{{name}}>, LubanError> {
+    pub(crate) fn new(mut buf: ByteBuf) -> Result<std::sync::Arc<{{name}}>, LubanError> {
         let n = buf.read_size();
         if n != 1 { return Err(LubanError::Table(format!("table mode=one, but size != 1"))); }
         {{deserialize 'data' 'buf' table.value_ttype}}
