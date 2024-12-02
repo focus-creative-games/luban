@@ -7,11 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Luban.Core\Luban.Core.csproj" />
+      <PackageReference Include="MessagePack" Version="2.5.192" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="MessagePack" Version="2.6.100-alpha" />
+      <ProjectReference Include="..\Luban.Core\Luban.Core.csproj" />
     </ItemGroup>
 
 </Project>

@@ -30,15 +30,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Scriban" Version="5.7.0">
-          <ExcludeAssets>runtime</ExcludeAssets>
-      </PackageReference>
-        <PackageReference Include="NLog" Version="5.2.2">
-            <ExcludeAssets>runtime</ExcludeAssets>
-        </PackageReference>
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\Luban.Core\Luban.Core.csproj">
             <Private>false</Private>
             <ExcludeAssets>runtime</ExcludeAssets>

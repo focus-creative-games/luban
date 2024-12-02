@@ -40,9 +40,4 @@
         </ProjectReference>
         <ProjectReference Include="..\Luban.DataLoader.Builtin\Luban.DataLoader.Builtin.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="NLog" Version="5.2.2">
-      </PackageReference>
-    </ItemGroup>
 </Project>
