@@ -33,7 +33,7 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackAsTool>True</PackAsTool>
         <FileVersion>$(AssemblyVersion)</FileVersion>
-        <Version>3.9.0</Version>
+        <Version>3.10.0</Version>
     </PropertyGroup>
 
     <ItemGroup>
