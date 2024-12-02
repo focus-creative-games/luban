@@ -78,15 +78,14 @@ public class GlobalConfigLoader : IConfigLoader
         List<SchemaFileInfo> importFiles = new();
         foreach (var schemaFile in globalConf.SchemaFiles)
         {
+            string fileOrDirectory = Path.Combine(_curDir, schemaFile.FileName);
             if (string.IsNullOrEmpty(schemaFile.Type))
             {
-                var fullPath = Path.Combine(_curDir, schemaFile.FileName);
-                if (!Directory.Exists(fullPath) && !File.Exists(fullPath))
+                if (!Directory.Exists(fileOrDirectory) && !File.Exists(fileOrDirectory))
                 {
-                    throw new Exception($"load schema file:'{fullPath}' fail: directory or file not exists!");
+                    throw new Exception($"failed to load schema file:'{fileOrDirectory}': directory or file doesn't exists!");
                 }
             }
-            string fileOrDirectory = Path.Combine(_curDir, schemaFile.FileName);
             foreach (var subFile in FileUtil.GetFileOrDirectory(fileOrDirectory))
             {
                 importFiles.Add(new SchemaFileInfo() { FileName = subFile, Type = schemaFile.Type });
