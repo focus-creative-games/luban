@@ -81,9 +81,9 @@ public class GlobalConfigLoader : IConfigLoader
             if (string.IsNullOrEmpty(schemaFile.Type))
             {
                 var fullPath = Path.Combine(_curDir, schemaFile.FileName);
-                if (!Directory.Exists(fullPath))
+                if (!Directory.Exists(fullPath) && !File.Exists(fullPath))
                 {
-                    throw new Exception($"{configFileName} schemal 文件错误: 目录'{fullPath}'不存在");
+                    throw new Exception($"load schema file:'{fullPath}' fail: directory or file not exists!");
                 }
             }
             string fileOrDirectory = Path.Combine(_curDir, schemaFile.FileName);
