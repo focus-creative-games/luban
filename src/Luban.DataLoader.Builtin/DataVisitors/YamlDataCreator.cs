@@ -23,7 +23,7 @@ class YamlDataCreator : ITypeFuncVisitor<YamlNode, DefAssembly, DType>
 
     public DType Accept(TBool type, YamlNode x, DefAssembly y)
     {
-        return DBool.ValueOf(bool.Parse(GetLowerTextValue(x)));
+        return DBool.ValueOf(DataUtil.ParseBool(GetLowerTextValue(x)));
     }
 
     public DType Accept(TByte type, YamlNode x, DefAssembly y)
