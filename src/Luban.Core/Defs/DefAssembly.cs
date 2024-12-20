@@ -45,6 +45,20 @@ public class DefAssembly
         return _variants.TryGetValue(variantKey, out variantName);
     }
 
+    public bool TryGetVariantNameOrDefault(string variantKey, out string variantName)
+    {
+        if (_variants == null)
+        {
+            variantName = "";
+            return false;
+        }
+        if (_variants.TryGetValue(variantKey, out variantName))
+        {
+            return true;
+        }
+        return _variants.TryGetValue("default", out variantName);
+    }
+
     public DefAssembly(RawAssembly assembly, string target, List<string> outputTables, List<RawGroup> groupDefs, Dictionary<string, string> variants)
     {
         _targets = assembly.Targets;

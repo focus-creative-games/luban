@@ -80,7 +80,7 @@ public class DefField
         if (Variants != null && Variants.Count > 0)
         {
             string variantKey = $"{HostType.FullName}.{Name}";
-            if (HostType.Assembly.TryGetVariantName(variantKey, out var variantName))
+            if (HostType.Assembly.TryGetVariantNameOrDefault(variantKey, out var variantName))
             {
                 if (!Variants.Contains(variantName))
                 {
