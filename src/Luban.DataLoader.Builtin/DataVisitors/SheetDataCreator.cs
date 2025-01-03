@@ -408,8 +408,7 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
         }
         if (row.Elements != null)
         {
-            var s = row.AsMultiRowConcatElements(sep);
-            return type.Apply(ExcelStreamDataCreator.Ins, s);
+            throw new Exception($"{type.DefBean.FullName} 不支持多行子字段格式，只有结构列表才支持此格式");
         }
         throw new Exception();
     }

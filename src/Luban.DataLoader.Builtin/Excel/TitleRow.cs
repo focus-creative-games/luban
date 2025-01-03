@@ -158,9 +158,4 @@ class TitleRow
     {
         return new ExcelStream(Rows, SelfTitle.FromIndex, SelfTitle.ToIndex, sep, SelfTitle.Default);
     }
-
-    public ExcelStream AsMultiRowConcatElements(string sep)
-    {
-        return new ExcelStream(Elements.Select(e => e.Row).ToList(), SelfTitle.FromIndex, SelfTitle.ToIndex, sep, SelfTitle.Default);
-    }
 }
