@@ -226,20 +226,26 @@ public static class FileUtil
         Directory.Delete(rootDir, false);
     }
 
-    public static bool IsIgnoreFile(string file)
+    public static bool IsIgnoreFile(string baseDir, string file)
     {
-        file = Path.GetFullPath(file);
+        baseDir = Path.GetFullPath(baseDir.Replace('\\', '/'));
+        file = Path.GetFullPath(file.Replace('\\', '/'));
+        // if baseDir contains '.' or '_', we shouldn't ignore it.
+        if (file.Length > baseDir.Length && file.StartsWith(baseDir) && (file[baseDir.Length] == '\\' || file[baseDir.Length] == '/'))
+        {
+            file = file[(baseDir.Length + 1)..];
+        }
         return file.Split('\\', '/').Any(fileName => fileName.StartsWith(".") || fileName.StartsWith("_") || fileName.StartsWith("~"));
     }
 
-    public static List<string> GetFileOrDirectory(string fileOrDirectory)
+    public static List<string> GetFileOrDirectory(string baseDir, string fileOrDirectory)
     {
         var files = new List<string>();
         if (Directory.Exists(fileOrDirectory))
         {
             foreach (var file in Directory.GetFiles(fileOrDirectory, "*", SearchOption.AllDirectories))
             {
-                if (IsIgnoreFile(file))
+                if (IsIgnoreFile(baseDir, file))
                 {
                     continue;
                 }

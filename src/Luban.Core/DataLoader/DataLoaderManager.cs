@@ -33,7 +33,7 @@ public class DataLoaderManager
             s_logger.Trace("load table:{} file:{}", table.FullName, inputFile);
             var (actualFile, subAssetName) = FileUtil.SplitFileAndSheetName(FileUtil.Standardize(inputFile));
             var options = new Dictionary<string, string>();
-            foreach (var atomFile in FileUtil.GetFileOrDirectory(Path.Combine(inputDataDir, actualFile)))
+            foreach (var atomFile in FileUtil.GetFileOrDirectory(inputDataDir, Path.Combine(inputDataDir, actualFile)))
             {
                 s_logger.Trace("load table:{} atomfile:{}", table.FullName, atomFile);
                 tasks.Add(Task.Run(() => LoadTableFile(table, atomFile, subAssetName, options)));

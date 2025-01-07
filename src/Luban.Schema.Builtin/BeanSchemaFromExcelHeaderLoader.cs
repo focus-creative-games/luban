@@ -34,7 +34,7 @@ public class BeanSchemaFromExcelHeaderLoader : IBeanSchemaLoader
         {
             if (Directory.Exists(fileName))
             {
-                var files = FileUtil.GetFileOrDirectory(fileName);
+                var files = FileUtil.GetFileOrDirectory(Directory.GetParent(fileName).FullName, fileName);
                 var firstExcelFile = files.FirstOrDefault(f => FileUtil.IsExcelFile(f));
                 if (firstExcelFile == null)
                 {

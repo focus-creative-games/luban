@@ -86,7 +86,7 @@ public class GlobalConfigLoader : IConfigLoader
                     throw new Exception($"failed to load schema file:'{fileOrDirectory}': directory or file doesn't exists!");
                 }
             }
-            foreach (var subFile in FileUtil.GetFileOrDirectory(fileOrDirectory))
+            foreach (var subFile in FileUtil.GetFileOrDirectory(_curDir, fileOrDirectory))
             {
                 importFiles.Add(new SchemaFileInfo() { FileName = subFile, Type = schemaFile.Type });
             }
