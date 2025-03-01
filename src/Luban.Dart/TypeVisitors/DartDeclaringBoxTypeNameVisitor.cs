@@ -30,17 +30,17 @@ namespace Luban.Dart.TypeVisitors
 
         public override string Accept(TLong type)
         {
-            return "Long";
+            return "int";
         }
 
         public override string Accept(TFloat type)
         {
-            return "Float";
+            return "double";
         }
 
         public override string Accept(TDouble type)
         {
-            return "Double";
+            return "double";
         }
     }
 }

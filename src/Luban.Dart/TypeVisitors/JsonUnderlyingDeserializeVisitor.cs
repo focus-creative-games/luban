@@ -39,7 +39,7 @@ namespace Luban.Dart.TypeVisitors
 
         public string Accept(TDouble type, string x, string y, int z)
         {
-            return $"{y} = {x} as double";
+            return $"{y} = {x}.toDouble()";
         }
 
         public string Accept(TEnum type, string x, string y, int z)
@@ -55,7 +55,7 @@ namespace Luban.Dart.TypeVisitors
 
         public string Accept(TDateTime type, string x, string y, int z)
         {
-            return $"{y} = {x} as DateTime";
+            return $"{y} = {x} as int";
         }
 
         public string Accept(TBean type, string x, string y, int z)

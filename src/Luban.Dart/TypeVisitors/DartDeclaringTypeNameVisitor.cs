@@ -30,7 +30,7 @@ class DartDeclaringTypeNameVisitor : ITypeFuncVisitor<string>
 
     public virtual string Accept(TLong type)
     {
-        return type.IsNullable ? "ing?" : "ing";
+        return type.IsNullable ? "int?" : "int";
     }
 
     public virtual string Accept(TFloat type)
@@ -55,7 +55,7 @@ class DartDeclaringTypeNameVisitor : ITypeFuncVisitor<string>
 
     public virtual string Accept(TDateTime type)
     {
-        return type.IsNullable ? "DateTime?" : "DateTime";
+        return type.IsNullable ? "int?" : "int";
     }
 
     public string Accept(TBean type)
