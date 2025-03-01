@@ -3,7 +3,16 @@
 {{~end~}}
 enum {{__name}}
 {
-     {{~ for item in __this.items ~}}
+    {{~if !has_enum_item __this~}}
+    None(0);
+    {{~else~}}
+{{~if !__this.has_zero_value_item ~}}
+    None(0),
+{{~end~}}
+    {{~end~}}
+
+
+    {{~ for item in __this.items ~}}
 {{~if item.comment_or_alias != '' ~}}
     //{{escape_comment item.comment_or_alias}}
 {{~end~}}
@@ -16,6 +25,6 @@ enum {{__name}}
 
     static {{__name}} fromValue(int value)
     {
-       return {{__name}}.values.firstWhere((element) => element.value == value);
+       return {{__name}}.values.firstWhere((element) => element.value == value, orElse: () => fromValue(0));
     }
 }

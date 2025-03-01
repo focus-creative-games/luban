@@ -37,7 +37,7 @@ final class {{__name}} {
     
     {{~if __table.is_map_table ~}}
     final List<{{declaring_type_name __value_type}}> _dataList = [];
-    final Map<int, {{declaring_type_name __value_type}}> _dataMap = {};
+    final Map<{{declaring_type_name __key_type}}, {{declaring_type_name __value_type}}> _dataMap = {};
 
     {{__name}}(List<dynamic> _array) {
         
@@ -50,7 +50,7 @@ final class {{__name}} {
         }
      }
 
-    {{declaring_type_name __value_type}}? getOrDefault(int id) {
+    {{declaring_type_name __value_type}}? getOrDefault({{declaring_type_name __key_type}} id) {
         if (_dataMap.containsKey(id)) {
             return _dataMap[id];
         }
@@ -135,7 +135,7 @@ final class {{__name}} {
     /// {{escape_comment field.comment}}
     /// </summary>
 {{~end~}}
-    {{declaring_null_type_name field.ctype}} get {{format_property_name __code_style field.name}} => _data?.{{format_property_name __code_style field.name}};
+    {{declaring_null_type_name field.ctype}} get {{format_property_name __code_style field.name}} => _data?.{{format_name_lower_camel field.name}};
     {{~end~}}
     void resolveRef({{__manager_name}} tables)
     {

@@ -31,7 +31,7 @@ final class {{__name}}
         resolveRef();
     }
 {{~for table in __tables ~}}
-    {{format_property_name __code_style table.name}}? get {{format_name_lower_camel table.name}} => _{{format_property_name __code_style table.name}};
+    {{table.name}}? get {{format_name_lower_camel table.name}} => _{{format_property_name __code_style table.name}};
 {{~end~}}
 
     void resolveRef(){

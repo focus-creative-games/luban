@@ -16,7 +16,7 @@ public abstract class DartCodeTargetBase : TemplateCodeTargetBase
         "final","const","typedef","operator","external","async","await","sync*","async*",
         "class","extends","with","implements","abstract","base","interface","factory","get",
         "set","static","covariant","late","required","assert","yield","deferred","library",
-        "part","import","export","as","on","dynamic","void","int","double","num","String",
+        "part","import","export","as","on","dynamic","void","int","double",/*"num",*/"String",
         "bool","List","Map","Set","Runes","Symbol","@deprecated","@override","@protected",
         "@sealed","is","is!"
     };

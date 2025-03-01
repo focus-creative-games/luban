@@ -54,7 +54,7 @@ func generate_resolve_field_ref
         else if (is_field_array_like_need_resolve_ref field)
             ret 'for (var _e in ' + fieldName + ') { _e?.resolveRef(tables); }'
         else if (is_field_map_need_resolve_ref field)
-            ret 'for (var _e in ' + fieldName + '.Values) { _e?.resolveRef(tables); }'
+            ret 'for (var _e in ' + fieldName + '.values) { _e?.resolveRef(tables); }'
         else
             ret ''
         end
@@ -72,9 +72,9 @@ end
     {
 {{~ for field in hierarchy_export_fields ~}}
     {{~if is_super_field field parent_def_type~}}
-    required super.{{format_field_name __code_style field.name}}, 
+    required super.{{format_name_lower_camel field.name}}, 
     {{~else~}}
-    required this.{{format_field_name __code_style field.name}},
+    required this.{{format_name_lower_camel field.name}},
     {{~end~}}
 {{~end~}}
     }
@@ -92,14 +92,14 @@ end
       }
       {{~else~}}
 {{~ for field in hierarchy_export_fields 
-        fieldName = format_property_name __code_style field.name
+        fieldName = format_name_lower_camel field.name
 ~}}     
         final {{fieldName}};
         {{deserialize_field fieldName '_buf' field.name field.ctype}}
 {{~end~}}
         return {{__name}}(
 {{~ for field in hierarchy_export_fields 
-       fieldName = format_property_name __code_style field.name
+       fieldName = format_name_lower_camel field.name
 ~}}
             {{fieldName}}:{{fieldName}},
 {{~end~}}
@@ -111,7 +111,7 @@ end
 {{~if field.comment != '' ~}}
     //{{escape_comment field.comment}}
 {{~end~}}
-    final {{declaring_type_name field.ctype}} {{format_field_name __code_style field.name}};
+    final {{declaring_type_name field.ctype}} {{format_name_lower_camel field.name}};
 {{~if can_generate_ref field~}}
     {{declaring_type_name (get_ref_type field)}}? {{get_ref_name field}};
 {{~else if can_generate_collection_ref field~}}
@@ -138,6 +138,6 @@ end
 
     @override
     String toString() {
-        return '{{__name}}({{for field in hierarchy_export_fields}}{{format_field_name __code_style field.name}}:${{format_field_name __code_style field.name}}, {{end}})';
+        return '{{__name}}({{for field in hierarchy_export_fields}}{{format_name_lower_camel field.name}}:${{format_name_lower_camel field.name}}, {{end}})';
     }
 }

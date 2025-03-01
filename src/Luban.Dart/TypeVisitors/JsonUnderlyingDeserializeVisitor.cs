@@ -68,7 +68,7 @@ namespace Luban.Dart.TypeVisitors
             string __j = $"_json{depth}";
             string __v = $"_v{depth}";
             string __e = $"_e{depth}";
-            return $"{{final {__j} = {x} as List<dynamic>; {y} = {type.Apply(DartDeclaringTypeNameVisitor.Ins)}.empty(growable: true); for(var {__e} in {__j}) {{var {type.ElementType.Apply(this, __e, __v, depth + 1)}; {y}.add({__v}); }} }}";
+            return $"{{var {__j} = {x} as List<dynamic>; {y} = {type.Apply(DartDeclaringTypeNameVisitor.Ins)}.empty(growable: true); for(var {__e} in {__j}) {{{type.ElementType.Apply(DartDeclaringTypeNameVisitor.Ins)} {__v}; {type.ElementType.Apply(this, __e, __v, depth + 1)}; {y}.add({__v}); }} }}";
         }
 
         public string Accept(TList type, string x, string y, int depth)
@@ -76,7 +76,7 @@ namespace Luban.Dart.TypeVisitors
             string __j = $"_json{depth}";
             string __v = $"_v{depth}";
             string __e = $"_e{depth}";
-            return $"{{final {__j} = {x} as List<dynamic>; {y} = {type.Apply(DartDeclaringTypeNameVisitor.Ins)}.empty(growable: true); for(var {__e} in {__j}) {{var {type.ElementType.Apply(this, __e, __v, depth + 1)}; {y}.add({__v}); }} }}";
+            return $"{{var {__j} = {x} as List<dynamic>; {y} = {type.Apply(DartDeclaringTypeNameVisitor.Ins)}.empty(growable: true); for(var {__e} in {__j}) {{{type.ElementType.Apply(DartDeclaringTypeNameVisitor.Ins)} {__v}; {type.ElementType.Apply(this, __e, __v, depth + 1)}; {y}.add({__v}); }} }}";
         }
 
         public string Accept(TSet type, string x, string y, int depth)
@@ -85,7 +85,7 @@ namespace Luban.Dart.TypeVisitors
             string __v = $"_v{depth}";
             string __j = $"_json{depth}";
 
-            return $"{{final {__j} = {x} as List<dynamic>; {y} = {type.Apply(DartDeclaringTypeNameVisitor.Ins)}(); for(var {__e} in {__j}) {{var {type.ElementType.Apply(this, __e, __v, depth + 1)};  {y}.add({__v}); }} }}";
+            return $"{{var {__j} = {x} as List<dynamic>; {y} = {type.Apply(DartDeclaringTypeNameVisitor.Ins)}(); for(var {__e} in {__j}) {{{type.ElementType.Apply(DartDeclaringTypeNameVisitor.Ins)} {__v}; {type.ElementType.Apply(this, __e, __v, depth + 1)};  {y}.add({__v}); }} }}";
         }
 
         public string Accept(TMap type, string x, string y, int depth)

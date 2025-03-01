@@ -1,5 +1,6 @@
 ﻿using Luban.Dart.TypeVisitors;
 using Luban.Defs;
+using Luban.TemplateExtensions;
 using Luban.Types;
 using Scriban.Runtime;
 
@@ -18,6 +19,10 @@ class DartCommonTemplateExtension : ScriptObject
     public static bool IsLastEnumItem(DefEnum defEnum, int value)
     {
         return defEnum.Items.Last().IntValue == value;
+    }
+    public static bool HasEnumItem(DefEnum defEnum)
+    {
+        return defEnum.Items.Count > 0;
     }
     public static string DeclaringTypeName(TType type)
     {
@@ -51,16 +56,21 @@ class DartCommonTemplateExtension : ScriptObject
         {
             return $"import '{RootFolder}{GetImportName(@enum.DefEnum.FullName)}.dart';\n";
         }
-        if (type is TBean bean)
+        else if (type is TBean bean)
         {
             return $"import '{RootFolder}{GetImportName(bean.DefBean.FullName)}.dart';\n";
         }
-        if (type.IsCollection)
+        else if (type.IsCollection)
         {
             var tType = type.ElementType;
 
+            if (type is TMap map)
+            {
+                return DeclaringImportName(map.KeyType, RootFolder) + DeclaringImportName(map.ValueType, RootFolder);
+            }
             return DeclaringImportName(tType, RootFolder);
         }
+
         return "";
     }
     public static bool NeedGenConstructor(List<DefField> fields)
@@ -93,6 +103,22 @@ class DartCommonTemplateExtension : ScriptObject
     }
     public static string ImportRefTypeDart(DefField field, string RootFolder)
     {
+        if (TypeTemplateExtension.CanGenerateRef(field))
+        {
+            var ref_table = TypeTemplateExtension.GetRefTable(field);
+            if (ref_table != null)
+            {
+                return DeclaringImportBean(ref_table.ValueTType.DefBean, RootFolder);
+            }
+        }
+        if (TypeTemplateExtension.CanGenerateCollectionRef(field))
+        {
+            var ref_table = TypeTemplateExtension.GetCollectionRefTable(field);
+            if (ref_table != null)
+            {
+                return DeclaringImportBean(ref_table.ValueTType.DefBean, RootFolder);
+            }
+        }
         return DeclaringImportName(field.CType, RootFolder);
     }
 }

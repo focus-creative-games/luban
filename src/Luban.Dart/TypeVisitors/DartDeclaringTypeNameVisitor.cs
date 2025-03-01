@@ -45,12 +45,17 @@ class DartDeclaringTypeNameVisitor : ITypeFuncVisitor<string>
 
     public virtual string Accept(TEnum type)
     {
-       return type.DefEnum.TypeNameWithTypeMapper() ?? type.DefEnum.Name;
+        var name = type.DefEnum.TypeNameWithTypeMapper() ?? type.DefEnum.Name;
+        if (type.IsNullable)
+        {
+            name += "?";
+        }
+        return name;
     }
 
     public string Accept(TString type)
     {
-        return "String";
+        return type.IsNullable ? "String?" : "String";
     }
 
     public virtual string Accept(TDateTime type)
@@ -60,7 +65,12 @@ class DartDeclaringTypeNameVisitor : ITypeFuncVisitor<string>
 
     public string Accept(TBean type)
     {
-        return type.DefBean.TypeNameWithTypeMapper() ?? type.DefBean.Name;
+        var name= type.DefBean.TypeNameWithTypeMapper() ?? type.DefBean.Name;
+        if (type.IsNullable)
+        {
+            name += "?";
+        }
+        return name;
     }
 
     public string Accept(TArray type)

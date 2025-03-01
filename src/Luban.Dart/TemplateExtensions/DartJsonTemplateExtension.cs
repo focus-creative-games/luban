@@ -10,9 +10,9 @@ class DartJsonTemplateExtension : ScriptObject
     {
         if (type.IsNullable)
         {
-            return $"{type.Apply(JsonUnderlyingDeserializeVisitor.Ins,
-                $"{jsonVarName}.containsKey('[fieldName]') ? {jsonVarName}['{jsonFieldName}']"
-                , fieldName, 0)} : null;";
+            return $" if ({jsonVarName}.containsKey('[fieldName]')) {{ {type.Apply(JsonUnderlyingDeserializeVisitor.Ins,
+                $"{jsonVarName}['{jsonFieldName}']"
+                , fieldName, 0)}; }} else {{ {fieldName} = null; }}";
         }
         else
         {
