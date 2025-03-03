@@ -1,0 +1,43 @@
+{{~
+func get_table_inner_name
+    ret '_' + ($0 | string.downcase)
+end
+~}}
+{{~for table in __tables ~}}
+{{declaring_import_table table '/gen/'}}
+{{~end~}}
+final class {{__name}}
+{
+    final Future<dynamic> Function(String filePath) _asyncloadFunction;
+    Tables(this._asyncloadFunction);
+
+    {{~for table in __tables ~}}
+{{~if table.comment != '' ~}}
+    //{{escape_comment table.comment}}
+{{~end~}}
+    {{table.name}}? _{{format_property_name __code_style table.name}};
+    {{~end~}}
+
+    Future<void> waitLoad() async {
+        var results = await Future.wait([
+        {{~for table in __tables ~}}
+            _asyncloadFunction("{{table.output_data_file}}"),
+        {{~end~}}
+        ]);
+        {{ idx=0 }}
+        {{~for table in __tables ~}}
+        _{{format_property_name __code_style table.name}} = {{table.name}}(results[{{idx}}]);{{idx=idx+1}}
+        {{~end~}}
+        resolveRef();
+    }
+{{~for table in __tables ~}}
+    {{table.name}}? get {{format_name_lower_camel table.name}} => _{{format_property_name __code_style table.name}};
+{{~end~}}
+
+    void resolveRef(){
+        {{~for table in __tables ~}}
+        _{{format_property_name __code_style table.name}}?.resolveRef(this);
+        {{~end~}}
+    }
+
+}

@@ -1,0 +1,145 @@
+import 'dart:collection';
+{{declaring_import_name __value_type '/gen/'}}
+{{~if __table.is_singleton_table ~}}
+{{for field in __value_type.def_bean.hierarchy_export_fields}}{{import_ref_type_dart field '/gen/'}}{{end}}
+{{~end~}}
+import '/gen/Tables.dart';
+{{
+    func index_type_name
+        ret (declaring_type_name $0.type)
+    end
+    
+    func table_union_map_type_name
+        ret 'Map<(' + (array.each __table.index_list @index_type_name | array.join ', ') + '), ' + (declaring_type_name __value_type)  + '>'
+    end
+    
+    func table_key_list
+        varName = $0
+        indexList = __table.index_list |array.each do; ret varName + '.' + (format_property_name __code_style $0.index_field.name); end;
+        ret array.join indexList ', '
+    end
+    
+    func table_param_def_list
+        paramList = __table.index_list |array.each do; ret (declaring_type_name $0.type) + ' ' + $0.index_field.name; end
+        ret array.join paramList ', '
+    end
+    
+    func table_param_name_list
+        paramList = __table.index_list |array.each do; ret $0.index_field.name; end
+        ret array.join paramList ', '
+    end
+}}
+
+{{~if __this.comment != '' ~}}
+//{{escape_comment __this.comment}}
+{{~end~}}
+final class {{__name}} {
+    
+    {{~if __table.is_map_table ~}}
+    final List<{{declaring_type_name __value_type}}> _dataList = [];
+    final Map<{{declaring_type_name __key_type}}, {{declaring_type_name __value_type}}> _dataMap = {};
+
+    {{__name}}(List<dynamic> _array) {
+        
+        for (var _buf in _array) {
+
+         {{declaring_type_name __value_type}} item = {{declaring_type_name __value_type}}.deserialize(_buf);
+
+         _dataList.add(item);
+         _dataMap[item.{{format_field_name __code_style __this.index_field.name}}] = item;
+        }
+     }
+
+    {{declaring_type_name __value_type}}? getOrDefault({{declaring_type_name __key_type}} id) {
+        if (_dataMap.containsKey(id)) {
+            return _dataMap[id];
+        }
+        return null;
+    }
+
+    void resolveRef({{__manager_name}} tables)
+    {
+      for(var _v in _dataList)
+      {
+         _v.resolveRef(tables);
+      }
+    }
+
+    {{~else if __table.is_list_table ~}}
+    final List<{{declaring_type_name __value_type}}> _dataList = [];
+
+{{~if __table.is_union_index~}}
+    final {{table_union_map_type_name}} _dataMapUnion = {};
+{{~else if !__table.index_list.empty?~}}
+    {{~for idx in __table.index_list~}}
+    final Map<{{declaring_type_name idx.type}}, {{declaring_type_name __value_type}}> _dataMap_{{idx.index_field.name}}={};
+    {{~end~}}
+{{~end~}}
+
+    {{__name}}(List<dynamic> _array) {
+        for (var _buf in _array) {
+          {{declaring_type_name __value_type}} item = {{declaring_type_name __value_type}}.deserialize(_buf);
+          _dataList.add(item);
+        }
+
+        {{~if __table.is_union_index~}}
+        for(var _v in _dataList)
+        {
+            _dataMapUnion[({{table_key_list "_v"}})]= _v;
+        }
+        {{~else if !__table.index_list.empty?~}}
+        for(var _v in _dataList)
+        {
+        {{~for idx in __table.index_list~}}
+            _dataMap_{{idx.index_field.name}}[_v.{{format_property_name __code_style idx.index_field.name}}]= _v;
+        {{~end~}}
+        }
+        {{~end~}}
+     }
+
+    List<{{declaring_type_name __value_type}}> get dataList => _dataList;
+
+     {{~if __table.is_union_index~}}
+    {{declaring_type_name __value_type}}? get({{table_param_def_list}}) => _dataMapUnion[({{table_param_name_list}})];
+    {{~else if !__table.index_list.empty? ~}}
+        {{~for idx in __table.index_list~}}
+    {{declaring_type_name __value_type}}? getBy{{format_property_name __code_style idx.index_field.name}}({{declaring_type_name idx.type}} key) => _dataMap_{{idx.index_field.name}}[key];
+        {{~end~}}
+    {{~end~}}
+
+    void resolveRef({{__manager_name}} tables)
+    {
+
+    }
+    {{~else~}}
+
+    {{declaring_type_name __value_type}}? _data;
+
+    {{declaring_type_name __value_type}}? get data => _data;
+
+    {{__name}}(List<dynamic> _array) {
+        
+        var n = _array.length;
+        if (n != 1)
+        {
+            throw Exception("table mode=one, but size != 1");
+        }
+        for (var _buf in _array) {
+         _data = {{declaring_type_name __value_type}}.deserialize(_buf);
+        }
+     }
+
+{{~ for field in __value_type.def_bean.hierarchy_export_fields ~}}
+{{~if field.comment != '' ~}}
+    /// <summary>
+    /// {{escape_comment field.comment}}
+    /// </summary>
+{{~end~}}
+    {{declaring_null_type_name field.ctype}} get {{format_property_name __code_style field.name}} => _data?.{{format_name_lower_camel field.name}};
+    {{~end~}}
+    void resolveRef({{__manager_name}} tables)
+    {
+
+    }
+    {{~end~}}
+}

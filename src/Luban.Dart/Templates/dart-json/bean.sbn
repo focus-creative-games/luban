@@ -1,0 +1,143 @@
+import 'dart:ffi';
+import 'dart:collection';
+import '/gen/Tables.dart';
+
+{{~
+    parent_def_type = __this.parent_def_type
+    export_fields = __this.export_fields
+    hierarchy_export_fields = __this.hierarchy_export_fields
+~}}
+{{for field in hierarchy_export_fields}}{{import_ref_type_dart field '/gen/'}}{{end}}
+{{if parent_def_type}}{{declaring_import_bean parent_def_type '/gen/'}}{{end}}
+{{~if __bean.is_abstract_type~}}
+{{~for child in __this.hierarchy_not_abstract_children~}}
+{{declaring_import_bean child '/gen/'}}
+{{~end~}}
+{{~end~}}
+{{~
+func get_ref_name 
+    ret (format_property_name __code_style $0.name) + '_Ref'
+end
+
+func generate_resolve_field_ref
+    field = $0
+    fieldName = format_name_lower_camel field.name
+    refTable = get_ref_table field
+    if can_generate_ref field
+        tableName = format_name_lower_camel refTable.name
+        if field.is_nullable
+            ret (get_ref_name field) + ' = ' + fieldName + '!= null ? tables.' + tableName + '?.getOrDefault(' + (get_value_of_nullable_type field.ctype fieldName) + ') : null;'
+        else
+            ret (get_ref_name field) + ' = tables.' + tableName + '?.getOrDefault(' + fieldName + ');'
+        end
+    else if can_generate_collection_ref field
+        collection_ref_table = get_collection_ref_table field
+        tableName = format_name_lower_camel collection_ref_table.name
+		if field.ctype.type_name == 'list' || field.ctype.type_name == 'array'
+            line1 = (get_ref_name field) + ' = ' + (declaring_collection_ref_name field.ctype) + '.empty(growable: true);' + '\n'
+            line2 = 'for (var _v in ' + fieldName + ') { var ref=(tables.'+tableName + '?.getOrDefault(_v))!;'+ (get_ref_name field) + '?.add(ref); }' + '\n'
+            ret line1 + line2
+        else if field.ctype.type_name == 'set'
+             line1 = (get_ref_name field) + ' = ' + (declaring_collection_ref_name field.ctype) + '();' + '\n'
+            line2 = 'for (var _v in ' + fieldName + ') { var ref= (tables.'+tableName + '?.getOrDefault(_v))!;'+ (get_ref_name field) + '?.add(ref); }' + '\n'
+            ret line1 + line2
+		else if field.ctype.type_name == 'map'
+            line1 = (get_ref_name field) + ' = ' + (declaring_collection_ref_name field.ctype) + '();' + '\n'
+			line2 = 'for (var kvp in ' + fieldName + '.entries) { var ref= (tables.' + tableName + '?.getOrDefault(kvp.value))!;' + (get_ref_name field) + '?[kvp.key]= ref; }' + '\n'
+			ret line1 + line2
+		else
+			ret ''
+		end
+    else
+        if (is_field_bean_need_resolve_ref field)
+            ret fieldName + '?.resolveRef(tables);'
+        else if (is_field_array_like_need_resolve_ref field)
+            ret 'for (var _e in ' + fieldName + ') { _e?.resolveRef(tables); }'
+        else if (is_field_map_need_resolve_ref field)
+            ret 'for (var _e in ' + fieldName + '.values) { _e?.resolveRef(tables); }'
+        else
+            ret ''
+        end
+    end
+end
+
+~}}
+{{~if __bean.comment != '' ~}}
+//{{escape_comment __bean.comment}}
+{{~end~}}
+{{class_modifier __this}} class {{__name}} {{if parent_def_type}}extends {{ __this.parent_def_type.name}}{{end}}
+{
+    {{__name}}(
+{{~if need_gen_constructor hierarchy_export_fields~}}
+    {
+{{~ for field in hierarchy_export_fields ~}}
+    {{~if is_super_field field parent_def_type~}}
+    required super.{{format_name_lower_camel field.name}}, 
+    {{~else~}}
+    required this.{{format_name_lower_camel field.name}},
+    {{~end~}}
+{{~end~}}
+    }
+    {{~end~}}
+    );
+
+    factory {{__name}}.deserialize(dynamic _buf){
+      {{~if __bean.is_abstract_type~}}
+      switch (_buf['\$type'])
+      {
+        {{~for child in __this.hierarchy_not_abstract_children~}}
+        case "{{impl_data_type child __this}}": return {{child.name}}.deserialize(_buf);
+        {{~end~}}
+        default: throw Exception('unknown type:$_buf[\$type]');
+      }
+      {{~else~}}
+{{~ for field in hierarchy_export_fields 
+        fieldName = format_name_lower_camel field.name
+~}}     
+        final {{fieldName}};
+        {{deserialize_field fieldName '_buf' field.name field.ctype}}
+{{~end~}}
+        return {{__name}}(
+{{~ for field in hierarchy_export_fields 
+       fieldName = format_name_lower_camel field.name
+~}}
+            {{fieldName}}:{{fieldName}},
+{{~end~}}
+       );
+       {{~end~}}
+    }
+
+    {{~ for field in export_fields ~}}
+{{~if field.comment != '' ~}}
+    //{{escape_comment field.comment}}
+{{~end~}}
+    final {{declaring_type_name field.ctype}} {{format_name_lower_camel field.name}};
+{{~if can_generate_ref field~}}
+    {{declaring_type_name (get_ref_type field)}}? {{get_ref_name field}};
+{{~else if can_generate_collection_ref field~}}
+    {{declaring_collection_ref_name field.ctype}}? {{get_ref_name field}};
+{{~end~}}
+    {{~end~}}
+{{~if !__bean.is_abstract_type && !__bean.is_value_type~}}
+    static final int __ID__ = {{__this.id}};
+{{~end~}}
+     {{method_modifier __bean}}
+    void resolveRef({{__manager_name}} tables)
+    {
+        {{~if parent_def_type~}}
+        super.resolveRef(tables);
+        {{~end~}}
+
+        {{~for field in export_fields~}}
+            {{~ line = generate_resolve_field_ref field ~}}
+            {{~ if line != ''~}}
+        {{line}}
+            {{~end~}}
+        {{~end~}}
+    }
+
+    @override
+    String toString() {
+        return '{{__name}}({{for field in hierarchy_export_fields}}{{format_name_lower_camel field.name}}:${{format_name_lower_camel field.name}}, {{end}})';
+    }
+}

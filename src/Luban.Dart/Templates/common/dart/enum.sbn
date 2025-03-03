@@ -1,0 +1,30 @@
+{{~if __this.comment != '' ~}}
+//{{escape_comment __this.comment}}
+{{~end~}}
+enum {{__name}}
+{
+    {{~if !has_enum_item __this~}}
+    empty_placeholder(0);
+    {{~else~}}
+{{~if !__this.has_zero_value_item ~}}
+    None(0),
+{{~end~}}
+    {{~end~}}
+
+
+    {{~ for item in __this.items ~}}
+{{~if item.comment_or_alias != '' ~}}
+    //{{escape_comment item.comment_or_alias}}
+{{~end~}}
+    {{item.name}}({{item.int_value}})  {{is_last_enum_item __this item.int_value ? ';' : ','}}
+
+    {{~end~}}
+    final int value;
+
+    const {{__name}}(this.value);
+
+    static {{__name}} fromValue(int value)
+    {
+       return {{__name}}.values.firstWhere((element) => element.value == value, orElse: () => fromValue(0));
+    }
+}

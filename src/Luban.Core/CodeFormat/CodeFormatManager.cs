@@ -27,6 +27,8 @@ public class CodeFormatManager
     public ICodeStyle CppDefaultCodeStyle { get; private set; }
 
     public ICodeStyle PythonDefaultCodeStyle { get; private set; }
+    
+    public ICodeStyle DartDefaultCodeStyle { get; private set; }
 
     public void Init()
     {
@@ -42,6 +44,7 @@ public class CodeFormatManager
         TypescriptDefaultCodeStyle = RegisterCodeStyle("typescript-default", "pascal", "pascal", "camel", "camel", "camel", "none");
         CppDefaultCodeStyle = RegisterCodeStyle("cpp-default", "snake", "pascal", "pascal", "pascal", "camel", "none");
         PythonDefaultCodeStyle = RegisterCodeStyle("python-default", "snake", "pascal", "snake", "snake", "snake", "none");
+        DartDefaultCodeStyle = RegisterCodeStyle("dart-default", "pascal", "pascal", "camel", "camel", "camel", "none");
     }
 
     public INamingConventionFormatter CreateFormatter(string formatterName)
