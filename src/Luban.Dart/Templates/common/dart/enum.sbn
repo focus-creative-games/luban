@@ -4,7 +4,7 @@
 enum {{__name}}
 {
     {{~if !has_enum_item __this~}}
-    None(0);
+    empty_placeholder(0);
     {{~else~}}
 {{~if !__this.has_zero_value_item ~}}
     None(0),
