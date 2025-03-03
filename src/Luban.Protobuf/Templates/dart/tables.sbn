@@ -1,0 +1,38 @@
+{{~
+func get_table_inner_name
+    ret '_' + ($0 | string.downcase)
+end
+~}}
+
+import '/gen/schema.pb.dart';
+import '/gen/schema.pbenum.dart';
+import '/gen/schema.pbjson.dart';
+final class {{__name}}
+{
+    final Future<dynamic> Function(String filePath) _asyncloadFunction;
+    Tables(this._asyncloadFunction);
+
+    {{~for table in __tables ~}}
+{{~if table.comment != '' ~}}
+    //{{escape_comment table.comment}}
+{{~end~}}
+    {{proto_full_name table.full_name}}? _{{format_name_lower_camel table.name}};
+    {{~end~}}
+
+    Future<void> waitLoad() async {
+        var results = await Future.wait([
+        {{~for table in __tables ~}}
+            _asyncloadFunction("{{table.output_data_file}}"),
+        {{~end~}}
+        ]);
+        {{ idx=0 }}
+        {{~for table in __tables ~}}
+        _{{format_name_lower_camel table.name}} = {{proto_full_name table.full_name}}.fromBuffer(results[{{idx}}]);{{idx=idx+1}}
+        {{~end~}}
+    }
+{{~for table in __tables ~}}
+    {{proto_full_name table.full_name}}? get {{format_name_lower_camel table.name}} => _{{format_name_lower_camel table.name}};
+{{~end~}}
+
+
+}

@@ -1,9 +1,8 @@
 ﻿using Scriban.Runtime;
 namespace Luban.Protobuf.TemplateExtensions;
 
-public  class CsharpProtobuf3TemplateExtension : ScriptObject
+public class CsharpProtobuf3TemplateExtension : ScriptObject
 {
-
     public static string NamespaceWithGraceBegin(string ns)
     {
         if (string.IsNullOrEmpty(ns))
