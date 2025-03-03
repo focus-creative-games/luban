@@ -17,8 +17,12 @@ public class DEnum : DType
     {
         Type = type;
         StrValue = value;
-
-        Value = type.DefEnum.GetValueByNameOrAlias(value);
+        string sep = type.GetTagOrDefault("sep", "|");
+        if (sep.Length > 1)
+        {
+            throw new System.Exception($"enum tag sep length must be 1, but is {sep}");
+        }
+        Value = type.DefEnum.GetValueByNameOrAlias(value, sep[0]);
     }
 
     public override void Apply<T>(IDataActionVisitor<T> visitor, T x)

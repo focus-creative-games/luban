@@ -51,15 +51,15 @@ public class DefEnum : DefTypeBase
         return _nameOrAlias2Value.TryGetValue(name, out value);
     }
 
-    public int GetValueByNameOrAlias(string name)
+    public int GetValueByNameOrAlias(string name, char sep = '|')
     {
         // TODO flags ?
-        if (!name.Contains('|'))
+        if (!name.Contains(sep))
         {
             return GetBasicValueByNameOrAlias(name);
         }
         int combindValue = 0;
-        foreach (var s in name.Split('|'))
+        foreach (var s in name.Split(sep))
         {
             combindValue |= GetBasicValueByNameOrAlias(s.Trim());
         }

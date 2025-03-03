@@ -200,7 +200,7 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
 
                 throw new InvalidExcelDataException($"枚举类:'{type.DefEnum.FullName}' 没有value为0的枚举项, 不支持默认值");
             }
-            return new DEnum(type, string.Join('|', items));
+            return new DEnum(type, string.Join(type.GetTagOrDefault("sep", "|"), items));
         }
         if (row.Elements != null)
         {
