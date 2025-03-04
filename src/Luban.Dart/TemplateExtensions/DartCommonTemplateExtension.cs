@@ -101,6 +101,10 @@ class DartCommonTemplateExtension : ScriptObject
     {
         return char.ToLower(s[0]) + s.Substring(1);
     }
+    public static string GetValueOfNullableType(TType type, string varName)
+    {
+        return varName + "!";
+    }
     public static string ImportRefTypeDart(DefField field, string RootFolder)
     {
         if (TypeTemplateExtension.CanGenerateRef(field))
