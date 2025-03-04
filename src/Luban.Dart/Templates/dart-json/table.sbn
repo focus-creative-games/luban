@@ -43,10 +43,10 @@ final class {{__name}} {
         
         for (var _buf in _array) {
 
-         {{declaring_type_name __value_type}} item = {{declaring_type_name __value_type}}.deserialize(_buf);
+         {{declaring_type_name __value_type}} _item = {{declaring_type_name __value_type}}.deserialize(_buf);
 
-         _dataList.add(item);
-         _dataMap[item.{{format_field_name __code_style __this.index_field.name}}] = item;
+         _dataList.add(_item);
+         _dataMap[_item.{{format_field_name __code_style __this.index_field.name}}] = _item;
         }
      }
 
@@ -78,8 +78,8 @@ final class {{__name}} {
 
     {{__name}}(List<dynamic> _array) {
         for (var _buf in _array) {
-          {{declaring_type_name __value_type}} item = {{declaring_type_name __value_type}}.deserialize(_buf);
-          _dataList.add(item);
+          {{declaring_type_name __value_type}} _item = {{declaring_type_name __value_type}}.deserialize(_buf);
+          _dataList.add(_item);
         }
 
         {{~if __table.is_union_index~}}

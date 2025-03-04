@@ -102,7 +102,7 @@ class DeclaringCollectionRefNameVisitor : ITypeFuncVisitor<string>
         }
         throw new Exception($"解析'Map<{type.KeyType}, {type.ValueType}>' 的ref失败");
     }
-    private static DefTable GetCollectionRefTable(TType type)
+    private static DefTable? GetCollectionRefTable(TType type)
     {
         var refTag = type.GetTag("ref");
         if (refTag == null)
