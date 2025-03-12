@@ -12,6 +12,9 @@ package {{__top_module}};
 import "{{__luban_module_name}}"
 
 {{~if __this.is_map_table~}}
+var {{go_full_name}}Loader func({{declaring_type_name value_type}})
+var {{go_full_name}}PostLoader func([]{{declaring_type_name value_type}})
+
 type {{go_full_name}} struct {
     _dataMap map[{{declaring_type_name key_type}}]{{declaring_type_name value_type}}
     _dataList []{{declaring_type_name value_type}}
@@ -28,6 +31,10 @@ func New{{go_full_name}}(_buf *luban.ByteBuf) (*{{go_full_name}}, error) {
 			if _v, err2 := New{{full_name value_type.def_bean}}(_buf); err2 != nil {
 				return nil, err2
 			} else {
+				if {{go_full_name}}Loader != nil {
+					{{go_full_name}}Loader(_v)
+				}
+	
 				_dataList = append(_dataList, _v)
 {{~if value_type.is_dynamic ~}}
         {{~for child in value_type.def_bean.hierarchy_not_abstract_children~}}
@@ -40,6 +47,10 @@ func New{{go_full_name}}(_buf *luban.ByteBuf) (*{{go_full_name}}, error) {
 				dataMap[_v.{{format_field_name __code_style index_field.name}}] = _v
 {{~end~}}
 			}
+		}
+
+		if {{go_full_name}}PostLoader != nil {
+			{{go_full_name}}PostLoader(_dataList)
 		}
 		return &{{go_full_name}}{_dataList:_dataList, _dataMap:dataMap}, nil
 	}
@@ -58,6 +69,9 @@ func (table *{{go_full_name}}) Get(key {{declaring_type_name key_type}}) {{decla
 }
 
 {{~else if __this.is_list_table~}}
+var {{go_full_name}}Loader func({{declaring_type_name value_type}})
+var {{go_full_name}}PostLoader func([]{{declaring_type_name value_type}})
+
 type {{go_full_name}} struct {
     _dataList []{{declaring_type_name value_type}}
 }
@@ -72,8 +86,16 @@ func New{{go_full_name}}(_buf *luban.ByteBuf) (*{{go_full_name}}, error) {
 			if _v, err2 := New{{full_name value_type.def_bean}}(_buf); err2 != nil {
 				return nil, err2
 			} else {
+				if {{go_full_name}}Loader != nil {
+					{{go_full_name}}Loader(_v)
+				}
+	
 				_dataList = append(_dataList, _v)
 			}
+		}
+
+		if {{go_full_name}}PostLoader != nil {
+			{{go_full_name}}PostLoader(_dataList)
 		}
 		return &{{go_full_name}}{_dataList:_dataList}, nil
 	}
@@ -91,6 +113,8 @@ func (table *{{go_full_name}}) Get(index int) {{declaring_type_name value_type}}
 
 import "errors"
 
+var {{go_full_name}}Loader func({{declaring_type_name value_type}})
+
 type {{go_full_name}} struct {
     _data {{declaring_type_name value_type}}
 }
@@ -104,6 +128,9 @@ func New{{go_full_name}}(_buf *luban.ByteBuf) (*{{go_full_name}}, error) {
 		if _v, err2 := New{{full_name value_type.def_bean}}(_buf); err2 != nil {
 			return nil, err2
 		} else {
+            if {{go_full_name}}Loader != nil {
+                {{go_full_name}}Loader(_v)
+            }
 		    return &{{go_full_name}}{_data:_v}, nil
 		}
 	}
