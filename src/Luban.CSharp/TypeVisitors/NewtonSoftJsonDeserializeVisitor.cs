@@ -61,7 +61,7 @@ namespace Luban.CSharp.TypeVisitors
 
         public string Accept(TBean type, string x, string y, int z)
         {
-            string src = $"{type.DefBean.FullName}.Deserialize{type.DefBean.Name}({x})";
+            string src = $"{CSharpUtil.GetFullNameWithGlobalQualifier(type.DefBean)}.Deserialize{type.DefBean.Name}({x})";
             string constructor = type.DefBean.TypeConstructorWithTypeMapper();
             return $"{y} = {(string.IsNullOrEmpty(constructor) ? src : $"{constructor}({src})")};";
         }

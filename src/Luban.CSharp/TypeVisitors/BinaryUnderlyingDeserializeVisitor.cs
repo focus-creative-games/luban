@@ -60,7 +60,7 @@ public class BinaryUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, strin
 
     public string Accept(TBean type, string bufName, string fieldName, int depth)
     {
-        string src = $"{type.DefBean.FullName}.Deserialize{type.DefBean.Name}({bufName})";
+        string src = $"{CSharpUtil.GetFullNameWithGlobalQualifier(type.DefBean)}.Deserialize{type.DefBean.Name}({bufName})";
         string constructor = type.DefBean.TypeConstructorWithTypeMapper();
         return $"{fieldName} = {(string.IsNullOrEmpty(constructor) ? src : $"{constructor}({src})")};";
     }
