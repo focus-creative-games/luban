@@ -243,7 +243,7 @@ class ExcelStreamDataCreator : ITypeFuncVisitor<ExcelStream, DType>
         {
             if (type.IsNullable)
             {
-                if (x.TryPeed(out object subTypeObj)) //ToString().Trim();
+                if (x.TryPeek(out object subTypeObj)) //ToString().Trim();
                 {
                     string subType = subTypeObj.ToString().Trim();
 

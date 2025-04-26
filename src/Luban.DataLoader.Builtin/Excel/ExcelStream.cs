@@ -190,7 +190,7 @@ public class ExcelStream
         return false;
     }
 
-    public bool TryPeed(out object data)
+    public bool TryPeek(out object data)
     {
         int oldCurIndex = _curIndex;
         if (TryRead(out data))
