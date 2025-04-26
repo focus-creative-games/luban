@@ -20,6 +20,7 @@ public class LiteStream
     {
         var token = new StringBuilder();
         int nestDepth = 0;
+        bool beginData = false;
         for (int i = 0; i < dataStr.Length; i++)
         {
             char c = dataStr[i];
@@ -48,18 +49,29 @@ public class LiteStream
             }
             else if (c == ',' || c == '{' || c == '}')
             {
-                if (token.Length > 0)
-                {
-                    _tokens.Add(token.ToString());
-                    token.Clear();
-                }
+                string tokenStr = token.ToString().Trim();
+                token.Clear();
                 if (c == '{')
                 {
+                    if (tokenStr.Length > 0 && !string.IsNullOrWhiteSpace(tokenStr))
+                    {
+                        throw new Exception($"Invalid token before '{{': `{dataStr}`");
+                    }
                     nestDepth++;
+                    beginData = true;
                     _tokens.Add("{");
                 }
                 else if (c == '}')
                 {
+                    if (tokenStr.Length > 0)
+                    {
+                        if (!beginData)
+                        {
+                            throw new Exception($"Invalid token before '}}': `{dataStr}`");
+                        }
+                        _tokens.Add(tokenStr);
+                    }
+                    beginData = false;
                     nestDepth--;
                     if (nestDepth < 0)
                     {
@@ -67,19 +79,39 @@ public class LiteStream
                     }
                     _tokens.Add("}");
                 }
+                else
+                {
+                    if (nestDepth == 0)
+                    {
+                        throw new Exception($"Invalid token before ',': `{dataStr}`");
+                    }
+                    if (tokenStr.Length > 0)
+                    {
+                        if (!beginData)
+                        {
+                            throw new Exception($"Invalid token before ',': `{dataStr}`");
+                        }
+                        _tokens.Add(tokenStr);
+                    }
+                    beginData = true;
+                }
+            }
+            else if (c == '\n' || c == '\r')
+            {
+                // skip newlines
             }
             else
             {
                 token.Append(c);
             }
         }
-        if (token.Length > 0)
-        {
-            _tokens.Add(token.ToString());
-        }
         if (nestDepth != 0)
         {
             throw new Exception($"Unmatched opening brace in: `{dataStr}`");
+        }
+        if (token.Length > 0 && !string.IsNullOrEmpty(token.ToString()))
+        {
+            throw new Exception($"Invalid token at end: `{dataStr}`");
         }
     }
 
