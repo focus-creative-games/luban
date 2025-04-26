@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Luban.DataLoader.Builtin.Excel.DataParser
 {
-    public static class DataParserManager
+    public static class DataParserFactory
     {
         public const string FORMAT_TAG_NAME = "format";
 

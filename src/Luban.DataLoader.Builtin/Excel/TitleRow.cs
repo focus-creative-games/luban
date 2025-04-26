@@ -128,10 +128,10 @@ public class TitleRow
 
     public IDataParser GetDataParser()
     {
-        if (SelfTitle.Tags.TryGetValue(DataParserManager.FORMAT_TAG_NAME, out var formatName))
+        if (SelfTitle.Tags.TryGetValue(DataParserFactory.FORMAT_TAG_NAME, out var formatName))
         {
-            return DataParserManager.GetDataParser(formatName);
+            return DataParserFactory.GetDataParser(formatName);
         }
-        return DataParserManager.GetDefaultDataParser();
+        return DataParserFactory.GetDefaultDataParser();
     }
 }
