@@ -1,9 +1,10 @@
-﻿namespace Luban.DataLoader.Builtin.Excel;
+﻿using Luban.DataLoader.Builtin.Excel.DataParser;
+using System.Data;
 
-class TitleRow
+namespace Luban.DataLoader.Builtin.Excel;
+
+public class TitleRow
 {
-    public List<string> Tags { get; }
-
     public Title SelfTitle { get; }
 
     public object Current
@@ -87,18 +88,6 @@ class TitleRow
         }
     }
 
-    public ExcelStream AsStream(string sep)
-    {
-        if (string.IsNullOrEmpty(sep))
-        {
-            return new ExcelStream(Row, SelfTitle.FromIndex, SelfTitle.ToIndex, "", SelfTitle.Default);
-        }
-        else
-        {
-            return new ExcelStream(Row, SelfTitle.FromIndex, SelfTitle.ToIndex, sep, SelfTitle.Default);
-        }
-    }
-
     public bool HasSubFields => Fields != null || Elements != null;
 
     public TitleRow(Title selfTitle, List<Cell> row)
@@ -132,30 +121,17 @@ class TitleRow
         return SelfTitle.SubTitles.TryGetValue(name, out var title) ? title : null;
     }
 
-
     public TitleRow GetSubTitleNamedRow(string name)
     {
-        //Title title = Titles[name];
-        //return new TitleRow(title, this.Rows);
         return Fields.TryGetValue(name, out var r) ? r : null;
     }
 
-    public IEnumerable<ExcelStream> GetColumnOfMultiRows(string name, string sep)
+    public IDataParser GetDataParser()
     {
-        foreach (var ele in GetSubTitleNamedRow(name).Elements)
+        if (SelfTitle.Tags.TryGetValue(DataParserManager.FORMAT_TAG_NAME, out var formatName))
         {
-            yield return ele.AsStream(sep);
+            return DataParserManager.GetDataParser(formatName);
         }
-    }
-
-
-    public IEnumerable<ExcelStream> AsMultiRowStream(string sep)
-    {
-        throw new NotSupportedException();
-    }
-
-    public ExcelStream AsMultiRowConcatStream(string sep)
-    {
-        return new ExcelStream(Rows, SelfTitle.FromIndex, SelfTitle.ToIndex, sep, SelfTitle.Default);
+        return DataParserManager.GetDefaultDataParser();
     }
 }

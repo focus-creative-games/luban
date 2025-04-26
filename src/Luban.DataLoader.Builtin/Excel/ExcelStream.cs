@@ -3,7 +3,7 @@ using Luban.DataLoader.Builtin.Utils;
 
 namespace Luban.DataLoader.Builtin.Excel;
 
-class ExcelStream
+public class ExcelStream
 {
 
     private readonly List<Cell> _datas;
