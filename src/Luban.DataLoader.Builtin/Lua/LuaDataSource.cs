@@ -11,7 +11,7 @@ namespace Luban.DataLoader.Builtin.Lua;
 [DataLoader("lua")]
 public class LuaDataSource : DataLoaderBase
 {
-    private static Neo.IronLua.Lua LuaManager { get; } = new();
+    public static Neo.IronLua.Lua LuaManager { get; } = new();
 
     private LuaGlobal _env;
     private LuaTable _dataTable;

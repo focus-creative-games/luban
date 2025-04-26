@@ -13,6 +13,7 @@ namespace Luban.DataLoader.Builtin.Excel.DataParser
         private readonly static IDataParser s_streamParser = new SteamParser();
         private readonly static IDataParser s_liteParser = new LiteParser();
         private readonly static IDataParser s_jsonParser = new JsonParser();
+        private readonly static IDataParser s_luaParser = new LuaParser();
 
         public static IDataParser GetDefaultDataParser()
         {
@@ -31,6 +32,7 @@ namespace Luban.DataLoader.Builtin.Excel.DataParser
                 "stream" => s_streamParser,
                 "lite" => s_liteParser,
                 "json" => s_jsonParser,
+                "lua" => s_luaParser,
                 _ => throw new NotSupportedException($"Unsupported data parser type: {parserType}")
             };
         }
