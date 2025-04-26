@@ -363,7 +363,9 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
                 sep += valueTitle.SelfTitle.Sep;
                 if (valueTitle.Row != null)
                 {
-                    return dataParser.ParseAbstractBean(type, implType, valueTitle.Row, valueTitle);
+                    TBean implBeanType = TBean.Create(type.IsNullable, implType, null);
+                    DBean implData = dataParser.ParseBean(implBeanType, valueTitle.Row, valueTitle);
+                    return new DBean(type, implType, implData.Fields);
                 }
 
                 if (valueTitle.Rows != null)
@@ -406,7 +408,7 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
         IDataParser dataParser = row.GetDataParser();
         if (row.Row != null)
         {
-            return dataParser.ParseCollectionElements(type, elementType, row.Row, row);
+            return dataParser.ParseCollectionElements(type, row.Row, row);
         }
         if (row.Rows != null)
         {

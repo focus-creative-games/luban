@@ -7,7 +7,6 @@ namespace Luban.Datas;
 public class DArray : DType
 {
     public TArray Type { get; }
-    public List<DType> Datas { get; }
 
     public override string TypeName => "array";
 

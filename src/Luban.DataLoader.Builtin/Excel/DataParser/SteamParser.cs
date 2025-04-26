@@ -32,54 +32,19 @@ namespace Luban.DataLoader.Builtin.Excel.DataParser
             return type.Apply(ExcelStreamDataCreator.Ins, stream);
         }
 
-        public override DType ParseBean(TBean type, List<Cell> cells, TitleRow title)
+        public override DBean ParseBean(TBean type, List<Cell> cells, TitleRow title)
         {
             var s = AsStream(title, cells, title.SelfTitle.Sep);
             if (type.IsNullable && s.TryReadEOF())
             {
                 return null;
             }
-            return type.Apply(ExcelStreamDataCreator.Ins, s);
+            return (DBean)type.Apply(ExcelStreamDataCreator.Ins, s);
         }
 
-
-        public override DType ParseAbstractBean(TBean type, DefBean implType, List<Cell> cells, TitleRow title)
+        public override List<DType> ParseCollectionElements(TType collectionType, List<Cell> cells, TitleRow title)
         {
-            var s = AsStream(title, cells, title.SelfTitle.Sep);
-            if (type.IsNullable && s.TryReadEOF())
-            {
-                return null;
-            }
-            return new DBean(type, implType, CreateBeanFields(implType, s));
-        }
-
-        private List<DType> CreateBeanFields(DefBean bean, ExcelStream stream)
-        {
-            var list = new List<DType>();
-            foreach (DefField f in bean.HierarchyFields)
-            {
-                try
-                {
-                    list.Add(f.CType.Apply(ExcelStreamDataCreator.Ins, stream));
-                }
-                catch (DataCreateException dce)
-                {
-                    dce.Push(bean, f);
-                    throw;
-                }
-                catch (Exception e)
-                {
-                    var dce = new DataCreateException(e, stream.LastReadDataInfo);
-                    dce.Push(bean, f);
-                    throw dce;
-                }
-            }
-            return list;
-        }
-
-        public override List<DType> ParseCollectionElements(TType collectionType, TType elementType, List<Cell> cells, TitleRow title)
-        {
-            return ExcelStreamDataCreator.Ins.ReadList(collectionType, elementType, AsStream(title, cells, title.SelfTitle.Sep));
+            return ExcelStreamDataCreator.Ins.ReadList(collectionType, collectionType.ElementType, AsStream(title, cells, title.SelfTitle.Sep));
         }
 
         public override DMap ParseMap(TMap type, List<Cell> cells, TitleRow title)

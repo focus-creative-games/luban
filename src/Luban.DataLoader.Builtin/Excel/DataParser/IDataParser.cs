@@ -14,11 +14,9 @@ namespace Luban.DataLoader.Builtin.Excel.DataParser
     {
         DType ParseAny(TType type, List<Cell> cells, TitleRow title);
 
-        DType ParseBean(TBean type, List<Cell> cells, TitleRow title);
+        DBean ParseBean(TBean type, List<Cell> cells, TitleRow title);
 
-        DType ParseAbstractBean(TBean type, DefBean implType, List<Cell> cells, TitleRow title);
-
-        List<DType> ParseCollectionElements(TType collectionType, TType elementType, List<Cell> cells, TitleRow title);
+        List<DType> ParseCollectionElements(TType collectionType, List<Cell> cells, TitleRow title);
 
         DMap ParseMap(TMap type, List<Cell> cells, TitleRow title);
 
@@ -28,9 +26,8 @@ namespace Luban.DataLoader.Builtin.Excel.DataParser
     public abstract class DataParserBase : IDataParser
     {
         public abstract DType ParseAny(TType type, List<Cell> cells, TitleRow title);
-        public abstract DType ParseBean(TBean type, List<Cell> cells, TitleRow title);
-        public abstract DType ParseAbstractBean(TBean type, DefBean implType, List<Cell> cells, TitleRow title);
-        public abstract List<DType> ParseCollectionElements(TType collectionType, TType elementType, List<Cell> cells, TitleRow title);
+        public abstract DBean ParseBean(TBean type, List<Cell> cells, TitleRow title);
+        public abstract List<DType> ParseCollectionElements(TType collectionType, List<Cell> cells, TitleRow title);
         public abstract DMap ParseMap(TMap type, List<Cell> cells, TitleRow title);
         public abstract KeyValuePair<DType, DType> ParseMapEntry(TMap type, List<Cell> cells, TitleRow title);
     }

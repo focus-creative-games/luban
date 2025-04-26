@@ -7,7 +7,6 @@ namespace Luban.Datas;
 public class DSet : DType
 {
     public TSet Type { get; }
-    public List<DType> Datas { get; }
 
     public override string TypeName => "set";
 

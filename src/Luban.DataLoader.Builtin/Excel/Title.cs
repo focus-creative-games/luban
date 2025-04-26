@@ -64,6 +64,7 @@ public class Title
         "non_empty",
         "multi_rows",
         "default",
+        "format",
     };
 
     public void Init()

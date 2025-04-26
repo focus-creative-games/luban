@@ -7,7 +7,6 @@ namespace Luban.Datas;
 public class DList : DType
 {
     public TList Type { get; }
-    public List<DType> Datas { get; }
 
     public override string TypeName => "list";
 

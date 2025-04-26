@@ -4,34 +4,34 @@ using Luban.Types;
 
 namespace Luban.DataLoader.Builtin.Excel.DataParser
 {
-    public class LiteParser : DataParserBase
+    public class LiteDataCreate
     {
-        public override DType ParseAbstractBean(TBean type, DefBean implType, List<Cell> cells, TitleRow title)
+
+    }
+
+    public class LiteParser : TextParserBase<LiteDataCreate>
+    {
+        protected override LiteDataCreate CreateRawData(string dataStr)
         {
             throw new NotImplementedException();
         }
 
-        public override DType ParseAny(TType type, List<Cell> cells, TitleRow title)
+        protected override DBean ParseBean(TBean type, LiteDataCreate rawData, TitleRow title)
         {
             throw new NotImplementedException();
         }
 
-        public override DType ParseBean(TBean type, List<Cell> cells, TitleRow title)
+        protected override DType ParseCollection(TType collectionType, LiteDataCreate rawData, TitleRow title)
         {
             throw new NotImplementedException();
         }
 
-        public override List<DType> ParseCollectionElements(TType collectionType, TType elementType, List<Cell> cells, TitleRow title)
+        protected override DMap ParseMap(TMap type, LiteDataCreate rawData, TitleRow title)
         {
             throw new NotImplementedException();
         }
 
-        public override DMap ParseMap(TMap type, List<Cell> cells, TitleRow title)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override KeyValuePair<DType, DType> ParseMapEntry(TMap type, List<Cell> cells, TitleRow title)
+        protected override KeyValuePair<DType, DType> ParseMapEntry(TMap type, LiteDataCreate rawData, TitleRow title)
         {
             throw new NotImplementedException();
         }

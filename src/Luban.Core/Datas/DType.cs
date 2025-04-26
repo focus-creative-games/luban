@@ -28,6 +28,9 @@ public abstract class DType : System.IComparable<DType>
 
     public abstract string TypeName { get; }
 
+
+    public List<DType> Datas { get; protected set; }
+
     public override string ToString()
     {
         return this.Apply(ToStringVisitor.Ins);
