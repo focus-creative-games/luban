@@ -10,7 +10,7 @@ public static class DataParserFactory
 {
     public const string FORMAT_TAG_NAME = "format";
 
-    private readonly static IDataParser s_streamParser = new SteamParser();
+    private readonly static IDataParser s_streamParser = new StreamParser();
     private readonly static IDataParser s_liteParser = new LiteParser();
     private readonly static IDataParser s_jsonParser = new JsonParser();
     private readonly static IDataParser s_luaParser = new LuaParser();

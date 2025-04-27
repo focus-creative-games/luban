@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Luban.DataLoader.Builtin.Excel.DataParser;
 
-public class SteamParser : DataParserBase
+public class StreamParser : DataParserBase
 {
     private ExcelStream AsStream(TitleRow row, List<Cell> cells, string sep)
     {
