@@ -130,38 +130,13 @@ class LiteStreamDataCreator : ITypeFuncVisitor<LiteStream, DType>
         return new DEnum(type, d.Trim());
     }
 
-    private static string RemoveStringQuote(string s)
-    {
-        if (s.Length == 0)
-        {
-            return s;
-        }
-        if (s[0] == '\'')
-        {
-            if (s.Length == 1 || s[s.Length - 1] != '\'')
-            {
-                throw new InvalidExcelDataException($"bad string:`{s}`");
-            }
-            return s.Substring(1, s.Length - 2);
-        }
-        else if (s[0] == '\"')
-        {
-            if (s.Length == 1 || s[s.Length - 1] != '\"')
-            {
-                throw new InvalidExcelDataException($"bad string:`{s}`");
-            }
-            return s.Substring(1, s.Length - 2);
-        }
-        return s;
-    }
-
     private static string ParseString(string s, bool nullable)
     {
         if (nullable && (string.IsNullOrEmpty(s) || s == "null"))
         {
             return null;
         }
-        return RemoveStringQuote(s);
+        return DataUtil.RemoveStringQuote(s);
     }
 
     public DType Accept(TString type, LiteStream x)

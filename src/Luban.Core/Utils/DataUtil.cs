@@ -47,17 +47,29 @@ public static class DataUtil
         return bytes;
     }
 
-    public static string UnEscapeRawString(string s)
+    public static string RemoveStringQuote(string s)
     {
-        switch (s)
+        if (s.Length == 0)
         {
-            case "null":
-                return null;
-            case "\"\"":
-                return string.Empty;
-            default:
-                return s;
+            return s;
         }
+        if (s[0] == '\'')
+        {
+            if (s.Length == 1 || s[s.Length - 1] != '\'')
+            {
+                throw new Exception($"bad string:`{s}`");
+            }
+            return s.Substring(1, s.Length - 2);
+        }
+        else if (s[0] == '\"')
+        {
+            if (s.Length == 1 || s[s.Length - 1] != '\"')
+            {
+                throw new Exception($"bad string:`{s}`");
+            }
+            return s.Substring(1, s.Length - 2);
+        }
+        return s;
     }
 
     public static string EscapeString(string s)

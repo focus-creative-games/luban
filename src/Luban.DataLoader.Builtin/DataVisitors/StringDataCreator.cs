@@ -1,6 +1,7 @@
 using Luban.Datas;
 using Luban.Types;
 using Luban.TypeVisitors;
+using Luban.Utils;
 
 namespace Luban.DataLoader.Builtin.DataVisitors;
 
@@ -99,6 +100,7 @@ class StringDataCreator : ITypeFuncVisitor<string, DType>
 
     public DType Accept(TString type, string x)
     {
+        x = DataUtil.RemoveStringQuote(x);
         return DString.ValueOf(type, x);
     }
 

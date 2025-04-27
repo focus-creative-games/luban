@@ -220,11 +220,11 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
 
         string s = d is string str ? str : d.ToString();
 
-        if (nullable && string.IsNullOrEmpty(s))
+        if (nullable && (string.IsNullOrEmpty(s) || s == "null"))
         {
             return null;
         }
-        return DataUtil.UnEscapeRawString(s);
+        return DataUtil.RemoveStringQuote(s);
     }
 
     public DType Accept(TString type, RowColumnSheet sheet, TitleRow row)
