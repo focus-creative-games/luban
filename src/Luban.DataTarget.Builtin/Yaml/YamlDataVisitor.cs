@@ -130,7 +130,7 @@ public class YamlDataVisitor : IDataFuncVisitor<YamlNode>
     public YamlNode Accept(DMap type)
     {
         var seqNode = new YamlSequenceNode();
-        foreach (var d in type.Datas)
+        foreach (var d in type.DataMap)
         {
             var e = new YamlSequenceNode();
             e.Add(d.Key.Apply(this));

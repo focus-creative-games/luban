@@ -122,7 +122,7 @@ public class BinaryDataVisitor : IDataActionVisitor<ByteBuf>
 
     public void Accept(DMap type, ByteBuf x)
     {
-        Dictionary<DType, DType> datas = type.Datas;
+        Dictionary<DType, DType> datas = type.DataMap;
         x.WriteSize(datas.Count);
         foreach (var e in datas)
         {

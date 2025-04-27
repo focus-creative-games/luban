@@ -55,7 +55,7 @@ public class FlatBuffersJsonDataVisitor : JsonDataVisitor
     public override void Accept(DMap type, Utf8JsonWriter x)
     {
         x.WriteStartArray();
-        foreach (var d in type.Datas)
+        foreach (var d in type.DataMap)
         {
             x.WriteStartObject();
             x.WritePropertyName("key");

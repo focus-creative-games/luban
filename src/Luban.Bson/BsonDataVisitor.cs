@@ -120,7 +120,7 @@ public class BsonDataVisitor : IDataActionVisitor<BsonDataWriter>
     public virtual void Accept(DMap type, BsonDataWriter x)
     {
         x.WriteStartArray();
-        foreach (var d in type.Datas)
+        foreach (var d in type.DataMap)
         {
             x.WriteStartArray();
             d.Key.Apply(this, x);

@@ -137,7 +137,7 @@ public class DataValidatorVisitor : TypeActionVisitorAdaptor<DType>
         var valueType = type.ValueType;
         if (keyType.Validators.Count > 0 || valueType.Validators.Count > 0)
         {
-            foreach (var e in ((DMap)x).Datas)
+            foreach (var e in ((DMap)x).DataMap)
             {
                 _path.Push(e.Key);
                 if (e.Key != null && keyType.Validators.Count > 0)
@@ -164,7 +164,7 @@ public class DataValidatorVisitor : TypeActionVisitorAdaptor<DType>
         }
         if (valueType is TBean)
         {
-            foreach (var e in ((DMap)x).Datas)
+            foreach (var e in ((DMap)x).DataMap)
             {
                 _path.Push(e.Key);
                 if (e.Value != null)

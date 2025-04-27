@@ -81,7 +81,7 @@ public class ToLuaLiteralVisitor : ToLiteralVisitorBase
     {
         var x = new StringBuilder();
         x.Append('{');
-        foreach (var e in type.Datas)
+        foreach (var e in type.DataMap)
         {
             x.Append('[');
             x.Append(e.Key.Apply(this));

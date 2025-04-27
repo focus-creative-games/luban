@@ -6,14 +6,14 @@ namespace Luban.Datas;
 public class DMap : DType
 {
     public TMap Type { get; }
-    public Dictionary<DType, DType> Datas { get; }
+    public Dictionary<DType, DType> DataMap { get; }
 
     public override string TypeName => "map";
 
     public DMap(TMap type, Dictionary<DType, DType> datas)
     {
         this.Type = type;
-        this.Datas = datas;
+        this.DataMap = datas;
 
         var set = new HashSet<DType>();
         foreach (var key in datas.Keys)
@@ -27,7 +27,7 @@ public class DMap : DType
 
     public override bool Equals(object obj)
     {
-        return obj is DMap d && Datas.Count == d.Datas.Count && Datas.All(e => d.Datas.TryGetValue(e.Key, out var v) && object.Equals(e.Value, v));
+        return obj is DMap d && DataMap.Count == d.DataMap.Count && DataMap.All(e => d.DataMap.TryGetValue(e.Key, out var v) && object.Equals(e.Value, v));
     }
 
     public override int GetHashCode()

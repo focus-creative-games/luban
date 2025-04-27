@@ -74,7 +74,7 @@ public class IsDefaultValueVisitor : IDataFuncVisitor<bool>
 
     public bool Accept(DMap type)
     {
-        return type.Datas.Count == 0;
+        return type.DataMap.Count == 0;
     }
 
     public bool Accept(DDateTime type)

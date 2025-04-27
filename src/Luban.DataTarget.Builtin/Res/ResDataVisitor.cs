@@ -112,7 +112,7 @@ public class ResDataVisitor : IDataActionVisitor<TType, List<ResourceInfo>>
     public void Accept(DMap type, TType x, List<ResourceInfo> y)
     {
         TMap mtype = (TMap)x;
-        foreach (var (k, v) in type.Datas)
+        foreach (var (k, v) in type.DataMap)
         {
             k.Apply(this, mtype.KeyType, y);
             v.Apply(this, mtype.ValueType, y);

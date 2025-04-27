@@ -116,7 +116,7 @@ public class DataActionHelpVisitor<T> : IDataActionVisitor<T>
     public void Accept(DMap type, T x)
     {
         _underlyingVisitor.Accept(type, x);
-        foreach (var e in type.Datas)
+        foreach (var e in type.DataMap)
         {
             e.Key.Apply(this, x);
             e.Value.Apply(this, x);
@@ -232,7 +232,7 @@ public class DataActionHelpVisitor<T1, T2> : IDataActionVisitor<T1, T2>
     public void Accept(DMap type, T1 x, T2 y)
     {
         _underlyingVisitor.Accept(type, x, y);
-        foreach (var e in type.Datas)
+        foreach (var e in type.DataMap)
         {
             e.Key.Apply(this, x, y);
             e.Value.Apply(this, x, y);

@@ -27,7 +27,7 @@ public class SizeValidator : DataValidatorBase
         {
             TList => d => ((DList)d).Datas.Count,
             TSet => d => ((DSet)d).Datas.Count,
-            TMap => d => ((DMap)d).Datas.Count,
+            TMap => d => ((DMap)d).DataMap.Count,
             TArray => d => ((DArray)d).Datas.Count,
             _ => throw new Exception($"type:{type} field:{field} not support size validator"),
         };

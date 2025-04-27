@@ -124,7 +124,7 @@ public class DataActionHelpVisitor2<T> : IDataActionVisitor2<T>
     {
         _underlyingVisitor.Accept(data, type, x);
         TMap mapType = (TMap)type;
-        foreach (var e in data.Datas)
+        foreach (var e in data.DataMap)
         {
             e.Key.Apply(this, mapType.KeyType, x);
             e.Value.Apply(this, mapType.ValueType, x);
@@ -246,7 +246,7 @@ public class DataActionHelpVisitor2<T1, T2> : IDataActionVisitor2<T1, T2>
     {
         _underlyingVisitor.Accept(data, type, x, y);
         TMap mapType = (TMap)type;
-        foreach (var e in data.Datas)
+        foreach (var e in data.DataMap)
         {
             e.Key.Apply(this, mapType.KeyType, x, y);
             e.Value.Apply(this, mapType.ValueType, x, y);

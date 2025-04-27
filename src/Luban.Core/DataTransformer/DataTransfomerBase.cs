@@ -182,7 +182,7 @@ public abstract class DataTransfomerBase : IDataTransformer, IDataFuncVisitor2<D
     {
         TMap mapType = (TMap)type;
         bool dirty = false;
-        foreach (var ele in data.Datas)
+        foreach (var ele in data.DataMap)
         {
             DType newKey = ele.Key.Apply(this, mapType.KeyType);
             DType newValue = ele.Value.Apply(this, mapType.ValueType);
@@ -198,7 +198,7 @@ public abstract class DataTransfomerBase : IDataTransformer, IDataFuncVisitor2<D
         }
 
         var newDatas = new Dictionary<DType, DType>();
-        foreach (var ele in data.Datas)
+        foreach (var ele in data.DataMap)
         {
             DType newKey = ele.Key.Apply(this, mapType.KeyType);
             DType newValue = ele.Value.Apply(this, mapType.ValueType);

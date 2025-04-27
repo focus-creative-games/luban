@@ -185,8 +185,8 @@ class MsgPackDataVisitor
 
     public void Accept(DMap type, ref MessagePackWriter writer)
     {
-        writer.WriteMapHeader(type.Datas.Count);
-        foreach (var d in type.Datas)
+        writer.WriteMapHeader(type.DataMap.Count);
+        foreach (var d in type.DataMap)
         {
             Apply(d.Key, ref writer);
             Apply(d.Value, ref writer);

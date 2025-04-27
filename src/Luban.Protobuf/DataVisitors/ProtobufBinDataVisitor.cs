@@ -210,7 +210,7 @@ public class ProtobufBinDataVisitor : IDataActionVisitor<CodedOutputStream>
         var keyType = type.Type.KeyType;
         var valueType = type.Type.ValueType;
         var ms = AllocMemoryStream();
-        foreach (var e in type.Datas)
+        foreach (var e in type.DataMap)
         {
             x.WriteTag(fieldId, WireFormat.WireType.LengthDelimited);
             ms.Seek(0, SeekOrigin.Begin);

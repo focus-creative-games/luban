@@ -118,7 +118,7 @@ public class XmlDataVisitor : IDataActionVisitor<XmlWriter>
 
     public void Accept(DMap type, XmlWriter w)
     {
-        foreach (var (k, v) in type.Datas)
+        foreach (var (k, v) in type.DataMap)
         {
             w.WriteStartElement("ele");
             w.WriteStartElement("key");

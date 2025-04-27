@@ -87,7 +87,7 @@ public class ToPythonLiteralVisitor : ToLiteralVisitorBase
         var x = new StringBuilder();
         x.Append('{');
         int index = 0;
-        foreach (var e in type.Datas)
+        foreach (var e in type.DataMap)
         {
             if (index > 0)
             {

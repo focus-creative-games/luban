@@ -74,7 +74,7 @@ public class ToStringVisitor : ToLiteralVisitorBase
     {
         var x = new StringBuilder();
         x.Append('{');
-        foreach (var e in type.Datas)
+        foreach (var e in type.DataMap)
         {
             x.Append('"').Append(e.Key.ToString()).Append('"');
             x.Append(':');

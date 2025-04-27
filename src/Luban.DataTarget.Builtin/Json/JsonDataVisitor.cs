@@ -121,7 +121,7 @@ public class JsonDataVisitor : IDataActionVisitor<Utf8JsonWriter>
     public virtual void Accept(DMap type, Utf8JsonWriter x)
     {
         x.WriteStartArray();
-        foreach (var d in type.Datas)
+        foreach (var d in type.DataMap)
         {
             x.WriteStartArray();
             d.Key.Apply(this, x);
