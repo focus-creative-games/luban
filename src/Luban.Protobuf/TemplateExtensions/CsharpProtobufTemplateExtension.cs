@@ -1,7 +1,7 @@
 ﻿using Scriban.Runtime;
 namespace Luban.Protobuf.TemplateExtensions;
 
-public  class CsharpProtobuf3TemplateExtension : ScriptObject
+public class CsharpProtobufTemplateExtension : ScriptObject
 {
 
     public static string NamespaceWithGraceBegin(string ns)
@@ -23,6 +23,7 @@ public  class CsharpProtobuf3TemplateExtension : ScriptObject
         }
         return "}";
     }
+
     public static string ProtoFullName(string typeName)
     {
         var name = string.Join("", typeName.Split('.'));

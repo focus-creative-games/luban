@@ -5,8 +5,8 @@ using Scriban;
 
 namespace Luban.Protobuf.CodeTarget;
 
-[CodeTarget("cs-protobuf3")]
-public class CSharpProtobuf3CodeTarget : CSharpProtobufCodeTargetBase
+[CodeTarget("cs-protobuf2")]
+public class CSharpProtobuf2CodeTarget : CSharpProtobufCodeTargetBase
 {
 
 }
