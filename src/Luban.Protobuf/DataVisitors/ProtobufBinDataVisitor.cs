@@ -213,14 +213,15 @@ public class ProtobufBinDataVisitor : IDataActionVisitor<CodedOutputStream>
         foreach (var e in type.DataMap)
         {
             x.WriteTag(fieldId, WireFormat.WireType.LengthDelimited);
-            ms.Seek(0, SeekOrigin.Begin);
+            ms.Position = 0;
+            ms.SetLength(0);
             var temp = new CodedOutputStream(ms);
             temp.WriteTag(1, keyType.Apply(ProtobufWireTypeVisitor.Ins));
             e.Key.Apply(this, temp);
             temp.WriteTag(2, valueType.Apply(ProtobufWireTypeVisitor.Ins));
             e.Value.Apply(this, temp);
             temp.Flush();
-            ms.Seek(0, SeekOrigin.Begin);
+            ms.Position = 0;
             x.WriteBytes(ByteString.FromStream(ms));
 
         }
