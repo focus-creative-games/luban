@@ -311,7 +311,7 @@ public static class SheetLoadUtil
 
         for (int i = title.FromIndex; i <= title.ToIndex; i++)
         {
-            var nameAndAttrs = titleRow[i].Value?.ToString()?.Trim();
+            string nameAndAttrs = i < titleRow.Count ? titleRow[i].Value?.ToString()?.Trim() : null;
             if (IsIgnoreTitle(nameAndAttrs))
             {
                 continue;

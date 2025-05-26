@@ -15,6 +15,7 @@ public class ExcelStream
     public ExcelStream(List<Cell> datas, int fromIndex, int toIndex, string sep, string overrideDefault)
     {
         _overrideDefault = overrideDefault;
+        toIndex = Math.Min(toIndex, datas.Count - 1);
         if (string.IsNullOrWhiteSpace(sep))
         {
             if (string.IsNullOrEmpty(overrideDefault))
@@ -110,7 +111,7 @@ public class ExcelStream
             {
                 foreach (var row in rows)
                 {
-                    for (int i = fromIndex; i <= toIndex; i++)
+                    for (int i = fromIndex; i <= toIndex && i < row.Count; i++)
                     {
                         this._datas.Add(row[i]);
                     }
@@ -126,7 +127,7 @@ public class ExcelStream
         {
             foreach (var row in rows)
             {
-                for (int i = fromIndex; i <= toIndex; i++)
+                for (int i = fromIndex; i <= toIndex && i < row.Count; i++)
                 {
                     var cell = row[i];
                     object d = cell.Value;
