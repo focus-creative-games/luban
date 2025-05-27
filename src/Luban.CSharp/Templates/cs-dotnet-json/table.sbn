@@ -2,6 +2,8 @@ using Luban;
 using System.Text.Json;
 
 {{
+    key_type = __table.key_ttype
+    value_type =  __table.value_ttype
     
     func index_type_name
         ret (declaring_type_name $0.type)
@@ -66,10 +68,12 @@ public partial class {{__name}}
 
     public void ResolveRef({{__manager_name}} tables)
     {
+        {{~if is_bean_need_resolve_ref value_type ~}}
         foreach(var _v in _dataList)
         {
             _v.ResolveRef(tables);
         }
+        {{~end~}}
     }
 
         {{~else if __table.is_list_table ~}}
@@ -124,10 +128,12 @@ public partial class {{__name}}
     
     public void ResolveRef({{__manager_name}} tables)
     {
+        {{~if is_bean_need_resolve_ref value_type ~}}
         foreach(var _v in _dataList)
         {
             _v.ResolveRef(tables);
         }
+        {{~end~}}
     }
     {{~else~}}
 
@@ -154,7 +160,9 @@ public partial class {{__name}}
     
     public void ResolveRef({{__manager_name}} tables)
     {
+        {{~if is_bean_need_resolve_ref value_type ~}}
         _data.ResolveRef(tables);
+        {{~end~}}
     }
     {{~end~}}
 }

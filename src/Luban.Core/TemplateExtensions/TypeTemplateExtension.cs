@@ -89,6 +89,11 @@ public class TypeTemplateExtension : ScriptObject
         return field.CType is TBean bean && bean.DefBean.TypeMappers == null && !bean.DefBean.IsValueType;
     }
 
+    public static bool IsBeanNeedResolveRef(TBean bean)
+    {
+        return bean.DefBean.TypeMappers == null && !bean.DefBean.IsValueType;
+    }
+
     public static bool IsFieldArrayLikeNeedResolveRef(DefField field)
     {
         return field.CType.ElementType is TBean bean && bean.DefBean.TypeMappers == null && !bean.DefBean.IsValueType && field.CType is not TMap;

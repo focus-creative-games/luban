@@ -98,5 +98,4 @@ public {{class_modifier __bean}} class {{__name}} : {{if __parent_def_type}} {{_
 
     {{~end~}}
 }
-
 {{namespace_with_grace_end __namespace_with_top_module}}
