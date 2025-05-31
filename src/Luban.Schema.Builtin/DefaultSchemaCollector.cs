@@ -17,7 +17,12 @@ public class DefaultSchemaCollector : SchemaCollectorBase
         foreach (var importFile in _config.Imports)
         {
             s_logger.Debug("import schema file:{} type:{}", importFile.FileName, importFile.Type);
-            var schemaLoader = SchemaManager.Ins.CreateSchemaLoader(FileUtil.GetExtensionWithDot(importFile.FileName), importFile.Type, this);
+            string ext = FileUtil.GetExtensionWithoutDot(importFile.FileName);
+            if (string.IsNullOrEmpty(ext))
+            {
+                throw new Exception($"schema file:'{importFile.FileName}' has no extension. luban doesn't know how to load file without extension.");
+            }
+            var schemaLoader = SchemaManager.Ins.CreateSchemaLoader(ext, importFile.Type, this);
             schemaLoader.Load(importFile.FileName);
         }
 
