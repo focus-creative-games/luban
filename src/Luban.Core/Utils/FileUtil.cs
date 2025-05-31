@@ -265,8 +265,13 @@ public static class FileUtil
         return files;
     }
 
-    public static string GetExtensionWithDot(string file)
+    public static string GetExtensionWithoutDot(string file)
     {
-        return Path.GetExtension(file).Substring(1);
+        string ext = Path.GetExtension(file);
+        if (string.IsNullOrEmpty(ext))
+        {
+            return "";
+        }
+        return ext.Substring(1);
     }
 }
