@@ -87,6 +87,15 @@ public class PathValidator : DataValidatorBase
                 _pathPattern = new Ue4ResourcePattern();
                 break;
             }
+            case "godot":
+            {
+                if (ss.Length != 1)
+                {
+                    ThrowCompileError(field, "");
+                }
+                _pathPattern = new GodotResourcePattern();
+                break;
+            }
             default:
             {
                 ThrowCompileError(field, $"不支持的path模式类型:{patType}");
