@@ -12,7 +12,7 @@ class BinDeserializeVisitor : DecoratorFuncVisitor<string, string, string>
     {
         if (type.IsNullable)
         {
-            return $"if({byteBufName}.ReadBool()) {{ {type.Apply(BinUnderingDeserializeVisitor.Ins, byteBufName, fieldName, 0)} }} else {{ {fieldName} = null; }}";
+            return $"if({byteBufName}.readBool()) {{ {type.Apply(BinUnderingDeserializeVisitor.Ins, byteBufName, fieldName, 0)} }} else {{ {fieldName} = null; }}";
         }
         else
         {

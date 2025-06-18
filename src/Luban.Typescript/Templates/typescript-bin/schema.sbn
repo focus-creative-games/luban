@@ -1,5 +1,5 @@
 
-import ByteBuf from '../bright/serialization/ByteBuf'
+import ByteBuf from '../luban/ByteBuf'
 
 {{~for enum in __enums~}}
 {{namespace_with_grace_begin enum.namespace}} 
@@ -64,7 +64,7 @@ end
 export {{if bean.is_abstract_type}}abstract {{end}}class {{bean.name}}{{if bean.parent_def_type}} extends {{bean.parent_def_type.full_name}}{{end}} {
 {{~if bean.is_abstract_type~}}
     static constructorFrom(_buf_: ByteBuf): {{bean.name}}{
-        switch (_buf_.ReadInt()) {
+        switch (_buf_.readInt()) {
         {{~ for child in bean.hierarchy_not_abstract_children~}}
             case {{child.id}}: return new {{child.full_name}}(_buf_)
         {{~end~}}
@@ -126,7 +126,7 @@ export class {{table.name}} {
     constructor(_buf_: ByteBuf) {
         this._dataMap = new Map<{{declaring_type_name key_type}}, {{declaring_type_name value_type}}>()
         this._dataList = []
-        for(let n = _buf_.ReadInt(); n > 0; n--) {
+        for(let n = _buf_.readInt(); n > 0; n--) {
             let _v: {{declaring_type_name value_type}}
             {{deserialize '_v' '_buf_' value_type}}
             this._dataList.push(_v)
@@ -152,7 +152,7 @@ export class {{table.name}} {
     
     constructor(_buf_: ByteBuf) {
         this._dataList = []
-        for(let n = _buf_.ReadInt(); n > 0; n--) {
+        for(let n = _buf_.readInt(); n > 0; n--) {
             let _v: {{declaring_type_name value_type}}
             {{deserialize '_v' '_buf_' value_type}}
             this._dataList.push(_v)
@@ -173,7 +173,7 @@ export class {{table.name}} {
 
     private _data: {{declaring_type_name value_type}}
     constructor(_buf_: ByteBuf) {
-        if (_buf_.ReadInt() != 1) throw new Error('table mode=one, but size != 1')
+        if (_buf_.readInt() != 1) throw new Error('table mode=one, but size != 1')
         {{deserialize 'this._data' '_buf_' value_type}}
     }
 
