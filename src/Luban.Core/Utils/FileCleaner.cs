@@ -96,6 +96,7 @@ public class FileCleaner
         var cleaner = new FileCleaner();
         cleaner.AddOutputDir(outputDir);
         cleaner.AddIgnoreExtension("meta"); // for unity
+        cleaner.AddIgnoreExtension("uid"); // for godot
         foreach (var file in savedFiles)
         {
             cleaner.AddSavedFile(file);
