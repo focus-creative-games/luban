@@ -45,8 +45,8 @@ public partial class {{__name}}
     
     public {{__name}}(JArray _buf)
     {
-        _dataMap = new System.Collections.Generic.Dictionary<{{declaring_type_name __key_type}}, {{declaring_type_name __value_type}}>();
-        _dataList = new System.Collections.Generic.List<{{declaring_type_name __value_type}}>();
+        _dataMap = new System.Collections.Generic.Dictionary<{{declaring_type_name __key_type}}, {{declaring_type_name __value_type}}>(_buf.Count);
+        _dataList = new System.Collections.Generic.List<{{declaring_type_name __value_type}}>(_buf.Count);
         
         foreach(JObject _ele in _buf)
         {
@@ -93,7 +93,7 @@ public partial class {{__name}}
 
     public {{__name}}(JArray _buf)
     {
-        _dataList = new System.Collections.Generic.List<{{declaring_type_name __value_type}}>();
+        _dataList = new System.Collections.Generic.List<{{declaring_type_name __value_type}}>(_buf.Count);
         
         foreach(JObject _ele in _buf)
         {
@@ -102,21 +102,21 @@ public partial class {{__name}}
             _dataList.Add(_v);
         }
         {{~if __table.is_union_index~}}
-        _dataMapUnion = new {{table_union_map_type_name}}();
+        _dataMapUnion = new {{table_union_map_type_name}}(_buf.Count);
         foreach(var _v in _dataList)
         {
             _dataMapUnion.Add(({{table_key_list "_v"}}), _v);
         }
         {{~else if !__table.index_list.empty?~}}
         {{~for idx in __table.index_list~}}
-            _dataMap_{{idx.index_field.name}} = new System.Collections.Generic.Dictionary<{{declaring_type_name idx.type}}, {{declaring_type_name __value_type}}>();
+            _dataMap_{{idx.index_field.name}} = new System.Collections.Generic.Dictionary<{{declaring_type_name idx.type}}, {{declaring_type_name __value_type}}>(_buf.Count);
         {{~end~}}
-        foreach(var _v in _dataList)
-        {
+            foreach(var _v in _dataList)
+            {
         {{~for idx in __table.index_list~}}
-            _dataMap_{{idx.index_field.name}}.Add(_v.{{format_property_name __code_style idx.index_field.name}}, _v);
+                _dataMap_{{idx.index_field.name}}.Add(_v.{{format_property_name __code_style idx.index_field.name}}, _v);
         {{~end~}}
-        }
+            }
         {{~end~}}
     }
 

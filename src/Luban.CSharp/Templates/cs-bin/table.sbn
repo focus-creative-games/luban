@@ -42,10 +42,10 @@ public partial class {{__name}}
     
     public {{__name}}(ByteBuf _buf)
     {
-        _dataMap = new System.Collections.Generic.Dictionary<{{declaring_type_name key_type}}, {{declaring_type_name value_type}}>();
-        _dataList = new System.Collections.Generic.List<{{declaring_type_name value_type}}>();
-        
-        for(int n = _buf.ReadSize() ; n > 0 ; --n)
+        int n = _buf.ReadSize();
+        _dataMap = new System.Collections.Generic.Dictionary<{{declaring_type_name key_type}}, {{declaring_type_name value_type}}>(n);
+        _dataList = new System.Collections.Generic.List<{{declaring_type_name value_type}}>(n);
+        for(int i = n ; i > 0 ; --i)
         {
             {{declaring_type_name value_type}} _v;
             {{deserialize '_buf' '_v' value_type}}
@@ -88,30 +88,30 @@ public partial class {{__name}}
 
     public {{__name}}(ByteBuf _buf)
     {
-        _dataList = new System.Collections.Generic.List<{{declaring_type_name value_type}}>();
-        
-        for(int n = _buf.ReadSize() ; n > 0 ; --n)
+        int n = _buf.ReadSize();
+        _dataList = new System.Collections.Generic.List<{{declaring_type_name value_type}}>(n);
+        for(int i = n ; i > 0 ; --i)
         {
             {{declaring_type_name value_type}} _v;
             {{deserialize '_buf' '_v' value_type}}
             _dataList.Add(_v);
         }
     {{~if __table.is_union_index~}}
-        _dataMapUnion = new {{table_union_map_type_name}}();
+        _dataMapUnion = new {{table_union_map_type_name}}(n);
         foreach(var _v in _dataList)
         {
             _dataMapUnion.Add(({{table_key_list "_v"}}), _v);
         }
     {{~else if !__table.index_list.empty?~}}
     {{~for idx in __table.index_list~}}
-        _dataMap_{{idx.index_field.name}} = new System.Collections.Generic.Dictionary<{{declaring_type_name idx.type}}, {{declaring_type_name value_type}}>();
+        _dataMap_{{idx.index_field.name}} = new System.Collections.Generic.Dictionary<{{declaring_type_name idx.type}}, {{declaring_type_name value_type}}>(n);
     {{~end~}}
-    foreach(var _v in _dataList)
-    {
+        foreach(var _v in _dataList)
+        {
     {{~for idx in __table.index_list~}}
-        _dataMap_{{idx.index_field.name}}.Add(_v.{{format_property_name __code_style idx.index_field.name}}, _v);
+            _dataMap_{{idx.index_field.name}}.Add(_v.{{format_property_name __code_style idx.index_field.name}}, _v);
     {{~end~}}
-    }
+        }
     {{~end~}}
     }
 
