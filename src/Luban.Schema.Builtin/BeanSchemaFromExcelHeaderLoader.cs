@@ -25,6 +25,7 @@ public class BeanSchemaFromExcelHeaderLoader : IBeanSchemaLoader
             Parent = "",
             Groups = new(),
             Fields = new(),
+            Tags = new Dictionary<string, string>(),
         };
 
 
@@ -81,6 +82,7 @@ public class BeanSchemaFromExcelHeaderLoader : IBeanSchemaLoader
                 Name = name,
                 Groups = new List<string>(),
                 Variants = new List<string>(),
+                Tags = new Dictionary<string, string>(),
             };
 
             string[] attrs = f.Type.Trim().Split('&').Select(s => s.Trim()).ToArray();
