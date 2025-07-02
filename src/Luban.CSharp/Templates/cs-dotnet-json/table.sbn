@@ -43,8 +43,9 @@ public partial class {{__name}}
     
     public {{__name}}(JsonElement _buf)
     {
-        _dataMap = new System.Collections.Generic.Dictionary<{{declaring_type_name __key_type}}, {{declaring_type_name __value_type}}>();
-        _dataList = new System.Collections.Generic.List<{{declaring_type_name __value_type}}>();
+        int count = _buf.GetArrayLength();
+        _dataMap = new System.Collections.Generic.Dictionary<{{declaring_type_name __key_type}}, {{declaring_type_name __value_type}}>(count);
+        _dataList = new System.Collections.Generic.List<{{declaring_type_name __value_type}}>(count);
         
         foreach(JsonElement _ele in _buf.EnumerateArray())
         {
@@ -89,7 +90,8 @@ public partial class {{__name}}
 
     public {{__name}}(JsonElement _buf)
     {
-        _dataList = new System.Collections.Generic.List<{{declaring_type_name __value_type}}>();
+        int count = _buf.GetArrayLength();
+        _dataList = new System.Collections.Generic.List<{{declaring_type_name __value_type}}>(count);
         
         foreach(JsonElement _ele in _buf.EnumerateArray())
         {
@@ -99,20 +101,20 @@ public partial class {{__name}}
         }
     {{~if __table.is_union_index~}}
         _dataMapUnion = new {{table_union_map_type_name}}();
-        foreach(var _v in _dataList)
-        {
-            _dataMapUnion.Add(({{table_key_list "_v"}}), _v);
-        }
+            foreach(var _v in _dataList)
+            {
+                _dataMapUnion.Add(({{table_key_list "_v"}}), _v);
+            }
     {{~else if !__table.index_list.empty?~}}
     {{~for idx in __table.index_list~}}
-        _dataMap_{{idx.index_field.name}} = new System.Collections.Generic.Dictionary<{{declaring_type_name idx.type}}, {{declaring_type_name __value_type}}>();
+            _dataMap_{{idx.index_field.name}} = new System.Collections.Generic.Dictionary<{{declaring_type_name idx.type}}, {{declaring_type_name __value_type}}>(count);
     {{~end~}}
-    foreach(var _v in _dataList)
-    {
+            foreach(var _v in _dataList)
+            {
     {{~for idx in __table.index_list~}}
-        _dataMap_{{idx.index_field.name}}.Add(_v.{{format_property_name __code_style idx.index_field.name}}, _v);
+                _dataMap_{{idx.index_field.name}}.Add(_v.{{format_property_name __code_style idx.index_field.name}}, _v);
     {{~end~}}
-    }
+            }
     {{~end~}}
     }
 
