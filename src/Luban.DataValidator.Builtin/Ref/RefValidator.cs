@@ -202,7 +202,7 @@ public class RefValidator : DataValidatorBase
                 throw new Exception($"field:'{field}' ref:{actualTable} 是list表，必须显式指定索引字段");
             }
             var indexField = table.IndexList.Find(k => k.IndexField.Name == indexName);
-            if (indexField.Type == null)
+            if (indexField?.Type == null)
             {
                 throw new Exception($"field:'{field}' 索引字段:{indexName} 不是被引用的list表:{actualTable} 的索引字段，合法值为'{table.Index}'之一");
             }
