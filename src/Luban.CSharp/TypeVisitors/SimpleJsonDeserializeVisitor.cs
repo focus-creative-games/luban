@@ -76,10 +76,6 @@ public class SimpleJsonDeserializeVisitor : ITypeFuncVisitor<string, string, int
         string typeStr = $"{type.ElementType.Apply(DeclaringTypeNameVisitor.Ins)}[{_n}]";
         if (type.Dimension > 1)
         {
-            if (type.FinalElementType == null)
-            {
-                throw new System.Exception("��ά����û��Ԫ������");
-            }
             typeStr = $"{type.FinalElementType.Apply(UnderlyingDeclaringTypeNameVisitor.Ins)}[{_n}]";
             for (int i = 0; i < type.Dimension - 1; i++)
             {

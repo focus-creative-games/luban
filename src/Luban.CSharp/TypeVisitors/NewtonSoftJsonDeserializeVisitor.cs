@@ -76,10 +76,6 @@ internal class NewtonSoftJsonDeserializeVisitor: ITypeFuncVisitor<string, string
         string typeStr = $"{type.ElementType.Apply(DeclaringTypeNameVisitor.Ins)}[{_n}]";
         if (type.Dimension > 1)
         {
-            if (type.FinalElementType == null)
-            {
-                throw new System.Exception("should not be here!");
-            }
             typeStr = $"{type.FinalElementType.Apply(UnderlyingDeclaringTypeNameVisitor.Ins)}[{_n}]";
             for (int i = 0; i < type.Dimension - 1; i++)
             {

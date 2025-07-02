@@ -71,10 +71,6 @@ class JavaBinUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string, int
         var typeStr = $"{type.ElementType.Apply(JavaDeclaringTypeNameVisitor.Ins)}[{__n}]";
         if (type.Dimension > 1)
         {
-            if (type.FinalElementType == null)
-            {
-                throw new System.Exception("多维数组没有元素类型");
-            }
             typeStr = $"{type.FinalElementType.Apply(JavaDeclaringTypeNameVisitor.Ins)}[{__n}]";
             for (int i = 0; i < type.Dimension - 1; i++)
             {
