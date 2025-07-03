@@ -29,6 +29,7 @@ Luban standardizes the game configuration development workflow, which can greatl
 - Supports all major game engines and platforms. Support Unity, Unreal, Cocos2x, Godot, WeChat games, etc.
 - Good cross-platform capability. It can run well on Win, Linux, and Mac platforms.
 - Support all mainstream hot update solutions. hybridclr, ilruntime, {x,t,s}lua, puerts, etc.
+- The generated code makes no reflection API calls, ensuring compatibility with common code obfuscation and hardening tools such as [Obfuz](https://github.com/focus-creative-games/obfuz), Obfuscator, Confuser, and .NET Refactor.
 - Clear and elegant generation pipeline, it is easy to carry out secondary development on the basis of luban, and customize a configuration tool suitable for your own project style.
 
 ## Documentation

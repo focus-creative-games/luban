@@ -29,6 +29,7 @@ luban标准化了游戏配置开发工作流，可以极大提升策划和程序
 - 支持所有主流的游戏引擎和平台。支持Unity、Unreal、Cocos2x、Godot、微信小游戏等
 - 良好的跨平台能力。能在Win,Linux,Mac平台良好运行。
 - 支持所有主流的热更新方案。hybridclr、ilruntime、{x,t,s}lua、puerts等
+- 生成的代码未调用任何反射接口，兼容[Obfuz](https://github.com/focus-creative-games/obfuz)、Obfuscator、Confuser、.Net Refactor等常见代码混淆和加固工具。
 - 清晰优雅的生成管线，很容易在luban基础上进行二次开发，定制出适合自己项目风格的配置工具。
 
 ## 文档
