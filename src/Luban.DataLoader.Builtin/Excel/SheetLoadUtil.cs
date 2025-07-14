@@ -59,7 +59,7 @@ public static class SheetLoadUtil
     {
         bool orientRow;
 
-        if (!TryParseMeta(reader, out orientRow, out var tableName))
+        if (!TryParseMeta(reader, out orientRow))
         {
             return null;
         }
@@ -67,7 +67,7 @@ public static class SheetLoadUtil
         ValidateTitles(cells);
         var title = ParseTitle(cells, reader.MergeCells, orientRow);
         cells.RemoveAll(c => IsNotDataRow(c));
-        return new RawSheet() { Title = title, TableName = tableName, SheetName = reader.Name, Cells = cells };
+        return new RawSheet() { Title = title, SheetName = reader.Name, Cells = cells };
     }
 
 
@@ -101,7 +101,7 @@ public static class SheetLoadUtil
             {
                 break;
             }
-            var tags = rowTag.Substring(2).Split(s_sep).Where(s => !string.IsNullOrEmpty(s));
+            var tags = StringUtil.SplitStringWithEscape(rowTag.Substring(2), s_sep).Where(s => !string.IsNullOrEmpty(s)).ToList();
             foreach (string tag in tags)
             {
                 if (!s_knownSpecialTags.Contains(tag))
@@ -168,7 +168,7 @@ public static class SheetLoadUtil
             {
                 throw new Exception($"excel标题头不再使用'&'作为分割符，请改为'{s_sep}'");
             }
-            var tags = rowTag.Substring(2).Split(s_sep).Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToList();
+            var tags = StringUtil.SplitStringWithEscape(rowTag.Substring(2), s_sep).Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToList();
             if (tags.Contains("field") || tags.Contains("var") || tags.Contains("+"))
             {
                 rowIndex = i;
@@ -220,7 +220,7 @@ public static class SheetLoadUtil
         {
             throw new Exception($"excel标题头不再使用'&'作为分割符，请改为'{s_sep}'");
         }
-        var attrs = nameAndAttrs.Split(s_sep);
+        var attrs = StringUtil.SplitStringWithEscape(nameAndAttrs, s_sep);
 
         string titleName = attrs[0];
         var tags = new Dictionary<string, string>();
@@ -370,10 +370,9 @@ public static class SheetLoadUtil
         }
     }
 
-    public static bool TryParseMeta(string metaStr, out bool orientRow, out string tableName)
+    public static bool TryParseMeta(string metaStr, out bool orientRow)
     {
         orientRow = true;
-        tableName = "";
 
         // meta 行 必须以 ##为第一个单元格内容,紧接着 key:value 形式 表达meta属性
         if (string.IsNullOrEmpty(metaStr) || !metaStr.StartsWith("##"))
@@ -384,7 +383,7 @@ public static class SheetLoadUtil
         {
             throw new Exception($"excel标题头不再使用'&'作为分割符，请改为'{s_sep}'");
         }
-        foreach (var attr in metaStr.Substring(2).Split(s_sep))
+        foreach (var attr in StringUtil.SplitStringWithEscape(metaStr.Substring(2), s_sep))
         {
             if (string.IsNullOrWhiteSpace(attr))
             {
@@ -396,28 +395,17 @@ public static class SheetLoadUtil
             string value = sepIndex >= 0 ? attr.Substring(sepIndex + 1) : "";
             switch (key)
             {
-                case "field":
                 case "+":
                 case "var":
                 case "comment":
-                case "desc":
                 case "type":
                 {
                     break;
                 }
-                case "row":
-                {
-                    orientRow = true;
-                    break;
-                }
                 case "column":
+                case "vertical":
                 {
                     orientRow = false;
-                    break;
-                }
-                case "table":
-                {
-                    tableName = value;
                     break;
                 }
                 default:
@@ -429,16 +417,15 @@ public static class SheetLoadUtil
         return true;
     }
 
-    public static bool TryParseMeta(IExcelDataReader reader, out bool orientRow, out string tableName)
+    public static bool TryParseMeta(IExcelDataReader reader, out bool orientRow)
     {
         if (!reader.Read() || reader.FieldCount == 0)
         {
             orientRow = true;
-            tableName = "";
             return false;
         }
         string metaStr = reader.GetString(0)?.Trim();
-        return TryParseMeta(metaStr, out orientRow, out tableName);
+        return TryParseMeta(metaStr, out orientRow);
     }
 
     private static bool IsTypeRow(List<Cell> row)
@@ -571,14 +558,14 @@ public static class SheetLoadUtil
     {
         bool orientRow;
 
-        if (!TryParseMeta(reader, out orientRow, out var _))
+        if (!TryParseMeta(reader, out orientRow))
         {
             return null;
         }
         var cells = ParseRawSheetContent(reader, orientRow, true);
         var title = ParseTitle(cells, reader.MergeCells, orientRow);
 
-        int typeRowIndex = cells.FindIndex(row => IsTypeRow(row));
+        int typeRowIndex = cells.FindIndex(IsTypeRow);
 
         if (typeRowIndex < 0)
         {
@@ -596,7 +583,7 @@ public static class SheetLoadUtil
         {
             descRow = cells.Count > 1 ? cells.Skip(1).FirstOrDefault(row => IsRowTagEqual(row, "##")) : null;
         }
-        List<Cell> groupRow = cells.Find(row => IsGroupRow(row));
+        List<Cell> groupRow = cells.Find(IsGroupRow);
         var fields = new Dictionary<string, FieldInfo>();
         foreach (var subTitle in title.SubTitleList)
         {

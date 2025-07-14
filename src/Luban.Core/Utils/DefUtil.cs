@@ -1,4 +1,6 @@
-﻿namespace Luban.Utils;
+﻿using System.Text;
+
+namespace Luban.Utils;
 
 public static class DefUtil
 {
@@ -33,10 +35,22 @@ public static class DefUtil
         }
 
         int braceDepth = 0;
-        int pairStart = 0;
+        var buf = new StringBuilder();
+        bool inEscape = false;
         for (int i = 0; i < tags.Length; i++)
         {
             var c = tags[i];
+            if (inEscape)
+            {
+                inEscape = false;
+                buf.Append(c);
+                continue;
+            }
+            if (c == '\\')
+            {
+                inEscape = true;
+                continue;
+            }
             if (c == '(' || c == '[' || c == '{')
             {
                 ++braceDepth;
@@ -48,18 +62,22 @@ public static class DefUtil
 
             if (braceDepth == 0 && c == '#')
             {
-                string rawPair = tags.Substring(pairStart, i - pairStart);
-                pairStart = i + 1;
+                string rawPair = buf.ToString();
+                buf.Clear();
                 AddAttr(am, rawPair);
+            }
+            else
+            {
+                buf.Append(c);
             }
         }
         if (braceDepth != 0)
         {
             throw new Exception($"非法tags:{tags}");
         }
-        if (pairStart < tags.Length)
+        if (buf.Length > 0)
         {
-            AddAttr(am, tags.Substring(pairStart));
+            AddAttr(am, buf.ToString());
         }
         return am;
     }

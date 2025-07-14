@@ -43,16 +43,6 @@ public class ExcelRowColumnDataSource : DataLoaderBase
         }
     }
 
-    public void Load(params RawSheet[] rawSheets)
-    {
-        foreach (RawSheet rawSheet in rawSheets)
-        {
-            var sheet = new RowColumnSheet("__intern__", rawSheet.TableName, rawSheet.SheetName);
-            sheet.Load(rawSheet);
-            _sheets.Add(sheet);
-        }
-    }
-
     public RawSheetTableDefInfo LoadTableDefInfo(string rawUrl, string sheetName, Stream stream)
     {
         return SheetLoadUtil.LoadSheetTableDefInfo(rawUrl, sheetName, stream);

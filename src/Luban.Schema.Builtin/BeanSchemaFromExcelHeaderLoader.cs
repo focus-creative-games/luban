@@ -85,7 +85,7 @@ public class BeanSchemaFromExcelHeaderLoader : IBeanSchemaLoader
                 Tags = new Dictionary<string, string>(),
             };
 
-            string[] attrs = f.Type.Trim().Split('&').Select(s => s.Trim()).ToArray();
+            string[] attrs = StringUtil.SplitStringWithEscape(f.Type.Trim(), '&').Select(s => s.Trim()).ToArray();
 
             if (attrs.Length == 0 || string.IsNullOrWhiteSpace(attrs[0]))
             {
