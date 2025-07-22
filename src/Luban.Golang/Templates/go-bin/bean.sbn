@@ -17,15 +17,15 @@ import (
 {{collect_import __this}}
 
 type {{go_full_name}} struct {
-    {{~for field in hierarchy_fields ~}}
+{{~for field in hierarchy_fields ~}}
     {{~if field.ctype.is_enum~}}
-        {{format_field_name __code_style field.name}} {{field.type}}
+    {{format_field_name __code_style field.name}} {{field.type}}
+    {{~else if field.ctype.is_dynamic~}}
+    {{format_field_name __code_style field.name}} is{{field.type}}_Value
     {{~else~}}
-        {{format_field_name __code_style field.name}} {{~if field.ctype.is_dynamic}} is{{field.type}}_Value
-        {{else}} {{declaring_type_name field.ctype}}
-        {{~end~}}
-    {{end~}}
+    {{format_field_name __code_style field.name}} {{declaring_type_name field.ctype}}
     {{~end~}}
+{{~end~}}
 }
 
 const TypeId_{{go_full_name}} = {{__this.id}}
