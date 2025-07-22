@@ -2,13 +2,11 @@
 package {{__top_module}};
 {{~end~}}
 
+{{~if __this.comment != '' ~}}
+// {{full_name __this}} {{escape_comment __this.comment}}
+{{~end~}}
 type {{full_name __this}} int32
 
-{{~if __this.comment != '' ~}}
-/**
- * {{escape_comment __this.comment}}
- */
-{{~end~}}
 const (
     {{~ for item in __this.items ~}}
 {{~if item.comment_or_alias != '' ~}}
