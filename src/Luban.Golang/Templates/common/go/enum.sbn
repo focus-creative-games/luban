@@ -2,6 +2,8 @@
 package {{__top_module}};
 {{~end~}}
 
+type {{full_name __this}} int32
+
 {{~if __this.comment != '' ~}}
 /**
  * {{escape_comment __this.comment}}
@@ -14,6 +16,6 @@ const (
      * {{escape_comment item.comment_or_alias}}
      */
 {{~end~}}
-    {{full_name __this}}_{{item.name}} = {{item.int_value}};
+    {{full_name __this}}_{{item.name}} {{full_name __this}} = {{item.int_value}};
     {{~end~}}
 )

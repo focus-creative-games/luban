@@ -18,7 +18,13 @@ import (
 
 type {{go_full_name}} struct {
     {{~for field in hierarchy_fields ~}}
-    {{format_field_name __code_style field.name}} {{declaring_type_name field.ctype}}
+    {{~if field.ctype.is_enum~}}
+        {{format_field_name __code_style field.name}} {{field.type}}
+    {{~else~}}
+        {{format_field_name __code_style field.name}} {{~if field.ctype.is_dynamic}} is{{field.type}}_Value
+        {{else}} {{declaring_type_name field.ctype}}
+        {{~end~}}
+    {{end~}}
     {{~end~}}
 }
 
@@ -29,7 +35,19 @@ func (*{{go_full_name}}) GetTypeId() int32 {
 }
 
 {{~if is_abstract_type~}}
-func New{{go_full_name}}(_buf *luban.ByteBuf) (interface{}, error) {
+type is{{go_full_name}}_Value interface {
+	is{{go_full_name}}_Value()
+}
+
+{{~for child in hierarchy_not_abstract_children~}}
+func (*{{full_name child}}) is{{go_full_name}}_Value() {}
+{{~end~}}
+
+{{~end~}}
+
+
+{{~if is_abstract_type~}}
+func New{{go_full_name}}(_buf *luban.ByteBuf) (is{{go_full_name}}_Value, error) {
     var id int32
     var err error
     if id, err = _buf.ReadInt() ; err != nil {
@@ -47,7 +65,18 @@ func New{{go_full_name}}(_buf *luban.ByteBuf) (interface{}, error) {
 func New{{go_full_name}}(_buf *luban.ByteBuf) (_v *{{go_full_name}}, err error) {
     _v = &{{go_full_name}}{}
     {{~for field in hierarchy_fields ~}}
-    {{deserialize_field field.ctype ("_v." + (format_field_name __code_style field.name)) '_buf' 'err'}}
+    {{~if field.ctype.is_enum~}}
+    {
+        var tmp int32
+        if tmp, err = _buf.ReadInt(); err != nil {
+			err = errors.New("error")
+			return
+		}
+        _v.{{format_field_name __code_style field.name}} = ({{field.type}})(tmp)
+    }
+    {{~else~}}
+        {{deserialize_field field.ctype ("_v." + (format_field_name __code_style field.name)) '_buf' 'err'}}
+    {{~end~}}
     {{~end~}}
     return
 }
