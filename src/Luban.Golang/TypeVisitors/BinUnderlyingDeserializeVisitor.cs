@@ -10,7 +10,7 @@ public class BinUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string, 
 
     public string Accept(TBool type, string fieldName, string bufName, string err, int depth)
     {
-        return $"{{ if {fieldName}, {err} = {bufName}.ReadBool(); {err} != nil {{ {err} = errors.New(\"error\"); {err} = errors.New(\"error\"); return }} }}";
+        return $"{{ if {fieldName}, {err} = {bufName}.ReadBool(); {err} != nil {{ {err} = errors.New(\"error\"); return }} }}";
     }
 
     public string Accept(TByte type, string fieldName, string bufName, string err, int depth)
