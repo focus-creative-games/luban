@@ -16,4 +16,6 @@ public interface ISchemaCollector
 
     void Add(RawRefGroup refGroup);
 
+    void AddConstAlias(string name, string alias);
+
 }

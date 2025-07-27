@@ -45,7 +45,7 @@ class ExcelStreamDataCreator : ITypeFuncVisitor<ExcelStream, DType>
         {
             return null;
         }
-        if (!byte.TryParse(d.ToString(), out byte v))
+        if (!LoadDataUtil.TryParseExcelByteFromNumberOrConstAlias(d.ToString(), out byte v))
         {
             throw new InvalidExcelDataException($"{d} 不是 byte 类型值");
         }
@@ -59,7 +59,7 @@ class ExcelStreamDataCreator : ITypeFuncVisitor<ExcelStream, DType>
         {
             return null;
         }
-        if (!short.TryParse(d.ToString(), out short v))
+        if (!LoadDataUtil.TryParseExcelShortFromNumberOrConstAlias(d.ToString(), out short v))
         {
             throw new InvalidExcelDataException($"{d} 不是 short 类型值");
         }
@@ -81,7 +81,7 @@ class ExcelStreamDataCreator : ITypeFuncVisitor<ExcelStream, DType>
         //        return DInt.ValueOf(c);
         //    }
         //}
-        if (!int.TryParse(ds, out var v))
+        if (!LoadDataUtil.TryParseExcelIntFromNumberOrConstAlias(ds, out var v))
         {
             throw new InvalidExcelDataException($"{d} 不是 int 类型值");
         }
@@ -103,7 +103,7 @@ class ExcelStreamDataCreator : ITypeFuncVisitor<ExcelStream, DType>
         //        return DLong.ValueOf(c);
         //    }
         //}
-        if (!long.TryParse(ds, out var v))
+        if (!LoadDataUtil.TryParseExcelLongFromNumberOrConstAlias(ds, out var v))
         {
             throw new InvalidExcelDataException($"{d} 不是 long 类型值");
         }

@@ -25,6 +25,7 @@ public class XmlSchemaLoader : SchemaLoaderBase
         _tagHandlers.Add("bean", AddBean);
         _tagHandlers.Add("table", AddTable);
         _tagHandlers.Add("refgroup", AddRefGroup);
+        _tagHandlers.Add("constalias", AddConstAlias);
     }
 
     public override void Load(string fileName)
@@ -283,5 +284,20 @@ public class XmlSchemaLoader : SchemaLoaderBase
     private void AddRefGroup(XElement e)
     {
         Collector.Add(XmlSchemaUtil.CreateRefGroup(_fileName, e));
+    }
+
+    private void AddConstAlias(XElement e)
+    {
+        string name = XmlUtil.GetRequiredAttribute(e, "name");
+        string alias = XmlUtil.GetRequiredAttribute(e, "value");
+        if (string.IsNullOrEmpty(name))
+        {
+            throw new LoadDefException($"定义文件:{_fileName} 中的constalias的name不能为空");
+        }
+        if (string.IsNullOrEmpty(alias))
+        {
+            throw new LoadDefException($"定义文件:{_fileName} 中的constalias `{name}`的value不能为空");
+        }
+        Collector.AddConstAlias(name, alias);
     }
 }

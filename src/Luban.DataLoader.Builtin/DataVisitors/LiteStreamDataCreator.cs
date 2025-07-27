@@ -42,7 +42,7 @@ class LiteStreamDataCreator : ITypeFuncVisitor<LiteStream, DType>
         {
             return null;
         }
-        if (!byte.TryParse(d, out byte v))
+        if (!LoadDataUtil.TryParseExcelByteFromNumberOrConstAlias(d, out byte v))
         {
             throw new InvalidExcelDataException($"{d} 不是 byte 类型值");
         }
@@ -56,7 +56,7 @@ class LiteStreamDataCreator : ITypeFuncVisitor<LiteStream, DType>
         {
             return null;
         }
-        if (!short.TryParse(d, out short v))
+        if (!LoadDataUtil.TryParseExcelShortFromNumberOrConstAlias(d, out short v))
         {
             throw new InvalidExcelDataException($"{d} 不是 short 类型值");
         }
@@ -70,7 +70,7 @@ class LiteStreamDataCreator : ITypeFuncVisitor<LiteStream, DType>
         {
             return null;
         }
-        if (!int.TryParse(d, out var v))
+        if (!LoadDataUtil.TryParseExcelIntFromNumberOrConstAlias(d, out var v))
         {
             throw new InvalidExcelDataException($"{d} 不是 int 类型值");
         }
@@ -85,7 +85,7 @@ class LiteStreamDataCreator : ITypeFuncVisitor<LiteStream, DType>
             return null;
         }
         //}
-        if (!long.TryParse(d, out var v))
+        if (!LoadDataUtil.TryParseExcelLongFromNumberOrConstAlias(d, out var v))
         {
             throw new InvalidExcelDataException($"{d} 不是 long 类型值");
         }
@@ -99,7 +99,7 @@ class LiteStreamDataCreator : ITypeFuncVisitor<LiteStream, DType>
         {
             return null;
         }
-        if (!float.TryParse(d, out var v))
+        if (!LoadDataUtil.TryParseExcelFloatFromNumberOrConstAlias(d, out var v))
         {
             throw new InvalidExcelDataException($"{d} 不是 float 类型值");
         }
@@ -113,7 +113,7 @@ class LiteStreamDataCreator : ITypeFuncVisitor<LiteStream, DType>
         {
             return null;
         }
-        if (!double.TryParse(d, out var v))
+        if (!LoadDataUtil.TryParseExcelDoubleFromNumberOrConstAlias(d, out var v))
         {
             throw new InvalidExcelDataException($"{d} 不是 double 类型值");
         }

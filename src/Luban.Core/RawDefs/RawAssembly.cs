@@ -13,4 +13,6 @@ public class RawAssembly
     public List<RawTarget> Targets { get; set; } = new();
 
     public List<RawRefGroup> RefGroups { get; set; } = new();
+
+    public Dictionary<string, string> ConstAliases { get; set; } = new();
 }

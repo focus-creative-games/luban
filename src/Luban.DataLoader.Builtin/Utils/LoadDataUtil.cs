@@ -273,6 +273,96 @@ static class LoadDataUtil
         }
     }
 
+    public static bool TryParseExcelByteFromNumberOrConstAlias(string s, out byte value)
+    {
+        s = s.Trim();
+        if (byte.TryParse(s, out value))
+        {
+            return true;
+        }
+        DefAssembly assembly = GenerationContext.Current.Assembly;
+        if (assembly.TryGetConstAlias(s, out var constValue) && byte.TryParse(constValue, out value))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public static bool TryParseExcelShortFromNumberOrConstAlias(string s, out short value)
+    {
+        s = s.Trim();
+        if (short.TryParse(s, out value))
+        {
+            return true;
+        }
+        DefAssembly assembly = GenerationContext.Current.Assembly;
+        if (assembly.TryGetConstAlias(s, out var constValue) && short.TryParse(constValue, out value))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public static bool TryParseExcelIntFromNumberOrConstAlias(string s, out int value)
+    {
+        s = s.Trim();
+        if (int.TryParse(s, out value))
+        {
+            return true;
+        }
+        DefAssembly assembly = GenerationContext.Current.Assembly;
+        if (assembly.TryGetConstAlias(s, out var constValue) && int.TryParse(constValue, out value))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public static bool TryParseExcelLongFromNumberOrConstAlias(string s, out long value)
+    {
+        s = s.Trim();
+        if (long.TryParse(s, out value))
+        {
+            return true;
+        }
+        DefAssembly assembly = GenerationContext.Current.Assembly;
+        if (assembly.TryGetConstAlias(s, out var constValue) && long.TryParse(constValue, out value))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public static bool TryParseExcelFloatFromNumberOrConstAlias(string s, out float value)
+    {
+        s = s.Trim();
+        if (float.TryParse(s, out value))
+        {
+            return true;
+        }
+        DefAssembly assembly = GenerationContext.Current.Assembly;
+        if (assembly.TryGetConstAlias(s, out var constValue) && float.TryParse(constValue, out value))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public static bool TryParseExcelDoubleFromNumberOrConstAlias(string s, out double value)
+    {
+        s = s.Trim();
+        if (double.TryParse(s, out value))
+        {
+            return true;
+        }
+        DefAssembly assembly = GenerationContext.Current.Assembly;
+        if (assembly.TryGetConstAlias(s, out var constValue) && double.TryParse(constValue, out value))
+        {
+            return true;
+        }
+        return false;
+    }
+
     //public static string Data2String(DType data)
     //{
     //    var s = new StringBuilder();
