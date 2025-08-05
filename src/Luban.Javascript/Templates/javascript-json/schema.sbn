@@ -1,0 +1,196 @@
+
+{{~for enum in __enums~}}{{~if enum.comment != '' ~}}
+/**
+ * {{enum.comment | html.escape}}
+ */
+{{~end~}}
+export const {{full_name enum}} = Object.freeze({
+    {{~for item in enum.items ~}}
+{{~if item.comment != '' ~}}
+    /**
+     * {{escape_comment item.comment}}
+     */
+{{~end~}}
+    {{item.name}}: {{item.int_value}},
+    {{~end~}}
+});
+
+{{~end~}}
+
+
+{{~
+func get_ref_name 
+    ret (format_property_name __code_style $0.name) + '_ref'
+end
+
+func generate_resolve_field_ref
+    field = $0
+    fieldName = format_property_name __code_style field.name
+    refTable = get_ref_table field
+    if can_generate_ref field
+        tableName = refTable.name
+        if field.is_nullable
+            ret 'this.'+(get_ref_name field) + ' = this.' + fieldName + '!= null ? tables.' + tableName + '.get(this.' + fieldName + ') : null'
+        else
+            ret 'this.'+(get_ref_name field) + ' = tables.' + tableName + '.get(this.' + fieldName + ')'
+        end
+    else
+        if (is_field_bean_need_resolve_ref field)
+            ret 'this.'+fieldName + '?.resolve(tables);'
+        else if (is_field_array_like_need_resolve_ref field)
+            ret 'for (let _e of ' + 'this.' + fieldName + ') { _e?.resolve(tables); }'
+        else if (is_field_map_need_resolve_ref field)
+            ret 'for (let [_, _e] of ' + 'this.' + fieldName + ') { _e?.resolve(tables); }'
+        else
+            ret ''
+        end
+    end
+end
+~}}
+
+{{~for bean in __beans~}}
+
+{{~if bean.comment != '' ~}}
+/**
+ * {{escape_comment bean.comment}}
+ */
+{{~end~}}
+export class {{full_name bean}}{{if bean.parent_def_type}} extends {{full_name bean.parent_def_type}}{{end}} {
+{{~if bean.is_abstract_type~}}
+    static constructorFrom(_json_) {
+        switch (_json_["$type"]) {
+        {{~ for child in bean.hierarchy_not_abstract_children~}}
+            case '{{impl_data_type child bean}}': return new {{full_name child}}(_json_);
+        {{~end~}}
+            default: throw new Error();
+        }
+    }
+{{~end~}}
+
+    constructor(_json_) {
+        {{~if bean.parent_def_type~}}
+        super(_json_);
+        {{~end~}}
+        {{~ for field in bean.export_fields ~}}
+        {{~if !field.ctype.is_nullable~}}
+        if (_json_.{{field.name}} === undefined) { throw new Error() };
+        {{~end~}}
+        {{deserialize ('this.' + format_field_name __code_style field.name) ( '_json_.' + field.name) field.ctype}};
+        {{~end~}}
+    }
+
+    resolve(tables) {
+        {{~if bean.parent_def_type~}}
+        super.resolve(tables);
+        {{~end~}}
+        {{~ for field in bean.export_fields ~}}
+        {{generate_resolve_field_ref field}}
+        {{~end~}}
+    }
+}
+
+{{~end~}}
+
+{{~for table in __tables
+    key_type = table.key_ttype
+    value_type = table.value_ttype
+~}}
+
+{{~if table.comment != '' ~}}
+/**
+ * {{escape_comment table.comment}}
+ */
+{{~end~}}
+export class {{full_name table}} {
+    {{~if table.is_map_table ~}}
+
+    constructor(_json_) {
+        this._dataMap = new Map();
+        this._dataList = [];
+        for(var _json2_ of _json_) {
+            let _v;
+            {{deserialize '_v' '_json2_' value_type}};
+            this._dataList.push(_v);
+            this._dataMap.set(_v.{{format_field_name __code_style table.index_field.name}}, _v);
+        }
+    }
+
+    getDataMap() { return this._dataMap; }
+    getDataList() { return this._dataList; }
+
+    get(key) { return this._dataMap.get(key); }
+
+    resolve(tables) {
+        for(let  data of this._dataList) {
+            data.resolve(tables);
+        }
+    }
+    {{~else if table.is_list_table ~}}
+    
+    constructor(_json_) {
+        this._dataList = [];
+        for(var _json2_ of _json_) {
+            let _v;
+            {{deserialize '_v' '_json2_' value_type}};
+            this._dataList.push(_v);
+        }
+    }
+
+    getDataList() { return this._dataList }
+
+    get(index) { return this._dataList[index] }
+    
+    resolve(tables) {
+        for(let  data of this._dataList) {
+            data.resolve(tables);
+        }
+    }
+    {{~else~}}
+
+    constructor(_json_) {
+        if (_json_.length != 1) throw new Error('table mode=one, but size != 1');
+        {{deserialize 'this._data' '_json_[0]' value_type}};
+    }
+
+    getData() { return this._data; }
+
+    {{~ for field in value_type.def_bean.hierarchy_export_fields ~}}
+{{~if field.comment != '' ~}}
+    /**
+     * {{escape_comment field.comment}}
+     */
+{{~end~}}
+    get  {{format_field_name __code_style field.name}}() { return this._data.{{format_field_name __code_style field.name}}; }
+    {{~if can_generate_ref field~}}
+    get  {{format_field_name __code_style field.name}}_ref(): { return this._data.{{format_field_name __code_style field.name}}_ref; }
+    {{~end~}}
+    {{~end~}}
+
+    resolve(tables) {
+        this._data.resolve(tables);
+    }
+    {{end}}
+}
+
+{{~end~}}
+
+export class {{__name}} {
+    {{~ for table in __tables ~}}
+{{~if table.comment != '' ~}}
+    /**
+     * {{escape_comment table.comment}}
+     */
+{{~end~}}
+    get {{table.name}}() { return this._{{table.name}};}
+    {{~end~}}
+
+    constructor(loader) {
+        {{~for table in __tables ~}}
+        this._{{table.name}} = new {{full_name table}}(loader('{{table.output_data_file}}'));
+        {{~end~}}
+
+        {{~for table in __tables ~}}
+        this._{{table.name}}.resolve(this);
+        {{~end~}}
+    }
+}

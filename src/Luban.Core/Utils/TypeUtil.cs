@@ -139,6 +139,11 @@ public static class TypeUtil
         return MakeGoNamespace(module) + name;
     }
 
+    public static string MakeJavascriptFullName(string module, string name)
+    {
+        return MakeGoNamespace(module) + name;
+    }
+
     public static string MakeNamespace(string module, string subModule)
     {
         if (string.IsNullOrWhiteSpace(module))
