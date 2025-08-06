@@ -65,7 +65,7 @@ public class BinUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string, 
 
     private string GenList(TType elementType, string fieldName, string bufName, string err, int depth)
     {
-        return $@"{{{fieldName} = make([]{elementType.Apply(DeclaringTypeNameVisitor.Ins)}, 0); var _n{depth}_ int; if _n{depth}_, {err} = {bufName}.ReadSize(); {err} != nil {{ {err} = errors.New(""error""); return}}; for i{depth} := 0 ; i{depth} < _n{depth}_ ; i{depth}++ {{ var _e{depth}_ {elementType.Apply(DeclaringTypeNameVisitor.Ins)}; {elementType.Apply(DeserializeBinVisitor.Ins, $@"_e{depth}_", bufName, err, depth +1)}; {fieldName} = append({fieldName}, _e{depth}_) }} }}";
+        return $@"{{{fieldName} = make([]{elementType.Apply(DeclaringTypeNameVisitor.Ins)}, 0); var _n{depth}_ int; if _n{depth}_, {err} = {bufName}.ReadSize(); {err} != nil {{ {err} = errors.New(""error""); return}}; for i{depth} := 0 ; i{depth} < _n{depth}_ ; i{depth}++ {{ var _e{depth}_ {elementType.Apply(DeclaringTypeNameVisitor.Ins)}; {elementType.Apply(DeserializeBinVisitor.Ins, $@"_e{depth}_", bufName, err, depth + 1)}; {fieldName} = append({fieldName}, _e{depth}_) }} }}";
     }
 
     public string Accept(TArray type, string fieldName, string bufName, string err, int depth)

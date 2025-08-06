@@ -24,7 +24,7 @@ public class TextKeyToValueTransformer : DataTransfomerBase, IDataFuncVisitor2<D
 
     DType IDataFuncVisitor2<DType>.Accept(DString data, TType type)
     {
-        if(string.IsNullOrEmpty(data.Value) || !type.HasTag("text"))
+        if (string.IsNullOrEmpty(data.Value) || !type.HasTag("text"))
         {
             return data;
         }

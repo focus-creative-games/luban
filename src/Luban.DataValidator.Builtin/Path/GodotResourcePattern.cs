@@ -1,6 +1,6 @@
 namespace Luban.DataValidator.Builtin.Path;
 
-class GodotResourcePattern: IPathPattern
+class GodotResourcePattern : IPathPattern
 {
     public bool EmptyAble { get; set; }
     public bool ExistPath(string rootDir, string subFile)

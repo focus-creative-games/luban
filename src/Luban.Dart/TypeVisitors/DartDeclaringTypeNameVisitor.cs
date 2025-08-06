@@ -65,7 +65,7 @@ class DartDeclaringTypeNameVisitor : ITypeFuncVisitor<string>
 
     public string Accept(TBean type)
     {
-        var name= type.DefBean.TypeNameWithTypeMapper() ?? type.DefBean.Name;
+        var name = type.DefBean.TypeNameWithTypeMapper() ?? type.DefBean.Name;
         if (type.IsNullable)
         {
             name += "?";

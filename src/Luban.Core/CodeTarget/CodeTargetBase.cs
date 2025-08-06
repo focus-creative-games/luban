@@ -118,7 +118,7 @@ public abstract class CodeTargetBase : ICodeTarget
                 }
             }
         }
-    }   
+    }
 
     public virtual void ValidateDefinition(GenerationContext ctx)
     {

@@ -18,7 +18,7 @@ class RowColumnSheet
     {
         this.UrlWithoutParams = rawUrl;
         this.Name = name;
-        this.SheetName =sheetName;
+        this.SheetName = sheetName;
     }
 
     private string GetRowTag(List<Cell> row)

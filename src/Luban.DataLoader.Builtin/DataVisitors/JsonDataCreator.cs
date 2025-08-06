@@ -60,7 +60,7 @@ public class JsonDataCreator : ITypeFuncVisitor<JsonElement, DefAssembly, DType>
     {
         if (!string.IsNullOrEmpty(field.CurrentVariantNameWithFieldName))
         {
-            if ( x.TryGetProperty(field.CurrentVariantNameWithFieldName, out ele))
+            if (x.TryGetProperty(field.CurrentVariantNameWithFieldName, out ele))
             {
                 return true;
             }

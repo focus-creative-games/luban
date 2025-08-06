@@ -217,7 +217,7 @@ class LiteStreamDataCreator : ITypeFuncVisitor<LiteStream, DType>
             var fields = CreateBeanFields(implType, x);
             x.ReadStructOrCollectionEnd();
             return new DBean(type, implType, fields);
-           
+
         }
         else
         {

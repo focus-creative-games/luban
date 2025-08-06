@@ -4,7 +4,7 @@ using Luban.Utils;
 
 namespace Luban.CSharp.TypeVisitors;
 
-internal class NewtonSoftJsonDeserializeVisitor: ITypeFuncVisitor<string, string, int, string>
+internal class NewtonSoftJsonDeserializeVisitor : ITypeFuncVisitor<string, string, int, string>
 {
 
     public static NewtonSoftJsonDeserializeVisitor Ins { get; } = new();

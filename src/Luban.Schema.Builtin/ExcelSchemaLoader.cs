@@ -100,7 +100,8 @@ public class ExcelSchemaLoader : SchemaLoaderBase
             // string options = (data.GetField("options") as DString).Value.Trim(); 
             var table = SchemaLoaderUtil.CreateTable(fileName, name, module, valueType, index, mode, group, comment, readSchemaFromFile, inputFile, tags, outputFile);
             Collector.Add(table);
-        };
+        }
+        ;
     }
 
     private void LoadEnumListFromFile(string fileName)
@@ -199,7 +200,8 @@ public class ExcelSchemaLoader : SchemaLoaderBase
                 }).ToList(),
             };
             Collector.Add(curEnum);
-        };
+        }
+        ;
     }
 
     private void LoadBeanListFromFile(string fileName)
@@ -313,6 +315,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
                 )).ToList(),
             };
             Collector.Add(curBean);
-        };
+        }
+        ;
     }
 }

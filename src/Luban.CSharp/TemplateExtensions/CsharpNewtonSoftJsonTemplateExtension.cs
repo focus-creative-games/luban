@@ -7,7 +7,7 @@ internal class CsharpNewtonSoftJsonTemplateExtension : ScriptObject
 {
     public static string Deserialize(string fieldName, string jsonVar, TType type)
     {
-       return type.Apply(NewtonSoftJsonDeserializeVisitor.Ins, jsonVar, fieldName, 0);
+        return type.Apply(NewtonSoftJsonDeserializeVisitor.Ins, jsonVar, fieldName, 0);
     }
 
     public static string DeserializeField(string fieldName, string jsonVar, string jsonFieldName, TType type)

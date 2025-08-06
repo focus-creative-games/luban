@@ -11,7 +11,7 @@ public class CppRawptrDeserializeVisitor : DecoratorFuncVisitor<string, string, 
     {
         if (type.IsNullable)
         {
-            return $"{{ bool _has_value_; if(!{bufName}.readBool(_has_value_)){{return false;}}  if(_has_value_) {{ {fieldName} = {(type.IsBean ? "nullptr" : $"new {type.Apply(CppUnderlyingDeclaringTypeNameVisitor.Ins)}{{}}")}; {type.Apply(CppRawptrUnderlyingDeserializeVisitor.Ins, bufName, type.IsBean ? fieldName : $"*{fieldName}",depth + 1, CppRawptrDeclaringTypeNameVisitor.Ins)} }} else {{ {fieldName} = nullptr; }} }}";
+            return $"{{ bool _has_value_; if(!{bufName}.readBool(_has_value_)){{return false;}}  if(_has_value_) {{ {fieldName} = {(type.IsBean ? "nullptr" : $"new {type.Apply(CppUnderlyingDeclaringTypeNameVisitor.Ins)}{{}}")}; {type.Apply(CppRawptrUnderlyingDeserializeVisitor.Ins, bufName, type.IsBean ? fieldName : $"*{fieldName}", depth + 1, CppRawptrDeclaringTypeNameVisitor.Ins)} }} else {{ {fieldName} = nullptr; }} }}";
         }
         else
         {

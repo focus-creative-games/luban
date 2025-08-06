@@ -11,11 +11,11 @@ public class CppSharedptrDeserializeVisitor : DecoratorFuncVisitor<string, strin
     {
         if (type.IsNullable)
         {
-            return $"{{ bool _has_value_; if(!{bufName}.readBool(_has_value_)){{return false;}}  if(_has_value_) {{ {fieldName}.reset({(type.IsBean ? "" : $"new {type.Apply(CppUnderlyingDeclaringTypeNameVisitor.Ins)}()")}); {type.Apply(CppSharedptrUnderlyingDeserializeVisitor.Ins, bufName, $"{(type.IsBean ? "" : "*")}{fieldName}",depth+1, CppSharedptrDeclaringTypeNameVisitor.Ins)} }} else {{ {fieldName}.reset(); }} }}";
+            return $"{{ bool _has_value_; if(!{bufName}.readBool(_has_value_)){{return false;}}  if(_has_value_) {{ {fieldName}.reset({(type.IsBean ? "" : $"new {type.Apply(CppUnderlyingDeclaringTypeNameVisitor.Ins)}()")}); {type.Apply(CppSharedptrUnderlyingDeserializeVisitor.Ins, bufName, $"{(type.IsBean ? "" : "*")}{fieldName}", depth + 1, CppSharedptrDeclaringTypeNameVisitor.Ins)} }} else {{ {fieldName}.reset(); }} }}";
         }
         else
         {
-            return type.Apply(CppSharedptrUnderlyingDeserializeVisitor.Ins, bufName, fieldName, depth ,CppSharedptrDeclaringTypeNameVisitor.Ins);
+            return type.Apply(CppSharedptrUnderlyingDeserializeVisitor.Ins, bufName, fieldName, depth, CppSharedptrDeclaringTypeNameVisitor.Ins);
         }
     }
 }

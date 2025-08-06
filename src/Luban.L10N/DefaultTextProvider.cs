@@ -109,7 +109,8 @@ public class DefaultTextProvider : ITextProvider
             {
                 s_logger.Error("textFile:{} key:{} is duplicated", fileName, key);
             }
-        };
+        }
+        ;
     }
 
     public void AddUnknownKey(string key)
@@ -126,7 +127,7 @@ public class DefaultTextProvider : ITextProvider
             {
                 foreach (var record in GenerationContext.Current.GetTableAllDataList(table))
                 {
-                    record.Data = (DBean)record.Data.Apply(trans,table.ValueTType);
+                    record.Data = (DBean)record.Data.Apply(trans, table.ValueTType);
                 }
             }
         }

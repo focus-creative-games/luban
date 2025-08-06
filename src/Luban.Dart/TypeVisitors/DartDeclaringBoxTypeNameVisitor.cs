@@ -4,23 +4,23 @@ using Luban.Types;
 
 namespace Luban.Dart.TypeVisitors;
 
-class DartDeclaringBoxTypeNameVisitor: DartDeclaringTypeNameVisitor
+class DartDeclaringBoxTypeNameVisitor : DartDeclaringTypeNameVisitor
 {
     public new static DartDeclaringBoxTypeNameVisitor Ins { get; } = new();
 
     public override string Accept(TBool type)
     {
-        return  "bool";
+        return "bool";
     }
 
     public override string Accept(TByte type)
     {
-        return  "int";
+        return "int";
     }
 
     public override string Accept(TShort type)
     {
-        return  "int";
+        return "int";
     }
 
     public override string Accept(TInt type)

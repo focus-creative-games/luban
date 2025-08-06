@@ -27,7 +27,7 @@ public class CodeFormatManager
     public ICodeStyle CppDefaultCodeStyle { get; private set; }
 
     public ICodeStyle PythonDefaultCodeStyle { get; private set; }
-    
+
     public ICodeStyle DartDefaultCodeStyle { get; private set; }
 
     public void Init()

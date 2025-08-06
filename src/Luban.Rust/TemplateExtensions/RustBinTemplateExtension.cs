@@ -27,7 +27,7 @@ public class RustBinTemplateExtension : ScriptObject
         }
         else
         {
-            if (type is TBean {IsDynamic: true})
+            if (type is TBean { IsDynamic: true })
             {
                 return $"let {fieldName} = {type.Apply(BinaryUnderlyingDeserializeVisitor.Ins, bufName, fieldName, 0)};";
             }
