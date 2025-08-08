@@ -62,10 +62,10 @@ public partial class {{__name}}
     public System.Collections.Generic.List<{{declaring_type_name __value_type}}> DataList => _dataList;
 
 {{~if __value_type.is_dynamic~}}
-    public T GetOrDefaultAs<T>({{declaring_type_name __key_type}} key) where T : {{declaring_type_name __value_type}} => _dataMap.TryGetValue(key, out var v) ? (T)v : null;
+    public T GetOrDefaultAs<T>({{declaring_type_name __key_type}} key) where T : {{declaring_type_name __value_type}} => _dataMap.TryGetValue(key, out var v) ? (T)v : default;
     public T GetAs<T>({{declaring_type_name __key_type}} key) where T : {{declaring_type_name __value_type}} => (T)_dataMap[key];
 {{~end~}}
-    public {{declaring_type_name __value_type}} GetOrDefault({{declaring_type_name __key_type}} key) => _dataMap.TryGetValue(key, out var v) ? v : null;
+    public {{declaring_type_name __value_type}} GetOrDefault({{declaring_type_name __key_type}} key) => _dataMap.TryGetValue(key, out var v) ? v : default;
     public {{declaring_type_name __value_type}} Get({{declaring_type_name __key_type}} key) => _dataMap[key];
     public {{declaring_type_name __value_type}} this[{{declaring_type_name __key_type}} key] => _dataMap[key];
 
@@ -124,10 +124,10 @@ public partial class {{__name}}
 
 
     {{~if __table.is_union_index~}}
-    public {{declaring_type_name __value_type}} Get({{table_param_def_list}}) => _dataMapUnion.TryGetValue(({{table_param_name_list}}), out {{declaring_type_name __value_type}} __v) ? __v : null;
+    public {{declaring_type_name __value_type}} Get({{table_param_def_list}}) => _dataMapUnion.TryGetValue(({{table_param_name_list}}), out {{declaring_type_name __value_type}} __v) ? __v : default;
     {{~else if !__table.index_list.empty? ~}}
         {{~for idx in __table.index_list~}}
-    public {{declaring_type_name __value_type}} GetBy{{format_property_name __code_style idx.index_field.name}}({{declaring_type_name idx.type}} key) => _dataMap_{{idx.index_field.name}}.TryGetValue(key, out {{declaring_type_name __value_type}} __v) ? __v : null;
+    public {{declaring_type_name __value_type}} GetBy{{format_property_name __code_style idx.index_field.name}}({{declaring_type_name idx.type}} key) => _dataMap_{{idx.index_field.name}}.TryGetValue(key, out {{declaring_type_name __value_type}} __v) ? __v : default;
         {{~end~}}
     {{~end~}}
 
