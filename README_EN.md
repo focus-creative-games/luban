@@ -34,8 +34,8 @@ Luban standardizes the game configuration development workflow, which can greatl
 
 ## Documentation
 
-- [Official Documentation](https://luban.doc.code-philosophy.com/)
-- [Quick Start](https://luban.doc.code-philosophy.com/docs/beginner/quickstart)
+- [Official Documentation](https://www.datable.cn/)
+- [Quick Start](https://www.datable.cn/docs/beginner/quickstart)
 - **Example Project** ([github](https://github.com/focus-creative-games/luban_examples)) ([gitee](https://gitee.com/focus-creative-games/luban_examples) )
 
 ## Support and contact
