@@ -261,7 +261,7 @@ public class ExcelStream
 
     private bool IsSkip(object x)
     {
-        return x == null || (x is string s && string.IsNullOrWhiteSpace(s));
+        return x == null || (x is string s && string.IsNullOrEmpty(s));
     }
 
     public bool TryReadEOF()

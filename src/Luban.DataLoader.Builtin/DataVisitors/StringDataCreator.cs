@@ -100,7 +100,6 @@ class StringDataCreator : ITypeFuncVisitor<string, DType>
 
     public DType Accept(TString type, string x)
     {
-        x = DataUtil.RemoveStringQuote(x);
         return DString.ValueOf(type, x);
     }
 

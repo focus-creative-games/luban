@@ -72,6 +72,19 @@ public static class DataUtil
         return s;
     }
 
+    public static string UnEscapeRawString(string s)
+    {
+        switch (s)
+        {
+            case "null":
+                return null;
+            case "\"\"":
+                return string.Empty;
+            default:
+                return s;
+        }
+    }
+
     public static string EscapeString(string s)
     {
         return s.Replace("\\", "\\\\").Replace("\"", "\\\"");
