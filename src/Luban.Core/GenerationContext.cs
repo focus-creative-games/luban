@@ -92,7 +92,7 @@ public class GenerationContext
             throw new Exception("option '--includeTag <tag>' and '--excludeTag <tag>' can not be set at the same time");
         }
         TimeZone = TimeZoneUtil.GetTimeZone(builder.TimeZone);
-        _exportEmptyGroupsTypes = builder.Assembly.Target.Groups.Any(g => GlobalConf.Groups.First(gd => gd.Names.Contains(g))?.IsDefault == true);
+        _exportEmptyGroupsTypes = builder.Assembly.Target.Groups.Any(g => GlobalConf.Groups.FirstOrDefault(gd => gd.Names.Contains(g))?.IsDefault == true);
 
         TextProvider = EnvManager.Current.TryGetOption(BuiltinOptionNames.L10NFamily, BuiltinOptionNames.L10NProviderName, false, out string providerName) ?
             L10NManager.Ins.CreateTextProvider(providerName) : null;

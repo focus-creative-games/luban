@@ -74,6 +74,13 @@ public class DefAssembly
         {
             throw new Exception($"target:{target} is invalid");
         }
+        foreach (var g in Target.Groups)
+        {
+            if (groupDefs.All(d => !d.Names.Contains(g)))
+            {
+                throw new Exception($"target:{target} group:`{g}` not defined");
+            }
+        }
         _variants = variants;
 
         foreach (var c in assembly.ConstAliases)
