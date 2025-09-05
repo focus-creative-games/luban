@@ -424,7 +424,7 @@ public static class SheetLoadUtil
             orientRow = true;
             return false;
         }
-        string metaStr = reader.GetString(0)?.Trim();
+        string metaStr = reader.GetValue(0)?.ToString().Trim();
         return TryParseMeta(metaStr, out orientRow);
     }
 
