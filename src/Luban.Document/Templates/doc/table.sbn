@@ -1,0 +1,77 @@
+---
+sidebar_label: '●{{get_side_bar_label __table}}'
+---
+
+# {{__name}}
+
+{{
+    root_path = '/docs/Manuals/'
+
+    value_type = __table.value_ttype
+
+    func index_type_name
+        index_field = $0
+        type_name = index_field.name
+        ret type_name
+    end
+
+    func get_table_mode
+        if __table.is_map_table
+            ret 'map'
+        else if __table.is_list_table
+            if __table.is_union_index
+                ret 'union'
+            else if !__table.index_list.empty?
+                ret 'multi'
+            else
+                ret 'list'
+            end
+        else
+            ret 'singleton'
+        end
+    end
+
+    table_mode = get_table_mode
+    
+    func get_union_keys
+        key_names = []
+        for index in __table.index_list
+            key_names = key_names + [index_type_name index.index_field]
+        end
+        ret key_names | array.join ' + '
+    end
+}}
+
+## 属性
+
+| Key | Value |
+| -------- | -------- |
+| 类型 | 表 |
+| 全名 | {{__table.full_name}} |
+| 注释 | {{parse_char_for_markdown __table.comment}} |
+| 值类型 | [{{value_type.def_bean.name}}]({{root_path + get_ttype_document_path value_type}}) |
+| 分组 | {{get_table_groups __table}} |
+| 数据文件 | {{~for file in __table.input_files ~}}{{file}} {{~if !@last~}}<br/>{{~end~}}{{~end~}} |
+{{~ if table_mode == 'map' ~}}
+| 模式 | 单主键 |
+| 主键 | {{index_type_name __table.index_field}} |
+{{~ else if table_mode == 'multi' ~}}
+| 模式 | 独立多主键 |
+| 主键 | {{~for index in __table.index_list ~}}{{index_type_name index.index_field}} {{~if !@last~}}, {{~end~}}{{~end~}} |
+{{~ else if table_mode == 'union' ~}}
+| 模式 | 联合多主键 |
+| 主键 | {{get_union_keys}} |
+{{~ else if table_mode == 'list' ~}}
+| 模式 | 无主键 |
+{{~ else if table_mode == 'singleton' ~}}
+| 模式 | 单例 |
+{{~ end ~}}
+
+{{~if has_references __table ~}}
+## 所有引用
+| 引用 | 
+| -------- | 
+    {{~for ref_def in (get_references __table) ~}}
+| [{{ref_def.full_name}}]({{root_path + get_def_document_path ref_def}}) |
+    {{~end~}}
+{{~end~}}

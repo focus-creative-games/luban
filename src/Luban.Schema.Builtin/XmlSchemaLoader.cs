@@ -89,6 +89,7 @@ public class XmlSchemaLoader : SchemaLoaderBase
             Groups = SchemaLoaderUtil.CreateGroups(XmlUtil.GetOptionalAttribute(e, "group")),
             Items = new(),
             TypeMappers = new(),
+            DefineFile = _fileName,
         };
 
         foreach (XElement item in e.Elements())
@@ -144,7 +145,7 @@ public class XmlSchemaLoader : SchemaLoaderBase
         string mode = XmlUtil.GetOptionalAttribute(e, "mode");
         string tags = XmlUtil.GetOptionalAttribute(e, "tags");
         string output = XmlUtil.GetOptionalAttribute(e, "output");
-        Collector.Add(SchemaLoaderUtil.CreateTable(_fileName, name, module, valueType, index, mode, group, comment, defineFromFile, input, tags, output));
+        Collector.Add(SchemaLoaderUtil.CreateTable(_fileName, name, module, valueType, index, mode, group, comment, defineFromFile, input, tags, output, _fileName));
     }
 
     private static readonly List<string> _fieldOptionalAttrs = new()
@@ -236,6 +237,7 @@ public class XmlSchemaLoader : SchemaLoaderBase
             Groups = SchemaLoaderUtil.CreateGroups(XmlUtil.GetOptionalAttribute(e, "group")),
             Fields = new(),
             TypeMappers = new(),
+            DefineFile = _fileName,
         };
         var childBeans = new List<XElement>();
 

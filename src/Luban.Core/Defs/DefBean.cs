@@ -79,6 +79,7 @@ public class DefBean : DefTypeBase
 
     public DefBean(RawBean b)
     {
+        DefineFile = b.DefineFile;
         Name = b.Name;
         Namespace = b.Namespace;
         Parent = b.Parent;

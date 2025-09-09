@@ -56,6 +56,7 @@
       <ProjectReference Include="..\Luban.DataTarget.Builtin\Luban.DataTarget.Builtin.csproj" />
       <ProjectReference Include="..\Luban.DataLoader.Builtin\Luban.DataLoader.Builtin.csproj" />
       <ProjectReference Include="..\Luban.DataValidator.Builtin\Luban.DataValidator.Builtin.csproj" />
+      <ProjectReference Include="..\Luban.Document\Luban.Document.csproj" />
       <ProjectReference Include="..\Luban.FlatBuffers\Luban.FlatBuffers.csproj" />
       <ProjectReference Include="..\Luban.Gdscript\Luban.Gdscript.csproj" />
       <ProjectReference Include="..\Luban.Golang\Luban.Golang.csproj" />

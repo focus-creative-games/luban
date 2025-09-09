@@ -1,0 +1,90 @@
+---
+sidebar_label: "*表目录"
+---
+
+# {{__name}}
+## 类型: 总表
+
+## 表列表
+| 表名 | 值类型 | 分组 | 模式 | 主键 | 数据文件 |
+| -------- | -------- | -------- | -------- | -------- | -------- |
+{{~for table in __tables ~}}
+{{~
+    value_type = table.value_ttype
+    
+    func index_type_name
+        index_field = $0
+        type_name = index_field.name
+        ret type_name
+    end
+
+    func get_table_mode
+        if table.is_map_table
+            ret 'map'
+        else if table.is_list_table
+            if table.is_union_index
+                ret 'union'
+            else if !table.index_list.empty?
+                ret 'multi'
+            else
+                ret 'list'
+            end
+        else
+            ret 'singleton'
+        end
+    end
+    
+    table_mode = get_table_mode
+    
+    func get_keys
+        if table_mode == 'map'
+            ret index_type_name table.index_field
+        else if table_mode == 'multi'
+            keys = ''
+            for index in table.index_list
+                if !@first
+                    keys = keys + ', '
+                end
+                keys = keys + index_type_name index.index_field
+            end
+            ret keys
+        else if table_mode == 'union'
+            key_names = []
+            for index in table.index_list
+                key_names = key_names + [index_type_name index.index_field]
+            end
+            ret key_names | array.join ' + '
+        else if table_mode == 'list'
+            ret ''
+        else if table_mode == 'singleton'
+            ret ''
+        end
+    end
+    
+    func get_mode_text
+        if table_mode == 'map'
+            ret '单主键'
+        else if table_mode == 'multi'
+            ret '独立多主键'
+        else if table_mode == 'union'
+            ret '联合多主键'
+        else if table_mode == 'list'
+            ret '无主键'
+        else if table_mode == 'singleton'
+            ret '单例'
+        end
+    end
+    
+    func get_files
+        files = ''
+        for file in table.input_files
+            if !@first
+                files = files + '<br/>'
+            end
+            files = files + file
+        end
+        ret files
+    end
+~}}
+| [{{table.name}}]({{get_def_document_path table}}) | [{{value_type.def_bean.name}}]({{'/docs/Manuals/' + get_ttype_document_path value_type}}) | {{get_table_groups table}} | {{get_mode_text}} | {{get_keys}} | {{get_files}} |
+{{~end~}}

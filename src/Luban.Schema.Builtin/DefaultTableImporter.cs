@@ -70,6 +70,7 @@ public class DefaultTableImporter : ITableImporter
                 InputFiles = new List<string> { relativePath },
                 OutputFile = "",
                 Tags = new Dictionary<string, string>(),
+                DefineFile = fileName,
             };
             s_logger.Debug("import table file:{@}", table);
             tables.Add(table);

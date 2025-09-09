@@ -34,4 +34,6 @@ public class RawEnum
     public List<string> Groups { get; set; }
 
     public List<TypeMapper> TypeMappers { get; set; }
+
+    public string DefineFile { get; set; }
 }

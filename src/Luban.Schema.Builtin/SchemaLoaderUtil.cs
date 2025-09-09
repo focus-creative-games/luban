@@ -12,7 +12,7 @@ public static class SchemaLoaderUtil
     }
 
     public static RawTable CreateTable(string schemaFile, string name, string module, string valueType, string index, string mode, string group,
-        string comment, bool readSchemaFromFile, string input, string tags, string outputFileName)
+        string comment, bool readSchemaFromFile, string input, string tags, string outputFileName, string defineFile)
     {
         var p = new RawTable()
         {
@@ -26,6 +26,7 @@ public static class SchemaLoaderUtil
             Mode = ConvertMode(schemaFile, name, mode, index),
             Tags = DefUtil.ParseAttrs(tags),
             OutputFile = outputFileName,
+            DefineFile = defineFile,
         };
         if (string.IsNullOrWhiteSpace(name))
         {

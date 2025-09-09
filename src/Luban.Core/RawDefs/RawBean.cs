@@ -25,4 +25,6 @@ public class RawBean
     public List<RawField> Fields { get; set; }
 
     public List<TypeMapper> TypeMappers { get; set; }
+
+    public string DefineFile { get; set; }
 }

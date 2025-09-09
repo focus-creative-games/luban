@@ -1,0 +1,57 @@
+---
+sidebar_label: '●{{get_side_bar_label __bean}}'
+---
+
+# {{__name}}
+
+{{
+    root_path = '/docs/Manuals/'
+    func get_field_ref_table_and_link
+        field = $0
+        def_table = get_field_ref_table field
+        if def_table == null
+            ret ''
+        else
+            ret '[' + def_table.name + '](' + root_path + get_def_document_path def_table + ')'
+        end
+    end
+}}
+
+## 属性
+| Key | Value |
+| -------- | -------- |
+| 类型 | 自定义类型 |
+| 全名 | {{__bean.full_name}} |
+| 别名 | {{__bean.alias}} |
+| 注释 | {{parse_char_for_markdown __bean.comment}} |
+| 分组 | {{get_bean_groups __bean}} |
+{{~if __bean.parent != '' ~}}
+| 父类 | [{{__bean.parent}}]({{root_path + get_def_document_path __bean.parent_def_type}}) |
+{{~end~}}
+| 是否为值类型 | {{__bean.is_value_type}} |
+| 分隔符 | {{__bean.sep}} |
+
+## 字段
+| 名称 | 类型 | 原始类型 | 别名 | 分组 | 注释 | 关联表 |
+| -------- | -------- | -------- | -------- | -------- | -------- | -------- |
+{{~for field in __bean.fields ~}}
+| {{field.name}} | {{get_type_name_and_link field.ctype root_path}} | {{field.raw_field.type}} | {{field.alias}} | {{get_field_groups field}} | {{parse_char_for_markdown field.comment}} | {{get_field_ref_table_and_link field}} |
+{{~end~}}
+
+{{~if __bean.is_abstract_type ~}}
+## 子类 
+| 子类 | 
+| -------- | 
+    {{~for child in __bean.children ~}}
+| [{{child.full_name}}]({{root_path + get_def_document_path child}}) |
+    {{~end~}}
+{{~end~}}
+
+{{~if has_references __bean ~}}
+## 所有引用
+| 引用 | 
+| -------- | 
+    {{~for ref_def in (get_references __bean) ~}}
+| [{{ref_def.full_name}}]({{root_path + get_def_document_path ref_def}}) |
+    {{~end~}}
+{{~end~}}

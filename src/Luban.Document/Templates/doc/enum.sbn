@@ -1,0 +1,35 @@
+---
+sidebar_label: '●{{get_side_bar_label __enum}}'
+---
+
+{{~
+    root_path = '/docs/Manuals/'
+~}}
+
+# {{__name}}
+
+## 属性
+| Key | Value |
+| -------- | -------- |
+| 类型 | 枚举 |
+| 全名 | {{__enum.full_name}} |
+| 注释 | {{parse_char_for_markdown __enum.comment}} |
+| 是否位标记 | {{__enum.is_flags}} |
+| 枚举值是否唯一 | {{__enum.is_unique_item_id}} |
+| 分组 | {{get_enum_groups __enum}} |
+
+## 枚举项
+| 名称 | 别名 | 值 | 注释 |
+| -------- | -------- | -------- | -------- |
+{{~for item in __enum.items ~}}
+| {{item.name}} | {{item.alias}} | {{item.value}} | {{parse_char_for_markdown item.comment}} |
+{{~end~}}
+
+{{~if has_references __enum ~}}
+## 所有引用
+| 引用 | 
+| -------- | 
+    {{~for ref_def in (get_references __enum) ~}}
+| [{{ref_def.full_name}}]({{root_path + get_def_document_path ref_def}}) |
+    {{~end~}}
+{{~end~}}

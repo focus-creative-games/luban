@@ -14,6 +14,7 @@ public class DefTable : DefTypeBase
 
     public DefTable(RawTable b)
     {
+        DefineFile = b.DefineFile;
         Name = b.Name;
         Namespace = b.Namespace;
         Index = b.Index;

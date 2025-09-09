@@ -26,6 +26,7 @@ public class BeanSchemaFromExcelHeaderLoader : IBeanSchemaLoader
             Groups = new(),
             Fields = new(),
             Tags = new Dictionary<string, string>(),
+            DefineFile = fileName,
         };
 
 

@@ -88,6 +88,7 @@ public class DefEnum : DefTypeBase
 
     public DefEnum(RawEnum e)
     {
+        DefineFile = e.DefineFile;
         Name = e.Name;
         Namespace = e.Namespace;
         IsFlags = e.IsFlags;

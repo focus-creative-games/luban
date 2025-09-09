@@ -80,6 +80,7 @@ public class DefaultTextProvider : ITextProvider
             IsValueType = false,
             Sep = "",
             Fields = rawFields,
+            DefineFile = fileName,
         })
         {
             Assembly = ass,
