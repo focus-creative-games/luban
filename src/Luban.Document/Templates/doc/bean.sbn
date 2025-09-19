@@ -21,6 +21,7 @@ sidebar_label: '●{{get_side_bar_label __bean}}'
 | Key | Value |
 | -------- | -------- |
 | 类型 | 自定义类型 |
+| 声明文件 | {{get_data_file_path __bean}} |
 | 全名 | {{__bean.full_name}} |
 | 别名 | {{__bean.alias}} |
 | 注释 | {{parse_char_for_markdown __bean.comment}} |

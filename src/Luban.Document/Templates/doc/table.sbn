@@ -47,6 +47,7 @@ sidebar_label: '●{{get_side_bar_label __table}}'
 | Key | Value |
 | -------- | -------- |
 | 类型 | 表 |
+| 声明文件 | {{get_data_file_path __table}} |
 | 全名 | {{__table.full_name}} |
 | 注释 | {{parse_char_for_markdown __table.comment}} |
 | 值类型 | [{{value_type.def_bean.name}}]({{root_path + get_ttype_document_path value_type}}) |

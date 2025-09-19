@@ -12,6 +12,7 @@ sidebar_label: '●{{get_side_bar_label __enum}}'
 | Key | Value |
 | -------- | -------- |
 | 类型 | 枚举 |
+| 声明文件 | {{get_data_file_path __enum}} |
 | 全名 | {{__enum.full_name}} |
 | 注释 | {{parse_char_for_markdown __enum.comment}} |
 | 是否位标记 | {{__enum.is_flags}} |
