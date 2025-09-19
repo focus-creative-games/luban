@@ -100,7 +100,9 @@ public class DefField
         }
         catch (Exception e)
         {
-            throw new Exception($"type:'{HostType.FullName}' field:'{Name}' type:'{Type}' is invalid", e);
+            s_logger.Error($"type:'{HostType.FullName}' field:'{Name}' type:'{Type}' is invalid");
+            s_logger.Error($"字段'{Name}'声明文件位置：'{FileUtil.GetDataFilePath(HostType)}");
+            throw;
         }
 
         //if (IsNullable && (CType.IsCollection || (CType is TBean)))

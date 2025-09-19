@@ -150,7 +150,15 @@ public class DefAssembly
         }
         foreach (var type in TypeList)
         {
-            type.Compile();
+            try
+            {
+                type.Compile();
+            }
+            catch (Exception)
+            {
+                s_logger.Error($"定义 {type.GetType().Name} '{type.FullName}' 声明文件位置：'{FileUtil.GetDataFilePath(type)}'");
+                throw;
+            }
         }
 
         foreach (var type in TypeList)

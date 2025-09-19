@@ -1,3 +1,4 @@
+using Luban.Defs;
 using System.Collections;
 using System.Security.Cryptography;
 using System.Text;
@@ -273,5 +274,30 @@ public static class FileUtil
             return "";
         }
         return ext.Substring(1);
+    }
+
+
+    public static string GetDataFilePath(DefTypeBase defTypeBase)
+    {
+        (var actualFile, var sheetName) = FileUtil.SplitFileAndSheetName(FileUtil.Standardize(defTypeBase.DefineFile));
+        var workspace = FileUtil.Standardize(Environment.CurrentDirectory);
+        if (actualFile.StartsWith(workspace))
+        {
+            var relativePath = actualFile.Substring(workspace.Length).TrimStart('/');
+            return Result(sheetName, relativePath);
+        }
+        return Result(sheetName, actualFile);
+
+        string Result(string sheetName, string file)
+        {
+            if (string.IsNullOrEmpty(sheetName))
+            {
+                return file;
+            }
+            else
+            {
+                return $"{sheetName}@{file}";
+            }
+        }
     }
 }
