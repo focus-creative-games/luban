@@ -96,6 +96,22 @@ public class DefField
         }
         try
         {
+            if (EnvManager.Current.TryGetOption("field_name_check", "pattern", true, out var regexPattern))
+            {
+                if (HostType.Namespace != "__intern__")
+                {
+                    var regex = new System.Text.RegularExpressions.Regex(regexPattern);
+                    if (!IgnoreNameValidation && !regex.IsMatch(Name))
+                    {
+                        var log = $"字段名匹配格式失败： '{regexPattern}'";
+                        if (EnvManager.Current.TryGetOption("field_name_check", "tips", true, out var tips))
+                        {
+                            log += "\n" + tips;
+                        }
+                        throw new Exception(log);
+                    }
+                }
+            }
             CType = Assembly.CreateType(HostType.Namespace, Type, false);
         }
         catch (Exception e)
