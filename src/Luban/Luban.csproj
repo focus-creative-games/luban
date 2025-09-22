@@ -61,6 +61,7 @@
       <ProjectReference Include="..\Luban.Golang\Luban.Golang.csproj" />
       <ProjectReference Include="..\Luban.Javascript\Luban.Javascript.csproj" />
       <ProjectReference Include="..\Luban.Java\Luban.Java.csproj" />
+      <ProjectReference Include="..\Luban.Kotlin\Luban.Kotlin.csproj" />
       <ProjectReference Include="..\Luban.L10N\Luban.L10N.csproj" />
       <ProjectReference Include="..\Luban.Lua\Luban.Lua.csproj" />
       <ProjectReference Include="..\Luban.MsgPack\Luban.MsgPack.csproj" />

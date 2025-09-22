@@ -1,0 +1,79 @@
+{{~if __namespace_with_top_module != ''~}}
+package {{__namespace_with_top_module}}
+{{~end~}}
+
+import luban.*
+import com.google.gson.JsonElement
+
+{{~if __this.comment != '' ~}}
+/**
+ * {{escape_comment __this.comment}}
+ */
+{{~end~}}
+class {{__name}}(private val _buf: JsonElement) {
+    {{~if __this.is_map_table
+     key_type = __this.key_ttype
+     ~}}
+    private val _dataMap: MutableMap<{{declaring_box_type_name key_type}}, {{declaring_box_type_name __value_type}}>
+    private val _dataList: MutableList<{{declaring_box_type_name __value_type}}>
+    
+    init {
+        _dataMap = mutableMapOf()
+        _dataList = mutableListOf()
+        
+        for (_e_ in _buf.asJsonArray) {
+            val _v: {{declaring_box_type_name __value_type}}
+            {{deserialize '_v' '_e_' __value_type}}
+            _dataList.add(_v)
+            _dataMap[_v.{{format_field_name __code_style __this.index_field.name}}] = _v
+        }
+    }
+
+    fun getDataMap(): Map<{{declaring_box_type_name key_type}}, {{declaring_box_type_name __value_type}}> = _dataMap
+    fun getDataList(): List<{{declaring_box_type_name __value_type}}> = _dataList
+
+{{~if __value_type.is_dynamic~}}
+    @Suppress("UNCHECKED_CAST")
+    fun <T : {{declaring_box_type_name __value_type}}> getAs(key: {{declaring_type_name key_type}}): T? = _dataMap[key] as T?
+{{~end~}}
+    fun get(key: {{declaring_type_name key_type}}): {{declaring_box_type_name __value_type}}? = _dataMap[key]
+
+    {{~else if __this.is_list_table ~}}
+    private val _dataList: MutableList<{{declaring_box_type_name __value_type}}>
+    
+    init {
+        _dataList = mutableListOf()
+        
+        for (_e_ in _buf.asJsonArray) {
+            val _v: {{declaring_box_type_name __value_type}}
+            {{deserialize '_v' '_e_' __value_type}}
+            _dataList.add(_v)
+        }
+    }
+
+    fun getDataList(): List<{{declaring_box_type_name __value_type}}> = _dataList
+
+    fun get(index: Int): {{declaring_box_type_name __value_type}} = _dataList[index]
+
+    {{~else~}}
+    private val _data: {{declaring_type_name __value_type}}
+
+    val data: {{declaring_type_name __value_type}} get() = _data
+
+    init {
+        val n = _buf.asJsonArray.size()
+        if (n != 1) throw SerializationException("table mode=one, but size != 1")
+        {{deserialize '_data' '_buf.asJsonArray[0].asJsonObject' __value_type}}
+    }
+
+    {{~ for field in __value_type.def_bean.hierarchy_export_fields ~}}
+{{~if field.comment != '' ~}}
+    /**
+     * {{escape_comment field.comment}}
+     */
+{{~end~}}
+     fun {{getter_name field.name}}(): {{declaring_type_name field.ctype}} = _data.{{format_field_name __code_style field.name}}
+    {{~end~}}
+
+    {{~end~}}
+}

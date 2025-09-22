@@ -1,0 +1,4 @@
+
+using Luban;
+
+[assembly: RegisterBehaviour]
