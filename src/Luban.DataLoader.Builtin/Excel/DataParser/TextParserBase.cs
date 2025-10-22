@@ -17,7 +17,7 @@ public abstract class TextParserBase : DataParserBase
     {
         Title selfTitle = title.SelfTitle;
         var sb = new StringBuilder();
-        for (int i = selfTitle.FromIndex; i <= selfTitle.ToIndex; i++)
+        for (int i = selfTitle.FromIndex, end = Math.Min(selfTitle.ToIndex, cells.Count - 1); i <= end; i++)
         {
             Cell cell = cells[i];
             if (cell.Value == null)
@@ -38,7 +38,7 @@ public abstract class TextParserBase : DataParserBase
     {
         Title selfTitle = title.SelfTitle;
         var ss = new List<string>();
-        for (int i = selfTitle.FromIndex; i <= selfTitle.ToIndex; i++)
+        for (int i = selfTitle.FromIndex, end = Math.Min(selfTitle.ToIndex, cells.Count - 1); i <= end; i++)
         {
             Cell cell = cells[i];
             if (cell.Value == null)
