@@ -326,6 +326,10 @@ static class LoadDataUtil
     public static bool TryParseExcelIntFromNumberOrConstAlias(string s, out int value)
     {
         s = s.Trim();
+        if (s.StartsWith("0x") || s.StartsWith("0X"))
+        {
+            return int.TryParse(s.Substring(2), System.Globalization.NumberStyles.HexNumber, null, out value);
+        }
         if (int.TryParse(s, out value))
         {
             return true;
