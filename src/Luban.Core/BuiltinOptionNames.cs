@@ -75,4 +75,6 @@ public static class BuiltinOptionNames
     public const string LineEnding = "lineEnding";
 
     public const string FileEncoding = "fileEncoding";
+
+    public const string TextCollectTag = "textCollectTag";
 }

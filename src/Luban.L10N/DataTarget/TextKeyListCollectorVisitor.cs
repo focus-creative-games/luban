@@ -24,6 +24,7 @@ using Luban.Datas;
 using Luban.DataVisitors;
 using Luban.Defs;
 using Luban.Types;
+using Luban.Utils;
 
 namespace Luban.L10N.DataTarget;
 
@@ -31,7 +32,7 @@ namespace Luban.L10N.DataTarget;
 /// <summary>
 /// 检查 相同key的text,原始值必须相同
 /// </summary>
-public class TextKeyListCollectorVisitor : IDataActionVisitor2<TextKeyCollection>
+public class TextKeyListCollectorVisitor(string tag = "text") : IDataActionVisitor2<TextKeyCollection>
 {
     public static TextKeyListCollectorVisitor Ins { get; } = new TextKeyListCollectorVisitor();
 
@@ -77,7 +78,7 @@ public class TextKeyListCollectorVisitor : IDataActionVisitor2<TextKeyCollection
 
     public void Accept(DString data, TType type, TextKeyCollection x)
     {
-        if (data != null && type.HasTag("text"))
+        if (data != null && type.HasTag(tag))
         {
             x.AddKey(data.Value);
         }
@@ -90,7 +91,13 @@ public class TextKeyListCollectorVisitor : IDataActionVisitor2<TextKeyCollection
 
     public void Accept(DBean data, TType type, TextKeyCollection x)
     {
-
+        foreach (var tf in data.ImplType.Fields)
+        {
+            if (data.GetField(tf.Name) is DString ts && tf.HasTag(tag))
+            {
+                x.AddKey(ts.Value);
+            }
+        }
     }
 
     public void Accept(DArray data, TType type, TextKeyCollection x)

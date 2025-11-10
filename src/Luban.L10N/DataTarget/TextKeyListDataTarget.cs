@@ -43,7 +43,7 @@ internal class TextKeyListDataTarget : DataTargetBase
     {
         var textCollection = new TextKeyCollection();
 
-        var visitor = new DataActionHelpVisitor2<TextKeyCollection>(TextKeyListCollectorVisitor.Ins);
+        var visitor = new DataActionHelpVisitor2<TextKeyCollection>(CreateVisitor());
 
         foreach (var table in tables)
         {
@@ -57,5 +57,15 @@ internal class TextKeyListDataTarget : DataTargetBase
         string outputFile = EnvManager.Current.GetOption(BuiltinOptionNames.L10NFamily, BuiltinOptionNames.L10NTextListFile, false);
 
         return CreateOutputFile(outputFile, content);
+    }
+    
+    private IDataActionVisitor2<TextKeyCollection> CreateVisitor()
+    {
+        if (EnvManager.Current.TryGetOption(Name, BuiltinOptionNames.TextCollectTag, false, out var optionTag))
+        {
+            return string.IsNullOrWhiteSpace(optionTag) ? TextKeyListCollectorVisitor.Ins : new TextKeyListCollectorVisitor(optionTag);
+        }
+
+        return TextKeyListCollectorVisitor.Ins;
     }
 }
