@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="cfg">
+  <enum name="Quality" group="client,server" comment="Item quality">
+    <var name="Common" value="1" comment="普通"/>
+    <var name="Rare" value="2" comment="稀有"/>
+    <var name="Epic" value="3" comment="史诗"/>
+  </enum>
+</module>

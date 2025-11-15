@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="cfg">
+  <!-- Basic item bean demonstrating primitive and enum fields -->
+  <bean name="Item" group="client,server" comment="Item definition">
+    <var name="id" type="int" comment="Primary key"/>
+    <var name="name" type="string" comment="Display name"/>
+    <var name="quality" type="cfg.Quality" comment="Quality enum"/>
+    <var name="price" type="int" comment="Shop price"/>
+  </bean>
+</module>

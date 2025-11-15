@@ -1,0 +1,20 @@
+{
+  "101": {
+    "id": 101,
+    "name": "Potion",
+    "quality": 1,
+    "price": 50
+  },
+  "102": {
+    "id": 102,
+    "name": "Iron Sword",
+    "quality": 2,
+    "price": 1200
+  },
+  "103": {
+    "id": 103,
+    "name": "Wizard Staff",
+    "quality": 3,
+    "price": 3200
+  }
+}

@@ -1,0 +1,5 @@
+[
+  { "id": 101, "name": "Potion", "quality": "Common", "price": 50, "tags": ["consumable", "healing"] },
+  { "id": 102, "name": "Iron Sword", "quality": "Rare", "price": 1200, "tags": ["weapon", "melee"] },
+  { "id": 103, "name": "Wizard Staff", "quality": "Epic", "price": 3200, "tags": ["weapon", "magic"] }
+]
