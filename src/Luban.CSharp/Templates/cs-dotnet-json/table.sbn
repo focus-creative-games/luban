@@ -56,8 +56,8 @@ public partial class {{__name}}
         }
     }
 
-    public System.Collections.Generic.Dictionary<{{declaring_type_name __key_type}}, {{declaring_type_name __value_type}}> DataMap => _dataMap;
-    public System.Collections.Generic.List<{{declaring_type_name __value_type}}> DataList => _dataList;
+    public System.Collections.Generic.IReadOnlyDictionary<{{declaring_type_name __key_type}}, {{declaring_type_name __value_type}}> DataMap => _dataMap;
+    public System.Collections.Generic.IReadOnlyList<{{declaring_type_name __value_type}}> DataList => _dataList;
 
 {{~if __value_type.is_dynamic~}}
     public T GetOrDefaultAs<T>({{declaring_type_name __key_type}} key) where T : {{declaring_type_name __value_type}} => _dataMap.TryGetValue(key, out var v) ? (T)v : default;
@@ -118,7 +118,7 @@ public partial class {{__name}}
     {{~end~}}
     }
 
-    public System.Collections.Generic.List<{{declaring_type_name __value_type}}> DataList => _dataList;
+    public System.Collections.Generic.IReadOnlyList<{{declaring_type_name __value_type}}> DataList => _dataList;
 
     {{~if __table.is_union_index~}}
     public {{declaring_type_name __value_type}} Get({{table_param_def_list}}) => _dataMapUnion.TryGetValue(({{table_param_name_list}}), out {{declaring_type_name __value_type}} __v) ? __v : default;
