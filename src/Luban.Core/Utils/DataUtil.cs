@@ -235,4 +235,58 @@ public static class DataUtil
     {
         return rec.Tags != null && rec.Tags.Count > 0 && rec.Tags.Contains(TAG_UNCHECKED);
     }
+
+    public static List<DType> ParseHexArray(TType type, string hex)
+    {
+        if (string.IsNullOrEmpty(hex))
+        {
+            return default;
+        }
+        byte[] bytes = Enumerable.Range(0, hex.Length / 2)
+                                 .Select(i => Convert.ToByte(hex.Substring(i * 2, 2), 16))
+                                 .ToArray();//to byte array
+
+        int elementSize = GetElementSize(type);
+        if (bytes.Length % elementSize != 0)
+        {
+            throw new ArgumentException($"Byte length ({bytes.Length}) is not divisible by element size ({elementSize}) for type {type}.");
+        }
+        int count = bytes.Length / elementSize;
+        var result = new List<DType>(count);
+
+        for (int i = 0; i < count; i++)
+        {
+            result.Add(ReadElement(type, bytes, i * elementSize));
+        }
+
+        return result;
+    }
+    private static int GetElementSize(TType type)
+    {
+
+        return type switch
+        {
+            TType t when t is TBool => 1,
+            TType t when t is TByte => 1,
+            TType t when t is TShort => 2,
+            TType t when t is TInt => 4,
+            TType t when t is TEnum => 4,
+            TType t when t is TLong => 8,
+            _ => throw new NotSupportedException($"Type {type} is not supported. Supported: bool, byte, short, int, enum, long.")
+        };
+    }
+
+    private static DType ReadElement(TType type, byte[] bytes, int offset)
+    {
+        return type switch
+        {
+            TType t when t is TBool => DBool.ValueOf(bytes[offset] != 0),
+            TType t when t is TByte => DByte.ValueOf(bytes[offset]),
+            TType t when t is TShort => DShort.ValueOf(BitConverter.ToInt16(bytes, offset)),
+            TType t when t is TInt => DInt.ValueOf(BitConverter.ToInt32(bytes, offset)),
+            TType t when t is TEnum te => new DEnum(te, BitConverter.ToInt32(bytes, offset).ToString()),
+            TType t when t is TLong => DLong.ValueOf(BitConverter.ToInt64(bytes, offset)),
+            _ => throw new InvalidOperationException()
+        };
+    }
 }

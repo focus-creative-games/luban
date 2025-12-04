@@ -111,58 +111,63 @@ class YamlDataCreator : ITypeFuncVisitor<YamlNode, DefAssembly, DType>
 
     public DType Accept(TBean type, YamlNode x, DefAssembly y)
     {
-        var m = (YamlMappingNode)x;
         var bean = type.DefBean;
-
-        DefBean implBean;
-        if (bean.IsAbstractType)
+        if (x is YamlMappingNode m)
         {
-            if (!m.Children.TryGetValue(s_typeNodeName, out var typeNode) && !m.Children.TryGetValue(s_typeNodeNameFallback, out typeNode))
+            DefBean implBean;
+            if (bean.IsAbstractType)
             {
-                throw new Exception($"bean:'{bean.FullName}'是多态，需要指定{FieldNames.JsonTypeNameKey}属性.\n xml:{x}");
+                if (!m.Children.TryGetValue(s_typeNodeName, out var typeNode) && !m.Children.TryGetValue(s_typeNodeNameFallback, out typeNode))
+                {
+                    throw new Exception($"bean:'{bean.FullName}'是多态，需要指定{FieldNames.JsonTypeNameKey}属性.\n xml:{x}");
+                }
+                string subType = (string)typeNode;
+                if (string.IsNullOrWhiteSpace(subType))
+                {
+                    throw new Exception($"bean:'{bean.FullName}'是多态，需要指定{FieldNames.JsonTypeNameKey}属性.\n xml:{x}");
+                }
+                implBean = DataUtil.GetImplTypeByNameOrAlias(bean, subType);
             }
-            string subType = (string)typeNode;
-            if (string.IsNullOrWhiteSpace(subType))
+            else
             {
-                throw new Exception($"bean:'{bean.FullName}'是多态，需要指定{FieldNames.JsonTypeNameKey}属性.\n xml:{x}");
+                implBean = bean;
             }
-            implBean = DataUtil.GetImplTypeByNameOrAlias(bean, subType);
+
+            var fields = new List<DType>();
+            foreach (DefField f in implBean.HierarchyFields)
+            {
+                if (!TryGetBeanField(m, f, out var fele))
+                {
+                    if (f.CType.IsNullable)
+                    {
+                        fields.Add(null);
+                        continue;
+                    }
+                    throw new Exception($"bean:{implBean.FullName} 字段:{f.Name} 缺失");
+                }
+                try
+                {
+                    fields.Add(f.CType.Apply(this, fele, y));
+                }
+                catch (DataCreateException dce)
+                {
+                    dce.Push(implBean, f);
+                    throw;
+                }
+                catch (Exception e)
+                {
+                    var dce = new DataCreateException(e, "");
+                    dce.Push(bean, f);
+                    throw dce;
+                }
+
+            }
+            return new DBean(type, implBean, fields);
         }
         else
         {
-            implBean = bean;
+            throw new Exception($"bean:{bean.FullName} 数据来源类型错误");
         }
-
-        var fields = new List<DType>();
-        foreach (DefField f in implBean.HierarchyFields)
-        {
-            if (!TryGetBeanField(m, f, out var fele))
-            {
-                if (f.CType.IsNullable)
-                {
-                    fields.Add(null);
-                    continue;
-                }
-                throw new Exception($"bean:{implBean.FullName} 字段:{f.Name} 缺失");
-            }
-            try
-            {
-                fields.Add(f.CType.Apply(this, fele, y));
-            }
-            catch (DataCreateException dce)
-            {
-                dce.Push(implBean, f);
-                throw;
-            }
-            catch (Exception e)
-            {
-                var dce = new DataCreateException(e, "");
-                dce.Push(bean, f);
-                throw dce;
-            }
-
-        }
-        return new DBean(type, implBean, fields);
     }
 
     private List<DType> ReadList(TType type, YamlSequenceNode x, DefAssembly ass)
@@ -177,16 +182,28 @@ class YamlDataCreator : ITypeFuncVisitor<YamlNode, DefAssembly, DType>
 
     public DType Accept(TArray type, YamlNode x, DefAssembly y)
     {
+        if(x is YamlScalarNode scalarNode)
+        {
+            return new DArray(type, DataUtil.ParseHexArray(type.ElementType, scalarNode.Value));
+        }
         return new DArray(type, ReadList(type.ElementType, (YamlSequenceNode)x, y));
     }
 
     public DType Accept(TList type, YamlNode x, DefAssembly y)
     {
+        if (x is YamlScalarNode scalarNode)
+        {
+            return new DList(type, DataUtil.ParseHexArray(type.ElementType, scalarNode.Value));
+        }
         return new DList(type, ReadList(type.ElementType, (YamlSequenceNode)x, y));
     }
 
     public DType Accept(TSet type, YamlNode x, DefAssembly y)
     {
+        if (x is YamlScalarNode scalarNode)
+        {
+            return new DSet(type, DataUtil.ParseHexArray(type.ElementType, scalarNode.Value));
+        }
         return new DSet(type, ReadList(type.ElementType, (YamlSequenceNode)x, y));
     }
 
