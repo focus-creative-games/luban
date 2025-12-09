@@ -19,7 +19,6 @@
 // SOFTWARE.
 
 using Luban.DataExporter.Builtin.Json;
-using Luban.Datas;
 using Luban.Javascript.TemplateExtensions;
 using Luban.Types;
 using Luban.TypeVisitors;

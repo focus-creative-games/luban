@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-﻿namespace Luban.DataValidator.Builtin.Range;
+namespace Luban.DataValidator.Builtin.Range;
 
 public class LongRange
 {

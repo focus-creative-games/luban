@@ -18,9 +18,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-﻿using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.Reflection;
 using Luban.CodeFormat;
 using Luban.CodeTarget;
 using Luban.DataLoader;
@@ -33,6 +30,8 @@ using Luban.Types;
 using Luban.TypeVisitors;
 using Luban.Utils;
 using Luban.Validator;
+using System.Collections.Concurrent;
+using System.Diagnostics;
 
 namespace Luban;
 

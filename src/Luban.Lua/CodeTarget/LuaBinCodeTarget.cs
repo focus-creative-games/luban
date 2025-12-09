@@ -20,9 +20,7 @@
 
 using Luban.CodeTarget;
 using Luban.Lua.TemplateExtensions;
-using Luban.Tmpl;
 using Scriban;
-using Scriban.Runtime;
 
 namespace Luban.Lua.CodeTarget;
 

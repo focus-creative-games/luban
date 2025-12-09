@@ -18,12 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using Luban.CodeFormat;
-using Luban.Defs;
-using Luban.TemplateExtensions;
-using Luban.Tmpl;
 using Luban.Utils;
-using Scriban;
 using Scriban.Runtime;
 
 namespace Luban.CodeTarget;

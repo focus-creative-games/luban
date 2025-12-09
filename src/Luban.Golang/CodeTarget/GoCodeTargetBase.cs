@@ -21,7 +21,6 @@
 using Luban.CodeFormat;
 using Luban.CodeTarget;
 using Luban.Golang.TemplateExtensions;
-using Luban.Utils;
 using Scriban;
 using Scriban.Runtime;
 

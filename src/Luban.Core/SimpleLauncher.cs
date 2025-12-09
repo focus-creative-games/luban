@@ -18,7 +18,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using Luban.CodeFormat;
 using Luban.CodeTarget;
 using Luban.CustomBehaviour;
@@ -31,6 +30,7 @@ using Luban.PostProcess;
 using Luban.Schema;
 using Luban.Tmpl;
 using Luban.Validator;
+using System.Reflection;
 
 namespace Luban;
 

@@ -18,10 +18,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-﻿using Luban.Defs;
+using Luban.Defs;
 using Luban.Rust.TypeVisitors;
 using Luban.Types;
-using Luban.Utils;
 using Scriban.Runtime;
 
 namespace Luban.Rust.TemplateExtensions;

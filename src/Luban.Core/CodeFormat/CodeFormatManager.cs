@@ -18,10 +18,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using Luban.CodeFormat.CodeStyles;
 using Luban.CustomBehaviour;
 using NLog;
+using System.Reflection;
 
 namespace Luban.CodeFormat;
 

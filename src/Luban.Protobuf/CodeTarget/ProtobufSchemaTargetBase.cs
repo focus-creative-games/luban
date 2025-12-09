@@ -21,8 +21,6 @@
 using Luban.CodeFormat;
 using Luban.CodeTarget;
 using Luban.Protobuf.TemplateExtensions;
-using Luban.Tmpl;
-using Scriban;
 using Scriban.Runtime;
 
 namespace Luban.Protobuf.CodeTarget;

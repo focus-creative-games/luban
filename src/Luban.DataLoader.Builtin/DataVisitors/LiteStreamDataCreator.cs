@@ -18,7 +18,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using Luban.DataLoader.Builtin.Excel;
 using Luban.DataLoader.Builtin.Lite;
 using Luban.DataLoader.Builtin.Utils;
 using Luban.Datas;

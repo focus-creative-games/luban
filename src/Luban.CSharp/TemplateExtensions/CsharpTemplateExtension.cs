@@ -18,11 +18,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using Luban.CodeFormat;
 using Luban.CSharp.TypeVisitors;
 using Luban.Defs;
 using Luban.Types;
-using Luban.Utils;
 using Scriban.Runtime;
 
 namespace Luban.CSharp.TemplateExtensions;

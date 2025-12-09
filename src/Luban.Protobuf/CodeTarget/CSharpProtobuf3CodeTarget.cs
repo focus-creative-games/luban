@@ -18,10 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-﻿using Luban.CodeTarget;
-using Luban.Protobuf.TemplateExtensions;
-using Luban.Utils;
-using Scriban;
+using Luban.CodeTarget;
 
 namespace Luban.Protobuf.CodeTarget;
 

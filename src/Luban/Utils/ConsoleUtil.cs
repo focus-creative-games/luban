@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 
 namespace Luban.Utils;
 

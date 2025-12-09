@@ -23,7 +23,6 @@ using Luban.CodeTarget;
 using Luban.Defs;
 using Luban.FlatBuffers.TemplateExtensions;
 using Luban.FlatBuffers.TypeVisitors;
-using Luban.Tmpl;
 using Scriban;
 using Scriban.Runtime;
 

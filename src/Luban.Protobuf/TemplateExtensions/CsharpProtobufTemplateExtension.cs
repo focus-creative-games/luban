@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-﻿using Scriban.Runtime;
+using Scriban.Runtime;
 namespace Luban.Protobuf.TemplateExtensions;
 
 public class CsharpProtobufTemplateExtension : ScriptObject

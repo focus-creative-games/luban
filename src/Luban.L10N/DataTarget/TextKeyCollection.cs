@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-﻿namespace Luban.L10N.DataTarget;
+namespace Luban.L10N.DataTarget;
 
 public class TextKeyCollection
 {

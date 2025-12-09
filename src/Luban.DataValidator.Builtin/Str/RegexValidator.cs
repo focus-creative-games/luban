@@ -18,12 +18,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-﻿using System.Text.RegularExpressions;
 using Luban.Datas;
 using Luban.Defs;
 using Luban.Types;
-using Luban.Utils;
 using Luban.Validator;
+using System.Text.RegularExpressions;
 
 namespace Luban.DataValidator.Builtin.Str;
 

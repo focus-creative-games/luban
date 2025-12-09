@@ -18,8 +18,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using Luban.DataLoader;
-using Luban.Datas;
 using Luban.Golang.TemplateExtensions;
 using Luban.Types;
 using Luban.TypeVisitors;

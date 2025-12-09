@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-﻿using Luban.CodeFormat;
+using Luban.CodeFormat;
 using Luban.CodeTarget;
 using Luban.Dart.TemplateExtensions;
 using Scriban;

@@ -18,12 +18,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-﻿using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Luban.RawDefs;
 using Luban.Schema;
 using Luban.Utils;
+using System.Text;
+using System.Text.Json;
 
 namespace Luban;
 

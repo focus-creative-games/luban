@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-﻿using Luban.Datas;
+using Luban.Datas;
 using Luban.DataValidator.Builtin.Range;
 using Luban.Defs;
 using Luban.Types;

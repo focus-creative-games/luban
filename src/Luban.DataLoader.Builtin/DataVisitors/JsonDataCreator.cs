@@ -18,12 +18,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Text.Json;
 using Luban.Datas;
 using Luban.Defs;
 using Luban.Types;
 using Luban.TypeVisitors;
 using Luban.Utils;
+using System.Text.Json;
 
 namespace Luban.DataLoader.Builtin.DataVisitors;
 

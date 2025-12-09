@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-﻿namespace Luban.DataLoader.Builtin.DataVisitors;
+namespace Luban.DataLoader.Builtin.DataVisitors;
 
 class UnityAssetDataCreator : YamlDataCreator
 {

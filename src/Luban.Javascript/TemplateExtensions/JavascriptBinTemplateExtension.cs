@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-﻿using Luban.Types;
+using Luban.Types;
 using Scriban.Runtime;
 
 namespace Luban.Javascript.TemplateExtensions;

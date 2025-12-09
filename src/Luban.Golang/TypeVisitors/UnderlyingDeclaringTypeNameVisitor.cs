@@ -21,7 +21,6 @@
 using Luban.Golang.TemplateExtensions;
 using Luban.Types;
 using Luban.TypeVisitors;
-using Luban.Utils;
 
 namespace Luban.Golang.TypeVisitors;
 

@@ -21,7 +21,6 @@
 using Luban.CodeTarget;
 using Luban.DataTarget;
 using Luban.Defs;
-using Luban.L10N;
 using Luban.OutputSaver;
 using Luban.PostProcess;
 using Luban.RawDefs;

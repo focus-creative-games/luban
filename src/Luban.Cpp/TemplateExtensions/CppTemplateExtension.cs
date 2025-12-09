@@ -18,12 +18,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Text;
-using Luban.Cpp.TypeVisitors;
 using Luban.Defs;
 using Luban.Types;
 using Luban.Utils;
 using Scriban.Runtime;
+using System.Text;
 
 namespace Luban.Cpp.TemplateExtensions;
 

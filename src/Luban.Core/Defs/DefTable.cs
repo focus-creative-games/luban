@@ -21,7 +21,6 @@
 using Luban.RawDefs;
 using Luban.Types;
 using Luban.TypeVisitors;
-using Luban.Utils;
 using Luban.Validator;
 
 namespace Luban.Defs;

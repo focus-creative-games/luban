@@ -20,7 +20,6 @@
 
 using Luban.Types;
 using Luban.TypeVisitors;
-using Luban.Utils;
 
 namespace Luban.Python.TypeVisitors;
 

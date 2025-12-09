@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-﻿using Luban.CodeFormat;
+using Luban.CodeFormat;
 using Luban.CodeTarget;
 using Luban.Defs;
 using Luban.Rust.TemplateExtensions;
@@ -27,8 +27,6 @@ using Luban.Utils;
 
 using Scriban;
 using Scriban.Runtime;
-using System.Text;
-using System.Xml.Linq;
 
 namespace Luban.Rust.CodeTarget;
 

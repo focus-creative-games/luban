@@ -18,12 +18,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using System.Text;
 using Luban.CodeFormat;
 using Luban.CodeFormat.CodeStyles;
 using Luban.Defs;
 using Luban.Utils;
+using System.Reflection;
+using System.Text;
 
 namespace Luban.CodeTarget;
 

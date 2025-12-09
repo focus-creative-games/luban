@@ -18,9 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using Luban.CustomBehaviour;
-using Luban.Utils;
+using System.Reflection;
 
 namespace Luban.Schema;
 

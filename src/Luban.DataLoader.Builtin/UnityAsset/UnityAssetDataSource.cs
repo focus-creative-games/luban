@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-﻿using Luban.DataLoader.Builtin.DataVisitors;
+using Luban.DataLoader.Builtin.DataVisitors;
 using Luban.Datas;
 using Luban.Defs;
 using Luban.Types;

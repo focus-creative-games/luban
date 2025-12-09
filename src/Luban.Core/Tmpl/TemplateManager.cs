@@ -18,10 +18,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-﻿using System.Collections.Concurrent;
-using System.Reflection;
-using System.Text;
 using Scriban;
+using System.Collections.Concurrent;
+using System.Text;
 
 namespace Luban.Tmpl;
 

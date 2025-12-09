@@ -19,7 +19,6 @@
 // SOFTWARE.
 
 using Luban.DataLoader.Builtin.Excel;
-using Luban.Defs;
 using Luban.RawDefs;
 using Luban.Utils;
 

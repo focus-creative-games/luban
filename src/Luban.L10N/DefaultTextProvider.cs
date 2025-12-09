@@ -24,7 +24,6 @@ using Luban.Defs;
 using Luban.RawDefs;
 using Luban.Types;
 using Luban.Utils;
-using System.Linq;
 
 namespace Luban.L10N;
 

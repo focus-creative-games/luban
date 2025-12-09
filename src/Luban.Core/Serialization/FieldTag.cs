@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-﻿namespace Luban.Serialization;
+namespace Luban.Serialization;
 
 // 把 int,long,string,bool 调整到最小
 // 这样 marshal compatible write(field_id << tag_shift | tag_id) < 2^7 能在一个字节

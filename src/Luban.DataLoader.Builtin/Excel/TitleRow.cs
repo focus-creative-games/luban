@@ -18,8 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-﻿using Luban.DataLoader.Builtin.Excel.DataParser;
-using System.Data;
+using Luban.DataLoader.Builtin.Excel.DataParser;
 
 namespace Luban.DataLoader.Builtin.Excel;
 

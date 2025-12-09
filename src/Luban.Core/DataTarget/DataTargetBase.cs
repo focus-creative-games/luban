@@ -18,7 +18,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using Luban.CodeTarget;
 using Luban.Defs;
 using Luban.Utils;
 using System.Reflection;

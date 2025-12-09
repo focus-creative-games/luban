@@ -21,7 +21,6 @@
 using Luban.CodeFormat;
 using Luban.CodeTarget;
 using Luban.Java.TemplateExtensions;
-using Luban.Utils;
 using Scriban;
 
 namespace Luban.Java.CodeTarget;

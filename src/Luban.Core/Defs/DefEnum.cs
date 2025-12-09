@@ -19,7 +19,6 @@
 // SOFTWARE.
 
 using Luban.RawDefs;
-using Luban.Utils;
 
 namespace Luban.Defs;
 

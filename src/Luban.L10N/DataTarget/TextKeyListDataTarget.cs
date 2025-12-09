@@ -18,10 +18,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-﻿using Luban.DataTarget;
+using Luban.DataTarget;
 using Luban.DataVisitors;
 using Luban.Defs;
-using System.Text;
 
 namespace Luban.L10N.DataTarget;
 

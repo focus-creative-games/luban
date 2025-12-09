@@ -18,13 +18,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Text.Json;
 using Luban.DataExporter.Builtin.Json;
 using Luban.Datas;
 using Luban.Defs;
 using Luban.FlatBuffers.TypeVisitors;
 using Luban.Types;
 using Luban.Utils;
+using System.Text.Json;
 
 namespace Luban.FlatBuffers.DataVisitors;
 
