@@ -106,6 +106,7 @@ local function InitTypes(methods)
         {{~ for field in bean.export_fields~}}
          ---@field public {{field.name}} {{comment_type field.ctype}} {{-if field.comment != ''}} @{{escape_comment field.comment}}{{end}}
         {{~end~}}
+
             local class = {
                 {{~ for field in bean.export_fields~}}
                 { name='{{field.name}}', type='{{comment_type field.ctype}}'},
@@ -122,6 +123,7 @@ local function InitTypes(methods)
     {{~ for field in bean.export_fields~}}
          ---@field public {{field.name}} {{comment_type field.ctype}}
     {{~end~}}
+
         local class = SimpleClass()
         class._id = {{bean.id}}
         class._type_ = '{{bean.full_name}}'
