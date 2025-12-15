@@ -98,14 +98,15 @@ local function InitTypes(methods)
             return readBool(bs)
         end
     end
-    
+
     local beans = {}
     {{~ for bean in __beans ~}}
         do
-        ---@class {{bean.full_name}} {{if bean.parent_def_type}}:{{bean.parent}} {{end}} {{-if bean.comment != ''}} @{{escape_comment bean.comment}}{{end}}
+        ---@class {{bean.full_name}} {{-if bean.parent_def_type}}:{{bean.parent}} {{end}} {{-if bean.comment != ''}} @{{escape_comment bean.comment}}{{end}}
         {{~ for field in bean.export_fields~}}
          ---@field public {{field.name}} {{comment_type field.ctype}} {{-if field.comment != ''}} @{{escape_comment field.comment}}{{end}}
         {{~end~}}
+
             local class = {
                 {{~ for field in bean.export_fields~}}
                 { name='{{field.name}}', type='{{comment_type field.ctype}}'},
@@ -114,14 +115,15 @@ local function InitTypes(methods)
             beans['{{bean.full_name}}'] = class
         end
     {{~end~}}
-    
+
     local beans = {}
 {{~ for bean in __beans ~}}
     do
-    ---@class {{bean.full_name}} {{if bean.parent_def_type}}:{{bean.parent}} {{end}}
+    ---@class {{bean.full_name}} {{-if bean.parent_def_type}}:{{bean.parent}} {{end}}
     {{~ for field in bean.export_fields~}}
          ---@field public {{field.name}} {{comment_type field.ctype}}
     {{~end~}}
+
         local class = SimpleClass()
         class._id = {{bean.id}}
         class._type_ = '{{bean.full_name}}'
