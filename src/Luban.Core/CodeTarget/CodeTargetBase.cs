@@ -74,6 +74,15 @@ public abstract class CodeTargetBase : ICodeTarget
         return PreservedKeyWords.Contains(name);
     }
 
+    protected bool ContainsPreserveKeyWordsInNamespace(string ns)
+    {
+        if (string.IsNullOrEmpty(ns))
+        {
+            return false;
+        }
+        return ns.Split('.').Any(IsPreserveKeyWords);
+    }
+
     protected virtual bool IsValidateName(string name, NameLocation location)
     {
         return !string.IsNullOrEmpty(name);
@@ -85,11 +94,15 @@ public abstract class CodeTargetBase : ICodeTarget
         {
             if (IsPreserveKeyWords(table.Name))
             {
-                throw new Exception($"table name {table.FullName} is preserved keyword");
+                throw new Exception($"the name of type `{table.FullName}` is preserved keyword");
+            }
+            if (ContainsPreserveKeyWordsInNamespace(table.Namespace))
+            {
+                throw new Exception($"the namespace of type `{table.FullName}` contains preserved keyword");
             }
             if (!IsValidateName(table.Name, NameLocation.TableName))
             {
-                throw new Exception($"table name {table.FullName} is invalid");
+                throw new Exception($"the name of table `{table.FullName}` is invalid");
             }
         }
 
@@ -97,21 +110,25 @@ public abstract class CodeTargetBase : ICodeTarget
         {
             if (IsPreserveKeyWords(bean.Name))
             {
-                throw new Exception($"bean name {bean.FullName} is preserved keyword");
+                throw new Exception($"the name of bean `{bean.FullName}` is preserved keyword");
+            }
+            if (ContainsPreserveKeyWordsInNamespace(bean.Namespace))
+            {
+                throw new Exception($"the namespace of bean `{bean.FullName}` contains preserved keyword");
             }
             if (!IsValidateName(bean.Name, NameLocation.BeanName))
             {
-                throw new Exception($"bean name {bean.FullName}  is invalid");
+                throw new Exception($"the name of bean `{bean.FullName}` is invalid");
             }
             foreach (var field in bean.Fields)
             {
                 if (IsPreserveKeyWords(field.Name))
                 {
-                    throw new Exception($"the name of field {bean.FullName}::{field.Name} is preserved keyword");
+                    throw new Exception($"the name of field `{bean.FullName}::{field.Name}` contains preserved keyword");
                 }
                 if (!IsValidateName(field.Name, NameLocation.BeanFieldName))
                 {
-                    throw new Exception($"the name of field {bean.FullName}::{field.Name} is invalid");
+                    throw new Exception($"the name of field `{bean.FullName}::{field.Name}` is invalid");
                 }
             }
         }
@@ -120,21 +137,25 @@ public abstract class CodeTargetBase : ICodeTarget
         {
             if (IsPreserveKeyWords(@enum.Name))
             {
-                throw new Exception($"enum name {@enum.FullName} is preserved keyword");
+                throw new Exception($"the name of enum `{@enum.FullName}` is preserved keyword");
+            }
+            if (ContainsPreserveKeyWordsInNamespace(@enum.Namespace))
+            {
+                throw new Exception($"the namespace of enum `{@enum.FullName}` contains preserved keyword");
             }
             if (!IsValidateName(@enum.Name, NameLocation.EnumName))
             {
-                throw new Exception($"enum name {@enum.FullName}  is invalid");
+                throw new Exception($"the name of enum `{@enum.FullName}` is invalid");
             }
             foreach (var item in @enum.Items)
             {
                 if (IsPreserveKeyWords(item.Name))
                 {
-                    throw new Exception($"the name of enum item '{@enum.FullName}::{item.Name}' is preserved keyword");
+                    throw new Exception($"the name of enum item `{@enum.FullName}::{item.Name}` contains preserved keyword");
                 }
                 if (!IsValidateName(item.Name, NameLocation.EnumItemName))
                 {
-                    throw new Exception($"the name of enum item '{@enum.FullName}::{item.Name}' is invalid");
+                    throw new Exception($"the name of enum item `{@enum.FullName}::{item.Name}` is invalid");
                 }
             }
         }
