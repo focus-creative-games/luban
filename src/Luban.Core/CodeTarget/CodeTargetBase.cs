@@ -1,9 +1,29 @@
-using System.Reflection;
-using System.Text;
+// Copyright 2025 Code Philosophy
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 using Luban.CodeFormat;
 using Luban.CodeFormat.CodeStyles;
 using Luban.Defs;
 using Luban.Utils;
+using System.Reflection;
+using System.Text;
 
 namespace Luban.CodeTarget;
 
@@ -54,6 +74,15 @@ public abstract class CodeTargetBase : ICodeTarget
         return PreservedKeyWords.Contains(name);
     }
 
+    protected bool ContainsPreserveKeyWordsInNamespace(string ns)
+    {
+        if (string.IsNullOrEmpty(ns))
+        {
+            return false;
+        }
+        return ns.Split('.').Any(IsPreserveKeyWords);
+    }
+
     protected virtual bool IsValidateName(string name, NameLocation location)
     {
         return !string.IsNullOrEmpty(name);
@@ -65,11 +94,15 @@ public abstract class CodeTargetBase : ICodeTarget
         {
             if (IsPreserveKeyWords(table.Name))
             {
-                throw new Exception($"table name {table.FullName} is preserved keyword");
+                throw new Exception($"the name of type `{table.FullName}` is preserved keyword");
+            }
+            if (ContainsPreserveKeyWordsInNamespace(table.Namespace))
+            {
+                throw new Exception($"the namespace of type `{table.FullName}` contains preserved keyword");
             }
             if (!IsValidateName(table.Name, NameLocation.TableName))
             {
-                throw new Exception($"table name {table.FullName} is invalid");
+                throw new Exception($"the name of table `{table.FullName}` is invalid");
             }
         }
 
@@ -77,21 +110,25 @@ public abstract class CodeTargetBase : ICodeTarget
         {
             if (IsPreserveKeyWords(bean.Name))
             {
-                throw new Exception($"bean name {bean.FullName} is preserved keyword");
+                throw new Exception($"the name of bean `{bean.FullName}` is preserved keyword");
+            }
+            if (ContainsPreserveKeyWordsInNamespace(bean.Namespace))
+            {
+                throw new Exception($"the namespace of bean `{bean.FullName}` contains preserved keyword");
             }
             if (!IsValidateName(bean.Name, NameLocation.BeanName))
             {
-                throw new Exception($"bean name {bean.FullName}  is invalid");
+                throw new Exception($"the name of bean `{bean.FullName}` is invalid");
             }
             foreach (var field in bean.Fields)
             {
                 if (IsPreserveKeyWords(field.Name))
                 {
-                    throw new Exception($"the name of field {bean.FullName}::{field.Name} is preserved keyword");
+                    throw new Exception($"the name of field `{bean.FullName}::{field.Name}` contains preserved keyword");
                 }
                 if (!IsValidateName(field.Name, NameLocation.BeanFieldName))
                 {
-                    throw new Exception($"the name of field {bean.FullName}::{field.Name} is invalid");
+                    throw new Exception($"the name of field `{bean.FullName}::{field.Name}` is invalid");
                 }
             }
         }
@@ -100,21 +137,25 @@ public abstract class CodeTargetBase : ICodeTarget
         {
             if (IsPreserveKeyWords(@enum.Name))
             {
-                throw new Exception($"enum name {@enum.FullName} is preserved keyword");
+                throw new Exception($"the name of enum `{@enum.FullName}` is preserved keyword");
+            }
+            if (ContainsPreserveKeyWordsInNamespace(@enum.Namespace))
+            {
+                throw new Exception($"the namespace of enum `{@enum.FullName}` contains preserved keyword");
             }
             if (!IsValidateName(@enum.Name, NameLocation.EnumName))
             {
-                throw new Exception($"enum name {@enum.FullName}  is invalid");
+                throw new Exception($"the name of enum `{@enum.FullName}` is invalid");
             }
             foreach (var item in @enum.Items)
             {
                 if (IsPreserveKeyWords(item.Name))
                 {
-                    throw new Exception($"the name of enum item '{@enum.FullName}::{item.Name}' is preserved keyword");
+                    throw new Exception($"the name of enum item `{@enum.FullName}::{item.Name}` contains preserved keyword");
                 }
                 if (!IsValidateName(item.Name, NameLocation.EnumItemName))
                 {
-                    throw new Exception($"the name of enum item '{@enum.FullName}::{item.Name}' is invalid");
+                    throw new Exception($"the name of enum item `{@enum.FullName}::{item.Name}` is invalid");
                 }
             }
         }
