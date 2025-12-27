@@ -17,14 +17,14 @@ import com.google.gson.JsonObject
  * {{escape_comment __this.comment}}
  */
 {{~end~}}
+{{~if __this.is_abstract_type || parent_def_type~}}
+// 注意：由于 Kotlin 中 data class 不能继承其他类，这里使用普通 class
 {{class_modifier __this}} class {{__name}}(private val _buf: JsonObject) {{if parent_def_type}}: {{__this.parent_def_type.full_name_with_top_module}}(_buf){{else}}: AbstractBean(){{end}} {
     {{~ for field in export_fields ~}}
 {{~if field.comment != '' ~}}
-    /**
-     * {{escape_comment field.comment}}
-     */
+    // {{escape_comment field.comment}}
 {{~end~}}
-    val {{format_field_name __code_style field.name}}: {{declaring_type_name field.ctype}}
+    {{property_modifier field}} {{format_field_name __code_style field.name}}: {{declaring_type_name field.ctype}}{{get_field_default_value field}}
     {{~end~}}
 
     init {
@@ -43,14 +43,14 @@ import com.google.gson.JsonObject
         
         fun deserialize(_buf: JsonObject): {{__name}} {
             {{~if __this.is_abstract_type~}}
-            return when (_buf.get("$type").asString) {
+            return when (_buf.get("\$type").asString) {
                 {{~for child in __this.hierarchy_not_abstract_children~}}
-                "{{impl_data_type child __this}}" -> {{child.full_name_with_top_module}}(_buf)
+                "{{impl_data_type child __this}}" -> {{child.full_name_with_top_module}}.deserialize(_buf)
                 {{~end~}}
                 else -> throw SerializationException()
             }
             {{~else~}}
-            return {{__this.full_name_with_top_module}}(_buf)
+            return {{__name}}(_buf)
             {{~end~}}
         }
     }
@@ -67,3 +67,29 @@ import com.google.gson.JsonObject
         "}"
     }
 }
+{{~else~}}
+// 无继承关系时使用 data class
+data class {{__name}}(
+    {{~ for field in export_fields ~}}
+{{~if field.comment != '' ~}}
+    // {{escape_comment field.comment}}
+{{~end~}}
+    {{property_modifier_in_constructor field}} {{format_field_name __code_style field.name}}: {{declaring_type_name field.ctype}}{{if !for.last}},{{end}}
+    {{~end~}}
+) : AbstractBean() {
+    companion object {
+        const val __ID__ = {{__this.id}}
+        
+        fun deserialize(_buf: JsonObject): {{__name}} {
+            // 为所有字段创建临时变量并初始化
+            {{~ for field in export_fields ~}}
+            var {{format_field_name __code_style field.name}}: {{declaring_type_name field.ctype}}
+            {{deserialize_field (format_field_name __code_style field.name) '_buf' field.name field.ctype}}
+            {{~end~}}
+            return {{__name}}({{~ for field in export_fields ~}}{{format_field_name __code_style field.name}}{{if !for.last}}, {{end}}{{~end~}})
+        }
+    }
+
+    override fun getTypeId(): Int = __ID__
+}
+{{~end~}}

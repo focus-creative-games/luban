@@ -19,7 +19,8 @@ public class KotlinJsonTemplateExtension : ScriptObject
         }
         else
         {
-            return type.Apply(KotlinJsonUnderlyingDeserializeVisitor.Ins, $"{jsonName}.get(\"{jsonFieldName}\")", fieldName, 0);
+            // 对于非空字段，如果字段缺失或为null，应该抛出异常
+            return $"run {{ if ({jsonName}.has(\"{jsonFieldName}\") && !{jsonName}.get(\"{jsonFieldName}\").isJsonNull) {{ {type.Apply(KotlinJsonUnderlyingDeserializeVisitor.Ins, $"{jsonName}.get(\"{jsonFieldName}\")", fieldName, 0)} }} else {{ throw IllegalArgumentException(\"Required field '{jsonFieldName}' is missing or null\") }} }}";
         }
     }
 

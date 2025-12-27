@@ -10,8 +10,8 @@ end
 ~}}
 
 class {{__name}}(loader: IByteBufLoader) {
-    
-    interface IByteBufLoader {
+
+    fun interface IByteBufLoader {
         @Throws(java.io.IOException::class)
         fun load(file: String): ByteBuf
     }

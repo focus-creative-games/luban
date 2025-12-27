@@ -45,8 +45,9 @@ public class KotlinDeclaringTypeNameVisitor : ITypeFuncVisitor<string>
 
     public virtual string Accept(TEnum type)
     {
-        string src = type.IsNullable ? "Int?" : "Int";
-        return type.DefEnum.TypeNameWithTypeMapper() ?? src;
+        // 使用枚举的实际类型名称，并正确处理可空性
+        string enumTypeName = type.DefEnum.TypeNameWithTypeMapper() ?? type.DefEnum.FullNameWithTopModule;
+        return type.IsNullable ? $"{enumTypeName}?" : enumTypeName;
     }
 
     public string Accept(TString type)

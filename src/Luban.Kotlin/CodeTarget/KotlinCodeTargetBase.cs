@@ -18,7 +18,7 @@ public abstract class KotlinCodeTargetBase : TemplateCodeTargetBase
     {
         // kotlin preserved key words
         "abstract", "actual", "annotation", "as", "break", "by", "catch", "class", "companion", "const", "constructor",
-        "continue", "crossinline", "data", "delegate", "do", "dynamic", "else", "enum", "expect", "external", "false",
+        "continue", "crossinline", "delegate", "do", "dynamic", "else", "enum", "expect", "external", "false",
         "field", "file", "final", "finally", "for", "fun", "get", "if", "import", "in", "infix", "init", "inline",
         "inner", "interface", "internal", "is", "it", "lateinit", "noinline", "null", "object", "open", "operator",
         "out", "override", "package", "param", "private", "property", "protected", "public", "receiver", "reified",

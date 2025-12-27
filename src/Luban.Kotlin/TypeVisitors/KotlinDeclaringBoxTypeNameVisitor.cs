@@ -45,7 +45,8 @@ public class KotlinDeclaringBoxTypeNameVisitor : ITypeFuncVisitor<string>
 
     public string Accept(TEnum type)
     {
-        return type.DefEnum.TypeNameWithTypeMapper() ?? "Int";
+        // 修复：使用枚举的实际类型名称而不是默认的 Int
+        return type.DefEnum.TypeNameWithTypeMapper() ?? type.DefEnum.FullNameWithTopModule;
     }
 
     public string Accept(TString type)

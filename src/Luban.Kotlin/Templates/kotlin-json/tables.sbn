@@ -12,7 +12,7 @@ end
 
 class {{__name}}(loader: IJsonLoader) {
 
-    interface IJsonLoader {
+    fun interface IJsonLoader {
         @Throws(java.io.IOException::class)
         fun load(file: String): JsonElement
     }

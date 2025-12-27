@@ -1,0 +1,28 @@
+{{~if __namespace_with_top_module != ''~}}
+package {{__namespace_with_top_module}}
+{{~end~}}
+
+{{~if __this.comment != '' ~}}
+/**
+ * {{escape_comment __this.comment}}
+ */
+{{~end~}}
+enum class {{__name}}(val value: Int) {
+    {{~ for item in __this.items ~}}
+{{~if item.comment_or_alias != '' ~}}
+    // {{escape_comment item.comment_or_alias}}
+{{~end~}}
+    {{item.name}}({{item.int_value}}){{if !for.last}},{{end}}
+    {{~end~}}
+    {{~if __this.items.size > 0~}};
+    {{~else~}};
+    {{~end~}}
+
+    companion object {
+        private val valueMap = entries.associateBy { it.value }
+        
+        fun fromValue(value: Int): {{__name}}? = valueMap[value]
+        
+        fun fromValueOrDefault(value: Int, default: {{__name}}): {{__name}} = valueMap[value] ?: default
+    }
+}

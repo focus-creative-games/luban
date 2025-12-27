@@ -9,6 +9,27 @@ import luban.*
  * {{escape_comment __this.comment}}
  */
 {{~end~}}
+{{~if __this.is_map_table~}}
+/**
+ * Map Table
+ * Key field: {{__this.index_field.name}} ({{declaring_type_name __this.key_ttype}})
+ */
+{{~else if __this.is_list_table && (__this.multikey || __this.is_union_index)~}}
+/**
+ * Multi-Key List Table
+{{~for index in __this.index_list~}}
+ * Key field: {{index.index_field.name}} ({{declaring_type_name index.type}})
+{{~end~}}
+ */
+{{~else if __this.is_list_table~}}
+/**
+ * List Table
+ */
+{{~else~}}
+/**
+ * Singleton Table
+ */
+{{~end~}}
 class {{__name}}(private val _buf: ByteBuf) {
     {{~if __this.is_map_table
      key_type = __this.key_ttype
@@ -29,16 +50,100 @@ class {{__name}}(private val _buf: ByteBuf) {
         }
     }
 
-    fun getDataMap(): Map<{{declaring_box_type_name key_type}}, {{declaring_box_type_name __value_type}}> = _dataMap
-    fun getDataList(): List<{{declaring_box_type_name __value_type}}> = _dataList
+    val dataMap: Map<{{declaring_box_type_name key_type}}, {{declaring_box_type_name __value_type}}> get() = _dataMap
+    val dataList: List<{{declaring_box_type_name __value_type}}> get() = _dataList
 
 {{~if __value_type.is_dynamic~}}
     @Suppress("UNCHECKED_CAST")
     fun <T : {{declaring_box_type_name __value_type}}> getAs(key: {{declaring_type_name key_type}}): T? = _dataMap[key] as T?
 {{~end~}}
-    fun get(key: {{declaring_type_name key_type}}): {{declaring_box_type_name __value_type}}? = _dataMap[key]
+    operator fun get(key: {{declaring_type_name key_type}}): {{declaring_box_type_name __value_type}}? = _dataMap[key]
 
     {{~else if __this.is_list_table ~}}
+    {{~if __this.multikey || __this.is_union_index~}}
+    private val _dataList: MutableList<{{declaring_box_type_name __value_type}}>
+    private val _dataMap: {{~for index in __this.index_list~}}{{~if for.first~}}MutableMap<{{declaring_box_type_name index.type}}, {{~else~}}MutableMap<{{declaring_box_type_name index.type}}, {{~end~}}{{~end~}}{{declaring_box_type_name __value_type}}{{~for index in __this.index_list~}}>{{~end~}}
+    
+    init {
+        _dataList = mutableListOf()
+        _dataMap = mutableMapOf()
+        
+        val n = _buf.readSize()
+        repeat(n) {
+            val _v: {{declaring_box_type_name __value_type}}
+            {{deserialize '_buf' '_v' __value_type}}
+            _dataList.add(_v)
+            
+            // 构建嵌套Map
+            {{~if __this.index_list.size == 2~}}
+            var innerMap = _dataMap[_v.{{format_field_name __code_style __this.index_list[0].index_field.name}}]
+            if (innerMap == null) {
+                innerMap = mutableMapOf()
+                _dataMap[_v.{{format_field_name __code_style __this.index_list[0].index_field.name}}] = innerMap
+            }
+            innerMap[_v.{{format_field_name __code_style __this.index_list[1].index_field.name}}] = _v
+            {{~else if __this.index_list.size == 3~}}
+            var level1Map = _dataMap[_v.{{format_field_name __code_style __this.index_list[0].index_field.name}}]
+            if (level1Map == null) {
+                level1Map = mutableMapOf()
+                _dataMap[_v.{{format_field_name __code_style __this.index_list[0].index_field.name}}] = level1Map
+            }
+            var level2Map = level1Map[_v.{{format_field_name __code_style __this.index_list[1].index_field.name}}]
+            if (level2Map == null) {
+                level2Map = mutableMapOf()
+                level1Map[_v.{{format_field_name __code_style __this.index_list[1].index_field.name}}] = level2Map
+            }
+            level2Map[_v.{{format_field_name __code_style __this.index_list[2].index_field.name}}] = _v
+            {{~else if __this.index_list.size == 4~}}
+            var level1Map = _dataMap[_v.{{format_field_name __code_style __this.index_list[0].index_field.name}}]
+            if (level1Map == null) {
+                level1Map = mutableMapOf()
+                _dataMap[_v.{{format_field_name __code_style __this.index_list[0].index_field.name}}] = level1Map
+            }
+            var level2Map = level1Map[_v.{{format_field_name __code_style __this.index_list[1].index_field.name}}]
+            if (level2Map == null) {
+                level2Map = mutableMapOf()
+                level1Map[_v.{{format_field_name __code_style __this.index_list[1].index_field.name}}] = level2Map
+            }
+            var level3Map = level2Map[_v.{{format_field_name __code_style __this.index_list[2].index_field.name}}]
+            if (level3Map == null) {
+                level3Map = mutableMapOf()
+                level2Map[_v.{{format_field_name __code_style __this.index_list[2].index_field.name}}] = level3Map
+            }
+            level3Map[_v.{{format_field_name __code_style __this.index_list[3].index_field.name}}] = _v
+            {{~else~}}
+            var innerMap = _dataMap[_v.{{format_field_name __code_style __this.index_list[0].index_field.name}}]
+            if (innerMap == null) {
+                innerMap = mutableMapOf()
+                _dataMap[_v.{{format_field_name __code_style __this.index_list[0].index_field.name}}] = innerMap
+            }
+            innerMap[_v.{{format_field_name __code_style __this.index_list[1].index_field.name}}] = _v
+            {{~end~}}
+        }
+    }
+
+    val dataList: List<{{declaring_box_type_name __value_type}}> get() = _dataList
+    val dataMap: {{~for index in __this.index_list~}}{{~if for.first~}}Map<{{declaring_box_type_name index.type}}, {{~else~}}Map<{{declaring_box_type_name index.type}}, {{~end~}}{{~end~}}{{declaring_box_type_name __value_type}}{{~for index in __this.index_list~}}>{{~end~}} get() = _dataMap
+
+    operator fun get({{~for index in __this.index_list~}}{{format_field_name __code_style index.index_field.name}}: {{declaring_type_name index.type}}{{~if !for.last~}}, {{~end~}}{{~end~}}): {{declaring_box_type_name __value_type}}? {
+        {{~if __this.index_list.size == 2~}}
+        val innerMap = _dataMap[{{format_field_name __code_style __this.index_list[0].index_field.name}}]
+        return innerMap?.get({{format_field_name __code_style __this.index_list[1].index_field.name}})
+        {{~else if __this.index_list.size == 3~}}
+        val level1Map = _dataMap[{{format_field_name __code_style __this.index_list[0].index_field.name}}]
+        val level2Map = level1Map?.get({{format_field_name __code_style __this.index_list[1].index_field.name}})
+        return level2Map?.get({{format_field_name __code_style __this.index_list[2].index_field.name}})
+        {{~else if __this.index_list.size == 4~}}
+        val level1Map = _dataMap[{{format_field_name __code_style __this.index_list[0].index_field.name}}]
+        val level2Map = level1Map?.get({{format_field_name __code_style __this.index_list[1].index_field.name}})
+        val level3Map = level2Map?.get({{format_field_name __code_style __this.index_list[2].index_field.name}})
+        return level3Map?.get({{format_field_name __code_style __this.index_list[3].index_field.name}})
+        {{~else~}}
+        val innerMap = _dataMap[{{format_field_name __code_style __this.index_list[0].index_field.name}}]
+        return innerMap?.get({{format_field_name __code_style __this.index_list[1].index_field.name}})
+        {{~end~}}
+    }
+    {{~else~}}
     private val _dataList: MutableList<{{declaring_box_type_name __value_type}}>
     
     init {
@@ -52,9 +157,10 @@ class {{__name}}(private val _buf: ByteBuf) {
         }
     }
 
-    fun getDataList(): List<{{declaring_box_type_name __value_type}}> = _dataList
+    val dataList: List<{{declaring_box_type_name __value_type}}> get() = _dataList
 
-    fun get(index: Int): {{declaring_box_type_name __value_type}} = _dataList[index]
+    operator fun get(index: Int): {{declaring_box_type_name __value_type}} = _dataList[index]
+    {{~end~}}
 
     {{~else~}}
     private val _data: {{declaring_type_name __value_type}}
@@ -73,7 +179,8 @@ class {{__name}}(private val _buf: ByteBuf) {
      * {{escape_comment field.comment}}
      */
 {{~end~}}
-     fun {{getter_name field.name}}(): {{declaring_type_name field.ctype}} = _data.{{format_field_name __code_style field.name}}
+    val {{format_field_name __code_style field.name}}: {{declaring_type_name field.ctype}}
+        get() = _data.{{format_field_name __code_style field.name}}
     {{~end~}}
 
     {{~end~}}

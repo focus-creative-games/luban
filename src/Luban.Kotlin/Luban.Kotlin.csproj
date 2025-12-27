@@ -11,11 +11,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Templates\common\kotlin\" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Update="Templates\common\kotlin\enum.sbn">
+      <None Update="Templates\lua-lua\schema.sbn">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Templates\lua-bin\schema.sbn">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Templates\common\kt\enum.sbn">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
       <None Update="Templates\kotlin-bin\bean.sbn">
@@ -36,6 +38,10 @@
       <None Update="Templates\kotlin-json\tables.sbn">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Templates\common\kotlin\" />
     </ItemGroup>
 
 </Project>

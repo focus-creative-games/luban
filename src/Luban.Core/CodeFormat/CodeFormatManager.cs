@@ -38,6 +38,8 @@ public class CodeFormatManager
 
     public ICodeStyle JavaDefaultCodeStyle { get; private set; }
 
+    public ICodeStyle KotlinDefaultCodeStyle { get; private set; }
+
     public ICodeStyle GoDefaultCodeStyle { get; private set; }
 
     public ICodeStyle LuaDefaultCodeStyle { get; private set; }
@@ -52,6 +54,8 @@ public class CodeFormatManager
 
     public void Init()
     {
+        // Register built-in naming convention formatters from current assembly
+        CustomBehaviourManager.Ins.ScanRegisterBehaviour(GetType().Assembly);
     }
 
     public void PostInit()
@@ -59,6 +63,7 @@ public class CodeFormatManager
         NoneCodeStyle = RegisterCodeStyle("none", "none", "none", "none", "none", "none", "none");
         CsharpDefaultCodeStyle = RegisterCodeStyle("csharp-default", "pascal", "pascal", "pascal", "pascal", "camel", "none");
         JavaDefaultCodeStyle = RegisterCodeStyle("java-default", "pascal", "pascal", "camel", "camel", "camel", "none");
+        KotlinDefaultCodeStyle = RegisterCodeStyle("kotlin-default", "pascal", "pascal", "camel", "camel", "camel", "none");
         GoDefaultCodeStyle = RegisterCodeStyle("go-default", "snake", "pascal", "camel", "camel", "pascal", "none");
         LuaDefaultCodeStyle = RegisterCodeStyle("lua-default", "snake", "pascal", "camel", "camel", "snake", "none");
         TypescriptDefaultCodeStyle = RegisterCodeStyle("typescript-default", "pascal", "pascal", "camel", "camel", "camel", "none");

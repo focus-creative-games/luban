@@ -1,6 +1,8 @@
 using Luban.Datas;
+using Luban.Kotlin.TemplateExtensions;
 using Luban.Types;
 using Luban.TypeVisitors;
+using Luban.Utils;
 
 namespace Luban.Kotlin.TypeVisitors;
 
@@ -45,7 +47,20 @@ public class KotlinJsonUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, s
 
     public string Accept(TEnum type, string json, string x, int depth)
     {
-        return $"{x} = {json}.asInt";
+        // 支持直接使用枚举值，而不是转换为整数
+        string src = $"{json}.asInt";
+        string constructor = type.DefEnum.TypeConstructorWithTypeMapper();
+        string enumValue = $"{type.DefEnum.FullNameWithTopModule}.fromValue({src})";
+        string enumTypeName = type.DefEnum.FullNameWithTopModule;
+        // 修改：使用Elvis操作符简化空值检查，并处理构造函数情况
+        if (string.IsNullOrEmpty(constructor))
+        {
+            return $"{x} = {enumValue} ?: throw IllegalArgumentException(\"Invalid enum value for {enumTypeName}: ${{{src}}}\")";
+        }
+        else
+        {
+            return $"{x} = {constructor}({enumValue} ?: throw IllegalArgumentException(\"Invalid enum value for {enumTypeName}: ${{{src}}}\"))";
+        }
     }
 
     public string Accept(TString type, string json, string x, int depth)
@@ -70,8 +85,24 @@ public class KotlinJsonUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, s
         string __v = $"__v{depth}";
         string __index = $"__index{depth}";
         string typeStr = type.ElementType.Apply(KotlinDeclaringTypeNameVisitor.Ins);
+        string boxTypeStr = type.ElementType.Apply(KotlinDeclaringBoxTypeNameVisitor.Ins);
         
-        return $"run {{ val _json{depth}_ = {json}.asJsonArray; val {__n} = _json{depth}_.size(); {x} = Array({__n}) {{ {type.ElementType.Apply(KotlinDeclaringBoxTypeNameVisitor.Ins)}() }}; var {__index} = 0; for ({__e} in _json{depth}_) {{ var {__v}: {typeStr}; {type.ElementType.Apply(this, __e, __v, depth + 1)}; {x}[{__index}++] = {__v} }} }}";
+        // 对于引用类型，使用arrayOfNulls创建，然后通过@Suppress抑制类型转换警告
+        // 对于基本类型，使用默认值初始化
+        string arrayInit;
+        if (type.ElementType is TBean || (type.ElementType is TBean bean && bean.DefBean.IsAbstractType))
+        {
+            // 引用类型：使用arrayOfNulls，运行时会正确填充
+            arrayInit = $"@Suppress(\"UNCHECKED_CAST\") (arrayOfNulls<{boxTypeStr}>({__n}) as Array<{boxTypeStr}>)";
+        }
+        else
+        {
+            // 基本类型：使用默认值初始化
+            var defaultValue = KotlinCommonTemplateExtension.GetArrayDefaultValue(type.ElementType);
+            arrayInit = $"Array({__n}) {{ {defaultValue} }}";
+        }
+        
+        return $"run {{ val _json{depth}_ = {json}.asJsonArray; val {__n} = _json{depth}_.size(); {x} = {arrayInit}; var {__index} = 0; for ({__e} in _json{depth}_) {{ var {__v}: {typeStr}; {type.ElementType.Apply(this, __e, __v, depth + 1)}; {x}[{__index}++] = {__v} }} }}";
     }
 
     public string Accept(TList type, string json, string x, int depth)
