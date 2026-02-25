@@ -369,6 +369,12 @@ public static class SheetLoadUtil
                 {
                     throw new Exception($"列:'[{titleName}' 未找到结束匹配列 '{titleName}]'");
                 }
+                // 处理 * 前缀（multi_rows 标记）
+                if (titleName.StartsWith('*'))
+                {
+                    titleName = titleName.Substring(1);
+                    tags["multi_rows"] = "1";
+                }
                 subTitle = new Title() { Name = titleName, Tags = tags, FromIndex = startIndex, ToIndex = i };
             }
             else
