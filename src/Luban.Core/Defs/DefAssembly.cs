@@ -238,9 +238,15 @@ public class DefAssembly
     public void AddType(DefTypeBase type)
     {
         string fullName = type.FullName;
-        if (Types.ContainsKey(fullName))
+        if (!Types.TryAdd(fullName, type))
         {
             throw new Exception($"type:'{fullName}' duplicate");
+        }
+
+        string alias = (type as IAlias)?.Alias;
+        if (!string.IsNullOrEmpty(alias) && !Types.TryAdd(alias, type))
+        {
+            throw new Exception($"type:'{alias}' duplicate");
         }
 
         if (!_notCaseSenseTypes.TryAdd(fullName.ToLower(), type))
@@ -254,7 +260,6 @@ public class DefAssembly
             throw new Exception($"type:'{fullName}' 和 type:'{_notCaseSenseNamespaces[namespaze.ToLower()].FullName}' 命名空间小写重复. 在win平台有问题，请修改定义并删除生成的代码目录后再重新生成");
         }
 
-        Types.Add(fullName, type);
         TypeList.Add(type);
     }
 

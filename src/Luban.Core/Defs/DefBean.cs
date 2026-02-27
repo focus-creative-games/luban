@@ -24,7 +24,7 @@ using Luban.Utils;
 
 namespace Luban.Defs;
 
-public class DefBean : DefTypeBase
+public class DefBean : DefTypeBase, IAlias
 {
     public int Id { get; }
 

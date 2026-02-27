@@ -85,3 +85,8 @@ public abstract class DefTypeBase
 
     public virtual void PostCompile() { }
 }
+
+public interface IAlias
+{
+    public string Alias { get; }
+}
