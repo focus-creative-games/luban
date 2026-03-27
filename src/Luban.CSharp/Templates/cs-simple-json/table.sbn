@@ -1,5 +1,5 @@
 using Luban;
-using SimpleJSON;
+using Luban.SimpleJSON;
 
 {{
     key_type = __table.key_ttype

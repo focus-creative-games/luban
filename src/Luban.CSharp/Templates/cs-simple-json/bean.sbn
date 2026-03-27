@@ -1,5 +1,5 @@
 ﻿using Luban;
-using SimpleJSON;
+using Luban.SimpleJSON;
 {{
     parent_def_type = __bean.parent_def_type
     export_fields = __bean.export_fields

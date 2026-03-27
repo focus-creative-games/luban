@@ -1,5 +1,5 @@
 using Luban;
-using SimpleJSON;
+using Luban.SimpleJSON;
 
 {{namespace_with_grace_begin __namespace}}
 public partial class {{__name}}
