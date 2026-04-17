@@ -79,7 +79,7 @@ class EditorJsonLoad : ITypeFuncVisitor<string, string, int, string>
 
     public string Accept(TArray type, string json, string x, int depth)
     {
-        return $"if(!{json}.IsArray) {{ throw new SerializationException(); }} int _n{depth} = {json}.Count; {x} = new {BinaryUnderlyingDeserializeVisitor.CreateNewArrayWithSize(type, $"_n{depth}")}; int _index{depth}=0; foreach(SimpleJSON.JSONNode __e{depth} in {json}.Children) {{ {type.ElementType.Apply(EditorDeclaringTypeNameVisitor.Ins)} __v{depth};  {type.ElementType.Apply(this, $"__e{depth}", $"__v{depth}", depth + 1)}  {x}[_index{depth}++] = __v{depth}; }}  ";
+        return $"if(!{json}.IsArray) {{ throw new SerializationException(); }} int _n{depth} = {json}.Count; {x} = new {BinaryUnderlyingDeserializeVisitor.CreateNewArrayWithSize(type, $"_n{depth}")}; int _index{depth}=0; foreach(JSONNode __e{depth} in {json}.Children) {{ {type.ElementType.Apply(EditorDeclaringTypeNameVisitor.Ins)} __v{depth};  {type.ElementType.Apply(this, $"__e{depth}", $"__v{depth}", depth + 1)}  {x}[_index{depth}++] = __v{depth}; }}  ";
     }
 
     public string Accept(TList type, string json, string x, int depth)
