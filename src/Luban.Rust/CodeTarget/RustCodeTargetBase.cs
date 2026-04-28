@@ -22,6 +22,7 @@ using Luban.CodeFormat;
 using Luban.CodeTarget;
 using Luban.Defs;
 using Luban.Rust.TemplateExtensions;
+using Luban.TemplateExtensions;
 using Luban.Tmpl;
 using Luban.Utils;
 
@@ -53,9 +54,9 @@ public class RustCodeTargetBase : TemplateCodeTargetBase
 
     protected override void OnCreateTemplateContext(TemplateContext ctx)
     {
+        ctx.PushGlobal(new TypeTemplateExtension());
         ctx.PushGlobal(new RustCommonTemplateExtension());
     }
-
 
     public override void Handle(GenerationContext ctx, OutputFileManifest manifest)
     {

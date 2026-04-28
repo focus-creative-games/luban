@@ -55,5 +55,5 @@ public abstract class DartCodeTargetBase : TemplateCodeTargetBase
         ctx.PushGlobal(new DartCommonTemplateExtension());
     }
 
-    protected override ICodeStyle CodeStyle => CodeFormatManager.Ins.DartDefaultCodeStyle;
+    protected override ICodeStyle DefaultCodeStyle => CodeFormatManager.Ins.DartDefaultCodeStyle;
 }

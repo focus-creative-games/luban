@@ -35,17 +35,17 @@ public class RustJsonUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, str
 
     public string Accept(TByte type, string json, string field, int depth)
     {
-        return $"({json}.as_u64().unwrap() as u8)";
+        return $"{json}.as_u64().unwrap() as u8";
     }
 
     public string Accept(TShort type, string json, string field, int depth)
     {
-        return $"({json}.as_i64().unwrap() as i16)";
+        return $"{json}.as_i64().unwrap() as i16";
     }
 
     public string Accept(TInt type, string json, string field, int depth)
     {
-        return $"({json}.as_i64().unwrap() as i32)";
+        return $"{json}.as_i64().unwrap() as i32";
     }
 
     public string Accept(TLong type, string json, string field, int depth)
@@ -55,7 +55,7 @@ public class RustJsonUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, str
 
     public string Accept(TFloat type, string json, string field, int depth)
     {
-        return $"({json}.as_f64().unwrap() as f32)";
+        return $"{json}.as_f64().unwrap() as f32";
     }
 
     public string Accept(TDouble type, string json, string field, int depth)

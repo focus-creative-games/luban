@@ -34,9 +34,9 @@ impl std::fmt::Display for LubanError {
     }
 }
 
-pub struct Tables{
+pub struct Tables {
 {{~ for table in __tables ~}}
-    pub {{table.name}}: std::sync::Arc<{{full_name table}}>,
+    pub {{format_field_name __code_style table.name}}: std::sync::Arc<{{full_name table}}>,
 {{~end~}}
 }
 
@@ -44,7 +44,7 @@ impl Tables {
     pub fn new<T: Fn(&str) -> Result<serde_json::Value, LubanError>>(loader: T) -> Result<Tables, LubanError> {
         Ok(Tables {
 {{~ for table in __tables ~}}
-            {{table.name}}: {{full_name table}}::new(&loader("{{table.output_data_file}}")?)?,
+            {{format_field_name __code_style table.name}}: {{full_name table}}::new(&loader("{{table.output_data_file}}")?)?,
 {{~end~}}
         })
     }

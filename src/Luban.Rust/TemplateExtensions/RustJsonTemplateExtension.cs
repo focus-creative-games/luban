@@ -52,7 +52,7 @@ public class RustJsonTemplateExtension : ScriptObject
     {
         if (type.IsNullable)
         {
-            return $"let {fieldName} = None; if let Some(value) = {jsonVarName}.get(\"{fieldName}\") {{ {fieldName} = Some({type.Apply(RustJsonUnderlyingDeserializeVisitor.Ins, $"{jsonVarName}[\"{fieldName}\"]", fieldName, 0)}); }}";
+            return $"let {fieldName} = if let Some(value) = {jsonVarName}.get(\"{fieldName}\") {{ Some({type.Apply(RustJsonUnderlyingDeserializeVisitor.Ins, $"value", fieldName, 0)}) }} else {{ None }};";
         }
         else
         {
