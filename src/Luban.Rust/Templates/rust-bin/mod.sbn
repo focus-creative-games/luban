@@ -201,16 +201,24 @@ impl {{name}} {
         Ok(std::sync::Arc::new({{name}} { data_map, data_list }))
     }
 
-    pub fn get(&self, key: &{{key_type}}) -> Option<{{value_type}}> {
+    pub fn get<Q>(&self, key: &Q) -> Option<{{value_type}}>
+    where
+        {{key_type}}: std::borrow::Borrow<Q>,
+        Q: std::hash::Hash + Eq + ?Sized,
+    {
         self.data_map.get(key).map(|x| x.clone())
     }
 }
 
-impl std::ops::Index<{{key_type}}> for {{name}} {
+impl<Q> std::ops::Index<&Q> for {{name}}
+where
+    {{key_type}}: std::borrow::Borrow<Q>,
+    Q: std::hash::Hash + Eq + ?Sized,
+{
     type Output = {{value_type}};
 
-    fn index(&self, index: {{key_type}}) -> &Self::Output {
-        &self.data_map.get(&index).unwrap()
+    fn index(&self, index: &Q) -> &Self::Output {
+        self.data_map.get(index).unwrap()
     }
 }
 {{~else if table.is_list_table ~}}
@@ -252,14 +260,22 @@ impl {{name}} {
     }
 
     {{~if table.is_union_index~}}
-    pub fn get(&self, key: &({{array.each table.index_list @index_type_name | array.join ', '}})) -> Option<{{value_type}}> {
+    pub fn get<Q>(&self, key: &Q) -> Option<{{value_type}}>
+    where
+        ({{array.each table.index_list @index_type_name | array.join ', '}}): std::borrow::Borrow<Q>,
+        Q: std::hash::Hash + Eq + ?Sized,
+    {
         self.data_map_union.get(key).map(|x| x.clone())
     }
     {{~else if !table.index_list.empty? ~}}
     {{~for idx in table.index_list
         index = format_property_name __code_style idx.index_field.name
     ~}}
-    pub fn get_by_{{index}}(&self, key: &{{declaring_type_name idx.type}}) -> Option<{{value_type}}> {
+    pub fn get_by_{{index}}<Q>(&self, key: &Q) -> Option<{{value_type}}>
+    where
+        {{declaring_type_name idx.type}}: std::borrow::Borrow<Q>,
+        Q: std::hash::Hash + Eq + ?Sized,
+    {
         self.data_map_{{index}}.get(key).map(|x| x.clone())
     }
     {{~end~}}
