@@ -85,32 +85,29 @@ public class BinaryUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, strin
     public string Accept(TBean type, string bufName, string fieldName, int depth)
     {
         return type.DefBean.IsAbstractType
-            ? $"{RustCommonTemplateExtension.FullName(type.DefBean)}::new(&mut {bufName})?"
-            : $"{type.Apply(RustDeclaringTypeNameVisitor.Ins)}::new(&mut {bufName})?";
+            ? $"{RustCommonTemplateExtension.FullName(type.DefBean)}::new({bufName})?"
+            : $"{type.Apply(RustDeclaringTypeNameVisitor.Ins)}::new({bufName})?";
     }
 
     public string Accept(TArray type, string bufName, string fieldName, int depth)
     {
         string n = $"n{depth}";
         string e = $"_e{depth}";
-        string i = $"i{depth}";
-        return $"{{let {n} = std::cmp::min({bufName}.read_size(), {bufName}.size());let mut {e} = vec![]; for {i} in 0..{n} {{ {e}.push({type.ElementType.Apply(this, bufName, $"{e}", depth + 1)}); }} {e} }}";
+        return $"{{let {n} = std::cmp::min({bufName}.read_size(), {bufName}.size());let mut {e} = vec![]; for _ in 0..{n} {{ {e}.push({type.ElementType.Apply(this, bufName, $"{e}", depth + 1)}); }} {e} }}";
     }
 
     public string Accept(TList type, string bufName, string fieldName, int depth)
     {
         string n = $"n{depth}";
         string e = $"_e{depth}";
-        string i = $"i{depth}";
-        return $"{{let {n} = std::cmp::min({bufName}.read_size(), {bufName}.size());let mut {e} = vec![]; for {i} in 0..{n} {{ {e}.push({type.ElementType.Apply(this, bufName, $"{e}", depth + 1)}); }} {e} }}";
+        return $"{{let {n} = std::cmp::min({bufName}.read_size(), {bufName}.size());let mut {e} = vec![]; for _ in 0..{n} {{ {e}.push({type.ElementType.Apply(this, bufName, $"{e}", depth + 1)}); }} {e} }}";
     }
 
     public string Accept(TSet type, string bufName, string fieldName, int depth)
     {
         string n = $"n{depth}";
         string e = $"_e{depth}";
-        string i = $"i{depth}";
-        return $"{{let {n} = std::cmp::min({bufName}.read_size(), {bufName}.size());let mut {e} = {ConstantStrings.SetType}::default(); for {i} in 0..{n} {{ {e}.insert({type.ElementType.Apply(this, bufName, $"{e}", depth + 1)}); }} {e} }}";
+        return $"{{let {n} = std::cmp::min({bufName}.read_size(), {bufName}.size());let mut {e} = {ConstantStrings.SetType}::default(); for _ in 0..{n} {{ {e}.insert({type.ElementType.Apply(this, bufName, $"{e}", depth + 1)}); }} {e} }}";
     }
 
     public string Accept(TMap type, string bufName, string fieldName, int depth)
@@ -119,7 +116,6 @@ public class BinaryUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, strin
         string e = $"_e{depth}";
         string k = $"_k{depth}";
         string v = $"_v{depth}";
-        string i = $"i{depth}";
-        return $"{{let {n} = std::cmp::min({bufName}.read_size(), {bufName}.size()); let mut {e} = {ConstantStrings.MapType}::with_capacity({n} * 3 / 2);for {i} in 0..{n} {{ let {k} = {type.KeyType.Apply(this, bufName, k, depth + 1)}; let {v} = {type.ValueType.Apply(this, bufName, v, depth + 1)}; {e}.insert({k}, {v});}} {e} }}";
+        return $"{{let {n} = std::cmp::min({bufName}.read_size(), {bufName}.size()); let mut {e} = {ConstantStrings.MapType}::with_capacity({n} * 3 / 2);for _ in 0..{n} {{ let {k} = {type.KeyType.Apply(this, bufName, k, depth + 1)}; let {v} = {type.ValueType.Apply(this, bufName, v, depth + 1)}; {e}.insert({k}, {v});}} {e} }}";
     }
 }

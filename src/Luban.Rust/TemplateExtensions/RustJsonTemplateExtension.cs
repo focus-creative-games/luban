@@ -30,7 +30,7 @@ public class RustJsonTemplateExtension : ScriptObject
     {
         if (type.IsNullable)
         {
-            return $"let mut {fieldName} = serde_json::from_value({jsonVarName}.clone())";
+            return $"let {fieldName} = serde_json::from_value({jsonVarName}.clone())";
         }
         else
         {
@@ -52,7 +52,7 @@ public class RustJsonTemplateExtension : ScriptObject
     {
         if (type.IsNullable)
         {
-            return $"let mut {fieldName} = None; if let Some(value) = {jsonVarName}.get(\"{fieldName}\") {{ {fieldName} = Some({type.Apply(RustJsonUnderlyingDeserializeVisitor.Ins, $"{jsonVarName}[\"{fieldName}\"]", fieldName, 0)}); }}";
+            return $"let {fieldName} = None; if let Some(value) = {jsonVarName}.get(\"{fieldName}\") {{ {fieldName} = Some({type.Apply(RustJsonUnderlyingDeserializeVisitor.Ins, $"{jsonVarName}[\"{fieldName}\"]", fieldName, 0)}); }}";
         }
         else
         {

@@ -44,7 +44,7 @@ impl Tables {
     pub fn new<T: Fn(&str) -> Result<ByteBuf, LubanError>>(loader: T) -> Result<Tables, LubanError> {
         Ok(Tables {
 {{~ for table in __tables ~}}
-            {{table.name}}: {{full_name table}}::new(loader("{{table.output_data_file}}")?)?,
+            {{table.name}}: {{full_name table}}::new(&mut loader("{{table.output_data_file}}")?)?,
 {{~end~}}
         })
     }

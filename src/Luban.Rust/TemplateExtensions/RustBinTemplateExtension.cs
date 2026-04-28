@@ -30,7 +30,7 @@ public class RustBinTemplateExtension : ScriptObject
     {
         if (type.IsNullable)
         {
-            return $"let mut {fieldName} = if {bufName}.read_bool() {{ Some({type.Apply(BinaryUnderlyingDeserializeVisitor.Ins, bufName, fieldName, 0)}) }} else {{ None }};";
+            return $"let {fieldName} = if {bufName}.read_bool() {{ Some({type.Apply(BinaryUnderlyingDeserializeVisitor.Ins, bufName, fieldName, 0)}) }} else {{ None }};";
         }
         else
         {
@@ -42,7 +42,7 @@ public class RustBinTemplateExtension : ScriptObject
     {
         if (type.IsNullable)
         {
-            return $"let mut {fieldName} = if {bufName}.read_bool() {{ Some({type.Apply(BinaryUnderlyingDeserializeVisitor.Ins, bufName, fieldName, 0)}) }} else {{ None }};";
+            return $"let {fieldName} = if {bufName}.read_bool() {{ Some({type.Apply(BinaryUnderlyingDeserializeVisitor.Ins, bufName, fieldName, 0)}) }} else {{ None }};";
         }
         else
         {
