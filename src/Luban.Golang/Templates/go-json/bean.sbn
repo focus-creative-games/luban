@@ -14,7 +14,7 @@ package {{__top_module}};
 
 type {{go_full_name}} struct {
     {{~for field in hierarchy_fields ~}}
-    {{format_field_name __code_style field.name}} {{declaring_type_name field.ctype}}
+    {{format_field_name __code_style field.name}} {{declaring_type_name field.ctype}} {{-if field.comment != ''}} // {{escape_comment field.comment}} {{end}}
     {{~end~}}
 }
 
