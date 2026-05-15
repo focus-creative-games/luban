@@ -41,7 +41,7 @@ public class LiteDataSource : DataLoaderBase
     {
         var records = new List<Record>();
         _liteStream.ReadStructOrCollectionBegin();
-        while (_liteStream.IsEndOfStructOrCollection())
+        while (!_liteStream.IsEndOfStructOrCollection())
         {
             var record = ReadRecord(_liteStream, type);
             records.Add(record);
