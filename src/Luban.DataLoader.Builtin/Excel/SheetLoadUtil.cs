@@ -581,7 +581,7 @@ public static class SheetLoadUtil
                 }
             } while (reader.NextResult());
         }
-        throw new Exception($"{rawUrl} 没有找到有效的表定义");
+        throw new Exception($"excel:{rawUrl} sheet:{sheetName} 没有找到有效的表定义");
     }
 
     private static RawSheetTableDefInfo ParseSheetTableDefInfo(string rawUrl, IExcelDataReader reader)
