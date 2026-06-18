@@ -125,9 +125,22 @@ public class DefTable : DefTypeBase
                 }
                 else
                 {
-                    IndexField = ValueTType.DefBean.HierarchyFields[0];
-                    Index = IndexField.Name;
-                    IndexFieldIdIndex = 0;
+                    var fields = ValueTType.DefBean.HierarchyFields;
+                    for (var i = 0; i < fields.Count; i++)
+                    {
+                        var field = fields[i];
+                        if (field.NeedExport())
+                        {
+                            IndexField = field;
+                            Index = IndexField.Name;
+                            IndexFieldIdIndex = i;
+                            break;
+                        }
+                    }
+                    if (string.IsNullOrWhiteSpace(Index))
+                    {
+                        throw new Exception($"table:'{FullName}' 必须定义至少一个可导出字段");
+                    }
                 }
                 KeyTType = IndexField.CType;
                 Type = TMap.Create(false, null, KeyTType, ValueTType, false);
