@@ -21,6 +21,7 @@
 using Luban.RawDefs;
 using Luban.Types;
 using Luban.TypeVisitors;
+using Luban.Utils;
 using Luban.Validator;
 
 namespace Luban.Defs;
@@ -111,8 +112,16 @@ public class DefTable : DefTypeBase
                 {
                     if (ValueTType.DefBean.TryGetField(Index, out var f, out var i))
                     {
-                        IndexField = f;
-                        IndexFieldIdIndex = i;
+                        if (f.NeedExport())
+                        {
+                            IndexField = f;
+                            IndexFieldIdIndex = i;
+                        }
+                        else
+                        {
+                            throw new Exception($"table:'{FullName}' 索引{f.Name}不能导出，请指定有效索引");
+                        }
+
                     }
                     else
                     {
@@ -125,7 +134,13 @@ public class DefTable : DefTypeBase
                 }
                 else
                 {
-                    IndexField = ValueTType.DefBean.HierarchyFields[0];
+                    var f = ValueTType.DefBean.HierarchyFields[0];
+
+                    if (!f.NeedExport())
+                    {
+                        throw new Exception($"table:'{FullName}' 默认索引{f.Name}不能导出，请指定有效索引");
+                    }
+                    IndexField = f;
                     Index = IndexField.Name;
                     IndexFieldIdIndex = 0;
                 }
