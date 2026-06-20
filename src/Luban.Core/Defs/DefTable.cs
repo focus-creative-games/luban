@@ -136,7 +136,7 @@ public class DefTable : DefTypeBase
                 {
                     var f = ValueTType.DefBean.HierarchyFields[0];
 
-                    if (!f.NeedExport())
+                    if (!f.NeedExport() && this.NeedExport())
                     {
                         throw new Exception($"table:'{FullName}' 默认索引{f.Name}不能导出，请指定有效索引");
                     }
