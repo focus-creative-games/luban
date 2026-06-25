@@ -35,7 +35,7 @@ public struct Cell
     public object Value { get; }
 
 
-    private static string ToAlphaString(int column)
+    public static string ToAlphaString(int column)
     {
         int h = column / 26;
         int n = column % 26;
@@ -44,6 +44,6 @@ public struct Cell
 
     public override string ToString()
     {
-        return $"[{ToAlphaString(Column)}:{Row + 1}] {Value}";
+        return $"[{ToAlphaString(Column)}{Row + 1}] {Value}";
     }
 }
