@@ -20,6 +20,7 @@
 
 using ExcelDataReader;
 using Luban.Utils;
+using System.Data.Common;
 
 namespace Luban.DataLoader.Builtin.Excel;
 
@@ -509,7 +510,17 @@ public static class SheetLoadUtil
             var row = new List<Cell>();
             for (int i = 0, n = reader.FieldCount; i < n; i++)
             {
-                row.Add(new Cell(rowIndex, i, reader.GetValue(i)));
+                object value;
+                CellError? cellError = reader.GetCellError(i);
+                if (cellError != null)
+                {
+                    value = new InvalidExcelValue(rowIndex, i, cellError.Value);
+                }
+                else
+                {
+                    value = reader.GetValue(i);
+                }
+                row.Add(new Cell(rowIndex, i, value));
             }
             ++rowIndex;
             if (IsEmptyRow(row))
