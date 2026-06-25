@@ -135,7 +135,7 @@ public static class SheetLoadUtil
 
     private static bool IsNotDataRow(List<Cell> row)
     {
-        if (row.Count == 0)
+        if (IsEmptyRow(row))
         {
             return true;
         }
@@ -490,7 +490,7 @@ public static class SheetLoadUtil
 
     private static bool IsEmptyRow(List<Cell> row)
     {
-        return row.All(c => string.IsNullOrWhiteSpace(c.Value?.ToString()));
+        return row.All(c => c.Value == null || c.Value is InvalidExcelValue || string.IsNullOrWhiteSpace(c.Value.ToString()));
     }
 
     const int maxEmptyRowCount = 300;
