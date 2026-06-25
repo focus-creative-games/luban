@@ -112,16 +112,12 @@ public class DefTable : DefTypeBase
                 {
                     if (ValueTType.DefBean.TryGetField(Index, out var f, out var i))
                     {
-                        if (f.NeedExport())
-                        {
-                            IndexField = f;
-                            IndexFieldIdIndex = i;
-                        }
-                        else
+                        if(!f.NeedExport() && this.NeedExport())
                         {
                             throw new Exception($"table:'{FullName}' 索引{f.Name}不能导出，请指定有效索引");
                         }
-
+                        IndexField = f;
+                        IndexFieldIdIndex = i;
                     }
                     else
                     {
@@ -136,7 +132,7 @@ public class DefTable : DefTypeBase
                 {
                     var f = ValueTType.DefBean.HierarchyFields[0];
 
-                    if (!f.NeedExport())
+                    if (!f.NeedExport() && this.NeedExport())
                     {
                         throw new Exception($"table:'{FullName}' 默认索引{f.Name}不能导出，请指定有效索引");
                     }
