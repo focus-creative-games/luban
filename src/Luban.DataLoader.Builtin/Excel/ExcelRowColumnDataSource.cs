@@ -45,7 +45,7 @@ public class ExcelRowColumnDataSource : DataLoaderBase
 
         foreach (RawSheet rawSheet in SheetLoadUtil.LoadRawSheets(rawUrl, sheetName, stream))
         {
-            var sheet = new RowColumnSheet(rawUrl, sheetName, rawSheet.SheetName);
+            var sheet = new RowColumnSheet(rawUrl, rawSheet.SheetName);
             sheet.Load(rawSheet);
             _sheets.Add(sheet);
         }
@@ -94,7 +94,7 @@ public class ExcelRowColumnDataSource : DataLoaderBase
             }
             catch (Exception e)
             {
-                throw new Exception($"sheet:{sheet.Name}", e);
+                throw new Exception($"sheet:{sheet.SheetName}", e);
             }
         }
         return datas;

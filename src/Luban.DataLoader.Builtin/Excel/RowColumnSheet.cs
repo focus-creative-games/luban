@@ -34,10 +34,9 @@ class RowColumnSheet
 
     public List<(string Tag, TitleRow Row)> Rows { get; } = new();
 
-    public RowColumnSheet(string rawUrl, string name, string sheetName)
+    public RowColumnSheet(string rawUrl, string sheetName)
     {
         this.UrlWithoutParams = rawUrl;
-        this.Name = name;
         this.SheetName = sheetName;
     }
 
