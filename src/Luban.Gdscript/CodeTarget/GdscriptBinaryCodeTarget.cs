@@ -18,34 +18,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using Luban.Defs;
-using Luban.Gdscript.TypeVisitors;
-using Luban.Types;
-using Luban.Utils;
-using Scriban.Runtime;
+using Luban.CodeTarget;
+using Luban.Gdscript.TemplateExtensions;
+using Scriban;
 
-namespace Luban.Gdscript.TemplateExtensions;
+namespace Luban.Gdscript.CodeTarget;
 
-public class GdscriptCommonTemplateExtension : ScriptObject
+[CodeTarget("gdscript-bin")]
+public class GdscriptBinaryCodeTarget : GdscriptCodeTargetBase
 {
-
-    public static string DeclaringTypeName(TType type)
+    protected override void OnCreateTemplateContext(TemplateContext ctx)
     {
-        return type.Apply(DeclaringTypeNameVisitor.Ins);
-    }
-
-    public static string FullName(DefTypeBase type)
-    {
-        return type.Name;
-    }
-
-    public static string ToFieldName(string typeName)
-    {
-        return char.ToLower(typeName[0]) + typeName.Substring(1);
-    }
-
-    public static string StrFullName(string fullName)
-    {
-        return TypeUtil.ToPascalCase(fullName.Replace(".", "_"));
+        base.OnCreateTemplateContext(ctx);
+        ctx.PushGlobal(new GdscriptBinaryTemplateExtension());
     }
 }

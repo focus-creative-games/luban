@@ -30,11 +30,11 @@ public class GdscriptJsonTemplateExtension : ScriptObject
     {
         if (type.IsNullable)
         {
-            return $"if {jsonVarName} != null: {type.Apply(UnderlyingDeserializeVisitor.Ins, jsonVarName, fieldName)}";
+            return $"if {jsonVarName} != null: {type.Apply(JsonUnderlyingDeserializeVisitor.Ins, jsonVarName, fieldName)}";
         }
         else
         {
-            return type.Apply(UnderlyingDeserializeVisitor.Ins, jsonVarName, fieldName);
+            return type.Apply(JsonUnderlyingDeserializeVisitor.Ins, jsonVarName, fieldName);
         }
     }
 
@@ -42,11 +42,11 @@ public class GdscriptJsonTemplateExtension : ScriptObject
     {
         if (type.IsNullable)
         {
-            return $"if {jsonVarName}.get('{jsonFieldName}') != null: {type.Apply(UnderlyingDeserializeVisitor.Ins, $"{jsonVarName}[\"{jsonFieldName}\"]", fieldName)}";
+            return $"if {jsonVarName}.get('{jsonFieldName}') != null: {type.Apply(JsonUnderlyingDeserializeVisitor.Ins, $"{jsonVarName}[\"{jsonFieldName}\"]", fieldName)}";
         }
         else
         {
-            return type.Apply(UnderlyingDeserializeVisitor.Ins, $"{jsonVarName}[\"{jsonFieldName}\"]", fieldName);
+            return type.Apply(JsonUnderlyingDeserializeVisitor.Ins, $"{jsonVarName}[\"{jsonFieldName}\"]", fieldName);
         }
     }
 }

@@ -86,21 +86,41 @@ public class DeclaringTypeNameVisitor : ITypeFuncVisitor<string>
 
     public string Accept(TArray type)
     {
+        if (type.ElementType is TArray or TSet or TList or TMap)
+        {
+            // throw new NotImplementedException("Nested typed collections are not supported in gdscript");
+            return $"Array";
+        }
         return $"Array[{type.ElementType.Apply((this))}]";
     }
 
     public string Accept(TList type)
     {
+        if (type.ElementType is TArray or TSet or TList or TMap)
+        {
+            // throw new NotImplementedException("Nested typed collections are not supported in gdscript");
+            return $"Array";
+        }
         return $"Array[{type.ElementType.Apply((this))}]";
     }
 
     public string Accept(TSet type)
     {
+        if (type.ElementType is TArray or TSet or TList or TMap)
+        {
+            // throw new NotImplementedException("Nested typed collections are not supported in gdscript");
+            return $"Array";
+        }
         return $"Array[{type.ElementType.Apply((this))}]";
     }
 
     public string Accept(TMap type)
     {
-        return "Dictionary";
+        if (type.ValueType is TArray or TSet or TList or TMap || type.KeyType is TArray or TSet or TList or TMap)
+        {
+            // throw new NotImplementedException("Nested typed collections are not supported in gdscript");
+            return $"Dictionary";
+        }
+        return $"Dictionary[{type.KeyType.Apply(this)}, {type.ValueType.Apply(this)}]";
     }
 }
