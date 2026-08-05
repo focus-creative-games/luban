@@ -26,15 +26,20 @@ namespace Luban.Gdscript.TemplateExtensions;
 
 public class GdscriptBinaryTemplateExtension : ScriptObject
 {
-    public static string Deserialize(string fieldName, string bufName, TType type)
+    public static string Deserialize(string fieldName, string bufName, TType type, string eleTypeVarName = "", string eleTypeVarName2 = "")
     {
         if (type.IsNullable)
         {
-            return $"if {bufName}.ReadBool(): {type.Apply(BinaryUnderlyingDeserializeVisitor.Ins, bufName, fieldName)} else  {fieldName} = null";
+            return $"if {bufName}.ReadBool(): {type.Apply(BinaryUnderlyingDeserializeVisitor.Ins, bufName, fieldName, eleTypeVarName, eleTypeVarName2)} else  {fieldName} = null";
         }
         else
         {
-            return type.Apply(BinaryUnderlyingDeserializeVisitor.Ins, bufName, fieldName);
+            return type.Apply(BinaryUnderlyingDeserializeVisitor.Ins, bufName, fieldName, eleTypeVarName,  eleTypeVarName2);
         }
+    }
+
+    public static string EleType(string eleTypeVarName, TType eleTType)
+    {
+        return $"var {eleTypeVarName} = {eleTType.Apply(BinaryUnderlyingEleTypeVisitor.Ins)}";
     }
 }

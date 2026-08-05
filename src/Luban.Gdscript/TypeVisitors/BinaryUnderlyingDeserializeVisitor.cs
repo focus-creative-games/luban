@@ -26,102 +26,96 @@ using NLog;
 
 namespace Luban.Gdscript.TypeVisitors;
 
-public class BinaryUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string, string>
+public class BinaryUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string, string, string, string>
 {
     public static BinaryUnderlyingDeserializeVisitor Ins { get; } = new();
 
-    public string Accept(TBool type, string bufName, string fieldName)
-    {
-        var funcName = type.Apply(BinaryUnderlyingDeserializeFuncNameVisitor.Ins);
-        LogManager.GetCurrentClassLogger().Error($"{fieldName} = {funcName}({bufName});");
-        return $"{fieldName} = {funcName}({bufName});";
-    }
-
-    public string Accept(TByte type, string bufName, string fieldName)
+    public string Accept(TBool type, string bufName, string fieldName, string eleTypeVarName = "", string eleTypeVarName2 = "")
     {
         var funcName = type.Apply(BinaryUnderlyingDeserializeFuncNameVisitor.Ins);
         return $"{fieldName} = {funcName}({bufName});";
     }
 
-    public string Accept(TShort type, string bufName, string fieldName)
-    {
-        var funcName = type.Apply(BinaryUnderlyingDeserializeFuncNameVisitor.Ins);
-        return $"{fieldName} = {funcName}({bufName});";
-    }
-    public string Accept(TInt type, string bufName, string fieldName)
+    public string Accept(TByte type, string bufName, string fieldName, string eleTypeVarName = "", string eleTypeVarName2 = "")
     {
         var funcName = type.Apply(BinaryUnderlyingDeserializeFuncNameVisitor.Ins);
         return $"{fieldName} = {funcName}({bufName});";
     }
 
-    public string Accept(TLong type, string bufName, string fieldName)
+    public string Accept(TShort type, string bufName, string fieldName, string eleTypeVarName = "", string eleTypeVarName2 = "")
+    {
+        var funcName = type.Apply(BinaryUnderlyingDeserializeFuncNameVisitor.Ins);
+        return $"{fieldName} = {funcName}({bufName});";
+    }
+    public string Accept(TInt type, string bufName, string fieldName, string eleTypeVarName = "", string eleTypeVarName2 = "")
     {
         var funcName = type.Apply(BinaryUnderlyingDeserializeFuncNameVisitor.Ins);
         return $"{fieldName} = {funcName}({bufName});";
     }
 
-    public string Accept(TFloat type, string bufName, string fieldName)
+    public string Accept(TLong type, string bufName, string fieldName, string eleTypeVarName = "", string eleTypeVarName2 = "")
     {
         var funcName = type.Apply(BinaryUnderlyingDeserializeFuncNameVisitor.Ins);
         return $"{fieldName} = {funcName}({bufName});";
     }
 
-    public string Accept(TDouble type, string bufName, string fieldName)
+    public string Accept(TFloat type, string bufName, string fieldName, string eleTypeVarName = "", string eleTypeVarName2 = "")
     {
         var funcName = type.Apply(BinaryUnderlyingDeserializeFuncNameVisitor.Ins);
         return $"{fieldName} = {funcName}({bufName});";
     }
 
-    public string Accept(TEnum type, string bufName, string fieldName)
+    public string Accept(TDouble type, string bufName, string fieldName, string eleTypeVarName = "", string eleTypeVarName2 = "")
     {
         var funcName = type.Apply(BinaryUnderlyingDeserializeFuncNameVisitor.Ins);
         return $"{fieldName} = {funcName}({bufName});";
     }
 
-    public string Accept(TString type, string bufName, string fieldName)
+    public string Accept(TEnum type, string bufName, string fieldName, string eleTypeVarName = "", string eleTypeVarName2 = "")
     {
         var funcName = type.Apply(BinaryUnderlyingDeserializeFuncNameVisitor.Ins);
         return $"{fieldName} = {funcName}({bufName});";
     }
 
-    public string Accept(TDateTime type, string bufName, string fieldName)
+    public string Accept(TString type, string bufName, string fieldName, string eleTypeVarName = "", string eleTypeVarName2 = "")
     {
         var funcName = type.Apply(BinaryUnderlyingDeserializeFuncNameVisitor.Ins);
         return $"{fieldName} = {funcName}({bufName});";
     }
 
-    public string Accept(TBean type, string bufName, string fieldName)
+    public string Accept(TDateTime type, string bufName, string fieldName, string eleTypeVarName = "", string eleTypeVarName2 = "")
     {
         var funcName = type.Apply(BinaryUnderlyingDeserializeFuncNameVisitor.Ins);
         return $"{fieldName} = {funcName}({bufName});";
     }
 
-    public string Accept(TArray type, string bufName, string fieldName)
+    public string Accept(TBean type, string bufName, string fieldName, string eleTypeVarName = "", string eleTypeVarName2 = "")
     {
         var funcName = type.Apply(BinaryUnderlyingDeserializeFuncNameVisitor.Ins);
-        var elementFuncName = type.ElementType.Apply(BinaryUnderlyingDeserializeFuncNameVisitor.Ins);
-        return $"{fieldName} = {funcName}({bufName}, {elementFuncName});";
+        return $"{fieldName} = {funcName}({bufName});";
     }
 
-    public string Accept(TList type, string bufName, string fieldName)
+    public string Accept(TArray type, string bufName, string fieldName, string eleTypeVarName = "", string eleTypeVarName2 = "")
     {
         var funcName = type.Apply(BinaryUnderlyingDeserializeFuncNameVisitor.Ins);
-        var elementFuncName = type.ElementType.Apply(BinaryUnderlyingDeserializeFuncNameVisitor.Ins);
-        return $"{fieldName} = {funcName}({bufName}, {elementFuncName});";
+        return $"{fieldName} = {funcName}({bufName}, {eleTypeVarName});";
     }
 
-    public string Accept(TSet type, string bufName, string fieldName)
+    public string Accept(TList type, string bufName, string fieldName, string eleTypeVarName = "", string eleTypeVarName2 = "")
     {
         var funcName = type.Apply(BinaryUnderlyingDeserializeFuncNameVisitor.Ins);
-        var elementFuncName = type.ElementType.Apply(BinaryUnderlyingDeserializeFuncNameVisitor.Ins);
-        return $"{fieldName} = {funcName}({bufName}, {elementFuncName});";
+        return $"{fieldName} = {funcName}({bufName}, {eleTypeVarName});";
     }
 
-    public string Accept(TMap type, string bufName, string fieldName)
+    public string Accept(TSet type, string bufName, string fieldName, string eleTypeVarName = "", string eleTypeVarName2 = "")
     {
         var funcName = type.Apply(BinaryUnderlyingDeserializeFuncNameVisitor.Ins);
-        var keyFuncName = type.KeyType.Apply(BinaryUnderlyingDeserializeFuncNameVisitor.Ins);
-        var elementFuncName = type.ValueType.Apply(BinaryUnderlyingDeserializeFuncNameVisitor.Ins);
-        return $"{fieldName} = {funcName}({bufName}, {keyFuncName}, {elementFuncName});";
+        return $"{fieldName} = {funcName}({bufName}, {eleTypeVarName});";
+    }
+
+    public string Accept(TMap type, string bufName, string fieldName, string keyTypeVarName = "", string valTypeVarName = "")
+    {
+        var funcName = type.Apply(BinaryUnderlyingDeserializeFuncNameVisitor.Ins);
+        return $"{fieldName} = {funcName}({bufName}, {keyTypeVarName}, {valTypeVarName});";
     }
 }

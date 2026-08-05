@@ -50,8 +50,21 @@ class {{name}}{{if bean.parent_def_type}} extends {{full_name bean.parent_def_ty
         super(_buf_)
 {{~end~}}
         {{~ for field in bean.export_fields
-            field_name = (format_field_name __code_style field.name) ~}}
+            field_name = (format_field_name __code_style field.name) 
+            field_type_name = field.ctype.type_name~}}
+        {{~ if field_type_name == 'array' || field_type_name == 'list' || field_type_name == 'set' 
+            ele_type_name = ((field_name)+'_ele')~}}
+        {{ele_type ele_type_name field.ctype.element_type}}
+        {{deserialize ('self.' + (field_name)) '_buf_' field.ctype ele_type_name}}
+        {{~ else if field_type_name == 'map' 
+            key_type_name = ((field_name)+'_key_ele')
+            val_type_name = ((field_name)+'_val_ele')~}}
+        {{ele_type key_type_name field.ctype.key_type}}
+        {{ele_type val_type_name field.ctype.value_type}}
+        {{deserialize ('self.' + (field_name)) '_buf_' field.ctype key_type_name val_type_name}}
+        {{~ else ~}}
         {{deserialize ('self.' + (field_name)) '_buf_' field.ctype}}
+        {{~ end ~}}
         {{~end~}}
         {{~if bean.export_fields.empty?~}}
         pass
@@ -93,7 +106,7 @@ class {{full_name table}}:
     {{~else if table.multi_key ~}}
     var _data_list: Array[{{value_type_name}}]
     {{~ for INDEX in table.index_list 
-        index_type = table.key_ttype
+        index_type = INDEX.index_field.ctype
         index_type_name = (declaring_type_name index_type)~}}
     var _{{INDEX.index_field.name}}_data_map: Dictionary[{{index_type_name}}, {{value_type_name}}]
     {{~ end ~}} 
