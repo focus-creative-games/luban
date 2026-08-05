@@ -25,7 +25,7 @@ enum {{full_name enum}}
 {{~if bean.comment != '' ~}}
 ## {{bean.comment | html.escape}}
 {{~end~}}
-class {{name}}{{if bean.parent_def_type}} extends {{full_name bean.parent_def_type}}{{end}}:
+class {{name}}{{if bean.parent_def_type}} extends {{full_name bean.parent_def_type}}{{else}} extends LubanCfgBean{{end}}:
 {{~ for field in bean.export_fields ~}}
     {{~if field.comment != '' ~}}
     ## {{field.comment | html.escape}}
@@ -33,10 +33,15 @@ class {{name}}{{if bean.parent_def_type}} extends {{full_name bean.parent_def_ty
     var {{format_field_name __code_style field.name}}: {{declaring_type_name field.ctype}}
 {{~end~}}
 
+{{~if !bean.is_abstract_type && !bean.is_value_type~}}
+    var __type_id__ = {{bean.id}};
+    func get_type_id() : return __type_id__;
+
+{{~end~}}
     static func from_bytes(_buf_):
 {{~if bean.is_abstract_type~}}
-        var typeId = _buf.read_int()
-        match type:
+        var typeId = LubanUtil.read_int(_buf_)
+        match typeId:
         {{~ for child in bean.hierarchy_not_abstract_children~}}
             {{child.id}}: return {{full_name child}}.new(_buf_)
         {{~end~}}
@@ -145,7 +150,7 @@ class {{full_name table}}:
 		var n = LubanUtil.read_size(_buf_)
 		for i in range(n):
 		    var _v: {{value_type_name}}
-			var _v = {{deserialize '_v' '_buf_' value_type}}
+			{{deserialize '_v' '_buf_' value_type}}
 			self._data_list.append(_v)
 
     func get_data_list() -> Array[{{value_type_name}}]:

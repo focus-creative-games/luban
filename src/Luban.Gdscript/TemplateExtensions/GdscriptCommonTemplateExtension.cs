@@ -36,7 +36,7 @@ public class GdscriptCommonTemplateExtension : ScriptObject
 
     public static string FullName(DefTypeBase type)
     {
-        return type.Name;
+        return TypeUtil.MakeGDScriptFullName(type.Namespace, type.Name);
     }
 
     public static string ToFieldName(string typeName)

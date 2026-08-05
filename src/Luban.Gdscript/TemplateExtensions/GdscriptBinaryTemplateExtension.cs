@@ -30,7 +30,7 @@ public class GdscriptBinaryTemplateExtension : ScriptObject
     {
         if (type.IsNullable)
         {
-            return $"if {bufName}.ReadBool(): {type.Apply(BinaryUnderlyingDeserializeVisitor.Ins, bufName, fieldName, eleTypeVarName, eleTypeVarName2)} else  {fieldName} = null";
+            return $"if LubanUtil.read_bool({bufName}): {type.Apply(BinaryUnderlyingDeserializeVisitor.Ins, bufName, fieldName, eleTypeVarName, eleTypeVarName2)}";
         }
         else
         {
