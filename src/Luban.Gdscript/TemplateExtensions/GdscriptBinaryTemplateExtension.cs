@@ -24,29 +24,22 @@ using Scriban.Runtime;
 
 namespace Luban.Gdscript.TemplateExtensions;
 
-public class GdscriptJsonTemplateExtension : ScriptObject
+public class GdscriptBinaryTemplateExtension : ScriptObject
 {
-    public static string Deserialize(string fieldName, string jsonVarName, TType type)
+    public static string Deserialize(string fieldName, string bufName, TType type, string eleTypeVarName = "", string eleTypeVarName2 = "")
     {
         if (type.IsNullable)
         {
-            return $"if {jsonVarName} != null: {type.Apply(JsonUnderlyingDeserializeVisitor.Ins, jsonVarName, fieldName)}";
+            return $"if LubanUtil.read_bool({bufName}): {type.Apply(BinaryUnderlyingDeserializeVisitor.Ins, bufName, fieldName, eleTypeVarName, eleTypeVarName2)}";
         }
         else
         {
-            return type.Apply(JsonUnderlyingDeserializeVisitor.Ins, jsonVarName, fieldName);
+            return type.Apply(BinaryUnderlyingDeserializeVisitor.Ins, bufName, fieldName, eleTypeVarName,  eleTypeVarName2);
         }
     }
 
-    public static string DeserializeField(string fieldName, string jsonVarName, string jsonFieldName, TType type)
+    public static string EleType(string eleTypeVarName, TType eleTType)
     {
-        if (type.IsNullable)
-        {
-            return $"if {jsonVarName}.get('{jsonFieldName}') != null: {type.Apply(JsonUnderlyingDeserializeVisitor.Ins, $"{jsonVarName}[\"{jsonFieldName}\"]", fieldName)}";
-        }
-        else
-        {
-            return type.Apply(JsonUnderlyingDeserializeVisitor.Ins, $"{jsonVarName}[\"{jsonFieldName}\"]", fieldName);
-        }
+        return $"var {eleTypeVarName} = {eleTType.Apply(BinaryUnderlyingEleTypeVisitor.Ins)}";
     }
 }

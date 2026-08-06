@@ -1,0 +1,196 @@
+@tool
+class_name Schema
+extends RefCounted
+
+
+{{~for enum in __enums~}}
+{{~if enum.comment != '' ~}}
+## {{enum.comment | html.escape}}
+{{~end~}}
+enum {{full_name enum}}
+{
+    {{~ for item in enum.items ~}}
+    {{~if item.comment_or_alias != '' ~}}
+    ## {{item.comment_or_alias | html.escape}}
+    {{~end~}}
+    {{item.name}} = {{item.value}},
+    {{~end~}}
+}
+
+
+{{~end~}}
+{{~for bean in __beans
+    name = (full_name bean)
+~}}
+{{~if bean.comment != '' ~}}
+## {{bean.comment | html.escape}}
+{{~end~}}
+class {{name}}{{if bean.parent_def_type}} extends {{full_name bean.parent_def_type}}{{else}} extends LubanCfgBean{{end}}:
+{{~ for field in bean.export_fields ~}}
+    {{~if field.comment != '' ~}}
+    ## {{field.comment | html.escape}}
+    {{~end~}}
+    var {{format_field_name __code_style field.name}}: {{declaring_type_name field.ctype}}
+{{~end~}}
+
+{{~if !bean.is_abstract_type && !bean.is_value_type~}}
+    var __type_id__ = {{bean.id}};
+    func get_type_id() : return __type_id__;
+
+{{~end~}}
+    static func from_bytes(_buf_):
+{{~if bean.is_abstract_type~}}
+        var typeId = LubanUtil.read_int(_buf_)
+        match typeId:
+        {{~ for child in bean.hierarchy_not_abstract_children~}}
+            {{child.id}}: return {{full_name child}}.new(_buf_)
+        {{~end~}}
+            _: assert(false)
+{{~else~}}
+        return {{name}}.new(_buf_)
+{{~end~}}
+
+    func _init(_buf_) -> void:
+{{~if bean.parent_def_type~}}
+        super(_buf_)
+{{~end~}}
+        {{~ for field in bean.export_fields
+            field_name = (format_field_name __code_style field.name) 
+            field_type_name = field.ctype.type_name~}}
+        {{~ if field_type_name == 'array' || field_type_name == 'list' || field_type_name == 'set' 
+            ele_type_name = ((field_name)+'_ele')~}}
+        {{ele_type ele_type_name field.ctype.element_type}}
+        {{deserialize ('self.' + (field_name)) '_buf_' field.ctype ele_type_name}}
+        {{~ else if field_type_name == 'map' 
+            key_type_name = ((field_name)+'_key_ele')
+            val_type_name = ((field_name)+'_val_ele')~}}
+        {{ele_type key_type_name field.ctype.key_type}}
+        {{ele_type val_type_name field.ctype.value_type}}
+        {{deserialize ('self.' + (field_name)) '_buf_' field.ctype key_type_name val_type_name}}
+        {{~ else ~}}
+        {{deserialize ('self.' + (field_name)) '_buf_' field.ctype}}
+        {{~ end ~}}
+        {{~end~}}
+        {{~if bean.export_fields.empty?~}}
+        pass
+        {{~end~}}
+
+
+{{~end~}}
+{{~for table in __tables
+    value_type = table.value_ttype
+    value_type_name = (declaring_type_name value_type)
+~}}
+{{~if table.comment != '' ~}}
+## {{table.comment | html.escape}}
+{{~end~}}
+class {{full_name table}}:
+    {{~if table.is_map_table 
+        index_type = table.key_ttype
+        index_type_name = (declaring_type_name index_type)~}}
+    var _data_list: Array[{{value_type_name}}]
+    var _data_map: Dictionary[{{index_type_name}}, {{value_type_name}}]
+    
+    func _init(_buf_ : LubanByteBuf) -> void:
+        var n = LubanUtil.read_size(_buf_)
+        for i in range(n):
+            var _v: {{value_type_name}}
+            {{deserialize '_v' '_buf_' value_type}}
+            self._data_list.append(_v)
+            self._data_map[_v.{{format_field_name __code_style table.index_field.name}}] = _v
+
+    func get_data_list() -> Array[{{value_type_name}}]:
+        return self._data_list
+
+    func get_data_map() -> Dictionary[{{index_type_name}}, {{value_type_name}}]:
+        return self._data_map
+
+    func get_item(key : {{index_type_name}}) -> {{value_type_name}}:
+        return self._data_map.get(key)
+
+    {{~else if table.multi_key ~}}
+    var _data_list: Array[{{value_type_name}}]
+    {{~ for INDEX in table.index_list 
+        index_type = INDEX.index_field.ctype
+        index_type_name = (declaring_type_name index_type)~}}
+    var _{{INDEX.index_field.name}}_data_map: Dictionary[{{index_type_name}}, {{value_type_name}}]
+    {{~ end ~}} 
+
+    func _init(_buf_) -> void:
+        {{~ for INDEX in table.index_list ~}}
+        self._{{INDEX.index_field.name}}_data_map = {}
+        {{~ end ~}}
+        
+        var n = LubanUtil.read_size(_buf_)
+        for i in range(n):
+            var _v: {{value_type_name}}
+            {{deserialize '_v' '_buf_' value_type}}
+            self._data_list.append(_v)
+        {{~ for INDEX in table.index_list ~}}
+            self._{{INDEX.index_field.name}}_data_map[_v.{{INDEX.index_field.name}}] = _v
+        {{~ end ~}}
+
+    func get_data_list() -> Array[{{value_type_name}}]:
+        return self._data_list
+
+    {{~ for INDEX in table.index_list ~}}
+    func get_{{INDEX.index_field.name}}_data_map() -> Dictionary:
+        return self._{{INDEX.index_field.name}}_data_map
+    {{~ end ~}}
+
+{{~ for INDEX in table.index_list ~}}
+    func get_item_by_{{INDEX.index_field.name}}({{INDEX.index_field.name}}) -> {{value_type_name}}:
+        return self._{{INDEX.index_field.name}}_data_map.get({{INDEX.index_field.name}})
+
+{{~ end ~}}
+    {{~else if table.is_list_table ~}}
+    var _data_list: Array[{{value_type_name}}]
+    
+    func _init(_buf_ : LubanByteBuf) -> void:
+		var n = LubanUtil.read_size(_buf_)
+		for i in range(n):
+		    var _v: {{value_type_name}}
+			{{deserialize '_v' '_buf_' value_type}}
+			self._data_list.append(_v)
+
+    func get_data_list() -> Array[{{value_type_name}}]:
+        return self._data_list
+    
+    func get_item(index) -> {{value_type_name}}:
+        return self._data_list[index]
+    {{~else~}}
+    var _data:{{value_type_name}}
+    
+    func _init(_buf_ : LubanByteBuf) -> void:
+        var n = LubanUtil.read_size(_buf_)
+        assert(n == 1, "table mode = one, but size != 1")
+        {{deserialize 'self._data' '_buf_' value_type}}
+
+    func get_data() -> {{value_type_name}}:
+        return self._data
+
+    {{~ for field in value_type.def_bean.hierarchy_export_fields
+     name = format_field_name __code_style field.name
+     ~}}
+{{~if field.comment != '' ~}}
+    ## {{escape_comment field.comment}}
+{{~end~}}
+    var {{name}}: {{declaring_type_name field.ctype}}:
+        get: return self._data.{{name}}
+
+    {{~end~}}
+    {{~end~}}
+
+{{~end~}}
+class {{str_full_name __full_name}}:
+    {{~for table in __tables ~}}
+    {{~if table.comment != ''~}}
+    ## {{table.comment | html.escape}}
+    {{~end~}}
+    var {{to_field_name table.name}}: {{full_name table}}
+    {{~end~}}
+    
+    func _init(loader: Callable) -> void:
+        {{~for table in __tables ~}}
+        self.{{to_field_name table.name}} = {{full_name table}}.new(loader.call('{{table.output_data_file}}'))
+        {{~end~}}

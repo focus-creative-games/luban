@@ -18,35 +18,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using Luban.Gdscript.TypeVisitors;
-using Luban.Types;
-using Scriban.Runtime;
+using Luban.CodeTarget;
+using Luban.Gdscript.TemplateExtensions;
+using Scriban;
 
-namespace Luban.Gdscript.TemplateExtensions;
+namespace Luban.Gdscript.CodeTarget;
 
-public class GdscriptJsonTemplateExtension : ScriptObject
+[CodeTarget("gdscript-bin")]
+public class GdscriptBinaryCodeTarget : GdscriptCodeTargetBase
 {
-    public static string Deserialize(string fieldName, string jsonVarName, TType type)
+    protected override void OnCreateTemplateContext(TemplateContext ctx)
     {
-        if (type.IsNullable)
-        {
-            return $"if {jsonVarName} != null: {type.Apply(JsonUnderlyingDeserializeVisitor.Ins, jsonVarName, fieldName)}";
-        }
-        else
-        {
-            return type.Apply(JsonUnderlyingDeserializeVisitor.Ins, jsonVarName, fieldName);
-        }
-    }
-
-    public static string DeserializeField(string fieldName, string jsonVarName, string jsonFieldName, TType type)
-    {
-        if (type.IsNullable)
-        {
-            return $"if {jsonVarName}.get('{jsonFieldName}') != null: {type.Apply(JsonUnderlyingDeserializeVisitor.Ins, $"{jsonVarName}[\"{jsonFieldName}\"]", fieldName)}";
-        }
-        else
-        {
-            return type.Apply(JsonUnderlyingDeserializeVisitor.Ins, $"{jsonVarName}[\"{jsonFieldName}\"]", fieldName);
-        }
+        base.OnCreateTemplateContext(ctx);
+        ctx.PushGlobal(new GdscriptBinaryTemplateExtension());
     }
 }

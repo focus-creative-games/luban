@@ -39,6 +39,11 @@ public class GdscriptCommonTemplateExtension : ScriptObject
         return TypeUtil.MakeGDScriptFullName(type.Namespace, type.Name);
     }
 
+    public static string ToFieldName(string typeName)
+    {
+        return char.ToLower(typeName[0]) + typeName.Substring(1);
+    }
+
     public static string StrFullName(string fullName)
     {
         return TypeUtil.ToPascalCase(fullName.Replace(".", "_"));

@@ -24,9 +24,9 @@ using Luban.TypeVisitors;
 
 namespace Luban.Gdscript.TypeVisitors;
 
-public class UnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string, string>
+public class JsonUnderlyingDeserializeVisitor : ITypeFuncVisitor<string, string, string>
 {
-    public static UnderlyingDeserializeVisitor Ins { get; } = new();
+    public static JsonUnderlyingDeserializeVisitor Ins { get; } = new();
 
     public string Accept(TBool type, string jsonVarName, string fieldName)
     {
