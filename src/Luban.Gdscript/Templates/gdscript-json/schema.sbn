@@ -32,6 +32,12 @@ class {{name}}{{if bean.parent_def_type}} extends {{full_name bean.parent_def_ty
     {{~end~}}
     var {{format_field_name __code_style field.name}}: {{declaring_type_name field.ctype}}
 {{~end~}}
+    {{~if !bean.is_abstract_type && !bean.is_value_type~}}
+    
+    var __type_id__ = {{bean.id}};
+    func get_type_id() : return __type_id__;
+    
+    {{~end~}}
 
 {{~if bean.is_abstract_type~}}
     static func fromJson(_json_):
