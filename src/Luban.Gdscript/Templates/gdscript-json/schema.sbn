@@ -164,10 +164,10 @@ class {{str_full_name __full_name}}:
     {{~if table.comment != ''~}}
     ## {{table.comment | html.escape}}
     {{~end~}}
-    var {{format_method_name __code_style table.name}}: {{full_name table}}
+    var {{to_field_name table.name}}: {{full_name table}}
     {{~end~}}
     
     func _init(loader: Callable) -> void:
         {{~for table in __tables ~}}
-        self.{{format_method_name __code_style table.name}} = {{full_name table}}.new(loader.call('{{table.output_data_file}}'))
+        self.{{to_field_name table.name}} = {{full_name table}}.new(loader.call('{{table.output_data_file}}'))
         {{~end~}}
