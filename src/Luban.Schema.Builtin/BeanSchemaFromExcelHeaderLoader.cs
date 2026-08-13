@@ -40,7 +40,7 @@ public class BeanSchemaFromExcelHeaderLoader : IBeanSchemaLoader
         {
             Namespace = valueTypeNamespace,
             Name = valueTypeName,
-            Comment = "",
+            Comment = table.Comment,
             Parent = "",
             Groups = new(),
             Fields = new(),

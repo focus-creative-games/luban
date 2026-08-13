@@ -2,6 +2,16 @@
 class_name Schema
 extends RefCounted
 
+{{~
+func table_field_name
+    name = format_method_name __code_style $0.name
+    if $0.namespace == ''
+        ret name + '_'
+    else
+        ret name
+    end
+end
+~}}
 
 {{~for enum in __enums~}}
 {{~if enum.comment != '' ~}}

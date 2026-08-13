@@ -110,26 +110,32 @@ public class DefaultTextProvider : ITextProvider
         defTableRecordType.PostCompile();
         var tableRecordType = TBean.Create(false, defTableRecordType, null);
 
-        (var actualFile, var sheetName) = FileUtil.SplitFileAndSheetName(FileUtil.Standardize(fileName));
-        var records = DataLoaderManager.Ins.LoadTableFile(tableRecordType, actualFile, sheetName, new Dictionary<string, string>());
-
-        foreach (var r in records)
+        string inputDataDir = GenerationContext.GetInputDataPath();
+        foreach (string subFile in fileName.Split(';', ','))
         {
-            DBean data = r.Data;
+            foreach (var atomFile in FileUtil.GetFileOrDirectory(inputDataDir, subFile))
+            {
+                (var actualFile, var sheetName) = FileUtil.SplitFileAndSheetName(FileUtil.Standardize(atomFile));
+                var records = DataLoaderManager.Ins.LoadTableFile(tableRecordType, actualFile, sheetName, new Dictionary<string, string>());
 
-            string key = ((DString)data.GetField(_keyFieldName)).Value;
-            string value = _convertTextKeyToValue ? ((DString)data.GetField(_ValueFieldName)).Value : key;
-            if (string.IsNullOrEmpty(key))
-            {
-                s_logger.Error("textFile:{} key:{} is empty. ignore it!", fileName, key);
-                continue;
-            }
-            if (!_texts.TryAdd(key, value))
-            {
-                s_logger.Error("textFile:{} key:{} is duplicated", fileName, key);
+                foreach (var r in records)
+                {
+                    DBean data = r.Data;
+
+                    string key = ((DString)data.GetField(_keyFieldName)).Value;
+                    string value = _convertTextKeyToValue ? ((DString)data.GetField(_ValueFieldName)).Value : key;
+                    if (string.IsNullOrEmpty(key))
+                    {
+                        s_logger.Error("textFile:{} key:{} is empty. ignore it!", atomFile, key);
+                        continue;
+                    }
+                    if (!_texts.TryAdd(key, value))
+                    {
+                        s_logger.Error("textFile:{} key:{} is duplicated", atomFile, key);
+                    }
+                }
             }
         }
-        ;
     }
 
     public void AddUnknownKey(string key)

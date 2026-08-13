@@ -34,8 +34,8 @@ luban标准化了游戏配置开发工作流，可以极大提升策划和程序
 
 ## 文档
 
-- [官方文档](https://www.datable.cn/)
-- [快速上手](https://www.datable.cn/docs/beginner/quickstart)
+- [官方文档](https://www.datable.cn/docs/intro)
+- [快速上手](https://www.datable.cn/docs/guide/install)
 - **示例项目** ([github](https://github.com/focus-creative-games/luban_examples)) ([gitee](https://gitee.com/focus-creative-games/luban_examples))
 
 ## 支持与联系
