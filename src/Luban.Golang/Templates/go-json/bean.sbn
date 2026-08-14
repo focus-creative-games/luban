@@ -8,6 +8,10 @@ package {{__top_module}};
     is_abstract_type = __this.is_abstract_type
     hierarchy_fields = __this.hierarchy_export_fields
     hierarchy_not_abstract_children = __this.hierarchy_not_abstract_children
+
+    func bean_index_name
+        ret (format_field_name __code_style $0.name) + '_Index'
+    end
 ~}}
 
 {{collect_import __this}}
@@ -15,6 +19,9 @@ package {{__top_module}};
 type {{go_full_name}} struct {
     {{~for field in hierarchy_fields ~}}
     {{format_field_name __code_style field.name}} {{declaring_type_name field.ctype}} {{-if field.comment != ''}} // {{escape_comment field.comment}} {{end}}
+    {{~if has_index field~}}
+    {{bean_index_name field}} {{declaring_type_name (get_index_map_type field)}}
+    {{~end~}}
     {{~end~}}
 }
 
@@ -44,6 +51,26 @@ func New{{go_full_name}}(_buf map[string]interface{}) (_v *{{go_full_name}}, err
     _v = &{{go_full_name}}{}
     {{~for field in hierarchy_fields ~}}
     {{deserialize_field field.ctype ("_v." + (format_field_name __code_style field.name)) field.name '_buf'}}
+    {{~if has_index field~}}
+    _v.{{bean_index_name field}} = make({{declaring_type_name (get_index_map_type field)}})
+    for _, _e := range _v.{{format_field_name __code_style field.name}} {
+        {{~if field.ctype.element_type.is_dynamic~}}
+        switch __e := _e.(type) {
+        {{~for child in field.ctype.element_type.def_bean.hierarchy_not_abstract_children~}}
+        case *{{full_name child}}:
+            _key := __e.{{format_field_name __code_style (get_index_field field).name}}
+            _v.{{bean_index_name field}}[_key] = _e
+        {{~end~}}
+        default:
+            err = errors.New("unexpected dynamic collection value")
+            return
+        }
+        {{~else~}}
+        _key := _e.{{format_field_name __code_style (get_index_field field).name}}
+        _v.{{bean_index_name field}}[_key] = _e
+        {{~end~}}
+    }
+    {{~end~}}
     {{~end~}}
     return
 }

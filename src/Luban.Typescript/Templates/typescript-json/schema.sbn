@@ -80,6 +80,12 @@ export {{if bean.is_abstract_type}}abstract {{end}}class {{bean.name}}{{if bean.
         if (_json_.{{field.name}} === undefined) { throw new Error() }
         {{~end~}}
         {{deserialize ('this.' + format_field_name __code_style field.name) ( '_json_.' + field.name) field.ctype}}
+        {{~if has_index field~}}
+        this.{{format_field_name __code_style field.name}}_Index = new Map<{{declaring_type_name (get_index_map_type field).key_type}}, {{declaring_type_name (get_index_map_type field).value_type}}>()
+        for (let _e of this.{{format_field_name __code_style field.name}}) {
+            this.{{format_field_name __code_style field.name}}_Index.set(_e.{{format_field_name __code_style (get_index_field field).name}}, _e)
+        }
+        {{~end~}}
         {{~end~}}
     }
 
@@ -92,6 +98,9 @@ export {{if bean.is_abstract_type}}abstract {{end}}class {{bean.name}}{{if bean.
     readonly {{format_field_name __code_style field.name}}: {{declaring_type_name field.ctype}}
     {{~if can_generate_ref field~}}
     {{get_ref_name field}}: {{declaring_type_name (get_ref_type field)}} | undefined
+    {{~end~}}
+    {{~if has_index field~}}
+    readonly {{format_field_name __code_style field.name}}_Index: Map<{{declaring_type_name (get_index_map_type field).key_type}}, {{declaring_type_name (get_index_map_type field).value_type}}>
     {{~end~}}
     {{~end~}}
 
@@ -109,9 +118,25 @@ export {{if bean.is_abstract_type}}abstract {{end}}class {{bean.name}}{{if bean.
 
 {{~end~}}
 
+{{~
+func table_param_def_list
+    paramList = $0.index_list |array.each do; ret (format_field_name __code_style $0.index_field.name) + ': ' + (declaring_type_name $0.type); end
+    ret array.join paramList ', '
+end
+
+func table_index_getter_name
+    name = 'get_by_' + $0.index_field.name
+    ret format_method_name __code_style name
+end
+~}}
+
 {{~for table in __tables
     key_type = table.key_ttype
     value_type = table.value_ttype
+    unionMapType = declaring_type_name value_type
+    for idx in table.index_list reversed
+        unionMapType = 'Map<' + (declaring_type_name idx.type) + ', ' + unionMapType + '>'
+    end
 ~}}
 
 {{namespace_with_grace_begin table.namespace}}
@@ -131,7 +156,8 @@ export class {{table.name}} {
             let _v: {{declaring_type_name value_type}}
             {{deserialize '_v' '_json2_' value_type}}
             this._dataList.push(_v)
-            this._dataMap.set(_v.{{format_field_name __code_style table.index_field.name}}, _v)
+            const _key = _v.{{format_field_name __code_style table.index_field.name}}
+            this._dataMap.set(_key, _v)
         }
     }
 
@@ -148,6 +174,13 @@ export class {{table.name}} {
     }
     {{~else if table.is_list_table ~}}
     private _dataList: {{declaring_type_name value_type}}[]
+    {{~if table.is_union_index~}}
+    private _dataMapUnion: {{unionMapType}}
+    {{~else if !table.index_list.empty?~}}
+    {{~for idx in table.index_list~}}
+    private _dataMap_{{idx.index_field.name}}: Map<{{declaring_type_name idx.type}}, {{declaring_type_name value_type}}>
+    {{~end~}}
+    {{~end~}}
     
     constructor(_json_: any) {
         this._dataList = []
@@ -156,11 +189,51 @@ export class {{table.name}} {
             {{deserialize '_v' '_json2_' value_type}}
             this._dataList.push(_v)
         }
+    {{~if table.is_union_index~}}
+        this._dataMapUnion = new Map()
+        for (let _v of this._dataList) {
+            let _m: any = this._dataMapUnion
+            {{~for idx in table.index_list~}}
+            var _k{{for.index}} = _v.{{format_field_name __code_style idx.index_field.name}}
+            {{~if !for.last~}}
+            var _sub{{for.index}} = _m.get(_k{{for.index}}); if (_sub{{for.index}} === undefined) { _sub{{for.index}} = new Map(); _m.set(_k{{for.index}}, _sub{{for.index}}); } _m = _sub{{for.index}}
+            {{~else~}}
+            _m.set(_k{{for.index}}, _v)
+            {{~end~}}
+            {{~end~}}
+        }
+    {{~else if !table.index_list.empty?~}}
+        {{~for idx in table.index_list~}}
+        this._dataMap_{{idx.index_field.name}} = new Map<{{declaring_type_name idx.type}}, {{declaring_type_name value_type}}>()
+        {{~end~}}
+        for (let _v of this._dataList) {
+            {{~for idx in table.index_list~}}
+            this._dataMap_{{idx.index_field.name}}.set(_v.{{format_field_name __code_style idx.index_field.name}}, _v)
+            {{~end~}}
+        }
+    {{~end~}}
     }
 
     getDataList(): {{declaring_type_name value_type}}[] { return this._dataList }
 
-    get(index: number): {{declaring_type_name value_type}} | undefined { return this._dataList[index] }
+    {{~if table.is_union_index~}}
+    get({{table_param_def_list table}}): {{declaring_type_name value_type}} | undefined {
+        let _m: any = this._dataMapUnion
+        {{~for idx in table.index_list~}}
+        {{~if for.last~}}
+        return _m.get({{format_field_name __code_style idx.index_field.name}})
+        {{~else~}}
+        _m = _m.get({{format_field_name __code_style idx.index_field.name}})
+        if (_m === undefined) { return undefined }
+        {{~end~}}
+        {{~end~}}
+    }
+    {{~end~}}
+    {{~if !table.index_list.empty? && !table.is_union_index~}}
+    {{~for idx in table.index_list~}}
+    {{table_index_getter_name idx}}(key: {{declaring_type_name idx.type}}): {{declaring_type_name value_type}} | undefined { return this._dataMap_{{idx.index_field.name}}.get(key) }
+    {{~end~}}
+    {{~end~}}
     
     resolve(tables:{{__name}}) {
         for(let  data of this._dataList)

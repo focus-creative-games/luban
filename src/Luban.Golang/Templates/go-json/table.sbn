@@ -7,7 +7,30 @@ package {{__top_module}};
     key_type = __this.key_ttype
     value_type =  __this.value_ttype
     index_field = __this.index_field
+
+    func table_param_def_list
+        paramList = $0.index_list |array.each do; ret (format_property_name __code_style $0.index_field.name) + ' ' + (declaring_type_name $0.type); end
+        ret array.join paramList ', '
+    end
+
+    func table_index_getter_name
+        name = 'get_by_' + $0.index_field.name
+        ret format_field_name __code_style name
+    end
 ~}}
+
+{{~if (__this.is_map_table || (__this.is_list_table && !__this.index_list.empty?)) && value_type.is_dynamic~}}
+import "errors"
+{{~end~}}
+
+{{~if __this.is_list_table && __this.is_union_index~}}
+type {{go_full_name}}UnionKey struct {
+    {{~for idx in __this.index_list~}}
+    {{format_field_name __code_style idx.index_field.name}} {{declaring_type_name idx.type}}
+    {{~end~}}
+}
+
+{{~end~}}
 
 {{~if __this.is_map_table~}}
 type {{go_full_name}} struct {
@@ -27,12 +50,15 @@ func New{{go_full_name}}(_buf []map[string]interface{}) (*{{go_full_name}}, erro
 {{~if value_type.is_dynamic ~}}
     {{~for child in value_type.def_bean.hierarchy_not_abstract_children~}}
             if __v, __is := _v.(*{{full_name child}}) ; __is {
-                dataMap[__v.{{format_field_name __code_style index_field.name}}] = _v
+                _key := __v.{{format_field_name __code_style index_field.name}}
+                dataMap[_key] = _v
                 continue
             }
     {{~end~}}
+            return nil, errors.New("unexpected dynamic table value")
 {{~else~}}
-            dataMap[_v.{{format_field_name __code_style index_field.name}}] = _v
+            _key := _v.{{format_field_name __code_style index_field.name}}
+            dataMap[_key] = _v
 {{~end~}}
         }
     }
@@ -54,6 +80,13 @@ func (table *{{go_full_name}}) Get(key {{declaring_type_name key_type}}) {{decla
 {{~else if __this.is_list_table~}}
 type {{go_full_name}} struct {
     _dataList []{{declaring_type_name value_type}}
+    {{~if __this.is_union_index~}}
+    _dataMapUnion map[{{go_full_name}}UnionKey]{{declaring_type_name value_type}}
+    {{~else if !__this.index_list.empty?~}}
+    {{~for idx in __this.index_list~}}
+    _dataMap_{{idx.index_field.name}} map[{{declaring_type_name idx.type}}]{{declaring_type_name value_type}}
+    {{~end~}}
+    {{~end~}}
 }
 
 func New{{go_full_name}}(_buf []map[string]interface{}) (*{{go_full_name}}, error) {
@@ -65,16 +98,87 @@ func New{{go_full_name}}(_buf []map[string]interface{}) (*{{go_full_name}}, erro
             _dataList = append(_dataList, _v)
         }
     }
+    {{~if __this.is_union_index~}}
+    dataMapUnion := make(map[{{go_full_name}}UnionKey]{{declaring_type_name value_type}}, len(_dataList))
+    for _, _v := range _dataList {
+        {{~if value_type.is_dynamic~}}
+        var _key {{go_full_name}}UnionKey
+        switch __v := _v.(type) {
+        {{~for child in value_type.def_bean.hierarchy_not_abstract_children~}}
+        case *{{full_name child}}:
+            _key = {{go_full_name}}UnionKey{
+                {{~for idx in __this.index_list~}}
+                {{format_field_name __code_style idx.index_field.name}}: __v.{{format_field_name __code_style idx.index_field.name}},
+                {{~end~}}
+            }
+        {{~end~}}
+        default:
+            return nil, errors.New("unexpected dynamic table value")
+        }
+        {{~else~}}
+        _key := {{go_full_name}}UnionKey{
+            {{~for idx in __this.index_list~}}
+            {{format_field_name __code_style idx.index_field.name}}: _v.{{format_field_name __code_style idx.index_field.name}},
+            {{~end~}}
+        }
+        {{~end~}}
+        dataMapUnion[_key] = _v
+    }
+    {{~else if !__this.index_list.empty?~}}
+    {{~for idx in __this.index_list~}}
+    dataMap_{{idx.index_field.name}} := make(map[{{declaring_type_name idx.type}}]{{declaring_type_name value_type}}, len(_dataList))
+    {{~end~}}
+    for _, _v := range _dataList {
+        {{~if value_type.is_dynamic~}}
+        switch __v := _v.(type) {
+        {{~for child in value_type.def_bean.hierarchy_not_abstract_children~}}
+        case *{{full_name child}}:
+            {{~for idx in __this.index_list~}}
+            _key_{{idx.index_field.name}} := __v.{{format_field_name __code_style idx.index_field.name}}
+            dataMap_{{idx.index_field.name}}[_key_{{idx.index_field.name}}] = _v
+            {{~end~}}
+        {{~end~}}
+        default:
+            return nil, errors.New("unexpected dynamic table value")
+        }
+        {{~else~}}
+        {{~for idx in __this.index_list~}}
+        _key_{{idx.index_field.name}} := _v.{{format_field_name __code_style idx.index_field.name}}
+        dataMap_{{idx.index_field.name}}[_key_{{idx.index_field.name}}] = _v
+        {{~end~}}
+        {{~end~}}
+    }
+    {{~end~}}
+    {{~if __this.is_union_index~}}
+    return &{{go_full_name}}{_dataList:_dataList, _dataMapUnion:dataMapUnion}, nil
+    {{~else if !__this.index_list.empty?~}}
+    return &{{go_full_name}}{_dataList:_dataList{{~for idx in __this.index_list~}}, _dataMap_{{idx.index_field.name}}:dataMap_{{idx.index_field.name}}{{~end~}}}, nil
+    {{~else~}}
     return &{{go_full_name}}{_dataList:_dataList}, nil
+    {{~end~}}
 }
 
 func (table *{{go_full_name}}) GetDataList() []{{declaring_type_name value_type}} {
     return table._dataList
 }
 
-func (table *{{go_full_name}}) Get(index int) {{declaring_type_name value_type}} {
-    return table._dataList[index]
+{{~if __this.is_union_index~}}
+func (table *{{go_full_name}}) Get({{table_param_def_list __this}}) {{declaring_type_name value_type}} {
+    _key := {{go_full_name}}UnionKey{
+        {{~for idx in __this.index_list~}}
+        {{format_field_name __code_style idx.index_field.name}}: {{format_property_name __code_style idx.index_field.name}},
+        {{~end~}}
+    }
+    return table._dataMapUnion[_key]
 }
+{{~end~}}
+{{~if !__this.index_list.empty? && !__this.is_union_index~}}
+{{~for idx in __this.index_list~}}
+func (table *{{go_full_name}}) {{table_index_getter_name idx}}(key {{declaring_type_name idx.type}}) {{declaring_type_name value_type}} {
+    return table._dataMap_{{idx.index_field.name}}[key]
+}
+{{~end~}}
+{{~end~}}
 
 {{~else~}}
 
