@@ -442,9 +442,39 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
         }
         if (row.Elements != null)
         {
-            throw new Exception($"{type.DefBean.FullName} 不支持多行子字段格式，只有结构列表才支持此格式");
+            return ReadMultiRowBeanData(type, sheet, row);
         }
         throw new Exception();
+    }
+
+    private DType ReadMultiRowBeanData(TBean type, RowColumnSheet sheet, TitleRow row)
+    {
+        var elements = row.Elements;
+        if (elements.Count == 0)
+        {
+            if (type.IsNullable)
+            {
+                return null;
+            }
+            throw new Exception($"字段:'{row.SelfTitle.Name}' type:{type.DefBean.FullName} 缺少数据");
+        }
+        if (elements[0].HasSubFields)
+        {
+            // 带子列名的多行格式：单 bean 只能对应一行子字段数据
+            if (elements.Count > 1)
+            {
+                throw new Exception($"字段:'{row.SelfTitle.Name}' 是单bean类型 '{type.DefBean.FullName}'，不支持多行子字段数据（共{elements.Count}行）。如需多行数据请改用 list 类型");
+            }
+            return Accept(type, sheet, elements[0]);
+        }
+        // 平铺格式（无子列名）：多行单元格按列顺序摊平成流解析，兼容旧版本表格式
+        var s = row.AsMultiRowConcatElements(row.SelfTitle.Sep);
+        var result = type.Apply(ExcelStreamDataCreator.Ins, s);
+        if (!s.TryReadEOF())
+        {
+            throw new Exception($"字段:'{row.SelfTitle.Name}' type:{type.DefBean.FullName} 多行数据中存在未被使用的多余数据，请检查是否误填，或者应该改用 list 类型");
+        }
+        return result;
     }
 
     private List<DType> ReadCollectionDatas(TType type, TType elementType, RowColumnSheet sheet, TitleRow row)
