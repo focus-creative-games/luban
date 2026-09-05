@@ -126,6 +126,7 @@ public static class FileUtil
     public static bool IsExcelFile(string fullName)
     {
         return fullName.EndsWith(".csv", StringComparison.Ordinal)
+               || fullName.EndsWith(".tsv", StringComparison.Ordinal)
                || fullName.EndsWith(".xls", StringComparison.Ordinal)
                || fullName.EndsWith(".xlsx", StringComparison.Ordinal)
                || fullName.EndsWith(".xlsm", StringComparison.Ordinal);

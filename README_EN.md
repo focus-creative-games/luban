@@ -18,7 +18,7 @@ Luban standardizes the game configuration development workflow, which can greatl
 
 ## Core features
 
-- Rich source data format. Support excel family (csv, xls, xlsx, xlsm), json, xml, yaml, lua, etc.
+- Rich source data format. Support excel family (csv, tsv, xls, xlsx, xlsm), json, xml, yaml, lua, etc.
 - Rich export formats. Support generating binary, json, bson, xml, lua, yaml and other format data
 - Enhanced excel format. Simple configurations such as simple lists, substructures, structured lists, and arbitrarily complex deep nested structures can be concisely configured
 - Complete type system. Not only can it express common specification line lists, but it can flexibly and elegantly express complex GamePlay data such as behavior trees, skills, plots, and dungeons because **supports OOP type inheritance**
