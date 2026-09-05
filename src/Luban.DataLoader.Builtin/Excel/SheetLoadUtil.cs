@@ -45,6 +45,26 @@ public static class SheetLoadUtil
         }
     }
 
+    public static IExcelDataReader CreateSheetReader(string ext, Stream stream)
+    {
+        switch (ext)
+        {
+            case ".csv":
+            case ".tsv":
+            {
+                var config = new ExcelReaderConfiguration() { FallbackEncoding = DetectCsvEncoding(stream) };
+                if (ext == ".tsv")
+                {
+                    // tsv 的分隔符固定为 tab，不参与 csv 的多分隔符自动探测
+                    config.AutodetectSeparators = new[] { '\t' };
+                }
+                return ExcelReaderFactory.CreateCsvReader(stream, config);
+            }
+            default:
+                return ExcelReaderFactory.CreateReader(stream);
+        }
+    }
+
     private static readonly AsyncLocal<string> s_curExcel = new();
 
     public static IEnumerable<RawSheet> LoadRawSheets(string rawUrl, string sheetName, Stream stream)
@@ -52,7 +72,7 @@ public static class SheetLoadUtil
         s_logger.Trace("{filename} {sheet}", rawUrl, sheetName);
         s_curExcel.Value = rawUrl;
         string ext = Path.GetExtension(rawUrl);
-        using (var reader = ext != ".csv" ? ExcelReaderFactory.CreateReader(stream) : ExcelReaderFactory.CreateCsvReader(stream, new ExcelReaderConfiguration() { FallbackEncoding = DetectCsvEncoding(stream) }))
+        using (var reader = CreateSheetReader(ext, stream))
         {
             do
             {
@@ -570,7 +590,7 @@ public static class SheetLoadUtil
     {
         s_logger.Trace("{filename} {sheet}", rawUrl, sheetName);
         string ext = Path.GetExtension(rawUrl);
-        using (var reader = ext != ".csv" ? ExcelReaderFactory.CreateReader(stream) : ExcelReaderFactory.CreateCsvReader(stream, new ExcelReaderConfiguration() { FallbackEncoding = DetectCsvEncoding(stream) }))
+        using (var reader = CreateSheetReader(ext, stream))
         {
             do
             {

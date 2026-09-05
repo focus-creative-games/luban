@@ -31,6 +31,7 @@ namespace Luban.DataLoader.Builtin.Excel;
 [DataLoader("xlsm")]
 [DataLoader("xlm")]
 [DataLoader("csv")]
+[DataLoader("tsv")]
 public class ExcelRowColumnDataSource : DataLoaderBase
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();

@@ -65,6 +65,7 @@ internal class DirectoryWatcher
     {
         ".xlsx",
         ".csv",
+        ".tsv",
         ".xls",
         ".xlsm",
         ".json",

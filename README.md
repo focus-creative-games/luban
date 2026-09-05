@@ -18,7 +18,7 @@ luban标准化了游戏配置开发工作流，可以极大提升策划和程序
 
 ## 核心特性
 
-- 丰富的源数据格式。支持excel族(csv,xls,xlsx,xlsm)、json、xml、yaml、lua等
+- 丰富的源数据格式。支持excel族(csv,tsv,xls,xlsx,xlsm)、json、xml、yaml、lua等
 - 丰富的导出格式。 支持生成binary、json、bson、xml、lua、yaml等格式数据
 - 增强的excel格式。可以简洁地配置出像简单列表、子结构、结构列表，以及任意复杂的深层次的嵌套结构
 - 完备的类型系统。不仅能表达常见的规范行列表，由于**支持OOP类型继承**，能灵活优雅表达行为树、技能、剧情、副本之类复杂GamePlay数据
