@@ -81,6 +81,9 @@ internal static class Program
         [Option("locale", Required = false, HelpText = "locale for error/warning messages (en, zh). default: system UI language")]
         public string Locale { get; set; }
 
+        [Option("errorFormat", Required = false, Default = "text", HelpText = "error output format: text|json (json is for AI/CI tooling)")]
+        public string ErrorFormat { get; set; } = "text";
+
         [Option('x', "xargs", Required = false, HelpText = "args like -x a=1 -x b=2")]
         public IEnumerable<string> Xargs { get; set; }
 
@@ -133,6 +136,34 @@ internal static class Program
         }
     }
 
+    private static bool UseJsonErrors(CommandOptions opts)
+        => string.Equals(opts.ErrorFormat, "json", StringComparison.OrdinalIgnoreCase);
+
+    private static void EmitErrorReport(DiagnosticReport report, CommandOptions opts)
+    {
+        if (UseJsonErrors(opts))
+        {
+            Console.Error.WriteLine(report.ToJson());
+            return;
+        }
+        foreach (var err in report.Errors)
+        {
+            s_logger.Error("[{}] {}{}", err.Category, err.Code != null ? err.Code + ": " : "", err.Message);
+            if (!string.IsNullOrEmpty(err.File))
+            {
+                s_logger.Error("  file: {}", err.File);
+            }
+            if (!string.IsNullOrEmpty(err.Location))
+            {
+                s_logger.Error("  location: {}", err.Location);
+            }
+            if (!string.IsNullOrEmpty(err.FieldPath))
+            {
+                s_logger.Error("  field: {}", err.FieldPath);
+            }
+        }
+    }
+
     private static void RunGeneration(CommandOptions opts, bool exitOnError)
     {
         try
@@ -151,16 +182,35 @@ internal static class Program
                 pipeline.Run(CreatePipelineArgs(opts, config));
                 if (exitOnError && opts.Strict && scope.GenerationContext.AnyValidatorFail)
                 {
-                    s_logger.Error(MessageCatalog.Format("error.cli.validation_fail"));
+                    var report = DiagnosticReport.ValidationFailed();
+                    if (UseJsonErrors(opts))
+                    {
+                        EmitErrorReport(report, opts);
+                    }
+                    else
+                    {
+                        s_logger.Error(MessageCatalog.Format("error.cli.validation_fail"));
+                    }
                     Environment.Exit(1);
+                }
+                if (UseJsonErrors(opts) && exitOnError)
+                {
+                    Console.Error.WriteLine(DiagnosticReport.Success().ToJson());
                 }
                 s_logger.Info("bye~");
             }
         }
         catch (Exception e)
         {
-            PrettyPrintException(e);
-            s_logger.Error(MessageCatalog.Format("error.cli.run_failed"));
+            if (UseJsonErrors(opts))
+            {
+                EmitErrorReport(DiagnosticReport.FromException(e), opts);
+            }
+            else
+            {
+                PrettyPrintException(e);
+                s_logger.Error(MessageCatalog.Format("error.cli.run_failed"));
+            }
             if (exitOnError)
             {
                 Environment.Exit(1);

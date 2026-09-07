@@ -36,8 +36,10 @@ Luban standardizes the game configuration development workflow, which can greatl
 
 - [Official Documentation](https://www.datable.cn/en/docs/intro)
 - [Quick Start](https://www.datable.cn/en/docs/guide/install)
+- [AI support (Skills / MCP / schema-json)](https://www.datable.cn/docs/ai/overview)
 - **Example Project** ([github](https://github.com/focus-creative-games/luban_examples)) ([gitee](https://gitee.com/focus-creative-games/luban_examples))
 
+AI assets in this repo: [`ai/`](./ai/README.md).
 ## Support and contact
 
 - QQ group: 692890842 (Luban development exchange group)
