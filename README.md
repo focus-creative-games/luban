@@ -1,13 +1,10 @@
-
-- [README 中文](./README.md)
-- [README English](./README_EN.md)
-
 # Luban
 
 ![icon](docs/images/logo.png)
 
 [![license](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://opensource.org/licenses/MIT) ![star](https://img.shields.io/github/stars/focus-creative-games/luban?style=flat-square)
 
+**中文** | [English](./README_EN.md)
 
 luban是一个强大、易用、优雅、稳定的游戏配置解决方案。它设计目标为满足从小型到超大型游戏项目的简单到复杂的游戏配置工作流需求。
 
@@ -15,6 +12,8 @@ luban可以处理丰富的文件类型，支持主流的语言，可以生成多
 luban有清晰优雅的生成管线设计，支持良好的模块化和插件化，方便开发者进行二次开发。开发者很容易就能将luban适配到自己的配置格式，定制出满足项目要求的强大的配置工具。
 
 luban标准化了游戏配置开发工作流，可以极大提升策划和程序的工作效率。
+
+自 **5.0.0** 起，Luban 面向 AI Agent / IDE 提供 **AI Native** 能力：官方 Skills、机器可读 schema 与报错、`Luban.Agent` CLI，以及 MCP Server，让加表、查 schema、校验与生成可以稳定地交给 Agent 完成。
 
 ## 核心特性
 
@@ -26,6 +25,7 @@ luban标准化了游戏配置开发工作流，可以极大提升策划和程序
 - 支持主流的消息方案。 protobuf(schema + binary + json)、flatbuffers(schema + json)、msgpack(binary)
 - 强大的数据校验能力。ref引用检查、path资源路径、range范围检查等等
 - 完善的本地化支持
+- **AI Native（5.0.0+）**。官方 Agent Skills、`-c schema-json`、`--errorFormat json`、`Luban.Agent`（校验 / 查表 / describe）、`Luban.Mcp`（IDE 工具调用）
 - 支持所有主流的游戏引擎和平台。支持Unity、Unreal、Cocos2x、Godot、微信小游戏等
 - 良好的跨平台能力。能在Win,Linux,Mac平台良好运行。
 - 支持所有主流的热更新方案。hybridclr、ilruntime、{x,t,s}lua、puerts等
@@ -36,7 +36,7 @@ luban标准化了游戏配置开发工作流，可以极大提升策划和程序
 
 - [官方文档](https://www.datable.cn/docs/intro)
 - [快速上手](https://www.datable.cn/docs/guide/install)
-- [AI 支持（Skills / MCP / schema-json）](https://www.datable.cn/docs/ai/overview)
+- [AI 支持（Skills / Agent / MCP / schema-json）](https://www.datable.cn/docs/ai/overview)
 - **示例项目** ([github](https://github.com/focus-creative-games/luban_examples)) ([gitee](https://gitee.com/focus-creative-games/luban_examples))
 
 仓库内 AI 资源见 [`ai/`](./ai/README.md)。

@@ -1,13 +1,10 @@
-
-- [README 中文](./README.md)
-- [README English](./README_EN.md)
-
 # Luban
 
 ![icon](docs/images/logo.png)
 
 [![license](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://opensource.org/licenses/MIT) ![star](https://img.shields.io/github/stars/focus-creative-games/luban?style=flat-square)
 
+[中文](./README.md) | **English**
 
 luban is a powerful, easy-to-use, elegant, and stable game configuration solution. It is designed to meet the needs of simple to complex game configuration workflows from small to very large game projects.
 
@@ -15,6 +12,8 @@ luban can handle a variety of file types, supports popular languages, can genera
 Luban has a clear and elegant generation pipeline design, supports good modularization and plug-in, and is convenient for developers to carry out secondary development. Developers can easily adapt luban to their own configuration format, and customize powerful configuration tools that meet project requirements.
 
 Luban standardizes the game configuration development workflow, which can greatly improve the efficiency of planning and programming.
+
+Since **5.0.0**, Luban is **AI Native**: official Agent Skills, machine-readable schema and diagnostics, `Luban.Agent` CLI, and an MCP Server—so agents can reliably add tables, inspect schema, validate, and generate.
 
 ## Core features
 
@@ -26,6 +25,7 @@ Luban standardizes the game configuration development workflow, which can greatl
 - Support popular message schemes. protobuf(schema + binary + json), flatbuffers(schema + json), msgpack(binary)
 - Powerful data verification capability. ref reference check, path resource path, range range check, etc.
 - Perfect localization support
+- **AI Native (5.0.0+)**. Official Agent Skills, `-c schema-json`, `--errorFormat json`, `Luban.Agent` (validate / list / describe), and `Luban.Mcp` (IDE tool calling)
 - Supports all major game engines and platforms. Support Unity, Unreal, Cocos2x, Godot, WeChat games, etc.
 - Good cross-platform capability. It can run well on Win, Linux, and Mac platforms.
 - Support all mainstream hot update solutions. hybridclr, ilruntime, {x,t,s}lua, puerts, etc.
@@ -36,10 +36,12 @@ Luban standardizes the game configuration development workflow, which can greatl
 
 - [Official Documentation](https://www.datable.cn/en/docs/intro)
 - [Quick Start](https://www.datable.cn/en/docs/guide/install)
-- [AI support (Skills / MCP / schema-json)](https://www.datable.cn/docs/ai/overview)
+- [AI support (Skills / Agent / MCP / schema-json)](https://www.datable.cn/docs/ai/overview)
+- [What's new in 5.x (vs 4.x)](https://www.datable.cn/docs/other/whats-new-5.x)
 - **Example Project** ([github](https://github.com/focus-creative-games/luban_examples)) ([gitee](https://gitee.com/focus-creative-games/luban_examples))
 
 AI assets in this repo: [`ai/`](./ai/README.md).
+
 ## Support and contact
 
 - QQ group: 692890842 (Luban development exchange group)
