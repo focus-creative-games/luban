@@ -189,15 +189,15 @@ type {{go_full_name}} struct {
 }
 
 func New{{go_full_name}}(_buf []map[string]interface{}) (*{{go_full_name}}, error) {
-	if len(_buf) != 1 {
+    if len(_buf) != 1 {
         return nil, errors.New(" size != 1 ")
-	} else {
-		if _v, err2 := New{{full_name value_type.def_bean}}(_buf[0]); err2 != nil {
-			return nil, err2
-		} else {
-		    return &{{go_full_name}}{_data:_v}, nil
-		}
-	}
+    } else {
+        if _v, err2 := New{{full_name value_type.def_bean}}(_buf[0]); err2 != nil {
+            return nil, err2
+        } else {
+            return &{{go_full_name}}{_data:_v}, nil
+        }
+    }
 }
 
 func (table *{{go_full_name}}) Get() {{declaring_type_name value_type}} {
