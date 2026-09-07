@@ -22,10 +22,14 @@ description: Diagnoses Luban generation and validation failures. Use when gen.ba
 ## 有用命令
 
 ```bash
-# 只校验
+# 只校验（推荐 Agent CLI）
+dotnet Luban.Agent.dll validate --conf luban.conf -t all
+
+# 或主 CLI
 dotnet Luban.dll --conf luban.conf -t all -f --strict --errorFormat json -x outputSaver=null
 
-# 导出 schema 对照
+# 导出 / 查询 schema
+dotnet Luban.Agent.dll schema --conf luban.conf -t all
 dotnet Luban.dll --conf luban.conf -t all -c schema-json -x outputCodeDir=./schema-out
 ```
 

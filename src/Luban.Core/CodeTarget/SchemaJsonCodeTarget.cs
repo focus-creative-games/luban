@@ -1,4 +1,4 @@
-// Copyright 2025 Code Philosophy
+// Copyright 2026 Code Philosophy
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal

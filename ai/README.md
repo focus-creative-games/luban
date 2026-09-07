@@ -6,9 +6,9 @@
 
 - `skills/`：可复制到 `.cursor/skills/` 的 Skill 包
 - 源码侧能力：
-  - `-c schema-json`：导出机器可读 schema
-  - `--errorFormat json`：可解析报错
-  - `src/Luban.Mcp`：MCP Server（查 schema / 校验生成 / 搜文档）
+  - `src/Luban.Agent`：Agent CLI（validate / schema / list-tables / describe）
+  - 主 `Luban`：`-c schema-json`、`--errorFormat json`
+  - `src/Luban.Mcp`：MCP Server（优先调 Agent，生成走主 CLI）
 
 ## 文档
 

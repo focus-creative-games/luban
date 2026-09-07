@@ -1,5 +1,23 @@
-// Copyright 2025 Code Philosophy
+// Copyright 2026 Code Philosophy
 //
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
@@ -18,89 +36,67 @@ public static class LubanTools
         WriteIndented = true,
     };
 
-    [McpServerTool, Description("List tables from a Luban project by exporting schema-json. Requires LUBAN_DLL (path to Luban.dll) or lubanDll argument.")]
+    [McpServerTool, Description("List Luban tables via Luban.Agent. Prefers LUBAN_AGENT_DLL.")]
     public static async Task<string> ListTables(
         [Description("Absolute path to luban.conf")] string conf,
         [Description("Export target name, e.g. client/server/all")] string target = "all",
-        [Description("Optional override path to Luban.dll")] string? lubanDll = null,
+        [Description("Optional path to Luban.Agent.dll")] string? agentDll = null,
         CancellationToken cancellationToken = default)
     {
-        var schema = await ExportSchemaAsync(conf, target, lubanDll, cancellationToken);
-        using var doc = JsonDocument.Parse(schema);
-        var tables = doc.RootElement.GetProperty("tables");
-        var list = new List<object>();
-        foreach (var t in tables.EnumerateArray())
-        {
-            list.Add(new
-            {
-                fullName = t.GetProperty("fullName").GetString(),
-                valueType = t.TryGetProperty("valueType", out var vt) ? vt.GetString() : null,
-                mode = t.TryGetProperty("mode", out var m) ? m.GetString() : null,
-                index = t.TryGetProperty("index", out var idx) ? idx.GetString() : null,
-                comment = t.TryGetProperty("comment", out var c) && c.ValueKind != JsonValueKind.Null ? c.GetString() : null,
-            });
-        }
-        return JsonSerializer.Serialize(list, s_json);
+        return await RunAgentAsync(
+            ["list-tables", "--conf", conf, "-t", target],
+            agentDll,
+            cancellationToken);
     }
 
-    [McpServerTool, Description("Get compiled Luban schema as JSON (tables/beans/enums). Optionally filter by full name substring.")]
+    [McpServerTool, Description("Get compiled Luban schema JSON via Luban.Agent (optional name filter).")]
     public static async Task<string> GetSchema(
         [Description("Absolute path to luban.conf")] string conf,
         [Description("Export target name")] string target = "all",
-        [Description("Optional filter: table/bean/enum fullName contains this string")] string? nameFilter = null,
-        [Description("Optional override path to Luban.dll")] string? lubanDll = null,
+        [Description("Optional filter: fullName contains this string")] string? nameFilter = null,
+        [Description("Optional path to Luban.Agent.dll")] string? agentDll = null,
         CancellationToken cancellationToken = default)
     {
-        var schema = await ExportSchemaAsync(conf, target, lubanDll, cancellationToken);
-        if (string.IsNullOrWhiteSpace(nameFilter))
+        var args = new List<string> { "schema", "--conf", conf, "-t", target };
+        if (!string.IsNullOrWhiteSpace(nameFilter))
         {
-            return schema;
+            args.Add("--name");
+            args.Add(nameFilter);
         }
-
-        using var doc = JsonDocument.Parse(schema);
-        var root = doc.RootElement;
-        var filter = nameFilter.Trim();
-        bool Match(JsonElement el) =>
-            el.TryGetProperty("fullName", out var fn) &&
-            (fn.GetString()?.Contains(filter, StringComparison.OrdinalIgnoreCase) ?? false);
-
-        var filtered = new
-        {
-            version = root.GetProperty("version").GetInt32(),
-            target = root.GetProperty("target").GetString(),
-            topModule = root.TryGetProperty("topModule", out var tm) ? tm.GetString() : null,
-            tables = FilterArray(root, "tables", Match),
-            beans = FilterArray(root, "beans", Match),
-            enums = FilterArray(root, "enums", Match),
-        };
-        return JsonSerializer.Serialize(filtered, s_json);
+        return await RunAgentAsync(args, agentDll, cancellationToken);
     }
 
-    [McpServerTool, Description("Validate Luban config/data without writing outputs (-f --strict --errorFormat json -x outputSaver=null).")]
+    [McpServerTool, Description("Describe a table/bean/enum by name via Luban.Agent.")]
+    public static async Task<string> Describe(
+        [Description("Absolute path to luban.conf")] string conf,
+        [Description("Table/bean/enum name or fullName substring")] string name,
+        [Description("Export target name")] string target = "all",
+        [Description("Optional path to Luban.Agent.dll")] string? agentDll = null,
+        CancellationToken cancellationToken = default)
+    {
+        return await RunAgentAsync(
+            ["describe", "--conf", conf, "-t", target, "--name", name],
+            agentDll,
+            cancellationToken);
+    }
+
+    [McpServerTool, Description("Validate Luban config/data via Luban.Agent (no file output).")]
     public static async Task<string> Validate(
         [Description("Absolute path to luban.conf")] string conf,
         [Description("Export target name")] string target = "all",
         [Description("Extra CLI args, space-separated, e.g. -x pathValidator.rootDir=...")] string? extraArgs = null,
-        [Description("Optional override path to Luban.dll")] string? lubanDll = null,
+        [Description("Optional path to Luban.Agent.dll")] string? agentDll = null,
         CancellationToken cancellationToken = default)
     {
-        var args = new List<string>
-        {
-            "--conf", conf,
-            "-t", target,
-            "-f",
-            "--strict",
-            "--errorFormat", "json",
-            "-x", "outputSaver=null",
-        };
+        var args = new List<string> { "validate", "--conf", conf, "-t", target };
         if (!string.IsNullOrWhiteSpace(extraArgs))
         {
             args.AddRange(SplitArgs(extraArgs));
         }
-        return await RunLubanAsync(args, lubanDll, cancellationToken);
+        return await RunAgentAsync(args, agentDll, cancellationToken);
     }
 
-    [McpServerTool, Description("Run Luban generation with arbitrary CLI arguments (after Luban.dll). Prefer --errorFormat json for parseable errors.")]
+    [McpServerTool, Description("Run main Luban generation (Luban.dll). Prefer --errorFormat json.")]
     public static async Task<string> Generate(
         [Description("CLI args after Luban.dll, e.g. --conf path -t client -c cs-bin -d bin -x outputCodeDir=...")] string args,
         [Description("Optional override path to Luban.dll")] string? lubanDll = null,
@@ -116,10 +112,10 @@ public static class LubanTools
             list.Add("--errorFormat");
             list.Add("json");
         }
-        return await RunLubanAsync(list, lubanDll, cancellationToken);
+        return await RunDotnetDllAsync(ResolveLubanDll(lubanDll), list, "Luban.dll not found. Set env LUBAN_DLL.", cancellationToken);
     }
 
-    [McpServerTool, Description("Search Luban documentation markdown files. Set LUBAN_DOC to docs root (folder containing intro.md) or pass docsRoot.")]
+    [McpServerTool, Description("Search Luban documentation markdown files. Set LUBAN_DOC to docs root or pass docsRoot.")]
     public static string SearchDocs(
         [Description("Search keywords (space-separated, all must match case-insensitive)")] string query,
         [Description("Optional docs root override")] string? docsRoot = null,
@@ -175,49 +171,14 @@ public static class LubanTools
         return JsonSerializer.Serialize(new { ok = true, docsRoot = root, count = results.Count, results }, s_json);
     }
 
-    private static async Task<string> ExportSchemaAsync(string conf, string target, string? lubanDll, CancellationToken ct)
-    {
-        var tempDir = Path.Combine(Path.GetTempPath(), "luban-mcp-" + Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(tempDir);
-        try
-        {
-            var args = new List<string>
-            {
-                "--conf", conf,
-                "-t", target,
-                "-c", "schema-json",
-                "--errorFormat", "json",
-                "-x", $"outputCodeDir={tempDir}",
-            };
-            var run = await RunLubanAsync(args, lubanDll, ct);
-            var schemaPath = Path.Combine(tempDir, "schema.json");
-            if (!File.Exists(schemaPath))
-            {
-                return JsonSerializer.Serialize(new
-                {
-                    ok = false,
-                    message = "schema.json was not produced",
-                    lubanOutput = run,
-                }, s_json);
-            }
-            return await File.ReadAllTextAsync(schemaPath, ct);
-        }
-        finally
-        {
-            try { Directory.Delete(tempDir, true); } catch { /* ignore */ }
-        }
-    }
+    private static Task<string> RunAgentAsync(IReadOnlyList<string> args, string? agentDll, CancellationToken ct)
+        => RunDotnetDllAsync(ResolveAgentDll(agentDll), args, "Luban.Agent.dll not found. Set env LUBAN_AGENT_DLL.", ct);
 
-    private static async Task<string> RunLubanAsync(IReadOnlyList<string> args, string? lubanDll, CancellationToken ct)
+    private static async Task<string> RunDotnetDllAsync(string? dll, IReadOnlyList<string> args, string missingMessage, CancellationToken ct)
     {
-        var dll = ResolveLubanDll(lubanDll);
         if (dll == null)
         {
-            return JsonSerializer.Serialize(new
-            {
-                ok = false,
-                message = "Luban.dll not found. Set env LUBAN_DLL or pass lubanDll.",
-            }, s_json);
+            return JsonSerializer.Serialize(new { ok = false, message = missingMessage }, s_json);
         }
 
         var psi = new ProcessStartInfo
@@ -244,7 +205,7 @@ public static class LubanTools
         var stdout = await stdoutTask;
         var stderr = await stderrTask;
 
-        var reportJson = ExtractLastJsonObject(stderr) ?? ExtractLastJsonObject(stdout);
+        var reportJson = ExtractLastJsonObject(stdout) ?? ExtractLastJsonObject(stderr);
         return JsonSerializer.Serialize(new
         {
             ok = proc.ExitCode == 0,
@@ -253,6 +214,25 @@ public static class LubanTools
             stderr,
             stdout,
         }, s_json);
+    }
+
+    private static string? ResolveAgentDll(string? overridePath)
+    {
+        if (!string.IsNullOrWhiteSpace(overridePath) && File.Exists(overridePath))
+        {
+            return Path.GetFullPath(overridePath);
+        }
+        var env = Environment.GetEnvironmentVariable("LUBAN_AGENT_DLL");
+        if (!string.IsNullOrWhiteSpace(env) && File.Exists(env))
+        {
+            return Path.GetFullPath(env);
+        }
+        var candidates = new[]
+        {
+            Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "Luban.Agent", "bin", "Release", "net8.0", "Luban.Agent.dll")),
+            Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "Luban.Agent", "bin", "Debug", "net8.0", "Luban.Agent.dll")),
+        };
+        return candidates.FirstOrDefault(File.Exists);
     }
 
     private static string? ResolveLubanDll(string? overridePath)
@@ -266,8 +246,6 @@ public static class LubanTools
         {
             return Path.GetFullPath(env);
         }
-
-        // Dev fallback: sibling build output
         var candidates = new[]
         {
             Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "Luban", "bin", "Release", "net8.0", "Luban.dll")),
@@ -289,23 +267,6 @@ public static class LubanTools
         }
         var sibling = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "..", "luban-doc", "docs"));
         return Directory.Exists(sibling) ? sibling : null;
-    }
-
-    private static List<JsonElement> FilterArray(JsonElement root, string name, Func<JsonElement, bool> pred)
-    {
-        var list = new List<JsonElement>();
-        if (!root.TryGetProperty(name, out var arr) || arr.ValueKind != JsonValueKind.Array)
-        {
-            return list;
-        }
-        foreach (var el in arr.EnumerateArray())
-        {
-            if (pred(el))
-            {
-                list.Add(el.Clone());
-            }
-        }
-        return list;
     }
 
     private static IEnumerable<string> SplitArgs(string args)
@@ -390,7 +351,6 @@ public static class LubanTools
         }
         var start = Math.Max(0, idx - 40);
         var len = Math.Min(maxLen, text.Length - start);
-        var snippet = text.Substring(start, len).Replace('\r', ' ').Replace('\n', ' ');
-        return snippet;
+        return text.Substring(start, len).Replace('\r', ' ').Replace('\n', ' ');
     }
 }
