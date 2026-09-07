@@ -1,0 +1,4 @@
+﻿return {
+  {id=1, name="sword", price=100},
+  {id=2, name="shield", price=80},
+}

@@ -41,6 +41,18 @@ luban标准化了游戏配置开发工作流，可以极大提升策划和程序
 
 仓库内 AI 资源见 [`ai/`](./ai/README.md)。
 
+## 开发者：运行测试
+
+主仓自带 xUnit 集成测试（不依赖外部 `luban_examples`）：
+
+```bash
+dotnet test src/Luban.Tests/Luban.Tests.csproj
+```
+
+- 夹具与期望输出：`tests/fixtures/`、`tests/golden/`
+- 刷新 golden（改导出行为后）：`pwsh tests/scripts/update-goldens.ps1` 或 `bash tests/scripts/update-goldens.sh`
+- 也可在跑测试时设置环境变量 `LUBAN_UPDATE_GOLDEN=1` 就地更新 golden
+
 ## 支持与联系
 
 - QQ群: 692890842 （Luban开发交流群）

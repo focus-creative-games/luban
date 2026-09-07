@@ -42,6 +42,18 @@ Since **5.0.0**, Luban is **AI Native**: official Agent Skills, machine-readable
 
 AI assets in this repo: [`ai/`](./ai/README.md).
 
+## Developers: running tests
+
+In-repo xUnit integration tests (no dependency on external `luban_examples`):
+
+```bash
+dotnet test src/Luban.Tests/Luban.Tests.csproj
+```
+
+- Fixtures and expected outputs: `tests/fixtures/`, `tests/golden/`
+- Refresh goldens after export changes: `pwsh tests/scripts/update-goldens.ps1` or `bash tests/scripts/update-goldens.sh`
+- Or set `LUBAN_UPDATE_GOLDEN=1` while running tests to rewrite goldens in place
+
 ## Support and contact
 
 - QQ group: 692890842 (Luban development exchange group)

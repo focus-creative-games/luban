@@ -1,0 +1,8 @@
+﻿<module name="">
+    <bean name="Item">
+        <var name="id" type="int"/>
+        <var name="name" type="string"/>
+        <var name="price" type="int"/>
+    </bean>
+    <table name="TbItem" value="Item" input="*@item.lua"/>
+</module>

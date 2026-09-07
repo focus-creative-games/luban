@@ -1,0 +1,5 @@
+﻿<module name="">
+  <bean name="Part"><var name="pid" type="int"/><var name="v" type="int"/></bean>
+  <bean name="Row"><var name="id" type="int"/><var name="parts" type="(list#index=pid),Part"/></bean>
+  <table name="TbRow" value="Row" input="*@row.json"/>
+</module>

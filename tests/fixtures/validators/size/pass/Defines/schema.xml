@@ -1,0 +1,4 @@
+﻿<module name="">
+  <bean name="Row"><var name="id" type="int"/><var name="vals" type="(list#(size=[1,3])),int"/></bean>
+  <table name="TbRow" value="Row" input="*@row.json"/>
+</module>

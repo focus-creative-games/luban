@@ -1,0 +1,23 @@
+{
+  "id": 2,
+  "name": "shield",
+  "quality": "BLUE",
+  "tags": [
+    "armor"
+  ],
+  "attrs": [
+    [
+      "def",
+      20
+    ]
+  ],
+  "flags": [
+    3
+  ],
+  "shape": {
+    "$type": "Rect",
+    "id": 11,
+    "width": 2,
+    "height": 3
+  }
+}

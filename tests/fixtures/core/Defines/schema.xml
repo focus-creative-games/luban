@@ -1,0 +1,43 @@
+﻿<module name="">
+    <enum name="Quality">
+        <var name="WHITE" value="0"/>
+        <var name="GREEN" value="1"/>
+        <var name="BLUE" value="2"/>
+    </enum>
+
+    <bean name="Shape">
+        <var name="id" type="int"/>
+        <bean name="Circle">
+            <var name="radius" type="float"/>
+        </bean>
+        <bean name="Rect">
+            <var name="width" type="float"/>
+            <var name="height" type="float"/>
+        </bean>
+    </bean>
+
+    <bean name="Item">
+        <var name="id" type="int"/>
+        <var name="name" type="string"/>
+        <var name="quality" type="Quality"/>
+        <var name="tags" type="(list#sep=,),string"/>
+        <var name="attrs" type="(map#sep=,),string,int"/>
+        <var name="flags" type="(set#sep=,),int"/>
+        <var name="shape" type="Shape"/>
+    </bean>
+
+    <bean name="GlobalConfig">
+        <var name="version" type="int"/>
+        <var name="title" type="string"/>
+    </bean>
+
+    <bean name="ScoreRow">
+        <var name="uid" type="int"/>
+        <var name="stage" type="int"/>
+        <var name="score" type="int"/>
+    </bean>
+
+    <table name="TbItem" value="Item" input="*@item.json"/>
+    <table name="TbGlobal" value="GlobalConfig" mode="one" input="global.json"/>
+    <table name="TbScore" value="ScoreRow" mode="list" index="uid+stage" input="*@score.json"/>
+</module>

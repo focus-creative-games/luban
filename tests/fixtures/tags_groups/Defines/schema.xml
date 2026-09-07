@@ -1,0 +1,11 @@
+﻿<module name="">
+  <bean name="Item">
+    <var name="id" type="int"/>
+    <var name="name" type="string"/>
+    <var name="clientOnly" type="string" group="c"/>
+    <var name="serverOnly" type="string" group="s"/>
+  </bean>
+  <table name="TbItem" value="Item" input="*@item.json"/>
+  <table name="TbClientItem" value="Item" group="c" input="*@item.json"/>
+  <table name="TbServerItem" value="Item" group="s" input="*@item.json"/>
+</module>

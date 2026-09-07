@@ -1,0 +1,55 @@
+{
+  "data_list": [
+    {
+      "id": 1,
+      "name": "sword",
+      "quality": 1,
+      "tags": [
+        "weapon",
+        "melee"
+      ],
+      "attrs": [
+        {
+          "key": "atk",
+          "value": 10
+        },
+        {
+          "key": "def",
+          "value": 2
+        }
+      ],
+      "flags": [
+        1,
+        2
+      ],
+      "shape_type": "Circle",
+      "shape": {
+        "id": 10,
+        "radius": 1.5
+      }
+    },
+    {
+      "id": 2,
+      "name": "shield",
+      "quality": 2,
+      "tags": [
+        "armor"
+      ],
+      "attrs": [
+        {
+          "key": "def",
+          "value": 20
+        }
+      ],
+      "flags": [
+        3
+      ],
+      "shape_type": "Rect",
+      "shape": {
+        "id": 11,
+        "width": 2,
+        "height": 3
+      }
+    }
+  ]
+}

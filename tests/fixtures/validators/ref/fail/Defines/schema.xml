@@ -1,0 +1,6 @@
+﻿<module name="">
+  <bean name="Item"><var name="id" type="int"/><var name="name" type="string"/></bean>
+  <bean name="Reward"><var name="id" type="int"/><var name="item_id" type="int#ref=TbItem"/></bean>
+  <table name="TbItem" value="Item" input="*@item.json"/>
+  <table name="TbReward" value="Reward" input="*@reward.json"/>
+</module>

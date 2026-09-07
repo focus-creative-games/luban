@@ -32,6 +32,8 @@ public class JsonConvertTarget : DataTargetBase
 {
     protected override string DefaultOutputFileExt => "json";
 
+    public override AggregationType AggregationType => AggregationType.Record;
+
     public static bool UseCompactJson => EnvManager.Current.GetBoolOptionOrDefault("json", "compact", true, false);
 
     protected virtual JsonDataVisitor ImplJsonDataVisitor => JsonConvertor.Ins;

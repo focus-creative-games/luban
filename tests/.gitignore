@@ -1,0 +1,3 @@
+# Luban test suite scripts
+*.tmp
+**/test-out/

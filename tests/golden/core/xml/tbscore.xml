@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<table>
+  <record>
+    <uid>1</uid>
+    <stage>1</stage>
+    <score>100</score>
+  </record>
+  <record>
+    <uid>1</uid>
+    <stage>2</stage>
+    <score>200</score>
+  </record>
+  <record>
+    <uid>2</uid>
+    <stage>1</stage>
+    <score>150</score>
+  </record>
+</table>

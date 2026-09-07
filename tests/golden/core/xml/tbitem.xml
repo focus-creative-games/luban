@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<table>
+  <record>
+    <id>1</id>
+    <name>sword</name>
+    <quality>1</quality>
+    <tags>
+      <ele>weapon</ele>
+      <ele>melee</ele>
+    </tags>
+    <attrs>
+      <ele>
+        <key>atk</key>
+        <value>10</value>
+      </ele>
+      <ele>
+        <key>def</key>
+        <value>2</value>
+      </ele>
+    </attrs>
+    <flags>
+      <ele>1</ele>
+      <ele>2</ele>
+    </flags>
+    <shape type="Circle">
+      <id>10</id>
+      <radius>1.5</radius>
+    </shape>
+  </record>
+  <record>
+    <id>2</id>
+    <name>shield</name>
+    <quality>2</quality>
+    <tags>
+      <ele>armor</ele>
+    </tags>
+    <attrs>
+      <ele>
+        <key>def</key>
+        <value>20</value>
+      </ele>
+    </attrs>
+    <flags>
+      <ele>3</ele>
+    </flags>
+    <shape type="Rect">
+      <id>11</id>
+      <width>2</width>
+      <height>3</height>
+    </shape>
+  </record>
+</table>

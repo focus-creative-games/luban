@@ -273,3 +273,8 @@ __pycache__/
 /src/packages
 /src/.vscode
 /src/Luban/Properties/*.json
+
+# Luban test suite temporary outputs
+**/luban-csharp-harness/
+**/luban-test/
+tests/**/test-out/
