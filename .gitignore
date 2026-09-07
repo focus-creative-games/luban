@@ -278,3 +278,4 @@ __pycache__/
 **/luban-csharp-harness/
 **/luban-test/
 tests/**/test-out/
+!/tests/golden/core/bin
