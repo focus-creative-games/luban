@@ -21,6 +21,7 @@
 using Luban.Diagnostics;
 using Luban.CustomBehaviour;
 using Luban.Defs;
+using Luban.Pipeline;
 using Luban.Types;
 using Luban.Utils;
 
@@ -30,7 +31,7 @@ public class DataLoaderManager
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
-    public static DataLoaderManager Ins { get; } = new();
+    public static DataLoaderManager Ins => PipelineScope.Current.DataLoaders;
 
     public void Init()
     {

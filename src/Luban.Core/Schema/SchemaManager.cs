@@ -20,6 +20,7 @@
 
 using Luban.Diagnostics;
 using Luban.CustomBehaviour;
+using Luban.Pipeline;
 using System.Reflection;
 
 namespace Luban.Schema;
@@ -28,7 +29,7 @@ public class SchemaManager
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
-    public static SchemaManager Ins { get; } = new();
+    public static SchemaManager Ins => PipelineScope.Current.Schema;
 
     private class LoaderInfo
     {

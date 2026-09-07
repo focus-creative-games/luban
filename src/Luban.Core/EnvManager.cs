@@ -19,12 +19,13 @@
 // SOFTWARE.
 
 using Luban.Diagnostics;
+using Luban.Pipeline;
 
 namespace Luban;
 
 public class EnvManager
 {
-    public static EnvManager Current { get; set; }
+    public static EnvManager Current => PipelineScope.Current.Env;
 
     private readonly Dictionary<string, string> _options;
 

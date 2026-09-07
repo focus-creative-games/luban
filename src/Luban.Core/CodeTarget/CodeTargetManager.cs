@@ -19,12 +19,13 @@
 // SOFTWARE.
 
 using Luban.CustomBehaviour;
+using Luban.Pipeline;
 
 namespace Luban.CodeTarget;
 
 public class CodeTargetManager
 {
-    public static CodeTargetManager Ins { get; } = new();
+    public static CodeTargetManager Ins => PipelineScope.Current.CodeTargets;
 
     public void Init()
     {

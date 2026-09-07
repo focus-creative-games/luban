@@ -19,12 +19,13 @@
 // SOFTWARE.
 
 using Luban.CustomBehaviour;
+using Luban.Pipeline;
 
 namespace Luban.OutputSaver;
 
 public class OutputSaverManager
 {
-    public static OutputSaverManager Ins { get; } = new();
+    public static OutputSaverManager Ins => PipelineScope.Current.OutputSavers;
 
     public void Init()
     {

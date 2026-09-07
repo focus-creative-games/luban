@@ -21,6 +21,7 @@
 using Luban.Diagnostics;
 using Luban.CodeFormat.CodeStyles;
 using Luban.CustomBehaviour;
+using Luban.Pipeline;
 using NLog;
 using System.Reflection;
 
@@ -30,7 +31,7 @@ public class CodeFormatManager
 {
     private static readonly ILogger s_logger = LogManager.GetCurrentClassLogger();
 
-    public static CodeFormatManager Ins { get; } = new();
+    public static CodeFormatManager Ins => PipelineScope.Current.CodeFormat;
 
 
     public ICodeStyle NoneCodeStyle { get; private set; }

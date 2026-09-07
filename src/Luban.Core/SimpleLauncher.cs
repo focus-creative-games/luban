@@ -18,80 +18,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using Luban.CodeFormat;
-using Luban.CodeTarget;
-using Luban.CustomBehaviour;
-using Luban.DataLoader;
-using Luban.DataTarget;
-using Luban.L10N;
-using Luban.OutputSaver;
 using Luban.Pipeline;
-using Luban.PostProcess;
-using Luban.Schema;
-using Luban.Tmpl;
-using Luban.Validator;
 using System.Reflection;
 
 namespace Luban;
 
+/// <summary>
+/// Thin host helper. Prefer <see cref="PipelineScope"/> directly.
+/// <see cref="Start"/> creates a scope, scans plugins, and enters it so that
+/// <c>XxxManager.Ins</c> works until the returned scope is disposed.
+/// </summary>
 public class SimpleLauncher
 {
-    private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
-
-    public void Start(Dictionary<string, string> options)
+    public PipelineScope Start(Dictionary<string, string> options)
     {
-        EnvManager.Current = new EnvManager(options);
-        InitManagers();
-        ScanRegisterAssemblyBehaviours();
-        PostInitManagers();
-    }
-
-    private void InitManagers()
-    {
-        SchemaManager.Ins.Init();
-        TemplateManager.Ins.Init();
-        CodeFormatManager.Ins.Init();
-        CodeTargetManager.Ins.Init();
-        PostProcessManager.Ins.Init();
-        OutputSaverManager.Ins.Init();
-        DataLoaderManager.Ins.Init();
-        ValidatorManager.Ins.Init();
-        DataTargetManager.Ins.Init();
-        PipelineManager.Ins.Init();
-        L10NManager.Ins.Init();
-        CustomBehaviourManager.Ins.Init();
-    }
-
-    private void PostInitManagers()
-    {
-        CodeFormatManager.Ins.PostInit();
-    }
-
-    private void ScanRegisterAssemblyBehaviours()
-    {
-        string dllDir = Path.GetDirectoryName(AppContext.BaseDirectory);
-        foreach (var dllFile in Directory.GetFiles(dllDir, "*.dll", SearchOption.TopDirectoryOnly))
-        {
-            string dllName = Path.GetFileNameWithoutExtension(dllFile);
-            if (dllName.Contains("Luban") && AppDomain.CurrentDomain.GetAssemblies().All(a => a.GetName().Name != dllName))
-            {
-                s_logger.Trace("load dll:{dll}", dllFile);
-                Assembly.Load(dllName);
-            }
-        }
-
-        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-        {
-            if (assembly.GetCustomAttribute<RegisterBehaviourAttribute>() != null)
-            {
-                ScanRegisterAssembly(assembly);
-            }
-        }
+        var scope = PipelineScope.Create(options);
+        scope.Enter();
+        return scope;
     }
 
     public void ScanRegisterAssembly(Assembly assembly)
     {
-        CustomBehaviourManager.Ins.ScanRegisterBehaviour(assembly);
-        SchemaManager.Ins.ScanRegisterAll(assembly);
+        PipelineScope.Current.ScanRegisterAssembly(assembly);
     }
 }

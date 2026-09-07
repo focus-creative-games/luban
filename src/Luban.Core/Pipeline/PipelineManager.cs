@@ -24,7 +24,7 @@ namespace Luban.Pipeline;
 
 public class PipelineManager
 {
-    public static PipelineManager Ins { get; } = new();
+    public static PipelineManager Ins => PipelineScope.Current.Pipelines;
 
     public void Init()
     {

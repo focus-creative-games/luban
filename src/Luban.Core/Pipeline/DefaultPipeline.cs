@@ -109,15 +109,15 @@ public class DefaultPipeline : IPipeline
     protected void ProcessTargets()
     {
         var tasks = new List<Task>();
-        tasks.Add(Task.Run(() =>
+        foreach (string target in _args.CodeTargets)
         {
-            foreach (string target in _args.CodeTargets)
+            string codeTargetName = target;
+            tasks.Add(Task.Run(() =>
             {
-                // code target doesn't support run in parallel
-                ICodeTarget m = CodeTargetManager.Ins.CreateCodeTarget(target);
-                ProcessCodeTarget(target, m);
-            }
-        }));
+                ICodeTarget m = CodeTargetManager.Ins.CreateCodeTarget(codeTargetName);
+                ProcessCodeTarget(codeTargetName, m);
+            }));
+        }
 
         if (_args.ForceLoadTableDatas || _args.DataTargets.Count > 0)
         {

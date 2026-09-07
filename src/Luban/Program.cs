@@ -139,21 +139,23 @@ internal static class Program
         {
             IConfigLoader rootLoader = new GlobalConfigLoader();
             var config = rootLoader.Load(opts.ConfigFile);
-            GenerationContext.GlobalConf = config;
 
-
-            var launcher = new SimpleLauncher();
-            launcher.Start(ParseXargs(config.Xargs, opts.Xargs));
-            AddCustomTemplateDirs(opts.CustomTemplateDirs);
-
-            var pipeline = PipelineManager.Ins.CreatePipeline(opts.Pipeline);
-            pipeline.Run(CreatePipelineArgs(opts, config));
-            if (exitOnError && opts.Strict && GenerationContext.Current.AnyValidatorFail)
+            using var scope = PipelineScope.Create(ParseXargs(config.Xargs, opts.Xargs));
+            using (scope.Enter())
             {
-                s_logger.Error(MessageCatalog.Format("error.cli.validation_fail"));
-                Environment.Exit(1);
+                scope.Config = config;
+                AddCustomTemplateDirs(opts.CustomTemplateDirs);
+
+                var pipeline = scope.Pipelines.CreatePipeline(opts.Pipeline);
+                scope.Pipeline = pipeline;
+                pipeline.Run(CreatePipelineArgs(opts, config));
+                if (exitOnError && opts.Strict && scope.GenerationContext.AnyValidatorFail)
+                {
+                    s_logger.Error(MessageCatalog.Format("error.cli.validation_fail"));
+                    Environment.Exit(1);
+                }
+                s_logger.Info("bye~");
             }
-            s_logger.Info("bye~");
         }
         catch (Exception e)
         {

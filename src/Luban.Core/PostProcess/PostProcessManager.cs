@@ -19,12 +19,13 @@
 // SOFTWARE.
 
 using Luban.CustomBehaviour;
+using Luban.Pipeline;
 
 namespace Luban.PostProcess;
 
 public class PostProcessManager
 {
-    public static PostProcessManager Ins { get; } = new();
+    public static PostProcessManager Ins => PipelineScope.Current.PostProcesses;
 
     public void Init()
     {

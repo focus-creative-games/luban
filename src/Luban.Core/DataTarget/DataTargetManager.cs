@@ -19,12 +19,13 @@
 // SOFTWARE.
 
 using Luban.CustomBehaviour;
+using Luban.Pipeline;
 
 namespace Luban.DataTarget;
 
 public class DataTargetManager
 {
-    public static DataTargetManager Ins { get; } = new();
+    public static DataTargetManager Ins => PipelineScope.Current.DataTargets;
 
     public void Init()
     {

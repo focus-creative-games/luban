@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 using Luban.Diagnostics;
+using Luban.Pipeline;
 using System.Reflection;
 
 namespace Luban.CustomBehaviour;
@@ -27,7 +28,7 @@ public class CustomBehaviourManager
 {
     private static readonly NLog.Logger s_logger = NLog.LogManager.GetCurrentClassLogger();
 
-    public static CustomBehaviourManager Ins { get; } = new();
+    public static CustomBehaviourManager Ins => PipelineScope.Current.CustomBehaviour;
 
     private class BehaviourInfo
     {

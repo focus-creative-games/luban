@@ -19,12 +19,13 @@
 // SOFTWARE.
 
 using Luban.CustomBehaviour;
+using Luban.Pipeline;
 
 namespace Luban.L10N;
 
 public class L10NManager
 {
-    public static L10NManager Ins { get; } = new();
+    public static L10NManager Ins => PipelineScope.Current.L10N;
 
     public void Init()
     {

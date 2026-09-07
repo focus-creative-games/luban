@@ -20,13 +20,14 @@
 
 using Luban.CustomBehaviour;
 using Luban.Defs;
+using Luban.Pipeline;
 using Luban.Types;
 
 namespace Luban.Validator;
 
 public class ValidatorManager
 {
-    public static ValidatorManager Ins { get; } = new();
+    public static ValidatorManager Ins => PipelineScope.Current.Validators;
 
     public void Init()
     {
