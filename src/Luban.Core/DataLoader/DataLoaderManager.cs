@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.CustomBehaviour;
 using Luban.Defs;
 using Luban.Types;
@@ -73,7 +74,7 @@ public class DataLoaderManager
             s_logger.Trace("load table:{} file:{}", table.FullName, file);
             if (!File.Exists(file) && !Directory.Exists(file))
             {
-                throw new Exception($"'{table.FullName}'的input文件或目录不存在: {file} ");
+                throw new LubanException("error.data.input_not_exist", table.FullName, file);
             }
             string loaderName = options.TryGetValue("loader", out var name) ? name : FileUtil.GetExtensionWithoutDot(file);
             var loader = CreateDataLoader(loaderName);
@@ -95,7 +96,7 @@ public class DataLoaderManager
         }
         catch (Exception e)
         {
-            throw new Exception($"LoadTableFile fail. {file}", e);
+            throw new LubanException(e, "error.data.load_table_file_fail", file);
         }
     }
 
@@ -123,7 +124,7 @@ public class DataLoaderManager
         }
         catch (Exception e)
         {
-            throw new Exception($"LoadTableFile fail. {file}", e);
+            throw new LubanException(e, "error.data.load_table_file_fail", file);
         }
     }
 

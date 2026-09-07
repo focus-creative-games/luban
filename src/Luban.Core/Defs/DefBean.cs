@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.RawDefs;
 using Luban.TypeVisitors;
 using Luban.Utils;
@@ -179,7 +180,7 @@ public class DefBean : DefTypeBase
         {
             if (!string.IsNullOrWhiteSpace(c.Alias) && !nameOrAliasName.Add(c.Alias))
             {
-                throw new Exception($"bean:'{FullName}' alias:{c.Alias} 重复");
+                throw new LubanException("error.def.bean.duplicate_alias", FullName, c.Alias);
             }
         }
         DefField.CompileFields(this, HierarchyFields);
@@ -232,7 +233,7 @@ public class DefBean : DefTypeBase
         {
             if ((ParentDefType = (DefBean)Assembly.GetDefType(Namespace, Parent)) == null)
             {
-                throw new Exception($"bean:'{FullName}' parent:'{Parent}' not exist");
+                throw new LubanException("error.def.bean.parent_not_exist", FullName, Parent);
             }
             if (ParentDefType.Children == null)
             {

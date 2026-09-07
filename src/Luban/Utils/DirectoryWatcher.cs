@@ -18,6 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
+
 namespace Luban.Utils;
 
 internal class DirectoryWatcher
@@ -95,7 +97,7 @@ internal class DirectoryWatcher
             }
             catch (Exception e2)
             {
-                s_logger.Error(e2, "OnChange exception");
+                s_logger.Error(e2, MessageCatalog.Format("error.watch.onchange"));
             }
         }
     }

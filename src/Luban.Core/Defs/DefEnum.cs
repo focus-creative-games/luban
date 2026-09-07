@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.RawDefs;
 
 namespace Luban.Defs;
@@ -95,13 +96,13 @@ public class DefEnum : DefTypeBase
         {
             if (!_vaule2Name.ContainsKey(value) && !IsFlags)
             {
-                throw new Exception($"{value} 不是 enum:'{FullName}'的有效枚举值");
+                throw new LubanException("error.def.enum.invalid_int_value", value, FullName);
             }
             return value;
         }
         else
         {
-            throw new Exception($"'{name}' 不是enum:'{FullName}'的有效枚举值");
+            throw new LubanException("error.def.enum.invalid_name", name, FullName);
         }
     }
 
@@ -140,7 +141,7 @@ public class DefEnum : DefTypeBase
             string value = item.Value.ToLower();
             if (!names.Add(item.Name))
             {
-                throw new Exception($"enum:'{fullName}' 字段:'{item.Name}' 重复");
+                throw new LubanException("error.def.enum.duplicate_item", fullName, item.Name);
             }
             if (string.IsNullOrEmpty(value))
             {
@@ -164,7 +165,7 @@ public class DefEnum : DefTypeBase
                 }
                 else
                 {
-                    throw new Exception($"enum:'{fullName}' 枚举名:'{item.Name}' value:'{item.Value}' 非法");
+                    throw new LubanException("error.def.enum.invalid_item_value", fullName, item.Name, item.Value);
                 }
             }
             else if (IsFlags)
@@ -176,30 +177,30 @@ public class DefEnum : DefTypeBase
                     var index = Items.FindIndex(i => i.Name == n);
                     if (index < 0)
                     {
-                        throw new Exception($"enum:'{fullName}' 枚举名:'{item.Name}' 值:'{item.Value}' 非法");
+                        throw new LubanException("error.def.enum.invalid_item_value", fullName, item.Name, item.Value);
                     }
                     item.IntValue |= Items[index].IntValue;
                 }
             }
             else
             {
-                throw new Exception($"enum:'{fullName}' 枚举名:'{item.Name}' value:'{item.Value}' 非法");
+                throw new LubanException("error.def.enum.invalid_item_value", fullName, item.Name, item.Value);
             }
 
             if (!string.IsNullOrWhiteSpace(item.Name) && !_nameOrAlias2Value.TryAdd(item.Name, item.IntValue))
             {
-                throw new Exception($"enum:'{fullName}' 枚举名:'{Name}' 重复");
+                throw new LubanException("error.def.enum.duplicate_name", fullName, Name);
             }
 
             if (!string.IsNullOrWhiteSpace(item.Alias) && !_nameOrAlias2Value.TryAdd(item.Alias, item.IntValue))
             {
-                throw new Exception($"enum:'{fullName}' 枚举名:'{Name}' alias:'{item.Alias}' 重复");
+                throw new LubanException("error.def.enum.duplicate_alias", fullName, Name, item.Alias);
             }
             if (_vaule2Name.TryGetValue(item.IntValue, out var itemName))
             {
                 if (IsUniqueItemId)
                 {
-                    throw new Exception($"enum:'{fullName}' 枚举值:{item.IntValue} 重复. 枚举名:'{itemName}' <=> '{item.Name}'");
+                    throw new LubanException("error.def.enum.duplicate_value", fullName, item.IntValue, itemName, item.Name);
                 }
             }
             else

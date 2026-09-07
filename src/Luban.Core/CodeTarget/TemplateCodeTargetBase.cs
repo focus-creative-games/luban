@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.Defs;
 using Luban.TemplateExtensions;
 using Luban.Tmpl;
@@ -59,7 +60,7 @@ public abstract class TemplateCodeTargetBase : CodeTargetBase
         {
             return template;
         }
-        throw new Exception($"template:{name} not found");
+        throw new LubanException("error.codegen.template_not_found", name);
     }
 
     public override void GenerateTables(GenerationContext ctx, List<DefTable> tables, CodeWriter writer)

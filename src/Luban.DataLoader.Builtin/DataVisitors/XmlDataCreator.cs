@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.Datas;
 using Luban.Defs;
 using Luban.Types;
@@ -114,7 +115,7 @@ class XmlDataCreator : ITypeFuncVisitor<XElement, DefAssembly, DType>
             }
             if (string.IsNullOrWhiteSpace(subType))
             {
-                throw new Exception($"bean:'{bean.FullName}'是多态，需要指定{FieldNames.XmlTypeNameKey}属性.\n xml:{x}");
+                throw new LubanException("error.data.polymorphic_need_type", bean.FullName, FieldNames.XmlTypeNameKey);
             }
             implBean = DataUtil.GetImplTypeByNameOrAlias(bean, subType);
         }
@@ -134,7 +135,7 @@ class XmlDataCreator : ITypeFuncVisitor<XElement, DefAssembly, DType>
                     fields.Add(null);
                     continue;
                 }
-                throw new Exception($"字段:{f.Name} 缺失");
+                throw new LubanException("error.data.missing_field", implBean.FullName, f.Name);
             }
             try
             {
@@ -190,7 +191,7 @@ class XmlDataCreator : ITypeFuncVisitor<XElement, DefAssembly, DType>
             DType value = type.ValueType.Apply(this, e.Element("value"), ass);
             if (!map.TryAdd(key, value))
             {
-                throw new Exception($"map 的 key:{key} 重复");
+                throw new LubanException("error.data.map_duplicate_key", key);
             }
         }
         return new DMap(type, map);

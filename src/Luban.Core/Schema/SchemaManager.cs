@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.CustomBehaviour;
 using System.Reflection;
 
@@ -61,7 +62,7 @@ public class SchemaManager
     {
         if (!_schemaLoaders.TryGetValue((extName, type), out var loader))
         {
-            throw new Exception($"can't find schema loader for type:{type} extName:{extName}");
+            throw new LubanException("error.schema.loader_not_found", type, extName);
         }
 
         ISchemaLoader schemaLoader = loader.Creator();
@@ -76,7 +77,7 @@ public class SchemaManager
         {
             if (loader.Priority >= priority)
             {
-                s_logger.Warn("schema loader creator already exist. type:{} priority:{} extName:{}", type, priority, extName);
+                s_logger.Warn(MessageCatalog.Format("warn.schema.loader_exists", type, priority, extName));
                 return;
             }
         }

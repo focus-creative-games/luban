@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.Types;
 using Luban.TypeVisitors;
 using Luban.Utils;
@@ -87,7 +88,7 @@ public class ProtobufTypeNameVisitor : ITypeFuncVisitor<string>
     {
         if (type.ElementType.IsCollection)
         {
-            throw new Exception("not support multi-dimension array type");
+            throw new LubanException("error.codegen.pb_multi_array");
         }
         return $"{type.ElementType.Apply(this)}";
     }
@@ -96,7 +97,7 @@ public class ProtobufTypeNameVisitor : ITypeFuncVisitor<string>
     {
         if (type.ElementType.IsCollection)
         {
-            throw new Exception("not support multi-dimension list type");
+            throw new LubanException("error.codegen.pb_multi_list");
         }
         return $"{type.ElementType.Apply(this)}";
     }
@@ -105,7 +106,7 @@ public class ProtobufTypeNameVisitor : ITypeFuncVisitor<string>
     {
         if (type.ElementType.IsCollection)
         {
-            throw new Exception("not support multi-dimension set type");
+            throw new LubanException("error.codegen.pb_multi_set");
         }
         return $"{type.ElementType.Apply(this)}";
     }
@@ -114,7 +115,7 @@ public class ProtobufTypeNameVisitor : ITypeFuncVisitor<string>
     {
         if (type.ElementType.IsCollection)
         {
-            throw new Exception("not support multi-dimension map type");
+            throw new LubanException("error.codegen.pb_multi_map");
         }
         string key = type.KeyType is TEnum ? "int32" : (type.KeyType.Apply(this));
         return $"map<{key}, {type.ValueType.Apply(this)}>";

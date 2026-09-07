@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.Datas;
 using Luban.Defs;
 using Luban.Types;
@@ -119,12 +120,12 @@ class YamlDataCreator : ITypeFuncVisitor<YamlNode, DefAssembly, DType>
         {
             if (!m.Children.TryGetValue(s_typeNodeName, out var typeNode) && !m.Children.TryGetValue(s_typeNodeNameFallback, out typeNode))
             {
-                throw new Exception($"bean:'{bean.FullName}'是多态，需要指定{FieldNames.JsonTypeNameKey}属性.\n xml:{x}");
+                throw new LubanException("error.data.polymorphic_need_type", bean.FullName, FieldNames.JsonTypeNameKey);
             }
             string subType = (string)typeNode;
             if (string.IsNullOrWhiteSpace(subType))
             {
-                throw new Exception($"bean:'{bean.FullName}'是多态，需要指定{FieldNames.JsonTypeNameKey}属性.\n xml:{x}");
+                throw new LubanException("error.data.polymorphic_need_type", bean.FullName, FieldNames.JsonTypeNameKey);
             }
             implBean = DataUtil.GetImplTypeByNameOrAlias(bean, subType);
         }
@@ -143,7 +144,7 @@ class YamlDataCreator : ITypeFuncVisitor<YamlNode, DefAssembly, DType>
                     fields.Add(null);
                     continue;
                 }
-                throw new Exception($"bean:{implBean.FullName} 字段:{f.Name} 缺失");
+                throw new LubanException("error.data.missing_field", implBean.FullName, f.Name);
             }
             try
             {
@@ -205,7 +206,7 @@ class YamlDataCreator : ITypeFuncVisitor<YamlNode, DefAssembly, DType>
             DType value = type.ValueType.Apply(this, kv[1], y);
             if (!map.TryAdd(key, value))
             {
-                throw new Exception($"map 的 key:{key} 重复");
+                throw new LubanException("error.data.map_duplicate_key", key);
             }
         }
         return new DMap(type, map);

@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 using Luban.Defs;
+using Luban.Diagnostics;
 using Luban.RawDefs;
 using Luban.Utils;
 
@@ -49,11 +50,11 @@ public static class SchemaLoaderUtil
         };
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new Exception($"定义文件:{schemaFile} table:'{p.Name}' name:'{p.Name}' 不能为空");
+            throw new LubanException("error.schema.table_empty_name", schemaFile, p.Name);
         }
         if (string.IsNullOrWhiteSpace(valueType))
         {
-            throw new Exception($"定义文件:{schemaFile} table:'{p.Name}' value_type:'{valueType}' 不能为空");
+            throw new LubanException("error.schema.table_empty_value_type", schemaFile, p.Name, valueType);
         }
         p.InputFiles.AddRange(input.Split(',').Select(s => s.Trim()).Where(s => !string.IsNullOrWhiteSpace(s)));
 
@@ -89,7 +90,7 @@ public static class SchemaLoaderUtil
             {
                 if (!string.IsNullOrWhiteSpace(indexStr))
                 {
-                    throw new Exception($"定义文件:{schemaFile} table:'{tableName}' mode={modeStr} 是单例表，不支持定义index属性");
+                    throw new LubanException("error.schema.singleton_index", schemaFile, tableName, modeStr);
                 }
                 mode = TableMode.ONE;
                 break;
@@ -98,7 +99,7 @@ public static class SchemaLoaderUtil
             {
                 if (!string.IsNullOrWhiteSpace(indexStr) && indexs.Length > 1)
                 {
-                    throw new Exception($"定义文件:'{schemaFile}' table:'{tableName}' 是单主键表，index:'{indexStr}'不能包含多个key");
+                    throw new LubanException("error.schema.map_multi_index", schemaFile, tableName, indexStr);
                 }
                 mode = TableMode.MAP;
                 break;

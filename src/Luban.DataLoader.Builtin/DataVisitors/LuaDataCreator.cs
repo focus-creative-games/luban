@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.Datas;
 using Luban.Defs;
 using Luban.Types;
@@ -59,7 +60,7 @@ class LuaDataCreator : ITypeFuncVisitor<object, DefAssembly, DType>
             long b => b,
             double c => (long)c,
             float d => (long)d,
-            _ => throw new Exception($"{x} 不是 long 类型数据"),
+            _ => throw new LubanException("error.data.invalid_long", x),
         };
     }
 
@@ -71,7 +72,7 @@ class LuaDataCreator : ITypeFuncVisitor<object, DefAssembly, DType>
             long b => b,
             double c => (float)c,
             float d => d,
-            _ => throw new Exception($"{x} 不是 float 类型数据"),
+            _ => throw new LubanException("error.data.invalid_float", x),
         };
     }
 
@@ -83,7 +84,7 @@ class LuaDataCreator : ITypeFuncVisitor<object, DefAssembly, DType>
             long b => b,
             double c => c,
             float d => d,
-            _ => throw new Exception($"{x} 不是 double 类型数据"),
+            _ => throw new LubanException("error.data.invalid_double", x),
         };
     }
 
@@ -115,7 +116,7 @@ class LuaDataCreator : ITypeFuncVisitor<object, DefAssembly, DType>
         }
         else
         {
-            throw new Exception($"{x} 不是 string 类型数据");
+            throw new LubanException("error.data.invalid_string", x);
         }
     }
 
@@ -157,7 +158,7 @@ class LuaDataCreator : ITypeFuncVisitor<object, DefAssembly, DType>
             }
             else
             {
-                throw new Exception($"结构:{bean.FullName} 是多态类型，必须用 {FieldNames.LuaTypeNameKey} 字段指定 子类名");
+                throw new LubanException("error.data.polymorphic_need_type", bean.FullName, FieldNames.LuaTypeNameKey);
             }
             implBean = DataUtil.GetImplTypeByNameOrAlias(bean, subType);
         }
@@ -196,7 +197,7 @@ class LuaDataCreator : ITypeFuncVisitor<object, DefAssembly, DType>
             }
             else
             {
-                throw new Exception($"结构:{implBean.FullName} 字段:{f.Name} 缺失");
+                throw new LubanException("error.data.missing_field", implBean.FullName, f.Name);
             }
         }
         return new DBean(type, implBean, fields);
@@ -237,7 +238,7 @@ class LuaDataCreator : ITypeFuncVisitor<object, DefAssembly, DType>
             DType value = type.ValueType.Apply(this, e.Value, ass);
             if (!map.TryAdd(key, value))
             {
-                throw new Exception($"map 的 key:{key} 重复");
+                throw new LubanException("error.data.map_duplicate_key", key);
             }
         }
         return new DMap(type, map);

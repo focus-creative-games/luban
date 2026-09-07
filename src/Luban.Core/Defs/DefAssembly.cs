@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.RawDefs;
 using Luban.Types;
 using Luban.Utils;
@@ -92,13 +93,13 @@ public class DefAssembly
         Target = GetTarget(target);
         if (Target == null)
         {
-            throw new Exception($"target:{target} is invalid");
+            throw new LubanException("error.def.target.invalid", target);
         }
         foreach (var g in Target.Groups)
         {
             if (groupDefs.All(d => !d.Names.Contains(g)))
             {
-                throw new Exception($"target:{target} group:`{g}` not defined");
+                throw new LubanException("error.def.target.group_not_defined", target, g);
             }
         }
         _variants = variants;
@@ -149,7 +150,7 @@ public class DefAssembly
                 }
                 else
                 {
-                    throw new Exception($"outputTable:{tableName} not found");
+                    throw new LubanException("error.def.output_table_not_found", tableName);
                 }
             }
         }
@@ -202,11 +203,11 @@ public class DefAssembly
     {
         if (!TablesByFullName.TryAdd(table.FullName, table))
         {
-            throw new Exception($"table:'{table.FullName}' duplicated");
+            throw new LubanException("error.def.table.duplicated", table.FullName);
         }
         if (!TablesByName.TryAdd(table.Name, table))
         {
-            throw new Exception($"table:'{table.FullName} 与 table:'{TablesByName[table.Name].FullName}' 的表名重复(不同模块下也不允许定义同名表，将来可能会放开限制)");
+            throw new LubanException("error.def.table.duplicate_name", table.FullName, TablesByName[table.Name].FullName);
         }
     }
 
@@ -225,7 +226,7 @@ public class DefAssembly
     {
         if (_refGroups.ContainsKey(g.Name))
         {
-            throw new Exception($"refgroup:{g.Name} 重复");
+            throw new LubanException("error.def.refgroup.duplicate", g.Name);
         }
         _refGroups.Add(g.Name, new DefRefGroup(g));
     }
@@ -240,18 +241,18 @@ public class DefAssembly
         string fullName = type.FullName;
         if (Types.ContainsKey(fullName))
         {
-            throw new Exception($"type:'{fullName}' duplicate");
+            throw new LubanException("error.def.type.duplicate", fullName);
         }
 
         if (!_notCaseSenseTypes.TryAdd(fullName.ToLower(), type))
         {
-            throw new Exception($"type:'{fullName}' 和 type:'{_notCaseSenseTypes[fullName.ToLower()].FullName}' 类名小写重复. 在win平台有问题");
+            throw new LubanException("error.def.type.duplicate_case_insensitive", fullName, _notCaseSenseTypes[fullName.ToLower()].FullName);
         }
 
         string namespaze = type.Namespace;
         if (_namespaces.Add(namespaze) && !_notCaseSenseNamespaces.TryAdd(namespaze.ToLower(), type))
         {
-            throw new Exception($"type:'{fullName}' 和 type:'{_notCaseSenseNamespaces[namespaze.ToLower()].FullName}' 命名空间小写重复. 在win平台有问题，请修改定义并删除生成的代码目录后再重新生成");
+            throw new LubanException("error.def.type.duplicate_namespace_case_insensitive", fullName, _notCaseSenseNamespaces[namespaze.ToLower()].FullName);
         }
 
         Types.Add(fullName, type);
@@ -363,7 +364,7 @@ public class DefAssembly
             {
                 if (containerElementType)
                 {
-                    throw new Exception($"container element type can't be nullable type:'{module}.{type}'");
+                    throw new LubanException("error.def.container.nullable_element", module, type);
                 }
                 nullable = true;
                 type = type[..^1];
@@ -458,7 +459,7 @@ public class DefAssembly
                 TType type = CreateType(module, elementType, true);
                 if (type.IsCollection)
                 {
-                    throw new Exception("set的元素不支持容器类型");
+                    throw new LubanException("error.def.set.container_element");
                 }
                 return TSet.Create(false, containerTags, type, false);
             }

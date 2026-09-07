@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.Defs;
 using Luban.TypeVisitors;
 
@@ -65,7 +66,7 @@ public class TArray : TType
 
         if (ElementType is TBean e && !e.IsDynamic && e.DefBean.HierarchyFields.Count == 0)
         {
-            throw new Exception($"container element type:'{e.DefBean.FullName}' can't be empty bean");
+            throw new LubanException("error.def.container.empty_bean", e.DefBean.FullName);
         }
     }
 

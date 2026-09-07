@@ -20,6 +20,7 @@
 
 using Luban.Datas;
 using Luban.Defs;
+using Luban.Diagnostics;
 using Luban.Types;
 using Luban.Validator;
 
@@ -86,7 +87,7 @@ public class SetValidator : DataValidatorBase
             }
             default:
             {
-                throw new Exception($"set not support type:{type} field:{field}");
+                throw new LubanException("error.validator.set.unsupported_type", type, field);
             }
         }
     }
@@ -95,7 +96,7 @@ public class SetValidator : DataValidatorBase
     {
         if ((_longSet != null && !_longSet.Contains(_longGetter(data))) || (_stringSet != null && !_stringSet.Contains(_stringGetter(data))))
         {
-            s_logger.Error("记录 {}:{} (来自文件:{}) 值不在set:{}中", RecordPath, data, Source, _valueSetStr);
+            s_logger.Error(MessageCatalog.Format("error.validator.set.not_in_set", RecordPath, data, Source, _valueSetStr));
             GenerationContext.Current.LogValidatorFail(this);
         }
     }

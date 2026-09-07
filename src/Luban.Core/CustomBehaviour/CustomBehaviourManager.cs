@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using System.Reflection;
 
 namespace Luban.CustomBehaviour;
@@ -49,7 +50,7 @@ public class CustomBehaviourManager
             return (T)bi.Creator();
         }
 
-        throw new Exception($"behaviour:{name} type:{typeof(T)} not exists");
+        throw new LubanException("error.behaviour.not_exists", name, typeof(T));
     }
 
     public bool TryCreateBehaviour<T, C>(string name, out T behaviour) where C : Attribute, ICustomBehaviour where T : class
@@ -70,7 +71,7 @@ public class CustomBehaviourManager
         {
             if (bi.Priority >= priority)
             {
-                s_logger.Warn("Behaviour type:{} name:{} priority:{} is ignored", type, name, priority);
+                s_logger.Warn(MessageCatalog.Format("warn.behaviour.ignored", type, name, priority));
                 return;
             }
             s_logger.Debug("Behaviour type:{} name:{} priority:{} is overrided by priority:{}", type, name, bi.Priority, priority);

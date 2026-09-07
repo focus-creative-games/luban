@@ -20,6 +20,7 @@
 
 using Luban.Datas;
 using Luban.Defs;
+using Luban.Diagnostics;
 using Luban.Types;
 using Luban.Utils;
 using Luban.Validator;
@@ -43,21 +44,21 @@ public class IndexValidator : DataValidatorBase
         TType elementType = type.ElementType;
         if (elementType == null || type is TMap)
         {
-            throw new Exception($" field:{field} index:{Args} validator not support type:{type}");
+            throw new LubanException("error.validator.index.unsupported_type", field, Args, type);
         }
         if (elementType is not TBean bean)
         {
-            throw new Exception($"field:{field} index:{Args} type:{elementType} validator only support bean type");
+            throw new LubanException("error.validator.index.not_bean", field, Args, elementType);
         }
 
         if (!bean.DefBean.TryGetField(Args, out var indexField, out _fieldIndex))
         {
-            throw new Exception($"field:{field} index:{Args} not exist in bean:{bean.DefBean.FullName}");
+            throw new LubanException("error.validator.index.not_exist", field, Args, bean.DefBean.FullName);
         }
 
         if (!indexField.NeedExport())
         {
-            throw new Exception($"field:{field} index:{Args} in bean:{bean.DefBean.FullName} is not export");
+            throw new LubanException("error.validator.index.not_export", field, Args, bean.DefBean.FullName);
         }
     }
 
@@ -72,7 +73,7 @@ public class IndexValidator : DataValidatorBase
             case DSet dset:
                 return dset.Datas;
             default:
-                throw new Exception("not possible");
+                throw new LubanException("error.internal.not_possible");
         }
     }
 
@@ -84,7 +85,7 @@ public class IndexValidator : DataValidatorBase
             DType fieldData = ((DBean)ele).Fields[_fieldIndex];
             if (fieldData != null && !values.Add(fieldData))
             {
-                s_logger.Error("记录 {}:{} (来自文件:{}) index:{} value:{} 重复", DataValidatorContext.CurrentRecordPath, data, Source, Args, fieldData);
+                s_logger.Error(MessageCatalog.Format("error.validator.index.duplicate", DataValidatorContext.CurrentRecordPath, data, Source, Args, fieldData));
                 GenerationContext.Current.LogValidatorFail(this);
             }
         }

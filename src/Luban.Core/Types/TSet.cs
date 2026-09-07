@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.Defs;
 using Luban.TypeVisitors;
 
@@ -55,7 +56,7 @@ public class TSet : TType
 
         if (ElementType is TBean beanType)
         {
-            throw new Exception($"bean:{field.HostType.FullName} field:{field.Name} element type can't be bean:{beanType.DefBean.FullName}");
+            throw new LubanException("error.def.set.bean_element", field.HostType.FullName, field.Name, beanType.DefBean.FullName);
         }
     }
 

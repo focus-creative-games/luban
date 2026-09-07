@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.Datas;
 using Luban.Defs;
 using Luban.Types;
@@ -105,7 +106,7 @@ public class JsonDataCreator : ITypeFuncVisitor<JsonElement, DefAssembly, DType>
         {
             if (!x.TryGetProperty(FieldNames.JsonTypeNameKey, out var typeNameProp) && !x.TryGetProperty(FieldNames.FallbackTypeNameKey, out typeNameProp))
             {
-                throw new Exception($"结构:'{bean.FullName}' 是多态类型，必须用 '{FieldNames.JsonTypeNameKey}' 字段指定 子类名");
+                throw new LubanException("error.data.polymorphic_need_type", bean.FullName, FieldNames.JsonTypeNameKey);
             }
             string subType = typeNameProp.GetString();
             implBean = DataUtil.GetImplTypeByNameOrAlias(bean, subType);
@@ -128,7 +129,7 @@ public class JsonDataCreator : ITypeFuncVisitor<JsonElement, DefAssembly, DType>
                     }
                     else
                     {
-                        throw new Exception($"结构:'{implBean.FullName}' 字段:'{f.Name}' 不能 null or undefined ");
+                        throw new LubanException("error.data.field_null", implBean.FullName, f.Name);
                     }
                 }
                 else
@@ -156,7 +157,7 @@ public class JsonDataCreator : ITypeFuncVisitor<JsonElement, DefAssembly, DType>
             }
             else
             {
-                throw new Exception($"结构:'{implBean.FullName}' 字段:'{f.CurrentVariantNameWithFieldNameOrOrigin}' 缺失");
+                throw new LubanException("error.data.missing_field", implBean.FullName, f.CurrentVariantNameWithFieldNameOrOrigin);
             }
         }
         return new DBean(type, implBean, fields);
@@ -200,7 +201,7 @@ public class JsonDataCreator : ITypeFuncVisitor<JsonElement, DefAssembly, DType>
             DType value = type.ValueType.Apply(this, e[1], ass);
             if (!map.TryAdd(key, value))
             {
-                throw new Exception($"map 的 key:{key} 重复");
+                throw new LubanException("error.data.map_duplicate_key", key);
             }
         }
         return new DMap(type, map);

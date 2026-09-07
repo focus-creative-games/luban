@@ -18,6 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
+
 namespace Luban.DataValidator.Builtin.Range;
 
 public class DoubleRange
@@ -43,7 +45,7 @@ public class DoubleRange
 
         if (_str.Length <= 2)
         {
-            throw new Exception($"range定义不合法");
+            throw new LubanException("error.validator.range.invalid");
         }
         switch (_str[0])
         {
@@ -54,7 +56,7 @@ public class DoubleRange
                 _includeMinBound = false;
                 break;
             default:
-                throw new Exception($"range定义不合法");
+                throw new LubanException("error.validator.range.invalid");
         }
         switch (_str[^1])
         {
@@ -65,13 +67,13 @@ public class DoubleRange
                 _includeMaxBound = false;
                 break;
             default:
-                throw new Exception($"range定义不合法");
+                throw new LubanException("error.validator.range.invalid");
         }
 
         var pars = _str[1..^1].Split(',');
         if (pars.Length != 2)
         {
-            throw new Exception($"range定义不合法");
+            throw new LubanException("error.validator.range.invalid");
         }
 
         bool p1 = TryParse(pars[0], ref _min);
@@ -79,7 +81,7 @@ public class DoubleRange
 
         if (!p1 || !p2)
         {
-            throw new Exception($"range定义不合法");
+            throw new LubanException("error.validator.range.invalid");
         }
         if (_min != null && _min != (long)_min)
         {

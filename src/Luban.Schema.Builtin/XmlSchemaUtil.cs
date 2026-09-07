@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 using Luban.Defs;
+using Luban.Diagnostics;
 using Luban.RawDefs;
 using Luban.Utils;
 using System.Xml.Linq;
@@ -34,14 +35,14 @@ public static class XmlSchemaUtil
             var name = k.Name.LocalName;
             if (!requireKeys.Contains(name) && optionKeys != null && !optionKeys.Contains(name))
             {
-                throw new LoadDefException($"定义文件:{defineFile} 定义:{e} 包含未知属性 attr:{name}");
+                throw new LubanException("error.schema.unknown_attr", defineFile, e, name);
             }
         }
         foreach (var k in requireKeys)
         {
             if (e.Attribute(k) == null)
             {
-                throw new LoadDefException($"定义文件:{defineFile} 定义:{e} 缺失属性 attr:{k}");
+                throw new LubanException("error.schema.missing_attr", defineFile, e, k);
             }
         }
     }

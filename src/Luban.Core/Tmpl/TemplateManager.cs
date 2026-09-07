@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Scriban;
 using System.Collections.Concurrent;
 using System.Text;
@@ -49,7 +50,7 @@ public class TemplateManager
         {
             if (sureExists)
             {
-                s_logger.Error("template search path:{} not exists", templateSearchPath);
+                s_logger.Error(MessageCatalog.Format("error.tmpl.search_path_not_exists", templateSearchPath));
             }
             return;
         }

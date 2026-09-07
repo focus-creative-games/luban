@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.DataVisitors;
 using Luban.Types;
 
@@ -40,7 +41,7 @@ public class DMap : DType
         {
             if (!set.Add(key))
             {
-                throw new Exception($"set 的 value:{key} 重复");
+                throw new LubanException("error.data.map_duplicate_key", key);
             }
         }
     }

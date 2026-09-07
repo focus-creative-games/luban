@@ -20,6 +20,7 @@
 
 using Luban.Datas;
 using Luban.Defs;
+using Luban.Diagnostics;
 using Luban.Types;
 using Luban.Validator;
 
@@ -34,7 +35,7 @@ public class TextValidator : DataValidatorBase
     {
         if (type is not TString)
         {
-            throw new Exception($"field:{field} text validator supports string type only");
+            throw new LubanException("error.validator.text.string_only", field);
         }
     }
 
@@ -53,7 +54,7 @@ public class TextValidator : DataValidatorBase
         }
         if (!provider.IsValidKey(key))
         {
-            s_logger.Error("记录 {}:{} (来自文件:{}) 不是一个有效的文本key", DataValidatorContext.CurrentRecordPath, data, Source);
+            s_logger.Error(MessageCatalog.Format("error.validator.text.invalid_key", DataValidatorContext.CurrentRecordPath, data, Source));
             GenerationContext.Current.LogValidatorFail(this);
         }
     }

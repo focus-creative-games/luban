@@ -21,6 +21,7 @@
 using Luban.Datas;
 using Luban.DataValidator.Builtin.Range;
 using Luban.Defs;
+using Luban.Diagnostics;
 using Luban.Types;
 using Luban.Validator;
 
@@ -49,7 +50,7 @@ public class SizeValidator : DataValidatorBase
             TSet => d => ((DSet)d).Datas.Count,
             TMap => d => ((DMap)d).DataMap.Count,
             TArray => d => ((DArray)d).Datas.Count,
-            _ => throw new Exception($"type:{type} field:{field} not support size validator"),
+            _ => throw new LubanException("error.validator.size.unsupported_type", type, field),
         };
     }
 
@@ -58,7 +59,7 @@ public class SizeValidator : DataValidatorBase
         long size = _sizeGetter(data);
         if (!_range.CheckInRange(size))
         {
-            s_logger.Error("记录 {}:{} (来自文件:{}) size:{},但要求为 {} ", DataValidatorContext.CurrentRecordPath, data, Source, size, _range.RawStr);
+            s_logger.Error(MessageCatalog.Format("error.validator.size.mismatch", DataValidatorContext.CurrentRecordPath, data, Source, size, _range.RawStr));
             GenerationContext.Current.LogValidatorFail(this);
         }
     }

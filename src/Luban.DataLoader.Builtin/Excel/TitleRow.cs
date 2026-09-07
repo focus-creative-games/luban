@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 using Luban.DataLoader.Builtin.Excel.DataParser;
+using Luban.Diagnostics;
 
 namespace Luban.DataLoader.Builtin.Excel;
 
@@ -44,7 +45,7 @@ public class TitleRow
             }
             else
             {
-                throw new Exception($"简单数据类型字段 不支持子列名或者多行");
+                throw new LubanException("error.excel.simple_field_no_sub");
             }
         }
     }
@@ -103,7 +104,7 @@ public class TitleRow
             {
                 return Elements.All(e => e.IsBlank);
             }
-            throw new Exception();
+            throw new LubanException("error.internal.unexpected");
         }
     }
 

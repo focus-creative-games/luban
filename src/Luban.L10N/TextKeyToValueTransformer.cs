@@ -21,6 +21,7 @@
 using Luban.Datas;
 using Luban.DataTransformer;
 using Luban.DataVisitors;
+using Luban.Diagnostics;
 using Luban.Types;
 
 namespace Luban.L10N;
@@ -46,7 +47,7 @@ public class TextKeyToValueTransformer : DataTransfomerBase, IDataFuncVisitor2<D
         {
             return DString.ValueOf(type, text);
         }
-        s_logger.Error("can't find target language text of text id:{} ", data.Value);
+        s_logger.Error(MessageCatalog.Format("error.l10n.missing_text", data.Value));
         //_provider.AddUnknownKey(data.Value);
         return data;
     }

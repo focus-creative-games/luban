@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 using Luban.DataLoader.Builtin.DataVisitors;
+using Luban.Diagnostics;
 using Luban.Datas;
 using Luban.Defs;
 using Luban.Types;
@@ -41,7 +42,7 @@ public class UnityAssetDataSource : DataLoaderBase
         // doc顶层为map，只包含一个字段，字段key为类型名。
         if (rootNode.Children.Count != 1)
         {
-            throw new Exception($"asset doc 应该只包含一个顶层字段");
+            throw new LubanException("error.data.asset_single_root");
         }
 
         this._root = rootNode.First().Value;

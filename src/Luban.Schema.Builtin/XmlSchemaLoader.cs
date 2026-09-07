@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 using Luban.Defs;
+using Luban.Diagnostics;
 using Luban.RawDefs;
 using Luban.Utils;
 using System.Xml.Linq;
@@ -70,7 +71,7 @@ public class XmlSchemaLoader : SchemaLoaderBase
             }
             else
             {
-                throw new LoadDefException($"定义文件:{_fileName} module:{CurNamespace} 不支持 tag:{tagName}");
+                throw new LubanException("error.schema.unsupported_tag", _fileName, CurNamespace, tagName);
             }
         }
         _namespaceStack.Pop();
@@ -83,7 +84,7 @@ public class XmlSchemaLoader : SchemaLoaderBase
         {
             if (!string.IsNullOrEmpty(parent))
             {
-                throw new Exception($"嵌套在'{parent}'中定义的子bean:'{XmlUtil.GetRequiredAttribute(e, "name")}' 不能再定义parent:{selfDefParent} 属性");
+                throw new LubanException("error.schema.nested_bean_parent", XmlUtil.GetRequiredAttribute(e, "name"), parent, selfDefParent);
             }
             parent = selfDefParent;
         }
@@ -135,7 +136,7 @@ public class XmlSchemaLoader : SchemaLoaderBase
                 }
                 default:
                 {
-                    throw new Exception($"不支持的enum子节点:{item.Name.LocalName}");
+                    throw new LubanException("error.schema.unsupported_enum_child", item.Name.LocalName);
                 }
             }
         }
@@ -221,7 +222,7 @@ public class XmlSchemaLoader : SchemaLoaderBase
             string value = XmlUtil.GetRequiredAttribute(optionEle, "value");
             if (!opts.TryAdd(key, value))
             {
-                throw new Exception($"CreateTypeMapper {fullName} option:{key} 重复定义");
+                throw new LubanException("error.schema.duplicate_type_mapper_option", fullName, key);
             }
         }
         var mapper = new TypeMapper()
@@ -268,7 +269,7 @@ public class XmlSchemaLoader : SchemaLoaderBase
                 {
                     if (defineAnyChildBean)
                     {
-                        throw new LoadDefException($"定义文件:{_fileName} 类型:{b.FullName} 的多态子bean必须在所有成员字段 <var> 之后定义");
+                        throw new LubanException("error.schema.polymorphic_bean_order", _fileName, b.FullName);
                     }
                     b.Fields.Add(CreateField(fe));
                     ;
@@ -287,7 +288,7 @@ public class XmlSchemaLoader : SchemaLoaderBase
                 }
                 default:
                 {
-                    throw new LoadDefException($"定义文件:{_fileName} 类型:{b.FullName} 不支持 tag:{fe.Name}");
+                    throw new LubanException("error.schema.unsupported_bean_tag", _fileName, b.FullName, fe.Name);
                 }
             }
         }
@@ -312,11 +313,11 @@ public class XmlSchemaLoader : SchemaLoaderBase
         string alias = XmlUtil.GetRequiredAttribute(e, "value");
         if (string.IsNullOrEmpty(name))
         {
-            throw new LoadDefException($"定义文件:{_fileName} 中的constalias的name不能为空");
+            throw new LubanException("error.schema.constalias_empty_name", _fileName);
         }
         if (string.IsNullOrEmpty(alias))
         {
-            throw new LoadDefException($"定义文件:{_fileName} 中的constalias `{name}`的value不能为空");
+            throw new LubanException("error.schema.constalias_empty_value", _fileName, name);
         }
         Collector.AddConstAlias(name, alias);
     }

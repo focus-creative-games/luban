@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using System.Xml.Linq;
 
 namespace Luban.Utils;
@@ -35,7 +36,7 @@ public static class XmlUtil
         }
         catch (Exception e)
         {
-            throw new LoadXmlException($"打开定义文件:{xmlFile} 失败 --> {e.Message}");
+            throw new LubanException(e, "error.schema.xml_open_fail", xmlFile, e.Message);
         }
     }
 
@@ -48,7 +49,7 @@ public static class XmlUtil
         }
         catch (Exception e)
         {
-            throw new LoadXmlException($"打开定义文件:{xmlFile} 失败 --> {e.Message}");
+            throw new LubanException(e, "error.schema.xml_open_fail", xmlFile, e.Message);
         }
     }
 

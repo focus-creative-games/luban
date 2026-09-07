@@ -21,6 +21,7 @@
 using Luban.DataLoader;
 using Luban.Datas;
 using Luban.Defs;
+using Luban.Diagnostics;
 using Luban.RawDefs;
 using Luban.Types;
 using Luban.Utils;
@@ -48,7 +49,7 @@ public class DefaultTextProvider : ITextProvider
         _keyFieldName = env.GetOptionOrDefault(BuiltinOptionNames.L10NFamily, BuiltinOptionNames.L10NTextFileKeyFieldName, false, "");
         if (string.IsNullOrWhiteSpace(_keyFieldName))
         {
-            throw new Exception($"'-x {BuiltinOptionNames.L10NFamily}.{BuiltinOptionNames.L10NTextFileKeyFieldName}=xxx' missing");
+            throw new LubanException("error.l10n.missing_key_field", BuiltinOptionNames.L10NFamily, BuiltinOptionNames.L10NTextFileKeyFieldName);
         }
 
         _convertTextKeyToValue = DataUtil.ParseBool(env.GetOptionOrDefault(BuiltinOptionNames.L10NFamily, BuiltinOptionNames.L10NConvertTextKeyToValue, false, "false"));
@@ -57,7 +58,7 @@ public class DefaultTextProvider : ITextProvider
             _ValueFieldName = env.GetOptionOrDefault(BuiltinOptionNames.L10NFamily, BuiltinOptionNames.L10NTextFileLanguageFieldName, false, "");
             if (string.IsNullOrWhiteSpace(_ValueFieldName))
             {
-                throw new Exception($"'-x {BuiltinOptionNames.L10NFamily}.{BuiltinOptionNames.L10NTextFileLanguageFieldName}=xxx' missing");
+                throw new LubanException("error.l10n.missing_language_field", BuiltinOptionNames.L10NFamily, BuiltinOptionNames.L10NTextFileLanguageFieldName);
             }
         }
 
@@ -126,12 +127,12 @@ public class DefaultTextProvider : ITextProvider
                     string value = _convertTextKeyToValue ? ((DString)data.GetField(_ValueFieldName)).Value : key;
                     if (string.IsNullOrEmpty(key))
                     {
-                        s_logger.Error("textFile:{} key:{} is empty. ignore it!", atomFile, key);
+                        s_logger.Error(MessageCatalog.Format("error.l10n.empty_key", atomFile, key));
                         continue;
                     }
                     if (!_texts.TryAdd(key, value))
                     {
-                        s_logger.Error("textFile:{} key:{} is duplicated", atomFile, key);
+                        s_logger.Error(MessageCatalog.Format("error.l10n.duplicate_key", atomFile, key));
                     }
                 }
             }

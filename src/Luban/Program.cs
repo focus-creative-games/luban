@@ -20,6 +20,7 @@
 
 using CommandLine;
 using Luban.DataLoader;
+using Luban.Diagnostics;
 using Luban.Pipeline;
 using Luban.Schema;
 using Luban.Tmpl;
@@ -74,8 +75,11 @@ internal static class Program
         [Option("customTemplateDir", Required = false, HelpText = "custom template dirs")]
         public IEnumerable<string> CustomTemplateDirs { get; set; }
 
-        [Option("validationFailAsError", Required = false, HelpText = "validation fail as error")]
-        public bool ValidationFailAsError { get; set; }
+        [Option("strict", Required = false, HelpText = "treat validation failure as error")]
+        public bool Strict { get; set; }
+
+        [Option("locale", Required = false, HelpText = "locale for error/warning messages (en, zh). default: system UI language")]
+        public string Locale { get; set; }
 
         [Option('x', "xargs", Required = false, HelpText = "args like -x a=1 -x b=2")]
         public IEnumerable<string> Xargs { get; set; }
@@ -144,9 +148,9 @@ internal static class Program
 
             var pipeline = PipelineManager.Ins.CreatePipeline(opts.Pipeline);
             pipeline.Run(CreatePipelineArgs(opts, config));
-            if (exitOnError && opts.ValidationFailAsError && GenerationContext.Current.AnyValidatorFail)
+            if (exitOnError && opts.Strict && GenerationContext.Current.AnyValidatorFail)
             {
-                s_logger.Error("encounter some validation failure. exit code: 1");
+                s_logger.Error(MessageCatalog.Format("error.cli.validation_fail"));
                 Environment.Exit(1);
             }
             s_logger.Info("bye~");
@@ -154,7 +158,7 @@ internal static class Program
         catch (Exception e)
         {
             PrettyPrintException(e);
-            s_logger.Error("run failed!!!");
+            s_logger.Error(MessageCatalog.Format("error.cli.run_failed"));
             if (exitOnError)
             {
                 Environment.Exit(1);
@@ -166,13 +170,13 @@ internal static class Program
     {
         if (TryExtractDataCreateException(e, out var dce))
         {
-            s_logger.Error($"=======================================================================");
-            s_logger.Error("解析失败!");
-            s_logger.Error($"文件:        {dce.OriginDataLocation}");
-            s_logger.Error($"错误位置:    {dce.DataLocationInFile}");
-            s_logger.Error($"Err:         {dce.OriginErrorMsg}");
-            s_logger.Error($"字段:        {dce.VariableFullPathStr}");
-            s_logger.Error($"=======================================================================");
+            s_logger.Error("=======================================================================");
+            s_logger.Error(MessageCatalog.Format("error.data.parse_failed"));
+            s_logger.Error(MessageCatalog.Format("error.data.parse_file", dce.OriginDataLocation));
+            s_logger.Error(MessageCatalog.Format("error.data.parse_location", dce.DataLocationInFile));
+            s_logger.Error(MessageCatalog.Format("error.data.parse_err", dce.OriginErrorMsg));
+            s_logger.Error(MessageCatalog.Format("error.data.parse_field", dce.VariableFullPathStr));
+            s_logger.Error("=======================================================================");
             return;
         }
         do
@@ -251,12 +255,12 @@ internal static class Program
             string[] pair = arg.Split('=', 2);
             if (pair.Length != 2)
             {
-                throw new Exception($"invalid xargs:{arg}");
+                throw new LubanException("error.cli.invalid_xargs", arg);
             }
 
             if (!result.TryAdd(pair[0], pair[1]))
             {
-                throw new Exception($"duplicate xargs:{arg}");
+                throw new LubanException("error.cli.duplicate_xargs", arg);
             }
         }
         return result;
@@ -285,12 +289,12 @@ internal static class Program
             string[] pair = variant.Split('=', 2);
             if (pair.Length != 2)
             {
-                throw new Exception($"invalid variant:{variant}");
+                throw new LubanException("error.cli.invalid_variant", variant);
             }
 
             if (!result.TryAdd(pair[0], pair[1]))
             {
-                throw new Exception($"duplicate variant:{variant}");
+                throw new LubanException("error.cli.duplicate_variant", variant);
             }
         }
         return result;
@@ -326,6 +330,7 @@ internal static class Program
 
         NLog.LogManager.Setup().LoadConfigurationFromFile(opts.LogConfig);
         s_logger = LogManager.GetCurrentClassLogger();
+        MessageCatalog.Init(opts.Locale);
         PrintCopyRight();
     }
 
@@ -334,6 +339,8 @@ internal static class Program
         s_logger.Info(" ==========================================================================================");
         s_logger.Info("");
         s_logger.Info("  Luban is developed by Code Philosophy Technology Co., LTD. https://code-philosophy.com");
+        s_logger.Info("  Github: https://github.com/focus-creative-games/luban");
+        s_logger.Info("  Document: https://www.datable.cn");
         s_logger.Info("");
         s_logger.Info(" ==========================================================================================");
     }

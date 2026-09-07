@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 using Luban.DataLoader.Builtin.DataVisitors;
+using Luban.Diagnostics;
 using Luban.Datas;
 using Luban.Types;
 using System.Text;
@@ -56,11 +57,11 @@ public class JsonParser : TextParserBase<JsonElement>
     {
         if (rawData.ValueKind != JsonValueKind.Array)
         {
-            throw new Exception($"json map entry must be array");
+            throw new LubanException("error.data.json_map_entry_array");
         }
         if (rawData.GetArrayLength() != 2)
         {
-            throw new Exception($"json map entry must be [key,value] array");
+            throw new LubanException("error.data.json_map_entry_kv");
         }
         DType key = type.KeyType.Apply(JsonDataCreator.Ins, rawData[0], GenerationContext.Current.Assembly);
         DType value = type.ValueType.Apply(JsonDataCreator.Ins, rawData[1], GenerationContext.Current.Assembly);

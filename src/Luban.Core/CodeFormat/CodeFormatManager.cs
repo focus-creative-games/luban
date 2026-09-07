@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.CodeFormat.CodeStyles;
 using Luban.CustomBehaviour;
 using NLog;
@@ -99,7 +100,7 @@ public class CodeFormatManager
             {
                 if (!typeof(ICodeStyle).IsAssignableFrom(type))
                 {
-                    throw new Exception($"type:{type.FullName} not implement interface:{typeof(ICodeStyle).FullName}");
+                    throw new LubanException("error.codegen.code_style_interface", type.FullName, typeof(ICodeStyle).FullName);
                 }
                 var codeStyle = (ICodeStyle)Activator.CreateInstance(type);
                 RegisterCodeStyle(attr.Name, codeStyle);

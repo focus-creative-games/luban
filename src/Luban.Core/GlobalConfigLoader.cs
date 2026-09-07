@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.RawDefs;
 using Luban.Schema;
 using Luban.Utils;
@@ -102,7 +103,7 @@ public class GlobalConfigLoader : IConfigLoader
             {
                 if (!Directory.Exists(fileOrDirectory) && !File.Exists(fileOrDirectory))
                 {
-                    throw new Exception($"failed to load schema file:'{fileOrDirectory}': directory or file doesn't exists!");
+                    throw new LubanException("error.schema.file_not_exist", fileOrDirectory);
                 }
             }
             foreach (var subFile in FileUtil.GetFileOrDirectory(_curDir, fileOrDirectory))

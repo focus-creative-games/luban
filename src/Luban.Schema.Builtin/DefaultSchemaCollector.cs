@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.RawDefs;
 using Luban.Utils;
 
@@ -40,7 +41,7 @@ public class DefaultSchemaCollector : SchemaCollectorBase
             string ext = FileUtil.GetExtensionWithoutDot(importFile.FileName);
             if (string.IsNullOrEmpty(ext))
             {
-                throw new Exception($"schema file:'{importFile.FileName}' has no extension. luban doesn't know how to load file without extension.");
+                throw new LubanException("error.schema.file_no_extension", importFile.FileName);
             }
             var schemaLoader = SchemaManager.Ins.CreateSchemaLoader(ext, importFile.Type, this);
             schemaLoader.Load(importFile.FileName);

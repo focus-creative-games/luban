@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 using Luban.DataLoader.Builtin.Utils;
+using Luban.Diagnostics;
 using System.Text;
 
 namespace Luban.DataLoader.Builtin.Excel;
@@ -257,7 +258,7 @@ public class ExcelStream
             }
         }
         LastReadIndex = _curIndex - 1;
-        throw new Exception($"cell:{_datas[_curIndex - 1]} 缺少数据");
+        throw new LubanException("error.excel.missing_cell_data", _datas[_curIndex - 1]);
     }
 
     public object ReadSkipNull()
@@ -272,7 +273,7 @@ public class ExcelStream
             }
         }
         LastReadIndex = _curIndex - 1;
-        throw new Exception($"cell:{_datas[_curIndex - 1]} 缺少数据");
+        throw new LubanException("error.excel.missing_cell_data", _datas[_curIndex - 1]);
     }
 
 

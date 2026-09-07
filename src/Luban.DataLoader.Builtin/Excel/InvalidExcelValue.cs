@@ -19,7 +19,7 @@
 // SOFTWARE.
 
 using ExcelDataReader;
-using Luban.DataLoader.Builtin.DataVisitors;
+using Luban.Diagnostics;
 
 namespace Luban.DataLoader.Builtin.Excel;
 
@@ -40,6 +40,6 @@ public class InvalidExcelValue
 
     public override string ToString()
     {
-        throw new InvalidExcelDataException($"Invalid Excel Value at: [{Cell.ToAlphaString(ColumnIndex)}{RowIndex + 1}], Error: {CellError}");
+        throw new LubanException("error.excel.invalid_cell", Cell.ToAlphaString(ColumnIndex), RowIndex + 1, CellError);
     }
 }

@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.DataVisitors;
 using Luban.Types;
 
@@ -44,7 +45,7 @@ public class DString : DType<string>
             case "true":
                 return new DString(System.Text.RegularExpressions.Regex.Unescape(s));
             default:
-                throw new Exception($"unknown escape mode:{escapeMode}");
+                throw new LubanException("error.data.unknown_escape_mode", escapeMode);
         }
     }
 

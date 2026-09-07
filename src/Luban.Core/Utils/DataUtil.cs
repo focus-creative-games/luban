@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.Datas;
 using Luban.Defs;
 using Luban.Types;
@@ -39,7 +40,7 @@ public static class DataUtil
             case "0":
                 return false;
             default:
-                throw new Exception($"{s} 不是 bool 类型的值 (true|1 或 false|0)");
+                throw new LubanException("error.data.invalid_bool", s);
         }
     }
 
@@ -77,7 +78,7 @@ public static class DataUtil
         {
             if (s.Length == 1 || s[s.Length - 1] != '\'')
             {
-                throw new Exception($"bad string:`{s}`");
+                throw new LubanException("error.data.bad_string", s);
             }
             return s.Substring(1, s.Length - 2);
         }
@@ -85,7 +86,7 @@ public static class DataUtil
         {
             if (s.Length == 1 || s[s.Length - 1] != '\"')
             {
-                throw new Exception($"bad string:`{s}`");
+                throw new LubanException("error.data.bad_string", s);
             }
             return s.Substring(1, s.Length - 2);
         }
@@ -144,7 +145,7 @@ public static class DataUtil
             result.Append(']').Append(multiEqualStr).Append(']');
             return result.ToString();
         }
-        throw new Exception($"too complex string:'{s}'");
+        throw new LubanException("error.data.too_complex_string", s);
     }
 
     //public static string EscapeStringWithQuote(string s)
@@ -215,16 +216,16 @@ public static class DataUtil
     {
         if (string.IsNullOrEmpty(subType))
         {
-            throw new Exception($"module:'{bean.Namespace}' 多态数据type不能为空");
+            throw new LubanException("error.data.polymorphic_type_empty", bean.Namespace);
         }
         DefBean defType = bean.GetHierarchyChildren().FirstOrDefault(c => c.Alias == subType || c.Name == subType || c.FullName == subType);
         if (defType == null)
         {
-            throw new Exception($"module:'{bean.Namespace}' type:'{subType}' 不是合法类型");
+            throw new LubanException("error.data.polymorphic_type_invalid", bean.Namespace, subType);
         }
         if (defType.IsAbstractType)
         {
-            throw new Exception($"module:'{bean.Namespace}' type:'{subType}' 是抽象类. 不能创建实例");
+            throw new LubanException("error.data.polymorphic_type_abstract", bean.Namespace, subType);
         }
         return defType;
     }

@@ -21,6 +21,7 @@
 using Luban.Datas;
 using Luban.DataVisitors;
 using Luban.Defs;
+using Luban.Diagnostics;
 using Luban.Types;
 using Luban.Validator;
 
@@ -40,7 +41,7 @@ public class NotDefaultValueValidator : DataValidatorBase
     {
         if (data.Apply(IsDefaultValueVisitor.Ins))
         {
-            s_logger.Error("记录 {}:{} (来自文件:{}) 是一个默认值", DataValidatorContext.CurrentRecordPath, data, Source);
+            s_logger.Error(MessageCatalog.Format("error.validator.not_default", DataValidatorContext.CurrentRecordPath, data, Source));
             GenerationContext.Current.LogValidatorFail(this);
         }
     }

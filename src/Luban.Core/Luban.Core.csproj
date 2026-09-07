@@ -44,4 +44,15 @@
       <PackageReference Include="Scriban" Version="7.2.5" />
     </ItemGroup>
 
+    <ItemGroup>
+      <EmbeddedResource Include="Resources\messages_en.json">
+        <LogicalName>Luban.Resources.messages_en.json</LogicalName>
+        <WithCulture>false</WithCulture>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Resources\messages_zh.json">
+        <LogicalName>Luban.Resources.messages_zh.json</LogicalName>
+        <WithCulture>false</WithCulture>
+      </EmbeddedResource>
+    </ItemGroup>
+
 </Project>

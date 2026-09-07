@@ -20,6 +20,7 @@
 
 using Luban.Datas;
 using Luban.Defs;
+using Luban.Diagnostics;
 using Luban.Types;
 using Luban.Utils;
 using Luban.Validator;
@@ -44,7 +45,7 @@ public class PathValidator : DataValidatorBase
             string key = $"{BuiltinOptionNames.PathValidatorFamily}.{BuiltinOptionNames.PathValidatorRootDir}";
             if (GenerationContext.Current.GetOrAddUniqueObject(key, () => this) == this)
             {
-                s_logger.Warn("option '-x {0}=<rootValidationDir>' not found, path validation is disabled", key);
+                s_logger.Warn(MessageCatalog.Format("warn.validator.path.disabled", key));
             }
         }
     }
@@ -141,7 +142,7 @@ public class PathValidator : DataValidatorBase
 
         if (!_pathPattern.ExistPath(_rootDir, value))
         {
-            s_logger.Error("{}:{} (来自文件:{}) 找不到对应文件", RecordPath, value, Source);
+            s_logger.Error(MessageCatalog.Format("error.validator.path.not_found", RecordPath, value, Source));
             GenerationContext.Current.LogValidatorFail(this);
         }
     }

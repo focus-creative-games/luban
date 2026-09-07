@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.CodeFormat;
 using Luban.CodeFormat.CodeStyles;
 using Luban.Defs;
@@ -94,15 +95,15 @@ public abstract class CodeTargetBase : ICodeTarget
         {
             if (IsPreserveKeyWords(table.Name))
             {
-                throw new Exception($"the name of type `{table.FullName}` is preserved keyword");
+                throw new LubanException("error.codegen.preserved_keyword", table.FullName);
             }
             if (ContainsPreserveKeyWordsInNamespace(table.Namespace))
             {
-                throw new Exception($"the namespace of type `{table.FullName}` contains preserved keyword");
+                throw new LubanException("error.codegen.namespace_preserved_keyword", table.FullName);
             }
             if (!IsValidateName(table.Name, NameLocation.TableName))
             {
-                throw new Exception($"the name of table `{table.FullName}` is invalid");
+                throw new LubanException("error.codegen.invalid_table_name", table.FullName);
             }
         }
 
@@ -110,25 +111,25 @@ public abstract class CodeTargetBase : ICodeTarget
         {
             if (IsPreserveKeyWords(bean.Name))
             {
-                throw new Exception($"the name of bean `{bean.FullName}` is preserved keyword");
+                throw new LubanException("error.codegen.bean_preserved_keyword", bean.FullName);
             }
             if (ContainsPreserveKeyWordsInNamespace(bean.Namespace))
             {
-                throw new Exception($"the namespace of bean `{bean.FullName}` contains preserved keyword");
+                throw new LubanException("error.codegen.bean_namespace_preserved_keyword", bean.FullName);
             }
             if (!IsValidateName(bean.Name, NameLocation.BeanName))
             {
-                throw new Exception($"the name of bean `{bean.FullName}` is invalid");
+                throw new LubanException("error.codegen.invalid_bean_name", bean.FullName);
             }
             foreach (var field in bean.Fields)
             {
                 if (IsPreserveKeyWords(field.Name))
                 {
-                    throw new Exception($"the name of field `{bean.FullName}::{field.Name}` contains preserved keyword");
+                    throw new LubanException("error.codegen.field_preserved_keyword", bean.FullName, field.Name);
                 }
                 if (!IsValidateName(field.Name, NameLocation.BeanFieldName))
                 {
-                    throw new Exception($"the name of field `{bean.FullName}::{field.Name}` is invalid");
+                    throw new LubanException("error.codegen.invalid_field_name", bean.FullName, field.Name);
                 }
             }
         }
@@ -137,25 +138,25 @@ public abstract class CodeTargetBase : ICodeTarget
         {
             if (IsPreserveKeyWords(@enum.Name))
             {
-                throw new Exception($"the name of enum `{@enum.FullName}` is preserved keyword");
+                throw new LubanException("error.codegen.enum_preserved_keyword", @enum.FullName);
             }
             if (ContainsPreserveKeyWordsInNamespace(@enum.Namespace))
             {
-                throw new Exception($"the namespace of enum `{@enum.FullName}` contains preserved keyword");
+                throw new LubanException("error.codegen.enum_namespace_preserved_keyword", @enum.FullName);
             }
             if (!IsValidateName(@enum.Name, NameLocation.EnumName))
             {
-                throw new Exception($"the name of enum `{@enum.FullName}` is invalid");
+                throw new LubanException("error.codegen.invalid_enum_name", @enum.FullName);
             }
             foreach (var item in @enum.Items)
             {
                 if (IsPreserveKeyWords(item.Name))
                 {
-                    throw new Exception($"the name of enum item `{@enum.FullName}::{item.Name}` contains preserved keyword");
+                    throw new LubanException("error.codegen.enum_item_preserved_keyword", @enum.FullName, item.Name);
                 }
                 if (!IsValidateName(item.Name, NameLocation.EnumItemName))
                 {
-                    throw new Exception($"the name of enum item `{@enum.FullName}::{item.Name}` is invalid");
+                    throw new LubanException("error.codegen.invalid_enum_item_name", @enum.FullName, item.Name);
                 }
             }
         }

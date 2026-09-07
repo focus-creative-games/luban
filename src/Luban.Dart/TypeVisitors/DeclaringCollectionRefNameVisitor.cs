@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 using Luban.Defs;
+using Luban.Diagnostics;
 using Luban.Types;
 using Luban.TypeVisitors;
 
@@ -90,7 +91,7 @@ class DeclaringCollectionRefNameVisitor : ITypeFuncVisitor<string>
         {
             return $"List<{refTable.ValueTType.Apply(DartDeclaringTypeNameVisitor.Ins)}>";
         }
-        throw new Exception($"解析'List<{type.ElementType}>' 的ref失败");
+        throw new LubanException("error.codegen.collection_ref_fail", $"List<{type.ElementType}>");
     }
 
     public string Accept(TList type)
@@ -100,7 +101,7 @@ class DeclaringCollectionRefNameVisitor : ITypeFuncVisitor<string>
         {
             return $"List<{refTable.ValueTType.Apply(DartDeclaringTypeNameVisitor.Ins)}>";
         }
-        throw new Exception($"解析'List<{type.ElementType}>' 的ref失败");
+        throw new LubanException("error.codegen.collection_ref_fail", $"List<{type.ElementType}>");
     }
 
     public string Accept(TSet type)
@@ -110,7 +111,7 @@ class DeclaringCollectionRefNameVisitor : ITypeFuncVisitor<string>
         {
             return $"HashSet<{refTable.ValueTType.Apply(DartDeclaringTypeNameVisitor.Ins)}>";
         }
-        throw new Exception($"解析'HashSet<{type.ElementType}>' 的ref失败");
+        throw new LubanException("error.codegen.collection_ref_fail", $"HashSet<{type.ElementType}>");
     }
 
     public string Accept(TMap type)
@@ -120,7 +121,7 @@ class DeclaringCollectionRefNameVisitor : ITypeFuncVisitor<string>
         {
             return $"Map<{type.KeyType.Apply(DartDeclaringTypeNameVisitor.Ins)}, {refTable.ValueTType.Apply(DartDeclaringTypeNameVisitor.Ins)}>";
         }
-        throw new Exception($"解析'Map<{type.KeyType}, {type.ValueType}>' 的ref失败");
+        throw new LubanException("error.codegen.collection_ref_fail", $"Map<{type.KeyType}, {type.ValueType}>");
     }
     private static DefTable GetCollectionRefTable(TType type)
     {

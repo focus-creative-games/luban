@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.Utils;
 
 namespace Luban.DataLoader.Builtin.Excel;
@@ -61,7 +62,7 @@ public class Title
     {
         if (!SubTitles.TryAdd(title.Name, title))
         {
-            throw new Exception($"列:{title.Name} 重复");
+            throw new LubanException("error.excel.duplicate_column", title.Name);
         }
         SubTitleList.Add(title);
     }
@@ -103,7 +104,7 @@ public class Title
         {
             if (!s_validTags.Contains(key))
             {
-                throw new Exception($"excel标题列:'{Name}' 不支持tag:'{key}',请移到##type行");
+                throw new LubanException("error.excel.title_tag_unsupported", Name, key);
             }
         }
 

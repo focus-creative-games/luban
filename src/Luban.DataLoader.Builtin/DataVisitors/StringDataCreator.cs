@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.Datas;
 using Luban.Types;
 using Luban.TypeVisitors;
@@ -36,7 +37,7 @@ class StringDataCreator : ITypeFuncVisitor<string, DType>
         }
         else
         {
-            throw new Exception($"{x} 不是bool类型");
+            throw new LubanException("error.data.invalid_bool_type", x);
         }
     }
 
@@ -48,7 +49,7 @@ class StringDataCreator : ITypeFuncVisitor<string, DType>
         }
         else
         {
-            throw new Exception($"{x} 不是byte类型");
+            throw new LubanException("error.data.invalid_byte", x);
         }
     }
 
@@ -60,7 +61,7 @@ class StringDataCreator : ITypeFuncVisitor<string, DType>
         }
         else
         {
-            throw new Exception($"{x} 不是short类型");
+            throw new LubanException("error.data.invalid_short", x);
         }
     }
 
@@ -72,7 +73,7 @@ class StringDataCreator : ITypeFuncVisitor<string, DType>
         }
         else
         {
-            throw new Exception($"{x} 不是int类型");
+            throw new LubanException("error.data.invalid_int", x);
         }
     }
 
@@ -84,7 +85,7 @@ class StringDataCreator : ITypeFuncVisitor<string, DType>
         }
         else
         {
-            throw new Exception($"{x} 不是long类型");
+            throw new LubanException("error.data.invalid_long", x);
         }
     }
 
@@ -96,7 +97,7 @@ class StringDataCreator : ITypeFuncVisitor<string, DType>
         }
         else
         {
-            throw new Exception($"{x} 不是float类型");
+            throw new LubanException("error.data.invalid_float", x);
         }
     }
 
@@ -108,7 +109,7 @@ class StringDataCreator : ITypeFuncVisitor<string, DType>
         }
         else
         {
-            throw new Exception($"{x} 不是double类型");
+            throw new LubanException("error.data.invalid_double", x);
         }
     }
 

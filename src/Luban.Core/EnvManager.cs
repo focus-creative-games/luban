@@ -18,6 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
+
 namespace Luban;
 
 public class EnvManager
@@ -49,7 +51,7 @@ public class EnvManager
 
     public string GetOption(string namespaze, string name, bool useGlobalIfNotExits)
     {
-        return TryGetOption(namespaze, name, useGlobalIfNotExits, out var value) ? value : throw new Exception($"option '{name}' not exists");
+        return TryGetOption(namespaze, name, useGlobalIfNotExits, out var value) ? value : throw new LubanException("error.env.option_not_exists", name);
     }
 
     public bool TryGetOption(string namespaze, string name, bool useGlobalIfNotExits, out string value)
@@ -97,7 +99,7 @@ public class EnvManager
                 case "true":
                     return true;
                 default:
-                    throw new Exception($"invalid bool option value:{value}");
+                    throw new LubanException("error.env.invalid_bool_option", value);
             }
         }
         return defaultValue;

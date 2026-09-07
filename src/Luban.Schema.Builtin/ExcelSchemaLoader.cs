@@ -21,6 +21,7 @@
 using Luban.DataLoader;
 using Luban.Datas;
 using Luban.Defs;
+using Luban.Diagnostics;
 using Luban.RawDefs;
 using Luban.Types;
 using Luban.Utils;
@@ -48,7 +49,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
                 LoadEnumListFromFile(fileName);
                 break;
             default:
-                throw new Exception($"unknown type:{Type}");
+                throw new LubanException("error.schema.unknown_excel_type", Type);
         }
     }
 
@@ -98,7 +99,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
             string name = TypeUtil.GetName(fullName);
             if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(name))
             {
-                throw new Exception($"file:{actualFile} 定义了一个空的table类名");
+                throw new LubanException("error.schema.empty_table_name", actualFile);
             }
             string module = TypeUtil.GetNamespace(fullName);
             string valueType = (data.GetField("value_type") as DString).Value.Trim();
@@ -193,7 +194,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
             string name = TypeUtil.GetName(fullName);
             if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(name))
             {
-                throw new Exception($"file:{fileName} 定义了一个空的enum类名");
+                throw new LubanException("error.schema.empty_enum_name", fileName);
             }
             string module = TypeUtil.GetNamespace(fullName);
 
@@ -298,7 +299,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
             string name = TypeUtil.GetName(fullName);
             if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(name))
             {
-                throw new Exception($"file:'{fileName}' 定义了一个空bean类名");
+                throw new LubanException("error.schema.empty_bean_name", fileName);
             }
             string module = TypeUtil.GetNamespace(fullName);
 

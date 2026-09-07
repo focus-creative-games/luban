@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 using Luban.DataLoader.Builtin.Excel;
+using Luban.Diagnostics;
 using Luban.RawDefs;
 using Luban.Utils;
 
@@ -58,18 +59,18 @@ public class BeanSchemaFromExcelHeaderLoader : IBeanSchemaLoader
                 var firstExcelFile = files.FirstOrDefault(f => FileUtil.IsExcelFile(f));
                 if (firstExcelFile == null)
                 {
-                    throw new Exception($"table: '{table.Name}' valueType:'{valueTypeFullName}' directory:'{fileName}', 当table的ReadSchemaFromFile为true时，目录下必须有excel文件");
+                    throw new LubanException("error.schema.excel_dir_required", table.Name, valueTypeFullName, fileName);
                 }
                 actualFile = firstExcelFile;
             }
             else
             {
-                throw new Exception($"table '{table.Name}' intput path:'{fileName}' not found");
+                throw new LubanException("error.schema.input_not_found", table.Name, fileName);
             }
         }
         else if (!FileUtil.IsExcelFile(actualFile))
         {
-            throw new Exception($"table: '{table.Name}' valueType:'{valueTypeFullName}' file:'{fileName}'，当table的ReadSchemaFromFile为true时，文件必须是excel文件");
+            throw new LubanException("error.schema.excel_file_required", table.Name, valueTypeFullName, fileName);
         }
 
         using var inputStream = new FileStream(actualFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
@@ -83,14 +84,14 @@ public class BeanSchemaFromExcelHeaderLoader : IBeanSchemaLoader
                 var splitName = name.Split('@');
                 if (splitName.Length != 2)
                 {
-                    throw new Exception($"file:{fileName} title:'{name}' is invalid!");
+                    throw new LubanException("error.schema.invalid_title", fileName, name);
                 }
                 string actualName = splitName[0];
                 string variantName = splitName[1];
                 RawField rawField = cb.Fields.Find(f => f.Name == actualName);
                 if (rawField == null)
                 {
-                    throw new Exception($"file:{fileName} field:{actualName} not found for variant field:'{name}' not found!");
+                    throw new LubanException("error.schema.variant_field_not_found", fileName, actualName, name);
                 }
                 rawField.Variants.Add(variantName);
                 continue;
@@ -108,7 +109,7 @@ public class BeanSchemaFromExcelHeaderLoader : IBeanSchemaLoader
 
             if (attrs.Length == 0 || string.IsNullOrWhiteSpace(attrs[0]))
             {
-                throw new Exception($"file:{fileName} title:'{name}' type missing!");
+                throw new LubanException("error.schema.title_type_missing", fileName, name);
             }
 
             cf.Comment = f.Desc;
@@ -118,7 +119,7 @@ public class BeanSchemaFromExcelHeaderLoader : IBeanSchemaLoader
                 var pair = attrs[i].Split('=', 2);
                 if (pair.Length != 2)
                 {
-                    throw new Exception($"file:{fileName} title:'{name}' attr:'{attrs[i]}' is invalid!");
+                    throw new LubanException("error.schema.invalid_title_attr", fileName, name, attrs[i]);
                 }
                 var attrName = pair[0].Trim();
                 var attrValue = pair[1].Trim();
@@ -131,7 +132,7 @@ public class BeanSchemaFromExcelHeaderLoader : IBeanSchemaLoader
                     case "sep":
                     case "regex":
                     {
-                        throw new Exception($"file:{fileName} title:'{name}' attr:'{attrName}' 属于type的属性，必须用#分割，尝试'{cf.Type}#{attrs[i]}'");
+                        throw new LubanException("error.schema.title_type_attr", fileName, name, attrName, cf.Type, attrs[i]);
                     }
                     case "group":
                     {
@@ -150,7 +151,7 @@ public class BeanSchemaFromExcelHeaderLoader : IBeanSchemaLoader
                     }
                     default:
                     {
-                        throw new Exception($"file:{fileName} title:'{name}' attr:'{attrs[i]}' is invalid!");
+                        throw new LubanException("error.schema.invalid_title_attr", fileName, name, attrs[i]);
                     }
                 }
             }

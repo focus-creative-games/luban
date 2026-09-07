@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.RawDefs;
 using Luban.Schema;
 using Luban.Utils;
@@ -74,7 +75,7 @@ public abstract class DefTypeBase
                 {
                     if (c.Groups.All(gg => !gg.Names.Contains(g)))
                     {
-                        throw new Exception($"type:{FullName} group:{g} not found");
+                        throw new LubanException("error.def.type.group_not_found", FullName, g);
                     }
                 }
             }

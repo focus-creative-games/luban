@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.CodeFormat;
 using Luban.CodeTarget;
 using Luban.DataLoader;
@@ -108,7 +109,7 @@ public class GenerationContext
         ExcludeTags = builder.ExcludeTags;
         if (IncludeTags != null && IncludeTags.Count != 0 && ExcludeTags != null && ExcludeTags.Count > 0)
         {
-            throw new Exception("option '--includeTag <tag>' and '--excludeTag <tag>' can not be set at the same time");
+            throw new LubanException("error.cli.include_exclude_tag_conflict");
         }
         TimeZone = TimeZoneUtil.GetTimeZone(builder.TimeZone);
         _exportEmptyGroupsTypes = builder.Assembly.Target.Groups.Any(g => GlobalConf.Groups.FirstOrDefault(gd => gd.Names.Contains(g))?.IsDefault == true);

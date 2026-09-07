@@ -20,6 +20,7 @@
 
 using Luban.Datas;
 using Luban.Defs;
+using Luban.Diagnostics;
 using Luban.Types;
 using Luban.Validator;
 using System.Text.RegularExpressions;
@@ -51,7 +52,7 @@ public class RegexValidator : DataValidatorBase
             }
             default:
             {
-                throw new Exception($"type:{field.CType} field:{field} not support regex validator");
+                throw new LubanException("error.validator.regex.unsupported_type", field.CType, field);
             }
         }
     }
@@ -66,7 +67,7 @@ public class RegexValidator : DataValidatorBase
     {
         if (!_regex.IsMatch(_stringGetter(data)))
         {
-            s_logger.Error($"记录 {RecordPath}:{data} (来自文件:{Source}) 不符合正则表达式：'{_regex}'");
+            s_logger.Error(MessageCatalog.Format("error.validator.regex.mismatch", RecordPath, data, Source, _regex));
             GenerationContext.Current.LogValidatorFail(this);
         }
     }

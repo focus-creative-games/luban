@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using System.Text;
 
 namespace Luban.Utils;
@@ -52,7 +53,7 @@ public static class StringUtil
             case "cr":
                 return "\r";
             default:
-                throw new Exception($"unknown line ending: {endings}");
+                throw new LubanException("error.codegen.unknown_line_ending", endings);
         }
     }
 

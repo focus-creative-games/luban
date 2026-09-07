@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.DataVisitors;
 using Luban.Types;
 using Luban.Utils;
@@ -40,7 +41,7 @@ public class DSet : DType
         {
             if (!set.Add(data))
             {
-                throw new Exception($"set 的 value:{data} 重复");
+                throw new LubanException("error.data.set_duplicate_value", data);
             }
         }
     }

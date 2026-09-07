@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 using Google.Protobuf;
+using Luban.Diagnostics;
 using Luban.Types;
 using Luban.TypeVisitors;
 
@@ -86,22 +87,22 @@ public class ProtobufWireTypeVisitor : ITypeFuncVisitor<WireFormat.WireType>
     public WireFormat.WireType Accept(TArray type)
     {
         //return WireFormat.WireType.LengthDelimited;
-        throw new Exception("not support multi-dimension array wire type");
+        throw new LubanException("error.codegen.pb_multi_array_wire");
     }
 
     public WireFormat.WireType Accept(TList type)
     {
-        throw new Exception("not support multi-dimension list wire type");
+        throw new LubanException("error.codegen.pb_multi_list_wire");
     }
 
     public WireFormat.WireType Accept(TSet type)
     {
-        throw new Exception("not support multi-dimension set wire type");
+        throw new LubanException("error.codegen.pb_multi_set_wire");
     }
 
     public WireFormat.WireType Accept(TMap type)
     {
         //return WireFormat.WireType.LengthDelimited;
-        throw new Exception("not support multi-dimension map wire type");
+        throw new LubanException("error.codegen.pb_multi_map_wire");
     }
 }

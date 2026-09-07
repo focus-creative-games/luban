@@ -18,19 +18,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace Luban.Defs;
+namespace Luban.Diagnostics;
 
-public class LoadDefException : Exception
+public class LubanException : Exception
 {
-    public LoadDefException()
+    public string MessageKey { get; }
+
+    public object[] Args { get; }
+
+    public LubanException(string messageKey, params object[] args)
+        : base(MessageCatalog.Format(messageKey, args))
     {
+        MessageKey = messageKey;
+        Args = args ?? Array.Empty<object>();
     }
 
-    public LoadDefException(string message) : base(message)
+    public LubanException(Exception innerException, string messageKey, params object[] args)
+        : base(MessageCatalog.Format(messageKey, args), innerException)
     {
-    }
-
-    public LoadDefException(string message, Exception innerException) : base(message, innerException)
-    {
+        MessageKey = messageKey;
+        Args = args ?? Array.Empty<object>();
     }
 }

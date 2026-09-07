@@ -20,6 +20,7 @@
 
 using Luban.DataLoader.Builtin.Lite;
 using Luban.DataLoader.Builtin.Utils;
+using Luban.Diagnostics;
 using Luban.Datas;
 using Luban.Defs;
 using Luban.Types;
@@ -63,7 +64,7 @@ class LiteStreamDataCreator : ITypeFuncVisitor<LiteStream, DType>
         }
         if (!LoadDataUtil.TryParseExcelByteFromNumberOrConstAlias(d, out byte v))
         {
-            throw new InvalidExcelDataException($"{d} 不是 byte 类型值");
+            throw new LubanException("error.data.invalid_byte", d);
         }
         return DByte.ValueOf(v);
     }
@@ -77,7 +78,7 @@ class LiteStreamDataCreator : ITypeFuncVisitor<LiteStream, DType>
         }
         if (!LoadDataUtil.TryParseExcelShortFromNumberOrConstAlias(d, out short v))
         {
-            throw new InvalidExcelDataException($"{d} 不是 short 类型值");
+            throw new LubanException("error.data.invalid_short", d);
         }
         return DShort.ValueOf(v);
     }
@@ -91,7 +92,7 @@ class LiteStreamDataCreator : ITypeFuncVisitor<LiteStream, DType>
         }
         if (!LoadDataUtil.TryParseExcelIntFromNumberOrConstAlias(d, out var v))
         {
-            throw new InvalidExcelDataException($"{d} 不是 int 类型值");
+            throw new LubanException("error.data.invalid_int", d);
         }
         return DInt.ValueOf(v);
     }
@@ -106,7 +107,7 @@ class LiteStreamDataCreator : ITypeFuncVisitor<LiteStream, DType>
         //}
         if (!LoadDataUtil.TryParseExcelLongFromNumberOrConstAlias(d, out var v))
         {
-            throw new InvalidExcelDataException($"{d} 不是 long 类型值");
+            throw new LubanException("error.data.invalid_long", d);
         }
         return DLong.ValueOf(v);
     }
@@ -120,7 +121,7 @@ class LiteStreamDataCreator : ITypeFuncVisitor<LiteStream, DType>
         }
         if (!LoadDataUtil.TryParseExcelFloatFromNumberOrConstAlias(d, out var v))
         {
-            throw new InvalidExcelDataException($"{d} 不是 float 类型值");
+            throw new LubanException("error.data.invalid_float", d);
         }
         return DFloat.ValueOf(v);
     }
@@ -134,7 +135,7 @@ class LiteStreamDataCreator : ITypeFuncVisitor<LiteStream, DType>
         }
         if (!LoadDataUtil.TryParseExcelDoubleFromNumberOrConstAlias(d, out var v))
         {
-            throw new InvalidExcelDataException($"{d} 不是 double 类型值");
+            throw new LubanException("error.data.invalid_double", d);
         }
         return DDouble.ValueOf(v);
     }
@@ -168,7 +169,7 @@ class LiteStreamDataCreator : ITypeFuncVisitor<LiteStream, DType>
             {
                 return null;
             }
-            throw new InvalidExcelDataException("字段不是nullable类型，不能为null");
+            throw new LubanException("error.data.not_nullable");
         }
         return DString.ValueOf(type, s);
     }
@@ -215,7 +216,7 @@ class LiteStreamDataCreator : ITypeFuncVisitor<LiteStream, DType>
                 }
                 else
                 {
-                    throw new Exception($"type:'{originBean.FullName}'的值只能为 `null` 或 `{{,,...}}` 格式");
+                    throw new LubanException("error.data.lite_bean_format", originBean.FullName);
                 }
             }
         }
@@ -228,7 +229,7 @@ class LiteStreamDataCreator : ITypeFuncVisitor<LiteStream, DType>
             {
                 if (!type.IsNullable)
                 {
-                    throw new InvalidExcelDataException($"type:{originBean.FullName}不是可空类型. 不能为空");
+                    throw new LubanException("error.data.bean_not_nullable", originBean.FullName);
                 }
                 return null;
             }
@@ -287,7 +288,7 @@ class LiteStreamDataCreator : ITypeFuncVisitor<LiteStream, DType>
             stream.ReadStructOrCollectionEnd();
             if (!datas.TryAdd(key, value))
             {
-                throw new InvalidExcelDataException($"map 的 key:{key} 重复");
+                throw new LubanException("error.data.map_duplicate_key", key);
             }
         }
         stream.ReadStructOrCollectionEnd();

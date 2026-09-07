@@ -21,6 +21,7 @@
 using Luban.Datas;
 using Luban.DataVisitors;
 using Luban.Defs;
+using Luban.Diagnostics;
 using Luban.Types;
 using Luban.Utils;
 using Luban.Validator;
@@ -46,7 +47,7 @@ public class RefValidator : DataValidatorBase
         this._tables = DefUtil.TrimBracePairs(Args).Split(',').Select(s => s.Trim()).ToList();
         if (_tables.Count == 0)
         {
-            throw new Exception($"field:{field} ref 不能为空");
+            throw new LubanException("error.validator.ref.empty", field);
         }
 
         var assembly = field.Assembly;
@@ -63,7 +64,7 @@ public class RefValidator : DataValidatorBase
             {
                 if (!string.IsNullOrWhiteSpace(indexName))
                 {
-                    throw new Exception($"refgroup:'{actualTable}' index:'{indexName}' 必须为空");
+                    throw new LubanException("error.validator.ref.refgroup_index", actualTable, indexName);
                 }
                 foreach (var rawRefTableName in refGroup.Refs)
                 {
@@ -71,14 +72,14 @@ public class RefValidator : DataValidatorBase
                     DefTable subTable = assembly.GetCfgTable(actualRefTableName);
                     if (subTable == null)
                     {
-                        throw new Exception($"field:{field} refgroup:'{actualTable}' ref:'{actualRefTableName}' 不存在");
+                        throw new LubanException("error.validator.ref.refgroup_missing", field, actualTable, actualRefTableName);
                     }
                     CompileTable(field, type, subTable, refIndex, ignoreDefault || refIgnoreDefault);
                 }
             }
             else
             {
-                throw new Exception($"field:{field} ref:'{actualTable}' 不存在");
+                throw new LubanException("error.validator.ref.missing", field, actualTable);
             }
         }
     }
@@ -141,7 +142,7 @@ public class RefValidator : DataValidatorBase
 
         foreach (var table in _compiledTables)
         {
-            s_logger.Error("记录 {} = {} (来自文件:{}) 在引用表:{} 中不存在", RecordPath, key, Source, table.Table.FullName);
+            s_logger.Error(MessageCatalog.Format("error.validator.ref.not_found", RecordPath, key, Source, table.Table.FullName));
         }
         GenerationContext.Current.LogValidatorFail(this);
     }
@@ -181,25 +182,25 @@ public class RefValidator : DataValidatorBase
         string valueTypeName = table.ValueTType.DefBean.FullName;
         if (!table.NeedExport() && field.NeedExport() && field.HostType.Assembly.ExportTables.Any(t => t.ValueTType.DefBean.IsAssignableFrom(field.HostType)))
         {
-            throw new Exception($"field:'{field}' ref 引用的表:'{actualTable}' 没有导出");
+            throw new LubanException("error.validator.ref.not_exported", field, actualTable);
         }
         if (table.IsSingletonTable)
         {
             if (string.IsNullOrEmpty(indexName))
             {
-                throw new Exception($"field:'{field}' ref:{actualTable} 是singleton表，索引字段不能为空");
+                throw new LubanException("error.validator.ref.singleton_index", field, actualTable);
             }
             if (!table.ValueTType.DefBean.TryGetField(indexName, out var indexField, out _))
             {
-                throw new Exception($"field:'{field}' ref:{actualTable} value_type:{valueTypeName} 未包含索引字段:{indexName}");
+                throw new LubanException("error.validator.ref.index_missing", field, actualTable, valueTypeName, indexName);
             }
             if (!(indexField.CType is TMap tmap))
             {
-                throw new Exception($"field:'{field}' ref:{actualTable} value_type:{valueTypeName} 索引字段:{indexName} type:{indexField.CType.TypeName} 不是map类型");
+                throw new LubanException("error.validator.ref.index_not_map", field, actualTable, valueTypeName, indexName, indexField.CType.TypeName);
             }
             if (tmap.KeyType.TypeName != fieldTypeName)
             {
-                throw new Exception($"field:'{field}' 类型:'{type.TypeName}' 与被引用的表:{actualTable} value_type:{valueTypeName} 索引字段:{indexName} key_type:{tmap.KeyType.TypeName} 不一致");
+                throw new LubanException("error.validator.ref.type_mismatch_map_index", field, type.TypeName, actualTable, valueTypeName, indexName, tmap.KeyType.TypeName);
             }
 
         }
@@ -207,28 +208,28 @@ public class RefValidator : DataValidatorBase
         {
             if (!string.IsNullOrEmpty(indexName))
             {
-                throw new Exception($"field:'{field}' ref:{actualTable} 是map表，不能索引子字段");
+                throw new LubanException("error.validator.ref.map_no_sub_index", field, actualTable);
             }
             var keyType = table.KeyTType;
             if (keyType.TypeName != fieldTypeName)
             {
-                throw new Exception($"field:'{field}' 类型:'{fieldTypeName}' 与 被引用的map表:'{actualTable}' key类型:'{keyType.TypeName}' 不一致");
+                throw new LubanException("error.validator.ref.type_mismatch_map_key", field, fieldTypeName, actualTable, keyType.TypeName);
             }
         }
         else
         {
             if (string.IsNullOrEmpty(indexName))
             {
-                throw new Exception($"field:'{field}' ref:{actualTable} 是list表，必须显式指定索引字段");
+                throw new LubanException("error.validator.ref.list_need_index", field, actualTable);
             }
             var indexField = table.IndexList.Find(k => k.IndexField.Name == indexName);
             if (indexField?.Type == null)
             {
-                throw new Exception($"field:'{field}' 索引字段:{indexName} 不是被引用的list表:{actualTable} 的索引字段，合法值为'{table.Index}'之一");
+                throw new LubanException("error.validator.ref.list_invalid_index", field, indexName, actualTable, table.Index);
             }
             if (indexField.Type.TypeName != fieldTypeName)
             {
-                throw new Exception($"field:'{field}' 类型:'{fieldTypeName}' 与 被引用的list表:'{actualTable}' key:{indexName} 类型:'{indexField.Type.TypeName}' 不一致");
+                throw new LubanException("error.validator.ref.type_mismatch_list_key", field, fieldTypeName, actualTable, indexName, indexField.Type.TypeName);
             }
         }
     }

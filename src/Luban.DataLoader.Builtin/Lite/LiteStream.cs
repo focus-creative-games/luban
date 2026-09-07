@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using System.Text;
 
 namespace Luban.DataLoader.Builtin.Lite;
@@ -46,7 +47,7 @@ public class LiteStream
                 i++;
                 if (i >= dataStr.Length)
                 {
-                    throw new Exception($"Invalid escape sequence: `{dataStr}`");
+                    throw new LubanException("error.data.lite.invalid_escape", dataStr);
                 }
                 c = dataStr[i];
                 if (c == 'n')
@@ -71,7 +72,7 @@ public class LiteStream
                 {
                     if (tokenStr.Length > 0 && !string.IsNullOrWhiteSpace(tokenStr))
                     {
-                        throw new Exception($"Invalid token before '{{': `{dataStr}`");
+                        throw new LubanException("error.data.lite.invalid_token_before_open", dataStr);
                     }
                     nestDepth++;
                     beginData = true;
@@ -83,7 +84,7 @@ public class LiteStream
                     {
                         if (!beginData)
                         {
-                            throw new Exception($"Invalid token before '}}': `{dataStr}`");
+                            throw new LubanException("error.data.lite.invalid_token_before_close", dataStr);
                         }
                         _tokens.Add(tokenStr);
                     }
@@ -91,7 +92,7 @@ public class LiteStream
                     nestDepth--;
                     if (nestDepth < 0)
                     {
-                        throw new Exception($"Unmatched closing brace in: `{dataStr}`");
+                        throw new LubanException("error.data.lite.unmatched_close", dataStr);
                     }
                     _tokens.Add("}");
                 }
@@ -99,13 +100,13 @@ public class LiteStream
                 {
                     if (nestDepth == 0)
                     {
-                        throw new Exception($"Invalid token before ',': `{dataStr}`");
+                        throw new LubanException("error.data.lite.invalid_token_before_comma", dataStr);
                     }
                     if (tokenStr.Length > 0)
                     {
                         if (!beginData)
                         {
-                            throw new Exception($"Invalid token before ',': `{dataStr}`");
+                            throw new LubanException("error.data.lite.invalid_token_before_comma", dataStr);
                         }
                         _tokens.Add(tokenStr);
                     }
@@ -123,11 +124,11 @@ public class LiteStream
         }
         if (nestDepth != 0)
         {
-            throw new Exception($"Unmatched opening brace in: `{dataStr}`");
+            throw new LubanException("error.data.lite.unmatched_open", dataStr);
         }
         if (token.Length > 0 && !string.IsNullOrEmpty(token.ToString()))
         {
-            throw new Exception($"Invalid token at end: `{dataStr}`");
+            throw new LubanException("error.data.lite.invalid_token_at_end", dataStr);
         }
     }
 
@@ -135,11 +136,11 @@ public class LiteStream
     {
         if (_currentIndex >= _tokens.Count)
         {
-            throw new Exception("No more tokens to read.");
+            throw new LubanException("error.data.lite.no_more_tokens");
         }
         if (_tokens[_currentIndex] != "{")
         {
-            throw new Exception($"Expected '{{' but found '{_tokens[_currentIndex]}'");
+            throw new LubanException("error.data.lite.expected_open", _tokens[_currentIndex]);
         }
         ++_currentIndex;
     }
@@ -148,11 +149,11 @@ public class LiteStream
     {
         if (_currentIndex >= _tokens.Count)
         {
-            throw new Exception("No more tokens to read.");
+            throw new LubanException("error.data.lite.no_more_tokens");
         }
         if (_tokens[_currentIndex] != "}")
         {
-            throw new Exception($"Expected '}}' but found '{_tokens[_currentIndex]}'");
+            throw new LubanException("error.data.lite.expected_close", _tokens[_currentIndex]);
         }
         _currentIndex++;
     }
@@ -179,12 +180,12 @@ public class LiteStream
     {
         if (_currentIndex >= _tokens.Count)
         {
-            throw new Exception("No more tokens to read.");
+            throw new LubanException("error.data.lite.no_more_tokens");
         }
         string token = _tokens[_currentIndex];
         if (token == "{" || token == "}")
         {
-            throw new Exception($"Expected data but found '{token}'");
+            throw new LubanException("error.data.lite.expected_data", token);
         }
         _currentIndex++;
         return token;

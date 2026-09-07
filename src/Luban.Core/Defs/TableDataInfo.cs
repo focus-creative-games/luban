@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.Datas;
 using Luban.Utils;
 
@@ -55,7 +56,7 @@ public class TableDataInfo
 
         if (table.IsSingletonTable && FinalRecords.Count != 1)
         {
-            throw new Exception($"配置表 {table.FullName} 是单值表 mode=one,但数据个数:{FinalRecords.Count} != 1");
+            throw new LubanException("error.data.singleton_count", table.FullName, FinalRecords.Count);
         }
     }
 
@@ -109,10 +110,7 @@ public class TableDataInfo
                     DType key = r.Data.Fields[table.IndexFieldIdIndex];
                     if (!recordMap.TryAdd(key, r))
                     {
-                        throw new Exception($@"配置表 '{table.FullName}' 主文件 主键字段:'{table.Index}' 主键值:'{key}' 重复.
-        记录1 来自文件:{r.Source}
-        记录2 来自文件:{recordMap[key].Source}
-");
+                        throw new LubanException("error.data.duplicate_key", table.FullName, table.Index, key, r.Source, recordMap[key].Source);
                     }
                 }
                 if (patchRecords != null && patchRecords.Count > 0)
@@ -124,7 +122,7 @@ public class TableDataInfo
                         {
                             if (overrideRecords.Contains(old))
                             {
-                                throw new Exception($"配置表 '{table.FullName}' 主文件 主键字段:'{table.Index}' 主键值:'{key}' 被patch多次覆盖，请检查patch是否有重复记录");
+                                throw new LubanException("error.data.patch_override_multiple", table.FullName, table.Index, key);
                             }
                             s_logger.Debug("配置表 {} 分支文件 主键:{} 覆盖 主文件记录", table.FullName, key);
                             mainRecords[recordIndex[old]] = r;
@@ -145,7 +143,7 @@ public class TableDataInfo
             {
                 if (patchRecords != null && patchRecords.Count > 0)
                 {
-                    throw new Exception($"配置表 '{table.FullName}' 是list表.不支持patch");
+                    throw new LubanException("error.data.list_patch_unsupported", table.FullName);
                 }
                 var recordMapByIndexs = new Dictionary<string, Dictionary<DType, Record>>();
                 if (table.IsUnionIndex)
@@ -156,10 +154,7 @@ public class TableDataInfo
                         var unionKeys = table.IndexList.Select(idx => r.Data.Fields[idx.IndexFieldIdIndex]).ToList();
                         if (!unionRecordMap.TryAdd(unionKeys, r))
                         {
-                            throw new Exception($@"配置表 '{table.FullName}' 主文件 主键字段:'{table.Index}' 主键值:'{StringUtil.CollectionToString(unionKeys)}' 重复.
-        记录1 来自文件:{r.Source}
-        记录2 来自文件:{unionRecordMap[unionKeys].Source}
-");
+                            throw new LubanException("error.data.duplicate_key", table.FullName, table.Index, StringUtil.CollectionToString(unionKeys), r.Source, unionRecordMap[unionKeys].Source);
                         }
                     }
 
@@ -185,10 +180,7 @@ public class TableDataInfo
                             DType key = r.Data.Fields[indexInfo.IndexFieldIdIndex];
                             if (!recordMap.TryAdd(key, r))
                             {
-                                throw new Exception($@"配置表 '{table.FullName}' 主文件 主键字段:'{indexInfo.IndexField.Name}' 主键值:'{key}' 重复.
-        记录1 来自文件:{r.Source}
-        记录2 来自文件:{recordMap[key].Source}
-");
+                                throw new LubanException("error.data.duplicate_key", table.FullName, indexInfo.IndexField.Name, key, r.Source, recordMap[key].Source);
                             }
                         }
                         recordMapByIndexs.Add(indexInfo.IndexField.Name, recordMap);
@@ -199,7 +191,7 @@ public class TableDataInfo
                 break;
             }
             default:
-                throw new Exception($"unknown mode:{Table.Mode}");
+                throw new LubanException("error.data.unknown_mode", Table.Mode);
         }
     }
 }

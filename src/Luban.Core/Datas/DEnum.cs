@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.DataVisitors;
 using Luban.Types;
 
@@ -40,7 +41,7 @@ public class DEnum : DType
         string sep = type.GetTagOrDefault("sep", "|");
         if (sep.Length > 1)
         {
-            throw new System.Exception($"enum tag sep length must be 1, but is {sep}");
+            throw new LubanException("error.data.enum_sep_length", sep);
         }
         Value = type.DefEnum.GetValueByNameOrAlias(value, sep[0]);
     }

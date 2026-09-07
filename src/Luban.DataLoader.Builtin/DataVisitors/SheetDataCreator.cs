@@ -21,6 +21,7 @@
 using Luban.DataLoader.Builtin.Excel;
 using Luban.DataLoader.Builtin.Excel.DataParser;
 using Luban.DataLoader.Builtin.Utils;
+using Luban.Diagnostics;
 using Luban.Datas;
 using Luban.Defs;
 using Luban.Types;
@@ -47,7 +48,7 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
     {
         if (row.SelfTitle.NonEmpty)
         {
-            throw new Exception($"字段不允许为空");
+            throw new LubanException("error.data.field_not_empty");
         }
     }
 
@@ -83,7 +84,7 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
         }
         if (!LoadDataUtil.TryParseExcelByteFromNumberOrConstAlias(x.ToString(), out byte v))
         {
-            throw new InvalidExcelDataException($"{x} 不是 byte 类型值");
+            throw new LubanException("error.data.invalid_byte", x);
         }
         return DByte.ValueOf(v);
     }
@@ -102,7 +103,7 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
         }
         if (!LoadDataUtil.TryParseExcelShortFromNumberOrConstAlias(x.ToString(), out short v))
         {
-            throw new InvalidExcelDataException($"{x} 不是 short 类型值");
+            throw new LubanException("error.data.invalid_short", x);
         }
         return DShort.ValueOf(v);
     }
@@ -120,7 +121,7 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
         }
         if (!LoadDataUtil.TryParseExcelIntFromNumberOrConstAlias(x.ToString(), out var v))
         {
-            throw new InvalidExcelDataException($"{x} 不是 int 类型值");
+            throw new LubanException("error.data.invalid_int", x);
         }
         return DInt.ValueOf(v);
     }
@@ -139,7 +140,7 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
         }
         if (!LoadDataUtil.TryParseExcelLongFromNumberOrConstAlias(x.ToString(), out var v))
         {
-            throw new InvalidExcelDataException($"{x} 不是 long 类型值");
+            throw new LubanException("error.data.invalid_long", x);
         }
         return DLong.ValueOf(v);
     }
@@ -158,7 +159,7 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
         }
         if (!LoadDataUtil.TryParseExcelFloatFromNumberOrConstAlias(x.ToString(), out var v))
         {
-            throw new InvalidExcelDataException($"{x} 不是 float 类型值");
+            throw new LubanException("error.data.invalid_float", x);
         }
         return DFloat.ValueOf(v);
     }
@@ -177,7 +178,7 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
         }
         if (!LoadDataUtil.TryParseExcelDoubleFromNumberOrConstAlias(x.ToString(), out var v))
         {
-            throw new InvalidExcelDataException($"{x} 不是 double 类型值");
+            throw new LubanException("error.data.invalid_double", x);
         }
         return DDouble.ValueOf(v);
     }
@@ -198,14 +199,14 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
                     return new DEnum(type, "0");
                 }
 
-                throw new InvalidExcelDataException($"枚举类:'{type.DefEnum.FullName}' 没有value为0的枚举项, 不支持默认值");
+                throw new LubanException("error.data.enum_no_zero_default", type.DefEnum.FullName);
             }
             return new DEnum(type, x.ToString());
         }
 
         if (row.Rows != null)
         {
-            throw new Exception($"{type.DefEnum.FullName} 不支持多行格式");
+            throw new LubanException("error.excel.enum_no_multirow", type.DefEnum.FullName);
         }
         if (row.Fields != null)
         {
@@ -219,7 +220,7 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
                 string itemName = field.SelfTitle.Name;
                 if (!type.DefEnum.TryValueByNameOrAlias(itemName, out _))
                 {
-                    throw new Exception($"列名:{itemName} 不是枚举类型'{type.DefEnum.FullName}'的有效枚举项");
+                    throw new LubanException("error.excel.enum_invalid_item", itemName, type.DefEnum.FullName);
                 }
                 if (field.IsBlank)
                 {
@@ -243,15 +244,15 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
                     return new DEnum(type, "0");
                 }
 
-                throw new InvalidExcelDataException($"枚举类:'{type.DefEnum.FullName}' 没有value为0的枚举项, 不支持默认值");
+                throw new LubanException("error.data.enum_no_zero_default", type.DefEnum.FullName);
             }
             return new DEnum(type, string.Join(type.GetTagOrDefault("sep", "|"), items));
         }
         if (row.Elements != null)
         {
-            throw new Exception($"{type.DefEnum.FullName} 不支持多行子字段格式");
+            throw new LubanException("error.excel.enum_no_multirow_sub");
         }
-        throw new Exception();
+        throw new LubanException("error.internal.unexpected");
     }
 
 
@@ -285,7 +286,7 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
             {
                 return null;
             }
-            throw new InvalidExcelDataException("字段不是nullable类型，不能为null");
+            throw new LubanException("error.data.not_nullable");
         }
         return DString.ValueOf(type, s);
     }
@@ -336,7 +337,7 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
             string fname = f.Name;
             if (!TryGetBeanField(row, f, out var field))
             {
-                throw new Exception($"bean:'{bean.FullName}' 缺失 列:'{fname}'，请检查是否写错或者遗漏");
+                throw new LubanException("error.excel.missing_column", bean.FullName, fname);
             }
             try
             {
@@ -374,7 +375,7 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
             //    return null;
             //}
             //return type.Apply(ExcelStreamDataCreator.Ins, s);
-            throw new Exception($"bean不支持多行格式，type:{type.DefBean.FullName} ");
+            throw new LubanException("error.excel.bean_no_multirow", type.DefBean.FullName);
         }
         if (row.Fields != null)
         {
@@ -385,7 +386,7 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
                 TitleRow typeTitle = row.GetSubTitleNamedRow(FieldNames.ExcelTypeNameKey) ?? row.GetSubTitleNamedRow(FieldNames.FallbackTypeNameKey);
                 if (typeTitle == null)
                 {
-                    throw new Exception($"type:'{originBean.FullName}' 是多态类型,需要定义'{FieldNames.ExcelTypeNameKey}'列来指定具体子类型");
+                    throw new LubanException("error.excel.polymorphic_need_type_column", originBean.FullName, FieldNames.ExcelTypeNameKey);
                 }
                 TitleRow valueTitle = row.GetSubTitleNamedRow(FieldNames.ExcelValueNameKey);
                 sep += type.GetTag("sep");
@@ -394,7 +395,7 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
                 {
                     if (!type.IsNullable)
                     {
-                        throw new Exception($"type:'{originBean.FullName}' 不是可空类型 '{type.DefBean.FullName}?' , 不能为空");
+                        throw new LubanException("error.excel.not_nullable_bean", originBean.FullName, type.DefBean.FullName);
                     }
                     return null;
                 }
@@ -414,9 +415,9 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
 
                 if (valueTitle.Rows != null)
                 {
-                    throw new Exception($"bean不支持多行格式，type:{type.DefBean.FullName} ");
+                    throw new LubanException("error.excel.bean_no_multirow", type.DefBean.FullName);
                 }
-                throw new Exception();
+                throw new LubanException("error.internal.unexpected");
             }
 
             if (type.IsNullable)
@@ -424,7 +425,7 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
                 TitleRow typeTitle = row.GetSubTitleNamedRow(FieldNames.ExcelTypeNameKey) ?? row.GetSubTitleNamedRow(FieldNames.FallbackTypeNameKey);
                 if (typeTitle == null)
                 {
-                    throw new Exception($"type:'{originBean.FullName}' 是可空类型,需要定义'{FieldNames.ExcelTypeNameKey}'列来指明是否可空");
+                    throw new LubanException("error.excel.nullable_need_type_column", originBean.FullName, FieldNames.ExcelTypeNameKey);
                 }
                 string subType = typeTitle.Current?.ToString()?.Trim();
                 if (subType == null || subType == FieldNames.BeanNullType)
@@ -434,7 +435,7 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
 
                 if (subType != FieldNames.BeanNotNullType && subType != originBean.Name)
                 {
-                    throw new Exception($"type:'{originBean.FullName}' 可空标识:'{subType}' 不合法（只能为'{FieldNames.BeanNullType}'或'{FieldNames.BeanNotNullType}'或'{originBean.Name}')");
+                    throw new LubanException("error.excel.invalid_null_flag", originBean.FullName, subType, FieldNames.BeanNullType, FieldNames.BeanNotNullType, originBean.Name);
                 }
             }
 
@@ -444,7 +445,7 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
         {
             return ReadMultiRowBeanData(type, sheet, row);
         }
-        throw new Exception();
+        throw new LubanException("error.internal.unexpected");
     }
 
     private DType ReadMultiRowBeanData(TBean type, RowColumnSheet sheet, TitleRow row)
@@ -456,14 +457,14 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
             {
                 return null;
             }
-            throw new Exception($"字段:'{row.SelfTitle.Name}' type:{type.DefBean.FullName} 缺少数据");
+            throw new LubanException("error.excel.bean_missing_data", row.SelfTitle.Name, type.DefBean.FullName);
         }
         if (elements[0].HasSubFields)
         {
             // 带子列名的多行格式：单 bean 只能对应一行子字段数据
             if (elements.Count > 1)
             {
-                throw new Exception($"字段:'{row.SelfTitle.Name}' 是单bean类型 '{type.DefBean.FullName}'，不支持多行子字段数据（共{elements.Count}行）。如需多行数据请改用 list 类型");
+                throw new LubanException("error.excel.bean_multirow_as_list", row.SelfTitle.Name, type.DefBean.FullName, elements.Count);
             }
             return Accept(type, sheet, elements[0]);
         }
@@ -472,7 +473,7 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
         var result = type.Apply(ExcelStreamDataCreator.Ins, s);
         if (!s.TryReadEOF())
         {
-            throw new Exception($"字段:'{row.SelfTitle.Name}' type:{type.DefBean.FullName} 多行数据中存在未被使用的多余数据，请检查是否误填，或者应该改用 list 类型");
+            throw new LubanException("error.excel.bean_extra_multirow", row.SelfTitle.Name, type.DefBean.FullName);
         }
         return result;
     }
@@ -486,7 +487,7 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
         }
         if (row.Rows != null)
         {
-            throw new Exception($"array 需要将字段设为多行模式才能读取多行数据  {row.SelfTitle.Name} => *{row.SelfTitle.Name}");
+            throw new LubanException("error.excel.array_need_multirow", row.SelfTitle.Name);
         }
         if (row.Fields != null)
         {
@@ -507,7 +508,7 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
         {
             return row.Elements.Select(e => elementType.Apply(this, sheet, e)).ToList();
         }
-        throw new Exception();
+        throw new LubanException("error.internal.unexpected");
     }
 
     public DType Accept(TArray type, RowColumnSheet sheet, TitleRow row)
@@ -537,7 +538,7 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
 
         if (row.Rows != null)
         {
-            throw new Exception($"map在非多行模式下不支持多行填写，是否忘记将字段设为多行模式?  {row.SelfTitle.Name} => *{row.SelfTitle.Name}");
+            throw new LubanException("error.excel.map_need_multirow", row.SelfTitle.Name);
         }
         if (row.Fields != null)
         {
@@ -572,7 +573,7 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
                     TitleRow keyTitle = e.GetSubTitleNamedRow(FieldNames.ExcelMapKey);
                     if (keyTitle == null)
                     {
-                        throw new Exception($"多行+列限定模式下map需要定义'{FieldNames.ExcelMapKey}'列来指明key");
+                        throw new LubanException("error.excel.map_need_key_column", FieldNames.ExcelMapKey);
                     }
                     var keyData = type.KeyType.Apply(this, sheet, keyTitle);
                     var valueData = type.ValueType.Apply(this, sheet, e);
@@ -586,6 +587,6 @@ class SheetDataCreator : ITypeFuncVisitor<RowColumnSheet, TitleRow, DType>
             }
             return new DMap(type, datas);
         }
-        throw new Exception();
+        throw new LubanException("error.internal.unexpected");
     }
 }

@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.Defs;
 
 namespace Luban.Utils;
@@ -62,7 +63,7 @@ public static class DefExtensions
             {
                 if (typeMapper.Targets.Contains(targetName) && typeMapper.CodeTargets.Contains(codeTargetName))
                 {
-                    return typeMapper.Options.TryGetValue(BuiltinOptionNames.TypeMapperType, out var typeName) ? typeName : throw new Exception($"option 'type' not found in type mapper of type {type.FullName} target:{targetName} codeTarget:{codeTargetName}");
+                    return typeMapper.Options.TryGetValue(BuiltinOptionNames.TypeMapperType, out var typeName) ? typeName : throw new LubanException("error.codegen.type_mapper_option", BuiltinOptionNames.TypeMapperType, type.FullName, targetName, codeTargetName);
                 }
             }
         }
@@ -79,7 +80,7 @@ public static class DefExtensions
             {
                 if (typeMapper.Targets.Contains(targetName) && typeMapper.CodeTargets.Contains(codeTargetName))
                 {
-                    return typeMapper.Options.TryGetValue(BuiltinOptionNames.TypeMapperConstructor, out var typeName) ? typeName : throw new Exception($"option 'constructor' not found in type mapper of type {type.FullName} target:{targetName} codeTarget:{codeTargetName}");
+                    return typeMapper.Options.TryGetValue(BuiltinOptionNames.TypeMapperConstructor, out var typeName) ? typeName : throw new LubanException("error.codegen.type_mapper_option", BuiltinOptionNames.TypeMapperConstructor, type.FullName, targetName, codeTargetName);
                 }
             }
         }
@@ -96,7 +97,7 @@ public static class DefExtensions
             {
                 if (typeMapper.Targets.Contains(targetName) && typeMapper.CodeTargets.Contains(codeTargetName))
                 {
-                    return typeMapper.Options.TryGetValue(option, out var typeName) ? typeName : throw new Exception($"option '{option}' not found in type mapper of type {type.FullName} target:{targetName} codeTarget:{codeTargetName}");
+                    return typeMapper.Options.TryGetValue(option, out var typeName) ? typeName : throw new LubanException("error.codegen.type_mapper_option", option, type.FullName, targetName, codeTargetName);
                 }
             }
         }

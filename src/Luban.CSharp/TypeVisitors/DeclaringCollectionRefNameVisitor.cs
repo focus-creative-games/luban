@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 using Luban.Defs;
+using Luban.Diagnostics;
 using Luban.Types;
 using Luban.TypeVisitors;
 
@@ -89,7 +90,7 @@ public class DeclaringCollectionRefNameVisitor : ITypeFuncVisitor<string>
         {
             return refTable.ValueTType.Apply(DeclaringTypeNameVisitor.Ins) + "[]";
         }
-        throw new Exception($"解析'{type.ElementType}[]' 的ref失败");
+        throw new LubanException("error.codegen.collection_ref_fail", $"{type.ElementType}[]");
     }
 
     public string Accept(TList type)
@@ -99,7 +100,7 @@ public class DeclaringCollectionRefNameVisitor : ITypeFuncVisitor<string>
         {
             return $"{ConstStrings.ListTypeName}<{refTable.ValueTType.Apply(DeclaringTypeNameVisitor.Ins)}>";
         }
-        throw new Exception($"解析'{ConstStrings.ListTypeName}<{type.ElementType}>' 的ref失败");
+        throw new LubanException("error.codegen.collection_ref_fail", $"{ConstStrings.ListTypeName}<{type.ElementType}>");
     }
 
     public string Accept(TSet type)
@@ -109,7 +110,7 @@ public class DeclaringCollectionRefNameVisitor : ITypeFuncVisitor<string>
         {
             return $"{ConstStrings.HashSetTypeName}<{refTable.ValueTType.Apply(DeclaringTypeNameVisitor.Ins)}>";
         }
-        throw new Exception($"解析'{ConstStrings.HashSetTypeName}<{type.ElementType}>' 的ref失败");
+        throw new LubanException("error.codegen.collection_ref_fail", $"{ConstStrings.HashSetTypeName}<{type.ElementType}>");
     }
 
     public string Accept(TMap type)
@@ -119,7 +120,7 @@ public class DeclaringCollectionRefNameVisitor : ITypeFuncVisitor<string>
         {
             return $"{ConstStrings.HashMapTypeName}<{type.KeyType.Apply(DeclaringTypeNameVisitor.Ins)}, {refTable.ValueTType.Apply(DeclaringTypeNameVisitor.Ins)}>";
         }
-        throw new Exception($"解析'{ConstStrings.HashMapTypeName}<{type.KeyType}, {type.ValueType}>' 的ref失败");
+        throw new LubanException("error.codegen.collection_ref_fail", $"{ConstStrings.HashMapTypeName}<{type.KeyType}, {type.ValueType}>");
     }
     private static DefTable GetCollectionRefTable(TType type)
     {

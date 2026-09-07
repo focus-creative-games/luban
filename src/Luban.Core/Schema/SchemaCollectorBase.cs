@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Diagnostics;
 using Luban.RawDefs;
 
 namespace Luban.Schema;
@@ -93,7 +94,7 @@ public abstract class SchemaCollectorBase : ISchemaCollector
         {
             if (_constAliases.ContainsKey(name))
             {
-                s_logger.Warn("Duplicate const alias for '{}': '{}' and '{}'", name, _constAliases[name], alias);
+                s_logger.Warn(MessageCatalog.Format("warn.schema.duplicate_const_alias", name, _constAliases[name], alias));
             }
             _constAliases[name] = alias;
         }
