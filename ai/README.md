@@ -10,6 +10,16 @@
   - 主 `Luban`：`-c schema-json`、`--errorFormat json`
   - `src/Luban.Mcp`：MCP Server（优先调 Agent，生成走主 CLI）
 
+## 构建（示例工程）
+
+`luban` 与 `luban_examples` 并列时，运行：
+
+```bash
+luban_examples/Tools/build-luban.bat   # 或 build-luban.sh
+```
+
+产出：`Tools/Luban`、`Tools/Luban.Agent`、`Tools/Luban.Mcp`。
+
 ## 文档
 
 见 luban-doc：`docs/ai/`，以及站点 `/llms.txt`。
