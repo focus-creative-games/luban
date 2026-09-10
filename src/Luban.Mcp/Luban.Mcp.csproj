@@ -28,6 +28,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <RootNamespace>Luban.Mcp</RootNamespace>
+    <Version>5.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
