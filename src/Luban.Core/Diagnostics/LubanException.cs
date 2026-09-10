@@ -18,6 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Schema;
+
 namespace Luban.Diagnostics;
 
 public class LubanException : Exception
@@ -26,6 +28,9 @@ public class LubanException : Exception
 
     public object[] Args { get; }
 
+    /// <summary>Optional schema definition location for structured diagnostics.</summary>
+    public SchemaSource SchemaOrigin { get; }
+
     public LubanException(string messageKey, params object[] args)
         : base(MessageCatalog.Format(messageKey, args))
     {
@@ -33,10 +38,26 @@ public class LubanException : Exception
         Args = args ?? Array.Empty<object>();
     }
 
+    public LubanException(SchemaSource schemaOrigin, string messageKey, params object[] args)
+        : base(MessageCatalog.Format(messageKey, args))
+    {
+        MessageKey = messageKey;
+        Args = args ?? Array.Empty<object>();
+        SchemaOrigin = schemaOrigin;
+    }
+
     public LubanException(Exception innerException, string messageKey, params object[] args)
         : base(MessageCatalog.Format(messageKey, args), innerException)
     {
         MessageKey = messageKey;
         Args = args ?? Array.Empty<object>();
+    }
+
+    public LubanException(Exception innerException, SchemaSource schemaOrigin, string messageKey, params object[] args)
+        : base(MessageCatalog.Format(messageKey, args), innerException)
+    {
+        MessageKey = messageKey;
+        Args = args ?? Array.Empty<object>();
+        SchemaOrigin = schemaOrigin;
     }
 }

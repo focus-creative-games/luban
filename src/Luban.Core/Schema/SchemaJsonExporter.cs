@@ -29,7 +29,7 @@ namespace Luban.Schema;
 /// </summary>
 public static class SchemaJsonExporter
 {
-    public const int FormatVersion = 1;
+    public const int FormatVersion = 2;
 
     private static readonly JsonSerializerOptions s_options = new()
     {
@@ -77,6 +77,7 @@ public static class SchemaJsonExporter
             OutputDataFile = t.OutputDataFile,
             Tags = TagsOrNull(t.Tags),
             Variant = EmptyToNull(t.CurrentVariant),
+            Source = ToSource(t.Source),
         };
     }
 
@@ -95,6 +96,7 @@ public static class SchemaJsonExporter
             Tags = TagsOrNull(b.Tags),
             Fields = b.HierarchyFields.Select(ToField).ToList(),
             Children = b.Children?.Select(c => c.FullName).ToList(),
+            Source = ToSource(b.Source),
         };
     }
 
@@ -132,6 +134,20 @@ public static class SchemaJsonExporter
                 Comment = EmptyToNull(i.Comment),
                 Tags = TagsOrNull(i.Tags),
             }).ToList(),
+            Source = ToSource(e.Source),
+        };
+    }
+
+    private static SchemaJsonSource ToSource(SchemaSource source)
+    {
+        if (source == null || string.IsNullOrEmpty(source.File))
+        {
+            return null;
+        }
+        return new SchemaJsonSource
+        {
+            File = source.File,
+            Sheet = EmptyToNull(source.Sheet),
         };
     }
 
@@ -153,6 +169,12 @@ public sealed class SchemaJsonDocument
     public List<SchemaJsonEnum> Enums { get; set; }
 }
 
+public sealed class SchemaJsonSource
+{
+    public string File { get; set; }
+    public string Sheet { get; set; }
+}
+
 public sealed class SchemaJsonTable
 {
     public string FullName { get; set; }
@@ -168,6 +190,7 @@ public sealed class SchemaJsonTable
     public string OutputDataFile { get; set; }
     public Dictionary<string, string> Tags { get; set; }
     public string Variant { get; set; }
+    public SchemaJsonSource Source { get; set; }
 }
 
 public sealed class SchemaJsonBean
@@ -183,6 +206,7 @@ public sealed class SchemaJsonBean
     public Dictionary<string, string> Tags { get; set; }
     public List<SchemaJsonField> Fields { get; set; }
     public List<string> Children { get; set; }
+    public SchemaJsonSource Source { get; set; }
 }
 
 public sealed class SchemaJsonField
@@ -207,6 +231,7 @@ public sealed class SchemaJsonEnum
     public List<string> Groups { get; set; }
     public Dictionary<string, string> Tags { get; set; }
     public List<SchemaJsonEnumItem> Items { get; set; }
+    public SchemaJsonSource Source { get; set; }
 }
 
 public sealed class SchemaJsonEnumItem

@@ -114,6 +114,7 @@ public class GlobalConfigLoader : IConfigLoader
         return new LubanConfig()
         {
             ConfigFileName = configFileName,
+            ConfigDir = FileUtil.Standardize(_curDir),
             InputDataDir = dataInputDir,
             Groups = groups,
             Targets = targets,

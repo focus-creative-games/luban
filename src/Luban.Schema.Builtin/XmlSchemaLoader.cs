@@ -21,6 +21,7 @@
 using Luban.Defs;
 using Luban.Diagnostics;
 using Luban.RawDefs;
+using Luban.Schema;
 using Luban.Utils;
 using System.Xml.Linq;
 
@@ -101,6 +102,7 @@ public class XmlSchemaLoader : SchemaLoaderBase
         XmlSchemaUtil.ValidAttrKeys(_fileName, e, _enumOptionalAttrs, _enumRequiredAttrs);
         var en = new RawEnum()
         {
+            Source = SchemaSource.FromPath(_fileName),
             Name = XmlUtil.GetRequiredAttribute(e, "name").Trim(),
             Namespace = CurNamespace,
             Comment = XmlUtil.GetOptionalAttribute(e, "comment"),
@@ -247,6 +249,7 @@ public class XmlSchemaLoader : SchemaLoaderBase
         TryGetUpdateParent(e, ref parent);
         var b = new RawBean()
         {
+            Source = SchemaSource.FromPath(_fileName),
             Name = XmlUtil.GetRequiredAttribute(e, "name"),
             Namespace = CurNamespace,
             Parent = parent,

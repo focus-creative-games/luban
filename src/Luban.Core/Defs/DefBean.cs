@@ -115,6 +115,7 @@ public class DefBean : DefTypeBase
         IsValueType = b.IsValueType;
         Groups = b.Groups;
         TypeMappers = b.TypeMappers is { Count: > 0 } ? b.TypeMappers : null;
+        Source = b.Source;
     }
 
     protected DefField CreateField(RawField f, int idOffset)
@@ -180,7 +181,7 @@ public class DefBean : DefTypeBase
         {
             if (!string.IsNullOrWhiteSpace(c.Alias) && !nameOrAliasName.Add(c.Alias))
             {
-                throw new LubanException("error.def.bean.duplicate_alias", FullName, c.Alias);
+                throw new LubanException(Source, "error.def.bean.duplicate_alias", FullName, c.Alias);
             }
         }
         DefField.CompileFields(this, HierarchyFields);
@@ -233,7 +234,7 @@ public class DefBean : DefTypeBase
         {
             if ((ParentDefType = (DefBean)Assembly.GetDefType(Namespace, Parent)) == null)
             {
-                throw new LubanException("error.def.bean.parent_not_exist", FullName, Parent);
+                throw new LubanException(Source, "error.def.bean.parent_not_exist", FullName, Parent);
             }
             if (ParentDefType.Children == null)
             {

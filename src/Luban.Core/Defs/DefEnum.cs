@@ -96,13 +96,13 @@ public class DefEnum : DefTypeBase
         {
             if (!_vaule2Name.ContainsKey(value) && !IsFlags)
             {
-                throw new LubanException("error.def.enum.invalid_int_value", value, FullName);
+                throw new LubanException(Source, "error.def.enum.invalid_int_value", value, FullName);
             }
             return value;
         }
         else
         {
-            throw new LubanException("error.def.enum.invalid_name", name, FullName);
+            throw new LubanException(Source, "error.def.enum.invalid_name", name, FullName);
         }
     }
 
@@ -116,6 +116,7 @@ public class DefEnum : DefTypeBase
         Tags = e.Tags;
         Groups = e.Groups;
         TypeMappers = e.TypeMappers is { Count: > 0 } ? e.TypeMappers : null;
+        Source = e.Source;
         foreach (var item in e.Items)
         {
             Items.Add(new Item
@@ -141,7 +142,7 @@ public class DefEnum : DefTypeBase
             string value = item.Value.ToLower();
             if (!names.Add(item.Name))
             {
-                throw new LubanException("error.def.enum.duplicate_item", fullName, item.Name);
+                throw new LubanException(Source, "error.def.enum.duplicate_item", fullName, item.Name);
             }
             if (string.IsNullOrEmpty(value))
             {
@@ -165,7 +166,7 @@ public class DefEnum : DefTypeBase
                 }
                 else
                 {
-                    throw new LubanException("error.def.enum.invalid_item_value", fullName, item.Name, item.Value);
+                    throw new LubanException(Source, "error.def.enum.invalid_item_value", fullName, item.Name, item.Value);
                 }
             }
             else if (IsFlags)
@@ -177,30 +178,30 @@ public class DefEnum : DefTypeBase
                     var index = Items.FindIndex(i => i.Name == n);
                     if (index < 0)
                     {
-                        throw new LubanException("error.def.enum.invalid_item_value", fullName, item.Name, item.Value);
+                        throw new LubanException(Source, "error.def.enum.invalid_item_value", fullName, item.Name, item.Value);
                     }
                     item.IntValue |= Items[index].IntValue;
                 }
             }
             else
             {
-                throw new LubanException("error.def.enum.invalid_item_value", fullName, item.Name, item.Value);
+                throw new LubanException(Source, "error.def.enum.invalid_item_value", fullName, item.Name, item.Value);
             }
 
             if (!string.IsNullOrWhiteSpace(item.Name) && !_nameOrAlias2Value.TryAdd(item.Name, item.IntValue))
             {
-                throw new LubanException("error.def.enum.duplicate_name", fullName, Name);
+                throw new LubanException(Source, "error.def.enum.duplicate_name", fullName, Name);
             }
 
             if (!string.IsNullOrWhiteSpace(item.Alias) && !_nameOrAlias2Value.TryAdd(item.Alias, item.IntValue))
             {
-                throw new LubanException("error.def.enum.duplicate_alias", fullName, Name, item.Alias);
+                throw new LubanException(Source, "error.def.enum.duplicate_alias", fullName, Name, item.Alias);
             }
             if (_vaule2Name.TryGetValue(item.IntValue, out var itemName))
             {
                 if (IsUniqueItemId)
                 {
-                    throw new LubanException("error.def.enum.duplicate_value", fullName, item.IntValue, itemName, item.Name);
+                    throw new LubanException(Source, "error.def.enum.duplicate_value", fullName, item.IntValue, itemName, item.Name);
                 }
             }
             else

@@ -335,6 +335,7 @@ internal static class Program
             t.Comment,
             t.InputFiles,
             t.Groups,
+            t.Source,
         }).ToList();
     }
 

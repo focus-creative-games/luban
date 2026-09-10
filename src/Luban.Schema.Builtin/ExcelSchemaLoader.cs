@@ -24,6 +24,7 @@ using Luban.Datas;
 using Luban.Defs;
 using Luban.Diagnostics;
 using Luban.RawDefs;
+using Luban.Schema;
 using Luban.Types;
 using Luban.Utils;
 
@@ -222,6 +223,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
 
             var curEnum = new RawEnum()
             {
+                Source = SchemaSource.FromPath(fileName),
                 Name = name,
                 Namespace = module,
                 IsFlags = (data.GetField("flags") as DBool).Value,
@@ -332,6 +334,7 @@ public class ExcelSchemaLoader : SchemaLoaderBase
             DList fields = data.GetField("fields") as DList;
             var curBean = new RawBean()
             {
+                Source = SchemaSource.FromPath(fileName),
                 Name = name,
                 Namespace = module,
                 IsValueType = ((DBool)data.GetField("valueType")).Value,

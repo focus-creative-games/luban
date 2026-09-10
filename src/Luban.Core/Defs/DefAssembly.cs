@@ -203,11 +203,11 @@ public class DefAssembly
     {
         if (!TablesByFullName.TryAdd(table.FullName, table))
         {
-            throw new LubanException("error.def.table.duplicated", table.FullName);
+            throw new LubanException(table.Source, "error.def.table.duplicated", table.FullName);
         }
         if (!TablesByName.TryAdd(table.Name, table))
         {
-            throw new LubanException("error.def.table.duplicate_name", table.FullName, TablesByName[table.Name].FullName);
+            throw new LubanException(table.Source, "error.def.table.duplicate_name", table.FullName, TablesByName[table.Name].FullName);
         }
     }
 
@@ -241,18 +241,18 @@ public class DefAssembly
         string fullName = type.FullName;
         if (Types.ContainsKey(fullName))
         {
-            throw new LubanException("error.def.type.duplicate", fullName);
+            throw new LubanException(type.Source, "error.def.type.duplicate", fullName);
         }
 
         if (!_notCaseSenseTypes.TryAdd(fullName.ToLower(), type))
         {
-            throw new LubanException("error.def.type.duplicate_case_insensitive", fullName, _notCaseSenseTypes[fullName.ToLower()].FullName);
+            throw new LubanException(type.Source, "error.def.type.duplicate_case_insensitive", fullName, _notCaseSenseTypes[fullName.ToLower()].FullName);
         }
 
         string namespaze = type.Namespace;
         if (_namespaces.Add(namespaze) && !_notCaseSenseNamespaces.TryAdd(namespaze.ToLower(), type))
         {
-            throw new LubanException("error.def.type.duplicate_namespace_case_insensitive", fullName, _notCaseSenseNamespaces[namespaze.ToLower()].FullName);
+            throw new LubanException(type.Source, "error.def.type.duplicate_namespace_case_insensitive", fullName, _notCaseSenseNamespaces[namespaze.ToLower()].FullName);
         }
 
         Types.Add(fullName, type);

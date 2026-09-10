@@ -116,6 +116,8 @@ public sealed class DiagnosticReport
                 Category = GuessCategory(le.MessageKey),
                 Code = le.MessageKey,
                 Message = le.Message,
+                File = le.SchemaOrigin?.File,
+                Location = le.SchemaOrigin?.Sheet,
                 Args = le.Args is { Length: > 0 }
                     ? le.Args.Select(a => a?.ToString()).ToList()
                     : null,

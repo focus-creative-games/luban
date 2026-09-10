@@ -18,6 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using Luban.Schema;
+
 namespace Luban.RawDefs;
 
 public class EnumItem
@@ -35,6 +37,8 @@ public class EnumItem
 
 public class RawEnum
 {
+    public SchemaSource Source { get; set; }
+
     public string Namespace { get; set; }
 
     public string Name { get; set; }

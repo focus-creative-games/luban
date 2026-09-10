@@ -19,11 +19,14 @@
 // SOFTWARE.
 
 using Luban.Defs;
+using Luban.Schema;
 
 namespace Luban.RawDefs;
 
 public class RawTable
 {
+    public SchemaSource Source { get; set; }
+
     public string Namespace { get; set; }
 
     public string Name { get; set; }

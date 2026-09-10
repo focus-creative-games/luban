@@ -219,24 +219,35 @@ internal static class Program
     }
 
     private static void PrettyPrintException(Exception e)
-    {
-        if (TryExtractDataCreateException(e, out var dce))
         {
-            s_logger.Error("=======================================================================");
-            s_logger.Error(MessageCatalog.Format("error.data.parse_failed"));
-            s_logger.Error(MessageCatalog.Format("error.data.parse_file", dce.OriginDataLocation));
-            s_logger.Error(MessageCatalog.Format("error.data.parse_location", dce.DataLocationInFile));
-            s_logger.Error(MessageCatalog.Format("error.data.parse_err", dce.OriginErrorMsg));
-            s_logger.Error(MessageCatalog.Format("error.data.parse_field", dce.VariableFullPathStr));
-            s_logger.Error("=======================================================================");
-            return;
+            if (TryExtractDataCreateException(e, out var dce))
+            {
+                s_logger.Error("=======================================================================");
+                s_logger.Error(MessageCatalog.Format("error.data.parse_failed"));
+                s_logger.Error(MessageCatalog.Format("error.data.parse_file", dce.OriginDataLocation));
+                s_logger.Error(MessageCatalog.Format("error.data.parse_location", dce.DataLocationInFile));
+                s_logger.Error(MessageCatalog.Format("error.data.parse_err", dce.OriginErrorMsg));
+                s_logger.Error(MessageCatalog.Format("error.data.parse_field", dce.VariableFullPathStr));
+                s_logger.Error("=======================================================================");
+                return;
+            }
+            do
+            {
+                s_logger.Error("===> {}", e.Message);
+                if (e is LubanException { SchemaOrigin: not null } le)
+                {
+                    if (!string.IsNullOrEmpty(le.SchemaOrigin.File))
+                    {
+                        s_logger.Error("  file: {}", le.SchemaOrigin.File);
+                    }
+                    if (!string.IsNullOrEmpty(le.SchemaOrigin.Sheet))
+                    {
+                        s_logger.Error("  sheet: {}", le.SchemaOrigin.Sheet);
+                    }
+                }
+                e = e.InnerException;
+            } while (e != null);
         }
-        do
-        {
-            s_logger.Error("===> {}", e.Message);
-            e = e.InnerException;
-        } while (e != null);
-    }
 
     private static bool TryExtractDataCreateException(Exception e, out DataCreateException extract)
     {

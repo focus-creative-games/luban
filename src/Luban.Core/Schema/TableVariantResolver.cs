@@ -71,7 +71,7 @@ public static class TableVariantResolver
             {
                 if (fallback != null)
                 {
-                    throw new LubanException("error.def.table.variant_fallback_duplicate", fullName);
+                    throw new LubanException(table.Source, "error.def.table.variant_fallback_duplicate", fullName);
                 }
                 fallback = table;
                 continue;
@@ -81,7 +81,7 @@ public static class TableVariantResolver
             {
                 if (!byVariant.TryAdd(variantName, table))
                 {
-                    throw new LubanException("error.def.table.variant_duplicate", fullName, variantName);
+                    throw new LubanException(table.Source, "error.def.table.variant_duplicate", fullName, variantName);
                 }
             }
         }
@@ -128,9 +128,9 @@ public static class TableVariantResolver
 
         if (string.IsNullOrEmpty(selected))
         {
-            throw new LubanException("error.def.table.variant_not_set", fullName);
+            throw new LubanException(group[0].Source, "error.def.table.variant_not_set", fullName);
         }
 
-        throw new LubanException("error.def.table.variant_not_in_list", fullName, selected, string.Join(",", byVariant.Keys));
+        throw new LubanException(group[0].Source, "error.def.table.variant_not_in_list", fullName, selected, string.Join(",", byVariant.Keys));
     }
 }

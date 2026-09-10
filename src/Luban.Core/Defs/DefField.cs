@@ -105,7 +105,7 @@ public class DefField
             {
                 if (!Variants.Contains(variantName))
                 {
-                    throw new LubanException("error.def.field.variant_not_in_list", HostType.FullName, Name, variantKey, variantName, string.Join(",", Variants));
+                    throw new LubanException(HostType.Source, "error.def.field.variant_not_in_list", HostType.FullName, Name, variantKey, variantName, string.Join(",", Variants));
                 }
                 CurrentVariantNameWithoutFieldName = variantName;
                 CurrentVariantNameWithFieldName = $"{Name}@{variantName}";
@@ -121,7 +121,7 @@ public class DefField
         }
         catch (Exception e)
         {
-            throw new LubanException(e, "error.def.field.invalid_type", HostType.FullName, Name, Type);
+            throw new LubanException(e, HostType.Source, "error.def.field.invalid_type", HostType.FullName, Name, Type);
         }
 
         //if (IsNullable && (CType.IsCollection || (CType is TBean)))
@@ -135,7 +135,7 @@ public class DefField
             {
                 if (t.ElementType is TBean e && !e.IsDynamic && e.DefBean.HierarchyFields.Count == 0)
                 {
-                    throw new LubanException("error.def.container.empty_bean", e.DefBean.FullName);
+                    throw new LubanException(e.DefBean.Source, "error.def.container.empty_bean", e.DefBean.FullName);
                 }
                 break;
             }
@@ -143,7 +143,7 @@ public class DefField
             {
                 if (t.ElementType is TBean e && !e.IsDynamic && e.DefBean.HierarchyFields.Count == 0)
                 {
-                    throw new LubanException("error.def.container.empty_bean", e.DefBean.FullName);
+                    throw new LubanException(e.DefBean.Source, "error.def.container.empty_bean", e.DefBean.FullName);
                 }
                 break;
             }
@@ -167,15 +167,15 @@ public class DefField
             var name = f.Name;
             if (name.Length == 0)
             {
-                throw new LubanException("error.def.field.empty_name", hostType.FullName);
+                throw new LubanException(hostType.Source, "error.def.field.empty_name", hostType.FullName);
             }
             if (!names.Add(name))
             {
-                throw new LubanException("error.def.field.duplicate", hostType.FullName, name);
+                throw new LubanException(hostType.Source, "error.def.field.duplicate", hostType.FullName, name);
             }
             if (TypeUtil.ToCsStyleName(name) == hostType.Name)
             {
-                throw new LubanException("error.def.field.csharp_name_conflict", hostType.FullName, name);
+                throw new LubanException(hostType.Source, "error.def.field.csharp_name_conflict", hostType.FullName, name);
             }
             f.AutoId = nextAutoId++;
         }
@@ -187,11 +187,11 @@ public class DefField
             {
                 if (!aliasNames.TryAdd(f.Alias, f))
                 {
-                    throw new LubanException("error.def.field.alias_duplicate_field", hostType.FullName, f.Name, f.Alias, aliasNames[f.Alias].Name);
+                    throw new LubanException(hostType.Source, "error.def.field.alias_duplicate_field", hostType.FullName, f.Name, f.Alias, aliasNames[f.Alias].Name);
                 }
                 if (names.Contains(f.Alias))
                 {
-                    throw new LubanException("error.def.field.alias_duplicate_name", hostType.FullName, f.Name, f.Alias);
+                    throw new LubanException(hostType.Source, "error.def.field.alias_duplicate_name", hostType.FullName, f.Name, f.Alias);
                 }
             }
             f.Compile();

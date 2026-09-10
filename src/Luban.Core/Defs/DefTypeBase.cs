@@ -29,6 +29,9 @@ public abstract class DefTypeBase
 {
     public DefAssembly Assembly { get; set; }
 
+    /// <summary>Schema definition origin (file + optional excel sheet).</summary>
+    public SchemaSource Source { get; set; }
+
     public string Name { get; set; }
 
     public string Namespace { get; set; }
@@ -75,7 +78,7 @@ public abstract class DefTypeBase
                 {
                     if (c.Groups.All(gg => !gg.Names.Contains(g)))
                     {
-                        throw new LubanException("error.def.type.group_not_found", FullName, g);
+                        throw new LubanException(Source, "error.def.type.group_not_found", FullName, g);
                     }
                 }
             }

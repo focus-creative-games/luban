@@ -47,6 +47,7 @@ public class DefTable : DefTypeBase
         Tags = b.Tags;
         _outputFile = b.OutputFile;
         CurrentVariant = b.CurrentVariant ?? "";
+        Source = b.Source;
     }
 
     public string Index { get; private set; }
@@ -100,7 +101,7 @@ public class DefTable : DefTypeBase
 
         if ((ValueTType = (TBean)ass.CreateType(Namespace, ValueType, false)) == null)
         {
-            throw new LubanException("error.def.table.value_type_not_exist", FullName, ValueType);
+            throw new LubanException(Source, "error.def.table.value_type_not_exist", FullName, ValueType);
         }
 
         switch (Mode)
@@ -121,19 +122,19 @@ public class DefTable : DefTypeBase
                     {
                         if(!f.NeedExport() && this.NeedExport())
                         {
-                            throw new LubanException("error.def.table.index_not_exported", FullName, f.Name);
+                            throw new LubanException(Source, "error.def.table.index_not_exported", FullName, f.Name);
                         }
                         IndexField = f;
                         IndexFieldIdIndex = i;
                     }
                     else
                     {
-                        throw new LubanException("error.def.table.index_not_exist", FullName, Index);
+                        throw new LubanException(Source, "error.def.table.index_not_exist", FullName, Index);
                     }
                 }
                 else if (ValueTType.DefBean.HierarchyFields.Count == 0)
                 {
-                    throw new LubanException("error.def.table.no_field", FullName);
+                    throw new LubanException(Source, "error.def.table.no_field", FullName);
                 }
                 else
                 {
@@ -141,7 +142,7 @@ public class DefTable : DefTypeBase
 
                     if (!f.NeedExport() && this.NeedExport())
                     {
-                        throw new LubanException("error.def.table.default_index_not_exported", FullName, f.Name);
+                        throw new LubanException(Source, "error.def.table.default_index_not_exported", FullName, f.Name);
                     }
                     IndexField = f;
                     Index = IndexField.Name;
@@ -168,7 +169,7 @@ public class DefTable : DefTypeBase
                     }
                     else
                     {
-                        throw new LubanException("error.def.table.index_not_exist", FullName, idx);
+                        throw new LubanException(Source, "error.def.table.index_not_exist", FullName, idx);
                     }
                 }
                 // 如果不是 union index, 每个key必须唯一，否则 (key1,..,key n)唯一
@@ -177,7 +178,7 @@ public class DefTable : DefTypeBase
                 break;
             }
             default:
-                throw new LubanException("error.def.table.unknown_mode", Mode);
+                throw new LubanException(Source, "error.def.table.unknown_mode", Mode);
         }
 
         foreach (var index in IndexList)
@@ -186,11 +187,11 @@ public class DefTable : DefTypeBase
             string idxName = index.IndexField.Name;
             if (indexType.IsNullable)
             {
-                throw new LubanException("error.def.table.index_nullable", FullName, idxName);
+                throw new LubanException(Source, "error.def.table.index_nullable", FullName, idxName);
             }
             if (!indexType.Apply(IsValidTableKeyTypeVisitor.Ins))
             {
-                throw new LubanException("error.def.table.index_invalid_type", FullName, idxName, index.IndexField.Type);
+                throw new LubanException(Source, "error.def.table.index_invalid_type", FullName, idxName, index.IndexField.Type);
             }
         }
     }
