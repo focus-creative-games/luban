@@ -85,6 +85,7 @@ public class DefaultTableImporter : ITableImporter
                 InputFiles = new List<string> { relativePath },
                 OutputFile = "",
                 Tags = new Dictionary<string, string>(),
+                Variants = new List<string>(),
             };
             s_logger.Debug("import table file:{@}", table);
             tables.Add(table);

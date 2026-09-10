@@ -76,6 +76,7 @@ public static class SchemaJsonExporter
             ReadSchemaFromFile = t.ReadSchemaFromFile,
             OutputDataFile = t.OutputDataFile,
             Tags = TagsOrNull(t.Tags),
+            Variant = EmptyToNull(t.CurrentVariant),
         };
     }
 
@@ -166,6 +167,7 @@ public sealed class SchemaJsonTable
     public bool ReadSchemaFromFile { get; set; }
     public string OutputDataFile { get; set; }
     public Dictionary<string, string> Tags { get; set; }
+    public string Variant { get; set; }
 }
 
 public sealed class SchemaJsonBean

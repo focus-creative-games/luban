@@ -48,6 +48,7 @@ public class DefaultSchemaCollector : SchemaCollectorBase
         }
 
         LoadTablesFromTableImporter();
+        ResolveTableVariants();
         LoadTableValueTypeSchemasFromFile();
     }
 

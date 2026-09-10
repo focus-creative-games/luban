@@ -62,7 +62,7 @@ internal static class Program
         [Option('e', "excludeTag", Required = false)]
         public IEnumerable<string> ExcludeTags { get; set; }
 
-        [Option("variant", Required = false)]
+        [Option("variant", Required = false, HelpText = "field/table variants")]
         public IEnumerable<string> Variants { get; set; }
 
         [Option("timeZone", Required = false)]

@@ -45,6 +45,12 @@
   "error.def.table.unknown_mode": "unknown mode:'{0}'",
   "error.def.table.index_nullable": "table:'{0}' index:'{1}' cannot be a nullable type",
   "error.def.table.index_invalid_type": "table:'{0}' index:'{1}' type:'{2}' cannot be used as index",
+  "error.def.table.variant_duplicate": "table:'{0}' variant:'{1}' is duplicated",
+  "error.def.table.variant_fallback_duplicate": "table:'{0}' has multiple fallback definitions without variant",
+  "error.def.table.variant_not_in_list": "table:'{0}' variant:'{1}' is not in declared list [{2}], and no fallback exists",
+  "error.def.table.variant_not_set": "table:'{0}' declares variants but current variant is not set, and no fallback exists. please set '--variant {0}=<variantName>' or '--variant default=<variantName>'",
+  "warn.def.table.variant_not_set": "table:'{0}' not set variant, using fallback definition. please set variant by command line option '--variant {0}=<variantName>'",
+  "warn.def.table.variant_fallback": "table:'{0}' variant:'{1}' not matched, using fallback definition",
 
   "error.def.bean.duplicate_alias": "bean:'{0}' alias:{1} is duplicated",
   "error.def.bean.parent_not_exist": "bean:'{0}' parent:'{1}' does not exist",

@@ -38,4 +38,10 @@ public interface ISchemaCollector
 
     void AddConstAlias(string name, string alias);
 
+    /// <summary>
+    /// Inject --variant map before <see cref="Load"/>. Default no-op for custom collectors.
+    /// </summary>
+    void SetVariants(Dictionary<string, string> variants)
+    {
+    }
 }

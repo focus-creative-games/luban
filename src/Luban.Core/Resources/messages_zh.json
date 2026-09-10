@@ -45,6 +45,12 @@
   "error.def.table.unknown_mode": "未知 mode:'{0}'",
   "error.def.table.index_nullable": "表:'{0}' index:'{1}' 不能为可空类型",
   "error.def.table.index_invalid_type": "表:'{0}' index:'{1}' 的类型:'{2}' 不能作为 index",
+  "error.def.table.variant_duplicate": "表:'{0}' variant:'{1}' 重复定义",
+  "error.def.table.variant_fallback_duplicate": "表:'{0}' 存在多个无 variant 的 fallback 定义",
+  "error.def.table.variant_not_in_list": "表:'{0}' variant:'{1}' 不在已声明列表 [{2}] 中，且没有 fallback",
+  "error.def.table.variant_not_set": "表:'{0}' 定义了变体但未设置当前变体，且没有 fallback。请通过 '--variant {0}=<variantName>' 或 '--variant default=<variantName>' 设置",
+  "warn.def.table.variant_not_set": "表:'{0}' 未设置 variant，使用 fallback 定义。请通过命令行选项 '--variant {0}=<variantName>' 设置",
+  "warn.def.table.variant_fallback": "表:'{0}' 指定的 variant:'{1}' 未命中，使用 fallback 定义",
 
   "error.def.bean.duplicate_alias": "bean:'{0}' alias:{1} 重复",
   "error.def.bean.parent_not_exist": "bean:'{0}' parent:'{1}' 不存在",

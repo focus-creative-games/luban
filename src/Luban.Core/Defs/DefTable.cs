@@ -46,6 +46,7 @@ public class DefTable : DefTypeBase
         ReadSchemaFromFile = b.ReadSchemaFromFile;
         Tags = b.Tags;
         _outputFile = b.OutputFile;
+        CurrentVariant = b.CurrentVariant ?? "";
     }
 
     public string Index { get; private set; }
@@ -55,6 +56,11 @@ public class DefTable : DefTypeBase
     public TableMode Mode { get; }
 
     public bool ReadSchemaFromFile { get; }
+
+    /// <summary>
+    /// Selected variant name after resolve. Empty when the fallback table definition is used.
+    /// </summary>
+    public string CurrentVariant { get; }
 
     public bool IsSingletonTable => Mode == TableMode.ONE;
 

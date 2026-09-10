@@ -1,0 +1,8 @@
+<module name="">
+  <bean name="Item">
+    <var name="id" type="int"/>
+    <var name="name" type="string"/>
+  </bean>
+  <table name="TbItem" variant="zh" value="Item" input="*@item_zh.json"/>
+  <table name="TbItem" variant="en" value="Item" input="*@item_en.json"/>
+</module>

@@ -1,0 +1,28 @@
+<module name="">
+  <bean name="Item">
+    <var name="id" type="int"/>
+    <var name="name" type="string"/>
+  </bean>
+  <bean name="ItemEn">
+    <var name="id" type="int"/>
+    <var name="name" type="string"/>
+    <var name="desc" type="string"/>
+  </bean>
+  <bean name="Global">
+    <var name="id" type="int"/>
+    <var name="value" type="int"/>
+  </bean>
+  <bean name="Quest">
+    <var name="id" type="int"/>
+    <var name="item_id" type="int#ref=TbItem"/>
+  </bean>
+
+  <table name="TbItem" value="Item" input="*@item.json"/>
+  <table name="TbItem" variant="zh" value="Item" input="*@item_zh.json"/>
+  <table name="TbItem" variant="en" value="ItemEn" input="*@item_en.json"/>
+
+  <table name="TbGlobal" value="Global" input="*@global.json"/>
+  <table name="TbGlobal" variant="zh,en" value="Global" input="*@global_locale.json"/>
+
+  <table name="TbQuest" value="Quest" input="*@quest.json"/>
+</module>

@@ -36,11 +36,31 @@ public abstract class SchemaCollectorBase : ISchemaCollector
 
     private readonly Dictionary<string, string> _constAliases = new();
 
+    private Dictionary<string, string> _variants = new();
+
     protected List<RawTable> Tables => _tables;
+
+    protected IReadOnlyDictionary<string, string> Variants => _variants;
 
     public abstract void Load(LubanConfig config);
 
     public abstract RawAssembly CreateRawAssembly();
+
+    public virtual void SetVariants(Dictionary<string, string> variants)
+    {
+        _variants = variants ?? new Dictionary<string, string>();
+    }
+
+    /// <summary>
+    /// Resolve table variants in-place. Must be called after all tables are collected
+    /// and before readSchemaFromFile.
+    /// </summary>
+    protected void ResolveTableVariants()
+    {
+        var resolved = TableVariantResolver.Resolve(_tables, _variants);
+        _tables.Clear();
+        _tables.AddRange(resolved);
+    }
 
     protected RawAssembly CreateRawAssembly(LubanConfig config)
     {

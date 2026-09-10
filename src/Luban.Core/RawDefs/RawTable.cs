@@ -45,4 +45,14 @@ public class RawTable
     public List<string> InputFiles { get; set; } = new();
 
     public string OutputFile { get; set; }
+
+    /// <summary>
+    /// Declared table variants. Empty means this definition is the fallback table.
+    /// </summary>
+    public List<string> Variants { get; set; } = new();
+
+    /// <summary>
+    /// Variant name selected for this table after resolve. Empty when fallback is used.
+    /// </summary>
+    public string CurrentVariant { get; set; } = "";
 }

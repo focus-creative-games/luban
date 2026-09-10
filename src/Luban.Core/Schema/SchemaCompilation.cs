@@ -43,6 +43,7 @@ public static class SchemaCompilation
 
         string collectorName = string.IsNullOrWhiteSpace(args.SchemaCollector) ? "default" : args.SchemaCollector;
         var schemaCollector = SchemaManager.Ins.CreateSchemaCollector(collectorName);
+        schemaCollector.SetVariants(args.Variants);
         schemaCollector.Load(args.Config);
         RawAssembly rawAssembly = schemaCollector.CreateRawAssembly();
 
