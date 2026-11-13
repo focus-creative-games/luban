@@ -32,6 +32,19 @@ Luban standardizes the game configuration development workflow, which can greatl
 - The generated code makes no reflection API calls, ensuring compatibility with common code obfuscation and hardening tools such as [Obfuz](https://github.com/focus-creative-games/obfuz), Obfuscator, Confuser, and .NET Refactor.
 - Clear and elegant generation pipeline, it is easy to carry out secondary development on the basis of luban, and customize a configuration tool suitable for your own project style.
 
+## Build from source
+
+Install the .NET 10 SDK. The repository's `global.json` selects a stable .NET 10 SDK.
+
+Run the following commands from the repository root:
+
+```shell
+dotnet build src/Luban.sln --configuration Release
+dotnet src/Luban/bin/Release/net10.0/Luban.dll --help
+```
+
+Build outputs are written to `src/Luban/bin/Release/net10.0/` and require the .NET 10 runtime to run.
+
 ## Documentation
 
 - [Official Documentation](https://www.datable.cn/en/docs/intro)

@@ -1,9 +1,10 @@
 language: csharp
 solution: src/Luban.sln
+dist: jammy
 
 mono: none
-dotnet: 6.0
+dotnet: 10.0.115
 script:
  - cd src
  - dotnet restore Luban.sln
- - dotnet build Luban.sln
+ - dotnet build Luban.sln --configuration Release --no-restore

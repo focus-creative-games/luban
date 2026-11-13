@@ -35,6 +35,19 @@ luban标准化了游戏配置开发工作流，可以极大提升策划和程序
 - 生成的代码未调用任何反射接口，兼容[Obfuz](https://github.com/focus-creative-games/obfuz)、Obfuscator、Confuser、.Net Refactor等常见代码混淆和加固工具。
 - 清晰优雅的生成管线，很容易在luban基础上进行二次开发，定制出适合自己项目风格的配置工具。
 
+## 从源码构建
+
+需要安装 .NET 10 SDK。仓库中的 `global.json` 指定使用 .NET 10 的稳定版 SDK。
+
+在仓库根目录执行：
+
+```shell
+dotnet build src/Luban.sln --configuration Release
+dotnet src/Luban/bin/Release/net10.0/Luban.dll --help
+```
+
+构建产物位于 `src/Luban/bin/Release/net10.0/`。运行这些产物需要 .NET 10 运行时。
+
 ## 文档
 
 - [官方文档](https://www.datable.cn/docs/intro)
